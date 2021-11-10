@@ -70,6 +70,7 @@ namespace Tests.SalesOrderItemTests
             salesOrderItemEdit.Description.Set(expected.Description);
             salesOrderItemEdit.Comment.Set(expected.Comment);
             salesOrderItemEdit.InternalComment.Set(expected.InternalComment);
+            salesOrderItemEdit.OrderItemQuantityOrdered_1.Set(expected.QuantityOrdered.ToString());
             salesOrderItemEdit.PriceableAssignedUnitPrice_1.Set(expected.AssignedUnitPrice.ToString());
 
             this.Transaction.Rollback();
@@ -87,6 +88,7 @@ namespace Tests.SalesOrderItemTests
             Assert.Equal(expectedDescription, actual.Description);
             Assert.Equal(expectedComment, actual.Comment);
             Assert.Equal(expectedInternalComment, actual.InternalComment);
+            Assert.Equal(expectedQuantityOrdered, actual.QuantityOrdered);
             Assert.Equal(expectedAssignedUnitPrice, actual.AssignedUnitPrice);
         }
 

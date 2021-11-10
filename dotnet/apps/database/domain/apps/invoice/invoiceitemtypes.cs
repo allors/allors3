@@ -62,7 +62,6 @@ namespace Allors.Database.Domain
                 v.Name = "Service";
                 localisedName.Set(v, dutchLocale, "Service");
                 v.IsActive = true;
-                v.MaxQuantity = 1;
             });
 
             merge(TimeId, v =>

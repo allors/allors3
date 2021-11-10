@@ -33,10 +33,7 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithComment(faker.Lorem.Sentence())
                 .WithInternalComment(faker.Lorem.Sentence())
                 .WithInvoiceItemType(faker.Random.ListItem(otherInvoiceItemTypes))
-                .WithProduct(serializedProduct)
-                .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
-                .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
-                .WithQuantityOrdered(1)
+                .WithQuantityOrdered(faker.Random.UInt(1, 10))
                 .WithAssignedUnitPrice(faker.Random.UInt());
 
             return @this;
