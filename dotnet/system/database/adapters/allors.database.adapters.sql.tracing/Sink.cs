@@ -8,14 +8,26 @@ namespace Allors.Database.Adapters.Sql.Tracing
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;
+    using System.Linq;
 
     public class Sink : ISink
     {
-        public Sink() => this.TreeByTransaction = new ConcurrentDictionary<ITransaction, SinkTree>();
+        private int counter;
+
+        public Sink()
+        {
+            this.counter = 0;
+            this.TreeByTransaction = new ConcurrentDictionary<ITransaction, SinkTree>();
+        }
 
         public ConcurrentDictionary<ITransaction, SinkTree> TreeByTransaction { get; }
 
         public Func<Event, bool> Breaker { get; set; }
+
+        public SinkTree[] Trees => this.TreeByTransaction
+            .Values
+            .OrderBy(v => v.Index)
+            .ToArray();
 
         public void OnBefore(Event @event)
         {
@@ -34,6 +46,6 @@ namespace Allors.Database.Adapters.Sql.Tracing
             transactionSink.OnAfter(@event);
         }
 
-        private SinkTree GetTransactionSink(Event @event) => this.TreeByTransaction.GetOrAdd(@event.Transaction, (v) => new SinkTree(v));
+        private SinkTree GetTransactionSink(Event @event) => this.TreeByTransaction.GetOrAdd(@event.Transaction, (v) => new SinkTree(v, ++this.counter));
     }
 }
