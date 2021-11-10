@@ -1694,20 +1694,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedQuantityOrderedValidationError()
-        {
-            var item = new SalesOrderItemBuilder(this.Transaction)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Service)
-                .Build();
-            this.Derive();
-
-            item.QuantityOrdered = 2;
-
-            var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
-        }
-
-        [Fact]
         public void ChangedQuantityOrderedValidationErrorRequired()
         {
             var product = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();

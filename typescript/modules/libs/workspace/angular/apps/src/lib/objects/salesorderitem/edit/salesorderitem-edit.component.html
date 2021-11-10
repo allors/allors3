@@ -19,7 +19,8 @@
       </div>
 
       <div class="row" *ngIf="orderItem.InvoiceItemType !== productItemType">
-        <a-mat-input class="col-md" [object]="orderItem" [roleType]="m.SalesOrderItem.AssignedUnitPrice" label="Amount"></a-mat-input>
+        <a-mat-input class="col-md" [object]="orderItem" [roleType]="m.SalesOrderItem.QuantityOrdered"></a-mat-input>
+        <a-mat-input class="col-md" [object]="orderItem" [roleType]="m.SalesOrderItem.AssignedUnitPrice" label="Unit Price"></a-mat-input>
         <a-mat-static class="col-md" [object]="orderItem" [roleType]="m.SalesOrderItem.UnitVat"></a-mat-static>
         <a-mat-static class="col-md" [object]="orderItem" [roleType]="m.SalesOrderItem.TotalIncVat"></a-mat-static>
       </div>

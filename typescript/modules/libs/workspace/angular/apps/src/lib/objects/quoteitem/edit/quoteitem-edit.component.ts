@@ -6,7 +6,6 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import {
-  Organisation,
   Part,
   UnitOfMeasure,
   InternalOrganisation,
@@ -144,7 +143,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
             }),
             pull.UnitOfMeasure({
               predicate: { kind: 'Equals', propertyType: m.UnitOfMeasure.IsActive, value: true },
-              sorting: [{ roleType: m.UnitOfMeasure.Name }]
+              sorting: [{ roleType: m.UnitOfMeasure.Name }],
             }),
             pull.RequestItemState({}),
             pull.RequestState({}),
@@ -485,7 +484,7 @@ export class QuoteItemEditComponent extends TestScope implements OnInit, OnDestr
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.part = (loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.NonUnifiedGood.Part));
+      this.part = loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.NonUnifiedGood.Part);
       this.serialisedItems = this.part.SerialisedItems?.filter((v) => v.AvailableForSale === true);
 
       if (this.quoteItem.Product !== this.previousProduct) {

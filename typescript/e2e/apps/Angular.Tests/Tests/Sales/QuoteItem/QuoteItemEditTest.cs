@@ -57,7 +57,7 @@ namespace Tests.ProductQuoteItemTests
 
             quoteItemDetail
                 .QuoteItemInvoiceItemType_1.Select(expectedInvoiceItemType)
-                .Quantity.Set(expectedQuantity.ToString())
+                .QuoteItemQuantity_2.Set(expectedQuantity.ToString())
                 .UnitOfMeasure.Select(expectedUnitOfMeasure)
                 .Product.Select(product.Name)
                 .PriceableAssignedUnitPrice_1.Set(expectedTotalBasePrice.ToString());
@@ -90,12 +90,14 @@ namespace Tests.ProductQuoteItemTests
 
             var expected = new QuoteItemBuilder(this.Transaction)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Service)
-                .WithTotalBasePrice(10M)
+                .WithQuantity(2)
+                .WithAssignedUnitPrice(10M)
                 .Build();
 
             this.Transaction.Derive();
 
             var expectedInvoiceItemType = expected.InvoiceItemType;
+            var expectedQuantity = expected.Quantity;
             var expectedTotalBasePrice = expected.TotalBasePrice;
 
             this.productQuotes.Table.DefaultAction(productQuote);
@@ -104,6 +106,7 @@ namespace Tests.ProductQuoteItemTests
 
             quoteItemDetail
                 .QuoteItemInvoiceItemType_1.Select(expectedInvoiceItemType)
+                .QuoteItemQuantity_1.Set(expectedQuantity.ToString())
                 .PriceableAssignedUnitPrice_1.Set(expectedTotalBasePrice.ToString());
 
             this.Transaction.Rollback();
@@ -119,6 +122,7 @@ namespace Tests.ProductQuoteItemTests
             var quoteItem = after.Except(before).First();
 
             Assert.Equal(expectedInvoiceItemType, quoteItem.InvoiceItemType);
+            Assert.Equal(expectedQuantity, quoteItem.Quantity);
             Assert.Equal(expectedTotalBasePrice, quoteItem.TotalBasePrice);
         }
 
@@ -131,14 +135,15 @@ namespace Tests.ProductQuoteItemTests
 
             var expected = new QuoteItemBuilder(this.Transaction)
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Time)
-                .WithTotalBasePrice(10M)
+                .WithQuantity(2)
+                .WithAssignedUnitPrice(10M)
                 .Build();
 
             this.Transaction.Derive();
 
             var expectedInvoiceItemType = expected.InvoiceItemType;
+            var expectedQuantity = expected.Quantity;
             var expectedTotalBasePrice = expected.TotalBasePrice;
-
 
             this.productQuotes.Table.DefaultAction(productQuote);
             var productQuotesDetails = new ProductQuoteOverviewComponent(this.productQuotes.Driver, this.M);
@@ -146,6 +151,7 @@ namespace Tests.ProductQuoteItemTests
 
             quoteItemDetail
                 .QuoteItemInvoiceItemType_1.Select(expectedInvoiceItemType)
+                .QuoteItemQuantity_1.Set(expectedQuantity.ToString())
                 .PriceableAssignedUnitPrice_1.Set(expectedTotalBasePrice.ToString());
 
             this.Transaction.Rollback();
@@ -161,6 +167,7 @@ namespace Tests.ProductQuoteItemTests
             var quoteItem = after.Except(before).First();
 
             Assert.Equal(expectedInvoiceItemType, quoteItem.InvoiceItemType);
+            Assert.Equal(expectedQuantity, quoteItem.Quantity);
             Assert.Equal(expectedTotalBasePrice, quoteItem.TotalBasePrice);
         }
     }

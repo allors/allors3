@@ -6,7 +6,6 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import {
-  Organisation,
   Part,
   InternalOrganisation,
   NonSerialisedInventoryItem,
@@ -329,8 +328,6 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-    this.onSave();
-
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.orderItem);
       this.refreshService.refresh();
@@ -421,12 +418,6 @@ export class SalesOrderItemEditComponent extends TestScope implements OnInit, On
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
-  }
-
-  private onSave() {
-    if (this.orderItem.InvoiceItemType !== this.productItemType || this.orderItem.InvoiceItemType !== this.partItemType) {
-      this.orderItem.QuantityOrdered = '1';
-    }
   }
 
   private refreshSerialisedItems(product: Product): void {

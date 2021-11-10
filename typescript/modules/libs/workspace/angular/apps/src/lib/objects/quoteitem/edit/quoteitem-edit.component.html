@@ -16,7 +16,8 @@
       </div>
 
       <div class="row" *ngIf="quoteItem.InvoiceItemType !== productItemType">
-        <a-mat-input class="col-md" [object]="quoteItem" [roleType]="m.QuoteItem.AssignedUnitPrice" label="Amount"></a-mat-input>
+        <a-mat-input class="col-md" [object]="quoteItem" [roleType]="m.QuoteItem.Quantity" class="col-md"></a-mat-input>
+        <a-mat-input class="col-md" [object]="quoteItem" [roleType]="m.QuoteItem.AssignedUnitPrice" label="Unit Price"></a-mat-input>
         <a-mat-static class="col-md" [object]="quoteItem" [roleType]="m.QuoteItem.UnitVat"></a-mat-static>
         <a-mat-static class="col-md" [object]="quoteItem" [roleType]="m.QuoteItem.TotalIncVat"></a-mat-static>
       </div>
@@ -31,7 +32,7 @@
         <div class="row">
           <a-mat-input [object]="quoteItem" [roleType]="m.QuoteItem.Quantity" class="col-md"></a-mat-input>
           <a-mat-select [object]="quoteItem" [roleType]="m.QuoteItem.UnitOfMeasure" [options]="unitsOfMeasure" display="Name" class="col-md"></a-mat-select>
-          <a-mat-input [object]="quoteItem" [roleType]="m.QuoteItem.AssignedUnitPrice" class="col-md"></a-mat-input>
+          <a-mat-input [object]="quoteItem" [roleType]="m.QuoteItem.AssignedUnitPrice" label="Unit Price" class="col-md"></a-mat-input>
           <a-mat-static [object]="requestItem" [roleType]="m.RequestItem.MaximumAllowedPrice" class="col-md"></a-mat-static>
         </div>
 
