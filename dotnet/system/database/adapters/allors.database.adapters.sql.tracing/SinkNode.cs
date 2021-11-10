@@ -26,6 +26,6 @@ namespace Allors.Database.Adapters.Sql.Tracing
             return child;
         }
 
-        public override string ToString() => this.Event.Kind.ToString();
+        public override string ToString() => this.Event.ToString();
     }
 }

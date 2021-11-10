@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json;
@@ -29,8 +30,9 @@ namespace Allors.Database.Protocol.Json
         private readonly HashSet<IObject> objects;
 
         private List<IValidation> errors;
+        private readonly Action<IEnumerable<IObject>> prefetch;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies)
+        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies, Action<IEnumerable<IObject>> prefetch)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;
@@ -41,6 +43,8 @@ namespace Allors.Database.Protocol.Json
             this.AllowedClasses = allowedClasses;
             this.PreparedSelects = preparedSelects;
             this.PreparedExtents = preparedExtents;
+
+            this.prefetch = prefetch;
 
             this.objects = new HashSet<IObject>();
         }
@@ -91,15 +95,9 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        public void AddObject(string name, IObject @object)
-        {
-            this.AddObjectInternal(name, @object);
-        }
+        public void AddObject(string name, IObject @object) => this.AddObjectInternal(name, @object);
 
-        public void AddObject(string name, IObject @object, Node[] tree)
-        {
-            this.AddObjectInternal(name, @object, tree);
-        }
+        public void AddObject(string name, IObject @object, Node[] tree) => this.AddObjectInternal(name, @object, tree);
 
         public void AddValue(string name, object value)
         {
@@ -138,7 +136,6 @@ namespace Allors.Database.Protocol.Json
 
                 if (tree != null)
                 {
-                    // TODO: include dependencies
                     var prefetchPolicy = tree.BuildPrefetchPolicy();
 
                     ICollection<IObject> newCollection;
@@ -247,6 +244,8 @@ namespace Allors.Database.Protocol.Json
 
             // Add dependencies
             this.AddDependencies();
+
+            this.prefetch(this.objects);
 
             // Serialize
             var grants = new HashSet<IGrant>();

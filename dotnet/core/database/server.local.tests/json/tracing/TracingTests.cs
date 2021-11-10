@@ -6,6 +6,8 @@
 
 namespace Tests
 {
+    using System;
+    using System.Linq;
     using Allors.Database.Adapters.Sql;
     using Allors.Database.Adapters.Sql.Tracing;
     using Allors.Database.Data;
@@ -19,9 +21,9 @@ namespace Tests
 
     public class TracingTests : ApiTest, IClassFixture<Fixture>
     {
-        private TraceX x1;
-        private TraceY y1;
-        private TraceZ z1;
+        private TraceX[] x;
+        private TraceY[] y;
+        private TraceZ[] z;
 
         public TracingTests(Fixture fixture) : base(fixture) => this.UnitConvert = new UnitConvert();
 
@@ -43,23 +45,10 @@ namespace Tests
 
             tree.Clear();
 
-            var pull = new Pull
-            {
-                Extent = new Extent(this.M.TraceX)
-                {
-                    Predicate = new Equals(this.M.TraceX.AllorsString) { Value = "X1" }
-                },
-                Results = new[]
-                {
-                    new  Result
-                    {
-                        Include = new []
-                        {
-                            new Node(this.M.TraceX.One2One)
-                        }
-                    },
-                }
-            };
+            //sink.Breaker = v =>
+            //{
+            //    return v.Kind == EventKind.CommandsInstantiateObject;
+            //};
 
             var pullRequest = new PullRequest
             {
@@ -67,14 +56,19 @@ namespace Tests
                 {
                     new PullDependency
                     {
+                        o = this.M.TraceX.Tag,
+                        r = this.M.TraceX.One2One.RelationType.Tag,
+                    },
+                    new PullDependency
+                    {
                         o = this.M.TraceY.Tag,
                         r = this.M.TraceY.One2One.RelationType.Tag,
-                    }
+                    },
                 },
-                l = new[]
+                l = Enumerable.Range(0, 100).Select(v => new Allors.Protocol.Json.Data.Pull
                 {
-                    pull.ToJson(this.UnitConvert)
-                },
+                    o = this.x[v].Id
+                }).ToArray()
             };
 
             var api = new Api(this.Transaction, "Default");
@@ -105,7 +99,7 @@ namespace Tests
 
             var syncRequest = new SyncRequest
             {
-                o = new[] { this.x1.Id },
+                o = new[] { this.x[0].Id },
             };
 
             var api = new Api(this.Transaction, "Default");
@@ -120,19 +114,30 @@ namespace Tests
 
         private void Populate()
         {
-            this.x1 = new TraceXBuilder(this.Transaction)
-                .WithAllorsString("X1")
-                .Build();
-            this.y1 = new TraceYBuilder(this.Transaction)
-                .WithAllorsString("Y1")
-                .Build();
-            this.z1 = new TraceZBuilder(this.Transaction)
-                .WithAllorsString("Z1")
-                .Build();
+            this.x = new TraceX[100];
+            this.y = new TraceY[100];
+            this.z = new TraceZ[100];
 
+            for (var i = 0; i < 100; i++)
+            {
+                this.x[i] = new TraceXBuilder(this.Transaction)
+                    .WithAllorsString($"X{i}")
+                    .Build();
 
-            this.x1.One2One = this.y1;
-            this.y1.One2One = this.z1;
+                this.y[i] = new TraceYBuilder(this.Transaction)
+                    .WithAllorsString($"Y{i}")
+                    .Build();
+
+                this.z[i] = new TraceZBuilder(this.Transaction)
+                    .WithAllorsString($"Z{i}")
+                    .Build();
+            }
+
+            for (var i = 0; i < 100; i++)
+            {
+                this.x[i].One2One = this.y[i];
+                this.y[i].One2One = this.z[i];
+            }
 
             this.Transaction.Commit();
         }

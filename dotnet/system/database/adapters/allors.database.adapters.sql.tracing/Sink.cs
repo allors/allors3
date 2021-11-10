@@ -5,7 +5,9 @@
 
 namespace Allors.Database.Adapters.Sql.Tracing
 {
+    using System;
     using System.Collections.Concurrent;
+    using System.Diagnostics;
 
     public class Sink : ISink
     {
@@ -13,8 +15,15 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public ConcurrentDictionary<ITransaction, SinkTree> TreeByTransaction { get; }
 
+        public Func<Event, bool> Breaker { get; set; }
+
         public void OnBefore(Event @event)
         {
+            if (this.Breaker != null && this.Breaker(@event))
+            {
+                Debugger.Break();
+            }
+
             var transactionSink = this.GetTransactionSink(@event);
             transactionSink.OnBefore(@event);
         }
