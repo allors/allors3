@@ -11,9 +11,9 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
     using System.Globalization;
     using System.Linq;
     using Meta;
-    using NonUnifiedGood = Domain.NonUnifiedGood;
-    using QuoteItem = Domain.QuoteItem;
-    using UnifiedGood = Domain.UnifiedGood;
+    using NonUnifiedGood = NonUnifiedGood;
+    using QuoteItem = QuoteItem;
+    using UnifiedGood = UnifiedGood;
 
     public class QuoteItemModel
     {

@@ -6,11 +6,9 @@
 
 namespace Tests
 {
-    using System;
     using System.Linq;
     using Allors.Database.Adapters.Sql;
     using Allors.Database.Adapters.Sql.Tracing;
-    using Allors.Database.Data;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json;
@@ -28,6 +26,38 @@ namespace Tests
         public TracingTests(Fixture fixture) : base(fixture) => this.UnitConvert = new UnitConvert();
 
         public IUnitConvert UnitConvert { get; }
+
+        [Fact]
+        public void PullManyObjects()
+        {
+            this.Populate();
+
+            var sink = new Sink();
+            var database = (Database)this.Transaction.Database;
+            database.Sink = sink;
+
+            this.Transaction = database.CreateTransaction();
+            this.SetUser("jane@example.com");
+
+            var tree = sink.TreeByTransaction[this.Transaction];
+
+            tree.Clear();
+
+            var pullRequest = new PullRequest
+            {
+                l = Enumerable.Range(0, 100).Select(v => new Allors.Protocol.Json.Data.Pull
+                {
+                    o = this.x[v].Id
+                }).ToArray()
+            };
+
+            var api = new Api(this.Transaction, "Default");
+            var pullResponse = api.Pull(pullRequest);
+
+            Assert.All(tree.Nodes, v => Assert.False(v.Event.Kind == EventKind.CommandsInstantiateObject));
+            Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
+        }
+
 
         [Fact]
         public void Pull()
