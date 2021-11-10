@@ -10,7 +10,7 @@ namespace Tests
     using System.IO;
     using System.Reflection;
     using Allors.Database;
-    using Allors.Database.Adapters.Memory;
+    using Allors.Database.Adapters.Sql;
     using Allors.Database.Configuration;
     using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Derivations;
@@ -18,7 +18,6 @@ namespace Tests
     using Allors.Database.Meta;
     using Microsoft.Extensions.Configuration;
     using C1 = Allors.Database.Domain.C1;
-    using Configuration = Allors.Database.Adapters.Sql.Configuration;
     using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
     using User = Allors.Database.Domain.User;
 
