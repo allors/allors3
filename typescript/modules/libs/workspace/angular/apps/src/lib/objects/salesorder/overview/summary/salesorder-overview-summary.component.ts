@@ -6,7 +6,6 @@ import { SerialisedInventoryItemState, Shipment, SalesOrderItem, ProductQuote, S
 import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { QuoteReceiver } from '../../../../../../../../meta/custom/src/lib/generated/m.g';
 
 @Component({
   // tslint:disable-next-line:component-selector
