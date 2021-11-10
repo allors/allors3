@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Protocol.Json
 {
+    using System.Linq;
     using Allors.Protocol.Json;
     using Meta;
     using Pull = Allors.Protocol.Json.Data.Pull;
@@ -16,13 +17,23 @@ namespace Allors.Database.Protocol.Json
 
         public static IRoleType FindRoleType(this IMetaPopulation @this, string tag) => tag != null ? ((IRelationType)@this.FindByTag(tag)).RoleType : null;
 
-        public static Data.Pull FromJson(this Pull pull, ITransaction transaction, IUnitConvert unitConvert)
+        public static Data.Pull[] FromJson(this Pull[] pulls, ITransaction transaction, IUnitConvert unitConvert)
         {
             var fromJson = new FromJson(transaction, unitConvert);
-            var fromJsonVisitor = new FromJsonVisitor(fromJson);
-            pull.Accept(fromJsonVisitor);
-            fromJson.Resolve();
-            return fromJsonVisitor.Pull;
+
+            try
+            {
+                return pulls.Select(v =>
+                {
+                    var fromJsonVisitor = new FromJsonVisitor(fromJson);
+                    v.Accept(fromJsonVisitor);
+                    return fromJsonVisitor.Pull;
+                }).ToArray();
+            }
+            finally
+            {
+                fromJson.Resolve();
+            }
         }
 
         public static Data.IExtent FromJson(this Allors.Protocol.Json.Data.Extent extent, ITransaction transaction, IUnitConvert unitConvert)
