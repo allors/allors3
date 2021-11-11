@@ -28,9 +28,9 @@ export abstract class Session implements ISession {
 
   sessionOriginState: SessionOriginState;
 
-  objectByWorkspaceId: Map<number, IObject>;
-
   readonly ranges: Ranges<IObject>;
+
+  protected objectByWorkspaceId: Map<number, IObject>;
 
   private objectsByClass: Map<Class, Set<IObject>>;
 
@@ -251,13 +251,19 @@ export abstract class Session implements ISession {
 
   public getCompositeAssociation(role: IObject, associationType: AssociationType): IObject {
     const roleType = associationType.roleType;
-    for (const association of this.strategiesForClass(associationType.objectType as Composite)) {
-      if (!association.strategy.canRead(roleType)) {
-        continue;
-      }
 
-      if ((association.strategy as Strategy).isCompositeAssociationForRole(roleType, role)) {
-        return association;
+    for (const cls of (associationType.objectType as Composite).classes) {
+      const associations = this.objectsByClass.get(cls);
+      if (associations != null) {
+        for (const association of associations) {
+          if (!association.strategy.canRead(roleType)) {
+            continue;
+          }
+
+          if ((association.strategy as Strategy).isCompositeAssociationForRole(roleType, role)) {
+            return association;
+          }
+        }
       }
     }
 
@@ -267,23 +273,35 @@ export abstract class Session implements ISession {
   public getCompositesAssociation(role: IObject, associationType: AssociationType): IObject[] {
     const roleType = associationType.roleType;
 
-    const associations: IObject[] = [];
+    const results: IObject[] = [];
 
-    for (const association of this.strategiesForClass(associationType.objectType as Composite)) {
-      if (!association.strategy.canRead(roleType)) {
-        continue;
-      }
+    for (const cls of (associationType.objectType as Composite).classes) {
+      const associations = this.objectsByClass.get(cls);
+      if (associations != null) {
+        for (const association of associations) {
+          if (!association.strategy.canRead(roleType)) {
+            continue;
+          }
 
-      if ((association.strategy as Strategy).isCompositesAssociationForRole(roleType, role)) {
-        associations.push(association);
+          if ((association.strategy as Strategy).isCompositesAssociationForRole(roleType, role)) {
+            results.push(association);
+          }
+        }
       }
     }
 
-    return associations;
+    return results;
   }
 
   protected addObject(object: IObject) {
     this.objectByWorkspaceId.set(object.id, object);
+    let objects = this.objectsByClass.get(object.strategy.cls);
+    if (objects == null) {
+      objects = new Set();
+      this.objectsByClass.set(object.strategy.cls, objects);
+    }
+
+    objects.add(object);
 
     let strategies = this.objectsByClass.get(object.strategy.cls);
     if (strategies == null) {
@@ -296,6 +314,8 @@ export abstract class Session implements ISession {
 
   protected removeObject(object: IObject) {
     this.objectByWorkspaceId.delete(object.id);
+    this.objectsByClass.get(object.strategy.cls)?.delete(object);
+
     const strategies = this.objectsByClass.get(object.strategy.cls);
     strategies?.delete(object);
   }
@@ -306,20 +326,6 @@ export abstract class Session implements ISession {
     (object.strategy as Strategy).onDatabasePushNewId(databaseId);
     this.addObject(object);
     (object.strategy as Strategy).onDatabasePushed();
-  }
-
-  private strategiesForClass(objectType: Composite): IObject[] {
-    const classes = objectType.classes;
-
-    // TODO: Optimize
-    const objects: IObject[] = [];
-    for (const [, object] of this.objectByWorkspaceId) {
-      if (classes.has(object.strategy.cls) && objects.indexOf(object) < 0) {
-        objects.push(object);
-      }
-    }
-
-    return objects;
   }
 
   abstract invoke(methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
