@@ -1,13 +1,8 @@
-import { IRule } from './derivation/rules/irule';
-import { IConfiguration } from './iconfiguration';
+import { Configuration } from './configuration';
 import { ISession } from './isession';
 
 export interface IWorkspace {
-  configuration: IConfiguration;
-
-  rules: IRule[];
-
-  rule(cls: new (...args: any[]) => IRule): IRule;
+  configuration: Configuration;
 
   createSession(): ISession;
 }

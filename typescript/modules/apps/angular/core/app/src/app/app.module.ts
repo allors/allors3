@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
@@ -20,6 +20,7 @@ import { HomeComponent } from './home/home.component';
 import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
+import { Configuration } from '@allors/workspace/domain/system';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
@@ -35,7 +36,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
-      engine: new Engine(ruleBuilder(m)),
+      rules: ruleBuilder(m),
     };
 
     const database = new DatabaseConnection(configuration, angularClient);

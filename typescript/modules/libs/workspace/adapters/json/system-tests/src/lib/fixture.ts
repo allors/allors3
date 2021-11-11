@@ -3,11 +3,11 @@ import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
-import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { M } from '@allors/workspace/meta/default';
 
 import { FetchClient } from './fetch-client';
-import { ISession, IWorkspace, Pull } from '@allors/workspace/domain/system';
+import { Configuration, ISession, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { C1, C2 } from '@allors/workspace/domain/default';
 
 const BASE_URL = 'http://localhost:5000/allors/';
@@ -39,8 +39,8 @@ export class Fixture {
       name: 'Default',
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
+      rules: ruleBuilder(this.m),
       idGenerator: () => nextId--,
-      engine: new Engine(ruleBuilder(this.m)),
     };
 
     return new DatabaseConnection(configuration, this.jsonClient);

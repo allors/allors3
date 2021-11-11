@@ -4,7 +4,7 @@ import { Person } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
 
 export class FullNameRule implements IRule {
-  patterns: IPattern[];
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {

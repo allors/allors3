@@ -1,19 +1,17 @@
-import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
+import { Dependency, RoleType } from '@allors/workspace/meta/system';
+import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
-import { Dependency } from '@allors/workspace/meta/system';
 
-export class OrganisationDisplayNameRule implements IRule {
-  patterns: IPattern[];
+export class OrganisationDisplayNameRule implements IRule<Organisation> {
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
-    this.patterns = [p(m.Organisation, (v) => v.Name)];
+    this.roleType = m.Organisation.DisplayName;
   }
 
-  derive(cycle: ICycle, matches: Organisation[]) {
-    for (const match of matches) {
-      match.DisplayName = match.Name ?? 'N/A';
-    }
+  derive(organisation: Organisation) {
+    organisation.DisplayName = organisation.Name ?? 'N/A';
   }
 }

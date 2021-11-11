@@ -157,6 +157,11 @@ export abstract class Strategy implements IStrategy {
   }
 
   getUnitRole(roleType: RoleType): IUnit {
+    const rule = this.session.activeRuleByRoleTyp.get(roleType);
+    if (rule != null) {
+      return rule.derive(this.object) as IUnit;
+    }
+
     switch (roleType.origin) {
       case Origin.Session:
         return this.session.sessionOriginState.getUnitRole(this.object, roleType) ?? null;
@@ -170,6 +175,11 @@ export abstract class Strategy implements IStrategy {
   }
 
   getCompositeRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T {
+    const rule = this.session.activeRuleByRoleTyp.get(roleType);
+    if (rule != null) {
+      return rule.derive(this.object) as T;
+    }
+
     switch (roleType.origin) {
       case Origin.Session:
         return (this.session.sessionOriginState.getCompositeRole(this.object, roleType) as T) ?? null;
@@ -183,6 +193,11 @@ export abstract class Strategy implements IStrategy {
   }
 
   getCompositesRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T[] {
+    const rule = this.session.activeRuleByRoleTyp.get(roleType);
+    if (rule != null) {
+      return rule.derive(this.object) as T[];
+    }
+
     switch (roleType.origin) {
       case Origin.Session:
         return (this.session.sessionOriginState.getCompositesRole(this.object, roleType) as T[]) ?? (frozenEmptyArray as T[]);

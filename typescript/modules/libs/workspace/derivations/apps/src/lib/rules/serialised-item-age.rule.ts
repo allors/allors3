@@ -4,7 +4,7 @@ import { SerialisedItem } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
 
 export class SerialisedItemAgeRule implements IRule {
-  patterns: IPattern[];
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {

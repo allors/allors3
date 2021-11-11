@@ -1,5 +1,5 @@
-import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, IRule, ISession, IValidation, IWorkspaceResult, Method, Procedure, Pull } from '@allors/workspace/domain/system';
-import { AssociationType, Class, Composite, Dependency, Origin } from '@allors/workspace/meta/system';
+import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, IRule, ISession, IWorkspaceResult, Method, Procedure, Pull } from '@allors/workspace/domain/system';
+import { AssociationType, Class, Composite, Dependency, Origin, RoleType } from '@allors/workspace/meta/system';
 
 import { Workspace } from '../workspace/workspace';
 import { WorkspaceResult } from '../workspace/workspace-result';
@@ -13,7 +13,6 @@ import { ChangeSetTracker } from './trackers/change-set-tracker';
 import { PushToDatabaseTracker } from './trackers/push-to-database-tracker';
 import { PushToWorkspaceTracker } from './trackers/push-to-workspace-tracker';
 import { ChangeSet } from './change-set';
-import { Derivation } from './derivation/derivation';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -28,13 +27,13 @@ export abstract class Session implements ISession {
 
   sessionOriginState: SessionOriginState;
 
+  activeRuleByRoleTyp: Map<RoleType, IRule<IObject>>;
+
   readonly ranges: Ranges<IObject>;
 
   protected objectByWorkspaceId: Map<number, IObject>;
 
   private objectsByClass: Map<Class, Set<IObject>>;
-
-  private activeRules: Set<IRule>;
 
   protected dependencies: Set<Dependency>;
 
@@ -48,20 +47,18 @@ export abstract class Session implements ISession {
     this.changeSetTracker = new ChangeSetTracker();
     this.pushToDatabaseTracker = new PushToDatabaseTracker();
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
+
+    this.activeRuleByRoleTyp = new Map();
+    this.dependencies = new Set();
   }
 
-  activate(rules: IRule[]): void {
+  activate(rules: IRule<IObject>[]): void {
     if (rules == null) {
       return;
     }
 
-    if (this.activeRules == null) {
-      this.activeRules = new Set();
-      this.dependencies = new Set();
-    }
-
     for (const rule of rules) {
-      this.activeRules.add(rule);
+      this.activeRuleByRoleTyp.set(rule.roleType, rule);
       if (rule.dependencies != null) {
         for (const dependency of rule.dependencies) {
           this.dependencies.add(dependency);
@@ -79,16 +76,6 @@ export abstract class Session implements ISession {
     }
 
     return false;
-  }
-
-  derive(): IValidation {
-    if (this.activeRules == null) {
-      return { errors: ['No active rules'] };
-    }
-
-    const configuration = this.workspace.database.configuration;
-    const derivation = new Derivation(this, configuration.engine, this.activeRules, configuration.maxCycles ?? 10);
-    return derivation.execute();
   }
 
   reset(): void {

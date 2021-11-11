@@ -1,4 +1,4 @@
-import { IConfiguration, IRule, ISession, IWorkspace } from '@allors/workspace/domain/system';
+import { Configuration, ISession, IWorkspace } from '@allors/workspace/domain/system';
 import { Class, RelationType } from '@allors/workspace/meta/system';
 
 import { Ranges } from '../collections/ranges/ranges';
@@ -7,7 +7,7 @@ import { Strategy } from '../session/strategy';
 import { WorkspaceRecord } from './workspace-record';
 
 export abstract class Workspace implements IWorkspace {
-  configuration: IConfiguration;
+  configuration: Configuration;
 
   workspaceClassByWorkspaceId: Map<number, Class>;
 
@@ -25,14 +25,6 @@ export abstract class Workspace implements IWorkspace {
     this.workspaceIdsByWorkspaceClass = new Map();
 
     this.recordById = new Map();
-  }
-
-  rule(cls: any): IRule {
-    return this.rules.find((v) => v instanceof cls);
-  }
-
-  get rules(): IRule[] {
-    return this.database.configuration.engine.rules;
   }
 
   abstract createSession(): ISession;

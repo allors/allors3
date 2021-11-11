@@ -1,4 +1,4 @@
-import { IConfiguration, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
+import { Configuration, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
 import { Class, Composite } from '@allors/workspace/meta/system';
 import { Observable } from 'rxjs';
 import { WorkspaceService } from '../workspace/workspace-service';
@@ -10,9 +10,9 @@ export interface Context {
 
   workspace: IWorkspace;
 
-  configuration: IConfiguration;
+  configuration: Configuration;
 
-  activate(rules: { new (...args: any[]): any }[]): void;
+  activate(rules: IRule<IObject>[]): void;
 
   create<T extends IObject>(cls: Class): T;
 

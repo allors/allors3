@@ -4,7 +4,7 @@ import { WorkEffortInventoryAssignment } from '@allors/workspace/domain/default'
 import { Dependency } from '@allors/workspace/meta/system';
 
 export class WorkEffortInventoryAssignmentTotalSellingPriceRule implements IRule {
-  patterns: IPattern[];
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {

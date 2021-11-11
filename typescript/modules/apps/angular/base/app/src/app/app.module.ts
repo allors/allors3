@@ -10,7 +10,7 @@ import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common
 import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
@@ -126,6 +126,7 @@ import { FormComponent } from './tests/form/form.component';
 
 import { configure } from './configure';
 import { BaseContext } from '../allors/base-context';
+import { Configuration } from '@allors/workspace/domain/system';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
@@ -141,7 +142,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
-      engine: new Engine(ruleBuilder(m)),
+      rules: ruleBuilder(m),
     };
 
     const database = new DatabaseConnection(configuration, angularClient);

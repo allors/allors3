@@ -1,19 +1,17 @@
-import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
+import { Dependency, RoleType } from '@allors/workspace/meta/system';
 import { M } from '@allors/workspace/meta/default';
 import { AutomatedAgent } from '@allors/workspace/domain/default';
-import { Dependency } from '@allors/workspace/meta/system';
+import { IRule } from '@allors/workspace/domain/system';
 
-export class AutomatedAgentDisplayNameRule implements IRule {
-  patterns: IPattern[];
+export class AutomatedAgentDisplayNameRule implements IRule<AutomatedAgent> {
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
-    this.patterns = [p(m.AutomatedAgent, (v) => v.UserName)];
+    this.roleType = m.AutomatedAgent.DisplayName;
   }
 
-  derive(cycle: ICycle, matches: AutomatedAgent[]) {
-    for (const match of matches) {
-      match.DisplayName = match.UserName ?? 'N/A';
-    }
+  derive(automatedAgent: AutomatedAgent) {
+    automatedAgent.DisplayName = automatedAgent.UserName ?? 'N/A';
   }
 }

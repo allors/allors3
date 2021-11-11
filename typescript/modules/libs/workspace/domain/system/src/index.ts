@@ -44,13 +44,7 @@ export * from './lib/data/result';
 export * from './lib/data/operator';
 
 // derivation
-export * from './lib/derivation/rules/iassociation-pattern';
-export * from './lib/derivation/rules/icycle';
-export * from './lib/derivation/rules/ipattern';
-export * from './lib/derivation/rules/irole-pattern';
-export * from './lib/derivation/rules/irule';
-export * from './lib/derivation/iderivation';
-export * from './lib/derivation/ivalidation';
+export * from './lib/derivation/irule';
 
 // diff
 export * from './lib/diff/icomposite-diff';
@@ -58,8 +52,8 @@ export * from './lib/diff/icomposites-diff';
 export * from './lib/diff/idiff';
 export * from './lib/diff/iunit-diff';
 
+export * from './lib/configuration';
 export * from './lib/ichange-set';
-export * from './lib/iconfiguration';
 export * from './lib/iobject';
 export * from './lib/iobject-factory';
 export * from './lib/isession';

@@ -1,11 +1,10 @@
 import { Class, Composite } from '@allors/workspace/meta/system';
 
-import { IValidation } from './derivation/ivalidation';
 import { IObject } from './iobject';
 import { IWorkspace } from './iworkspace';
 import { IChangeSet } from './ichange-set';
 import { IWorkspaceResult } from './iworkspace-result';
-import { IRule } from './derivation/rules/irule';
+import { IRule } from './derivation/irule';
 import { Method } from './method';
 import { InvokeOptions } from './api/pull/invoke-options';
 import { IInvokeResult } from './api/pull/iinvoke-result';
@@ -19,9 +18,7 @@ export interface ISession {
 
   hasChanges: boolean;
 
-  activate(rules: IRule[]): void;
-
-  derive(): IValidation;
+  activate(rules: IRule<IObject>[]): void;
 
   reset(): void;
 

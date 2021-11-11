@@ -6,7 +6,7 @@ import { PurchaseOrderItem } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
 
 export class PurchaseOrderItemDisplayNameRule implements IRule {
-  patterns: IPattern[];
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {

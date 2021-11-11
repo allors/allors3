@@ -1,6 +1,6 @@
 import { PullResponse, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
-import { Grant, Configuration, DatabaseConnection as SystemDatabaseConnection, MapMap, Revocation } from '@allors/workspace/adapters/system';
-import { IWorkspace, Operations } from '@allors/workspace/domain/system';
+import { Grant, DatabaseConnection as SystemDatabaseConnection, MapMap, Revocation } from '@allors/workspace/adapters/system';
+import { Configuration, IWorkspace, Operations } from '@allors/workspace/domain/system';
 import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
 import { DatabaseRecord } from './database-record';
 import { ResponseContext } from './security/response-context';

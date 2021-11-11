@@ -4,7 +4,7 @@ import { UnifiedGood } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
 
 export class UnifiedGoodDisplayNameRule implements IRule {
-  patterns: IPattern[];
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {

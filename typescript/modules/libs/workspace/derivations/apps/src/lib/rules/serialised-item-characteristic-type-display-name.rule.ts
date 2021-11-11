@@ -4,7 +4,7 @@ import { SerialisedItemCharacteristicType } from '@allors/workspace/domain/defau
 import { Dependency } from '@allors/workspace/meta/system';
 
 export class SerialisedItemCharacteristicTypeDisplayNameRule implements IRule {
-  patterns: IPattern[];
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {

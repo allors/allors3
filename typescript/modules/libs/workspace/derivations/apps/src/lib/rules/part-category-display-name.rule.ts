@@ -1,31 +1,29 @@
-import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
+import { Dependency, RoleType } from '@allors/workspace/meta/system';
+import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { PartCategory } from '@allors/workspace/domain/default';
-import { Dependency } from '@allors/workspace/meta/system';
 
-export class PartCategoryDisplayNameRule implements IRule {
-  patterns: IPattern[];
+export class PartCategoryDisplayNameRule implements IRule<PartCategory> {
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
     const { treeBuilder: t, dependency: d } = m;
 
-    this.patterns = [p(m.PartCategory, (v) => v.PrimaryParent)];
-    
+    this.roleType = m.PartCategory.DisplayName;
+
     this.dependencies = [d(m.PartCategory, (v) => v.PrimaryParent)];
   }
 
-  derive(cycle: ICycle, matches: PartCategory[]) {
-    for (const match of matches) {
-      const selfAndPrimaryAncestors = [match];
-      let ancestor: PartCategory | null = match;
-      while (ancestor != null && selfAndPrimaryAncestors.indexOf(ancestor) < 0) {
-        selfAndPrimaryAncestors.push(ancestor);
-        ancestor = ancestor.PrimaryParent;
-      }
-
-      selfAndPrimaryAncestors.reverse();
-      match.DisplayName = selfAndPrimaryAncestors.map((v) => v.Name).join('/');
+  derive(partCategory: PartCategory) {
+    const selfAndPrimaryAncestors = [partCategory];
+    let ancestor: PartCategory | null = partCategory;
+    while (ancestor != null && selfAndPrimaryAncestors.indexOf(ancestor) < 0) {
+      selfAndPrimaryAncestors.push(ancestor);
+      ancestor = ancestor.PrimaryParent;
     }
+
+    selfAndPrimaryAncestors.reverse();
+    partCategory.DisplayName = selfAndPrimaryAncestors.map((v) => v.Name).join('/');
   }
 }

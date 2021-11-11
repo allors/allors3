@@ -4,7 +4,7 @@ import { WebAddress } from '@allors/workspace/domain/default';
 import { Dependency } from '@allors/workspace/meta/system';
 
 export class WebAddressDisplayNameRule implements IRule {
-  patterns: IPattern[];
+  roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {

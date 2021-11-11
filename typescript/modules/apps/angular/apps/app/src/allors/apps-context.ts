@@ -2,7 +2,7 @@ import { from, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { Context, WorkspaceService } from '@allors/workspace/angular/core';
-import { IConfiguration, IInvokeResult, InvokeOptions, IObject, IPullResult, IResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
+import { Configuration, IInvokeResult, InvokeOptions, IObject, IPullResult, IResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
 import { Class, Composite } from '@allors/workspace/meta/system';
 
 export class AppsContext implements Context {
@@ -12,24 +12,18 @@ export class AppsContext implements Context {
     this.session = this.workspace.createSession();
 
     // Auto activate
-    this.session.activate(this.workspace.rules);
+    this.session.activate(this.workspace.configuration.rules);
   }
 
   workspace: IWorkspace;
 
-  configuration: IConfiguration;
+  configuration: Configuration;
 
   session: ISession;
 
-  activate(ruleClasses: (new (...args: any[]) => IRule)[]) {
-    if (ruleClasses == null) {
-      return;
-    }
-
-    const rules = ruleClasses.map((v) => this.workspace.rule(v));
+  activate(rules: IRule<IObject>[]) {
     this.session.activate(rules);
   }
-
   create<T extends IObject>(cls: Class): T {
     return this.session.create<T>(cls);
   }
@@ -51,11 +45,7 @@ export class AppsContext implements Context {
   }
 
   pull(pulls: Pull[]): Observable<IPullResult> {
-    return from(this.session.pull(pulls)).pipe(
-      tap(() => {
-        this.session.derive();
-      })
-    );
+    return from(this.session.pull(pulls));
   }
 
   push(): Observable<IResult> {

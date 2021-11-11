@@ -15,7 +15,7 @@ test('personDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const rules = workspace.rules.filter((v) => v instanceof PersonDisplayNameRule);
+  const rules = workspace.configuration.rules.filter((v) => v instanceof PersonDisplayNameRule);
   session.activate(rules);
 
   const pull: Pull = {
@@ -32,11 +32,6 @@ test('personDisplayName', async () => {
 
   const result = await session.pull([pull]);
   const jane = result.collection<Person>(m.Person)[0];
-
-  expect(jane.DisplayName).toBeNull();
-
-  const validation = session.derive();
-  expect(validation.errors).toHaveLength(0);
 
   expect(jane.DisplayName).toBe('Jane Doe');
 });
@@ -61,18 +56,12 @@ test('personDisplayNameNotActivated', async () => {
   const jane = result.collection<Person>(m.Person)[0];
 
   expect(jane.DisplayName).toBeNull();
-
-  const validation = session.derive();
-
-  expect(validation.errors).toHaveLength(1);
-
-  expect(jane.DisplayName).toBeNull();
 });
 
 test('organisationDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
-  const rules = workspace.rules.filter((v) => v instanceof OrganisationDisplayNameRule);
+  const rules = workspace.configuration.rules.filter((v) => v instanceof OrganisationDisplayNameRule);
   session.activate(rules);
 
   const pull: Pull = {
@@ -89,10 +78,6 @@ test('organisationDisplayName', async () => {
 
   const result = await session.pull([pull]);
   const acme = result.collection<Organisation>(m.Organisation)[0];
-
-  expect(acme.DisplayName).toBeNull();
-
-  session.derive();
 
   expect(acme.DisplayName).toBe('Acme owned by Jane');
 });
