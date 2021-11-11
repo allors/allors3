@@ -3282,7 +3282,6 @@ namespace Allors.Database.Domain.Tests
             invoice.Send();
 
             this.Transaction.Derive();
-            this.Transaction.Commit();
 
             Assert.Equal(new SalesInvoiceStates(this.Transaction).NotPaid, invoice.SalesInvoiceState);
 

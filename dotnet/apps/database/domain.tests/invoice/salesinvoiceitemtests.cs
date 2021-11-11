@@ -2131,6 +2131,8 @@ namespace Allors.Database.Domain.Tests
         public void ValidateServiceInvoiceItemQuantityInvalid()
         {
             var service = new InvoiceItemTypes(this.Transaction).Service;
+            service.MaxQuantity = 1;
+
             var part = new NonUnifiedPartBuilder(this.Transaction).WithNonSerialisedDefaults(this.InternalOrganisation).Build();
             var salesInvoice = new SalesInvoiceBuilder(this.Transaction).Build();
             this.Derive();
