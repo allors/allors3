@@ -12,9 +12,11 @@ namespace Allors.Database.Adapters.Sql.Tracing
     {
         private Stack<SinkNode> stack;
 
-        public SinkTree(ITransaction transaction)
+        public SinkTree(ITransaction transaction, long index)
         {
             this.Transaction = transaction;
+            this.Index = index;
+
             this.stack = new Stack<SinkNode>();
             this.Nodes = new List<SinkNode>();
         }
@@ -22,6 +24,8 @@ namespace Allors.Database.Adapters.Sql.Tracing
         public ITransaction Transaction { get; }
 
         public IList<SinkNode> Nodes { get; private set; }
+
+        public long Index { get; set; }
 
         public void OnBefore(Event @event)
         {

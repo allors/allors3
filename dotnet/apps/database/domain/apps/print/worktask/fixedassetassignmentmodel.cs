@@ -7,8 +7,8 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     using System.Linq;
     using Meta;
-    using SerialisedItem = Domain.SerialisedItem;
-    using WorkEffortFixedAssetAssignment = Domain.WorkEffortFixedAssetAssignment;
+    using SerialisedItem = SerialisedItem;
+    using WorkEffortFixedAssetAssignment = WorkEffortFixedAssetAssignment;
 
     public class FixedAssetAssignmentModel
     {

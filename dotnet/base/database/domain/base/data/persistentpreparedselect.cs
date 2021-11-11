@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public partial class PersistentPreparedSelect
     {
-        public Allors.Database.Data.Select Select
+        public Database.Data.Select Select
         {
             get
             {

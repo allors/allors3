@@ -179,6 +179,7 @@ namespace Allors.Database.Protocol.Json
             var pullResponse = new PullResponse();
 
             var procedure = pullRequest?.p?.FromJson(this.Transaction, this.unitConvert);
+
             if (procedure != null)
             {
                 if (procedure.Pool != null)
@@ -225,10 +226,10 @@ namespace Allors.Database.Protocol.Json
 
             if (pullRequest?.l != null)
             {
-                foreach (var p in pullRequest.l)
-                {
-                    var pull = p.FromJson(this.Transaction, this.unitConvert);
+                var pulls = pullRequest.l.FromJson(this.Transaction, this.unitConvert);
 
+                foreach (var pull in pulls)
+                {
                     if (pull.Object != null)
                     {
                         var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
