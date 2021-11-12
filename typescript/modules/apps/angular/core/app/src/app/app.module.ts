@@ -36,9 +36,10 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
-      rules: ruleBuilder(m),
     };
 
+    ruleBuilder(m);
+    
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;

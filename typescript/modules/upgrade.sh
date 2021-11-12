@@ -40,6 +40,7 @@ npx nx g @nrwl/workspace:library workspace/derivations/base
 npx nx g @nrwl/workspace:library workspace/derivations/base-custom
 npx nx g @nrwl/workspace:library workspace/derivations/core
 npx nx g @nrwl/workspace:library workspace/derivations/core-custom
+npx nx g @nrwl/workspace:library workspace/derivations/system
 
 npx nx g @nrwl/workspace:library workspace/domain/apps
 npx nx g @nrwl/workspace:library workspace/domain/base

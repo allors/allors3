@@ -1,21 +1,21 @@
 import { inlineLists } from 'common-tags';
 
-import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
+import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { TelecommunicationsNumber } from '@allors/workspace/domain/default';
-import { Dependency } from '@allors/workspace/meta/system';
 
-export class TelecommunicationsNumberDisplayNameRule implements IRule {
+export class TelecommunicationsNumberDisplayNameRule implements IRule<TelecommunicationsNumber> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
-    this.patterns = [p(m.TelecommunicationsNumber, (v) => v.CountryCode), p(m.TelecommunicationsNumber, (v) => v.AreaCode), p(m.TelecommunicationsNumber, (v) => v.ContactNumber)];
+    this.objectType = m.TelecommunicationsNumber;
+    this.roleType = m.TelecommunicationsNumber.DisplayName;
   }
 
-  derive(cycle: ICycle, matches: TelecommunicationsNumber[]) {
-    for (const match of matches) {
-      match.DisplayName = inlineLists`${[match.CountryCode, match.AreaCode, match.ContactNumber].filter((v) => v)}`;
-    }
+  derive(match: TelecommunicationsNumber) {
+    return inlineLists`${[match.CountryCode, match.AreaCode, match.ContactNumber].filter((v) => v)}`;
   }
 }

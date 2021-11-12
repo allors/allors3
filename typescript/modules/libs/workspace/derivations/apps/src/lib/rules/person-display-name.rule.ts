@@ -1,13 +1,15 @@
-import { Dependency, RoleType } from '@allors/workspace/meta/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
 import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
 
 export class PersonDisplayNameRule implements IRule<Person> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
+    this.objectType = m.Person;
     this.roleType = m.Person.DisplayName;
   }
 
@@ -39,6 +41,6 @@ export class PersonDisplayNameRule implements IRule<Person> {
       name = 'N/A';
     }
 
-    person.DisplayName = name;
+    return name;
   }
 }

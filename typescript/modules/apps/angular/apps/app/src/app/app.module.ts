@@ -10,7 +10,7 @@ import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common
 import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { Configuration, Engine, PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
@@ -337,6 +337,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ErrorComponent } from './error/error.component';
 import { configure } from './configure';
 import { AppsContext } from '../allors/apps-context';
+import { Configuration } from '@allors/workspace/domain/system';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, internalOrganisationId: InternalOrganisationId) {
   return async () => {
@@ -352,8 +353,9 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
-      engine: new Engine(ruleBuilder(m)),
     };
+
+    ruleBuilder(m);
 
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();

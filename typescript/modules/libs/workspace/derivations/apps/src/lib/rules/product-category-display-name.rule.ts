@@ -1,15 +1,17 @@
-import { Dependency, RoleType } from '@allors/workspace/meta/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
 import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { ProductCategory } from '@allors/workspace/domain/default';
 
 export class ProductCategoryDisplayNameRule implements IRule<ProductCategory> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
     const { dependency: d } = m;
 
+    this.objectType = m.ProductCategory;
     this.roleType = m.ProductCategory.DisplayName;
 
     this.dependencies = [d(m.ProductCategory, (v) => v.PrimaryParent)];
@@ -24,6 +26,6 @@ export class ProductCategoryDisplayNameRule implements IRule<ProductCategory> {
     }
 
     selfAndPrimaryAncestors.reverse();
-    productCategory.DisplayName = selfAndPrimaryAncestors.map((v) => v.Name).join('/');
+    return selfAndPrimaryAncestors.map((v) => v.Name).join('/');
   }
 }

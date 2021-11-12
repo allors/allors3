@@ -601,6 +601,28 @@
         }
       }
     },
+    "workspace-derivations-system": {
+      "root": "libs/workspace/derivations/system",
+      "sourceRoot": "libs/workspace/derivations/system/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/derivations/system/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/derivations/system"],
+          "options": {
+            "jestConfig": "libs/workspace/derivations/system/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-domain-apps": {
       "root": "libs/workspace/domain/apps",
       "sourceRoot": "libs/workspace/domain/apps/src",

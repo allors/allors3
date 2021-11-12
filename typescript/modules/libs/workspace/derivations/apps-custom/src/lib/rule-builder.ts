@@ -1,6 +1,5 @@
-import { IRule } from '@allors/workspace/domain/system';
+import { IObject, IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
-import { FullNameRule } from './rules/full-name.rule';
 
 import { AutomatedAgentDisplayNameRule } from '@allors/workspace/derivations/apps';
 import { EmailAddressDisplayNameRule } from '@allors/workspace/derivations/apps';
@@ -28,7 +27,7 @@ import { WebAddressDisplayNameRule } from '@allors/workspace/derivations/apps';
 import { WorkEffortInventoryAssignmentTotalSellingPriceRule } from '@allors/workspace/derivations/apps';
 import { WorkEffortPartyAssignmentDisplayNameRule } from '@allors/workspace/derivations/apps';
 
-export function ruleBuilder(m: M): IRule[] {
+export function ruleBuilder(m: M): IRule<IObject>[] {
   return [
     new AutomatedAgentDisplayNameRule(m),
     new EmailAddressDisplayNameRule(m),
@@ -55,7 +54,5 @@ export function ruleBuilder(m: M): IRule[] {
     new WebAddressDisplayNameRule(m),
     new WorkEffortInventoryAssignmentTotalSellingPriceRule(m),
     new WorkEffortPartyAssignmentDisplayNameRule(m),
-
-    new FullNameRule(m),
   ];
 }

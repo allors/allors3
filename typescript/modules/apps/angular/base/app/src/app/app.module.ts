@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -142,9 +142,10 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
-      rules: ruleBuilder(m),
     };
 
+    ruleBuilder(m);
+    
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;

@@ -1,25 +1,25 @@
-import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
+import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
-import { Dependency } from '@allors/workspace/meta/system';
 
-export class WorkEffortInventoryAssignmentTotalSellingPriceRule implements IRule {
+export class WorkEffortInventoryAssignmentTotalSellingPriceRule implements IRule<WorkEffortInventoryAssignment> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
-    this.patterns = [p(m.WorkEffortInventoryAssignment, (v) => v.DerivedBillableQuantity), p(m.WorkEffortInventoryAssignment, (v) => v.Quantity), p(m.WorkEffortInventoryAssignment, (v) => v.UnitSellingPrice)];
+    this.objectType = m.WorkEffortInventoryAssignment;
+    this.roleType = m.WorkEffortInventoryAssignment.TotalSellingPrice;
   }
 
-  derive(cycle: ICycle, matches: WorkEffortInventoryAssignment[]) {
-    for (const match of matches) {
-      if (match.canReadUnitSellingPrice) {
-        const quantity = match.DerivedBillableQuantity ? match.DerivedBillableQuantity : match.Quantity ? match.Quantity : '0';
-        const unitSellingPrice = match.UnitSellingPrice ? match.UnitSellingPrice : '0';
-        match.TotalSellingPrice = (parseFloat(quantity) * parseFloat(unitSellingPrice)).toFixed(2);
-      } else {
-        match.TotalSellingPrice = '0';
-      }
+  derive(workEffortInventoryAssignment: WorkEffortInventoryAssignment) {
+    if (workEffortInventoryAssignment.canReadUnitSellingPrice) {
+      const quantity = workEffortInventoryAssignment.DerivedBillableQuantity ? workEffortInventoryAssignment.DerivedBillableQuantity : workEffortInventoryAssignment.Quantity ? workEffortInventoryAssignment.Quantity : '0';
+      const unitSellingPrice = workEffortInventoryAssignment.UnitSellingPrice ? workEffortInventoryAssignment.UnitSellingPrice : '0';
+      return (parseFloat(quantity) * parseFloat(unitSellingPrice)).toFixed(2);
     }
+
+    return '0';
   }
 }

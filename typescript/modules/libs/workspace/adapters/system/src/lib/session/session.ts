@@ -27,7 +27,7 @@ export abstract class Session implements ISession {
 
   sessionOriginState: SessionOriginState;
 
-  activeRuleByRoleTyp: Map<RoleType, IRule<IObject>>;
+  activeRulesByRoleType: Map<RoleType, Set<IRule<IObject>>>;
 
   readonly ranges: Ranges<IObject>;
 
@@ -48,7 +48,7 @@ export abstract class Session implements ISession {
     this.pushToDatabaseTracker = new PushToDatabaseTracker();
     this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
 
-    this.activeRuleByRoleTyp = new Map();
+    this.activeRulesByRoleType = new Map();
     this.dependencies = new Set();
   }
 
@@ -58,13 +58,39 @@ export abstract class Session implements ISession {
     }
 
     for (const rule of rules) {
-      this.activeRuleByRoleTyp.set(rule.roleType, rule);
+      let activeRules = this.activeRulesByRoleType.get(rule.roleType);
+      if (activeRules == null) {
+        activeRules = new Set();
+        this.activeRulesByRoleType.set(rule.roleType, activeRules);
+      }
+
+      activeRules.add(rule);
+
       if (rule.dependencies != null) {
         for (const dependency of rule.dependencies) {
           this.dependencies.add(dependency);
         }
       }
     }
+  }
+
+  resolve(strategy: Strategy, roleType: RoleType): IRule<IObject> {
+    const activeRules = this.activeRulesByRoleType.get(roleType);
+
+    if (activeRules?.size > 0) {
+      let rule: IRule<IObject>;
+      if (roleType.objectType.isClass) {
+        rule = roleType._.rule;
+      } else {
+        rule = roleType._.ruleByClass?.get(strategy.cls);
+      }
+
+      if (rule != null && activeRules.has(rule)) {
+        return rule;
+      }
+    }
+
+    return null;
   }
 
   get hasChanges(): boolean {

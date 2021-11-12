@@ -1,9 +1,10 @@
 import { from, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 import { Context, WorkspaceService } from '@allors/workspace/angular/core';
 import { Configuration, IInvokeResult, InvokeOptions, IObject, IPullResult, IResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
 import { Class, Composite } from '@allors/workspace/meta/system';
+
+import '@allors/workspace/derivations/system';
 
 export class AppsContext implements Context {
   constructor(public workspaceService: WorkspaceService) {
@@ -12,7 +13,8 @@ export class AppsContext implements Context {
     this.session = this.workspace.createSession();
 
     // Auto activate
-    this.session.activate(this.workspace.configuration.rules);
+    const rules = this.workspace.configuration.metaPopulation._.rules;
+    this.session.activate(rules);
   }
 
   workspace: IWorkspace;

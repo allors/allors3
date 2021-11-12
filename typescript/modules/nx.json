@@ -73,6 +73,9 @@
     "workspace-derivations-core-custom": {
       "tags": []
     },
+    "workspace-derivations-system": {
+      "tags": []
+    },
     "workspace-domain-apps": {
       "tags": []
     },

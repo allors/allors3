@@ -26,4 +26,5 @@ export { WorkEffortInventoryAssignmentTotalSellingPriceRule } from './lib/rules/
 export { WorkEffortPartyAssignmentDisplayNameRule } from './lib/rules/work-effort-party-assignment-display-name.rule';
 
 export * from './lib/rule-builder';
+import "@allors/workspace/derivations/system"
 

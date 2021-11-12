@@ -1,15 +1,17 @@
-import { Dependency, RoleType } from '@allors/workspace/meta/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
 import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { PartCategory } from '@allors/workspace/domain/default';
 
 export class PartCategoryDisplayNameRule implements IRule<PartCategory> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t, dependency: d } = m;
+    const { dependency: d } = m;
 
+    this.objectType = m.PartCategory;
     this.roleType = m.PartCategory.DisplayName;
 
     this.dependencies = [d(m.PartCategory, (v) => v.PrimaryParent)];
@@ -24,6 +26,6 @@ export class PartCategoryDisplayNameRule implements IRule<PartCategory> {
     }
 
     selfAndPrimaryAncestors.reverse();
-    partCategory.DisplayName = selfAndPrimaryAncestors.map((v) => v.Name).join('/');
+    return selfAndPrimaryAncestors.map((v) => v.Name).join('/');
   }
 }

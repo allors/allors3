@@ -1,23 +1,23 @@
-import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
+import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem } from '@allors/workspace/domain/default';
-import { Dependency } from '@allors/workspace/meta/system';
 
-export class SerialisedItemAgeRule implements IRule {
+export class SerialisedItemAgeRule implements IRule<SerialisedItem> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
-    this.patterns = [p(m.SerialisedItem, (v) => v.ManufacturingYear)];
+    this.objectType = m.SerialisedItem;
+    this.roleType = m.SerialisedItem.Age;
   }
 
-  derive(cycle: ICycle, matches: SerialisedItem[]) {
-    for (const match of matches) {
-      if (match.canReadPurchasePrice && match.ManufacturingYear != null) {
-        match.Age = new Date().getFullYear() - match.ManufacturingYear;
-      } else {
-        match.Age = 0;
-      }
+  derive(serialisedItem: SerialisedItem) {
+    if (serialisedItem.canReadPurchasePrice && serialisedItem.ManufacturingYear != null) {
+      return new Date().getFullYear() - serialisedItem.ManufacturingYear;
     }
+
+    return 0;
   }
 }

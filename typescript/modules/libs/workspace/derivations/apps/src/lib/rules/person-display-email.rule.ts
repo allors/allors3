@@ -1,19 +1,21 @@
-import { Dependency, RoleType } from '@allors/workspace/meta/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
 import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { EmailAddress, Person } from '@allors/workspace/domain/default';
 
 export class PersonDisplayEmailRule implements IRule<Person> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   m: M;
 
   constructor(m: M) {
-    const { treeBuilder: t, dependency: d } = m;
+    const { dependency: d } = m;
     this.m = m;
 
-    this.roleType = m.Person.DisplayName;
+    this.objectType = m.Person;
+    this.roleType = m.Person.DisplayEmail;
 
     this.dependencies = [d(m.Person, (v) => v.PartyContactMechanisms)];
   }
@@ -26,6 +28,6 @@ export class PersonDisplayEmailRule implements IRule<Person> {
       })
       .filter((v) => v) as string[];
 
-    person.DisplayEmail = emailAddresses.join(', ');
+    return emailAddresses.join(', ');
   }
 }

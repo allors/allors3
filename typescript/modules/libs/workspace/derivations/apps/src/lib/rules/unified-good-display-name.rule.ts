@@ -1,23 +1,23 @@
-import { ICycle, IRule, IPattern, pattern as p } from '@allors/workspace/domain/system';
+import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
+import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { UnifiedGood } from '@allors/workspace/domain/default';
-import { Dependency } from '@allors/workspace/meta/system';
 
-export class UnifiedGoodDisplayNameRule implements IRule {
+export class UnifiedGoodDisplayNameRule implements IRule<UnifiedGood> {
+  objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
 
   constructor(m: M) {
-    const { treeBuilder: t, dependency: d } = m;
+    const { dependency: d } = m;
 
-    this.patterns = [p(m.ProductCategory, (v) => v.DisplayName)];
+    this.objectType = m.UnifiedGood;
+    this.roleType = m.UnifiedGood.DisplayName;
 
     this.dependencies = [d(m.UnifiedGood, (v) => v.ProductCategoriesWhereProduct)];
   }
 
-  derive(cycle: ICycle, matches: UnifiedGood[]) {
-    for (const match of matches) {
-      match.DisplayName = match.ProductCategoriesWhereProduct?.map((v) => v.DisplayName).join(', ');
-    }
+  derive(unifiedGood: UnifiedGood) {
+    return unifiedGood.ProductCategoriesWhereProduct?.map((v) => v.DisplayName).join(', ');
   }
 }
