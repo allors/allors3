@@ -144,7 +144,8 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       idGenerator: () => nextId--,
     };
 
-    ruleBuilder(m);
+    const rules = ruleBuilder(m);
+    applyRules(m, rules);
     
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
@@ -332,3 +333,7 @@ export const routes: Routes = [
   ],
 })
 export class AppModule {}
+function applyRules(m: M, rules: import("@allors/workspace/domain/system").IRule<import("@allors/workspace/domain/system").IObject>[]) {
+  throw new Error('Function not implemented.');
+}
+

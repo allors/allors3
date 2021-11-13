@@ -79,7 +79,7 @@ export abstract class Session implements ISession {
 
     if (activeRules?.size > 0) {
       let rule: IRule<IObject>;
-      if (roleType.objectType.isClass) {
+      if (roleType.associationType.objectType.isClass) {
         rule = roleType._.rule;
       } else {
         rule = roleType._.ruleByClass?.get(strategy.cls);

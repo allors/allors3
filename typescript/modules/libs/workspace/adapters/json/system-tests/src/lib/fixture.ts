@@ -9,6 +9,7 @@ import { M } from '@allors/workspace/meta/default';
 import { FetchClient } from './fetch-client';
 import { Configuration, ISession, IWorkspace, Pull } from '@allors/workspace/domain/system';
 import { C1, C2 } from '@allors/workspace/domain/default';
+import { applyRules } from '@allors/workspace/derivations/system';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';
@@ -39,9 +40,11 @@ export class Fixture {
       name: 'Default',
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
-      rules: ruleBuilder(this.m),
       idGenerator: () => nextId--,
     };
+
+    const rules = ruleBuilder(this.m);
+    applyRules(this.m, rules);
 
     return new DatabaseConnection(configuration, this.jsonClient);
   }

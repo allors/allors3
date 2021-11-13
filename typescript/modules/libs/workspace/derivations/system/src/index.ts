@@ -1,1 +1,3 @@
-import "./lib/meta/index"
+export * from './lib/applyRules';
+
+import './lib/meta/index';

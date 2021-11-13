@@ -21,6 +21,7 @@ import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
 import { Configuration } from '@allors/workspace/domain/system';
+import { applyRules } from '@allors/workspace/derivations/system';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
@@ -38,7 +39,8 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
       idGenerator: () => nextId--,
     };
 
-    ruleBuilder(m);
+    const rules = ruleBuilder(m);
+    applyRules(m, rules);
     
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
