@@ -1,12 +1,9 @@
-import { Composite, CompositeExtension } from './composite';
+import { Composite } from './composite';
 import { RoleType } from './role-type';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ClassExtension extends CompositeExtension {}
 
 export interface Class extends Composite {
   readonly kind: 'Class';
-  _: ClassExtension;
+  _: unknown;
   overriddenRequiredRoleTypes: RoleType[];
   requiredRoleTypes: Set<RoleType>;
 }

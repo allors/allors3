@@ -127,6 +127,7 @@ import { FormComponent } from './tests/form/form.component';
 import { configure } from './configure';
 import { BaseContext } from '../allors/base-context';
 import { Configuration } from '@allors/workspace/domain/system';
+import { applyRules } from '@allors/workspace/derivations/system';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
@@ -146,7 +147,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
 
     const rules = ruleBuilder(m);
     applyRules(m, rules);
-    
+
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;
@@ -333,7 +334,3 @@ export const routes: Routes = [
   ],
 })
 export class AppModule {}
-function applyRules(m: M, rules: import("@allors/workspace/domain/system").IRule<import("@allors/workspace/domain/system").IObject>[]) {
-  throw new Error('Function not implemented.');
-}
-

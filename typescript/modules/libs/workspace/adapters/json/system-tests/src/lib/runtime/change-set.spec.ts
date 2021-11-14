@@ -15,34 +15,9 @@ test('changeSetConstruction', async () => {
 
   const changeSet = session.checkpoint();
 
-  expect(changeSet.instantiated.size).toBe(0);
-});
-
-test('changeSetInstantiated', async () => {
-  const { workspace, m } = fixture;
-  const session = workspace.createSession();
-
-  const pull: Pull = {
-    extent: {
-      kind: 'Filter',
-      objectType: m.C1,
-      predicate: {
-        kind: 'Equals',
-        propertyType: m.C1.Name,
-        value: 'c1A',
-      },
-    },
-  };
-
-  const result = await session.pull([pull]);
-  const c1s = result.collection<C1>('C1s');
-  const c1a = c1s[0];
-
-  const changeSet = session.checkpoint();
-
-  expect(changeSet.instantiated.size).toBe(1);
-  const instantiated = changeSet.instantiated.values().next().value;
-  expect(instantiated).toBe(c1a);
+  expect(changeSet.created.size).toBe(0);
+  expect(changeSet.associationsByRoleType.size).toBe(0);
+  expect(changeSet.rolesByAssociationType.size).toBe(0);
 });
 
 test('changeSetAfterPush', async () => {
@@ -793,7 +768,6 @@ test('changeSetAfterPullInNewSessionButNoPush', async () => {
   const changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
-  expect(changeSet.instantiated.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 });
@@ -811,7 +785,6 @@ test('changeSetBeforeAndAfterResetWithSessionObject', async () => {
   let changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(1);
-  expect(changeSet.instantiated.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
@@ -822,7 +795,6 @@ test('changeSetBeforeAndAfterResetWithSessionObject', async () => {
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
-  expect(changeSet.instantiated.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 });
@@ -848,7 +820,6 @@ test('changeSetBeforeAndAfterResetWithChangeSessionObject', async () => {
   changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
-  expect(changeSet.instantiated.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
@@ -892,7 +863,6 @@ test('changeSetAfterDoubleReset', async () => {
   const changeSet = session.checkpoint();
 
   expect(changeSet.created.size).toBe(0);
-  expect(changeSet.instantiated.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 

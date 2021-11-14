@@ -1,11 +1,8 @@
-import { ObjectType, ObjectTypeExtension } from './object-type';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface UnitExtension extends ObjectTypeExtension {}
+import { ObjectType } from './object-type';
 
 export interface Unit extends ObjectType {
   readonly kind: 'Unit';
-  _: UnitExtension;
+  _: unknown;
   isBinary: boolean;
   isBoolean: boolean;
   isDecimal: boolean;

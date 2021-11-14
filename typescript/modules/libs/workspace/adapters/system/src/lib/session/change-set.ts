@@ -13,12 +13,10 @@ export class ChangeSet implements IChangeSet {
 
   private ranges: Ranges<IObject>;
 
-  public constructor(public session: Session, public created: Set<IObject>, public instantiated: Set<IObject>) {
+  public constructor(public session: Session, public created: Set<IObject>) {
     this.associationsByRoleType = new Map();
     this.rolesByAssociationType = new Map();
-
     this.created ??= frozenEmptySet as Set<IObject>;
-    this.instantiated ??= frozenEmptySet as Set<IObject>;
 
     this.ranges = this.session.ranges;
   }

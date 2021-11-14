@@ -1,4 +1,4 @@
-import { FilterDefinition, SearchFactory } from '@allors/workspace/angular/base';
+import { angularList, angularOverview, angularMenu, FilterDefinition, SearchFactory, angularFilterDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Sorter } from '@allors/workspace/angular/base';
 import { Composite } from '@allors/workspace/meta/system';
@@ -6,13 +6,13 @@ import { Filters, InternalOrganisationId } from '@allors/workspace/angular/apps'
 import { Brand, Country, Currency, Facility, FixedAsset, Good, InventoryItemKind, IUnitOfMeasure, Model, Organisation, Ownership, Part, Party, Person, PositionType, Product, ProductCategory, ProductIdentification, ProductType, PurchaseInvoiceState, PurchaseInvoiceType, PurchaseOrderState, QuoteState, RateType, RequestState, SalesInvoiceState, SalesInvoiceType, SalesOrderState, Scope, SerialisedItem, SerialisedItemAvailability, SerialisedItemState, ShipmentState, WorkEffortState } from '@allors/workspace/domain/default';
 
 function nav(composite: Composite, list: string, overview?: string) {
-  composite._.list = list;
-  composite._.overview = overview;
+  angularList(composite, list);
+  angularOverview(composite, overview);
 }
 
 export function configure(m: M, internalOrganisationId: InternalOrganisationId) {
   // Menu
-  m._.menu = [
+  angularMenu(m,  [
     { title: 'Home', icon: 'home', link: '/' },
     {
       title: 'Contacts',
@@ -63,7 +63,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       icon: 'money',
       children: [{ objectType: m.ExchangeRate }],
     },
-  ];
+  ]);
 
   // Navigation
   nav(m.Person, '/contacts/people', '/contacts/person/:id');
@@ -287,26 +287,26 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
     predicates: [{ kind: 'Equals',  propertyType: m.RateType.IsActive, value: true }],
   });
 
-  m.Carrier._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.Carrier, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.Carrier.Name, parameter: 'name' },
     ]}
-  );
+  ));
 
-  m.Catalogue._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.Catalogue, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.Catalogue.Name, parameter: 'Name' },
       { kind: 'Equals',  propertyType: m.Catalogue.CatScope, parameter: 'Scope' },
     ]}, { Scope: { 
       search: () => scopeSearch, display: (v: Scope) => v && v.Name }
      }
-  );
+  ));
 
-  m.CommunicationEvent._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.CommunicationEvent, new FilterDefinition(
     { kind: 'And', operands: [{ kind: 'Like',  roleType: m.CommunicationEvent.Subject, parameter: 'subject' }]
-    });
+    }));
 
-  m.ExchangeRate._.filterDefinition = new FilterDefinition(
+    angularFilterDefinition(m.ExchangeRate, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.ExchangeRate.FromCurrency, parameter: 'fromCurrency' },
       { kind: 'Equals',  propertyType: m.ExchangeRate.ToCurrency, parameter: 'toCurrency' },
@@ -315,9 +315,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       fromCurrency: { search: () => currencySearch, display: (v: Currency) => v && v.IsoCode },
       toCurrency: { search: () => currencySearch, display: (v: Currency) => v && v.IsoCode },
     }
-  );
+  ));
  
-  m.Good._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.Good, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.Good.Name, parameter: 'name' },
       { kind: 'Like',  roleType: m.Good.Keywords, parameter: 'keyword' },
@@ -331,9 +331,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       brand: { search: () => brandSearch, display: (v: Brand) => v && v.Name },
       model: { search: () => modelSearch, display: (v: Model) => v && v.Name },
     }
-  );
+  ));
 
-  m.Organisation._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.Organisation, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.Organisation.Name, parameter: 'name' },
       { kind: 'ContainedIn', 
@@ -405,9 +405,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
         display: (v: Country) => v && v.Name,
       },
     }
-  );
+  ));
 
-  m.Part._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.Part, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.Part.Name, parameter: 'name' },
       { kind: 'Like',  roleType: m.Part.Keywords, parameter: 'keyword' },
@@ -440,9 +440,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       identification: { search: () => productIdSearch, display: (v: ProductIdentification) => v && v.Identification },
       facility: { search: () => facilitySearch, display: (v: Facility) => v && v.Name },
     }
-  );
+  ));
 
-  m.Person._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.Person, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.Person.FirstName, parameter: 'firstName' },
       { kind: 'Like',  roleType: m.Person.LastName, parameter: 'lastName' },
@@ -496,13 +496,13 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       },
       country: { search:() => countrySearch, display: (v: Country) => v && v.Name },
     }
-  );
+  ));
 
-  m.PositionType._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.PositionType, new FilterDefinition(
     { kind: 'And', operands: [{ kind: 'Like',  roleType: m.PositionType.Title, parameter: 'title' }]
-    });
+    }));
 
-  m.PositionTypeRate._.filterDefinition = new FilterDefinition(
+    angularFilterDefinition(m.PositionTypeRate, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Contains',  propertyType: m.PositionTypeRate.PositionTypesWherePositionTypeRate, parameter: 'positionType' },
       { kind: 'Equals',  propertyType: m.PositionTypeRate.RateType, parameter: 'rateType' },
@@ -511,9 +511,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       positionType: { search: () => positionTypeSearch, display: (v: PositionType) => v && v.Title },
       rateType: { search: () => rateTypeSearch, display: (v: RateType) => v && v.Name },
     }
-  );
+  ));
 
-  m.ProductCategory._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.ProductCategory, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.ProductCategory.Name, parameter: 'name' },
       { kind: 'Equals',  propertyType: m.ProductCategory.CatScope, parameter: 'scope' },
@@ -522,9 +522,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       scope: { search: () => scopeSearch, display: (v: Scope) => v && v.Name },
       product: { search: () => productSearch, display: (v: Good) => v && v.Name },
     }
-  );
+  ));
 
-  m.ProductQuote._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.ProductQuote, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.ProductQuote.QuoteState, parameter: 'state' },
       { kind: 'Equals',  propertyType: m.ProductQuote.Receiver, parameter: 'to' },
@@ -533,13 +533,13 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       state: { search: () => quoteStateSearch, display: (v: QuoteState) => v && v.Name },
       to: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
     }
-  );
+  ));
 
-  m.ProductType._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.ProductType, new FilterDefinition(
     { kind: 'And', operands: [{ kind: 'Like',  roleType: m.ProductType.Name, parameter: 'name' }]
-  });
+  }));
 
-  m.PurchaseInvoice._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.PurchaseInvoice, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.PurchaseInvoice.InvoiceNumber, parameter: 'number' },
       { kind: 'Equals',  propertyType: m.PurchaseInvoice.PurchaseInvoiceState, parameter: 'state' },
@@ -572,9 +572,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       sparePart: { search: () => partSearch, display: (v: Part) => v && v.Name },
       serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
     }
-  );
+  ));
 
-  m.PurchaseOrder._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.PurchaseOrder, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.PurchaseOrder.OrderNumber, parameter: 'number' },
       { kind: 'Equals',  propertyType: m.PurchaseOrder.CustomerReference, parameter: 'customerReference' },
@@ -607,9 +607,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       sparePart: { search: () => partSearch, display: (v: Part) => v && v.Name },
       serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
     }
-  );
+  ));
 
-  m.RequestForQuote._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.RequestForQuote, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.Request.RequestState, parameter: 'state' },
       { kind: 'Equals',  propertyType: m.Request.Originator, parameter: 'from' },
@@ -618,9 +618,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       state: { search: () => requestStateSearch, display: (v: RequestState) => v && v.Name },
       from: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
     }
-  );
+  ));
 
-  m.SalesInvoice._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.SalesInvoice, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.SalesInvoice.SalesInvoiceType, parameter: 'type' },
       { kind: 'Equals',  propertyType: m.SalesInvoice.InvoiceNumber, parameter: 'number' },
@@ -663,9 +663,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       product: { search: () => productSearch, display: (v: Product) => v && v.Name },
       serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
     }
-  );
+  ));
 
-  m.SalesOrder._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.SalesOrder, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.SalesOrder.OrderNumber, parameter: 'number' },
       { kind: 'Equals',  propertyType: m.SalesOrder.CustomerReference, parameter: 'customerReference' },
@@ -708,9 +708,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       product: { search: () => productSearch, display: (v: Product) => v && v.Name },
       serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
     }
-  );
+  ));
 
-  m.SerialisedItem._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.SerialisedItem, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.SerialisedItem.ItemNumber, parameter: 'id' },
       { kind: 'Like',  roleType: m.SerialisedItem.Name, parameter: 'name' },
@@ -770,9 +770,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       model: { search: () => modelSearch, display: (v: Model) => v && v.Name },
       productType: { search: () => productTypeSearch, display: (v: ProductType) => v && v.Name },
     }
-  );
+  ));
 
-  m.SerialisedItemCharacteristic._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.SerialisedItemCharacteristic, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.SerialisedItemCharacteristicType.Name, parameter: 'name' },
       { kind: 'Equals',  propertyType: m.SerialisedItemCharacteristicType.IsActive, parameter: 'active' },
@@ -781,9 +781,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       active: { initialValue: true },
       uom: { search: () => uomSearch, display: (v: IUnitOfMeasure) => v && v.Name },
     }
-  );
+  ));
 
-  m.Shipment._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.Shipment, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.Shipment.ShipmentNumber, parameter: 'number' },
       { kind: 'Equals',  propertyType: m.Shipment.ShipmentState, parameter: 'state' },
@@ -805,9 +805,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       shipFrom: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
       shipTo: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
     }
-  );
+  ));
 
-  m.UnifiedGood._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.UnifiedGood, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Like',  roleType: m.UnifiedGood.Name, parameter: 'name' },
       { kind: 'Like',  roleType: m.UnifiedGood.Keywords, parameter: 'keyword' },
@@ -824,9 +824,9 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       brand: { search: () => brandSearch, display: (v: Brand) => v && v.Name },
       model: { search: () => modelSearch, display: (v: Model) => v && v.Name },
     }
-  );
+  ));
 
-  m.WorkEffort._.filterDefinition = new FilterDefinition(
+  angularFilterDefinition(m.WorkEffort, new FilterDefinition(
     { kind: 'And', operands: [
       { kind: 'Equals',  propertyType: m.WorkEffort.WorkEffortState, parameter: 'state' },
       { kind: 'Equals',  propertyType: m.WorkEffort.Customer, parameter: 'customer' },
@@ -855,75 +855,75 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       worker: { search: () => personSearch, display: (v: Person) => v && v.DisplayName },
       equipment: { search: () => fixedAssetSearch, display: (v: FixedAsset) => v && v.DisplayName },
     }
-  );
+  ));
 
-  m.Carrier._.sorter = new Sorter({
+  angularSorter(m.Carrier, new Sorter({
     name: m.Carrier.Name,
-  });
+  }));
 
-  m.Catalogue._.sorter = new Sorter({
+  angularSorter(m.Catalogue, new Sorter({
     name: m.Catalogue.Name,
     description: m.Catalogue.Description,
     scope: m.Scope.Name,
-  });
+  }));
 
-  m.CommunicationEvent._.sorter = new Sorter({
+  angularSorter(m.CommunicationEvent, new Sorter({
     subject: m.CommunicationEvent.Subject,
     lastModifiedDate: m.CommunicationEvent.LastModifiedDate,
-  });
+  }));
 
-  m.ExchangeRate._.sorter = new Sorter({
+  angularSorter(m.ExchangeRate, new Sorter({
     validFrom: m.ExchangeRate.ValidFrom,
     from: m.ExchangeRate.FromCurrency,
     to: m.ExchangeRate.ToCurrency,
-  });
+  }));
 
-  m.Good._.sorter = new Sorter({
+  angularSorter(m.Good, new Sorter({
     name: [m.Good.Name],
-  });
+  }));
 
-  m.Organisation._.sorter = new Sorter({
+  angularSorter(m.Organisation, new Sorter({
     name: m.Organisation.Name,
     lastModifiedDate: m.Organisation.LastModifiedDate,
-  });
+  }));
 
-  m.Part._.sorter = new Sorter({
+  angularSorter(m.Part, new Sorter({
     name: m.NonUnifiedPart.Name,
-  });
+  }));
 
-  m.Person._.sorter = new Sorter({
+  angularSorter(m.Person, new Sorter({
     name: [m.Person.FirstName, m.Person.LastName],
     lastModifiedDate: m.Person.LastModifiedDate,
-  });
+  }));
 
-  m.PositionType._.sorter = new Sorter({
+  angularSorter(m.PositionType, new Sorter({
     title: m.PositionType.Title,
-  });
+  }));
 
-  m.PositionTypeRate._.sorter = new Sorter({
+  angularSorter(m.PositionTypeRate, new Sorter({
     rate: m.PositionTypeRate.Rate,
     from: m.PositionTypeRate.FromDate,
     through: m.PositionTypeRate.ThroughDate,
-  });
+  }));
 
-  m.ProductCategory._.sorter = new Sorter({
+  angularSorter(m.ProductCategory, new Sorter({
     name: m.Catalogue.Name,
     description: m.Catalogue.Description,
     scope: m.Scope.Name,
-  });
+  }));
 
-  m.ProductQuote._.sorter = new Sorter({
+  angularSorter(m.ProductQuote, new Sorter({
     number: m.Quote.SortableQuoteNumber,
     description: m.Quote.Description,
     responseRequired: m.Quote.RequiredResponseDate,
     lastModifiedDate: m.Quote.LastModifiedDate,
-  });
+  }));
 
-  m.ProductType._.sorter = new Sorter({
+  angularSorter(m.ProductType, new Sorter({
     name: m.ProductType.Name,
-  });
+  }));
 
-  m.PurchaseInvoice._.sorter = new Sorter({
+  angularSorter(m.PurchaseInvoice, new Sorter({
     number: m.PurchaseInvoice.SortableInvoiceNumber,
     type: m.PurchaseInvoice.PurchaseInvoiceType,
     reference: m.PurchaseInvoice.CustomerReference,
@@ -931,67 +931,67 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
     totalExVat: m.PurchaseInvoice.TotalExVat,
     totalIncVat: m.PurchaseInvoice.TotalIncVat,
     lastModifiedDate: m.PurchaseInvoice.LastModifiedDate,
-  });
+  }));
 
-  m.PurchaseOrder._.sorter = new Sorter({
+  angularSorter(m.PurchaseOrder, new Sorter({
     number: m.PurchaseOrder.SortableOrderNumber,
     customerReference: m.PurchaseOrder.CustomerReference,
     totalExVat: m.PurchaseOrder.TotalExVat,
     totalIncVat: m.PurchaseOrder.TotalIncVat,
     lastModifiedDate: m.PurchaseOrder.LastModifiedDate,
-  });
+  }));
 
-  m.RequestForQuote._.sorter = new Sorter({
+  angularSorter(m.RequestForQuote, new Sorter({
     number: m.Request.SortableRequestNumber,
     description: m.Request.Description,
     responseRequired: m.Request.RequiredResponseDate,
     lastModifiedDate: m.Request.LastModifiedDate,
-  });
+  }));
 
-  m.SalesInvoice._.sorter = new Sorter({
+  angularSorter(m.SalesInvoice, new Sorter({
     number: m.SalesInvoice.SortableInvoiceNumber,
     type: m.SalesInvoice.SalesInvoiceType,
     invoiceDate: m.SalesInvoice.InvoiceDate,
     description: m.SalesInvoice.Description,
     lastModifiedDate: m.SalesInvoice.LastModifiedDate,
-  });
+  }));
 
-  m.SalesOrder._.sorter = new Sorter({
+  angularSorter(m.SalesOrder, new Sorter({
     number: m.SalesOrder.SortableOrderNumber,
     customerReference: m.SalesOrder.CustomerReference,
     lastModifiedDate: m.SalesOrder.LastModifiedDate,
-  });
+  }));
 
-  m.SerialisedItem._.sorter = new Sorter({
+  angularSorter(m.SerialisedItem, new Sorter({
     id: [m.SerialisedItem.ItemNumber],
     categories: [m.SerialisedItem.DisplayProductCategories],
     name: [m.SerialisedItem.Name],
     availability: [m.SerialisedItem.SerialisedItemAvailabilityName],
-  });
+  }));
 
-  m.SerialisedItemCharacteristic._.sorter = new Sorter({
+  angularSorter(m.SerialisedItemCharacteristic, new Sorter({
     name: m.SerialisedItemCharacteristicType.Name,
     uom: m.UnitOfMeasure.Name,
     active: m.SerialisedItemCharacteristicType.IsActive,
-  });
+  }));
 
-  m.Shipment._.sorter = new Sorter({
+  angularSorter(m.Shipment, new Sorter({
     number: m.Shipment.SortableShipmentNumber,
     from: m.Shipment.ShipFromParty,
     to: m.Shipment.ShipToParty,
     lastModifiedDate: m.Shipment.LastModifiedDate,
-  });
+  }));
 
-  m.UnifiedGood._.sorter = new Sorter({
+  angularSorter(m.UnifiedGood, new Sorter({
     name: [m.UnifiedGood.Name],
     id: [m.UnifiedGood.ProductNumber],
     lastModifiedDate: m.UnifiedGood.LastModifiedDate,
-  });
+  }));
 
-  m.WorkEffort._.sorter = new Sorter({
+  angularSorter(m.WorkEffort, new Sorter({
     number: [m.WorkEffort.SortableWorkEffortNumber],
     name: [m.WorkEffort.Name],
     description: [m.WorkEffort.Description],
     lastModifiedDate: m.Person.LastModifiedDate,
-  });
+  }));
 }

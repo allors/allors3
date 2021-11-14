@@ -8,12 +8,9 @@ import { Composite } from './composite';
 import { PropertyType } from './property-type';
 import { Dependency } from './dependency';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface MetaPopulationExtension {}
-
 export interface MetaPopulation {
   readonly kind: 'MetaPopulation';
-  _: MetaPopulationExtension;
+  _: unknown;
   metaObjectByTag: Map<string, MetaObject>;
   units: Set<Unit>;
   interfaces: Set<Interface>;

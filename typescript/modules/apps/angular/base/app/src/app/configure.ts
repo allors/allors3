@@ -1,16 +1,16 @@
-import { FilterDefinition } from '@allors/workspace/angular/base';
+import { angularFilterDefinition, angularList, angularMenu, angularOverview, angularSorter, FilterDefinition } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Sorter } from '@allors/workspace/angular/base';
 import { Composite } from '@allors/workspace/meta/system';
 
 function nav(composite: Composite, list: string, overview?: string) {
-  composite._.list = list;
-  composite._.overview = overview;
+  angularList(composite, list);
+  angularOverview(composite, overview);
 }
 
 export function configure(m: M) {
   // Menu
-  m._.menu = [
+  angularMenu(m, [
     { title: 'Home', icon: 'home', link: '/' },
     {
       title: 'Contacts',
@@ -22,14 +22,14 @@ export function configure(m: M) {
       icon: 'build',
       children: [{ title: 'Form', icon: 'share', link: '/tests/form' }],
     },
-  ];
+  ]);
 
   // Navigation
   nav(m.Person, '/contacts/people', '/contacts/person/:id');
   nav(m.Organisation, '/contacts/organisations', '/contacts/organisation/:id');
 
   // Filter & Sort
-  m.Person._.filterDefinition = new FilterDefinition({
+  angularFilterDefinition(m.Person,  new FilterDefinition({
     kind: 'And',
     operands: [
       {
@@ -48,14 +48,15 @@ export function configure(m: M) {
         parameter: 'email',
       },
     ],
-  });
-  m.Person._.sorter = new Sorter({
+  }));
+  
+  angularSorter(m.Person,  new Sorter({
     firstName: m.Person.FirstName,
     lastName: m.Person.LastName,
     email: m.Person.UserEmail,
-  });
+  }));
 
-  m.Organisation._.filterDefinition = new FilterDefinition({
+  angularFilterDefinition(m.Organisation,  new FilterDefinition({
     kind: 'And',
     operands: [
       {
@@ -64,6 +65,6 @@ export function configure(m: M) {
         parameter: 'name',
       },
     ],
-  });
-  m.Organisation._.sorter = new Sorter({ name: m.Organisation.Name });
+  }));
+  angularSorter(m.Organisation,  new Sorter({ name: m.Organisation.Name }));
 }

@@ -1,9 +1,7 @@
-import { MetaObject, MetaObjectExtension } from './meta-object';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ObjectTypeExtension extends MetaObjectExtension {}
+import { MetaObject } from './meta-object';
 
 export interface ObjectType extends MetaObject {
+  _: unknown;
   singularName: string;
   pluralName: string;
   isUnit: boolean;

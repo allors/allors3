@@ -7,8 +7,6 @@ export interface IChangeSet {
 
   created: Set<IObject>;
 
-  instantiated: Set<IObject>;
-
   associationsByRoleType: Map<RoleType, Set<IObject>>;
 
   rolesByAssociationType: Map<AssociationType, Set<IObject>>;

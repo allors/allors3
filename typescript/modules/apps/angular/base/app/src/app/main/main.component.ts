@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { ContextService } from '@allors/workspace/angular/core';
 import { Organisation } from '@allors/workspace/domain/default';
-import { AllorsMaterialSideNavService, SideMenuItem } from '@allors/workspace/angular/base';
+import { AllorsMaterialSideNavService, AngularCompositeExtension, AngularMetaPopulationExtension, menu, SideMenuItem } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
@@ -31,21 +31,21 @@ export class MainComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const m = this.allors.context.configuration.metaPopulation as M;
 
-    m._.menu.forEach((menuItem) => {
+    menu(m).forEach((menuItem) => {
       const objectType = menuItem.objectType;
 
       const sideMenuItem: SideMenuItem = {
-        icon: menuItem.icon ?? objectType?._.icon,
-        title: menuItem.title ?? objectType?._.displayName ?? objectType?.pluralName,
-        link: menuItem.link ?? objectType?._.list,
+        icon: menuItem.icon ?? (objectType?._ as AngularCompositeExtension).icon,
+        title: menuItem.title ?? (objectType?._ as AngularCompositeExtension).displayName ?? objectType?.pluralName,
+        link: menuItem.link ?? (objectType?._ as AngularCompositeExtension).list,
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
             const childObjectType = childMenuItem.objectType;
             return {
-              icon: childMenuItem.icon ?? childObjectType?._.icon,
-              title: childMenuItem.title ?? childObjectType?._.displayName ?? childObjectType?.pluralName,
-              link: childMenuItem.link ?? childObjectType?._.list,
+              icon: childMenuItem.icon ?? (childObjectType?._ as AngularCompositeExtension).icon,
+              title: childMenuItem.title ?? (childObjectType?._ as AngularCompositeExtension).displayName ?? childObjectType?.pluralName,
+              link: childMenuItem.link ?? (childObjectType?._ as AngularCompositeExtension).list,
             };
           }),
       };

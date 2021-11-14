@@ -4,8 +4,6 @@ import { Context, WorkspaceService } from '@allors/workspace/angular/core';
 import { Configuration, IInvokeResult, InvokeOptions, IObject, IPullResult, IResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
 import { Class, Composite } from '@allors/workspace/meta/system';
 
-import '@allors/workspace/derivations/system';
-
 export class BaseContext implements Context {
   constructor(public workspaceService: WorkspaceService) {
     this.workspace = this.workspaceService.workspace;
@@ -13,7 +11,7 @@ export class BaseContext implements Context {
     this.session = this.workspace.createSession();
 
     // Auto activate
-    const rules = this.workspace.configuration.metaPopulation._.rules;
+    const rules = (this.workspace.configuration.metaPopulation._ as DerivationsMetaPopulationExtension).rules;
     this.session.activate(rules);
   }
 

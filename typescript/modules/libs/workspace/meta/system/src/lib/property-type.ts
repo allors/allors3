@@ -1,12 +1,9 @@
 import { Origin } from './origin';
 import { ObjectType } from './object-type';
-import { OperandType, OperandTypeExtension } from './operand-type';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface PropertyTypeExtension extends OperandTypeExtension {}
+import { OperandType } from './operand-type';
 
 export interface PropertyType extends OperandType {
-  _: PropertyTypeExtension;
+  _: unknown;
   isRoleType: boolean;
   isAssociationType: boolean;
   isMethodType: boolean;

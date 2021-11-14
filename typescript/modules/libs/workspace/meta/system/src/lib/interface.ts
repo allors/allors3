@@ -1,9 +1,7 @@
-import { Composite, CompositeExtension } from './composite';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface InterfaceExtension extends CompositeExtension {}
+import { Composite } from './composite';
 
 export interface Interface extends Composite {
   readonly kind: 'Interface';
+  _: unknown;
   subtypes: Set<Composite>;
 }

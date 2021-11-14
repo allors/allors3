@@ -13,6 +13,7 @@ import { ChangeSetTracker } from './trackers/change-set-tracker';
 import { PushToDatabaseTracker } from './trackers/push-to-database-tracker';
 import { PushToWorkspaceTracker } from './trackers/push-to-workspace-tracker';
 import { ChangeSet } from './change-set';
+import { derivationRule, derivationRuleByClass } from '@allors/workspace/derivations/system';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -80,9 +81,9 @@ export abstract class Session implements ISession {
     if (activeRules?.size > 0) {
       let rule: IRule<IObject>;
       if (roleType.associationType.objectType.isClass) {
-        rule = roleType._.rule;
+        rule = derivationRule(roleType);
       } else {
-        rule = roleType._.ruleByClass?.get(strategy.cls);
+        rule = derivationRuleByClass(roleType)?.get(strategy.cls);
       }
 
       if (rule != null && activeRules.has(rule)) {
@@ -166,7 +167,7 @@ export abstract class Session implements ISession {
   }
 
   checkpoint(): IChangeSet {
-    const changeSet = new ChangeSet(this, this.changeSetTracker.created, this.changeSetTracker.instantiated);
+    const changeSet = new ChangeSet(this, this.changeSetTracker.created);
     if (this.changeSetTracker.databaseOriginStates != null) {
       for (const databaseOriginState of this.changeSetTracker.databaseOriginStates) {
         databaseOriginState.checkpoint(changeSet);
@@ -182,7 +183,6 @@ export abstract class Session implements ISession {
     this.sessionOriginState.checkpoint(changeSet);
 
     this.changeSetTracker.created = null;
-    this.changeSetTracker.instantiated = null;
     this.changeSetTracker.databaseOriginStates = null;
     this.changeSetTracker.workspaceOriginStates = null;
 

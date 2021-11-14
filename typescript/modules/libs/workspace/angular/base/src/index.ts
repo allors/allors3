@@ -138,4 +138,11 @@ export { AllorsMaterialSideNavServiceCore } from './lib/material/services/sidena
 
 export { Sorter } from './lib/material/sorting/sorter';
 
-import './lib/meta';
+export * from './lib/meta/angular.display.name';
+export * from './lib/meta/angular.filter';
+export * from './lib/meta/angular.filter.definition';
+export * from './lib/meta/angular.icon';
+export * from './lib/meta/angular.list';
+export * from './lib/meta/angular.menu';
+export * from './lib/meta/angular.overview';
+export * from './lib/meta/angular.sorter';

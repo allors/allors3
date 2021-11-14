@@ -1,3 +1,5 @@
 export * from './lib/applyRules';
 
-import './lib/meta/index';
+export * from './lib/meta/derivation.rule';
+export * from './lib/meta/derivation.rule.by.class';
+export * from './lib/meta/derivation.rules';

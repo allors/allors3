@@ -55,7 +55,6 @@ export class Session extends SystemSession {
     const databaseRecord = this.workspace.database.getRecord(id) as DatabaseRecord;
     const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addObject(strategy.object);
-    this.changeSetTracker.onInstantiated(strategy.object);
   }
 
   instantiateWorkspaceStrategy(id: number): IObject {
@@ -67,8 +66,6 @@ export class Session extends SystemSession {
 
     const strategy = new Strategy(this, cls, id);
     this.addObject(strategy.object);
-
-    this.changeSetTracker.onInstantiated(strategy.object);
 
     return strategy.object;
   }
