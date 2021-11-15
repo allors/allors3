@@ -1,7 +1,7 @@
 import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
 import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
-import { EmailAddress } from '../../../../../domain/apps/src/lib/generated/EmailAddress.g';
+import { EmailAddress } from '@allors/workspace/domain/default';
 
 export class EmailAddressDisplayNameRule implements IRule<EmailAddress> {
   objectType: Composite;
