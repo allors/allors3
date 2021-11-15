@@ -4,7 +4,7 @@ import { data } from '@allors/workspace/meta/json/default';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { configure } from './app/configure';
 import { M } from '@allors/workspace/meta/default';
-import { MenuItem } from '@allors/workspace/angular/base';
+import { angularList, angularMenu, angularOverview, MenuItem } from '@allors/workspace/angular/base';
 
 import { create, edit } from './app/app.module';
 
@@ -32,8 +32,8 @@ describe('Scaffold', () => {
     const meta: MetaInfo[] = [...metaPopulation.composites].map((v) => {
       return {
         tag: v.tag,
-        list: v._.list,
-        overview: v._.overview,
+        list: angularList(v),
+        overview: angularOverview(v),
       };
     });
 
@@ -47,7 +47,7 @@ describe('Scaffold', () => {
       };
     };
 
-    const menu: MenuInfo[] = m._.menu.map(menuMapper);
+    const menu: MenuInfo[] = angularMenu(m).map(menuMapper);
 
     const dialogs = {
       create: Object.keys(create).map((v) => ({ tag: v, component: create[v].name })),
