@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -91,7 +91,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.WorkEffort._.filter ??= new Filter(m.WorkEffort._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.WorkEffort);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.WorkEffort.TakenBy };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -119,7 +119,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             pull.WorkEffort({
               predicate,
-              sorting: sort ? m.WorkEffort._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.WorkEffort)?.create(sort) : null,
               include: {
                 Customer: x,
                 ExecutedBy: x,

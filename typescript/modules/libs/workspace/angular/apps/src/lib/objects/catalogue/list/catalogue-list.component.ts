@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Catalogue } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And, Equals } from '@allors/workspace/domain/system';
 
@@ -80,7 +80,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.Catalogue._.filter ??= new Filter(m.Catalogue._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Catalogue);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Catalogue.InternalOrganisation };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -108,7 +108,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
           const pulls = [
             pull.Catalogue({
               predicate: predicate,
-              sorting: sort ? m.Catalogue._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Catalogue)?.create(sort) : null,
               include: {
                 CatalogueImage: x,
                 ProductCategories: x,

@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Carrier } from '@allors/workspace/domain/default';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
@@ -69,7 +69,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = m.Carrier._.filter ??= new Filter(m.Carrier._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Carrier);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -92,7 +92,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
           const pulls = [
             pull.Carrier({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Carrier._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Carrier)?.create(sort) : null,
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,

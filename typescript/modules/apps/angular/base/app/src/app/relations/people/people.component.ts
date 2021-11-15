@@ -9,7 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { AllorsMaterialDialogService, Filter, MediaService, NavigationService, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { AllorsMaterialDialogService, angularFilterFromDefinition, angularSorter, Filter, MediaService, NavigationService, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Person } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
@@ -67,7 +67,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: p } = m;
 
-    this.filter = m.Person._.filter ??= new Filter(m.Person._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Person);
 
     this.subscription = combineLatest([this.refresh$, this.filter.fields$, this.sort$, this.pager$])
       .pipe(
@@ -78,7 +78,7 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             p.Person({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Person._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
               include: {
                 Pictures: {},
               },

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -80,7 +80,7 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.SerialisedItem._.filter ??= new Filter(m.SerialisedItem._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.SerialisedItem);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -103,7 +103,7 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
           const pulls = [
             pull.SerialisedItem({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.SerialisedItem._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.SerialisedItem)?.create(sort) : null,
               include: {
                 SerialisedItemState: x,
                 SerialisedItemAvailability: x,

@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, MediaService, MethodService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -77,7 +77,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.Organisation._.filter ??= new Filter(m.Organisation._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Organisation);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -101,7 +101,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
             this.fetcher.internalOrganisation,
             pull.Organisation({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Organisation._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Organisation)?.create(sort) : null,
               include: {
                 CustomerRelationshipsWhereCustomer: x,
                 SupplierRelationshipsWhereSupplier: x,

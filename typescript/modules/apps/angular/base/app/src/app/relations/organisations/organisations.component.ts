@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { scan, switchMap } from 'rxjs/operators';
 
-import { Action, DeleteService, Filter, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilter, angularFilterFromDefinition, angularSorter, DeleteService, Filter, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Organisation } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
@@ -56,7 +56,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
     const m = this.m;
     const { pullBuilder: p } = m;
 
-    this.filter = m.Organisation._.filter ??= new Filter(m.Organisation._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Organisation);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -70,7 +70,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
           const pulls = [
             p.Organisation({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Organisation._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Organisation)?.create(sort) : null,
               include: {
                 Owner: {},
                 Employees: {},

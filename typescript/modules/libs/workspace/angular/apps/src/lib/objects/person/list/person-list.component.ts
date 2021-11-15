@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -69,7 +69,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.Person._.filter ??= new Filter(m.Person._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Person);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -92,7 +92,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
           const pulls = [
             pull.Person({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Person._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
               include: {
                 Salutation: x,
                 Picture: x,

@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -106,7 +106,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.PurchaseOrder._.filter ??= new Filter(m.PurchaseOrder._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.PurchaseOrder);
    
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.PurchaseOrder.OrderedBy };
 
@@ -139,7 +139,7 @@ export class PurchaseOrderListComponent extends TestScope implements OnInit, OnD
             }),
             pull.PurchaseOrder({
               predicate,
-              sorting: sort ? m.PurchaseOrder._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.PurchaseOrder)?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

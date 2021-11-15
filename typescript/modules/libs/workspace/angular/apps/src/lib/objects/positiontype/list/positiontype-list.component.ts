@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PositionType } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -70,7 +70,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.PositionType._.filter ??= new Filter(m.PositionType._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.PositionType);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -93,7 +93,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
           const pulls = [
             pull.PositionType({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.PositionType._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.PositionType)?.create(sort) : null,
               include: {
                 PositionTypeRate: x,
               },

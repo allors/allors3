@@ -6,7 +6,7 @@ import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, Quote } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -86,7 +86,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
     
-    this.filter = m.ProductQuote._.filter ??= new Filter(m.ProductQuote._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.ProductQuote);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Quote.Issuer };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -118,7 +118,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
             }),
             pull.Quote({
               predicate,
-              sorting: sort ? m.ProductQuote._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.ProductQuote)?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

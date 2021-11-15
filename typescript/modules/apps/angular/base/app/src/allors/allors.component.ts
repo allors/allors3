@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { AllorsMaterialSideNavService, AngularCompositeExtension, AngularMetaPopulationExtension, MenuItem } from '@allors/workspace/angular/base';
+import { AllorsMaterialSideNavService, angularList, angularMenu, angularOverview, MenuItem } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 
 interface AllorsInfo {
@@ -51,8 +51,8 @@ export class AllorsComponent implements OnInit {
     const meta: MetaInfo[] = [...metaPopulation.composites].map((v) => {
       return {
         tag: v.tag,
-        list: (v._ as AngularCompositeExtension).list,
-        overview: (v._ as AngularCompositeExtension).overview,
+        list: angularList(v),
+        overview: angularOverview(v),
       };
     });
 
@@ -66,7 +66,7 @@ export class AllorsComponent implements OnInit {
       };
     };
 
-    const menu: MenuInfo[] = (m._ as AngularMetaPopulationExtension).menu.map(menuMapper);
+    const menu: MenuInfo[] = angularMenu(m).map(menuMapper);
 
     // const dialog: DialogInfo = {
     //   create: Object.keys(create).map((v) => ({ tag: v, component: create[v].name })),

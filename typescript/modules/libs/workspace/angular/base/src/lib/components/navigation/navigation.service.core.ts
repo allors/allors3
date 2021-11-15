@@ -6,6 +6,8 @@ import { Composite } from '@allors/workspace/meta/system';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 import { NavigationService } from '../../services/navigation/navigation.service';
+import { angularList } from '../../meta/angular.list';
+import { angularOverview } from '../../meta/angular.overview';
 
 @Injectable({
   providedIn: 'root',
@@ -16,24 +18,24 @@ export class NavigationServiceCore extends NavigationService {
   }
 
   hasList(obj: IObject): boolean {
-    const list = obj?.strategy.cls._.list;
+    const list = obj ? angularList(obj.strategy.cls) : null;
     return list != null;
   }
 
   list(objectType: Composite) {
-    const url = objectType._.list;
+    const url = angularList(objectType);
     if (url != null) {
       this.router.navigate([url]);
     }
   }
 
   hasOverview(obj: IObject): boolean {
-    const overview = obj?.strategy.cls._.overview;
+    const overview = obj ? angularOverview(obj.strategy.cls) : null;
     return overview != null;
   }
 
   overview(object: IObject) {
-    const overview = object?.strategy.cls._.overview;
+    const overview = object ? angularOverview(object.strategy.cls) : null;
     const url = overview?.replace(`:id`, object.strategy.id.toString());
     if (url != null) {
       this.router.navigate([url]);

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductType } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -69,7 +69,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.ProductType._.filter ??= new Filter(m.ProductType._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.ProductType);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -92,7 +92,7 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
           const pulls = [
             pull.ProductType({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.ProductType._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.ProductType)?.create(sort) : null,
               include: {
                 SerialisedItemCharacteristicTypes: x,
               },

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { NonUnifiedGood, Good, ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -66,7 +66,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.Good._.filter ??= new Filter(m.Good._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Good);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -77,7 +77,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Good._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Good)?.create(sort) : null,
               include: {
                 NonUnifiedGood_Part: x,
                 ProductIdentifications: {
@@ -90,7 +90,7 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
             }),
             pull.Good({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Good._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Good)?.create(sort) : null,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {

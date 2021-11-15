@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -68,7 +68,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = m.UnifiedGood._.filter ??= new Filter(m.UnifiedGood._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.UnifiedGood);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -91,7 +91,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
           const pulls = [
             pull.UnifiedGood({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.UnifiedGood._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.UnifiedGood)?.create(sort) : null,
               include: {
                 Photos: {},
                 PrimaryPhoto: {},
@@ -105,7 +105,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
             }),
             pull.UnifiedGood({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.UnifiedGood._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.UnifiedGood)?.create(sort) : null,
               select: {
                 ProductCategoriesWhereProduct: {
                   include: {

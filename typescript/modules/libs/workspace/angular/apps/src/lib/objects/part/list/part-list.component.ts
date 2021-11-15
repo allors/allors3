@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentificationType, Part } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -71,7 +71,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.Part._.filter ??= new Filter(m.Part._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Part);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -94,7 +94,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
           const pulls = [
             pull.Part({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.Part._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Part)?.create(sort) : null,
               include: {
                 Brand: x,
                 Model: x,

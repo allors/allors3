@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, SalesInvoice, Disbursement, Receipt, PaymentApplication } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -180,7 +180,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.SalesInvoice._.filter ??= new Filter(m.SalesInvoice._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.SalesInvoice);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesInvoice.BilledFrom };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -212,7 +212,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
             }),
             pull.SalesInvoice({
               predicate,
-              sorting: sort ? m.SalesInvoice._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.SalesInvoice)?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

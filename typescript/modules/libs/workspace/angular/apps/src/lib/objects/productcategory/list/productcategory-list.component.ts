@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductCategory } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -81,7 +81,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.ProductCategory._.filter ??= new Filter(m.ProductCategory._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.ProductCategory);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.ProductCategory.InternalOrganisation };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -109,7 +109,7 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
           const pulls = [
             pull.ProductCategory({
               predicate: predicate,
-              sorting: sort ? m.ProductCategory._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.ProductCategory)?.create(sort) : null,
               include: {
                 CategoryImage: x,
                 LocalisedNames: x,

@@ -2,14 +2,19 @@ import { IObject, IRule } from '@allors/workspace/domain/system';
 import { Class, RoleType } from '@allors/workspace/meta/system';
 
 export interface DerivationsRuleByClassExtension {
-  rule?: IRule<IObject>;
   ruleByClass?: Map<Class, IRule<IObject>>;
 }
 
-export function derivationRuleByClass(meta: RoleType, ruleByClass?: Map<Class, IRule<IObject>>) {
-  if (ruleByClass == null) {
-    return (meta._ as DerivationsRuleByClassExtension).ruleByClass;
+export function derivationRuleByClass(roleType: RoleType): Map<Class, IRule<IObject>>;
+export function derivationRuleByClass(roleType: RoleType, ruleByClass?: Map<Class, IRule<IObject>>): void;
+export function derivationRuleByClass(roleType: RoleType, ruleByClass?: Map<Class, IRule<IObject>>): void | Map<Class, IRule<IObject>> {
+  if(roleType == null){
+    return;
   }
 
-  (meta._ as DerivationsRuleByClassExtension).ruleByClass = ruleByClass;
+  if (ruleByClass == null) {
+    return (roleType._ as DerivationsRuleByClassExtension).ruleByClass;
+  }
+
+  (roleType._ as DerivationsRuleByClassExtension).ruleByClass = ruleByClass;
 }

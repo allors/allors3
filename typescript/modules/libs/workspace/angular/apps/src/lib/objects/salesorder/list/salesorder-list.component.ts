@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, SalesOrder } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -92,7 +92,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.SalesOrder._.filter ??= new Filter(m.SalesOrder._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.SalesOrder);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesOrder.TakenBy };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -124,7 +124,7 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
             }),
             pull.SalesOrder({
               predicate,
-              sorting: sort ? m.SalesOrder._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.SalesOrder)?.create(sort) : null,
               include: {
                 PrintDocument: {
                   Media: x,

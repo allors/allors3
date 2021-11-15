@@ -8,7 +8,6 @@ import { PanelService, RefreshService, SaveService, TestScope, SingletonId } fro
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { PartyPreferredCurrency } from '../../../../../../../../meta/custom/src/lib/generated/m.g';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -99,7 +98,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
                 LegalForm: x,
                 IndustryClassifications: x,
                 CustomClassifications: x,
-                PartyPreferredCurrency: x,
+                PreferredCurrency: x,
                 LogoImage: x,
               },
             }),

@@ -7,7 +7,7 @@ import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, Receipt, PaymentApplication, PurchaseInvoice, Disbursement, InternalOrganisation } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, ActionTarget, AllorsMaterialDialogService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And, Equals } from '@allors/workspace/domain/system';
 
@@ -176,7 +176,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.PurchaseInvoice._.filter ??= new Filter(m.PurchaseInvoice._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.PurchaseInvoice);
 
     const internalOrganisationPredicate : Equals = { kind: 'Equals', propertyType: m.PurchaseInvoice.BilledTo };
 
@@ -209,7 +209,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
             }),
             pull.PurchaseInvoice({
               predicate,
-              sorting: sort ? m.PurchaseInvoice._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.PurchaseInvoice)?.create(sort) : null,
               include: {
                 BilledFrom: x,
                 BilledTo: x,

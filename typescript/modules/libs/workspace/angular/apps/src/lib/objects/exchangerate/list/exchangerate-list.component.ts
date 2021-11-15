@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { ExchangeRate } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -75,7 +75,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.ExchangeRate._.filter ??= new Filter(m.ExchangeRate._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.ExchangeRate);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -98,7 +98,7 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
           const pulls = [
             pull.ExchangeRate({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.ExchangeRate._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.ExchangeRate)?.create(sort) : null,
               include: {
                 FromCurrency: x,
                 ToCurrency: x,

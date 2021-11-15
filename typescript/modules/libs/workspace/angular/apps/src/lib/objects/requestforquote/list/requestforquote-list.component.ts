@@ -6,7 +6,7 @@ import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Request, Person, Organisation, InternalOrganisation } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -81,7 +81,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.RequestForQuote._.filter ??= new Filter(m.RequestForQuote._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.RequestForQuote);
 
     const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Request.Recipient };
     const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
@@ -113,7 +113,7 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
             }),
             pull.Request({
               predicate,
-              sorting: sort ? m.RequestForQuote._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.RequestForQuote)?.create(sort) : null,
               include: {
                 Originator: x,
                 RequestState: x,

@@ -6,7 +6,8 @@ import { IObject } from '@allors/workspace/domain/system';
 import { ObjectData } from '../../services/object/object.data';
 import { ObjectService } from '../../services/object/object.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-
+import { angularIcon } from '../../../meta/angular.icon';
+import { angularDisplayName } from '../../../meta/angular.display.name';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -48,7 +49,11 @@ export class FactoryFabComponent implements OnInit {
     });
   }
 
+  icon(cls: Class): string {
+    return angularIcon(cls);
+  }
+
   displayName(cls: Class): string {
-    return cls._.displayName ?? humanize(cls.singularName);
+    return angularDisplayName(cls) ?? humanize(cls.singularName);
   }
 }

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItemCharacteristicType } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -74,7 +74,7 @@ export class SerialisedItemCharacteristicListComponent extends TestScope impleme
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.SerialisedItemCharacteristic._.filter ??= new Filter(m.SerialisedItemCharacteristic._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.SerialisedItemCharacteristic);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -97,7 +97,7 @@ export class SerialisedItemCharacteristicListComponent extends TestScope impleme
           const pulls = [
             pull.SerialisedItemCharacteristicType({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.SerialisedItemCharacteristic._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.SerialisedItemCharacteristic)?.create(sort) : null,
               include: {
                 UnitOfMeasure: x,
               },

@@ -338,6 +338,7 @@ import { ErrorComponent } from './error/error.component';
 import { configure } from './configure';
 import { AppsContext } from '../allors/apps-context';
 import { Configuration } from '@allors/workspace/domain/system';
+import { applyRules } from '@allors/workspace/derivations/system';
 
 export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, internalOrganisationId: InternalOrganisationId) {
   return async () => {
@@ -963,7 +964,3 @@ export const edit = {
   ],
 })
 export class AppModule {}
-function applyRules(m: M, rules: import("@allors/workspace/domain/system").IRule<import("@allors/workspace/domain/system").IObject>[]) {
-  throw new Error('Function not implemented.');
-}
-

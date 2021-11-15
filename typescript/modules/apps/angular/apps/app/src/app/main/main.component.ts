@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { ContextService } from '@allors/workspace/angular/core';
 import { Organisation } from '@allors/workspace/domain/default';
-import { AllorsMaterialSideNavService, SideMenuItem } from '@allors/workspace/angular/base';
+import { AllorsMaterialSideNavService, angularDisplayName, angularIcon, angularList, angularMenu, SideMenuItem } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
@@ -31,21 +31,21 @@ export class MainComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const { context } = this.allors;
     const m = context.configuration.metaPopulation as M;
-    m._.menu.forEach((menuItem) => {
+    angularMenu(m).forEach((menuItem) => {
       const objectType = menuItem.objectType;
 
       const sideMenuItem: SideMenuItem = {
-        icon: menuItem.icon ?? objectType?._.icon,
-        title: menuItem.title ?? objectType?._.displayName ?? objectType?.pluralName,
-        link: menuItem.link ?? objectType?._.list,
+        icon: menuItem.icon ?? angularIcon(objectType),
+        title: menuItem.title ?? angularDisplayName(objectType) ?? objectType?.pluralName,
+        link: menuItem.link ?? angularList(objectType),
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
             const childObjectType = childMenuItem.objectType;
             return {
-              icon: childMenuItem.icon ?? childObjectType?._.icon,
-              title: childMenuItem.title ?? childObjectType?._.displayName ?? childObjectType?.pluralName,
-              link: childMenuItem.link ?? childObjectType?._.list,
+              icon: childMenuItem.icon ?? angularIcon(childObjectType),
+              title: childMenuItem.title ?? angularDisplayName(childObjectType) ?? childObjectType?.pluralName,
+              link: childMenuItem.link ?? angularList(childObjectType),
             };
           }),
       };

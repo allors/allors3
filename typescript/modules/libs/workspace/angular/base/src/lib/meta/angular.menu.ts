@@ -5,7 +5,13 @@ interface AngularMenuExtension {
   menu?: MenuItem[];
 }
 
-export function angularMenu(metaPopulation: MetaPopulation, menu?: MenuItem[]) {
+export function angularMenu(metaPopulation: MetaPopulation): MenuItem[];
+export function angularMenu(metaPopulation: MetaPopulation, menu: MenuItem[]): void;
+export function angularMenu(metaPopulation: MetaPopulation, menu?: MenuItem[]): MenuItem[] | void {
+  if (metaPopulation == null) {
+    return;
+  }
+
   if (menu == null) {
     return (metaPopulation._ as AngularMenuExtension).menu;
   }

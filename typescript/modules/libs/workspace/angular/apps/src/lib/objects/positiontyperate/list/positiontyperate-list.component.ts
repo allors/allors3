@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { PositionTypeRate, PositionType } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -77,7 +77,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.PositionTypeRate._.filter ??= new Filter(m.PositionTypeRate._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.PositionTypeRate);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -100,7 +100,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
           const pulls = [
             pull.PositionTypeRate({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? m.PositionTypeRate._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.PositionTypeRate)?.create(sort) : null,
               include: {
                 Frequency: x,
                 RateType: x,

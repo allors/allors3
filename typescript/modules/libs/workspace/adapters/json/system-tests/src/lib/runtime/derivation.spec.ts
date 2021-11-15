@@ -5,6 +5,7 @@ import "@allors/workspace/derivations/system"
 
 import { Fixture } from '../fixture';
 import '../matchers';
+import { derivationRules } from '@allors/workspace/derivations/system';
 
 let fixture: Fixture;
 
@@ -17,7 +18,7 @@ test('personDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const rules = m._.rules.filter((v) => v instanceof PersonDisplayNameRule);
+  const rules = derivationRules(m).filter((v) => v instanceof PersonDisplayNameRule);
   session.activate(rules);
 
   const pull: Pull = {
@@ -63,7 +64,7 @@ test('personDisplayNameNotActivated', async () => {
 test('organisationDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
-  const rules = m._.rules.filter((v) => v instanceof OrganisationDisplayNameRule);
+  const rules = derivationRules(m).filter((v) => v instanceof OrganisationDisplayNameRule);
   session.activate(rules);
 
   const pull: Pull = {

@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Shipment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, Sorter } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, Sorter, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -87,7 +87,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = m.Shipment._.filter ??= new Filter(m.Shipment._.filterDefinition);
+    this.filter = angularFilterFromDefinition(m.Shipment);
 
     const fromInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipFromParty };
     const toInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipToParty };
@@ -118,7 +118,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
           const pulls = [
             pull.Shipment({
               predicate,
-              sorting: sort ? m.Shipment._.sorter?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Shipment)?.create(sort) : null,
               include: {
                 ShipToParty: x,
                 ShipFromParty: x,
