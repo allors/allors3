@@ -78,25 +78,9 @@ namespace Allors.Database.Protocol.Json
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            void Prefetch(IEnumerable<IObject> objects)
-            {
-                // Prefetch
-                foreach (var groupBy in objects.GroupBy(v => v.Strategy.Class, v => v))
-                {
-                    var prefetchClass = groupBy.Key;
-                    var prefetchObjects = groupBy;
-
-                    var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                    prefetchPolicyBuilder.WithSecurityRules((Class)prefetchClass, this.M);
-
-                    var prefetcher = prefetchPolicyBuilder.Build();
-
-                    this.Transaction.Prefetch(prefetcher, prefetchObjects);
-                }
-            }
-
+            var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
             var dependencies = this.ToDependencies(pullRequest.d);
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, Prefetch);
+            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, pullResponsePrefetcher);
             return response.Build(pullRequest);
         }
 
@@ -145,25 +129,10 @@ namespace Allors.Database.Protocol.Json
         // TODO: Delete
         public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
         {
-            void Prefetch(IEnumerable<IObject> objects)
-            {
-                // Prefetch
-                foreach (var groupBy in objects.GroupBy(v => v.Strategy.Class, v => v))
-                {
-                    var prefetchClass = groupBy.Key;
-                    var prefetchObjects = groupBy;
-
-                    var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                    prefetchPolicyBuilder.WithSecurityRules((Class)prefetchClass, this.M);
-
-                    var prefetcher = prefetchPolicyBuilder.Build();
-
-                    this.Transaction.Prefetch(prefetcher, prefetchObjects);
-                }
-            }
 
             // TODO: Dependencies
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, Prefetch);
+            var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
+            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, pullResponsePrefetcher);
         }
 
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)

@@ -9,6 +9,7 @@ namespace Allors.Database.Protocol.Json
     using System.Collections.Generic;
     using System.Linq;
     using Data;
+    using Meta;
     using Security;
     using Services;
 
@@ -84,11 +85,11 @@ namespace Allors.Database.Protocol.Json
                                 paged = paged.ToArray();
 
                                 response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
-                                response.AddCollection(name, paged, include);
+                                response.AddCollection(name, (IComposite)select.GetObjectType(), paged, include);
                             }
                             else
                             {
-                                response.AddCollection(name, objects, include);
+                                response.AddCollection(name, (IComposite)select.GetObjectType(), objects, include);
                             }
                         }
                         else
@@ -107,11 +108,11 @@ namespace Allors.Database.Protocol.Json
                                 paged = paged.ToArray();
 
                                 response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
-                                response.AddCollection(name, paged, include);
+                                response.AddCollection(name, extent.ObjectType, paged, include);
                             }
                             else
                             {
-                                response.AddCollection(name, objects, include);
+                                response.AddCollection(name, extent.ObjectType, objects, include);
                             }
                         }
                     }
@@ -124,7 +125,7 @@ namespace Allors.Database.Protocol.Json
             else
             {
                 var name = extent.ObjectType.PluralName;
-                response.AddCollection(name, objects);
+                response.AddCollection(name, extent.ObjectType, objects);
             }
         }
     }

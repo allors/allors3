@@ -9,12 +9,10 @@ namespace Allors.Database.Protocol.Json
     using System;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Services;
-    using Data;
     using Domain;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NLog;
-    using Services;
 
     [ApiController]
     [Route("allors/pull")]
@@ -28,8 +26,6 @@ namespace Allors.Database.Protocol.Json
 
             var scope = this.DatabaseService.Database.Services;
 
-            this.ExtentService = scope.Get<IPreparedExtents>();
-            this.PreparedSelects = scope.Get<IPreparedSelects>();
             this.TreeCache = scope.Get<ITreeCache>();
         }
 
@@ -37,9 +33,6 @@ namespace Allors.Database.Protocol.Json
 
         public IWorkspaceService WorkspaceService { get; }
 
-        private IPreparedExtents ExtentService { get; }
-
-        private IPreparedSelects PreparedSelects { get; }
 
         public Logger Logger => LogManager.GetCurrentClassLogger();
 

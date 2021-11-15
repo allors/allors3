@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Protocol.Json;
@@ -30,9 +29,9 @@ namespace Allors.Database.Protocol.Json
         private readonly HashSet<IObject> objects;
 
         private List<IValidation> errors;
-        private readonly Action<IEnumerable<IObject>> prefetch;
+        private readonly IPullPrefetchers prefetchers;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies, Action<IEnumerable<IObject>> prefetch)
+        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies, IPullPrefetchers prefetchers)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;
@@ -44,7 +43,7 @@ namespace Allors.Database.Protocol.Json
             this.PreparedSelects = preparedSelects;
             this.PreparedExtents = preparedExtents;
 
-            this.prefetch = prefetch;
+            this.prefetchers = prefetchers;
 
             this.objects = new HashSet<IObject>();
         }
@@ -65,31 +64,18 @@ namespace Allors.Database.Protocol.Json
             this.errors.Add(validation);
         }
 
-        public void AddCollection(string name, in IEnumerable<IObject> collection)
-        {
-            switch (collection)
-            {
-                case ICollection<IObject> asCollection:
-                    this.AddCollectionInternal(name, asCollection, null);
-                    break;
-                default:
-                    this.AddCollectionInternal(name, collection.ToArray(), null);
-                    break;
-            }
-        }
+        public void AddCollection(string name, IComposite objectType, in ICollection<IObject> collection) => this.AddCollectionInternal(name, objectType, collection, null);
 
-        public void AddCollection(string name, in ICollection<IObject> collection) => this.AddCollectionInternal(name, collection, null);
-
-        public void AddCollection(string name, in IEnumerable<IObject> collection, Node[] tree)
+        public void AddCollection(string name, IComposite objectType, in IEnumerable<IObject> collection, Node[] tree)
         {
             switch (collection)
             {
                 case ICollection<IObject> list:
-                    this.AddCollectionInternal(name, list, tree);
+                    this.AddCollectionInternal(name, objectType, list, tree);
                     break;
                 default:
                 {
-                    this.AddCollectionInternal(name, collection.ToArray(), tree);
+                    this.AddCollectionInternal(name, objectType, collection.ToArray(), tree);
                     break;
                 }
             }
@@ -111,14 +97,9 @@ namespace Allors.Database.Protocol.Json
         {
             if (@object != null && this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
             {
-                if (tree != null)
-                {
-                    // TODO: include dependencies
-                    // Prefetch
-                    var transaction = @object.Strategy.Transaction;
-                    var prefetcher = tree.BuildPrefetchPolicy();
-                    transaction.Prefetch(prefetcher, @object);
-                }
+                var prefetchPolicy = this.prefetchers.ForInclude(@object.Strategy.Class, tree);
+                var transaction = @object.Strategy.Transaction;
+                transaction.Prefetch(prefetchPolicy, @object);
 
                 this.objects.Add(@object);
                 this.objectByName[name] = @object;
@@ -126,18 +107,17 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        private void AddCollectionInternal(string name, in ICollection<IObject> collection, Node[] tree)
+        private void AddCollectionInternal(string name, IComposite objectType, in ICollection<IObject> collection, Node[] tree)
         {
             if (collection?.Count > 0)
             {
-                this.collectionsByName.TryGetValue(name, out var existingCollection);
+                var prefetchPolicy = this.prefetchers.ForInclude(objectType, tree);
 
-                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
+                this.collectionsByName.TryGetValue(name, out var existingCollection);
+                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class)).ToArray();
 
                 if (tree != null)
                 {
-                    var prefetchPolicy = tree.BuildPrefetchPolicy();
-
                     ICollection<IObject> newCollection;
 
                     if (existingCollection != null)
@@ -161,15 +141,20 @@ namespace Allors.Database.Protocol.Json
                         tree.Resolve(newObject, this.AccessControl, this.objects.Add);
                     }
                 }
-                else if (existingCollection != null)
-                {
-                    existingCollection.UnionWith(filteredCollection);
-                }
                 else
                 {
-                    var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
-                    this.collectionsByName.Add(name, newWorkspaceCollection);
-                    this.objects.UnionWith(newWorkspaceCollection);
+                    this.Transaction.Prefetch(prefetchPolicy, filteredCollection);
+
+                    if (existingCollection != null)
+                    {
+                        existingCollection.UnionWith(filteredCollection);
+                    }
+                    else
+                    {
+                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
+                        this.collectionsByName.Add(name, newWorkspaceCollection);
+                        this.objects.UnionWith(newWorkspaceCollection);
+                    }
                 }
             }
         }
@@ -246,8 +231,6 @@ namespace Allors.Database.Protocol.Json
             // Add dependencies
             this.AddDependencies();
 
-            this.prefetch(this.objects);
-
             // Serialize
             var grants = new HashSet<IGrant>();
             var revocations = new HashSet<IRevocation>();
@@ -301,15 +284,8 @@ namespace Allors.Database.Protocol.Json
 
                     if (this.dependencies.TryGetValue(@class, out var propertyTypes))
                     {
-                        var builder = new PrefetchPolicyBuilder();
-                        foreach (var propertyType in propertyTypes)
-                        {
-                            builder.WithRule(propertyType);
-                        }
-
-                        var policy = builder.Build();
-
-                        this.Transaction.Prefetch(policy, grouped);
+                        var prefetchPolicy = this.prefetchers.ForDependency(@class, propertyTypes);
+                        this.Transaction.Prefetch(prefetchPolicy, grouped);
 
                         foreach (var @object in grouped)
                         {

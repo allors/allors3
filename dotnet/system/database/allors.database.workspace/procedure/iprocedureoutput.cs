@@ -7,10 +7,11 @@ namespace Allors.Database
 {
     using System.Collections.Generic;
     using Data;
+    using Meta;
 
     public interface IProcedureOutput
     {
-        void AddCollection(string name, in IEnumerable<IObject> collection, Node[] tree = null);
+        void AddCollection(string name, IComposite objectType, in IEnumerable<IObject> collection, Node[] tree = null);
 
         void AddObject(string name, IObject @object, Node[] tree = null);
 

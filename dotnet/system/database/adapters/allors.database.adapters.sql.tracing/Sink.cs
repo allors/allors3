@@ -31,12 +31,13 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public void OnBefore(Event @event)
         {
+            var transactionSink = this.GetTransactionSink(@event);
+
             if (this.Breaker != null && this.Breaker(@event))
             {
                 Debugger.Break();
             }
 
-            var transactionSink = this.GetTransactionSink(@event);
             transactionSink.OnBefore(@event);
         }
 

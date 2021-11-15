@@ -9,7 +9,6 @@ namespace Allors.Database.Adapters.Sql.Tracing
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using System.Threading;
     using Meta;
 
     public sealed class Event
