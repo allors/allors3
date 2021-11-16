@@ -64,7 +64,7 @@ namespace Allors.Database.Protocol.Json
             this.errors.Add(validation);
         }
 
-        public void AddCollection(string name, IComposite objectType, in ICollection<IObject> collection) => this.AddCollectionInternal(name, objectType, collection, null);
+        public void AddCollection(string name, IComposite objectType, in IEnumerable<IObject> collection) => this.AddCollectionInternal(name, objectType, collection, null);
 
         public void AddCollection(string name, IComposite objectType, in IEnumerable<IObject> collection, Node[] tree)
         {
@@ -107,8 +107,10 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        private void AddCollectionInternal(string name, IComposite objectType, in ICollection<IObject> collection, Node[] tree)
+        private void AddCollectionInternal(string name, IComposite objectType, in IEnumerable<IObject> enumerable, Node[] tree)
         {
+            var collection = enumerable as ICollection<IObject> ?? enumerable.ToArray();
+
             if (collection?.Count > 0)
             {
                 var prefetchPolicy = this.prefetchers.ForInclude(objectType, tree);

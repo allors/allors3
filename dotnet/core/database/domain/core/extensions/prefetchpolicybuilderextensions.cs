@@ -7,21 +7,23 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
-    using Data;
+    using Database.Data;
     using Meta;
 
     public static class PrefetchPolicyBuilderExtensions
     {
-        public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class)
+        public static PrefetchPolicyBuilder WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class)
         {
             // TODO: Cache
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0))
             {
                 @this.WithRule(roleType);
             }
+
+            return @this;
         }
 
-        public static void WithSecurityRules(this PrefetchPolicyBuilder @this, IComposite composite, MetaPopulation m)
+        public static PrefetchPolicyBuilder WithSecurityRules(this PrefetchPolicyBuilder @this, IComposite composite, MetaPopulation m)
         {
             // TODO: Cache
 
@@ -49,17 +51,21 @@ namespace Allors.Database.Domain
 
             @this.WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy);
             @this.WithRule(m.Object.Revocations);
+
+            return @this;
         }
 
-        public static void WithNodes(this PrefetchPolicyBuilder @this, Node[] treeNodes, MetaPopulation m)
+        public static PrefetchPolicyBuilder WithNodes(this PrefetchPolicyBuilder @this, Node[] treeNodes, MetaPopulation m)
         {
             foreach (var node in treeNodes)
             {
                 @this.WithNode(node, m);
             }
+
+            return @this;
         }
 
-        public static void WithNode(this PrefetchPolicyBuilder @this, Node treeNode, MetaPopulation m)
+        public static PrefetchPolicyBuilder WithNode(this PrefetchPolicyBuilder @this, Node treeNode, MetaPopulation m)
         {
             if (treeNode.Nodes == null || treeNode.Nodes.Length == 0)
             {
@@ -80,7 +86,7 @@ namespace Allors.Database.Domain
                 @this.WithRule(treeNode.PropertyType, nestedPrefetchPolicy);
             }
 
+            return @this;
         }
-
     }
 }

@@ -12,7 +12,7 @@ namespace Allors.Database.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Database;
     using Protocol.Json;
-    
+
 
     public class PeopleSheetController : Controller
     {
@@ -35,8 +35,8 @@ namespace Allors.Database.Server.Controllers
         {
             var api = new Api(this.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
-            var people = new People(this.Transaction).Extent().ToArray();
-            response.AddCollection("people", people);
+            var people = new People(this.Transaction);
+            response.AddCollection("people", people.ObjectType, people.Extent());
             return this.Ok(response.Build());
         }
     }

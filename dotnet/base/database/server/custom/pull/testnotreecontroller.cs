@@ -10,7 +10,7 @@ namespace Allors.Database.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Database;
     using Protocol.Json;
-    
+
 
     public class TestNoTreeController : Controller
     {
@@ -34,7 +34,8 @@ namespace Allors.Database.Server.Controllers
             var response = api.CreatePullResponseBuilder();
 
             response.AddObject("object", api.User);
-            response.AddCollection("collection", new Organisations(this.Transaction).Extent());
+            var organisations = new Organisations(this.Transaction);
+            response.AddCollection("collection", organisations.ObjectType, organisations.Extent());
             return this.Ok(response.Build());
         }
     }
