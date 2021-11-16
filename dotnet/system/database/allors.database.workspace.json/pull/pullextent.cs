@@ -85,11 +85,11 @@ namespace Allors.Database.Protocol.Json
                                 paged = paged.ToArray();
 
                                 response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
-                                response.AddCollection(name, (IComposite)select.GetObjectType(), paged, include);
+                                response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, paged, include);
                             }
                             else
                             {
-                                response.AddCollection(name, (IComposite)select.GetObjectType(), objects, include);
+                                response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, objects, include);
                             }
                         }
                         else

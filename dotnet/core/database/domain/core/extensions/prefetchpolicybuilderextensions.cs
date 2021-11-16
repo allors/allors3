@@ -71,8 +71,13 @@ namespace Allors.Database.Domain
             {
                 @this.WithRule(treeNode.PropertyType);
 
-                var @class = ((Composite)treeNode.PropertyType.ObjectType).Classes.FirstOrDefault() as Class;
-                @this.WithSecurityRules(@class, m);
+                if (treeNode.PropertyType.ObjectType is Composite composite)
+                {
+                    foreach (var @class in composite.Classes)
+                    {
+                        @this.WithSecurityRules(@class, m);
+                    }
+                }
             }
             else
             {

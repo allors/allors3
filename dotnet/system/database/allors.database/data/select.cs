@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Data
 {
-    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Text;
@@ -103,8 +102,7 @@ namespace Allors.Database.Data
                 }
             }
         }
-
-
+        
         public IObjectType GetObjectType()
         {
             if (this.ExistNext)
@@ -112,7 +110,7 @@ namespace Allors.Database.Data
                 return this.Next.GetObjectType();
             }
 
-            return this.PropertyType.ObjectType;
+            return this.PropertyType?.ObjectType;
         }
 
         public override string ToString()

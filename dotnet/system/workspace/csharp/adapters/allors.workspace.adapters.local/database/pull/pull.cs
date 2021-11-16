@@ -149,14 +149,12 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (pull.Object != null)
                 {
-                    var pullInstantiate =
-                        new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
+                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
                     pullInstantiate.Execute(this);
                 }
                 else
                 {
-                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects,
-                        this.PreparedExtents);
+                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents);
                     pullExtent.Execute(this);
                 }
             }
