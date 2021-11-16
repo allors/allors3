@@ -43,8 +43,10 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
   ) {
     super();
 
-    this.canSave = true;
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
+
+    this.canSave = true;
   }
 
   public canCreate(createData: ObjectData) {

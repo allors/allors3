@@ -105,6 +105,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
@@ -234,7 +235,7 @@ export class SalesInvoiceOverviewDetailComponent extends TestScope implements On
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);

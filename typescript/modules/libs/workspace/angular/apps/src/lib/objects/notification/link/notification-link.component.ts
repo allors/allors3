@@ -35,6 +35,7 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
   }
 
   constructor(@Self() public allors: ContextService, public factoryService: ObjectService, public refreshService: RefreshService, public navigation: NavigationService, private userId: UserId) {
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

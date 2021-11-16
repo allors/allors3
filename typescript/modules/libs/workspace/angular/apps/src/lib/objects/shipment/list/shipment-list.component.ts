@@ -55,6 +55,7 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
 
     titleService.setTitle(this.title);
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete(allors.context);

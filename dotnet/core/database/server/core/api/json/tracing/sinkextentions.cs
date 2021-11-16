@@ -13,12 +13,12 @@ namespace Allors.Database.Protocol.Json
 
     public static class SinkExtensions
     {
-        public static InvokeEvent OnInvoke(this ISink @this, ITransaction transaction, InvokeRequest invokeRequest) => @this != null ? new InvokeEvent(@this, transaction) { InvokeRequest = invokeRequest } : null;
+        public static InvokeEvent OnInvoke(this ISink @this, ITransaction transaction, InvokeRequest invokeRequest) => @this != null ? new InvokeEvent(transaction) { InvokeRequest = invokeRequest } : null;
 
-        public static PullEvent OnPull(this ISink @this, ITransaction transaction, PullRequest pullRequest) => @this != null ? new PullEvent(@this, transaction) { PullRequest = pullRequest } : null;
+        public static PullEvent OnPull(this ISink @this, ITransaction transaction, PullRequest pullRequest) => @this != null ? new PullEvent(transaction) { PullRequest = pullRequest } : null;
 
-        public static PushEvent OnPush(this ISink @this, ITransaction transaction, PushRequest pushRequest) => @this != null ? new PushEvent(@this, transaction) { PushRequest = pushRequest } : null;
+        public static PushEvent OnPush(this ISink @this, ITransaction transaction, PushRequest pushRequest) => @this != null ? new PushEvent(transaction) { PushRequest = pushRequest } : null;
 
-        public static SyncEvent OnSync(this ISink @this, ITransaction transaction, SyncRequest syncRequest) => @this != null ? new SyncEvent(@this, transaction) { SyncRequest = syncRequest } : null;
+        public static SyncEvent OnSync(this ISink @this, ITransaction transaction, SyncRequest syncRequest) => @this != null ? new SyncEvent(transaction) { SyncRequest = syncRequest } : null;
     }
 }

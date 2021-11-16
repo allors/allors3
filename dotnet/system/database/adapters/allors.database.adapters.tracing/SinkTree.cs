@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql.Tracing
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using Database.Tracing;
 
     public class SinkTree
@@ -48,6 +49,11 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public void OnAfter(IEvent @event)
         {
+            if (this.stack.Count == 0)
+            {
+                Debugger.Break();
+            }
+
             var top = this.stack.Pop();
             if (top.Event != @event)
             {

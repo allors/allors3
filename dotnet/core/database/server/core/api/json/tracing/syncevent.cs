@@ -5,18 +5,12 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Text;
     using Allors.Protocol.Json.Api.Sync;
-    using Tracing;
 
-    public class SyncEvent : Event, IDisposable
+    public class SyncEvent : Event
     {
-        public SyncEvent(ISink sink, ITransaction transaction) : base(transaction) => this.Sink = sink;
-
-        public void Dispose() => this.Sink.OnAfter(this);
-
-        public ISink Sink { get; }
+        public SyncEvent(ITransaction transaction) : base(transaction) { }
 
         public SyncRequest SyncRequest { get; set; }
 

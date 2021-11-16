@@ -41,8 +41,6 @@ namespace Tests
 
             var tree = sink.TreeByTransaction[this.Transaction];
 
-            tree.Clear();
-
             //sink.Breaker = v =>
             //{
             //    return v.Kind == EventKind.CommandsInstantiateObject;
@@ -57,11 +55,15 @@ namespace Tests
             };
 
             var api = new Api(this.Transaction, "Default");
+
+            tree.Clear();
             var pullResponse = api.Pull(pullRequest);
 
-            Assert.Single(tree.Nodes.Where(v => v.Event is SqlInstantiateObjectEvent));
-            Assert.Equal(2, tree.Nodes.Count(v => v.Event is SqlInstantiateReferencesEvent));
-            Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
+            var nodes = tree.Nodes[0].Nodes;
+
+            Assert.Single(nodes.Where(v => v.Event is SqlInstantiateObjectEvent));
+            Assert.Equal(1, nodes.Count(v => v.Event is SqlInstantiateReferencesEvent));
+            Assert.All(nodes, v => Assert.Empty(v.Nodes));
 
             this.Transaction.Rollback();
 
@@ -69,10 +71,12 @@ namespace Tests
 
             pullResponse = api.Pull(pullRequest);
 
-            Assert.Single(tree.Nodes.Where(v => v.Event is SqlGetVersionsEvent));
-            Assert.Empty(tree.Nodes.Where(v => v.Event is SqlInstantiateObjectEvent));
-            Assert.Empty(tree.Nodes.Where(v => v.Event is SqlInstantiateReferencesEvent));
-            Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
+            nodes = tree.Nodes[0].Nodes;
+
+            Assert.Single(nodes.Where(v => v.Event is SqlGetVersionsEvent));
+            Assert.Empty(nodes.Where(v => v.Event is SqlInstantiateObjectEvent));
+            Assert.Empty(nodes.Where(v => v.Event is SqlInstantiateReferencesEvent));
+            Assert.All(nodes, v => Assert.Empty(v.Nodes));
         }
 
         [Fact]
@@ -118,8 +122,16 @@ namespace Tests
             tree.Clear();
             pullResponse = api.Pull(pullRequest);
 
-            Assert.All(tree.Nodes, v => Assert.StartsWith("SqlPrefetch", v.Event.GetType().Name));
-            Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
+            Assert.Single(tree.Nodes);
+
+            var pullEventNode = tree.Nodes[0];
+
+            Assert.True(pullEventNode.Event is PullEvent);
+
+            var nodes = pullEventNode.Nodes;
+
+            Assert.All(nodes, v => Assert.StartsWith("SqlPrefetch", v.Event.GetType().Name));
+            Assert.All(nodes, v => Assert.Empty(v.Nodes));
 
             this.Transaction.Rollback();
             tree.Clear();
@@ -130,8 +142,6 @@ namespace Tests
             //};
 
             pullResponse = api.Pull(pullRequest);
-
-            Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
         }
 
         [Fact]
@@ -161,8 +171,14 @@ namespace Tests
             tree.Clear();
             syncResponse = api.Sync(syncRequest);
 
-            Assert.All(tree.Nodes, v => Assert.StartsWith("SqlPrefetch", v.Event.GetType().Name));
-            Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
+            var syncEventNode = tree.Nodes[0];
+
+            Assert.True(syncEventNode.Event is SyncEvent);
+
+            var nodes = syncEventNode.Nodes;
+
+            Assert.All(nodes, v => Assert.StartsWith("SqlPrefetch", v.Event.GetType().Name));
+            Assert.All(nodes, v => Assert.Empty(v.Nodes));
         }
 
         private void Populate()

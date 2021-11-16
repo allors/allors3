@@ -25,6 +25,7 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
   m: M;
 
   constructor(
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
@@ -36,6 +37,7 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -87,7 +89,7 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.pull( pulls);
+          return this.panelManager.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {

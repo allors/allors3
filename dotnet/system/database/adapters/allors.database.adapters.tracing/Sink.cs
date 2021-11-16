@@ -32,6 +32,8 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public void OnBefore(IEvent @event)
         {
+            @event.Start();
+
             var transactionSink = this.GetTransactionSink(@event);
 
             if (this.Breaker != null && this.Breaker(@event))

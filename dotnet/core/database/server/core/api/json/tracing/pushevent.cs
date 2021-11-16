@@ -5,18 +5,12 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Text;
     using Allors.Protocol.Json.Api.Push;
-    using Tracing;
 
-    public class PushEvent : Event, IDisposable
+    public class PushEvent : Event
     {
-        public PushEvent(ISink sink, ITransaction transaction) : base(transaction) => this.Sink = sink;
-
-        public void Dispose() => this.Sink.OnAfter(this);
-
-        public ISink Sink { get; }
+        public PushEvent(ITransaction transaction) : base(transaction) { }
 
         public PushRequest PushRequest { get; set; }
 

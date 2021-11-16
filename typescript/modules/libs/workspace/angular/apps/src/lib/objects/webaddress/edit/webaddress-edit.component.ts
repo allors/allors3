@@ -33,6 +33,7 @@ export class WebAddressEditComponent extends TestScope implements OnInit, OnDest
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

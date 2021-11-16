@@ -11,19 +11,17 @@ namespace Allors.Database.Adapters.Tracing
 
     public abstract class Event : IEvent
     {
-        protected Event(ITransaction transaction)
-        {
-            this.Transaction = transaction;
-            this.Started = DateTime.Now;
-        }
+        protected Event(ITransaction transaction) => this.Transaction = transaction;
 
         public ITransaction Transaction { get; }
 
-        public DateTime Started { get; }
+        public DateTime Started { get; private set; }
 
         public DateTime Stopped { get; private set; }
 
         public TimeSpan Duration => this.Stopped - this.Started;
+
+        public void Start() => this.Started = DateTime.Now;
 
         public void Stop() => this.Stopped = DateTime.Now;
 

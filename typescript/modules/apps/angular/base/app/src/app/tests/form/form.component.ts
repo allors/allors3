@@ -50,6 +50,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.title = 'Form';
     this.titleService.setTitle(this.title);
 

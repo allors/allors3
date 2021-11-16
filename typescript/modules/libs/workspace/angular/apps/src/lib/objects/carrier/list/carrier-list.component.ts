@@ -42,6 +42,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;

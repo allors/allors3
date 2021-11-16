@@ -35,6 +35,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
   constructor(@Self() public allors: ContextService, private saveService: SaveService, private route: ActivatedRoute, public refreshService: RefreshService, private internalOrganisationId: InternalOrganisationId, titleService: Title) {
     titleService.setTitle(this.title);
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

@@ -5,18 +5,12 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Text;
     using Allors.Protocol.Json.Api.Invoke;
-    using Tracing;
 
-    public class InvokeEvent : Event, IDisposable
+    public class InvokeEvent : Event
     {
-        public InvokeEvent(ISink sink, ITransaction transaction) : base(transaction) => this.Sink = sink;
-
-        public void Dispose() => this.Sink.OnAfter(this);
-
-        public ISink Sink { get; }
+        public InvokeEvent(ITransaction transaction) : base(transaction) { }
 
         public InvokeRequest InvokeRequest { get; set; }
 

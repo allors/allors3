@@ -102,6 +102,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   ) {
     titleService.setTitle(this.title);
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print();

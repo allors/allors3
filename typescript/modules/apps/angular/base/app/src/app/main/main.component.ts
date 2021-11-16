@@ -26,7 +26,9 @@ export class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild('drawer', { static: true }) private sidenav: MatSidenav;
 
-  constructor(@Self() private allors: ContextService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {}
+  constructor(@Self() private allors: ContextService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {
+    this.allors.context.name = this.constructor.name;
+  }
 
   public ngOnInit(): void {
     const m = this.allors.context.configuration.metaPopulation as M;

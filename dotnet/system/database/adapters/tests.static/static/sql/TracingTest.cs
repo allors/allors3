@@ -60,7 +60,7 @@ namespace Allors.Database.Adapters.Sql
             var transactionSink = sink.TreeByTransaction[transaction];
 
             Assert.Equal(1, transactionSink.Nodes.Count);
-            Assert.Equal(typeof(SqlInstantiateObjectEvent), transactionSink.Nodes[0].GetType());
+            Assert.Equal(typeof(SqlInstantiateObjectEvent), transactionSink.Nodes[0].Event.GetType());
             Assert.Empty(transactionSink.Nodes[0].Nodes);
         }
 
@@ -88,9 +88,9 @@ namespace Allors.Database.Adapters.Sql
 
             var events = transactionSink.Nodes;
             Assert.Equal(2, events.Count);
-            Assert.Equal(typeof(SqlPrefetchCompositeRoleObjectTableEvent), events[0].GetType());
+            Assert.Equal(typeof(SqlPrefetchCompositeRoleObjectTableEvent), events[0].Event.GetType());
             Assert.Empty(events[0].Nodes);
-            Assert.Equal(typeof(SqlInstantiateReferencesEvent), events[1].GetType());
+            Assert.Equal(typeof(SqlInstantiateReferencesEvent), events[1].Event.GetType());
             Assert.Empty(events[1].Nodes);
 
             transactionSink.Clear();

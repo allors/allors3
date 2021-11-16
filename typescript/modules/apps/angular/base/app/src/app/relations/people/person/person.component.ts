@@ -26,6 +26,7 @@ export class PersonComponent extends TestScope implements OnInit, OnDestroy {
   constructor(@Self() private allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.title = 'Person';
     this.titleService.setTitle(this.title);
 

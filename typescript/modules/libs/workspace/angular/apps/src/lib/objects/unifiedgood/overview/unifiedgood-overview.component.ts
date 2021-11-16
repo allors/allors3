@@ -25,6 +25,7 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
   m: M;
 
   constructor(
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
@@ -36,6 +37,7 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;

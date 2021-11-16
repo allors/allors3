@@ -33,6 +33,7 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

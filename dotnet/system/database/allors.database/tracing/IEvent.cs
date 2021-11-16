@@ -17,6 +17,8 @@ namespace Allors.Database.Tracing
 
         public TimeSpan Duration { get; }
 
+        void Start();
+
         void Stop();
     }
 }

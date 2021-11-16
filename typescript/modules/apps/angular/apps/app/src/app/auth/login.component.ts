@@ -39,6 +39,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

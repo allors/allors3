@@ -24,6 +24,7 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
   m: M;
 
   constructor(
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
@@ -37,6 +38,7 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
 
     titleService.setTitle(this.title);
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

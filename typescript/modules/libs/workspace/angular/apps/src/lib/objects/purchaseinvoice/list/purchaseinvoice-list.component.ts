@@ -73,6 +73,7 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;

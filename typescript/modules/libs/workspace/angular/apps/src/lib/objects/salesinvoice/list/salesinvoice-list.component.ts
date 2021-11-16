@@ -75,7 +75,8 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     titleService: Title
   ) {
     super();
-
+    
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
     this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;

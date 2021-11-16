@@ -28,15 +28,10 @@ export class PositionTypeRateEditComponent extends TestScope implements OnInit, 
   positionTypes: PositionType[];
   originalPositionTypes: PositionType[];
 
-  constructor(
-    @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PositionTypeRateEditComponent>,
-    public refreshService: RefreshService,
-    private saveService: SaveService
-  ) {
+  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<PositionTypeRateEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

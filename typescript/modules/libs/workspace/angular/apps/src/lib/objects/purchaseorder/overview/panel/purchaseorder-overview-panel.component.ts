@@ -62,9 +62,11 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
+
     const m = this.m;
-    const { pullBuilder: pull, treeBuilder: tree } = m;
+    const { pullBuilder: pull } = m;
     const x = {};
 
     this.panel.name = 'purchaseorder';
@@ -124,7 +126,7 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     };
 
     this.panel.onPulled = (loaded) => {
-       this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+      this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders?.filter((v) => v.OrderedBy === this.internalOrganisation);
