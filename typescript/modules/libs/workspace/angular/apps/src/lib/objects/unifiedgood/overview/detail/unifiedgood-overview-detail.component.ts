@@ -48,7 +48,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   manufacturers: Organisation[];
   suppliers: Organisation[];
   currentSuppliers: Set<Organisation>;
-  activeSuppliers: Organisation[];
   selectedSuppliers: Organisation[];
   supplierOfferings: SupplierOffering[];
   brands: Brand[];

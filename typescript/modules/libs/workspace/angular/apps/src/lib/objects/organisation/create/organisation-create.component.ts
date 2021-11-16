@@ -8,7 +8,6 @@ import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Locale, Organisation, Currency, CustomOrganisationClassification, IndustryClassification, LegalForm, CustomerRelationship, SupplierRelationship, OrganisationRole } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, TestScope, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -37,8 +36,6 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
   private customerRole: OrganisationRole;
   private supplierRole: OrganisationRole;
   private manufacturerRole: OrganisationRole;
-  private isActiveCustomer: boolean;
-  private isActiveSupplier: boolean;
 
   private refresh$: BehaviorSubject<Date>;
   private subscription: Subscription;
@@ -87,7 +84,6 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
                 },
               },
             }),
-            pull.Organisation({ objectId: id }),
             pull.OrganisationRole({}),
             pull.Currency({
               predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
@@ -104,57 +100,17 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
             }),
           ];
 
-          if (id != null) {
-            pulls.push(
-              pull.CustomerRelationship({
-                predicate: {
-                  kind: 'And',
-                  operands: [
-                    { kind: 'Equals', propertyType: m.CustomerRelationship.Customer, value: id },
-                    { kind: 'Equals', propertyType: m.CustomerRelationship.InternalOrganisation, value: internalOrganisationId },
-                    {
-                      kind: 'Not',
-                      operand: { kind: 'Exists', propertyType: m.CustomerRelationship.ThroughDate },
-                    },
-                  ],
-                },
-              })
-            );
-
-            pulls.push(
-              pull.SupplierRelationship({
-                predicate: {
-                  kind: 'And',
-                  operands: [
-                    { kind: 'Equals', propertyType: m.SupplierRelationship.Supplier, value: id },
-                    { kind: 'Equals', propertyType: m.SupplierRelationship.InternalOrganisation, value: internalOrganisationId },
-                    {
-                      kind: 'Not',
-                      operand: { kind: 'Exists', propertyType: m.SupplierRelationship.ThroughDate },
-                    },
-                  ],
-                },
-              })
-            );
-          }
-
           return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.organisation = loaded.object<Organisation>(m.Organisation);
-         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
 
-        if (this.organisation) {
-          this.customerRelationship = loaded.collection<CustomerRelationship>(m.CustomerRelationship)[0];
-          this.supplierRelationship = loaded.collection<SupplierRelationship>(m.SupplierRelationship)[0];
-        } else {
-          this.organisation = this.allors.context.create<Organisation>(m.Organisation);
-          this.organisation.IsManufacturer = false;
-          this.organisation.IsInternalOrganisation = false;
-          this.organisation.CollectiveWorkEffortInvoice = false;
-          this.organisation.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
-        }
+        this.organisation = this.allors.context.create<Organisation>(m.Organisation);
+        this.organisation.IsManufacturer = false;
+        this.organisation.IsInternalOrganisation = false;
+        this.organisation.CollectiveWorkEffortInvoice = false;
+        this.organisation.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
 
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
@@ -168,19 +124,6 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
         this.selectableRoles.push(this.customerRole);
         this.selectableRoles.push(this.supplierRole);
 
-        if (this.internalOrganisation.ActiveCustomers.includes(this.organisation)) {
-          this.isActiveCustomer = true;
-          this.activeRoles.push(this.customerRole);
-        }
-
-        if (this.internalOrganisation.ActiveSuppliers.includes(this.organisation)) {
-          this.isActiveSupplier = true;
-          this.activeRoles.push(this.supplierRole);
-        }
-
-        if (this.organisation.IsManufacturer) {
-          this.activeRoles.push(this.manufacturerRole);
-        }
       });
   }
 
@@ -191,32 +134,16 @@ export class OrganisationCreateComponent extends TestScope implements OnInit, On
   }
 
   public save(): void {
-    if (this.activeRoles.indexOf(this.customerRole) > -1 && !this.isActiveCustomer) {
+    if (this.activeRoles.indexOf(this.customerRole) > -1) {
       const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
       customerRelationship.Customer = this.organisation;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
 
-    if (this.activeRoles.indexOf(this.customerRole) > -1 && this.customerRelationship) {
-      this.customerRelationship.ThroughDate = null;
-    }
-
-    if (this.activeRoles.indexOf(this.customerRole) === -1 && this.isActiveCustomer) {
-      this.customerRelationship.ThroughDate = new Date();
-    }
-
-    if (this.activeRoles.indexOf(this.supplierRole) > -1 && !this.isActiveSupplier) {
+    if (this.activeRoles.indexOf(this.supplierRole) > -1) {
       const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
       supplierRelationship.Supplier = this.organisation;
       supplierRelationship.InternalOrganisation = this.internalOrganisation;
-    }
-
-    if (this.activeRoles.indexOf(this.supplierRole) > -1 && this.supplierRelationship) {
-      this.supplierRelationship.ThroughDate = null;
-    }
-
-    if (this.activeRoles.indexOf(this.supplierRole) === -1 && this.isActiveSupplier) {
-      this.supplierRelationship.ThroughDate = new Date();
     }
 
     this.allors.context.push().subscribe(() => {

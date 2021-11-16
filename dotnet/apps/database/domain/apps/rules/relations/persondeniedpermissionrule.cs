@@ -75,6 +75,9 @@ namespace Allors.Database.Domain
             m.Person.AssociationPattern(v => v.PickListsWherePicker, m.Person),
             m.Person.AssociationPattern(v => v.PositionFulfillmentsWherePerson, m.Person),
             m.Person.AssociationPattern(v => v.ProfessionalAssignmentsWhereProfessional, m.Person),
+
+            m.Person.RolePattern(v => v.IsUser),
+            m.Person.RolePattern(v => v.UserEmail),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -84,14 +87,25 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Person>())
             {
-                var revocation = new Revocations(@this.Strategy.Transaction).PersonDeleteRevocation;
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PersonDeleteRevocation;
+                var resetPasswordRevocation = new Revocations(@this.Strategy.Transaction).PersonResetPasswordRevocation;
+
                 if (@this.IsDeletable)
                 {
-                    @this.RemoveRevocation(revocation);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddRevocation(revocation);
+                    @this.AddRevocation(deleteRevocation);
+                }
+
+                if (@this.IsUser && @this.ExistUserEmail)
+                {
+                    @this.RemoveRevocation(resetPasswordRevocation);
+                }
+                else
+                {
+                    @this.AddRevocation(resetPasswordRevocation);
                 }
             }
         }

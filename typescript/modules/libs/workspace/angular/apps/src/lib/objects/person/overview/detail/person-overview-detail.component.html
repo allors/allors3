@@ -39,6 +39,11 @@
         </div>
 
         <div class="row">
+          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.UserName"></a-mat-input>
+          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.UserEmail"></a-mat-input>
+        </div>
+
+        <div class="row">
           <a-mat-textarea class="col-md-12" [object]="person" [roleType]="m.Person.Comment"></a-mat-textarea>
           <a-mat-file class="col-md-12" [object]="person" [roleType]="m.Person.Picture" accept="image/*"></a-mat-file>
           <a-mat-slidetoggle class="col-md" [object]="person" [roleType]="m.Person.CollectiveWorkEffortInvoice"></a-mat-slidetoggle>

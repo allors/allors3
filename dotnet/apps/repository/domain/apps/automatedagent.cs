@@ -116,6 +116,8 @@ namespace Allors.Repository
 
         public string DisplayPhone { get; set; }
 
+        public bool IsUser { get; set; }
+
         #endregion
 
         #region Versioning
@@ -137,6 +139,7 @@ namespace Allors.Repository
         #endregion
 
         #region inherited methods
+        public void ResetPassword() { }
 
         #endregion
     }

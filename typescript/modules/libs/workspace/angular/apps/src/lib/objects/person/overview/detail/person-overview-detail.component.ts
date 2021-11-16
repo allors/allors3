@@ -1,13 +1,15 @@
 import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { switchMap, filter, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Currency, Enumeration, GenderType, InternalOrganisation, Locale, Organisation, Person, Salutation } from '@allors/workspace/domain/default';
+import { Currency, Enumeration, GenderType, InternalOrganisation, Locale, Person, Salutation, ContactMechanism, PartyContactMechanism, EmailAddress } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { ContactMechanismType, ElectronicAddressElectronicAddressString, ElectronicAddress, UserUserEmail, Party } from '../../../../../../../../meta/custom/src/lib/generated/m.g';
+import { Select } from '../../../../../../../../../protocol/json/system/src/lib/data/select';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -19,6 +21,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   readonly m: M;
 
   person: Person;
+  emailAddresses: string[] = [];
 
   internalOrganisation: InternalOrganisation;
   locales: Locale[];
@@ -53,7 +56,8 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
       this.person = undefined;
 
       if (this.panel.isCollapsed) {
-        const m = this.m; const { pullBuilder: pull } = m;
+        const m = this.m;
+        const { pullBuilder: pull } = m;
         const x = {};
         const id = this.panel.manager.id;
 
@@ -127,6 +131,18 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
                 Picture: x,
               },
             }),
+            pull.Person({
+              objectId: id,
+              select: {
+                PartyContactMechanisms: {
+                  include: {
+                    ContactMechanism: {
+                      ContactMechanismType: x,
+                    },
+                  },
+                },
+              },
+            }),
           ];
 
           return this.allors.context.pull(pulls);
@@ -141,7 +157,24 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
         this.genders = loaded.collection<GenderType>(m.GenderType);
         this.salutations = loaded.collection<Salutation>(m.Salutation);
+
+        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
+        this.emailAddresses = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)?.map((v) => v.ContactMechanism).map((v:EmailAddress) => v.ElectronicAddressString) ?? []; 
       });
+  }
+
+  private onSave(): void {
+
+    if (this.person.UserEmail != null && this.emailAddresses.indexOf(this.person.UserEmail) == -1) {
+      const emailAddress = this.allors.context.create<EmailAddress>(this.m.EmailAddress);
+      emailAddress.ElectronicAddressString = this.person.UserEmail;
+
+      const partyContactMechanism = this.allors.context.create<PartyContactMechanism>(this.m.PartyContactMechanism);
+      partyContactMechanism.ContactMechanism = emailAddress;
+
+      this.person.addPartyContactMechanism(partyContactMechanism);
+      this.emailAddresses.push(this.person.UserEmail);
+    }
   }
 
   public ngOnDestroy(): void {
@@ -151,6 +184,8 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   }
 
   public save(): void {
+    this.onSave();
+
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();

@@ -14,6 +14,7 @@ namespace Allors.Database.Domain
         public static readonly Guid NonUnifiedPartDeleteRevocationId = new Guid("5241e606-2246-435a-aeed-f819d094c3ae");
         public static readonly Guid OrganisationDeleteRevocationId = new Guid("52819a08-c8ac-4e5e-9048-d1c35ff0711c");
         public static readonly Guid PersonDeleteRevocationId = new Guid("f7ce0f2b-14ef-4a4b-8dc9-5f8f9c4fb3c4");
+        public static readonly Guid PersonResetPasswordRevocationId = new Guid("58c26f37-0c9b-4d97-811e-d22a5c557358");
         public static readonly Guid ProductQuoteDeleteRevocationId = new Guid("6e7fabdb-baa1-428b-bc5e-d7935a03e97a");
         public static readonly Guid ProductQuoteSetReadyForProcessingRevocationId = new Guid("30eb2b73-3885-4c11-b329-f49fb3d8c6a4");
         public static readonly Guid ProposalDeleteRevocationId = new Guid("8b267066-0ba9-46e3-bff2-d9ba63373edb");
@@ -59,6 +60,8 @@ namespace Allors.Database.Domain
         public Revocation OrganisationDeleteRevocation => this.Cache[OrganisationDeleteRevocationId];
 
         public Revocation PersonDeleteRevocation => this.Cache[PersonDeleteRevocationId];
+
+        public Revocation PersonResetPasswordRevocation => this.Cache[PersonResetPasswordRevocationId];
 
         public Revocation ProductQuoteDeleteRevocation => this.Cache[ProductQuoteDeleteRevocationId];
 
@@ -142,6 +145,7 @@ namespace Allors.Database.Domain
             merge(NonUnifiedPartDeleteRevocationId, _ => { });
             merge(OrganisationDeleteRevocationId, _ => { });
             merge(PersonDeleteRevocationId, _ => { });
+            merge(PersonResetPasswordRevocationId, _ => { });
             merge(ProductQuoteDeleteRevocationId, _ => { });
             merge(ProductQuoteSetReadyForProcessingRevocationId, _ => { });
             merge(ProposalDeleteRevocationId, _ => { });

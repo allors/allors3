@@ -33,4 +33,8 @@
       </div>
     </div>
   </mat-card-content>
+
+  <mat-card-actions>
+    <button *ngIf="user.canExecuteResetPassword" mat-button (click)="ResetPassword()">Reset Password</button>
+  </mat-card-actions>
 </mat-card>
