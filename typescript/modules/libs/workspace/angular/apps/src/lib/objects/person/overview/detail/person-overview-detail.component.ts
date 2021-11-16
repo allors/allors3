@@ -54,7 +54,8 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
       this.person = undefined;
 
       if (this.panel.isCollapsed) {
-        const m = this.m; const { pullBuilder: pull } = m;
+        const m = this.m;
+        const { pullBuilder: pull } = m;
         const x = {};
         const id = this.panel.manager.id;
 

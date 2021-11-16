@@ -23,7 +23,13 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public ConcurrentDictionary<ITransaction, SinkTree> TreeByTransaction { get; }
 
-        public Func<IEvent, bool> Breaker { get; set; }
+        public Action<IEvent> PreOnBefore { get; set; }
+
+        public Action<IEvent> PostOnBefore { get; set; }
+
+        public Action<IEvent> PreOnAfter { get; set; }
+
+        public Action<IEvent> PostOnAfter { get; set; }
 
         public SinkTree[] Trees => this.TreeByTransaction
             .Values
@@ -34,21 +40,23 @@ namespace Allors.Database.Adapters.Sql.Tracing
         {
             @event.Start();
 
-            var transactionSink = this.GetTransactionSink(@event);
+            this.PreOnBefore?.Invoke(@event);
 
-            if (this.Breaker != null && this.Breaker(@event))
-            {
-                Debugger.Break();
-            }
+            var sinkTree = this.GetTransactionSink(@event);
+            sinkTree.OnBefore(@event);
 
-            transactionSink.OnBefore(@event);
+            this.PostOnBefore?.Invoke(@event);
         }
 
         public void OnAfter(IEvent @event)
         {
-            var transactionSink = this.GetTransactionSink(@event);
-            transactionSink.OnAfter(@event);
+            this.PreOnAfter?.Invoke(@event);
+
+            var sinkTree = this.GetTransactionSink(@event);
+            sinkTree.OnAfter(@event);
             @event.Stop();
+
+            this.PostOnAfter?.Invoke(@event);
         }
 
         private SinkTree GetTransactionSink(IEvent @event) => this.TreeByTransaction.GetOrAdd(@event.Transaction, (v) => new SinkTree(v, ++this.counter));

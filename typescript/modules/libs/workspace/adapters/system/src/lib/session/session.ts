@@ -109,18 +109,21 @@ export abstract class Session implements ISession {
 
   reset(): void {
     const changeSet = this.checkpoint();
-
     const objects: Set<IObject> = new Set(changeSet.created);
 
     for (const roles of changeSet.rolesByAssociationType.values()) {
-      for (const role of roles) {
-        objects.add(role);
+      if (roles != null) {
+        for (const role of roles) {
+          objects.add(role);
+        }
       }
     }
 
     for (const associations of changeSet.associationsByRoleType.values()) {
-      for (const association of associations) {
-        objects.add(association);
+      if (associations != null) {
+        for (const association of associations) {
+          objects.add(association);
+        }
       }
     }
 

@@ -14,6 +14,8 @@ namespace Allors.Database.Protocol.Json
 
         public InvokeRequest InvokeRequest { get; set; }
 
+        public InvokeResponse InvokeResponse { get; set; }
+
         protected override void ToString(StringBuilder builder) => builder
             .Append(this.InvokeRequest.x);
     }

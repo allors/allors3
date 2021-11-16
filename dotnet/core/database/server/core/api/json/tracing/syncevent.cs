@@ -14,6 +14,8 @@ namespace Allors.Database.Protocol.Json
 
         public SyncRequest SyncRequest { get; set; }
 
+        public SyncResponse SyncResponse { get; set; }
+
         protected override void ToString(StringBuilder builder) => builder
             .Append(this.SyncRequest.x);
     }

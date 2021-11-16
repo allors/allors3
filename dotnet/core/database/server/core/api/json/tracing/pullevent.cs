@@ -14,6 +14,8 @@ namespace Allors.Database.Protocol.Json
 
         public PullRequest PullRequest { get; set; }
 
+        public PullResponse PullResponse { get; set; }
+
         protected override void ToString(StringBuilder builder) => builder
             .Append(this.PullRequest.x);
     }
