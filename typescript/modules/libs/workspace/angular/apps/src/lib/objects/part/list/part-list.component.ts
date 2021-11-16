@@ -48,6 +48,7 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;

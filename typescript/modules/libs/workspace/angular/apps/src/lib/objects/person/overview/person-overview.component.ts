@@ -36,6 +36,7 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     titleService.setTitle(this.title);

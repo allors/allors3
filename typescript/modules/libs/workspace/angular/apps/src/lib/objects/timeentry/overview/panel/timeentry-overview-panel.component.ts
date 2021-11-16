@@ -51,6 +51,7 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;
     const { pullBuilder: pull } = m;

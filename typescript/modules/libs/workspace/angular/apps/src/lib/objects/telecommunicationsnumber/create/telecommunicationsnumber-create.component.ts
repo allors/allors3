@@ -37,7 +37,8 @@ export class TelecommunicationsNumberCreateComponent extends TestScope implement
     private internalOrganisationId: InternalOrganisationId
   ) {
     super();
-
+    
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

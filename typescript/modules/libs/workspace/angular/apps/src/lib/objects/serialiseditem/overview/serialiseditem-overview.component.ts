@@ -26,6 +26,7 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
   owner: Party;
 
   constructor(
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
@@ -37,6 +38,7 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     titleService.setTitle(this.title);
   }

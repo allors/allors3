@@ -60,10 +60,10 @@ namespace Allors.Database.Adapters.Sql
             var transactionSink = sink.TreeByTransaction[transaction];
 
             Assert.Equal(1, transactionSink.Nodes.Count);
-            Assert.Equal(EventKind.CommandsInstantiateObject, transactionSink.Nodes[0].Event.Kind);
+            Assert.Equal(typeof(SqlInstantiateObjectEvent), transactionSink.Nodes[0].Event.GetType());
             Assert.Empty(transactionSink.Nodes[0].Nodes);
         }
-        
+
         [Fact]
         public void Prefetch()
         {
@@ -88,9 +88,9 @@ namespace Allors.Database.Adapters.Sql
 
             var events = transactionSink.Nodes;
             Assert.Equal(2, events.Count);
-            Assert.Equal(EventKind.PrefetcherPrefetchCompositeRoleObjectTable, events[0].Event.Kind);
+            Assert.Equal(typeof(SqlPrefetchCompositeRoleObjectTableEvent), events[0].Event.GetType());
             Assert.Empty(events[0].Nodes);
-            Assert.Equal(EventKind.CommandsInstantiateReferences, events[1].Event.Kind);
+            Assert.Equal(typeof(SqlInstantiateReferencesEvent), events[1].Event.GetType());
             Assert.Empty(events[1].Nodes);
 
             transactionSink.Clear();

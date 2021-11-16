@@ -8,6 +8,7 @@ namespace Allors.Database
     using System.Xml;
 
     using Meta;
+    using Tracing;
 
     /// <summary>
     /// A database is an online <see cref="IDatabase"/>.
@@ -77,5 +78,7 @@ namespace Allors.Database
         /// </summary>
         /// <param name="writer">The writer.</param>
         void Save(XmlWriter writer);
+
+        public ISink Sink { get; set; }
     }
 }

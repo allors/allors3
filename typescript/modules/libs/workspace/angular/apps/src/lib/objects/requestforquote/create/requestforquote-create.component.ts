@@ -49,6 +49,7 @@ export class RequestForQuoteCreateComponent extends TestScope implements OnInit,
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

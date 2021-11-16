@@ -16,6 +16,14 @@ export class AppsContext implements Context {
     this.session.activate(rules);
   }
 
+  get name(): string {
+    return this.session.context;
+  }
+
+  set name(value: string) {
+    this.session.context = value;
+  }
+
   workspace: IWorkspace;
 
   configuration: Configuration;

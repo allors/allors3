@@ -37,6 +37,7 @@ export class PurchaseOrderApprovalLevel2EditComponent extends TestScope implemen
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print(this.m.PurchaseOrderApprovalLevel2.PurchaseOrder);

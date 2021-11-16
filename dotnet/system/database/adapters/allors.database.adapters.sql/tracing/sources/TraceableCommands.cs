@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Tracing;
     using Meta;
     using Tracing;
 
@@ -18,97 +19,97 @@ namespace Allors.Database.Adapters.Sql
 
         internal override void DeleteObject(Strategy strategy)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsDeleteObject) { Strategy = strategy };
+            var @event = new SqlDeleteObjectEvent(this.Transaction) { Strategy = strategy };
             this.sink.OnBefore(@event);
 
             base.DeleteObject(strategy);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void GetUnitRoles(Strategy strategy)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsGetUnitRoles) { Strategy = strategy };
+            var @event = new SqlGetUnitRolesEvent(this.Transaction) { Strategy = strategy };
             this.sink.OnBefore(@event);
 
             base.GetUnitRoles(strategy);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void SetUnitRoles(Strategy strategy, List<IRoleType> sortedRoleTypes)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsSetUnitRoles) { Strategy = strategy, RoleTypes = sortedRoleTypes.ToArray() };
+            var @event = new SqlSetUnitRolesEvent(this.Transaction) { Strategy = strategy, RoleTypes = sortedRoleTypes.ToArray() };
             this.sink.OnBefore(@event);
 
             base.SetUnitRoles(strategy, sortedRoleTypes);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void GetCompositeRole(Strategy strategy, IRoleType roleType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsGetCompositeRole) { Strategy = strategy, RoleType = roleType };
+            var @event = new SqlGetCompositeRoleEvent(this.Transaction) { Strategy = strategy, RoleType = roleType };
             this.sink.OnBefore(@event);
 
             base.GetCompositeRole(strategy, roleType);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void SetCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsSetCompositeRole) { Relations = relations?.ToArray(), RoleType = roleType };
+            var @event = new SqlSetCompositeRoleEvent(this.Transaction) { Relations = relations?.ToArray(), RoleType = roleType };
             this.sink.OnBefore(@event);
 
             base.SetCompositeRole(relations, roleType);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void GetCompositesRole(Strategy strategy, IRoleType roleType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsGetCompositesRole) { Strategy = strategy, RoleType = roleType };
+            var @event = new SqlGetCompositesRoleEvent(this.Transaction) { Strategy = strategy, RoleType = roleType };
             this.sink.OnBefore(@event);
 
             base.GetCompositesRole(strategy, roleType);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void AddCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsAddCompositeRole) { Relations = relations?.ToArray(), RoleType = roleType };
+            var @event = new SqlAddCompositeRoleEvent(this.Transaction) { Relations = relations?.ToArray(), RoleType = roleType };
             this.sink.OnBefore(@event);
 
             base.AddCompositeRole(relations, roleType);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void RemoveCompositeRole(List<CompositeRelation> relations, IRoleType roleType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsRemoveCompositeRole) { Relations = relations?.ToArray(), RoleType = roleType };
+            var @event = new SqlRemoveCompositeRoleEvent(this.Transaction) { Relations = relations?.ToArray(), RoleType = roleType };
             this.sink.OnBefore(@event);
 
             base.RemoveCompositeRole(relations, roleType);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override void ClearCompositeAndCompositesRole(IList<long> associations, IRoleType roleType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsClearCompositeAndCompositesRole) { AssociationIds = associations?.ToArray(), RoleType = roleType };
+            var @event = new SqlClearCompositeAndCompositesRole(this.Transaction) { AssociationIds = associations?.ToArray(), RoleType = roleType };
             this.sink.OnBefore(@event);
 
             base.ClearCompositeAndCompositesRole(associations, roleType);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         internal override Reference GetCompositeAssociation(Reference role, IAssociationType associationType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsGetCompositeAssociation) { Role = role, AssociationType = associationType };
+            var @event = new SqlGetCompositeAssociationEvent(this.Transaction) { Role = role, AssociationType = associationType };
             this.sink.OnBefore(@event);
 
             try
@@ -117,13 +118,13 @@ namespace Allors.Database.Adapters.Sql
             }
             finally
             {
-                this.sink.OnAfter(@event.Stop());
+                this.sink.OnAfter(@event);
             }
         }
 
         internal override long[] GetCompositesAssociation(Strategy role, IAssociationType associationType)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsGetCompositesAssociation) { Role = role.Reference, AssociationType = associationType };
+            var @event = new SqlGetCompositesAssociationEvent(this.Transaction) { Role = role.Reference, AssociationType = associationType };
             this.sink.OnBefore(@event);
 
             try
@@ -132,13 +133,13 @@ namespace Allors.Database.Adapters.Sql
             }
             finally
             {
-                this.sink.OnAfter(@event.Stop());
+                this.sink.OnAfter(@event);
             }
         }
 
         internal override Reference CreateObject(IClass @class)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsCreateObject) { Class = @class };
+            var @event = new SqlCreateObjectEvent(this.Transaction) { Class = @class };
             this.sink.OnBefore(@event);
 
             try
@@ -147,13 +148,13 @@ namespace Allors.Database.Adapters.Sql
             }
             finally
             {
-                this.sink.OnAfter(@event.Stop());
+                this.sink.OnAfter(@event);
             }
         }
 
         internal override IList<Reference> CreateObjects(IClass @class, int count)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsCreateObjects) { Class = @class, Count = count };
+            var @event = new SqlCreatesObjectEvent(this.Transaction) { Class = @class, Count = count };
             this.sink.OnBefore(@event);
 
             try
@@ -162,13 +163,13 @@ namespace Allors.Database.Adapters.Sql
             }
             finally
             {
-                this.sink.OnAfter(@event.Stop());
+                this.sink.OnAfter(@event);
             }
         }
 
         internal override Reference InstantiateObject(long objectId)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsInstantiateObject) { ObjectId = objectId };
+            var @event = new SqlInstantiateObjectEvent(this.Transaction) { ObjectId = objectId };
             this.sink.OnBefore(@event);
 
             try
@@ -177,13 +178,13 @@ namespace Allors.Database.Adapters.Sql
             }
             finally
             {
-                this.sink.OnAfter(@event.Stop());
+                this.sink.OnAfter(@event);
             }
         }
 
         internal override IEnumerable<Reference> InstantiateReferences(IEnumerable<long> objectIds)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsInstantiateReferences) { ObjectIds = objectIds?.ToArray() };
+            var @event = new SqlInstantiateReferencesEvent(this.Transaction) { ObjectIds = objectIds?.ToArray() };
             this.sink.OnBefore(@event);
 
             try
@@ -192,13 +193,13 @@ namespace Allors.Database.Adapters.Sql
             }
             finally
             {
-                this.sink.OnAfter(@event.Stop());
+                this.sink.OnAfter(@event);
             }
         }
 
         internal override Dictionary<long, long> GetVersions(ISet<Reference> references)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsGetVersions) { References = references };
+            var @event = new SqlGetVersionsEvent(this.Transaction) { References = references };
             this.sink.OnBefore(@event);
 
             try
@@ -207,18 +208,18 @@ namespace Allors.Database.Adapters.Sql
             }
             finally
             {
-                this.sink.OnAfter(@event.Stop());
+                this.sink.OnAfter(@event);
             }
         }
 
         internal override void UpdateVersion(IEnumerable<long> changed)
         {
-            var @event = new Event(this.Transaction, EventKind.CommandsUpdateVersion) { ObjectIds = changed?.ToArray() };
+            var @event = new SqlUpdateVersionEvent(this.Transaction) { ObjectIds = changed?.ToArray() };
             this.sink.OnBefore(@event);
 
             base.UpdateVersion(changed);
 
-            this.sink.OnAfter(@event.Stop());
+            this.sink.OnAfter(@event);
         }
 
         private class SortedRoleTypeComparer : IEqualityComparer<IList<IRoleType>>

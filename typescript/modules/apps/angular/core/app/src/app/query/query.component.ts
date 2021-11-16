@@ -20,7 +20,9 @@ export class QueryComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title) {}
+  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title) {
+    this.allors.context.name = this.constructor.name;
+  }
 
   public ngOnInit() {
     this.title.setTitle('Query');

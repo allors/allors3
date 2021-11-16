@@ -42,6 +42,7 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;

@@ -26,6 +26,7 @@ export class PersonOverviewComponent extends TestScope implements OnInit, OnDest
   constructor(@Self() private allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.title = 'Person Overview';
     this.titleService.setTitle(this.title);
     this.m = this.allors.context.configuration.metaPopulation as M;

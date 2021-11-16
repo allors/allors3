@@ -6,10 +6,11 @@
 namespace Allors.Database.Adapters.Sql.Tracing
 {
     using System.Collections.Generic;
+    using Database.Tracing;
 
     public class SinkNode
     {
-        public SinkNode(Event @event)
+        public SinkNode(IEvent @event)
         {
             this.Event = @event;
             this.Nodes = new List<SinkNode>();
@@ -17,9 +18,9 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public IList<SinkNode> Nodes { get; }
 
-        public Event Event { get; }
+        public IEvent Event { get; }
 
-        public SinkNode OnBefore(Event @event)
+        public SinkNode OnBefore(IEvent @event)
         {
             var child = new SinkNode(@event);
             this.Nodes.Add(child);

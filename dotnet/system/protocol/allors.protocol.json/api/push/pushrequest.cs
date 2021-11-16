@@ -5,7 +5,7 @@
 
 namespace Allors.Protocol.Json.Api.Push
 {
-    public class PushRequest
+    public class PushRequest : Request
     {
         /// <summary>
         /// New Objects

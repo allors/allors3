@@ -74,7 +74,6 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
@@ -82,6 +81,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
@@ -172,7 +172,7 @@ export class PurchaseOrderOverviewDetailComponent extends TestScope implements O
         this.allors.context.reset();
 
         this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
-         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);

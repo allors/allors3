@@ -38,8 +38,10 @@ export class SupplierRelationshipEditComponent extends TestScope implements OnIn
   ) {
     super();
 
-    this.canSave = true;
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
+
+    this.canSave = true;
   }
 
   public canCreate(createData: ObjectData) {

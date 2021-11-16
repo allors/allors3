@@ -59,6 +59,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;

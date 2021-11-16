@@ -3,12 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Sql.Tracing
+namespace Allors.Database.Tracing
 {
     public interface ISink
     {
-        void OnBefore(Event @event);
+        void OnBefore(IEvent @event);
 
-        void OnAfter(Event @event);
+        void OnAfter(IEvent @event);
     }
 }

@@ -27,6 +27,7 @@ export class PanelManagerService {
 
   constructor(workspaceService: WorkspaceService, public router: Router, public route: ActivatedRoute) {
     this.context = workspaceService.contextBuilder();
+    this.context.session.context = "PanelManager";
     this.on$ = this.onSubject$ = new BehaviorSubject(new Date());
   }
 

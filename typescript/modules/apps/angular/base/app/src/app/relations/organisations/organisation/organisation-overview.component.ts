@@ -28,6 +28,7 @@ export class OrganisationOverviewComponent extends TestScope implements OnInit, 
   constructor(@Self() private allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.title = 'Organisation Overview';
     this.titleService.setTitle(this.title);
 

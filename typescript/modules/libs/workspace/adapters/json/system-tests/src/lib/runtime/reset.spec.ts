@@ -265,3 +265,30 @@ test('resetMany2ManyRemoveAfterPush', async () => {
   expect(c1a.C1C1Many2Manies.length).toBe(1);
   expect(c1a.C1C1Many2Manies).toContain(c1b);
 });
+
+test('sessionResetWithPulls', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const c1a = await fixture.pullC1(session, name_c1A);
+  const c1b = await fixture.pullC1(session, name_c1B);
+
+  c1a.C1AllorsString = 'X';
+  c1a.C1C1One2One = c1b;
+  c1a.C1C1Many2One = c1b;
+  c1a.addC1C1One2Many(c1b);
+  c1a.addC1C1Many2Many(c1b);
+
+  await session.push();
+  await session.pull({ object: c1a });
+
+  session.reset();
+
+  await session.pull({ object: c1b });
+
+  session.reset();
+
+  await session.pull({ extent: { kind: 'Filter', objectType: m.C2 } });
+
+  session.reset();
+});

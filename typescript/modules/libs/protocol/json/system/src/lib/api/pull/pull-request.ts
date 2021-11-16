@@ -1,8 +1,9 @@
 import { Procedure } from '../../data/procedure';
 import { Pull } from '../../data/pull';
+import { Request } from '../request';
 import { PullDependency } from './pull-dependency';
 
-export interface PullRequest {
+export interface PullRequest extends Request {
   /** Dependencies */
   d?: PullDependency[];
 

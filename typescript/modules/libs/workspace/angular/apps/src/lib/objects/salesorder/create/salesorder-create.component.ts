@@ -114,6 +114,7 @@ export class SalesOrderCreateComponent extends TestScope implements OnInit, OnDe
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

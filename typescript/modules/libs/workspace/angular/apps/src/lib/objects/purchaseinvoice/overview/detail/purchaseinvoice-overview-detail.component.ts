@@ -96,7 +96,6 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: PanelService,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
     public fetcher: FetcherService,
@@ -104,6 +103,7 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';
