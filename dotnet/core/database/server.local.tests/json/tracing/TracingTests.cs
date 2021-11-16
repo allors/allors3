@@ -59,8 +59,8 @@ namespace Tests
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
 
-            Assert.Single(tree.Nodes.Where(v => v.Event.Kind == EventKind.CommandsInstantiateObject));
-            Assert.Equal(2, tree.Nodes.Count(v => v.Event.Kind == EventKind.CommandsInstantiateReferences));
+            Assert.Single(tree.Nodes.Where(v => v.Event is SqlInstantiateObjectEvent));
+            Assert.Equal(2, tree.Nodes.Count(v => v.Event is SqlInstantiateReferencesEvent));
             Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
 
             this.Transaction.Rollback();
@@ -69,9 +69,9 @@ namespace Tests
 
             pullResponse = api.Pull(pullRequest);
 
-            Assert.Single(tree.Nodes.Where(v => v.Event.Kind == EventKind.CommandsGetVersions));
-            Assert.Empty(tree.Nodes.Where(v => v.Event.Kind == EventKind.CommandsInstantiateObject));
-            Assert.Empty(tree.Nodes.Where(v => v.Event.Kind == EventKind.CommandsInstantiateReferences));
+            Assert.Single(tree.Nodes.Where(v => v.Event is SqlGetVersionsEvent));
+            Assert.Empty(tree.Nodes.Where(v => v.Event is SqlInstantiateObjectEvent));
+            Assert.Empty(tree.Nodes.Where(v => v.Event is SqlInstantiateReferencesEvent));
             Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
         }
 
@@ -118,7 +118,7 @@ namespace Tests
             tree.Clear();
             pullResponse = api.Pull(pullRequest);
 
-            Assert.All(tree.Nodes, v => Assert.True(v.Event.Source == EventSource.Prefetcher));
+            Assert.All(tree.Nodes, v => Assert.StartsWith("SqlPrefetch", v.Event.GetType().Name));
             Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
 
             this.Transaction.Rollback();
@@ -161,7 +161,7 @@ namespace Tests
             tree.Clear();
             syncResponse = api.Sync(syncRequest);
 
-            Assert.All(tree.Nodes, v => Assert.True(v.Event.Source == EventSource.Prefetcher));
+            Assert.All(tree.Nodes, v => Assert.StartsWith("SqlPrefetch", v.Event.GetType().Name));
             Assert.All(tree.Nodes, v => Assert.Empty(v.Nodes));
         }
 

@@ -5,7 +5,7 @@
 
 namespace Allors.Protocol.Json.Api.Invoke
 {
-    public class InvokeRequest
+    public class InvokeRequest : Request
     {
         /// <summary>
         ///  List of Invocations

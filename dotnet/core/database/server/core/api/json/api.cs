@@ -20,6 +20,7 @@ namespace Allors.Database.Protocol.Json
     using Meta;
     using Ranges;
     using Services;
+    using Tracing;
     using User = Domain.User;
 
     public class Api
@@ -27,6 +28,7 @@ namespace Allors.Database.Protocol.Json
         public Api(ITransaction transaction, string workspaceName)
         {
             this.Transaction = transaction;
+            this.Sink = transaction.Database.Sink;
 
             var transactionServices = transaction.Services;
             var databaseServices = transaction.Database.Services;
@@ -47,6 +49,8 @@ namespace Allors.Database.Protocol.Json
         }
 
         public ITransaction Transaction { get; }
+
+        public ISink Sink { get; }
 
         public IRanges<long> Ranges { get; }
 
@@ -72,12 +76,16 @@ namespace Allors.Database.Protocol.Json
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
+            using var @event = this.Sink?.OnInvoke(this.Transaction, invokeRequest);
+
             var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControl, this.AllowedClasses);
             return invokeResponseBuilder.Build(invokeRequest);
         }
 
         public PullResponse Pull(PullRequest pullRequest)
         {
+            using var @event = this.Sink?.OnPull(this.Transaction, pullRequest);
+
             var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
             var dependencies = this.ToDependencies(pullRequest.d);
             var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, pullResponsePrefetcher);
@@ -86,12 +94,16 @@ namespace Allors.Database.Protocol.Json
 
         public PushResponse Push(PushRequest pushRequest)
         {
+            using var @event = this.Sink?.OnPush(this.Transaction, pushRequest);
+
             var responseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControl, this.AllowedClasses, this.Build, this.UnitConvert);
             return responseBuilder.Build(pushRequest);
         }
 
         public SyncResponse Sync(SyncRequest syncRequest)
         {
+            using var @event = this.Sink?.OnSync(this.Transaction, syncRequest);
+
             void Prefetch(IEnumerable<IObject> objects)
             {
                 // Prefetch

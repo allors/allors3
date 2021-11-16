@@ -20,6 +20,8 @@ export function isNewId(id: number): boolean {
 }
 
 export abstract class Session implements ISession {
+  context: string;
+
   changeSetTracker: ChangeSetTracker;
 
   pushToDatabaseTracker: PushToDatabaseTracker;

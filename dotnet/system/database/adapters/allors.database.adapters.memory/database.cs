@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.Memory
     using System;
     using System.Collections.Generic;
     using System.Xml;
-
+    using Allors.Database.Tracing;
     using Meta;
 
     public class Database : IDatabase
@@ -83,6 +83,8 @@ namespace Allors.Database.Adapters.Memory
         }
 
         public void Save(XmlWriter writer) => this.Transaction.Save(writer);
+
+        public ISink Sink { get; set; }
 
         public bool ContainsClass(IComposite objectType, IObjectType concreteClass)
         {

@@ -73,6 +73,7 @@ export class Session extends SystemSession {
   async invoke(methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult> {
     const methods = Array.isArray(methodOrMethods) ? methodOrMethods : [methodOrMethods];
     const invokeRequest: InvokeRequest = {
+      x: this.context,
       l: methods.map((v) => {
         return {
           i: v.object.id,
@@ -95,6 +96,7 @@ export class Session extends SystemSession {
 
   async call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
     const pullRequest: PullRequest = {
+      x: this.context,
       d: dependenciesToJson(this.dependencies),
       p: procedureToJson(procedure),
       l: pulls.map((v) => pullToJson(v)),
@@ -118,6 +120,7 @@ export class Session extends SystemSession {
     }
 
     const pullRequest: PullRequest = {
+      x: this.context,
       d: dependenciesToJson(this.dependencies),
       l: pulls.map((v) => pullToJson(v)),
     };
@@ -127,7 +130,9 @@ export class Session extends SystemSession {
   }
 
   async push(): Promise<IPushResult> {
-    const pushRequest: PushRequest = {};
+    const pushRequest: PushRequest = {
+      x: this.context,
+    };
 
     if (this.pushToDatabaseTracker.created) {
       pushRequest.n = [...this.pushToDatabaseTracker.created].map((v) => ((v.strategy as Strategy).DatabaseOriginState as DatabaseOriginState).pushNew());
@@ -173,7 +178,7 @@ export class Session extends SystemSession {
       return pullResult;
     }
 
-    const syncRequest = this.database.onPullResonse(pullResponse);
+    const syncRequest = this.database.onPullResonse(pullResponse, this.context);
     if (syncRequest.o.length > 0) {
       const syncResponse = await this.database.client.sync(syncRequest);
       const accessRequest = this.database.onSyncResponse(syncResponse);

@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Sql.Tracing
 {
     using System;
     using System.Collections.Generic;
+    using Database.Tracing;
 
     public class SinkTree
     {
@@ -27,7 +28,7 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public long Index { get; set; }
 
-        public void OnBefore(Event @event)
+        public void OnBefore(IEvent @event)
         {
             SinkNode sinkNode;
 
@@ -45,7 +46,7 @@ namespace Allors.Database.Adapters.Sql.Tracing
             this.stack.Push(sinkNode);
         }
 
-        public void OnAfter(Event @event)
+        public void OnAfter(IEvent @event)
         {
             var top = this.stack.Pop();
             if (top.Event != @event)
