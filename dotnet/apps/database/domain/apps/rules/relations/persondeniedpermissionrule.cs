@@ -87,8 +87,8 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Person>())
             {
-                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PersonDeleteRevocation;
-                var resetPasswordRevocation = new Revocations(@this.Strategy.Transaction).PersonResetPasswordRevocation;
+                var deleteRevocation = new Revocations(transaction).PersonDeleteRevocation;
+                var resetPasswordRevocation = new Revocations(transaction).PersonResetPasswordRevocation;
 
                 if (@this.IsDeletable)
                 {

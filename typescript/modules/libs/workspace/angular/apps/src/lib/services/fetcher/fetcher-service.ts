@@ -33,8 +33,6 @@ export class FetcherService {
         PaymentMethods: x,
         Organisation_AssignedActiveCollectionMethods: x,
         Organisation_DerivedActiveCollectionMethods: x,
-        ActiveEmployees: x,
-        FacilitiesWhereOwner: x,
         PreferredCurrency: x,
         Locale: x,
         OrderAddress: x,

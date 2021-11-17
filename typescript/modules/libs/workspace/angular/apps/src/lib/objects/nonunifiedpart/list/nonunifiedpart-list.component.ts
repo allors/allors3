@@ -254,9 +254,13 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
           const pulls = [
             this.fetcher.internalOrganisation,
+            pull.InternalOrganisation({
+              objectId: internalOrganisationId,
+              include: { FacilitiesWhereOwner: x },
+            }),
             pull.NonUnifiedPart({
               predicate,
               sorting: sorter.create(sort),

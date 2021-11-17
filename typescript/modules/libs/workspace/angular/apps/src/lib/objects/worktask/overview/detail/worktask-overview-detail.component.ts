@@ -122,7 +122,17 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
           const id = this.panel.manager.id;
 
           const pulls = [
-            this.fetcher.internalOrganisation,
+            pull.Organisation({
+              objectId: this.internalOrganisationId.value,
+              name: 'InternalOrganisation',
+              include: {
+                ActiveEmployees: {
+                  CurrentPartyContactMechanisms: {
+                    ContactMechanism: x,
+                  },
+                },
+              },
+            }),
             pull.WorkTask({
               objectId: id,
               include: {
@@ -161,7 +171,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation)
         this.employees = internalOrganisation.ActiveEmployees;
 
         this.workTask = loaded.object<WorkTask>(m.WorkTask);

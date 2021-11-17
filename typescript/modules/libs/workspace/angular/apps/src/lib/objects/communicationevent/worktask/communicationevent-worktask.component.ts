@@ -62,7 +62,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
               objectId: roleId,
             }),
             pull.InternalOrganisation({
-              objectId: id,
+              objectId: internalOrganisationId,
               include: { ActiveEmployees: x },
             }),
             pull.WorkEffortState({
