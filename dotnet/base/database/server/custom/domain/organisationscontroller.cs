@@ -34,8 +34,8 @@ namespace Allors.Database.Server.Controllers
         {
             var api = new Api(this.Transaction, this.WorkspaceService.Name);
             var response = api.CreatePullResponseBuilder();
-            var organisations = new Organisations(this.Transaction).Extent().ToArray();
-            response.AddCollection("organisations", organisations);
+            var organisations = new Organisations(this.Transaction);
+            response.AddCollection("organisations", organisations.ObjectType, organisations.Extent().ToArray());
             return this.Ok(response.Build());
         }
     }

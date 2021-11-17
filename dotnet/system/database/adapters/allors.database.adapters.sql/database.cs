@@ -10,11 +10,10 @@ namespace Allors.Database.Adapters.Sql
     using System.Data;
     using System.Linq;
     using System.Xml;
-    using Allors;
+    using Allors.Database.Tracing;
     using Caching;
     using Meta;
     using Ranges;
-    using Tracing;
 
     public abstract class Database : IDatabase
     {
@@ -110,8 +109,6 @@ namespace Allors.Database.Adapters.Sql
             get;
         }
 
-        public ISink Sink { get; set; }
-
         internal IRanges<long> Ranges = new DefaultStructRanges<long>();
 
         public ITransaction CreateTransaction()
@@ -137,6 +134,8 @@ namespace Allors.Database.Adapters.Sql
         public abstract void Load(XmlReader reader);
 
         public abstract void Save(XmlWriter writer);
+
+        public ISink Sink { get; set; }
 
         public override string ToString() => "Population[driver=Sql, type=Connected, id=" + this.GetHashCode() + "]";
 

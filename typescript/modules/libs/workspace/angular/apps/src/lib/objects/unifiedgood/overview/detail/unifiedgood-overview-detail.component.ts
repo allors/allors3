@@ -48,7 +48,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   manufacturers: Organisation[];
   suppliers: Organisation[];
   currentSuppliers: Set<Organisation>;
-  activeSuppliers: Organisation[];
   selectedSuppliers: Organisation[];
   supplierOfferings: SupplierOffering[];
   brands: Brand[];
@@ -81,6 +80,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject(new Date());
 

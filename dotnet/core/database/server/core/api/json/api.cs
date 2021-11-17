@@ -20,6 +20,7 @@ namespace Allors.Database.Protocol.Json
     using Meta;
     using Ranges;
     using Services;
+    using Tracing;
     using User = Domain.User;
 
     public class Api
@@ -27,6 +28,7 @@ namespace Allors.Database.Protocol.Json
         public Api(ITransaction transaction, string workspaceName)
         {
             this.Transaction = transaction;
+            this.Sink = transaction.Database.Sink;
 
             var transactionServices = transaction.Services;
             var databaseServices = transaction.Database.Services;
@@ -47,6 +49,8 @@ namespace Allors.Database.Protocol.Json
         }
 
         public ITransaction Transaction { get; }
+
+        public ISink Sink { get; }
 
         public IRanges<long> Ranges { get; }
 
@@ -72,42 +76,63 @@ namespace Allors.Database.Protocol.Json
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
+            var @event = this.Sink?.OnInvoke(this.Transaction, invokeRequest);
+            this.Sink?.OnBefore(@event);
+
             var invokeResponseBuilder = new InvokeResponseBuilder(this.Transaction, this.Derive, this.AccessControl, this.AllowedClasses);
-            return invokeResponseBuilder.Build(invokeRequest);
+            var invokeResponse = invokeResponseBuilder.Build(invokeRequest);
+
+            if (@event != null)
+            {
+                @event.InvokeResponse = invokeResponse;
+                this.Sink?.OnAfter(@event);
+            }
+
+            return invokeResponse;
         }
 
         public PullResponse Pull(PullRequest pullRequest)
         {
-            void Prefetch(IEnumerable<IObject> objects)
+            var @event = this.Sink?.OnPull(this.Transaction, pullRequest);
+            this.Sink?.OnBefore(@event);
+
+            var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
+            var dependencies = this.ToDependencies(pullRequest.d);
+            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, pullResponsePrefetcher);
+            var pullResponse = pullResponseBuilder.Build(pullRequest);
+
+            if (@event != null)
             {
-                // Prefetch
-                foreach (var groupBy in objects.GroupBy(v => v.Strategy.Class, v => v))
-                {
-                    var prefetchClass = groupBy.Key;
-                    var prefetchObjects = groupBy;
-
-                    var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                    prefetchPolicyBuilder.WithSecurityRules((Class)prefetchClass, this.M);
-
-                    var prefetcher = prefetchPolicyBuilder.Build();
-
-                    this.Transaction.Prefetch(prefetcher, prefetchObjects);
-                }
+                @event.PullResponse = pullResponse;
+                this.Sink?.OnAfter(@event);
             }
 
-            var dependencies = this.ToDependencies(pullRequest.d);
-            var response = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, Prefetch);
-            return response.Build(pullRequest);
+            return pullResponse;
         }
 
         public PushResponse Push(PushRequest pushRequest)
         {
-            var responseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControl, this.AllowedClasses, this.Build, this.UnitConvert);
-            return responseBuilder.Build(pushRequest);
+            var @event = this.Sink?.OnPush(this.Transaction, pushRequest);
+            this.Sink?.OnBefore(@event);
+
+            var pushResponseBuilder = new PushResponseBuilder(this.Transaction, this.Derive, this.MetaPopulation, this.AccessControl, this.AllowedClasses, this.Build, this.UnitConvert);
+            var pushResponse = pushResponseBuilder.Build(pushRequest);
+
+            if (@event != null)
+            {
+                @event.PushResponse = pushResponse;
+                this.Sink?.OnAfter(@event);
+            }
+
+            return pushResponse;
         }
 
         public SyncResponse Sync(SyncRequest syncRequest)
         {
+            var @event = this.Sink?.OnSync(this.Transaction, syncRequest);
+            this.Sink?.OnBefore(@event);
+
+
             void Prefetch(IEnumerable<IObject> objects)
             {
                 // Prefetch
@@ -126,8 +151,16 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            var responseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
-            return responseBuilder.Build(syncRequest);
+            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
+            var syncResponse = syncResponseBuilder.Build(syncRequest);
+
+            if (@event != null)
+            {
+                @event.SyncResponse = syncResponse;
+                this.Sink?.OnAfter(@event);
+            }
+
+            return syncResponse;
         }
 
         public AccessResponse Access(AccessRequest accessRequest)
@@ -145,25 +178,10 @@ namespace Allors.Database.Protocol.Json
         // TODO: Delete
         public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
         {
-            void Prefetch(IEnumerable<IObject> objects)
-            {
-                // Prefetch
-                foreach (var groupBy in objects.GroupBy(v => v.Strategy.Class, v => v))
-                {
-                    var prefetchClass = groupBy.Key;
-                    var prefetchObjects = groupBy;
-
-                    var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                    prefetchPolicyBuilder.WithSecurityRules((Class)prefetchClass, this.M);
-
-                    var prefetcher = prefetchPolicyBuilder.Build();
-
-                    this.Transaction.Prefetch(prefetcher, prefetchObjects);
-                }
-            }
 
             // TODO: Dependencies
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, Prefetch);
+            var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
+            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, pullResponsePrefetcher);
         }
 
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)

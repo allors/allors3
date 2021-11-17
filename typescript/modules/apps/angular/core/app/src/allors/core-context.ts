@@ -22,6 +22,14 @@ export class CoreContext implements Context {
 
   session: ISession;
 
+  get name(): string {
+    return this.session.context;
+  }
+
+  set name(value: string) {
+    this.session.context = value;
+  }
+
   activate(rules: IRule<IObject>[]) {
     this.session.activate(rules);
   }

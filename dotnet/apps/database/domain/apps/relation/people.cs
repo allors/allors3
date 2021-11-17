@@ -74,6 +74,11 @@ namespace Allors.Database.Domain
             {
                 permissions.Get(this.Meta, this.Meta.Delete),
             };
+
+            revocations.PersonResetPasswordRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.ResetPassword),
+            };
         }
     }
 }

@@ -87,7 +87,8 @@ namespace Allors.Database.Domain.Tests
                     .Add(this.M.C2.C2C2One2Manies),
             };
 
-            var prefetchPolicy = tree.BuildPrefetchPolicy();
+            var prefetchPolicy = new PrefetchPolicyBuilder().WithNodes(tree, this.M).Build();
+
             {
                 var resolved = new HashSet<IObject>();
 
@@ -156,13 +157,13 @@ namespace Allors.Database.Domain.Tests
         public void Prefetch()
         {
             var tree = Array.Empty<Node>();
-            tree.BuildPrefetchPolicy();
+            new PrefetchPolicyBuilder().WithNodes(tree, this.M).Build();
 
             tree = new[] { new Node(this.M.C1.C1AllorsBinary) };
-            tree.BuildPrefetchPolicy();
+            new PrefetchPolicyBuilder().WithNodes(tree, this.M).Build();
 
             tree = new[] { new Node(this.M.C1.C1C1Many2Manies) };
-            tree.BuildPrefetchPolicy();
+            new PrefetchPolicyBuilder().WithNodes(tree, this.M).Build();
         }
     }
 }

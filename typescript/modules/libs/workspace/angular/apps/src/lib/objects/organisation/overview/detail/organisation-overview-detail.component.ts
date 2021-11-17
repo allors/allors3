@@ -31,6 +31,7 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId, private fetcher: FetcherService) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'detail';

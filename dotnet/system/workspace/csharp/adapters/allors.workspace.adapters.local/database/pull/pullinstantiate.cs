@@ -90,11 +90,11 @@ namespace Allors.Workspace.Adapters.Local
                                         paged = paged.ToArray();
 
                                         response.AddValue(name + "_total", objects.Length.ToString());
-                                        response.AddCollection(name, paged, include);
+                                        response.AddCollection(name, (IComposite)@select.GetObjectType() ?? @class, paged, include);
                                     }
                                     else
                                     {
-                                        response.AddCollection(name, objects, include);
+                                        response.AddCollection(name, (IComposite)@select.GetObjectType() ?? @class, objects, include);
                                     }
                                 }
                             }

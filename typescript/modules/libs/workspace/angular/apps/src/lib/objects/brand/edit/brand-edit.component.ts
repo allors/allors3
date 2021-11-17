@@ -39,6 +39,7 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

@@ -48,6 +48,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;

@@ -24,15 +24,10 @@ export class ReceiptEditComponent extends TestScope implements OnInit, OnDestroy
   private subscription: Subscription;
   paymentApplication: PaymentApplication;
 
-  constructor(
-    @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ReceiptEditComponent>,
-    public refreshService: RefreshService,
-    private saveService: SaveService
-  ) {
+  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<ReceiptEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

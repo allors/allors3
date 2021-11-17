@@ -30,6 +30,7 @@ export class OrganisationComponent extends TestScope implements OnInit, OnDestro
   constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.title = 'Organisation';
     this.titleService.setTitle(this.title);
 

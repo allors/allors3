@@ -56,6 +56,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete(allors.context);

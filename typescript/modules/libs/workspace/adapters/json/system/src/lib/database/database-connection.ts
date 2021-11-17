@@ -36,8 +36,9 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     return new Workspace(this);
   }
 
-  onPullResonse(response: PullResponse): SyncRequest {
+  onPullResonse(response: PullResponse, context: string): SyncRequest {
     return {
+      x: context,
       o: response.p
         .filter((v) => {
           const record = this.recordsById.get(v.i);

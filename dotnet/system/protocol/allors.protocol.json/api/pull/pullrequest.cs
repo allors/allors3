@@ -7,7 +7,7 @@ namespace Allors.Protocol.Json.Api.Pull
 {
     using Data;
 
-    public class PullRequest
+    public class PullRequest : Request
     {
         /// <summary>
         /// Dependencies

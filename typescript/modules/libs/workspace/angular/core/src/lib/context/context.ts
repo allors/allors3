@@ -12,6 +12,8 @@ export interface Context {
 
   configuration: Configuration;
 
+  name: string;
+
   activate(rules: IRule<IObject>[]): void;
 
   create<T extends IObject>(cls: Class): T;

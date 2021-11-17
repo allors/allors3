@@ -130,6 +130,11 @@ export class ChangeSet implements IChangeSet {
   }
 
   private addAssociation(relationType: RelationType, association: IObject) {
+    if (association == null) {
+      // TODO: Investigate
+      return;
+    }
+
     const roleType = relationType.roleType;
 
     let associations = this.associationsByRoleType.get(roleType);
@@ -142,6 +147,11 @@ export class ChangeSet implements IChangeSet {
   }
 
   private addRole(relationType: RelationType, role: IObject) {
+    if (role == null) {
+      // TODO: Investigate
+      return;
+    }
+
     const associationType = relationType.associationType;
 
     let roles = this.rolesByAssociationType.get(associationType);

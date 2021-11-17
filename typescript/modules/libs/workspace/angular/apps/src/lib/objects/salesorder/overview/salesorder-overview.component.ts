@@ -23,6 +23,7 @@ export class SalesOrderOverviewComponent extends TestScope implements AfterViewI
   m: M;
 
   constructor(
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
@@ -34,6 +35,7 @@ export class SalesOrderOverviewComponent extends TestScope implements AfterViewI
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;

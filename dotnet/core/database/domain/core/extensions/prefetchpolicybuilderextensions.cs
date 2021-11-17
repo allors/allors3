@@ -7,45 +7,91 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using Database.Data;
     using Meta;
 
     public static class PrefetchPolicyBuilderExtensions
     {
-        public static void WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class)
+        public static PrefetchPolicyBuilder WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class)
         {
             // TODO: Cache
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0))
             {
                 @this.WithRule(roleType);
             }
+
+            return @this;
         }
 
-        public static void WithSecurityRules(this PrefetchPolicyBuilder @this, Class @class, MetaPopulation m)
+        public static PrefetchPolicyBuilder WithSecurityRules(this PrefetchPolicyBuilder @this, IComposite composite, MetaPopulation m)
         {
             // TODO: Cache
-            var AccessControlPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.Grant.UniqueId)
+
+            var securityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
+                .WithRule(m.SecurityToken.Grants, new PrefetchPolicyBuilder()
+                    .WithRule(m.Grant.UniqueId)
+                    .Build())
                 .Build();
 
-            var SecurityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.SecurityToken.Grants, AccessControlPrefetchPolicy)
-                .Build();
-
-            if (@class.DelegatedAccessRoleTypes != null)
+            foreach (Class @class in composite.Classes)
             {
-                var builder = new PrefetchPolicyBuilder()
-                    .WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy)
-                    .WithRule(m.Object.Revocations)
-                    .Build();
-
-                foreach (var delegatedAccessRoleType in @class.DelegatedAccessRoleTypes)
+                if (@class.DelegatedAccessRoleTypes != null)
                 {
-                    @this.WithRule(delegatedAccessRoleType, builder);
+                    var builder = new PrefetchPolicyBuilder()
+                        .WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy)
+                        .WithRule(m.Object.Revocations)
+                        .Build();
+
+                    foreach (var delegatedAccessRoleType in @class.DelegatedAccessRoleTypes)
+                    {
+                        @this.WithRule(delegatedAccessRoleType, builder);
+                    }
                 }
             }
 
-            @this.WithRule(m.Object.SecurityTokens, SecurityTokenPrefetchPolicy);
+            @this.WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy);
             @this.WithRule(m.Object.Revocations);
+
+            return @this;
+        }
+
+        public static PrefetchPolicyBuilder WithNodes(this PrefetchPolicyBuilder @this, Node[] treeNodes, MetaPopulation m)
+        {
+            foreach (var node in treeNodes)
+            {
+                @this.WithNode(node, m);
+            }
+
+            return @this;
+        }
+
+        public static PrefetchPolicyBuilder WithNode(this PrefetchPolicyBuilder @this, Node treeNode, MetaPopulation m)
+        {
+            if (treeNode.Nodes == null || treeNode.Nodes.Length == 0)
+            {
+                @this.WithRule(treeNode.PropertyType);
+
+                if (treeNode.PropertyType.ObjectType is Composite composite)
+                {
+                    foreach (var @class in composite.Classes)
+                    {
+                        @this.WithSecurityRules(@class, m);
+                    }
+                }
+            }
+            else
+            {
+                var nestedPrefetchPolicyBuilder = new PrefetchPolicyBuilder();
+                foreach (var node in treeNode.Nodes)
+                {
+                    @this.WithNode(node, m);
+                }
+
+                var nestedPrefetchPolicy = nestedPrefetchPolicyBuilder.Build();
+                @this.WithRule(treeNode.PropertyType, nestedPrefetchPolicy);
+            }
+
+            return @this;
         }
     }
 }

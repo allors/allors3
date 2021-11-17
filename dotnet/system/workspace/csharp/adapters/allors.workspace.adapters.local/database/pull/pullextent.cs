@@ -11,6 +11,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Database;
     using Database.Data;
+    using Database.Meta;
     using Database.Security;
     using Database.Services;
     using Extent = Database.Extent;
@@ -99,11 +100,11 @@ namespace Allors.Workspace.Adapters.Local
                                 paged = paged.ToArray();
 
                                 response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
-                                response.AddCollection(name, paged, include);
+                                response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, paged, include);
                             }
                             else
                             {
-                                response.AddCollection(name, objects, include);
+                                response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, objects, include);
                             }
                         }
                         else
@@ -122,11 +123,11 @@ namespace Allors.Workspace.Adapters.Local
                                 paged = paged.ToArray();
 
                                 response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
-                                response.AddCollection(name, paged, include);
+                                response.AddCollection(name, extent.ObjectType, paged, include);
                             }
                             else
                             {
-                                response.AddCollection(name, objects, include);
+                                response.AddCollection(name, extent.ObjectType, objects, include);
                             }
                         }
                     }

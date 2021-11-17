@@ -25,6 +25,7 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
   m: M;
 
   constructor(
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
@@ -38,6 +39,7 @@ export class OrganisationOverviewComponent extends TestScope implements AfterVie
 
     titleService.setTitle(this.title);
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

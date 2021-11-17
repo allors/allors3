@@ -18,7 +18,9 @@ export class FetchComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {}
+  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {
+    this.allors.context.name = this.constructor.name;
+  }
 
   public ngOnInit() {
     this.title.setTitle('Fetch');

@@ -66,7 +66,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private IPreparedExtents PreparedExtents { get; }
 
-        public void AddCollection(string name, in IEnumerable<Database.IObject> collection, Node[] tree)
+        public void AddCollection(string name, IComposite objectType, in IEnumerable<Database.IObject> collection, Node[] tree)
         {
             switch (collection)
             {
@@ -149,14 +149,12 @@ namespace Allors.Workspace.Adapters.Local
             {
                 if (pull.Object != null)
                 {
-                    var pullInstantiate =
-                        new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
+                    var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
                     pullInstantiate.Execute(this);
                 }
                 else
                 {
-                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects,
-                        this.PreparedExtents);
+                    var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents);
                     pullExtent.Execute(this);
                 }
             }
@@ -179,11 +177,11 @@ namespace Allors.Workspace.Adapters.Local
 
             if (tree != null)
             {
-                // TODO: include dependencies
+                // TODO: 
                 // Prefetch
-                var session = @object.Strategy.Transaction;
-                var prefetcher = tree.BuildPrefetchPolicy();
-                session.Prefetch(prefetcher, @object);
+                //    var session = @object.Strategy.Transaction;
+                //    var prefetcher = tree.BuildPrefetchPolicy();
+                //    session.Prefetch(prefetcher, @object);
             }
 
             this.DatabaseObjects.Add(@object);
@@ -202,22 +200,22 @@ namespace Allors.Workspace.Adapters.Local
 
                 if (tree != null)
                 {
-                    // TODO: include dependencies
-                    var prefetchPolicy = tree.BuildPrefetchPolicy();
+                    // TODO: 
+                    //var prefetchPolicy = tree.BuildPrefetchPolicy();
 
                     ICollection<Database.IObject> newCollection;
 
                     if (existingCollection != null)
                     {
                         newCollection = filteredCollection.ToArray();
-                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
+                        //this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         existingCollection.UnionWith(newCollection);
                     }
                     else
                     {
                         var newSet = new HashSet<Database.IObject>(filteredCollection);
                         newCollection = newSet;
-                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
+                        //this.Transaction.Prefetch(prefetchPolicy, newCollection);
                         this.DatabaseCollectionsByName.Add(name, newSet);
                     }
 

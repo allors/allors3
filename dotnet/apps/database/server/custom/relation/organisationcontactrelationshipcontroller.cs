@@ -35,17 +35,17 @@ namespace Allors.Database.Server.Controllers
 
             response.AddObject("contact", organisationContactRelationship.Contact);
 
-            var locales = new Locales(this.TransactionService.Transaction).Extent();
-            response.AddCollection("locales", locales);
+            var locales = new Locales(this.TransactionService.Transaction);
+            response.AddCollection("locales", locales.ObjectType, locales.Extent());
 
-            var genders = new GenderTypes(this.TransactionService.Transaction).Extent();
-            response.AddCollection("genders", genders);
+            var genders = new GenderTypes(this.TransactionService.Transaction);
+            response.AddCollection("genders", genders.ObjectType, genders.Extent());
 
-            var salutations = new Salutations(this.TransactionService.Transaction).Extent();
-            response.AddCollection("salutations", salutations);
+            var salutations = new Salutations(this.TransactionService.Transaction);
+            response.AddCollection("salutations", salutations.ObjectType, salutations.Extent());
 
-            var contactKinds = new OrganisationContactKinds(this.TransactionService.Transaction).Extent();
-            response.AddCollection("organisationContactKinds", contactKinds);
+            var contactKinds = new OrganisationContactKinds(this.TransactionService.Transaction);
+            response.AddCollection("organisationContactKinds", contactKinds.ObjectType, contactKinds.Extent());
 
             return this.Ok(response.Build());
         }

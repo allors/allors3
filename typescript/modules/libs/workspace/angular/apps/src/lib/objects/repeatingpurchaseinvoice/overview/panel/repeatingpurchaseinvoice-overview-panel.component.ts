@@ -56,6 +56,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent extends TestScope {
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     panel.name = 'repeating purchase invoice';

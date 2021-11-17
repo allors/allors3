@@ -86,25 +86,6 @@ namespace Allors.Database.Data
             }
         }
 
-        public void BuildPrefetchPolicy(PrefetchPolicyBuilder prefetchPolicyBuilder)
-        {
-            if (this.Nodes == null || this.Nodes.Length == 0)
-            {
-                prefetchPolicyBuilder.WithRule(this.PropertyType);
-            }
-            else
-            {
-                var nestedPrefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                foreach (var node in this.Nodes)
-                {
-                    node.BuildPrefetchPolicy(nestedPrefetchPolicyBuilder);
-                }
-
-                var nestedPrefetchPolicy = nestedPrefetchPolicyBuilder.Build();
-                prefetchPolicyBuilder.WithRule(this.PropertyType, nestedPrefetchPolicy);
-            }
-        }
-
         public Node Add(IEnumerable<IPropertyType> propertyTypes)
         {
             foreach (var propertyType in propertyTypes)

@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
     using System.Linq;
     using Meta;
     using DateTime = System.DateTime;
@@ -20,6 +21,8 @@ namespace Allors.Database.Domain
                 var singleton = transaction.GetSingleton();
                 @this.PreferredCurrency = singleton.Settings.PreferredCurrency;
             }
+
+            @this.DerivationTrigger = Guid.NewGuid();
         }
 
         public static bool AppsIsActiveCustomer(this Party @this, InternalOrganisation internalOrganisation, DateTime? date)

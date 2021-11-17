@@ -102,6 +102,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
   ) {
     titleService.setTitle(this.title);
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print();
@@ -253,9 +254,13 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
           const pulls = [
             this.fetcher.internalOrganisation,
+            pull.InternalOrganisation({
+              objectId: internalOrganisationId,
+              include: { FacilitiesWhereOwner: x },
+            }),
             pull.NonUnifiedPart({
               predicate,
               sorting: sorter.create(sort),

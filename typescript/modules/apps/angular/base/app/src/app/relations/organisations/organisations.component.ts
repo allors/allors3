@@ -34,6 +34,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   constructor(@Self() public allors: ContextService, public refreshService: RefreshService, public deleteService: DeleteService, public overviewService: OverviewService, private titleService: Title) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;

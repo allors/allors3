@@ -44,6 +44,7 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;

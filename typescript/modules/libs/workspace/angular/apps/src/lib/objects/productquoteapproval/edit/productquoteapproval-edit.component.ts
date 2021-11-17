@@ -37,6 +37,7 @@ export class ProductQuoteApprovalEditComponent extends TestScope implements OnIn
   ) {
     super();
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.print = printService.print(this.m.ProductQuoteApproval.ProductQuote);

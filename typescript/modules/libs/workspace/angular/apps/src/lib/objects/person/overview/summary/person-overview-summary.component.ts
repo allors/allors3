@@ -1,9 +1,10 @@
 import { Component, Self } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, OrganisationContactKind, Media } from '@allors/workspace/domain/default';
-import { MediaService, NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
+import { Person, User, Organisation, OrganisationContactRelationship, OrganisationContactKind, Media } from '@allors/workspace/domain/default';
+import { MediaService, NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -18,13 +19,18 @@ export class PersonOverviewSummaryComponent extends TestScope {
   organisation: Organisation;
   contactKindsText: string;
   organisationContactRelationships: OrganisationContactRelationship[];
+  user: User;
 
   constructor(
     @Self() public panel: PanelService,
     public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    public refreshService: RefreshService,
+    private saveService: SaveService,
+    public snackBar: MatSnackBar
+
   ) {
     super();
 
@@ -83,6 +89,7 @@ export class PersonOverviewSummaryComponent extends TestScope {
 
     panel.onPulled = (loaded) => {
       this.person = loaded.object<Person>(personPullName);
+      this.user = loaded.object<User>(personPullName);
 
       this.organisationContactRelationships = loaded.collection<OrganisationContactRelationship>(organisationContactRelationshipsPullName);
 
@@ -95,6 +102,13 @@ export class PersonOverviewSummaryComponent extends TestScope {
         }
       }
     };
+  }
+
+  public ResetPassword(): void {
+    this.panel.manager.context.invoke(this.user.ResetPassword).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Password reset mail send to user.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
   }
 
   get src(): string {

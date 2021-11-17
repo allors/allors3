@@ -41,6 +41,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
     public navigation: NavigationService,
     private userId: UserId
   ) {
+    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
 

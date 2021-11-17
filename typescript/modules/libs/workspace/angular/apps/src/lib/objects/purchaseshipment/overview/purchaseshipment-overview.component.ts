@@ -30,6 +30,7 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
   m: M;
 
   constructor(
+    @Self() public allors: ContextService,
     @Self() public panelManager: PanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
@@ -43,6 +44,7 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
 
     titleService.setTitle(this.title);
 
+    this.allors.context.name = this.constructor.name;
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
@@ -84,7 +86,7 @@ export class PurchaseShipmentOverviewComponent extends TestScope implements Afte
 
           this.panelManager.onPull(pulls);
 
-          return this.panelManager.context.pull( pulls);
+          return this.panelManager.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
