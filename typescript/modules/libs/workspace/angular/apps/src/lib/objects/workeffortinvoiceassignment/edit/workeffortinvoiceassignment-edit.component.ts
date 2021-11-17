@@ -92,7 +92,7 @@ export class WorkEffortInvoiceItemAssignmentEditComponent extends TestScope impl
         this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
 
         if (isCreate) {
-          this.title = 'Add work effort inventory assignment';
+          this.title = 'Add work effort invoice item';
 
           this.workEffortInvoiceItemAssignment = this.allors.context.create<WorkEffortInvoiceItemAssignment>(m.WorkEffortInvoiceItemAssignment);
           this.workEffortInvoiceItemAssignment.Assignment = this.workEffort;

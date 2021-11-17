@@ -61,6 +61,11 @@ namespace Allors.Database.Domain
                         @this.AddRevocation(reviseRevocation);
                     }
                 }
+                else if (@this.SalesInvoiceState.IsNotPaid)
+                {
+                    @this.AddRevocation(cancelRevocation);
+                    @this.AddRevocation(reviseRevocation);
+                }
             }
         }
     }
