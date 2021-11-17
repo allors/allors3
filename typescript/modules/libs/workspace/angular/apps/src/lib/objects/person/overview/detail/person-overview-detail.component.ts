@@ -8,8 +8,6 @@ import { NavigationService, PanelService, RefreshService, SaveService, Singleton
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { ContactMechanismType, ElectronicAddressElectronicAddressString, ElectronicAddress, UserUserEmail, Party } from '../../../../../../../../meta/custom/src/lib/generated/m.g';
-import { Select } from '../../../../../../../../../protocol/json/system/src/lib/data/select';
 
 @Component({
   // tslint:disable-next-line:component-selector
