@@ -119,7 +119,6 @@ export function predicateToJson(from: DataPredicate): Predicate {
     return null;
   }
 
-  // TODO: Koen
   switch (from.kind) {
     case 'And':
       return {
@@ -233,8 +232,6 @@ export function predicateToJson(from: DataPredicate): Predicate {
         ops: predicatesToJson(from.operands),
       };
   }
-
-  throw new Error('Not implemented yet');
 }
 
 function sortingsToJson(from: DataSort[]): Sort[] {
@@ -242,7 +239,12 @@ function sortingsToJson(from: DataSort[]): Sort[] {
     return null;
   }
 
-  return undefined;
+  return from.map((v) => {
+    return {
+      r: v.roleType.relationType.tag,
+      d: v.sortDirection,
+    };
+  });
 }
 
 function resultToJson(from: DataResult): Result {

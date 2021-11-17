@@ -466,7 +466,7 @@ namespace Allors.Database.Protocol.Json
             var sort = new Sort
             {
                 SortDirection = visited.d,
-                RoleType = !string.IsNullOrWhiteSpace(visited.r) ? (IRoleType)this.fromJson.MetaPopulation.FindByTag(visited.r) : null,
+                RoleType = !string.IsNullOrWhiteSpace(visited.r) ? ((IRelationType)this.fromJson.MetaPopulation.FindByTag(visited.r)).RoleType : null,
             };
 
             this.sorts.Push(sort);
