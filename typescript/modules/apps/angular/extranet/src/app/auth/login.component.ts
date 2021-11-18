@@ -33,7 +33,6 @@ export class LoginComponent extends TestScope implements OnDestroy {
     @Self() private allors: ContextService,
     private authService: AuthenticationService,
     private singletonId: SingletonId,
-    private internalOrganisationId: InternalOrganisationId,
     private router: Router,
     public formBuilder: FormBuilder
   ) {
