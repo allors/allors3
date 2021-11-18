@@ -77,6 +77,8 @@ namespace Allors.Repository
 
         public ProductIdentification[] ProductIdentifications { get; set; }
 
+        public string ProductCategoriesDisplayName { get; set; }
+
         public string BarCode { get; set; }
         public decimal ReplacementValue { get; set; }
         public int LifeTime { get; set; }
@@ -111,6 +113,8 @@ namespace Allors.Repository
         public SerialisedItem[] SerialisedItems { get; set; }
 
         public SerialisedItemCharacteristic[] SerialisedItemCharacteristics { get; set; }
+
+        public string PartCategoriesDisplayName { get; set; }
 
         public decimal QuantityOnHand { get; set; }
 

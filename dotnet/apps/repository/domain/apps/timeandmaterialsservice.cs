@@ -41,6 +41,8 @@ namespace Allors.Repository
 
         public ProductIdentification[] ProductIdentifications { get; set; }
 
+        public string ProductCategoriesDisplayName { get; set; }
+
         public string Name { get; set; }
 
         public DateTime IntroductionDate { get; set; }

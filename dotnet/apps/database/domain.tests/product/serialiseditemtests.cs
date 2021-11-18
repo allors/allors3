@@ -582,7 +582,7 @@ namespace Allors.Database.Domain.Tests
             new ProductCategoryBuilder(this.Transaction).WithName("catname").WithProduct(part).Build();
             this.Derive();
 
-            Assert.Contains("catname", serialisedItem.DisplayProductCategories);
+            Assert.Contains("catname", serialisedItem.ProductCategoriesDisplayName);
         }
     }
 

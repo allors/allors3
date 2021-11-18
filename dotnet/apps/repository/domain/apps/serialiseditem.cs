@@ -328,7 +328,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Workspace(Default)]
-        public string DisplayProductCategories { get; set; }
+        public string ProductCategoriesDisplayName { get; set; }
 
         #region Allors
         [Id("23572f9e-9423-49ac-baf7-c0ecb039c823")]

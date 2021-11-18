@@ -197,6 +197,29 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class ProductProductCategoriesDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProductProductCategoriesDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedProductCategoryNameDeriveProductCategoriesDisplayName()
+        {
+            var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var partCategory1 = new ProductCategoryBuilder(this.Transaction).WithName("parent").Build();
+            this.Derive();
+
+            var partCategory2 = new ProductCategoryBuilder(this.Transaction).WithName("child").WithPrimaryParent(partCategory1).Build();
+            this.Derive();
+
+            partCategory2.AddProduct(nonUnifiedGood);
+            this.Derive();
+
+            Assert.Equal("parent/child", nonUnifiedGood.ProductCategoriesDisplayName);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class UnifiedGoodDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {

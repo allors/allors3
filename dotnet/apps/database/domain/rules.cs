@@ -152,6 +152,8 @@ namespace Allors.Database.Domain
                 new PartCategoryImageRule(m),
                 new PartCategoryNameRule(m),
                 new PartCategoryRule(m),
+                new PartPartCategoriesDisplayNameRule(m),
+                new ProductProductCategoriesDisplayNameRule(m),
                 new NonUnifiedGoodVariantsRule(m),
                 new NonUnifiedGoodProductIdentificationsRule(m),
                 new StatementOfWorkRule(m),

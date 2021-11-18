@@ -351,4 +351,26 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class PartPartCategoriesDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartPartCategoriesDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartCategoryNameDerivePartCategoriesDisplayName()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var partCategory1 = new PartCategoryBuilder(this.Transaction).WithName("parent").Build();
+            this.Derive();
+
+            var partCategory2 = new PartCategoryBuilder(this.Transaction).WithName("child").WithPrimaryParent(partCategory1).Build();
+            this.Derive();
+
+            partCategory2.AddPart(nonUnifiedPart);
+            this.Derive();
+
+            Assert.Equal("parent/child", nonUnifiedPart.PartCategoriesDisplayName);
+        }
+    }
 }

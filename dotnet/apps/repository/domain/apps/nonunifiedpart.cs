@@ -79,6 +79,8 @@ namespace Allors.Repository
 
         public SerialisedItemCharacteristic[] SerialisedItemCharacteristics { get; set; }
 
+        public string PartCategoriesDisplayName { get; set; }
+
         public decimal QuantityOnHand { get; set; }
 
         public decimal AvailableToPromise { get; set; }

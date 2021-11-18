@@ -118,6 +118,13 @@ namespace Allors.Repository
         SerialisedItemCharacteristic[] SerialisedItemCharacteristics { get; set; }
 
         #region Allors
+        [Id("24d4b0f3-7775-4af4-b1cd-0c1d7ac4e588")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        public string PartCategoriesDisplayName { get; set; }
+
+        #region Allors
         [Id("d55ec9da-f499-47e1-9582-094e73bef11a")]
         [Indexed]
         #endregion

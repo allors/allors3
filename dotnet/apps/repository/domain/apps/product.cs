@@ -95,5 +95,12 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         PriceComponent[] BasePrices { get; set; }
+
+        #region Allors
+        [Id("054cd7a3-5d89-49d0-b902-07fd5c35b220")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        public string ProductCategoriesDisplayName { get; set; }
     }
 }
