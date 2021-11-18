@@ -154,8 +154,8 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
             pull.ProductIdentificationType({}),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.PartCategory({ 
-              sorting: [{ roleType: m.PartCategory.Name }]
+            pull.PartCategory({
+              sorting: [{ roleType: m.PartCategory.Name }],
             }),
             pull.Brand({
               include: {
@@ -169,7 +169,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
               select: { PartCategoriesWherePart: x },
             }),
           ];
-          
+
           this.manufacturersFilter = Filters.manufacturersFilter(m);
 
           return this.allors.context.pull(pulls);
@@ -179,7 +179,7 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         this.allors.context.reset();
 
         this.part = loaded.object<Part>(m.Part);
-        this.originalCategories = loaded.collection<PartCategory>('OriginalCategories')?? [];
+        this.originalCategories = loaded.collection<PartCategory>('OriginalCategories') ?? [];
         this.selectedCategories = this.originalCategories;
 
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
@@ -241,6 +241,28 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     this.allors.context.pull(pulls).subscribe(() => {
       this.models = this.selectedBrand?.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     });
+  }
+
+  public categorySelected(categories: PartCategory[]): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
+    let pulls = [];
+
+    categories.forEach((category: PartCategory) => {
+      pulls = [
+        ...pulls,
+        pull.PartCategory({
+          object: category,
+          include: {
+            Parts: x,
+          },
+        }),
+      ];
+    });
+
+    this.allors.context.pull(pulls);
   }
 
   public save(): void {
