@@ -24,6 +24,7 @@
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
+    "angular-extranet:serve": "npx nx serve angular-extranet",
     "angular-apps:serve": "npx nx serve angular-apps-app",
     "angular-base:serve": "npx nx serve angular-base-app",
     "angular-core:serve": "npx nx serve angular-core-app",

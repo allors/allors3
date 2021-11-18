@@ -18,6 +18,8 @@ npm install easymde
 npm install jsnlog
 npm install luxon
 
+npx nx g @nrwl/angular:application angular/extranet --routing=true --style=scss --e2eTestRunner=none
+
 npx nx g @nrwl/angular:application angular/apps/app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/angular:application angular/base/app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/angular:application angular/core/app --routing=true --style=scss --e2eTestRunner=none
