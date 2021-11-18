@@ -133,7 +133,7 @@ export class SerialisedItemListComponent extends TestScope implements OnInit, On
             object: v,
             id: v.ItemNumber,
             name: v.Name,
-            categories: v.DisplayProductCategories,
+            categories: v.ProductCategoriesDisplayName,
             availability: v.SerialisedItemAvailabilityName,
             ownership: v.OwnershipByOwnershipName,
             suppliedBy: v.SuppliedByPartyName,

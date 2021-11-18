@@ -724,7 +724,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       { kind: 'Equals',  propertyType: m.SerialisedItem.SuppliedBy, parameter: 'suppliedby' },
       { kind: 'Equals',  propertyType: m.SerialisedItem.RentedBy, parameter: 'rentedby' },
       { kind: 'Equals',  propertyType: m.SerialisedItem.OwnedBy, parameter: 'ownedby' },
-      { kind: 'Like',  roleType: m.SerialisedItem.DisplayProductCategories, parameter: 'category' },
+      { kind: 'Like',  roleType: m.SerialisedItem.ProductCategoriesDisplayName, parameter: 'category' },
       { kind: 'ContainedIn', 
         propertyType: m.SerialisedItem.PartWhereSerialisedItem,
         extent: { kind: 'Filter', 
@@ -964,7 +964,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
 
   angularSorter(m.SerialisedItem, new Sorter({
     id: [m.SerialisedItem.ItemNumber],
-    categories: [m.SerialisedItem.DisplayProductCategories],
+    categories: [m.SerialisedItem.ProductCategoriesDisplayName],
     name: [m.SerialisedItem.Name],
     availability: [m.SerialisedItem.SerialisedItemAvailabilityName],
   }));

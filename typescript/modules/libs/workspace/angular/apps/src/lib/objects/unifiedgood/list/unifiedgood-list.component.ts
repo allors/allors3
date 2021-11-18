@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
+import { UnifiedGood } from '@allors/workspace/domain/default';
 import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
