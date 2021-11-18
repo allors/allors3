@@ -8,7 +8,6 @@ import {
   Locale,
   Organisation,
   PriceComponent,
-  SupplierOffering,
   ProductIdentificationType,
   Facility,
   InventoryItemKind,

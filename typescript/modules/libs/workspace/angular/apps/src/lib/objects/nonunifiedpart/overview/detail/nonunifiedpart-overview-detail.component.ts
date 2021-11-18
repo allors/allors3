@@ -5,9 +5,10 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Part, PriceComponent, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, Locale } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, TestScope, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -25,7 +26,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   locales: Locale[];
   inventoryItemKinds: InventoryItemKind[];
   productTypes: ProductType[];
-  manufacturers: Organisation[];
   brands: Brand[];
   selectedBrand: Brand;
   models: Model[];
@@ -39,10 +39,10 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
   currentSellingPrice: PriceComponent;
   internalOrganisation: Organisation;
   settings: Settings;
-  suppliers: string;
   categories: PartCategory[];
   originalCategories: PartCategory[] = [];
   selectedCategories: PartCategory[] = [];
+  manufacturersFilter: SearchFactory;
 
   private subscription: Subscription;
 
@@ -154,18 +154,14 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
             pull.ProductIdentificationType({}),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.PartCategory({ 
-              include: { Parts: x },
-              sorting: [{ roleType: m.PartCategory.Name }]
+            pull.PartCategory({
+              sorting: [{ roleType: m.PartCategory.Name }],
             }),
             pull.Brand({
               include: {
                 Models: x,
               },
               sorting: [{ roleType: m.Brand.Name }],
-            }),
-            pull.Organisation({
-              predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
             }),
             pull.NonUnifiedPart({
               name: 'OriginalCategories',
@@ -174,6 +170,8 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
             }),
           ];
 
+          this.manufacturersFilter = Filters.manufacturersFilter(m);
+
           return this.allors.context.pull(pulls);
         })
       )
@@ -181,24 +179,20 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
         this.allors.context.reset();
 
         this.part = loaded.object<Part>(m.Part);
-        this.originalCategories = loaded.collection<PartCategory>('OriginalCategories');
+        this.originalCategories = loaded.collection<PartCategory>('OriginalCategories') ?? [];
         this.selectedCategories = this.originalCategories;
 
-        this.suppliers = this.part.SuppliedBy?.map((w) => w.PartyName).join(', ');
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.facilities = this.fetcher.getWarehouses(loaded);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<PartCategory>(m.PartCategory);
         this.settings = this.fetcher.getSettings(loaded);
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
-
-        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
 
         this.partNumber = this.part.ProductIdentifications?.find((v) => v.ProductIdentificationType === partNumberType);
 
@@ -247,6 +241,28 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     this.allors.context.pull(pulls).subscribe(() => {
       this.models = this.selectedBrand?.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
     });
+  }
+
+  public categorySelected(categories: PartCategory[]): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
+    let pulls = [];
+
+    categories.forEach((category: PartCategory) => {
+      pulls = [
+        ...pulls,
+        pull.PartCategory({
+          object: category,
+          include: {
+            Parts: x,
+          },
+        }),
+      ];
+    });
+
+    this.allors.context.pull(pulls);
   }
 
   public save(): void {

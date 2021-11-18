@@ -80,15 +80,12 @@
           </div>
 
           <div class="row">
-            <mat-form-field class="col-md">
-              <input matInput [(ngModel)]="suppliers" name="suppliers" placeholder="Supplied By" readonly />
-            </mat-form-field>
-            <a-mat-select class="col-md" [object]="part" [roleType]="m.Part.ManufacturedBy" [options]="manufacturers" display="Name"></a-mat-select>
+            <a-mat-autocomplete class="col-md" [object]="part" [roleType]="m.Part.ManufacturedBy" [filter]="manufacturersFilter.create(allors.context)" display="DisplayName"> </a-mat-autocomplete>
           </div>
 
           <div class="row">
             <mat-form-field class="col-md">
-              <mat-select [(ngModel)]="selectedCategories" name="categories" placeholder="Categories" multiple="true">
+              <mat-select [(ngModel)]="selectedCategories" name="categories" placeholder="Categories" multiple="true"  (ngModelChange)="categorySelected($event)">
                 <mat-option>None</mat-option>
                 <mat-option *ngFor="let category of categories" [value]="category"> {{ category.DisplayName }} </mat-option>
               </mat-select>
