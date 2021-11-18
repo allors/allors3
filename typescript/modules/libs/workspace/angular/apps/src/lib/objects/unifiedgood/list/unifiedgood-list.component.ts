@@ -104,18 +104,6 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
-            pull.UnifiedGood({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.UnifiedGood)?.create(sort) : null,
-              select: {
-                ProductCategoriesWhereProduct: {
-                  include: {
-                    Products: {},
-                    PrimaryAncestors: {},
-                  },
-                },
-              },
-            }),
           ];
 
           return this.allors.context.pull(pulls);
@@ -125,7 +113,6 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
         this.allors.context.reset();
 
         const goods = loaded.collection<UnifiedGood>(m.UnifiedGood);
-        const productCategories = loaded.collection<ProductCategory>(m.UnifiedGood.ProductCategoriesWhereProduct);
 
         this.table.total = (loaded.value('UnifiedGoods_total') ?? 0) as number;
         this.table.data = goods?.map((v) => {
@@ -133,10 +120,7 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
             object: v,
             name: v.Name,
             id: v.ProductNumber,
-            categories: productCategories
-              ?.filter((w) => w.Products.includes(v))
-              ?.map((w) => w.DisplayName)
-              .join(', '),
+            categories: v.ProductCategoriesDisplayName,
             qoh: v.QuantityOnHand,
             photos: v.Photos.length.toString(),
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),

@@ -281,18 +281,6 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
             }),
-            pull.NonUnifiedPart({
-              predicate,
-              sorting: sorter.create(sort),
-              select: {
-                PartCategoriesWherePart: {
-                  include: {
-                    Parts: x,
-                    PrimaryAncestors: x,
-                  },
-                },
-              },
-            }),
             pull.Singleton({
               objectId: this.singletonId.value,
               select: {
@@ -346,7 +334,6 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         }
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        const partCategories = loaded.collection<PartCategory>(m.NonUnifiedPart.PartCategoriesWherePart);
 
         this.table.total = (loaded.value('NonUnifiedParts_total') ?? 0) as number;
 
@@ -357,10 +344,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             partNo: v.ProductNumber,
             qoh: v.QuantityOnHand,
             localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[])?.find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
-            categories: partCategories
-              ?.filter((w) => w.Parts.includes(v))
-              ?.map((w) => w.DisplayName)
-              .join(', '),
+            categories: v.PartCategoriesDisplayName,
             brand: v.Brand ? v.Brand.Name : '',
             model: v.Model ? v.Model.Name : '',
             kind: v.InventoryItemKind.Name,
