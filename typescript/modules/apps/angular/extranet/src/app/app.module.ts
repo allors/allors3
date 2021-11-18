@@ -15,7 +15,7 @@ import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { M, tags } from '@allors/workspace/meta/default';
-import { ruleBuilder } from '@allors/workspace/derivations/apps-custom';
+import { ruleBuilder } from '@allors/workspace/derivations/extranet-custom';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -128,11 +128,11 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { ErrorComponent } from './error/error.component';
 import { configure } from './configure';
-import { AppsContext } from '../allors/apps-context';
+import { ExtranetContext } from '../allors/extranet-context';
 import { Configuration } from '@allors/workspace/domain/system';
 import { applyRules } from '@allors/workspace/derivations/system';
 
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, internalOrganisationId: InternalOrganisationId) {
+export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
     const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
 
@@ -155,9 +155,9 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     const workspace = database.createWorkspace();
 
     workspaceService.workspace = workspace;
-    workspaceService.contextBuilder = () => new AppsContext(workspaceService);
+    workspaceService.contextBuilder = () => new ExtranetContext(workspaceService);
 
-    configure(m, internalOrganisationId);
+    configure(m);
   };
 }
 
@@ -319,8 +319,6 @@ export const edit = {};
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
     { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
-    PrintService,
-    { provide: PrintConfig, useValue: { url: environment.baseUrl } },
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: OBJECT_CREATE_TOKEN, useValue: create },
     { provide: OBJECT_EDIT_TOKEN, useValue: edit },

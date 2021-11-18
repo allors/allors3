@@ -5,7 +5,7 @@ import { Configuration, IInvokeResult, InvokeOptions, IObject, IPullResult, IRes
 import { Class, Composite } from '@allors/workspace/meta/system';
 import { derivationRules } from '@allors/workspace/derivations/system';
 
-export class AppsContext implements Context {
+export class ExtranetContext implements Context {
   constructor(public workspaceService: WorkspaceService) {
     this.workspace = this.workspaceService.workspace;
     this.configuration = this.workspace.configuration;
