@@ -28,27 +28,35 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Part>())
             {
-                foreach(var category in @this.PartCategoriesWherePart)
-                {
-                    var primaryAncestors = new List<PartCategory>();
-                    var primaryAncestor = category.PrimaryParent;
-                    while (primaryAncestor != null)
-                    {
-                        if (primaryAncestors.Contains(primaryAncestor))
-                        {
-                            var loop = string.Join(" -> ", primaryAncestors.Append(primaryAncestor).Select(v => v.Name));
-                            validation.AddError(category, category.Meta.PrimaryParent, "Cycle detected in " + loop);
-                            break;
-                        }
+                @this.DerivePartPartCategoriesDisplayName(validation);
+            }
+        }
+    }
 
-                        primaryAncestors.Add(primaryAncestor);
-                        primaryAncestor = primaryAncestor.PrimaryParent;
+    public static class PartPartCategoriesDisplayNameRuleExtensions
+    {
+        public static void DerivePartPartCategoriesDisplayName(this Part @this, IValidation validation)
+        {
+            foreach (var category in @this.PartCategoriesWherePart)
+            {
+                var primaryAncestors = new List<PartCategory>();
+                var primaryAncestor = category.PrimaryParent;
+                while (primaryAncestor != null)
+                {
+                    if (primaryAncestors.Contains(primaryAncestor))
+                    {
+                        var loop = string.Join(" -> ", primaryAncestors.Append(primaryAncestor).Select(v => v.Name));
+                        validation.AddError(category, category.Meta.PrimaryParent, "Cycle detected in " + loop);
+                        break;
                     }
 
-                    primaryAncestors.Reverse();
-                    primaryAncestors.Add(category);
-                    @this.PartCategoriesDisplayName = string.Join("/", primaryAncestors.Select(v => v.Name));
+                    primaryAncestors.Add(primaryAncestor);
+                    primaryAncestor = primaryAncestor.PrimaryParent;
                 }
+
+                primaryAncestors.Reverse();
+                primaryAncestors.Add(category);
+                @this.PartCategoriesDisplayName = string.Join("/", primaryAncestors.Select(v => v.Name));
             }
         }
     }
