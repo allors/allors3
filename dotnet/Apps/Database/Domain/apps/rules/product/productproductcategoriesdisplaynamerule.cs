@@ -28,27 +28,35 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Product>())
             {
-                foreach(var category in @this.ProductCategoriesWhereProduct)
-                {
-                    var primaryAncestors = new List<ProductCategory>();
-                    var primaryAncestor = category.PrimaryParent;
-                    while (primaryAncestor != null)
-                    {
-                        if (primaryAncestors.Contains(primaryAncestor))
-                        {
-                            var loop = string.Join(" -> ", primaryAncestors.Append(primaryAncestor).Select(v => v.Name));
-                            validation.AddError(category, category.Meta.PrimaryParent, "Cycle detected in " + loop);
-                            break;
-                        }
+                @this.DeriveProductProductCategoriesDisplayName(validation);
+            }
+        }
+    }
 
-                        primaryAncestors.Add(primaryAncestor);
-                        primaryAncestor = primaryAncestor.PrimaryParent;
+    public static class ProductProductCategoriesDisplayNameExtensions
+    {
+        public static void DeriveProductProductCategoriesDisplayName(this Product @this, IValidation validation)
+        {
+            foreach (var category in @this.ProductCategoriesWhereProduct)
+            {
+                var primaryAncestors = new List<ProductCategory>();
+                var primaryAncestor = category.PrimaryParent;
+                while (primaryAncestor != null)
+                {
+                    if (primaryAncestors.Contains(primaryAncestor))
+                    {
+                        var loop = string.Join(" -> ", primaryAncestors.Append(primaryAncestor).Select(v => v.Name));
+                        validation.AddError(category, category.Meta.PrimaryParent, "Cycle detected in " + loop);
+                        break;
                     }
 
-                    primaryAncestors.Reverse();
-                    primaryAncestors.Add(category);
-                    @this.ProductCategoriesDisplayName = string.Join("/", primaryAncestors.Select(v => v.Name));
+                    primaryAncestors.Add(primaryAncestor);
+                    primaryAncestor = primaryAncestor.PrimaryParent;
                 }
+
+                primaryAncestors.Reverse();
+                primaryAncestors.Add(category);
+                @this.ProductCategoriesDisplayName = string.Join("/", primaryAncestors.Select(v => v.Name));
             }
         }
     }

@@ -14,21 +14,22 @@ namespace Allors.Database.Domain
 
     public class CustomerShipmentDeniedPermissionRule : Rule
     {
-        public CustomerShipmentDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("1121e021-7483-47ec-b8cf-1030e5dec9c3")) =>
-            this.Patterns = new Pattern[]
+        public CustomerShipmentDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("1121e021-7483-47ec-b8cf-1030e5dec9c3")) => this.Patterns = new Pattern[]
         {
             m.CustomerShipment.RolePattern(v => v.TransitionalRevocations),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            var transaction = cycle.Transaction;
-            var validation = cycle.Validation;
-
             foreach (var @this in matches.Cast<CustomerShipment>())
             {
-                @this.Revocations = @this.TransitionalRevocations;
+                @this.DeriveCustomerShipmentDeniedPermission();
             }
         }
+    }
+
+    public static class CustomerShipmentDeniedPermissionRuleExtensions
+    {
+        public static void DeriveCustomerShipmentDeniedPermission(this CustomerShipment @this) => @this.Revocations = @this.TransitionalRevocations;
     }
 }
