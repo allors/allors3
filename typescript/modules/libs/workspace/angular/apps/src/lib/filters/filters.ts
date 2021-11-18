@@ -69,9 +69,18 @@ export class Filters {
             kind: 'Filter',
             objectType: m.CustomerRelationship,
             predicate: {
-              kind: 'Equals',
-              propertyType: m.CustomerRelationship.InternalOrganisation,
-              value: internalOrganisationId,
+              kind: 'And',
+              operands: [
+                { kind: 'Equals', propertyType: m.CustomerRelationship.InternalOrganisation, value: internalOrganisationId },
+                { kind: 'LessThan', roleType: m.CustomerRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'Or',
+                  operands: [
+                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.CustomerRelationship.ThroughDate } },
+                    { kind: 'GreaterThan', roleType: m.CustomerRelationship.ThroughDate, value: new Date() },
+                  ],
+                },
+              ],
             },
           },
         });
@@ -91,9 +100,18 @@ export class Filters {
             kind: 'Filter',
             objectType: m.SupplierRelationship,
             predicate: {
-              kind: 'Equals',
-              propertyType: m.SupplierRelationship.InternalOrganisation,
-              value: internalOrganisationId,
+              kind: 'And',
+              operands: [
+                { kind: 'Equals', propertyType: m.SupplierRelationship.InternalOrganisation, value: internalOrganisationId },
+                { kind: 'LessThan', roleType: m.SupplierRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'Or',
+                  operands: [
+                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.SupplierRelationship.ThroughDate } },
+                    { kind: 'GreaterThan', roleType: m.SupplierRelationship.ThroughDate, value: new Date() },
+                  ],
+                },
+              ],
             },
           },
         });
@@ -139,7 +157,24 @@ export class Filters {
         predicate.operands.push({
           kind: 'ContainedIn',
           propertyType: m.Organisation.SubContractorRelationshipsWhereSubContractor,
-          extent: { kind: 'Filter', objectType: m.SubContractorRelationship, predicate: { kind: 'Equals', propertyType: m.SubContractorRelationship.Contractor, value: internalOrganisationId } },
+          extent: {
+            kind: 'Filter',
+            objectType: m.SubContractorRelationship,
+            predicate: {
+              kind: 'And',
+              operands: [
+                { kind: 'Equals', propertyType: m.SubContractorRelationship.Contractor, value: internalOrganisationId },
+                { kind: 'LessThan', roleType: m.SubContractorRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'Or',
+                  operands: [
+                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.SubContractorRelationship.ThroughDate } },
+                    { kind: 'GreaterThan', roleType: m.SubContractorRelationship.ThroughDate, value: new Date() },
+                  ],
+                },
+              ],
+            },
+          },
         });
       },
     });
@@ -153,7 +188,24 @@ export class Filters {
         predicate.operands.push({
           kind: 'ContainedIn',
           propertyType: m.Person.EmploymentsWhereEmployee,
-          extent: { kind: 'Filter', objectType: m.Employment, predicate: { kind: 'Equals', propertyType: m.Employment.Employer, value: internalOrganisationId } },
+          extent: {
+            kind: 'Filter',
+            objectType: m.Employment,
+            predicate: {
+              kind: 'And',
+              operands: [
+                { kind: 'Equals', propertyType: m.Employment.Employer, value: internalOrganisationId },
+                { kind: 'LessThan', roleType: m.Employment.FromDate, value: new Date() },
+                {
+                  kind: 'Or',
+                  operands: [
+                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.Employment.ThroughDate } },
+                    { kind: 'GreaterThan', roleType: m.Employment.ThroughDate, value: new Date() },
+                  ],
+                },
+              ],
+            },
+          },
         });
       },
     });

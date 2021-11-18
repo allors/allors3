@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Part, SupplierOffering, UnitOfMeasure, Settings, Currency, RatingType, Ordinal } from '@allors/workspace/domain/default';
+import { Part, SupplierOffering, UnitOfMeasure, Settings, Currency, RatingType, Ordinal } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 

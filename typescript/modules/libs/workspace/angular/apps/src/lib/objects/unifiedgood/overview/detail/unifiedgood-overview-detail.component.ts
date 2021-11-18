@@ -2,7 +2,6 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
-import { isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import {
@@ -18,15 +17,15 @@ import {
   Model,
   UnitOfMeasure,
   Settings,
-  SupplierRelationship,
   ProductCategory,
   ProductNumber,
   UnifiedGood,
 } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, TestScope, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -47,9 +46,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   categories: ProductCategory[];
   manufacturers: Organisation[];
   suppliers: Organisation[];
-  currentSuppliers: Set<Organisation>;
-  selectedSuppliers: Organisation[];
-  supplierOfferings: SupplierOffering[];
   brands: Brand[];
   selectedBrand: Brand;
   models: Model[];
@@ -65,6 +61,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   currentSellingPrice: PriceComponent;
   internalOrganisation: Organisation;
   settings: Settings;
+  allSuppliersFilter: SearchFactory;
 
   private subscription: Subscription;
   private refresh$: BehaviorSubject<Date>;
@@ -175,12 +172,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
                 },
               },
             }),
-            pull.UnifiedGood({
-              objectId: id,
-              select: {
-                SupplierOfferingsWherePart: x,
-              },
-            }),
             pull.UnitOfMeasure({}),
             pull.InventoryItemKind({}),
             pull.ProductIdentificationType({}),
@@ -190,11 +181,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             pull.ProductCategory({ 
               include: {Products: x },
               sorting: [{ roleType: m.ProductCategory.Name }]
-            }),
-            pull.SupplierRelationship({
-              include: {
-                Supplier: x,
-              },
             }),
             pull.Brand({
               include: {
@@ -217,6 +203,8 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
               },
             }),
           ];
+          
+          this.allSuppliersFilter = Filters.allSuppliersFilter(m);
 
           return this.allors.context.pull(pulls);
         })
@@ -225,7 +213,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         this.allors.context.reset();
 
         this.good = loaded.object<UnifiedGood>(m.UnifiedGood);
-        this.originalCategories = loaded.collection<ProductCategory>('OriginalCategories');
+        this.originalCategories = loaded.collection<ProductCategory>('OriginalCategories')?? [];
         this.selectedCategories = this.originalCategories;
 
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
@@ -240,25 +228,18 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
 
-        const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
-        const currentsupplierRelationships = supplierRelationships?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
-        this.currentSuppliers = new Set(currentsupplierRelationships?.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
-
         const goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
 
         this.productNumber = this.good.ProductIdentifications?.find((v) => v.ProductIdentificationType === goodNumberType);
 
         this.suppliers = this.good.SuppliedBy as Organisation[];
-        this.selectedSuppliers = this.suppliers;
-
+        
         this.selectedBrand = this.good.Brand;
         this.selectedModel = this.good.Model;
 
         if (this.selectedBrand) {
           this.brandSelected(this.selectedBrand);
         }
-
-        this.supplierOfferings = loaded.collection<SupplierOffering>(m.UnifiedGood.SupplierOfferingsWherePart);
       });
   }
 
@@ -336,45 +317,5 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
 
     this.good.Brand = this.selectedBrand;
     this.good.Model = this.selectedModel;
-
-    if (this.suppliers != null) {
-      const suppliersToDelete = this.suppliers?.filter((v) => v);
-
-      if (this.selectedSuppliers != null) {
-        this.selectedSuppliers.forEach((supplier: Organisation) => {
-          const index = suppliersToDelete.indexOf(supplier);
-          if (index > -1) {
-            suppliersToDelete.splice(index, 1);
-          }
-
-          const supplierOffering = this.supplierOfferings?.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
-
-          if (supplierOffering == null) {
-            this.supplierOfferings.push(this.newSupplierOffering(supplier));
-          } else {
-            supplierOffering.ThroughDate = null;
-          }
-        });
-      }
-
-      if (suppliersToDelete != null) {
-        suppliersToDelete.forEach((supplier: Organisation) => {
-          const supplierOffering = this.supplierOfferings?.find((v) => v.Supplier === supplier && isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
-
-          if (supplierOffering != null) {
-            supplierOffering.ThroughDate = new Date();
-          }
-        });
-      }
-    }
-  }
-
-  private newSupplierOffering(supplier: Organisation): SupplierOffering {
-    const supplierOffering = this.allors.context.create<SupplierOffering>(this.m.SupplierOffering);
-    supplierOffering.Supplier = supplier;
-    supplierOffering.Part = this.good;
-    supplierOffering.UnitOfMeasure = this.good.UnitOfMeasure;
-    supplierOffering.Currency = this.settings.PreferredCurrency;
-    return supplierOffering;
   }
 }

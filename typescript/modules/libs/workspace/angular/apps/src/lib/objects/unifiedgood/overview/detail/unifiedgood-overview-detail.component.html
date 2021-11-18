@@ -98,11 +98,6 @@
           </div>
 
           <div class="row">
-            <mat-form-field class="col-md">
-              <mat-select name="suppliers" [(ngModel)]="selectedSuppliers" placeholder="Suppliers" multiple="true">
-                <mat-option *ngFor="let supplier of currentSuppliers" [value]="supplier">{{ supplier.PartyName }}</mat-option>
-              </mat-select>
-            </mat-form-field>
             <a-mat-select class="col-md" [object]="good" [roleType]="m.UnifiedGood.ManufacturedBy" [options]="manufacturers" display="Name"></a-mat-select>
           </div>
 
