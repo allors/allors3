@@ -98,7 +98,7 @@
           </div>
 
           <div class="row">
-            <a-mat-select class="col-md" [object]="good" [roleType]="m.UnifiedGood.ManufacturedBy" [options]="manufacturers" display="Name"></a-mat-select>
+            <a-mat-autocomplete class="col-md" [object]="good" [roleType]="m.UnifiedGood.ManufacturedBy" [filter]="manufacturersFilter.create(allors.context)" display="DisplayName"> </a-mat-autocomplete>
           </div>
 
           <div class="row">

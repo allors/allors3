@@ -1,6 +1,7 @@
 import { SearchFactory } from '@allors/workspace/angular/base';
 import { And } from '@allors/workspace/domain/system';
 import { M, TreeBuilder } from '@allors/workspace/meta/default';
+import { OrganisationIsManufacturer } from '../../../../../meta/custom/src/lib/generated/m.g';
 
 export class Filters {
   static goodsFilter(m: M) {
@@ -224,6 +225,16 @@ export class Filters {
       roleTypes: [m.Organisation.PartyName],
       post: (predicate: And) => {
         predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true });
+      },
+    });
+  }
+
+  static manufacturersFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.Organisation,
+      roleTypes: [m.Organisation.PartyName],
+      post: (predicate: And) => {
+        predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true });
       },
     });
   }
