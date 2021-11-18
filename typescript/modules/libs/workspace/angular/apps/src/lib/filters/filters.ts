@@ -1,7 +1,6 @@
 import { SearchFactory } from '@allors/workspace/angular/base';
 import { And } from '@allors/workspace/domain/system';
 import { M, TreeBuilder } from '@allors/workspace/meta/default';
-import { OrganisationIsManufacturer } from '../../../../../meta/custom/src/lib/generated/m.g';
 
 export class Filters {
   static goodsFilter(m: M) {
