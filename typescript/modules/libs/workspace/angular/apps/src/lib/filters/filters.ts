@@ -228,6 +228,16 @@ export class Filters {
     });
   }
 
+  static manufacturersFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.Organisation,
+      roleTypes: [m.Organisation.PartyName],
+      post: (predicate: And) => {
+        predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true });
+      },
+    });
+  }
+
   static peopleFilter(m: M) {
     return new SearchFactory({
       objectType: m.Person,

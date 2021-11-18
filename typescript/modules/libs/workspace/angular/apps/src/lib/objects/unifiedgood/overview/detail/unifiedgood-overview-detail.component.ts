@@ -44,7 +44,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   inventoryItemKinds: InventoryItemKind[];
   productTypes: ProductType[];
   categories: ProductCategory[];
-  manufacturers: Organisation[];
   suppliers: Organisation[];
   brands: Brand[];
   selectedBrand: Brand;
@@ -61,7 +60,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
   currentSellingPrice: PriceComponent;
   internalOrganisation: Organisation;
   settings: Settings;
-  allSuppliersFilter: SearchFactory;
+  manufacturersFilter: SearchFactory;
 
   private subscription: Subscription;
   private refresh$: BehaviorSubject<Date>;
@@ -179,7 +178,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             pull.ProductIdentificationType({}),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
             pull.ProductCategory({ 
-              include: {Products: x },
               sorting: [{ roleType: m.ProductCategory.Name }]
             }),
             pull.Brand({
@@ -187,9 +185,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
                 Models: x,
               },
               sorting: [{ roleType: m.Brand.Name }],
-            }),
-            pull.Organisation({
-              predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
             }),
             pull.UnifiedGood({
               name: 'OriginalCategories',
@@ -204,7 +199,7 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
             }),
           ];
           
-          this.allSuppliersFilter = Filters.allSuppliersFilter(m);
+          this.manufacturersFilter = Filters.manufacturersFilter(m);
 
           return this.allors.context.pull(pulls);
         })
@@ -222,10 +217,8 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
         this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.settings = this.fetcher.getSettings(loaded);
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
 
         const goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
