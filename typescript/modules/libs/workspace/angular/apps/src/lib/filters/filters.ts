@@ -106,7 +106,27 @@ export class Filters {
       objectType: m.Organisation,
       roleTypes: [m.Organisation.PartyName],
       post: (predicate: And) => {
-        predicate.operands.push({ kind: 'ContainedIn', propertyType: m.Organisation.SupplierRelationshipsWhereSupplier, extent: { kind: 'Filter', objectType: m.SupplierRelationship } });
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: m.Organisation.SupplierRelationshipsWhereSupplier,
+          extent: {
+            kind: 'Filter',
+            objectType: m.SupplierRelationship,
+            predicate: {
+              kind: 'And',
+              operands: [
+                { kind: 'LessThan', roleType: m.SupplierRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'Or',
+                  operands: [
+                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.SupplierRelationship.ThroughDate } },
+                    { kind: 'GreaterThan', roleType: m.SupplierRelationship.ThroughDate, value: new Date() },
+                  ],
+                },
+              ],
+            },
+          },
+        });
       },
     });
   }
