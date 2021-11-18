@@ -55,6 +55,9 @@
     "workspace-angular-core": {
       "tags": []
     },
+    "workspace-angular-extranet": {
+      "tags": []
+    },
     "workspace-derivations-apps": {
       "tags": []
     },
@@ -76,6 +79,12 @@
     "workspace-derivations-core-custom": {
       "tags": []
     },
+    "workspace-derivations-extranet": {
+      "tags": []
+    },
+    "workspace-derivations-extranet-custom": {
+      "tags": []
+    },
     "workspace-derivations-system": {
       "tags": []
     },
@@ -86,6 +95,9 @@
       "tags": []
     },
     "workspace-domain-core": {
+      "tags": []
+    },
+    "workspace-domain-extranet": {
       "tags": []
     },
     "workspace-domain-system": {
@@ -100,6 +112,9 @@
     "workspace-meta-core": {
       "tags": []
     },
+    "workspace-meta-extranet": {
+      "tags": []
+    },
     "workspace-meta-json-apps": {
       "tags": []
     },
@@ -107,6 +122,9 @@
       "tags": []
     },
     "workspace-meta-json-core": {
+      "tags": []
+    },
+    "workspace-meta-json-extranet": {
       "tags": []
     },
     "workspace-meta-json-system": {

@@ -1,0 +1,35 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
+      "@allors/workspace/adapters/json/system": ["libs/workspace/adapters/json/system/src/index.ts"],
+      "@allors/workspace/adapters/system": ["libs/workspace/adapters/system/src/index.ts"],
+      "@allors/workspace/angular/base": ["libs/workspace/angular/base/src/index.ts"],
+      "@allors/workspace/angular/core": ["libs/workspace/angular/core/src/index.ts"],
+      "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
+      "@allors/workspace/meta/json/system": ["libs/workspace/meta/json/system/src/index.ts"],
+      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"],
+      // Default
+      "@allors/workspace/domain/default": ["libs/workspace/domain/extranet/src/index.ts"],
+      "@allors/workspace/derivations/default": ["libs/workspace/derivations/extranet/src/index.ts"],
+      "@allors/workspace/meta/default": ["libs/workspace/meta/extranet/src/index.ts"],
+      "@allors/workspace/meta/json/default": ["libs/workspace/meta/json/extranet/src/index.ts"],
+    }
+  },
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

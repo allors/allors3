@@ -535,6 +535,28 @@
         }
       }
     },
+    "workspace-angular-extranet": {
+      "root": "libs/workspace/angular/extranet",
+      "sourceRoot": "libs/workspace/angular/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/angular/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/angular/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/angular/extranet/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-derivations-apps": {
       "root": "libs/workspace/derivations/apps",
       "sourceRoot": "libs/workspace/derivations/apps/src",
@@ -689,6 +711,50 @@
         }
       }
     },
+    "workspace-derivations-extranet": {
+      "root": "libs/workspace/derivations/extranet",
+      "sourceRoot": "libs/workspace/derivations/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/derivations/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/derivations/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/derivations/extranet/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-derivations-extranet-custom": {
+      "root": "libs/workspace/derivations/extranet-custom",
+      "sourceRoot": "libs/workspace/derivations/extranet-custom/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/derivations/extranet-custom/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/derivations/extranet-custom"],
+          "options": {
+            "jestConfig": "libs/workspace/derivations/extranet-custom/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-derivations-system": {
       "root": "libs/workspace/derivations/system",
       "sourceRoot": "libs/workspace/derivations/system/src",
@@ -772,6 +838,28 @@
           "outputs": ["coverage/libs/workspace/domain/core"],
           "options": {
             "jestConfig": "libs/workspace/domain/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-domain-extranet": {
+      "root": "libs/workspace/domain/extranet",
+      "sourceRoot": "libs/workspace/domain/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/domain/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/domain/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/domain/extranet/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -865,6 +953,28 @@
         }
       }
     },
+    "workspace-meta-extranet": {
+      "root": "libs/workspace/meta/extranet",
+      "sourceRoot": "libs/workspace/meta/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/extranet/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "workspace-meta-json-apps": {
       "root": "libs/workspace/meta/json/apps",
       "sourceRoot": "libs/workspace/meta/json/apps/src",
@@ -926,6 +1036,28 @@
           "outputs": ["coverage/libs/workspace/meta/json/core"],
           "options": {
             "jestConfig": "libs/workspace/meta/json/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-meta-json-extranet": {
+      "root": "libs/workspace/meta/json/extranet",
+      "sourceRoot": "libs/workspace/meta/json/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/json/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/json/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/json/extranet/jest.config.js",
             "passWithNoTests": true
           }
         }
