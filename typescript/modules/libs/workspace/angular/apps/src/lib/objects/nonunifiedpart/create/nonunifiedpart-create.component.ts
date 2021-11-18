@@ -9,7 +9,6 @@ import { M } from '@allors/workspace/meta/default';
 import {
   Organisation,
   Part,
-  SupplierOffering,
   ProductIdentificationType,
   Facility,
   InventoryItemKind,
@@ -21,14 +20,13 @@ import {
   Settings,
   PartCategory,
   NonUnifiedPart,
-  SupplierRelationship,
   Locale
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, TestScope, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './nonunifiedpart-create.component.html',
@@ -42,13 +40,8 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   part: Part;
   facility: Facility;
   locales: Locale[];
-  supplierRelationships: SupplierRelationship[];
   inventoryItemKinds: InventoryItemKind[];
   productTypes: ProductType[];
-  manufacturers: Organisation[];
-  suppliers: Organisation[];
-  selectedSuppliers: Organisation[];
-  supplierOfferings: SupplierOffering[];
   brands: Brand[];
   selectedBrand: Brand;
   models: Model[];
@@ -61,9 +54,9 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
   facilities: Facility[];
   unitsOfMeasure: UnitOfMeasure[];
   settings: Settings;
-  currentSuppliers: Set<Organisation>;
   categories: PartCategory[];
   selectedCategories: PartCategory[] = [];
+  manufacturersFilter: SearchFactory;
 
   private subscription: Subscription;
 
@@ -100,25 +93,18 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
             pull.ProductIdentificationType({}),
             pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
             pull.PartCategory({ 
-              include: { Parts: x},
               sorting: [{ roleType: m.PartCategory.Name }]
             }),
             pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.SupplierRelationship({
-              include: {
-                Supplier: x,
-              },
-            }),
             pull.Brand({
               include: {
                 Models: x,
               },
               sorting: [{ roleType: m.Brand.Name }],
             }),
-            pull.Organisation({
-              predicate: { kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true },
-            }),
           ];
+          
+          this.manufacturersFilter = Filters.manufacturersFilter(m);
 
           return this.allors.context.pull(pulls);
         })
@@ -126,28 +112,19 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const now = new Date();
-
         this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.facilities = this.fetcher.getWarehouses(loaded);
-        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
         this.categories = loaded.collection<PartCategory>(m.PartCategory);
         this.settings = this.fetcher.getSettings(loaded);
-
-        const supplierRelationships = loaded.collection<SupplierRelationship>(m.SupplierRelationship);
-        const currentsupplierRelationships = supplierRelationships?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
-        this.currentSuppliers = new Set(currentsupplierRelationships?.map((v) => v.Supplier).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0)));
 
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         const piece = this.unitsOfMeasure?.find((v) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b');
 
         this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
         const partNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
-
-        this.manufacturers = loaded.collection<Organisation>(m.Organisation);
 
         this.part = this.allors.context.create<NonUnifiedPart>(m.NonUnifiedPart);
         this.part.DefaultFacility = this.settings.DefaultFacility;
@@ -225,15 +202,5 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
 
     this.part.Brand = this.selectedBrand;
     this.part.Model = this.selectedModel;
-
-    if (this.selectedSuppliers != null) {
-      this.selectedSuppliers.forEach((supplier: Organisation) => {
-        const supplierOffering = this.allors.context.create<SupplierOffering>(this.m.SupplierOffering);
-        supplierOffering.Supplier = supplier;
-        supplierOffering.Part = this.part;
-        supplierOffering.UnitOfMeasure = this.part.UnitOfMeasure;
-        supplierOffering.Currency = this.settings.PreferredCurrency;
-      });
-    }
   }
 }
