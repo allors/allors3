@@ -25,7 +25,7 @@ namespace Tests.RequestForQuoteTests
         public RequestForQuoteCreateTest(Fixture fixture) : base(fixture)
         {
             this.Login();
-            this.requestForQuoteListPage = this.Sidenav.NavigateToRequestsforQuote();
+            this.requestForQuoteListPage = this.Sidenav.NavigateToRequestsForQuote();
         }
 
         [Fact]
