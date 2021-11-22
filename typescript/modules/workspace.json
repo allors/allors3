@@ -1,24 +1,24 @@
 {
   "version": 2,
   "projects": {
-    "angular-apps-app": {
+    "angular-apps-extranet": {
       "projectType": "application",
-      "root": "apps/angular/apps/app",
-      "sourceRoot": "apps/angular/apps/app/src",
+      "root": "apps/angular/apps/extranet",
+      "sourceRoot": "apps/angular/apps/extranet/src",
       "prefix": "allors",
       "targets": {
         "build": {
           "executor": "@angular-devkit/build-angular:browser",
           "outputs": ["{options.outputPath}"],
           "options": {
-            "outputPath": "dist/apps/angular/apps/app",
-            "index": "apps/angular/apps/app/src/index.html",
-            "main": "apps/angular/apps/app/src/main.ts",
-            "polyfills": "apps/angular/apps/app/src/polyfills.ts",
-            "tsConfig": "apps/angular/apps/app/tsconfig.app.json",
+            "outputPath": "dist/apps/angular/apps/extranet",
+            "index": "apps/angular/apps/extranet/src/index.html",
+            "main": "apps/angular/apps/extranet/src/main.ts",
+            "polyfills": "apps/angular/apps/extranet/src/polyfills.ts",
+            "tsConfig": "apps/angular/apps/extranet/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["apps/angular/apps/app/src/favicon.ico", "apps/angular/apps/app/src/assets"],
-            "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/apps/app/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
+            "assets": ["apps/angular/apps/extranet/src/favicon.ico", "apps/angular/apps/extranet/src/assets"],
+            "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/apps/extranet/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
             "scripts": [],
             "allowedCommonJsDependencies": ["zone.js", "markdown.component", "easymde", "codemirror", "codemirror-spell-checker"]
           },
@@ -38,8 +38,8 @@
               ],
               "fileReplacements": [
                 {
-                  "replace": "apps/angular/apps/app/src/environments/environment.ts",
-                  "with": "apps/angular/apps/app/src/environments/environment.prod.ts"
+                  "replace": "apps/angular/apps/extranet/src/environments/environment.ts",
+                  "with": "apps/angular/apps/extranet/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -59,10 +59,10 @@
           "executor": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "angular-apps-app:build:production"
+              "browserTarget": "angular-apps-extranet:build:production"
             },
             "development": {
-              "browserTarget": "angular-apps-app:build:development"
+              "browserTarget": "angular-apps-extranet:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -70,21 +70,109 @@
         "extract-i18n": {
           "executor": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-apps-app:build"
+            "browserTarget": "angular-apps-extranet:build"
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/angular/apps/app/src/**/*.ts", "apps/angular/apps/app/src/**/*.html"]
+            "lintFilePatterns": ["apps/angular/apps/extranet/src/**/*.ts", "apps/angular/apps/extranet/src/**/*.html"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/angular/apps/extranet"],
+          "options": {
+            "jestConfig": "apps/angular/apps/extranet/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "angular-apps-intranet": {
+      "projectType": "application",
+      "root": "apps/angular/apps/intranet",
+      "sourceRoot": "apps/angular/apps/intranet/src",
+      "prefix": "allors",
+      "targets": {
+        "build": {
+          "executor": "@angular-devkit/build-angular:browser",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/angular/apps/intranet",
+            "index": "apps/angular/apps/intranet/src/index.html",
+            "main": "apps/angular/apps/intranet/src/main.ts",
+            "polyfills": "apps/angular/apps/intranet/src/polyfills.ts",
+            "tsConfig": "apps/angular/apps/intranet/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": ["apps/angular/apps/intranet/src/favicon.ico", "apps/angular/apps/intranet/src/assets"],
+            "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/apps/intranet/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
+            "scripts": [],
+            "allowedCommonJsDependencies": ["zone.js", "markdown.component", "easymde", "codemirror", "codemirror-spell-checker"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/angular/apps/intranet/src/environments/environment.ts",
+                  "with": "apps/angular/apps/intranet/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "executor": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "angular-apps-intranet:build:production"
+            },
+            "development": {
+              "browserTarget": "angular-apps-intranet:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "executor": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "angular-apps-intranet:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/angular/apps/intranet/src/**/*.ts", "apps/angular/apps/intranet/src/**/*.html"]
           },
           "outputs": ["{options.outputFile}"]
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/angular/apps/app"],
+          "outputs": ["coverage/apps/angular/apps/intranet"],
           "options": {
-            "jestConfig": "apps/angular/apps/app/jest.config.js",
+            "jestConfig": "apps/angular/apps/intranet/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -271,94 +359,6 @@
         }
       }
     },
-    "angular-extranet": {
-      "projectType": "application",
-      "root": "apps/angular/extranet",
-      "sourceRoot": "apps/angular/extranet/src",
-      "prefix": "allors",
-      "targets": {
-        "build": {
-          "executor": "@angular-devkit/build-angular:browser",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/angular/extranet",
-            "index": "apps/angular/extranet/src/index.html",
-            "main": "apps/angular/extranet/src/main.ts",
-            "polyfills": "apps/angular/extranet/src/polyfills.ts",
-            "tsConfig": "apps/angular/extranet/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": ["apps/angular/extranet/src/favicon.ico", "apps/angular/extranet/src/assets"],
-            "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/extranet/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
-            "scripts": [],
-            "allowedCommonJsDependencies": ["zone.js", "markdown.component", "easymde", "codemirror", "codemirror-spell-checker"]
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "apps/angular/extranet/src/environments/environment.ts",
-                  "with": "apps/angular/extranet/src/environments/environment.prod.ts"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "executor": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "browserTarget": "angular-extranet:build:production"
-            },
-            "development": {
-              "browserTarget": "angular-extranet:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "executor": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "angular-extranet:build"
-          }
-        },
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/angular/extranet/src/**/*.ts", "apps/angular/extranet/src/**/*.html"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/angular/extranet"],
-          "options": {
-            "jestConfig": "apps/angular/extranet/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "protocol-json-system": {
       "root": "libs/protocol/json/system",
       "sourceRoot": "libs/protocol/json/system/src",
@@ -469,23 +469,45 @@
         }
       }
     },
-    "workspace-angular-apps": {
-      "root": "libs/workspace/angular/apps",
-      "sourceRoot": "libs/workspace/angular/apps/src",
+    "workspace-angular-apps-extranet": {
+      "root": "libs/workspace/angular/apps/extranet",
+      "sourceRoot": "libs/workspace/angular/apps/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/angular/apps/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/angular/apps/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/angular/apps/extranet/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-angular-apps-intranet": {
+      "root": "libs/workspace/angular/apps/intranet",
+      "sourceRoot": "libs/workspace/angular/apps/intranet/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/workspace/angular/apps/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/angular/apps/intranet/**/*.ts"]
           },
           "outputs": ["{options.outputFile}"]
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/angular/apps"],
+          "outputs": ["coverage/libs/workspace/angular/apps/intranet"],
           "options": {
-            "jestConfig": "libs/workspace/angular/apps/jest.config.js",
+            "jestConfig": "libs/workspace/angular/apps/intranet/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -535,89 +557,111 @@
         }
       }
     },
-    "workspace-angular-extranet": {
-      "root": "libs/workspace/angular/extranet",
-      "sourceRoot": "libs/workspace/angular/extranet/src",
+    "workspace-derivations-apps-extranet": {
+      "root": "libs/workspace/derivations/apps/extranet",
+      "sourceRoot": "libs/workspace/derivations/apps/extranet/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["libs/workspace/angular/extranet/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/derivations/apps/extranet/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/angular/extranet"],
+          "outputs": ["coverage/libs/workspace/derivations/apps/extranet"],
           "options": {
-            "jestConfig": "libs/workspace/angular/extranet/jest.config.js",
+            "jestConfig": "libs/workspace/derivations/apps/extranet/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "workspace-derivations-apps": {
-      "root": "libs/workspace/derivations/apps",
-      "sourceRoot": "libs/workspace/derivations/apps/src",
+    "workspace-derivations-apps-extranet-custom": {
+      "root": "libs/workspace/derivations/apps/extranet-custom",
+      "sourceRoot": "libs/workspace/derivations/apps/extranet-custom/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["libs/workspace/derivations/apps/**/*.ts"]
-          },
-          "outputs": ["{options.outputFile}"]
+            "lintFilePatterns": ["libs/workspace/derivations/apps/extranet-custom/**/*.ts"]
+          }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/derivations/apps"],
+          "outputs": ["coverage/libs/workspace/derivations/apps/extranet-custom"],
           "options": {
-            "jestConfig": "libs/workspace/derivations/apps/jest.config.js",
+            "jestConfig": "libs/workspace/derivations/apps/extranet-custom/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "workspace-derivations-apps-custom": {
-      "root": "libs/workspace/derivations/apps-custom",
-      "sourceRoot": "libs/workspace/derivations/apps-custom/src",
+    "workspace-derivations-apps-intranet": {
+      "root": "libs/workspace/derivations/apps/intranet",
+      "sourceRoot": "libs/workspace/derivations/apps/intranet/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/workspace/derivations/apps-custom/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/derivations/apps/intranet/**/*.ts"]
           },
           "outputs": ["{options.outputFile}"]
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/derivations/apps-custom"],
+          "outputs": ["coverage/libs/workspace/derivations/apps/intranet"],
           "options": {
-            "jestConfig": "libs/workspace/derivations/apps-custom/jest.config.js",
+            "jestConfig": "libs/workspace/derivations/apps/intranet/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "workspace-derivations-apps-tests": {
-      "root": "libs/workspace/derivations/apps-tests",
-      "sourceRoot": "libs/workspace/derivations/apps-tests/src",
+    "workspace-derivations-apps-intranet-custom": {
+      "root": "libs/workspace/derivations/apps/intranet-custom",
+      "sourceRoot": "libs/workspace/derivations/apps/intranet-custom/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/workspace/derivations/apps-tests/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/derivations/apps/intranet-custom/**/*.ts"]
           },
           "outputs": ["{options.outputFile}"]
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/derivations/apps-tests"],
+          "outputs": ["coverage/libs/workspace/derivations/apps/intranet-custom"],
           "options": {
-            "jestConfig": "libs/workspace/derivations/apps-tests/jest.config.js",
+            "jestConfig": "libs/workspace/derivations/apps/intranet-custom/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-derivations-apps-intranet-tests": {
+      "root": "libs/workspace/derivations/apps/intranet-tests",
+      "sourceRoot": "libs/workspace/derivations/apps/intranet-tests/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/workspace/derivations/apps/intranet-tests/**/*.ts"]
+          },
+          "outputs": ["{options.outputFile}"]
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/derivations/apps/intranet-tests"],
+          "options": {
+            "jestConfig": "libs/workspace/derivations/apps/intranet-tests/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -711,50 +755,6 @@
         }
       }
     },
-    "workspace-derivations-extranet": {
-      "root": "libs/workspace/derivations/extranet",
-      "sourceRoot": "libs/workspace/derivations/extranet/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
-          "options": {
-            "lintFilePatterns": ["libs/workspace/derivations/extranet/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/derivations/extranet"],
-          "options": {
-            "jestConfig": "libs/workspace/derivations/extranet/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "workspace-derivations-extranet-custom": {
-      "root": "libs/workspace/derivations/extranet-custom",
-      "sourceRoot": "libs/workspace/derivations/extranet-custom/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
-          "options": {
-            "lintFilePatterns": ["libs/workspace/derivations/extranet-custom/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/derivations/extranet-custom"],
-          "options": {
-            "jestConfig": "libs/workspace/derivations/extranet-custom/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "workspace-derivations-system": {
       "root": "libs/workspace/derivations/system",
       "sourceRoot": "libs/workspace/derivations/system/src",
@@ -777,23 +777,45 @@
         }
       }
     },
-    "workspace-domain-apps": {
-      "root": "libs/workspace/domain/apps",
-      "sourceRoot": "libs/workspace/domain/apps/src",
+    "workspace-domain-apps-extranet": {
+      "root": "libs/workspace/domain/apps/extranet",
+      "sourceRoot": "libs/workspace/domain/apps/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/domain/apps/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/domain/apps/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/domain/apps/extranet/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-domain-apps-intranet": {
+      "root": "libs/workspace/domain/apps/intranet",
+      "sourceRoot": "libs/workspace/domain/apps/intranet/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/workspace/domain/apps/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/domain/apps/intranet/**/*.ts"]
           },
           "outputs": ["{options.outputFile}"]
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/domain/apps"],
+          "outputs": ["coverage/libs/workspace/domain/apps/intranet"],
           "options": {
-            "jestConfig": "libs/workspace/domain/apps/jest.config.js",
+            "jestConfig": "libs/workspace/domain/apps/intranet/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -843,28 +865,6 @@
         }
       }
     },
-    "workspace-domain-extranet": {
-      "root": "libs/workspace/domain/extranet",
-      "sourceRoot": "libs/workspace/domain/extranet/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
-          "options": {
-            "lintFilePatterns": ["libs/workspace/domain/extranet/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/domain/extranet"],
-          "options": {
-            "jestConfig": "libs/workspace/domain/extranet/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "workspace-domain-system": {
       "root": "libs/workspace/domain/system",
       "sourceRoot": "libs/workspace/domain/system/src",
@@ -887,23 +887,45 @@
         }
       }
     },
-    "workspace-meta-apps": {
-      "root": "libs/workspace/meta/apps",
-      "sourceRoot": "libs/workspace/meta/apps/src",
+    "workspace-meta-apps-extranet": {
+      "root": "libs/workspace/meta/apps/extranet",
+      "sourceRoot": "libs/workspace/meta/apps/extranet/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/workspace/meta/apps/extranet/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/workspace/meta/apps/extranet"],
+          "options": {
+            "jestConfig": "libs/workspace/meta/apps/extranet/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "workspace-meta-apps-intranet": {
+      "root": "libs/workspace/meta/apps/intranet",
+      "sourceRoot": "libs/workspace/meta/apps/intranet/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/workspace/meta/apps/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/meta/apps/intranet/**/*.ts"]
           },
           "outputs": ["{options.outputFile}"]
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/meta/apps"],
+          "outputs": ["coverage/libs/workspace/meta/apps/intranet"],
           "options": {
-            "jestConfig": "libs/workspace/meta/apps/jest.config.js",
+            "jestConfig": "libs/workspace/meta/apps/intranet/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -953,45 +975,45 @@
         }
       }
     },
-    "workspace-meta-extranet": {
-      "root": "libs/workspace/meta/extranet",
-      "sourceRoot": "libs/workspace/meta/extranet/src",
+    "workspace-meta-json-apps-extranet": {
+      "root": "libs/workspace/meta/json/apps/extranet",
+      "sourceRoot": "libs/workspace/meta/json/apps/extranet/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
           "options": {
-            "lintFilePatterns": ["libs/workspace/meta/extranet/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/meta/json/apps/extranet/**/*.ts"]
           }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/meta/extranet"],
+          "outputs": ["coverage/libs/workspace/meta/json/apps/extranet"],
           "options": {
-            "jestConfig": "libs/workspace/meta/extranet/jest.config.js",
+            "jestConfig": "libs/workspace/meta/json/apps/extranet/jest.config.js",
             "passWithNoTests": true
           }
         }
       }
     },
-    "workspace-meta-json-apps": {
-      "root": "libs/workspace/meta/json/apps",
-      "sourceRoot": "libs/workspace/meta/json/apps/src",
+    "workspace-meta-json-apps-intranet": {
+      "root": "libs/workspace/meta/json/apps/intranet",
+      "sourceRoot": "libs/workspace/meta/json/apps/intranet/src",
       "projectType": "library",
       "targets": {
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/workspace/meta/json/apps/**/*.ts"]
+            "lintFilePatterns": ["libs/workspace/meta/json/apps/intranet/**/*.ts"]
           },
           "outputs": ["{options.outputFile}"]
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/meta/json/apps"],
+          "outputs": ["coverage/libs/workspace/meta/json/apps/intranet"],
           "options": {
-            "jestConfig": "libs/workspace/meta/json/apps/jest.config.js",
+            "jestConfig": "libs/workspace/meta/json/apps/intranet/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -1036,28 +1058,6 @@
           "outputs": ["coverage/libs/workspace/meta/json/core"],
           "options": {
             "jestConfig": "libs/workspace/meta/json/core/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "workspace-meta-json-extranet": {
-      "root": "libs/workspace/meta/json/extranet",
-      "sourceRoot": "libs/workspace/meta/json/extranet/src",
-      "projectType": "library",
-      "targets": {
-        "lint": {
-          "executor": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
-          "options": {
-            "lintFilePatterns": ["libs/workspace/meta/json/extranet/**/*.ts"]
-          }
-        },
-        "test": {
-          "executor": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/workspace/meta/json/extranet"],
-          "options": {
-            "jestConfig": "libs/workspace/meta/json/extranet/jest.config.js",
             "passWithNoTests": true
           }
         }

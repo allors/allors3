@@ -19,16 +19,16 @@
     }
   },
   "projects": {
-    "angular-apps-app": {
+    "angular-apps-extranet": {
+      "tags": []
+    },
+    "angular-apps-intranet": {
       "tags": []
     },
     "angular-base-app": {
       "tags": []
     },
     "angular-core-app": {
-      "tags": []
-    },
-    "angular-extranet": {
       "tags": []
     },
     "protocol-json-system": {
@@ -46,7 +46,10 @@
     "workspace-adapters-system-tests": {
       "tags": []
     },
-    "workspace-angular-apps": {
+    "workspace-angular-apps-extranet": {
+      "tags": []
+    },
+    "workspace-angular-apps-intranet": {
       "tags": []
     },
     "workspace-angular-base": {
@@ -55,16 +58,19 @@
     "workspace-angular-core": {
       "tags": []
     },
-    "workspace-angular-extranet": {
+    "workspace-derivations-apps-extranet": {
       "tags": []
     },
-    "workspace-derivations-apps": {
+    "workspace-derivations-apps-extranet-custom": {
       "tags": []
     },
-    "workspace-derivations-apps-custom": {
+    "workspace-derivations-apps-intranet": {
       "tags": []
     },
-    "workspace-derivations-apps-tests": {
+    "workspace-derivations-apps-intranet-custom": {
+      "tags": []
+    },
+    "workspace-derivations-apps-intranet-tests": {
       "tags": []
     },
     "workspace-derivations-base": {
@@ -79,16 +85,13 @@
     "workspace-derivations-core-custom": {
       "tags": []
     },
-    "workspace-derivations-extranet": {
-      "tags": []
-    },
-    "workspace-derivations-extranet-custom": {
-      "tags": []
-    },
     "workspace-derivations-system": {
       "tags": []
     },
-    "workspace-domain-apps": {
+    "workspace-domain-apps-extranet": {
+      "tags": []
+    },
+    "workspace-domain-apps-intranet": {
       "tags": []
     },
     "workspace-domain-base": {
@@ -97,13 +100,13 @@
     "workspace-domain-core": {
       "tags": []
     },
-    "workspace-domain-extranet": {
-      "tags": []
-    },
     "workspace-domain-system": {
       "tags": []
     },
-    "workspace-meta-apps": {
+    "workspace-meta-apps-extranet": {
+      "tags": []
+    },
+    "workspace-meta-apps-intranet": {
       "tags": []
     },
     "workspace-meta-base": {
@@ -112,19 +115,16 @@
     "workspace-meta-core": {
       "tags": []
     },
-    "workspace-meta-extranet": {
+    "workspace-meta-json-apps-extranet": {
       "tags": []
     },
-    "workspace-meta-json-apps": {
+    "workspace-meta-json-apps-intranet": {
       "tags": []
     },
     "workspace-meta-json-base": {
       "tags": []
     },
     "workspace-meta-json-core": {
-      "tags": []
-    },
-    "workspace-meta-json-extranet": {
       "tags": []
     },
     "workspace-meta-json-system": {

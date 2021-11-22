@@ -19,23 +19,23 @@ npm install jsnlog
 npm install luxon
 
 // Extranet
-npx nx g @nrwl/angular:application angular/extranet --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular/extranet
-npx nx g @nrwl/workspace:library workspace/derivations/extranet
-npx nx g @nrwl/workspace:library workspace/derivations/extranet-custom
-npx nx g @nrwl/workspace:library workspace/domain/extranet
-npx nx g @nrwl/workspace:library workspace/meta/extranet
-npx nx g @nrwl/workspace:library workspace/meta/json/extranet
+npx nx g @nrwl/angular:application angular/apps/extranet --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library workspace/angular/apps/extranet
+npx nx g @nrwl/workspace:library workspace/derivations/apps/extranet
+npx nx g @nrwl/workspace:library workspace/derivations/apps/extranet-custom
+npx nx g @nrwl/workspace:library workspace/domain/apps/extranet
+npx nx g @nrwl/workspace:library workspace/meta/apps/extranet
+npx nx g @nrwl/workspace:library workspace/meta/json/apps/extranet
 
 // Intranet
-npx nx g @nrwl/angular:application angular/apps/app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular/apps
-npx nx g @nrwl/workspace:library workspace/derivations/apps
-npx nx g @nrwl/workspace:library workspace/derivations/apps-custom
-npx nx g @nrwl/workspace:library workspace/derivations/apps-tests
-npx nx g @nrwl/workspace:library workspace/domain/apps
-npx nx g @nrwl/workspace:library workspace/meta/apps
-npx nx g @nrwl/workspace:library workspace/meta/json/apps
+npx nx g @nrwl/angular:application angular/apps/intranet --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library workspace/angular/apps/intranet
+npx nx g @nrwl/workspace:library workspace/derivations/apps/intranet
+npx nx g @nrwl/workspace:library workspace/derivations/apps/intranet-custom
+npx nx g @nrwl/workspace:library workspace/derivations/apps/intranet-tests
+npx nx g @nrwl/workspace:library workspace/domain/apps/intranet
+npx nx g @nrwl/workspace:library workspace/meta/apps/intranet
+npx nx g @nrwl/workspace:library workspace/meta/json/apps/intranet
 
 // Base
 npx nx g @nrwl/angular:application angular/base/app --routing=true --style=scss --e2eTestRunner=none
