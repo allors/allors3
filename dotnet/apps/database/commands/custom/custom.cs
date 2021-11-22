@@ -47,11 +47,11 @@ namespace Commands
 
                 var m = this.Parent.M;
 
-                User user = new People(transaction).FindBy(m.Person.LastName, "Kuhic");
+                User user = new People(transaction).FindBy(m.Person.FirstName, "Simone");
 
                 transaction.Services.Get<IUserService>().User = user;
 
-                var wo = new WorkTasks(transaction).FindBy(m.WorkEffort.WorkEffortNumber, "a-WO-2");
+                var wo = new WorkTasks(transaction).FindBy(m.WorkEffort.WorkEffortNumber, "1");
 
                 var acl = new DatabaseAccessControl(user)[wo];
                 var result = acl.CanRead(m.WorkEffort.WorkEffortNumber);
