@@ -208,44 +208,5 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
-        public void CustomOnPostDerive(ObjectOnPostDerive method)
-        {
-            var transaction = this.Strategy.Transaction;
-
-            if (!this.IsInternalOrganisation)
-            {
-                var groupName = $"Customer contacts at {this.Name ?? "Unknown"} ({this.UniqueId})";
-
-                if (!this.ExistContactsSecurityToken)
-                {
-                    this.ContactsSecurityToken = new SecurityTokenBuilder(transaction).Build();
-                }
-
-                if (!this.ExistContactsUserGroup)
-                {
-                    this.ContactsUserGroup = new UserGroupBuilder(transaction).WithName(groupName).Build();
-                }
-
-                if (!this.ExistContactsGrant)
-                {
-                    var role = new Roles(transaction).CustomerContact;
-
-                    this.ContactsGrant = new GrantBuilder(transaction)
-                        .WithRole(role)
-                        .WithSubjectGroup(this.ContactsUserGroup)
-                        .Build();
-
-                    this.ContactsSecurityToken.AddGrant(this.ContactsGrant);
-                }
-
-                this.ContactsUserGroup.Members = this.CurrentContacts.ToArray();
-            }
-
-            this.SecurityTokens = new[]
-            {
-                new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.ContactsSecurityToken
-            };
-        }
     }
 }

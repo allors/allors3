@@ -9,15 +9,15 @@ namespace Allors.Database.Domain
 
     public partial class Roles
     {
-        public static readonly Guid EmployeeId = new Guid("A084F8C0-A130-4D2F-8404-8A11D3D93F14");
+        public static readonly Guid CustomerContactId = new Guid("ef339e89-d062-480e-85fa-43440876feb4");
 
-        public Role Employee => this.Cache[EmployeeId];
+        public Role CustomerContact => this.Cache[CustomerContactId];
 
-        protected override void AppsSetup(Setup setup)
+        protected override void CustomSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 
-            merge(EmployeeId, v => v.Name = "Employee");
+            merge(CustomerContactId, v => v.Name = "Customer contact");
         }
     }
 }

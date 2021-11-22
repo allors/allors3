@@ -26,21 +26,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void AppsOnPostDerive(ObjectOnPostDerive method)
-        {
-            var derivation = method.Derivation;
-
-            this.SecurityTokens = new[]
-            {
-                new SecurityTokens(this.strategy.Transaction).DefaultSecurityToken,
-            };
-
-            if (this.Customer is Organisation customer)
-            {
-                this.AddSecurityToken(customer.ContactsSecurityToken);
-            }
-        }
-
         public void AppsPrint(PrintablePrint method)
         {
             var singleton = this.Strategy.Transaction.GetSingleton();
