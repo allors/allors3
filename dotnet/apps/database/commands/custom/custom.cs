@@ -21,14 +21,43 @@ namespace Commands
             using var transaction = this.Parent.Database.CreateTransaction();
             this.Logger.Info("Begin");
 
-            var scheduler = new AutomatedAgents(transaction).System;
-            transaction.Services.Get<IUserService>().User = scheduler;
+            var m = this.Parent.M;
+
+            //var scheduler = new AutomatedAgents(transaction).System;
+            //transaction.Services.Get<IUserService>().User = scheduler;
+
+            // Custom code
+
+            return this.DoSomething();
 
             // Custom code
             transaction.Derive();
             transaction.Commit();
 
             this.Logger.Info("End");
+
+            return ExitCode.Success;
+        }
+
+        private int DoSomething()
+        {
+            using (var transaction = this.Parent.Database.CreateTransaction())
+            {
+                this.Logger.Info("Begin");
+
+                var m = this.Parent.M;
+
+                User user = new People(transaction).FindBy(m.Person.LastName, "Kuhic");
+
+                transaction.Services.Get<IUserService>().User = user;
+
+                var wo = new WorkTasks(transaction).FindBy(m.WorkEffort.WorkEffortNumber, "a-WO-2");
+
+                var acl = new DatabaseAccessControl(user)[wo];
+                var result = acl.CanRead(m.WorkEffort.WorkEffortNumber);
+
+                this.Logger.Info("End");
+            }
 
             return ExitCode.Success;
         }
