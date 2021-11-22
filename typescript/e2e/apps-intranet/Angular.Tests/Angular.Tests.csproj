@@ -23,7 +23,6 @@
     <Compile Include="..\..\Base\Angular.Tests\Base*\**\*.cs" />
   </ItemGroup>
   
-
   <ItemGroup>
     <None Update="appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

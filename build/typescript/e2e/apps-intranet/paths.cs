@@ -2,7 +2,7 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath TypescriptE2EAppsIntranet => TypescriptE2E / "apps";
+    public AbsolutePath TypescriptE2EAppsIntranet => TypescriptE2E / "apps-intranet";
 
     public AbsolutePath TypescriptE2EAppsIntranetGenerate => TypescriptE2EAppsIntranet / "Generate/Generate.csproj";
 

@@ -50,13 +50,17 @@ partial class Build
         .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptWorkspaceAdaptersJsonTest);
 
-    private Target CiTypescriptWorkspaceBaseE2ETest => _ => _
+    private Target CiTypescriptE2EAngularBaseTest => _ => _
         .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptE2EBaseTest);
+        .DependsOn(TypescriptE2EAngularBaseTest);
 
-    private Target CiTypescriptWorkspaceAppsE2ETest => _ => _
+    private Target CiTypescriptWorkspacesE2EAngularAppsIntranetTest => _ => _
         .DependsOn(TypescriptInstall)
-        .DependsOn(TypescriptE2EAppsIntranetTest);
+        .DependsOn(TypescriptE2EAngularAppsIntranetTest);
+
+    private Target CiTypescriptWorkspacesE2EAngularAppsExtranetTest => _ => _
+        .DependsOn(TypescriptInstall)
+        .DependsOn(TypescriptE2EAngularAppsExtranetTest);
 
     private Target CiDemosTest => _ => _
         .DependsOn(DemosDerivationTest)

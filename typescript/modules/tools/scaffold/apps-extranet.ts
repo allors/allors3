@@ -12,4 +12,4 @@ console.log('========');
 
 console.log('-> Project');
 fs.mkdirSync('./dist/apps-extranet', { recursive: true } as any);
-fs.writeFileSync('./dist/extranet/project.json', JSON.stringify(project));
+fs.writeFileSync('./dist/apps-extranet/project.json', JSON.stringify(project));

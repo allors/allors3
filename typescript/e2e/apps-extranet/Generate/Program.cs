@@ -66,7 +66,7 @@ namespace Allors
                     MetaPopulation = new MetaBuilder().Build(),
                 };
 
-                const string location = "../../modules/dist/extranet";
+                const string location = "../../modules/dist/apps-extranet";
                 model.LoadProject(new FileInfo($"{location}/project.json"));
 
                 using var driverManager = new DriverManager();

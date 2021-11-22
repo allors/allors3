@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Allors", "Allors", "{2930E40E-855F-4D83-9DEC-4C6282DD0102}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Angular.Tests", "Angular.Tests\Angular.Tests.csproj", "{B7BB2F74-5E2A-42A7-9481-43A640DF090A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "allors.database.adapters.sql.sqlclient", "..\..\..\dotnet\system\database\adapters\allors.database.adapters.sql.sqlclient\allors.database.adapters.sql.sqlclient.csproj", "{070E3FBB-12C8-4AB2-B079-DFF035601E4C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\..\..\dotnet\apps\database\domain\Domain.csproj", "{D347B62E-8DBE-41E0-8F18-0B272775E859}"
@@ -27,16 +25,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database", "..\..\..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Shared", "..\..\..\dotnet\system\shared\Allors.Shared.csproj", "{67C93991-F499-42F9-AD53-97AEA84DF8D0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Angular.Tests", "Angular.Tests\Angular.Tests.csproj", "{9AA2201C-BAF2-48FA-9D93-E68D844A8BBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B7BB2F74-5E2A-42A7-9481-43A640DF090A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7BB2F74-5E2A-42A7-9481-43A640DF090A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7BB2F74-5E2A-42A7-9481-43A640DF090A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7BB2F74-5E2A-42A7-9481-43A640DF090A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{070E3FBB-12C8-4AB2-B079-DFF035601E4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{070E3FBB-12C8-4AB2-B079-DFF035601E4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{070E3FBB-12C8-4AB2-B079-DFF035601E4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,6 +73,10 @@ Global
 		{67C93991-F499-42F9-AD53-97AEA84DF8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67C93991-F499-42F9-AD53-97AEA84DF8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67C93991-F499-42F9-AD53-97AEA84DF8D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AA2201C-BAF2-48FA-9D93-E68D844A8BBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AA2201C-BAF2-48FA-9D93-E68D844A8BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AA2201C-BAF2-48FA-9D93-E68D844A8BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AA2201C-BAF2-48FA-9D93-E68D844A8BBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
