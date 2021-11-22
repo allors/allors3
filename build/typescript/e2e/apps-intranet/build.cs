@@ -7,44 +7,43 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    private Target TypescriptE2EAppsIntranetPrepare => _ => _
+    private Target TypescriptE2EAngularAppsIntranetPrepare => _ => _
         .DependsOn(DotnetAppsGenerate)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.TypescriptModules)
             .SetCommand("scaffold-apps-intranet")));
 
-    private Target TypescriptE2EAppsIntranetScaffold => _ => _
-        .DependsOn(TypescriptE2EAppsIntranetPrepare)
+    private Target TypescriptE2EAngularAppsIntranetScaffold => _ => _
+        .DependsOn(TypescriptE2EAngularAppsIntranetPrepare)
         .Executes(async () =>
         {
 
-            using var angular = new Angular(Paths.TypescriptModules, "angular-apps:serve");
+            using var angular = new Angular(Paths.TypescriptModules, "angular-apps-intranet:serve");
             await angular.Init();
             DotNetRun(s => s
-                .SetProcessWorkingDirectory(Paths.TypescriptE2EApps)
+                .SetProcessWorkingDirectory(Paths.TypescriptE2EAppsIntranet)
                 .SetProjectFile(Paths.TypescriptE2EAppsIntranetGenerate)
             );
         });
 
-    private Target TypescriptE2EAppsIntranetTest => _ => _
+    private Target TypescriptE2EAngularAppsIntranetTest => _ => _
         .DependsOn(DotnetAppsPublishCommands)
         .DependsOn(DotnetAppsPublishServer)
         .DependsOn(DotnetAppsResetDataapps)
-        .DependsOn(TypescriptE2EAppsIntranetScaffold)
+        .DependsOn(TypescriptE2EAngularAppsIntranetScaffold)
         .Executes(async () =>
         {
 
             DotNet("Commands.dll Populate", Paths.ArtifactsAppsCommands);
 
             using var server = new Server(Paths.ArtifactsAppsServer);
-            using var angular = new Angular(Paths.TypescriptModules, "angular-apps:serve");
+            using var angular = new Angular(Paths.TypescriptModules, "angular-apps-intranet:serve");
             await server.Ready();
             await angular.Init();
             DotNetTest(s => s
                 .SetProjectFile(Paths.TypescriptE2EAppsIntranetAngularTests)
-                .AddLoggers("trx;LogFileName=TypescriptE2EAppsAngular.trx")
+                .AddLoggers("trx;LogFileName=TypescriptE2EAngularAppsIntranet.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
-
 }

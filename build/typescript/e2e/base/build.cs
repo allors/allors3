@@ -7,15 +7,15 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    private Target TypescriptE2EBasePrepare => _ => _
+    private Target TypescriptE2EAngularBasePrepare => _ => _
         .DependsOn(DotnetBaseGenerate)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.TypescriptModules)
             .SetCommand("scaffold-base")));
 
-    private Target TypescriptE2EBaseScaffold => _ => _
-        .DependsOn(TypescriptE2EBasePrepare)
+    private Target TypescriptE2EAngularBaseScaffold => _ => _
+        .DependsOn(TypescriptE2EAngularBasePrepare)
         .Executes(async () =>
         {
 
@@ -27,11 +27,11 @@ partial class Build
             );
         });
 
-    private Target TypescriptE2EBaseTest => _ => _
+    private Target TypescriptE2EAngularBaseTest => _ => _
         .DependsOn(DotnetBasePublishCommands)
         .DependsOn(DotnetBasePublishServer)
         .DependsOn(DotnetBaseResetDatabase)
-        .DependsOn(TypescriptE2EBaseScaffold)
+        .DependsOn(TypescriptE2EAngularBaseScaffold)
         .Executes(async () =>
         {
             DotNet("Commands.dll Populate", Paths.ArtifactsBaseCommands);
@@ -42,7 +42,7 @@ partial class Build
             await angular.Init();
             DotNetTest(s => s
                 .SetProjectFile(Paths.TypescriptE2EBaseAngularTests)
-                .AddLoggers("trx;LogFileName=TypescriptE2EBaseAngular.trx")
+                .AddLoggers("trx;LogFileName=TypescriptE2EAngularBase.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
