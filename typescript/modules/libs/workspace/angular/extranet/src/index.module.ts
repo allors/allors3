@@ -75,9 +75,7 @@ import {
 } from '@allors/workspace/angular/base';
 
 // Extranet
-import {
-  TestComponent
-} from './index';
+import { WorkEffortListComponent, WorkEffortOverviewPanelComponent, WorkTaskCreateComponent, WorkTaskOverviewComponent, WorkTaskOverviewDetailComponent, WorkTaskOverviewPanelComponent, WorkTaskOverviewSummaryComponent } from './index';
 
 @NgModule({
   declarations: [
@@ -119,7 +117,13 @@ import {
     AllorsMaterialTableComponent,
     FactoryFabComponent,
     // Extranet
-   TestComponent,
+    WorkEffortListComponent,
+    WorkEffortOverviewPanelComponent,
+    WorkTaskCreateComponent,
+    WorkTaskOverviewComponent,
+    WorkTaskOverviewDetailComponent,
+    WorkTaskOverviewPanelComponent,
+    WorkTaskOverviewSummaryComponent,
   ],
   imports: [
     BrowserModule,

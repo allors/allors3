@@ -12,12 +12,13 @@ export function configure(m: M) {
   angularMenu(m, [
     { title: 'Home', icon: 'home', link: '/' },
     {
-      title: 'Contacts',
-      icon: 'group',
-      children: [{ objectType: m.Person }],
+      title: 'WorkEfforts',
+      icon: 'schedule',
+      children: [{ objectType: m.WorkEffort }],
     },
   ]);
 
   // Navigation
-  nav(m.Person, '/contacts/people', '/contacts/person/:id');
+  nav(m.WorkEffort, '/workefforts/workefforts');
+  nav(m.WorkTask, '/workefforts/workefforts', '/workefforts/worktask/:id');
 }

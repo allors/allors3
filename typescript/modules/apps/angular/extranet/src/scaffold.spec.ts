@@ -27,7 +27,7 @@ describe('Scaffold', () => {
     const metaPopulation = new LazyMetaPopulation(data);
     const m: M = metaPopulation as unknown as M;
 
-    configure(m, null);
+    configure(m);
 
     const meta: MetaInfo[] = [...metaPopulation.composites].map((v) => {
       return {

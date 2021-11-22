@@ -6,7 +6,6 @@ import { PartCategoryDisplayNameRule } from '@allors/workspace/derivations/extra
 import { PartyDisplayPhoneRule } from '@allors/workspace/derivations/extranet';
 import { PersonDisplayEmailRule } from '@allors/workspace/derivations/extranet';
 import { PersonDisplayNameRule } from '@allors/workspace/derivations/extranet';
-import { PostalAddressDisplayNameRule } from '@allors/workspace/derivations/extranet';
 import { SerialisedItemDisplayNameRule } from '@allors/workspace/derivations/extranet';
 
 export function ruleBuilder(m: M): IRule<IObject>[] {
@@ -16,7 +15,6 @@ export function ruleBuilder(m: M): IRule<IObject>[] {
     new PartyDisplayPhoneRule(m),
     new PersonDisplayEmailRule(m),
     new PersonDisplayNameRule(m),
-    new PostalAddressDisplayNameRule(m),
     new SerialisedItemDisplayNameRule(m),
   ];
 }
