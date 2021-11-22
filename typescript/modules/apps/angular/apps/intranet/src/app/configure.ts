@@ -2,7 +2,7 @@ import { angularList, angularOverview, angularMenu, FilterDefinition, SearchFact
 import { M } from '@allors/workspace/meta/default';
 import { Sorter } from '@allors/workspace/angular/base';
 import { Composite } from '@allors/workspace/meta/system';
-import { Filters, InternalOrganisationId } from '@allors/workspace/angular/apps';
+import { Filters, InternalOrganisationId } from '@allors/workspace/angular/apps/intranet';
 import {
   Brand,
   Country,

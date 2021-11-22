@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { M } from '@allors/workspace/meta/default';
 import { RequestForQuote, Quote } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
-import { WorkspaceService } from '../../../../../../../core/src/lib/workspace/workspace-service';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   // tslint:disable-next-line:component-selector

@@ -7,15 +7,15 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    private Target TypescriptE2EAppsPrepare => _ => _
+    private Target TypescriptE2EAppsIntranetPrepare => _ => _
         .DependsOn(DotnetAppsGenerate)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(Paths.TypescriptModules)
-            .SetCommand("scaffold-apps")));
+            .SetCommand("scaffold-apps-intranet")));
 
-    private Target TypescriptE2EAppsScaffold => _ => _
-        .DependsOn(TypescriptE2EAppsPrepare)
+    private Target TypescriptE2EAppsIntranetScaffold => _ => _
+        .DependsOn(TypescriptE2EAppsIntranetPrepare)
         .Executes(async () =>
         {
 
@@ -23,15 +23,15 @@ partial class Build
             await angular.Init();
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(Paths.TypescriptE2EApps)
-                .SetProjectFile(Paths.TypescriptE2EAppsGenerate)
+                .SetProjectFile(Paths.TypescriptE2EAppsIntranetGenerate)
             );
         });
 
-    private Target TypescriptE2EAppsTest => _ => _
+    private Target TypescriptE2EAppsIntranetTest => _ => _
         .DependsOn(DotnetAppsPublishCommands)
         .DependsOn(DotnetAppsPublishServer)
         .DependsOn(DotnetAppsResetDataapps)
-        .DependsOn(TypescriptE2EAppsScaffold)
+        .DependsOn(TypescriptE2EAppsIntranetScaffold)
         .Executes(async () =>
         {
 
@@ -42,7 +42,7 @@ partial class Build
             await server.Ready();
             await angular.Init();
             DotNetTest(s => s
-                .SetProjectFile(Paths.TypescriptE2EAppsAngularTests)
+                .SetProjectFile(Paths.TypescriptE2EAppsIntranetAngularTests)
                 .AddLoggers("trx;LogFileName=TypescriptE2EAppsAngular.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });

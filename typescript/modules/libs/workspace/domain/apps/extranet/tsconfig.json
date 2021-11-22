@@ -9,5 +9,10 @@
     {
       "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@allors/workspace/meta/default": ["libs/workspace/meta/apps/extranet/src/index.ts"]
+    }
+  }
 }

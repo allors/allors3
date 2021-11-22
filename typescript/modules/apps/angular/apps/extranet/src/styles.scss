@@ -10,8 +10,8 @@ body {
 }
 
 // base
-@import '../../../../libs/workspace/angular/base//src/lib/material/styles/bootstrap';
-@import '../../../../libs/workspace/angular/base/src/lib/material/styles/layout';
+@import '../../../../../libs/workspace/angular/base/src/lib/material/styles/bootstrap';
+@import '../../../../../libs/workspace/angular/base/src/lib/material/styles/layout';
 
 // apps
-@import '../../../../libs/workspace/angular/apps/src/lib/styles/layout';
+@import '../../../../../libs/workspace/angular/apps/extranet/src/lib/styles/layout';

@@ -15,7 +15,7 @@ import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { M } from '@allors/workspace/meta/default';
-import { ruleBuilder } from '@allors/workspace-derivations-apps-extranet-custom';
+import { ruleBuilder } from '@allors/workspace/derivations/default';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -128,7 +128,7 @@ import {
   WorkTaskOverviewDetailComponent,
   WorkTaskOverviewPanelComponent,
   WorkTaskOverviewSummaryComponent,
-} from '@allors/workspace-angular-apps-extranet';
+} from '@allors/workspace/angular/apps/extranet';
 
 import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';

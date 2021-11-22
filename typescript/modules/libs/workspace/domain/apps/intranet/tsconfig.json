@@ -12,7 +12,7 @@
   ],
   "compilerOptions": {
     "paths": {
-      "@allors/workspace/meta/default": ["libs/workspace/meta/apps/src/index.ts"]
+      "@allors/workspace/meta/default": ["libs/workspace/meta/apps/intranet/src/index.ts"]
     }
   }
 }

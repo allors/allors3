@@ -55,7 +55,7 @@ partial class Build : NukeBuild
 
     Target Scaffold => _ => _
         .DependsOn(TypescriptE2EBaseScaffold)
-        .DependsOn(TypescriptE2EAppsScaffold);
+        .DependsOn(TypescriptE2EAppsIntranetScaffold);
 
     private Target Default => _ => _
         .DependsOn(Install)

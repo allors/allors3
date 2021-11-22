@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -15,7 +15,7 @@ import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { M, tags } from '@allors/workspace/meta/default';
-import { ruleBuilder } from '@allors/workspace-derivations-apps-intranet-custom';
+import { ruleBuilder } from '@allors/workspace/derivations/default';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -328,7 +328,7 @@ import {
   PrintService,
   PrintConfig,
   InternalOrganisationId,
-} from '@allors/workspace-angular-apps-intranet';
+} from '@allors/workspace/angular/apps/intranet';
 
 import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';

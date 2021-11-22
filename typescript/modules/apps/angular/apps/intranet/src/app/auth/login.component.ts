@@ -9,7 +9,7 @@ import { M } from '@allors/workspace/meta/default';
 import { Organisation, Singleton } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
 import { AuthenticationService, SingletonId, TestScope } from '@allors/workspace/angular/base';
-import { InternalOrganisationId } from '@allors/workspace-angular-apps-intranet';
+import { InternalOrganisationId } from '@allors/workspace/angular/apps/intranet';
 
 @Component({
   templateUrl: './login.component.html',
