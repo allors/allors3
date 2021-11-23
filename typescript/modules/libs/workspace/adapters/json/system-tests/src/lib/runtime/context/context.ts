@@ -56,5 +56,7 @@ export abstract class Context {
           throw new Error(mode.toString());
       }
     }
+
+    throw new Error("only for database objects");
   }
 }
