@@ -12,6 +12,7 @@ import {
   angularSorter,
   DeleteService,
   Filter,
+  FilterField,
   MediaService,
   MethodService,
   NavigationService,
@@ -25,6 +26,8 @@ import {
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Organisation;
@@ -112,7 +115,7 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
 
           return [refresh, filterFields, sort, pageEvent];
         }),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Organisation({

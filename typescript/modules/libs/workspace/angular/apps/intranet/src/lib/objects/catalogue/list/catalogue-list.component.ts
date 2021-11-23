@@ -5,11 +5,13 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Catalogue } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And, Equals } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Catalogue;
@@ -103,7 +105,7 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
 
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
+        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
           internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [

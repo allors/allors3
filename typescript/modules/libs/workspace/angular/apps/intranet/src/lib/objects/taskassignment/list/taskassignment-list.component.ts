@@ -6,9 +6,11 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { TaskAssignment } from '@allors/workspace/domain/default';
-import { Action, EditService, Filter, FilterDefinition, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
+import { Action, EditService, Filter, FilterDefinition, FilterField, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: TaskAssignment;
@@ -80,7 +82,7 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$)
+    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
         scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
           pageEvent =
@@ -97,7 +99,7 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
 
           return [refresh, filterFields, sort, pageEvent];
         }),
-        switchMap(([, filterFields, , pageEvent]) => {
+        switchMap(([, filterFields, , pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             pull.TaskAssignment({
               predicate,

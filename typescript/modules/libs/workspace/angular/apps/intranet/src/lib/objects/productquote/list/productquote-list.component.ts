@@ -6,13 +6,15 @@ import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, Quote } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { And, Equals } from '@allors/workspace/domain/system';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
 
 interface Row extends TableRow {
   object: Quote;
@@ -109,7 +111,7 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
 
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
+        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
           internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [

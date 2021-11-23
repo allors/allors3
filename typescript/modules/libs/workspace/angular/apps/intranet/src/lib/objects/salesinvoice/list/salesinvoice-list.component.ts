@@ -24,6 +24,7 @@ import {
   AllorsMaterialDialogService,
   angularFilterFromDefinition,
   angularSorter,
+  FilterField,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -31,6 +32,8 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { And, Equals } from '@allors/workspace/domain/system';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: SalesInvoice;
@@ -220,7 +223,7 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
 
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
+        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
           internalOrganisationPredicate.value = internalOrganisationId;
 
           const pulls = [

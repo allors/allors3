@@ -39,6 +39,7 @@ import {
   OverviewService,
   SingletonId,
   Sorter,
+  FilterField,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -47,6 +48,8 @@ import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 import { And } from '@allors/workspace/domain/system';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Part;
@@ -254,7 +257,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
           return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
         }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]) => {
+        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.InternalOrganisation({

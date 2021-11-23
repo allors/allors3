@@ -6,8 +6,10 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { PositionTypeRate, PositionType } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: PositionTypeRate;
@@ -97,7 +99,7 @@ export class PositionTypeRatesOverviewComponent extends TestScope implements OnI
 
           return [refresh, filterFields, sort, pageEvent];
         }),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             pull.PositionTypeRate({
               predicate: this.filter.definition.predicate,
