@@ -3,6 +3,9 @@
   "affected": {
     "defaultBase": "master"
   },
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
   "implicitDependencies": {
     "package.json": {
       "dependencies": "*",
@@ -18,128 +21,6 @@
       }
     }
   },
-  "projects": {
-    "angular-apps-extranet": {
-      "tags": []
-    },
-    "angular-apps-intranet": {
-      "tags": []
-    },
-    "angular-base-app": {
-      "tags": []
-    },
-    "angular-core-app": {
-      "tags": []
-    },
-    "protocol-json-system": {
-      "tags": []
-    },
-    "workspace-adapters-json-system": {
-      "tags": []
-    },
-    "workspace-adapters-json-system-tests": {
-      "tags": []
-    },
-    "workspace-adapters-system": {
-      "tags": []
-    },
-    "workspace-adapters-system-tests": {
-      "tags": []
-    },
-    "workspace-angular-apps-extranet": {
-      "tags": []
-    },
-    "workspace-angular-apps-intranet": {
-      "tags": []
-    },
-    "workspace-angular-base": {
-      "tags": []
-    },
-    "workspace-angular-core": {
-      "tags": []
-    },
-    "workspace-derivations-apps-extranet": {
-      "tags": []
-    },
-    "workspace-derivations-apps-extranet-custom": {
-      "tags": []
-    },
-    "workspace-derivations-apps-intranet": {
-      "tags": []
-    },
-    "workspace-derivations-apps-intranet-custom": {
-      "tags": []
-    },
-    "workspace-derivations-apps-intranet-tests": {
-      "tags": []
-    },
-    "workspace-derivations-base": {
-      "tags": []
-    },
-    "workspace-derivations-base-custom": {
-      "tags": []
-    },
-    "workspace-derivations-core": {
-      "tags": []
-    },
-    "workspace-derivations-core-custom": {
-      "tags": []
-    },
-    "workspace-derivations-system": {
-      "tags": []
-    },
-    "workspace-domain-apps-extranet": {
-      "tags": []
-    },
-    "workspace-domain-apps-intranet": {
-      "tags": []
-    },
-    "workspace-domain-base": {
-      "tags": []
-    },
-    "workspace-domain-core": {
-      "tags": []
-    },
-    "workspace-domain-system": {
-      "tags": []
-    },
-    "workspace-meta-apps-extranet": {
-      "tags": []
-    },
-    "workspace-meta-apps-intranet": {
-      "tags": []
-    },
-    "workspace-meta-base": {
-      "tags": []
-    },
-    "workspace-meta-core": {
-      "tags": []
-    },
-    "workspace-meta-json-apps-extranet": {
-      "tags": []
-    },
-    "workspace-meta-json-apps-intranet": {
-      "tags": []
-    },
-    "workspace-meta-json-base": {
-      "tags": []
-    },
-    "workspace-meta-json-core": {
-      "tags": []
-    },
-    "workspace-meta-json-system": {
-      "tags": []
-    },
-    "workspace-meta-json-system-tests": {
-      "tags": []
-    },
-    "workspace-meta-system": {
-      "tags": []
-    },
-    "workspace-meta-system-tests": {
-      "tags": []
-    }
-  },
   "targetDependencies": {
     "build": [
       {
@@ -147,5 +28,22 @@
         "projects": "dependencies"
       }
     ]
-  }
+  },
+  "generators": {
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "none"
+    },
+    "@nrwl/angular:library": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss"
+    }
+  },
+  "defaultProject": "angular-apps-extranet"
 }

@@ -6,8 +6,10 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Person;
@@ -89,7 +91,7 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
 
           return [refresh, filterFields, sort, pageEvent];
         }),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             pull.Person({
               predicate: this.filter.definition.predicate,

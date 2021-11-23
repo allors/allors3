@@ -3,10 +3,12 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { scan, switchMap } from 'rxjs/operators';
 
-import { Action, angularFilter, angularFilterFromDefinition, angularSorter, DeleteService, Filter, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilter, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Organisation } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Organisation;
@@ -67,7 +69,7 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
           sort,
           previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent,
         ]),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             p.Organisation({
               predicate: this.filter.definition.predicate,

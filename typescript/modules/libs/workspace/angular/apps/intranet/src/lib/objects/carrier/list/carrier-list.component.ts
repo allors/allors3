@@ -3,10 +3,12 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
 import { Carrier } from '@allors/workspace/domain/default';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Carrier;
@@ -89,7 +91,7 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
 
           return [refresh, filterFields, sort, pageEvent];
         }),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             pull.Carrier({
               predicate: this.filter.definition.predicate,

@@ -1,0 +1,23 @@
+{
+  "root": "libs/workspace/meta/json/system-tests",
+  "sourceRoot": "libs/workspace/meta/json/system-tests/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/workspace/meta/json/system-tests/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/workspace/meta/json/system-tests"],
+      "options": {
+        "jestConfig": "libs/workspace/meta/json/system-tests/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,15 +1,17 @@
 import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { PageEvent } from '@angular/material/paginator';
+import { Sort } from '@angular/material/sort';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
-import { And, Equals } from '@allors/workspace/domain/system';
+import { And } from '@allors/workspace/domain/system';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -103,7 +105,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
 
           return [refresh, filterFields, sort, pageEvent];
         }),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             pull.WorkEffort({
               predicate,

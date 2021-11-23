@@ -11,6 +11,10 @@
     }
   ],
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    // "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
       "@allors/workspace/domain/default": ["libs/workspace/domain/base/src/index.ts"],
       "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],

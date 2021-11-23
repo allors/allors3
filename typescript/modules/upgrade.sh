@@ -13,6 +13,7 @@ npm install @angular/material
 npm install @angular/material-luxon-adapter
 npm install bootstrap@4.6.0
 npm install common-tags
+npm install cross-fetch
 npm install date-fns
 npm install easymde
 npm install jsnlog

@@ -5,8 +5,10 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { NonUnifiedGood, Good, ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Good;
@@ -73,8 +75,8 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
       .pipe(
         scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
           return [refresh, filterFields, sort, previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent];
-        }, []),
-        switchMap(([, filterFields, sort, pageEvent]) => {
+        }),
+        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
             pull.Good({
               predicate: this.filter.definition.predicate,

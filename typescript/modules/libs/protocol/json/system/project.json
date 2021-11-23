@@ -1,0 +1,23 @@
+{
+  "root": "libs/protocol/json/system",
+  "sourceRoot": "libs/protocol/json/system/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/protocol/json/system/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/protocol/json/system"],
+      "options": {
+        "jestConfig": "libs/protocol/json/system/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
