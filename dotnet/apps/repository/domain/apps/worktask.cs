@@ -129,7 +129,9 @@ namespace Allors.Repository
 
         public LocalisedText[] LocalisedComments { get; set; }
 
-        public Media[] ElectronicDocuments { get; set; }
+        public Media[] PrivateElectronicDocuments { get; set; }
+
+        public Media[] PublicElectronicDocuments { get; set; }
 
         public int SortableWorkEffortNumber { get; set; }
 

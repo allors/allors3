@@ -23,7 +23,11 @@
         <mat-tab label="General">
           <div class="container-fluid">
             <div class="row pt-3">
-              <a-mat-select class="col-md" [object]="workTask" [roleType]="m.WorkTask.WorkEffortState" [options]="workEffortStates" display="Name" label="Status"></a-mat-select>
+              <a-mat-static class="col-md" [object]="workTask" [roleType]="m.WorkTask.WorkEffortState" display="Name" label="Status"></a-mat-static>
+              <a-mat-static class="col-md" [object]="workTask" [roleType]="m.WorkTask.WorkEffortPurposes" display="Name" label="Purpose(s)"></a-mat-static>
+            </div>
+
+            <div class="row">
               <a-mat-input class="col-md" [object]="workTask" [roleType]="m.WorkTask.Name"></a-mat-input>
             </div>
 
@@ -32,39 +36,42 @@
             </div>
 
             <div class="row">
-              <a-mat-autocomplete class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.ExecutedBy" [filter]="subContractorsFilter.create(allors.context)" display="DisplayName"></a-mat-autocomplete>
+              <a-mat-static class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.ExecutedBy" display="DisplayName"></a-mat-static>
             </div>
 
             <div class="row">
-              <a-mat-autocomplete class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.Customer" [filter]="customersFilter.create(allors.context)" (changed)="customerSelected($event)" display="DisplayName"></a-mat-autocomplete>
+              <div class="col-md">
+                <div class="row">
+                  <a-mat-select class="col" [object]="workTask" [roleType]="m.WorkTask.FullfillContactMechanism" [options]="contactMechanisms" display="DisplayName"></a-mat-select>
+                </div>
+              </div>
+            </div>
+      
+            <div class="row">
+              <div class="col-md">
+                <div class="row">
+                  <a-mat-select class="col" [object]="workTask" [roleType]="m.WorkTask.ContactPerson" [options]="contacts" display="DisplayName" label="Contact Person"></a-mat-select>
+                </div>
+              </div>
+            </div>
+      
+            <div class="row">
+              <a-mat-static class="col-md" [object]="workTask" [roleType]="m.WorkTask.EstimatedHours"></a-mat-static>
+              <a-mat-static class="col-md" [object]="workTask" [roleType]="m.WorkTask.ActualHours"></a-mat-static>
             </div>
 
             <div class="row">
-              <a-mat-select class="col-md" [object]="workTask" [roleType]="m.WorkTask.Priority" [options]="priorities" display="Name"></a-mat-select>
-              <a-mat-select class="col-md" [object]="workTask" [roleType]="m.WorkTask.WorkEffortPurposes" [options]="workEffortPurposes" display="Name" label="Purpose(s)"></a-mat-select>
+              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ScheduledStart" [disabled]="true"></a-mat-datetimepicker>
+              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ActualStart" [disabled]="true"></a-mat-datetimepicker>
             </div>
 
             <div class="row">
-              <a-mat-input class="col-md" [object]="workTask" [roleType]="m.WorkTask.EstimatedHours"></a-mat-input>
-              <a-mat-input class="col-md" [object]="workTask" [roleType]="m.WorkTask.ActualHours"></a-mat-input>
+              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ScheduledCompletion" [disabled]="true"></a-mat-datetimepicker>
+              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ActualCompletion" [disabled]="true"></a-mat-datetimepicker>
             </div>
 
             <div class="row">
-              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ScheduledStart"></a-mat-datetimepicker>
-              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ActualStart"></a-mat-datetimepicker>
-            </div>
-
-            <div class="row">
-              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ScheduledCompletion"></a-mat-datetimepicker>
-              <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ActualCompletion"></a-mat-datetimepicker>
-            </div>
-
-            <div class="row">
-              <a-mat-textarea class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.WorkDone"></a-mat-textarea>
-            </div>
-
-            <div class="row">
-              <a-mat-select class="col-md" [object]="workTask" [roleType]="m.WorkTask.Children" [options]="workEfforts" display="Name"></a-mat-select>
+              <a-mat-textarea class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.WorkDone" [disabled]="true"></a-mat-textarea>
             </div>
           </div>
         </mat-tab>
@@ -72,7 +79,7 @@
         <mat-tab label="Documents">
           <div class="container-fluid">
             <div class="row pt-3">
-              <a-mat-files class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.ElectronicDocuments" accept="image/*"></a-mat-files>
+              <a-mat-files class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.PublicElectronicDocuments" accept="image/*"></a-mat-files>
             </div>
           </div>
         </mat-tab>

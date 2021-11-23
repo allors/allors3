@@ -15,11 +15,8 @@ interface Row extends TableRow {
   object: WorkEffort;
   number: string;
   name: string;
-  type: string;
   state: string;
-  customer: string;
   equipment: string;
-  worker: string;
   executedBy: string;
   lastModifiedDate: string;
 }
@@ -67,12 +64,9 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
       columns: [
         { name: 'number', sort: true },
         { name: 'name', sort: true },
-        { name: 'type', sort: false },
         { name: 'state' },
-        { name: 'customer' },
         { name: 'executedBy' },
         { name: 'equipment' },
-        { name: 'worker' },
         { name: 'lastModifiedDate', sort: true },
       ],
       actions: [overviewService.overview(), this.delete],
@@ -149,12 +143,9 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
               object: v,
               number: v.WorkEffortNumber,
               name: v.Name,
-              type: v.strategy.cls.singularName,
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
-              customer: v.Customer ? v.Customer.DisplayName : '',
               executedBy: v.ExecutedBy ? v.ExecutedBy.DisplayName : '',
               equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment?.map((w) => w.FixedAsset.DisplayName).join(', ') : '',
-              worker: v.WorkEffortPartyAssignmentsWhereAssignment ? v.WorkEffortPartyAssignmentsWhereAssignment?.map((w) => w.Party.DisplayName).join(', ') : '',
               lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
             } as Row;
           });

@@ -7,19 +7,27 @@ namespace Allors.Database.Domain
 {
     public partial class SecurityTokens
     {
-        protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Grant);
+        protected override void CustomPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.Grant);
 
-        protected override void AppsSetup(Setup setup)
+        protected override void CustomSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
 
             var accessControls = new Grants(this.Transaction);
 
+            merge(InitialSecurityTokenId, v =>
+            {
+                if (setup.Config.SetupSecurity)
+                {
+                    v.AddGrant(accessControls.CustomerContacts);
+                }
+            });
+
             merge(DefaultSecurityTokenId, v =>
             {
                 if (setup.Config.SetupSecurity)
                 {
-                    v.AddGrant(accessControls.Employees);
+                    v.AddGrant(accessControls.CustomerContacts);
                 }
             });
         }

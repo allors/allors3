@@ -8,23 +8,23 @@
       </div>
 
       <div class="row">
-        <a-mat-autocomplete class="col-md" [object]="workTask" [roleType]="m.WorkTask.Customer" [filter]="organisationsFilter.create(allors.context)" (changed)="customerSelected($event)" display="DisplayName"></a-mat-autocomplete>
-      </div>
-
-      <div class="row">
-        <a-mat-autocomplete class="col-md" [object]="workTask" [roleType]="m.WorkTask.ExecutedBy" [filter]="subContractorsFilter.create(allors.context)" display="Name"></a-mat-autocomplete>
-      </div>
-
-      <div class="row">
         <a-mat-textarea class="col-md-12" [object]="workTask" [roleType]="m.WorkTask.Description"></a-mat-textarea>
       </div>
 
       <div class="row">
-        <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ScheduledStart"></a-mat-datetimepicker>
+        <div class="col-md">
+          <div class="row">
+            <a-mat-select class="col" [object]="workTask" [roleType]="m.WorkTask.FullfillContactMechanism" [options]="contactMechanisms" display="DisplayName"></a-mat-select>
+          </div>
+        </div>
       </div>
 
       <div class="row">
-        <a-mat-datetimepicker class="col-md" [object]="workTask" [roleType]="m.WorkTask.ScheduledCompletion"></a-mat-datetimepicker>
+        <div class="col-md">
+          <div class="row">
+            <a-mat-select class="col" [object]="workTask" [roleType]="m.WorkTask.ContactPerson" [options]="contacts" display="DisplayName" label="Contact Person"></a-mat-select>
+          </div>
+        </div>
       </div>
     </div>
   </mat-dialog-content>

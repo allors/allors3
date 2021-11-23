@@ -158,7 +158,8 @@ namespace Allors.Database.Domain
 
             var except = new HashSet<IOperandType>
             {
-                this.Meta.ElectronicDocuments,
+                this.Meta.PrivateElectronicDocuments,
+                this.Meta.PublicElectronicDocuments,
                 this.Meta.Print,
             };
 

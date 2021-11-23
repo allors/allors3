@@ -41,6 +41,11 @@ namespace Allors.Database.Domain
                 }
 
                 this.ContactsUserGroup.Members = this.CurrentContacts.ToArray();
+
+                foreach(var member in this.CurrentContacts)
+                {
+                    new UserGroups(transaction).CustomerContacts.AddMember(member);
+                }
             }
 
             this.SecurityTokens = new[]

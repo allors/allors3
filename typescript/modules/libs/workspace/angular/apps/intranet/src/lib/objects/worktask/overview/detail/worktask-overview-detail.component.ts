@@ -90,7 +90,8 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
               FullfillContactMechanism: x,
               ContactPerson: x,
               CreatedBy: x,
-              ElectronicDocuments: x,
+              PublicElectronicDocuments: x,
+              PrivateElectronicDocuments: x,
             },
           })
         );

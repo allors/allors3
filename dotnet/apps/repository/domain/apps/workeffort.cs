@@ -377,7 +377,15 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public Media[] ElectronicDocuments { get; set; }
+        public Media[] PrivateElectronicDocuments { get; set; }
+
+        #region Allors
+        [Id("8355fac3-785d-4cd1-866a-e0f6638f947e")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        public Media[] PublicElectronicDocuments { get; set; }
 
         #region Allors
         [Id("d21f9909-1dfd-4c7d-9559-68fb1fc29f26")]

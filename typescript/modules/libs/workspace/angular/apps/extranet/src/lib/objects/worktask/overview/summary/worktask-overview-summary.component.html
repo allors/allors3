@@ -16,12 +16,6 @@
   </mat-card-header>
 
   <mat-card-content>
-    <div (click)="navigation.overview(workTask.Customer)" style="cursor: pointer">
-      <div style="color: grey">Customer</div>
-      <div>
-        {{ workTask.Customer?.DisplayName }}
-      </div>
-    </div>
 
     <div *ngFor="let asset of assets" (click)="navigation.overview(asset)" style="cursor: pointer">
       <div style="color: grey">Equipment</div>
@@ -29,29 +23,9 @@
         {{ asset.DisplayName }}
       </div>
     </div>
-
-    <div *ngIf="parent" (click)="navigation.overview(parent)" style="cursor: pointer">
-      <div>
-        <div style="color: grey">Parent</div>
-        {{ parent.Name }}
-      </div>
-    </div>
-
-    <div *ngFor="let salesInvoice of salesInvoices" (click)="navigation.overview(salesInvoice)" style="cursor: pointer">
-      <div style="color: grey">Invoice</div>
-      <div>
-        {{ salesInvoice.InvoiceNumber }}
-      </div>
-    </div>
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="workTask.canExecuteCancel" mat-button (click)="cancel()">Cancel</button>
-    <button *ngIf="workTask.canExecuteReopen" mat-button (click)="reopen()">Reopen</button>
-    <button *ngIf="workTask.canExecuteComplete" mat-button (click)="complete()">Complete</button>
-    <button *ngIf="workTask.canExecuteInvoice" mat-button (click)="invoice()">Invoice</button>
-    <button *ngIf="workTask.canExecuteRevise" mat-button (click)="revise()">Revise</button>
-    <button mat-button type="button" (click)="printForWorker.execute(workTask)">Print internal</button>
     <button mat-button type="button" (click)="print.execute(workTask)">Print</button>
   </mat-card-actions>
 </mat-card>

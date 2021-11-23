@@ -31,7 +31,8 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithScheduledStart(@this.Transaction.Now().AddDays(7))
                 .WithScheduledCompletion(@this.Transaction.Now().AddDays(10))
                 .WithEstimatedHours(faker.Random.Int(7, 30))
-                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+                .WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("private doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("public doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
 
             return @this;
         }
@@ -55,7 +56,8 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithScheduledStart(@this.Transaction.Now().AddDays(7))
                 .WithScheduledCompletion(@this.Transaction.Now().AddDays(10))
                 .WithEstimatedHours(faker.Random.Int(7, 30))
-                .WithElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
+                .WithPrivateElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("private doc1.en.pdf").WithInData(faker.Random.Bytes(1000)).Build())
+                .WithPublicElectronicDocument(new MediaBuilder(@this.Transaction).WithInFileName("public doc2.en.pdf").WithInData(faker.Random.Bytes(1000)).Build());
 
             return @this;
         }
