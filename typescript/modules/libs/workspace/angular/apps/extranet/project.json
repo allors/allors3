@@ -1,0 +1,23 @@
+{
+  "root": "libs/workspace/angular/apps/extranet",
+  "sourceRoot": "libs/workspace/angular/apps/extranet/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/workspace/angular/apps/extranet/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/workspace/angular/apps/extranet"],
+      "options": {
+        "jestConfig": "libs/workspace/angular/apps/extranet/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

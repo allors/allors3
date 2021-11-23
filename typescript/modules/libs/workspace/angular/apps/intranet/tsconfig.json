@@ -11,6 +11,10 @@
     }
   ],
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    // "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
       "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
       "@allors/workspace/adapters/json/system": ["libs/workspace/adapters/json/system/src/index.ts"],

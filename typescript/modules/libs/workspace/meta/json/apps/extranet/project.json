@@ -1,0 +1,23 @@
+{
+  "root": "libs/workspace/meta/json/apps/extranet",
+  "sourceRoot": "libs/workspace/meta/json/apps/extranet/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/workspace/meta/json/apps/extranet/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/workspace/meta/json/apps/extranet"],
+      "options": {
+        "jestConfig": "libs/workspace/meta/json/apps/extranet/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

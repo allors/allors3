@@ -1,0 +1,23 @@
+{
+  "root": "libs/workspace/meta/json/base",
+  "sourceRoot": "libs/workspace/meta/json/base/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/workspace/meta/json/base/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/workspace/meta/json/base"],
+      "options": {
+        "jestConfig": "libs/workspace/meta/json/base/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

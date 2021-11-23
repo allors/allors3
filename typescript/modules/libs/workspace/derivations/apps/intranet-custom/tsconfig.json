@@ -11,6 +11,10 @@
     }
   ],
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    // "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
       "@allors/workspace/derivations/apps/intranet": ["libs/workspace/derivations/apps/intranet/src/index.ts"],
       "@allors/workspace/derivations/base": ["libs/workspace/derivations/base/src/index.ts"],

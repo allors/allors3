@@ -1,0 +1,23 @@
+{
+  "root": "libs/workspace/meta/apps/intranet",
+  "sourceRoot": "libs/workspace/meta/apps/intranet/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/workspace/meta/apps/intranet/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/workspace/meta/apps/intranet"],
+      "options": {
+        "jestConfig": "libs/workspace/meta/apps/intranet/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
