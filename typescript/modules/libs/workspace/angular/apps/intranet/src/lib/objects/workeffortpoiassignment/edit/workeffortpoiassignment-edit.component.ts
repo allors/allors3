@@ -48,7 +48,7 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent extends TestScop
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;

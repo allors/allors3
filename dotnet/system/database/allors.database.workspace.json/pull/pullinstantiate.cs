@@ -87,7 +87,11 @@ namespace Allors.Database.Protocol.Json
                                         var set = new HashSet<IObject>();
                                         foreach (var inner in outer)
                                         {
-                                            if (inner is IObject innerObject)
+                                            if (inner == null)
+                                            {
+                                                continue;
+                                            }
+                                            else if (inner is IObject innerObject)
                                             {
                                                 set.Add(innerObject);
                                             }
