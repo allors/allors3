@@ -31,6 +31,8 @@ namespace Allors.Database.Domain
                     @class.Equals(m.Locale) ||
                     @class.Equals(m.UnitOfMeasure) ||
                     @class.Equals(m.GenderType) ||
+                    @class.Equals(m.Hobby) ||
+                    @class.Equals(m.PersonalTitle) ||
                     @class.Equals(m.MaritalStatus) ||
                     @class.Equals(m.Salutation) ||
                     @class.Equals(m.SerialisedItemCharacteristicType) ||
@@ -114,7 +116,9 @@ namespace Allors.Database.Domain
                         @class.Equals(m.TelecommunicationsNumber) ||
                         @class.Equals(m.WebAddress) ||
                         @class.Equals(m.Media) ||
-                        @class.Equals(m.MediaContent))
+                        @class.Equals(m.MediaContent) ||
+                        @class.Equals(m.LocalisedMedia) ||
+                        @class.Equals(m.LocalisedText))
                 {
                     security.GrantCustomerContact(@class, Operations.Read, Operations.Write);
                 }
