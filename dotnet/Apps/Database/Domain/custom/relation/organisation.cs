@@ -46,6 +46,11 @@ namespace Allors.Database.Domain
                 {
                     new UserGroups(transaction).CustomerContacts.AddMember(member);
                 }
+
+                foreach (var member in this.InactiveContacts)
+                {
+                    new UserGroups(transaction).CustomerContacts.RemoveMember(member);
+                }
             }
 
             this.SecurityTokens = new[]
