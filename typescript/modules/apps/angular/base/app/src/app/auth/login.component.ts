@@ -9,11 +9,6 @@ import { AuthenticationService, TestScope } from '@allors/workspace/angular/base
   templateUrl: './login.component.html',
 })
 export class LoginComponent extends TestScope implements OnDestroy {
-  public loginFormGhost = this.formBuilder.group({
-    password: ['', Validators.required],
-    userName: ['', Validators.required],
-  });
-
   public loginForm = this.formBuilder.group({
     password: ['', Validators.required],
     userName: ['', Validators.required],
