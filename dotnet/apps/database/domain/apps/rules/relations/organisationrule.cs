@@ -31,7 +31,6 @@ namespace Allors.Database.Domain
                 m.OrganisationContactRelationship.RolePattern(v => v.FromDate, v => v.Organisation),
                 m.OrganisationContactRelationship.RolePattern(v => v.ThroughDate, v => v.Organisation),
                 m.InternalOrganisation.AssociationPattern(v => v.SubContractorRelationshipsWhereContractor),
-                m.OrganisationContactRelationship.RolePattern(v => v.ThroughDate, v => v.Organisation),
                 m.SubContractorRelationship.RolePattern(v => v.FromDate, v => v.Contractor),
                 m.SubContractorRelationship.RolePattern(v => v.ThroughDate, v => v.Contractor),
                 m.Organisation.RolePattern(v => v.PartyContactMechanisms),

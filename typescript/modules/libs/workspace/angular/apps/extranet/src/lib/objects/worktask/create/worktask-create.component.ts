@@ -3,10 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask } from '@allors/workspace/domain/default';
-import { NavigationService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask } from '@allors/workspace/domain/default';
+import { NavigationService, RefreshService, SaveService, SearchFactory, TestScope, UserId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -29,12 +30,11 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   addContactPerson = false;
   addContactMechanism: boolean;
 
-  locales: Locale[];
-
   private subscription: Subscription;
   private readonly refresh$: BehaviorSubject<Date>;
   organisationsFilter: SearchFactory;
   subContractorsFilter: SearchFactory;
+  user: Person;
 
   constructor(
     @Self() public allors: ContextService,
@@ -43,7 +43,8 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private saveService: SaveService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private userId: UserId
   ) {
     super();
 
@@ -55,13 +56,19 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
+    const x = {};
 
     this.subscription = combineLatest([this.route.url, this.refresh$])
       .pipe(
         switchMap(() => {
           const pulls = [
-            pull.Locale({
-              sorting: [{ roleType: m.Locale.Name }],
+            pull.Person({
+              objectId: this.userId.value,
+              include: {
+                CurrentOrganisationContactRelationships: {
+                  Organisation: x,
+                },
+              },
             }),
           ];
 
@@ -71,15 +78,15 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.locales = loaded.collection<Locale>(m.Locale);
-
+        this.user = loaded.object<Person>(m.Person);
         this.workTask = this.allors.context.create<WorkTask>(m.WorkTask);
-        this.workTask.TakenBy = this.internalOrganisation as Organisation;
-      });
-  }
 
-  public customerSelected(customer: IObject) {
-    this.updateCustomer(customer as Party);
+        if (this.user.CurrentOrganisationContactRelationships.length == 1) {
+          const customer = this.user.CurrentOrganisationContactRelationships[0].Organisation;
+          this.updateCustomer(customer as Party);      
+          this.workTask.Customer = customer;
+        }
+      });
   }
 
   private updateCustomer(party: Party) {
@@ -115,21 +122,6 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
 
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
-  }
-
-  public contactPersonAdded(contact: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
-    organisationContactRelationship.Contact = contact;
-
-    this.contacts.push(contact);
-    this.workTask.ContactPerson = contact;
-  }
-
-  public contactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.workTask.Customer.addPartyContactMechanism(partyContactMechanism);
-    this.workTask.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
   }
 
   public ngOnDestroy(): void {

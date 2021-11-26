@@ -14,7 +14,7 @@ import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
 import { data } from '@allors/workspace/meta/json/default';
-import { M } from '@allors/workspace/meta/default';
+import { M, tags } from '@allors/workspace/meta/default';
 import { ruleBuilder } from '@allors/workspace/derivations/default';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -122,12 +122,12 @@ import {
 // Angular Material Base
 import {
   WorkEffortListComponent,
-  WorkEffortOverviewPanelComponent,
   WorkTaskCreateComponent,
   WorkTaskOverviewComponent,
   WorkTaskOverviewDetailComponent,
-  WorkTaskOverviewPanelComponent,
   WorkTaskOverviewSummaryComponent,
+  PrintService,
+  PrintConfig,
 } from '@allors/workspace/angular/apps/extranet';
 
 import { LoginComponent } from './auth/login.component';
@@ -195,7 +195,9 @@ export const routes: Routes = [
   },
 ];
 
-export const create = {};
+export const create = {
+  [tags.WorkTask]: WorkTaskCreateComponent,
+};
 
 export const edit = {};
 
@@ -242,11 +244,9 @@ export const edit = {};
     FactoryFabComponent,
     // Extranet
     WorkEffortListComponent,
-    WorkEffortOverviewPanelComponent,
     WorkTaskCreateComponent,
     WorkTaskOverviewComponent,
     WorkTaskOverviewDetailComponent,
-    WorkTaskOverviewPanelComponent,
     WorkTaskOverviewSummaryComponent,
     // App
     ErrorComponent,
@@ -335,6 +335,8 @@ export const edit = {};
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
     { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
+    PrintService,
+    { provide: PrintConfig, useValue: { url: environment.baseUrl } },
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: OBJECT_CREATE_TOKEN, useValue: create },
     { provide: OBJECT_EDIT_TOKEN, useValue: edit },

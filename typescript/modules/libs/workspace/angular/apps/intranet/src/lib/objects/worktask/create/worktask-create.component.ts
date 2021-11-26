@@ -5,7 +5,7 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask } from '@allors/workspace/domain/default';
+import { Locale, Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask, SerialisedItem, WorkEffortFixedAssetAssignment } from '@allors/workspace/domain/default';
 import { NavigationService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -13,6 +13,7 @@ import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';
+import { ObjectData } from '../../../../../../../base/src/lib/material/services/object/object.data';
 
 @Component({
   templateUrl: './worktask-create.component.html',
@@ -39,10 +40,11 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
   private readonly refresh$: BehaviorSubject<Date>;
   organisationsFilter: SearchFactory;
   subContractorsFilter: SearchFactory;
+  workEffortFixedAssetAssignment: WorkEffortFixedAssetAssignment;
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkTaskCreateComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
@@ -72,6 +74,17 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
             }),
           ];
 
+          if (this.data.associationId) {
+            pulls.push(
+              pull.SerialisedItem({
+                objectId: this.data.associationId,
+              }),
+              pull.Party({
+                objectId: this.data.associationId,
+              })
+            );
+          }
+
           this.organisationsFilter = Filters.organisationsFilter(m);
           this.subContractorsFilter = Filters.subContractorsFilter(m, this.internalOrganisationId.value);
 
@@ -84,8 +97,18 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.locales = loaded.collection<Locale>(m.Locale);
 
+        const fromSerialiseditem = loaded.object<SerialisedItem>(m.SerialisedItem);
+        const fromCustomer  = loaded.object<Party>(m.Party);
+
         this.workTask = this.allors.context.create<WorkTask>(m.WorkTask);
         this.workTask.TakenBy = this.internalOrganisation as Organisation;
+        this.workTask.Customer = fromCustomer;
+
+        if (fromSerialiseditem != null) {
+          this.workEffortFixedAssetAssignment = this.allors.context.create<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
+          this.workEffortFixedAssetAssignment.Assignment = this.workTask;
+          this.workEffortFixedAssetAssignment.FixedAsset = fromSerialiseditem;
+        }
       });
   }
 

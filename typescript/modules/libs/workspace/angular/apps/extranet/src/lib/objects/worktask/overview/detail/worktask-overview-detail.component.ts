@@ -8,16 +8,12 @@ import {
   Organisation,
   OrganisationContactRelationship,
   Party,
-  InternalOrganisation,
   ContactMechanism,
   PartyContactMechanism,
   WorkEffort,
   WorkTask,
-  WorkEffortState,
-  Priority,
-  WorkEffortPurpose,
 } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -32,19 +28,11 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
 
   workTask: WorkTask;
   party: Party;
-  workEffortStates: WorkEffortState[];
-  priorities: Priority[];
-  workEffortPurposes: WorkEffortPurpose[];
-  employees: Person[];
   contactMechanisms: ContactMechanism[];
   contacts: Person[];
-  addContactPerson = false;
-  addContactMechanism: boolean;
 
   private subscription: Subscription;
   workEfforts: WorkEffort[];
-  customersFilter: SearchFactory;
-  subContractorsFilter: SearchFactory;
 
   constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public refreshService: RefreshService, public navigationService: NavigationService, private saveService: SaveService) {
     super();
@@ -75,10 +63,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
             objectId: id,
             include: {
               WorkEffortState: x,
-              FullfillContactMechanism: x,
-              ContactPerson: x,
               CreatedBy: x,
-              ElectronicDocuments: x,
             },
           })
         );
@@ -117,25 +102,15 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
                 FullfillContactMechanism: x,
                 Priority: x,
                 WorkEffortPurposes: x,
-                Customer: x,
                 ExecutedBy: x,
                 ContactPerson: x,
                 CreatedBy: x,
-              },
+                Customer: x,
+                PublicElectronicDocuments: x,
+                },
             }),
             pull.Locale({
               sorting: [{ roleType: m.Locale.Name }],
-            }),
-            pull.WorkEffortState({
-              sorting: [{ roleType: m.WorkEffortState.Name }],
-            }),
-            pull.Priority({
-              predicate: { kind: 'Equals', propertyType: m.Priority.IsActive, value: true },
-              sorting: [{ roleType: m.Priority.Name }],
-            }),
-            pull.WorkEffortPurpose({
-              predicate: { kind: 'Equals', propertyType: this.m.WorkEffortPurpose.IsActive, value: true },
-              sorting: [{ roleType: m.WorkEffortPurpose.Name }],
             }),
           ];
 
@@ -145,13 +120,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
-        this.employees = internalOrganisation.ActiveEmployees;
-
         this.workTask = loaded.object<WorkTask>(m.WorkTask);
-        this.workEffortStates = loaded.collection<WorkEffortState>(m.WorkEffortState);
-        this.priorities = loaded.collection<Priority>(m.Priority);
-        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(m.WorkEffortPurpose);
 
         this.updateCustomer(this.workTask.Customer);
       });
@@ -161,25 +130,6 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-  }
-
-  public contactPersonAdded(contact: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
-    organisationContactRelationship.Contact = contact;
-
-    this.contacts.push(contact);
-    this.workTask.ContactPerson = contact;
-  }
-
-  public contactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.workTask.Customer.addPartyContactMechanism(partyContactMechanism);
-    this.workTask.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
-  }
-
-  public customerSelected(customer: IObject) {
-    this.updateCustomer(customer as Party);
   }
 
   private updateCustomer(party: Party) {
