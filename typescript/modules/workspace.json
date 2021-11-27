@@ -5,6 +5,7 @@
     "angular-apps-intranet": "apps/angular/apps/intranet",
     "angular-base-app": "apps/angular/base/app",
     "angular-core-app": "apps/angular/core/app",
+    "angular-selectors": "libs/angular/selectors",
     "protocol-json-system": "libs/protocol/json/system",
     "workspace-adapters-json-system": "libs/workspace/adapters/json/system",
     "workspace-adapters-json-system-tests": "libs/workspace/adapters/json/system-tests",

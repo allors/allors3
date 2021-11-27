@@ -14,10 +14,7 @@
         "polyfills": "apps/angular/base/app/src/polyfills.ts",
         "tsConfig": "apps/angular/base/app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/angular/base/app/src/favicon.ico",
-          "apps/angular/base/app/src/assets"
-        ],
+        "assets": ["apps/angular/base/app/src/favicon.ico", "apps/angular/base/app/src/assets"],
         "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/base/app/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
         "scripts": [],
         "allowedCommonJsDependencies": ["easymde"]
@@ -78,10 +75,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/angular/base/app/src/**/*.ts",
-          "apps/angular/base/app/src/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/angular/base/app/src/**/*.ts", "apps/angular/base/app/src/**/*.html"]
       }
     },
     "test": {

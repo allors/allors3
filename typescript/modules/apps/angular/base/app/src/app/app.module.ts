@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -6,16 +6,10 @@ import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
-import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
-import { data } from '@allors/workspace/meta/json/default';
-import { M } from '@allors/workspace/meta/default';
-import { ruleBuilder } from '@allors/workspace/derivations/base-custom';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -42,7 +36,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AngularClient } from '../allors/angular-client';
 import { AuthorizationService } from './auth/authorization.service';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
@@ -124,42 +117,7 @@ import { PersonComponent } from './relations/people/person/person.component';
 import { PeopleComponent } from './relations/people/people.component';
 import { FormComponent } from './tests/form/form.component';
 
-import { configure } from './configure';
-import { BaseContext } from '../allors/base-context';
-import { Configuration } from '@allors/workspace/domain/system';
-import { applyRules } from '@allors/workspace/derivations/system';
-
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
-  return async () => {
-    const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
-
-    const metaPopulation = new LazyMetaPopulation(data);
-    const m = metaPopulation as unknown as M;
-
-    let nextId = -1;
-
-    const configuration: Configuration = {
-      name: 'Default',
-      metaPopulation,
-      objectFactory: new PrototypeObjectFactory(metaPopulation),
-      idGenerator: () => nextId--,
-    };
-
-    const rules = ruleBuilder(m);
-    applyRules(m, rules);
-
-    const database = new DatabaseConnection(configuration, angularClient);
-    const workspace = database.createWorkspace();
-    workspaceService.workspace = workspace;
-
-    workspaceService.contextBuilder = () => new BaseContext(workspaceService);
-
-    configure(m);
-  };
-}
-
 export const routes: Routes = [
-  ...environment.routes,
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   {
@@ -252,7 +210,6 @@ export const routes: Routes = [
     FormComponent,
     // App
     AppComponent,
-    ...environment.components,
   ],
   imports: [
     BrowserModule,
@@ -288,12 +245,6 @@ export const routes: Routes = [
     MatToolbarModule,
   ],
   providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitFactory,
-      deps: [WorkspaceService, HttpClient],
-      multi: true,
-    },
     WorkspaceService,
     { provide: AuthenticationService, useClass: AuthenticationServiceBase },
     {
@@ -331,6 +282,7 @@ export const routes: Routes = [
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
     { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
+    ...environment.providers,
   ],
 })
 export class AppModule {}

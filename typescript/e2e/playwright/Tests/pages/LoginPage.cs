@@ -14,6 +14,7 @@ namespace Tests
             await this.Page.GotoAsync("http://localhost:4200");
 
             await this.Page.FillAsync("angular=input[name=\"username\"]", "jane@example.com");
+            //await this.Page.FillAsync("input[name=\"username\"]", "jane@example.com");
             await this.Page.FillAsync("input[name=\"password\"]", password);
             await this.Page.ClickAsync("button:has-text(\"Sign In\")");
         }

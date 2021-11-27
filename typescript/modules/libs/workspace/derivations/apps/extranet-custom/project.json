@@ -7,9 +7,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/workspace/derivations/apps/extranet-custom/**/*.ts"
-        ]
+        "lintFilePatterns": ["libs/workspace/derivations/apps/extranet-custom/**/*.ts"]
       }
     },
     "test": {
