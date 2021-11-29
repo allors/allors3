@@ -98,15 +98,13 @@ namespace Allors.Domain
 						ObjectState[] ObjectStates {set;}
 
 		}
-		public interface User  : Deletable, UniquelyIdentifiable, SecurityTokenOwner 
+		public interface User  : UserPasswordReset, Deletable, UniquelyIdentifiable, SecurityTokenOwner 
 		{
 						NotificationList NotificationList {set;}
 
 						global::System.String UserName {set;}
 
 						global::System.String _NormalizedUserName {set;}
-
-						global::System.String InUserPassword {set;}
 
 						global::System.String UserPasswordHash {set;}
 
@@ -381,6 +379,13 @@ namespace Allors.Domain
 						SecurityToken _OwnerSecurityToken {set;}
 
 						Grant _OwnerGrant {set;}
+
+		}
+		public interface UserPasswordReset 
+		{
+						global::System.String InExistingUserPassword {set;}
+
+						global::System.String InUserPassword {set;}
 
 		}
 		public interface Counter  : UniquelyIdentifiable 

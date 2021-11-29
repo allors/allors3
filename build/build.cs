@@ -44,6 +44,12 @@ partial class Build : NukeBuild
     private Target Install => _ => _
         .DependsOn(TypescriptInstall);
 
+    private Target Merge => _ => _
+       .DependsOn(DotnetCoreMerge)
+       .DependsOn(DotnetLegacyMerge)
+       .DependsOn(DotnetBaseMerge)
+       .DependsOn(DotnetAppsMerge);
+
     private Target Generate => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .DependsOn(DotnetCoreGenerate)

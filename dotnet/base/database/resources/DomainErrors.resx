@@ -138,6 +138,12 @@
   <data name="DerivationErrorUnique" xml:space="preserve">
     <value>{0} is not unique</value>
   </data>
+  <data name="InvalidNewPassword" xml:space="preserve">
+    <value>New password does not meet complexity requirements</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Invalid password.</value>
+  </data>
   <data name="PermissionOnlyExecuteForMethodType" xml:space="preserve">
     <value>only execute is allowed for method type</value>
   </data>
