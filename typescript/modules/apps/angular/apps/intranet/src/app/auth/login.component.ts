@@ -16,11 +16,6 @@ import { InternalOrganisationId } from '@allors/workspace/angular/apps/intranet'
   providers: [ContextService],
 })
 export class LoginComponent extends TestScope implements OnDestroy {
-  public loginFormGhost = this.formBuilder.group({
-    password: ['', Validators.required],
-    userName: ['', Validators.required],
-  });
-
   public loginForm = this.formBuilder.group({
     password: ['', Validators.required],
     userName: ['', Validators.required],

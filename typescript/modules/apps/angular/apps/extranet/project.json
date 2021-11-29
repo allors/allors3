@@ -14,11 +14,8 @@
         "polyfills": "apps/angular/apps/extranet/src/polyfills.ts",
         "tsConfig": "apps/angular/apps/extranet/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": [
-          "apps/angular/apps/extranet/src/favicon.ico",
-          "apps/angular/apps/extranet/src/assets"
-        ],
-        "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css","apps/angular/apps/extranet/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
+        "assets": ["apps/angular/apps/extranet/src/favicon.ico", "apps/angular/apps/extranet/src/assets"],
+        "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "apps/angular/apps/extranet/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
         "scripts": [],
         "allowedCommonJsDependencies": ["zone.js", "markdown.component", "easymde", "codemirror", "codemirror-spell-checker"]
       },
@@ -78,10 +75,7 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/angular/apps/extranet/src/**/*.ts",
-          "apps/angular/apps/extranet/src/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/angular/apps/extranet/src/**/*.ts", "apps/angular/apps/extranet/src/**/*.html"]
       }
     },
     "test": {
