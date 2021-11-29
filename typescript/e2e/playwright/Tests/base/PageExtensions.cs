@@ -9,7 +9,7 @@ namespace Tests
     {
         public static async Task WaitForAngular(this IPage @this)
         {
-            const string Function =
+            const string expression =
 @"async () => {
     if(window.getAngularTestability){
         var app = document.querySelector('allors-root');
@@ -27,10 +27,17 @@ namespace Tests
             var factor = 1;
             while (!isStable && timeOut > DateTime.Now)
             {
-                var value = await @this.EvaluateAsync<bool?>(Function);
+                var value = await @this.EvaluateAsync<bool?>(expression);
                 isStable = value ?? false;
                 Thread.Sleep(Math.Min(10 * factor++, 100));
             }
+        }
+
+        public static async Task<string> Locale(this IPage @this)
+        {
+            const string expression = "return window.navigator.userLanguage || window.navigator.language;";
+
+            return await @this.EvaluateAsync<string>(expression);
         }
     }
 }

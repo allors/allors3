@@ -12,7 +12,7 @@ namespace Tests
         public async Task ShouldLogin()
         {
             var page = new LoginPage(this.Page);
-            await page.login("administrator");
+            await page.Login("jane@example.com");
 
             Assert.AreEqual("AngularBaseApp", await this.Page.TitleAsync());
         }

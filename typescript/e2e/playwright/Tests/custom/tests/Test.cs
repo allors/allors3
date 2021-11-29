@@ -25,12 +25,7 @@ namespace Tests
 
         public IPage Page { get; private set; }
 
-        public static async Task<IPlaywright> Init()
-        {
-            var playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            await playwright.Selectors.RegisterAngularSelectorsAsync();
-            return playwright;
-        }
+        public static async Task<IPlaywright> Init() => await Microsoft.Playwright.Playwright.CreateAsync();
 
         public Fixture Fixture
         {
