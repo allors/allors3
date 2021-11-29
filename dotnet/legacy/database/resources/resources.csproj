@@ -4,12 +4,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="DomainErrors.Designer.cs">
+    <Compile Update="DomainErrors.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>DomainErrors.resx</DependentUpon>
     </Compile>
-    <Compile Update="ErrorMessages.Designer.cs">
+    <Compile Update="ErrorMessages.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorMessages.resx</DependentUpon>
@@ -24,14 +24,14 @@
   <ItemGroup>
     <EmbeddedResource Update="DomainErrors.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>DomainErrors.Designer.cs</LastGenOutput>
+      <LastGenOutput>DomainErrors.designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="ErrorMessages.nl.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="ErrorMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
+      <LastGenOutput>ErrorMessages.designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
