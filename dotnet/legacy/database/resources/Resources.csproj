@@ -4,15 +4,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="_domainerrors.designer.cs">
+    <Compile Update="DomainErrors.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>_domainerrors.resx</DependentUpon>
+      <DependentUpon>DomainErrors.resx</DependentUpon>
     </Compile>
-    <Compile Update="_errormessages.designer.cs">
+    <Compile Update="ErrorMessages.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>_errormessages.resx</DependentUpon>
+      <DependentUpon>ErrorMessages.resx</DependentUpon>
     </Compile>
     <Compile Update="WorkspaceResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -22,16 +22,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="_domainerrors.resx">
+    <EmbeddedResource Update="DomainErrors.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>_domainerrors.designer.cs</LastGenOutput>
+      <LastGenOutput>DomainErrors.designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="_errormessages.nl.resx">
+    <EmbeddedResource Update="ErrorMessages.nl.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="_errormessages.resx">
+    <EmbeddedResource Update="ErrorMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>_errormessages.designer.cs</LastGenOutput>
+      <LastGenOutput>ErrorMessages.designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
