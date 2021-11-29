@@ -1,37 +1,14 @@
 using Nuke.Common;
-using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.Npm;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    private Target TypescriptE2EAngularAppsIntranetPrepare => _ => _
-        .DependsOn(DotnetAppsGenerate)
-        .Executes(() => NpmRun(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.TypescriptModules)
-            .SetCommand("scaffold-apps-intranet")));
-
-    private Target TypescriptE2EAngularAppsIntranetScaffold => _ => _
-        .DependsOn(TypescriptE2EAngularAppsIntranetPrepare)
-        .Executes(async () =>
-        {
-
-            using var angular = new Angular(Paths.TypescriptModules, "angular-apps-intranet:serve");
-            await angular.Init();
-            DotNetRun(s => s
-                .SetProcessWorkingDirectory(Paths.TypescriptE2EAppsIntranet)
-                .SetProjectFile(Paths.TypescriptE2EAppsIntranetGenerate)
-            );
-        });
 
     private Target TypescriptE2EAngularAppsIntranetTest => _ => _
         .DependsOn(DotnetAppsPublishCommands)
         .DependsOn(DotnetAppsPublishServer)
         .DependsOn(DotnetAppsResetDataapps)
-        .DependsOn(TypescriptE2EAngularAppsIntranetScaffold)
         .Executes(async () =>
         {
 

@@ -3,20 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { AllorsMaterialSideNavService } from '@allors/workspace/angular/base';
-import { AngularSelectorsModule, SelectorsService } from '@allors/angular/selectors';
 import { init } from '../app/app.init';
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, selectorsService: SelectorsService, router: Router, sideNavService: AllorsMaterialSideNavService) {
+export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, router: Router, sideNavService: AllorsMaterialSideNavService) {
   return async () => {
     init(workspaceService, httpClient, environment.baseUrl, environment.authUrl);
 
     const allors: any = (window['allors'] = {});
-
-    allors.selectors = selectorsService;
 
     allors.info = {
       router,
@@ -31,11 +28,10 @@ export const environment = {
   baseUrl: 'http://localhost:5000/allors/',
   authUrl: 'TestAuthentication/Token',
   providers: [
-    AngularSelectorsModule,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,
-      deps: [WorkspaceService, HttpClient, SelectorsService, Router, AllorsMaterialSideNavService],
+      deps: [WorkspaceService, HttpClient, Router, AllorsMaterialSideNavService],
       multi: true,
     },
   ],
@@ -49,4 +45,3 @@ export const environment = {
  * on performance if an error is thrown.
  */
 import 'zone.js/plugins/zone-error'; // Included with Angular CLI.import { init } from '../app/app.init';
-

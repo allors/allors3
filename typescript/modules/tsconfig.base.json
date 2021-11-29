@@ -15,7 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@allors/angular/selectors": ["libs/angular/selectors/src/index.ts"],
       "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
       "@allors/workspace/adapters/json/system": ["libs/workspace/adapters/json/system/src/index.ts"],
       "@allors/workspace/adapters/json/system-tests": ["libs/workspace/adapters/json/system-tests/src/index.ts"],
