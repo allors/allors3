@@ -37,11 +37,21 @@ namespace Allors.Server
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Token([FromBody]AuthenticationTokenRequest request)
+        public async Task<IActionResult> Token([FromBody] AuthenticationTokenRequest request)
         {
             if (this.ModelState.IsValid)
             {
                 var user = await this.UserManager.FindByNameAsync(request.l);
+
+                var host = this.Request.Host;
+
+                if (host.Host.StartsWith("extranet"))
+                {
+                }
+
+                if (host.Host.StartsWith("intranet"))
+                {
+                }
 
                 if (user != null)
                 {

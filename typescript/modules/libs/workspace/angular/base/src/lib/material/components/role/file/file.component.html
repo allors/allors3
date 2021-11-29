@@ -4,7 +4,7 @@
       <input aFocus [aFocusTrigger]="roleType" matInput [ngModel]="fieldValue" [name]="name" [placeholder]="label" readonly (click)="fileInput.click()" />
     </mat-form-field>
 
-    <button mat-icon-button type="button" (click)="fileInput.click()" title="Add">
+    <button mat-icon-button type="button" (click)="fileInput.click()" title="Add" [disabled]="disabled">
       <mat-icon>add_box</mat-icon>
     </button>
   </div>

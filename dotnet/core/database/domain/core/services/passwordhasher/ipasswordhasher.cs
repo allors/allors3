@@ -10,5 +10,7 @@ namespace Allors.Database.Domain
         string HashPassword(string user, string password);
 
         bool VerifyHashedPassword(string user, string hashedPassword, string providedPassword);
+
+        bool CheckStrength(string password);
     }
 }
