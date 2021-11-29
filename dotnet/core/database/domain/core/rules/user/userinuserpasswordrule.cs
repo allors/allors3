@@ -33,19 +33,19 @@ namespace Allors.Database.Domain
                 {
                     if (string.IsNullOrWhiteSpace(@this.UserPasswordHash))
                     {
-                        cycle.Validation.AddError(@this, m.User.UserPasswordHash, ErrorMessages.InvalidPassword);
+                        cycle.Validation.AddError(@this, m.User.UserPasswordHash, DomainErrors.InvalidPassword);
                         continue;
                     }
 
                     if (!string.IsNullOrWhiteSpace(@this.InExistingUserPassword) && !passwordHasher.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, @this.InExistingUserPassword))
                     {
-                        cycle.Validation.AddError(@this, m.User.InExistingUserPassword, ErrorMessages.InvalidPassword);
+                        cycle.Validation.AddError(@this, m.User.InExistingUserPassword, DomainErrors.InvalidPassword);
                         continue;
                     }
 
                     if (!passwordHasher.CheckStrength(@this.InUserPassword))
                     {
-                        cycle.Validation.AddError(@this, m.User.InUserPassword, ErrorMessages.InvalidNewPassword);
+                        cycle.Validation.AddError(@this, m.User.InUserPassword, DomainErrors.InvalidNewPassword);
                         continue;
                     }
 

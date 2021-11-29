@@ -1,17 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Update="DomainErrors.designer.cs">
+    <Compile Update="_domainerrors.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>DomainErrors.resx</DependentUpon>
+      <DependentUpon>_domainerrors.resx</DependentUpon>
     </Compile>
-    <Compile Update="ErrorMessages.Designer.cs">
+    <Compile Update="_errormessages.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>ErrorMessages.resx</DependentUpon>
+      <DependentUpon>_errormessages.resx</DependentUpon>
     </Compile>
     <Compile Update="WorkspaceResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -19,22 +20,23 @@
       <DependentUpon>WorkspaceResources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Update="DomainErrors.resx">
+    <EmbeddedResource Update="_domainerrors.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>DomainErrors.Designer.cs</LastGenOutput>
+      <LastGenOutput>_domainerrors.designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="ErrorMessages.resx">
+    <EmbeddedResource Update="_errormessages.nl.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="_errormessages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>_errormessages.designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="WorkspaceResources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>WorkspaceResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
 </Project>
