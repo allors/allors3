@@ -395,6 +395,8 @@ namespace Allors.Domain
 		}
 		public interface Singleton  : Object 
 		{
+						Person AutocompleteDefault {set;}
+
 						Locale DefaultLocale {set;}
 
 						Locale[] AdditionalLocales {set;}

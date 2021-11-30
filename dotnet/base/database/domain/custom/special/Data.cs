@@ -10,6 +10,16 @@ namespace Allors.Database.Domain
     /// </summary>
     public partial class Data
     {
+        public void CustomOnInit(ObjectOnInit method)
+        {
+            var singleton = this.strategy.Transaction.GetSingleton();
+
+            if (!this.ExistAutocompleteDerivedFilter)
+            {
+                this.AutocompleteDerivedFilter ??= singleton.AutocompleteDefault;
+            }
+        }
+
         public void CustomOnPostDerive(ObjectOnPostDerive method)
         {
             var singleton = this.strategy.Transaction.GetSingleton();

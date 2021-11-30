@@ -35,9 +35,9 @@ namespace Tests
 
         public static async Task<string> Locale(this IPage @this)
         {
-            const string expression = "return window.navigator.userLanguage || window.navigator.language;";
-
-            return await @this.EvaluateAsync<string>(expression);
+            const string expression = "window.navigator.userLanguage || window.navigator.language";
+            var locale = await @this.EvaluateAsync<string>(expression);
+            return locale;
         }
     }
 }

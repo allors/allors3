@@ -92,5 +92,18 @@ namespace Tests
         public virtual void Configure(BrowserNewContextOptions options)
         {
         }
+
+        protected async Task Login(string username, string password = null)
+        {
+            var loginPage = new LoginPage(this.Page);
+            await loginPage.Login(username, password);
+        }
+
+        protected async Task GotoAsync(string url)
+        {
+            await this.Page.GotoAsync(url);
+            await this.Page.WaitForAngular();
+        }
+
     }
 }

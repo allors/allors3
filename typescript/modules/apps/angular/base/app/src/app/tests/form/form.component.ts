@@ -162,6 +162,7 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
     console.log('save');
 
     this.allors.context.push().subscribe(() => {
+      console.log('+');
       this.data = null;
       this.refresh();
     }, this.saveService.errorHandler);

@@ -8,9 +8,9 @@ namespace Angular.Components
     using Allors.Database.Meta;
     using Microsoft.Playwright;
 
-    public class AnnotatedComponent : IComponent
+    public class ContainerComponent : IComponent
     {
-        protected AnnotatedComponent(IComponent container, string componentType)
+        protected ContainerComponent(IComponent container, string componentType)
         {
             this.Container = container;
             this.Locator = this.Page.Locator($"ng-component[data-allors-component-type='{componentType}']");

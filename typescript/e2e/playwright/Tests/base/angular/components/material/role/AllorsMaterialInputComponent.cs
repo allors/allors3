@@ -15,9 +15,9 @@ namespace Angular.Components
     using Tests;
     using Task = System.Threading.Tasks.Task;
 
-    public class InputControl : RoleControl
+    public class AllorsMaterialInputComponent : RoleControl
     {
-        public InputControl(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-input", "AllorsMaterialInputComponent")
+        public AllorsMaterialInputComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-input")
         {
         }
 
@@ -91,7 +91,8 @@ namespace Angular.Components
                     await this.SetValueAsync(Convert.ToString((bool)value, cultureInfo));
                     break;
                 case UnitTags.DateTime:
-                    await this.SetValueAsync(XmlConvert.ToString((System.DateTime)value, XmlDateTimeSerializationMode.Utc));
+                    await this.SetValueAsync(XmlConvert.ToString((System.DateTime)value,
+                        XmlDateTimeSerializationMode.Utc));
                     break;
                 case UnitTags.Unique:
                     await this.SetValueAsync(Convert.ToString((Guid)value, cultureInfo));
@@ -102,21 +103,6 @@ namespace Angular.Components
                 default:
                     throw new ArgumentException("Unknown Unit ObjectType: " + unit);
             }
-        }
-    }
-
-    public class InputControl<T> : InputControl where T : IComponent
-    {
-        public InputControl(T container, RoleType roleType)
-            : base(container, roleType) =>
-            this.Container = container;
-
-        public new T Container { get; }
-
-        public new async Task<T> SetAsync(object value)
-        {
-            await base.SetAsync(value);
-            return this.Container;
         }
     }
 }
