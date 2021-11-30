@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 
 import { ContextService } from '@allors/workspace/angular/core';
 import { Organisation } from '@allors/workspace/domain/default';
-import { AllorsMaterialSideNavService, angularDisplayName, angularIcon, angularList, angularMenu, SideMenuItem } from '@allors/workspace/angular/base';
+import { AllorsMaterialSideNavService, angularDisplayName, angularIcon, angularList, angularMenu, SideMenuItem, TestScope } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
@@ -14,7 +14,7 @@ import { M } from '@allors/workspace/meta/default';
   templateUrl: './main.component.html',
   providers: [ContextService],
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class MainComponent extends TestScope implements OnInit, OnDestroy {
   selectedInternalOrganisation: Organisation;
   internalOriganisations: Organisation[];
 
@@ -27,6 +27,7 @@ export class MainComponent implements OnInit, OnDestroy {
   @ViewChild('drawer', { static: true }) private sidenav: MatSidenav;
 
   constructor(@Self() private allors: ContextService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {
+    super();
     this.allors.context.name = this.constructor.name;
   }
 

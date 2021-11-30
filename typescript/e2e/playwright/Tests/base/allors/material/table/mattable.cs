@@ -13,6 +13,7 @@ namespace Components
     using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Tests;
+    using Task = System.Threading.Tasks.Task;
 
     public class MatTable : SelectorComponent
     {
@@ -56,11 +57,11 @@ namespace Components
             return new MatTableRow(this.Page, row);
         }
 
-        public void DefaultAction(IObject obj)
+        public async Task DefaultAction(IObject obj)
         {
             var row = this.FindRow(obj);
-            var cell = row.Cells[1];
-            cell.Click();
+            var cell = (await row.GetCells())[1];
+            await cell.Click();
         }
 
         public void Action(IObject obj, string action)

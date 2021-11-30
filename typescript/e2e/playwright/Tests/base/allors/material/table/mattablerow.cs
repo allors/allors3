@@ -5,6 +5,7 @@
 
 namespace Components
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.Playwright;
     using Tests;
@@ -30,7 +31,16 @@ namespace Components
         public async Task<MatTableCell[]> GetCells()
         {
             var cells = this.Element.Locator("td");
-            return cells.Select(v => new MatTableCell(this.Page, v)).ToArray();
+
+            var result = new List<MatTableCell>();
+            for (var i = 0; i < await cells.CountAsync(); i++)
+            {
+                var cell = cells.Nth(i);
+                var matTableCell = new MatTableCell(this.Page, cell);
+                result.Add(matTableCell);
+            }
+
+            return result.ToArray();
         }
 
         protected ILocator TableCell(string name)

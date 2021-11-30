@@ -4,6 +4,7 @@ namespace Tests
     using System.Threading.Tasks;
     using Allors.Database;
     using Allors.Database.Meta;
+    using Angular.Components;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -24,6 +25,8 @@ namespace Tests
         public IBrowser Browser { get; set; }
 
         public IPage Page { get; private set; }
+
+        public AppRoot AppRoot => new AppRoot(this.Page, this.M, "allors-root");
 
         public static async Task<IPlaywright> Init() => await Microsoft.Playwright.Playwright.CreateAsync();
 
