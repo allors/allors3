@@ -6,6 +6,7 @@
 namespace Tests
 {
     using System.Linq;
+    using System.Threading;
     using Allors.Database.Domain;
     using Microsoft.Playwright;
     using NUnit.Framework;
@@ -15,31 +16,40 @@ namespace Tests
     {
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
+        public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
+
+        public FormPage FormPage => new FormPage(this.AppRoot);
+
         [SetUp]
         public async Task Setup()
         {
-            this.
+            var loginPage = new LoginPage(this.Page);
+            await loginPage.Login("jane@example.com");
+
+            await this.Page.WaitForAngular();
+
+            await this.Page.GotoAsync("/tests/form");
         }
 
         [Test]
-        public void String()
+        public async Task String()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            this.page.String.Value = "Hello";
+            await this.FormPage.String.SetAsync("Hello");
+            await this.FormPage.SaveLocator.ClickAsync();
 
-            this.page.SAVE.Click();
+            await this.Page.WaitForAngular();
 
-            this.Driver.WaitForAngular();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
 
-            Assert.Equal(after.Length, before.Length + 1);
+            Assert.AreEqual(after.Length, before.Length + 1);
 
             var data = after.Except(before).First();
 
-            Assert.Equal("Hello", data.String);
+            Assert.AreEqual("Hello", data.String);
         }
     }
 }

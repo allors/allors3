@@ -49,7 +49,7 @@ element.easyMDE.value('{value}');";
 
         public new async Task<T> SetValue(string value)
         {
-            this.Value = value;
+            await this.SetValue(value);
             return this.Page;
         }
     }

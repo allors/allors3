@@ -1,0 +1,31 @@
+// <copyright file="Component.cs" company="Allors bvba">
+// Copyright (c) Allors bvba. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Angular.Components
+{
+    using System.Threading.Tasks;
+    using Allors.Database.Meta;
+    using Microsoft.Playwright;
+
+    public class AppRoot : IComponent
+    {
+        public AppRoot(IPage page, MetaPopulation m, string selector)
+        {
+            this.Page = page;
+            this.M = m;
+            this.Locator = this.Page.Locator(selector);
+        }
+
+        public IComponent Container => null;
+
+        public IPage Page { get; }
+
+        public MetaPopulation M { get; set; }
+
+        public ILocator Locator { get; }
+
+        public async Task<string> GetAngularVersionAsync() => await this.Locator.GetAttributeAsync("ng-version");
+    }
+}
