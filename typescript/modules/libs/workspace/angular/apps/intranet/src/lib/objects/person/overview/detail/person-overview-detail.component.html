@@ -20,35 +20,54 @@
     </mat-card-header>
 
     <mat-card-content>
-      <div class="container-fluid">
-        <div class="row">
-          <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.Salutation" [options]="salutations" display="Name"></a-mat-select>
-          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.FirstName"></a-mat-input>
-          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.MiddleName"></a-mat-input>
-          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.LastName"></a-mat-input>
-        </div>
+      <mat-tab-group>
+        <mat-tab label="General">
+          <div class="container-fluid">
+            <div class="row pt-3">
+              <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.Salutation" [options]="salutations" display="Name"></a-mat-select>
+              <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.FirstName"></a-mat-input>
+              <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.MiddleName"></a-mat-input>
+              <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.LastName"></a-mat-input>
+            </div>
 
-        <div class="row">
-          <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.Gender" [options]="genders" display="Name"></a-mat-select>
-          <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.Locale" [options]="locales" display="Name"></a-mat-select>
-        </div>
+            <div class="row">
+              <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.Gender" [options]="genders" display="Name"></a-mat-select>
+              <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.Locale" [options]="locales" display="Name"></a-mat-select>
+            </div>
 
-        <div class="row">
-          <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.PreferredCurrency" [options]="currencies" display="Name"></a-mat-select>
-          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.Function"></a-mat-input>
-        </div>
+            <div class="row">
+              <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.PreferredCurrency" [options]="currencies" display="Name"></a-mat-select>
+              <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.Function"></a-mat-input>
+            </div>
 
-        <div class="row">
-          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.UserName"></a-mat-input>
-          <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.UserEmail"></a-mat-input>
-        </div>
+            <div class="row">
+              <a-mat-textarea class="col-md-12" [object]="person" [roleType]="m.Person.Comment"></a-mat-textarea>
+              <a-mat-file class="col-md-12" [object]="person" [roleType]="m.Person.Picture" accept="image/*"></a-mat-file>
+              <a-mat-slidetoggle class="col-md" [object]="person" [roleType]="m.Person.CollectiveWorkEffortInvoice"></a-mat-slidetoggle>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="User">
+          <div class="container-fluid">
+            <div class="row pt-3">
+              <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.UserName"></a-mat-input>
+              <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.UserEmail"></a-mat-input>
+            </div>
 
-        <div class="row">
-          <a-mat-textarea class="col-md-12" [object]="person" [roleType]="m.Person.Comment"></a-mat-textarea>
-          <a-mat-file class="col-md-12" [object]="person" [roleType]="m.Person.Picture" accept="image/*"></a-mat-file>
-          <a-mat-slidetoggle class="col-md" [object]="person" [roleType]="m.Person.CollectiveWorkEffortInvoice"></a-mat-slidetoggle>
-        </div>
-      </div>
+            <div class="row">
+              <mat-form-field class="col-md">
+                <input matInput [(ngModel)]="person.InUserPassword" placeholder="New password" type="password" name="newpassword" />
+              </mat-form-field>
+            </div>
+
+            <div class="row">
+              <mat-form-field class="col-md">
+                <input matInput [(ngModel)]="confirmPassword" placeholder="Confirm new password" type="Password" name="confirmPassword" />
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
     </mat-card-content>
 
     <mat-card-actions>

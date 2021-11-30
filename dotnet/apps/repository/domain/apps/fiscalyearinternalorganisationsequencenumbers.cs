@@ -144,6 +144,20 @@ namespace Allors.Repository
         [Workspace(Default)]
         public Counter WorkEffortNumberCounter { get; set; }
 
+        #region Allors
+        [Id("db2c040c-c6b2-4eaa-a4aa-2a68abc5bd37")]
+        #endregion
+        [Workspace(Default)]
+        public string RequirementNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("8311c00d-a724-49b6-b0b9-932d96e99fa5")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public Counter RequirementNumberCounter { get; set; }
+
         #region inherited methods
 
         public Revocation[] Revocations { get; set; }

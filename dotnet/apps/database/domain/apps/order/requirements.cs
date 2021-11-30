@@ -3,22 +3,35 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+
 namespace Allors.Database.Domain
 {
+    using System.Collections.Generic;
+    using Meta;
+
     public partial class Requirements
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.RequirementState);
 
         protected override void AppsSecure(Security config)
         {
-            var createdState = new WorkEffortStates(this.Transaction).Created;
-            var cancelledState = new WorkEffortStates(this.Transaction).Cancelled;
-            var finishedState = new WorkEffortStates(this.Transaction).Completed;
+            var createdState = new RequirementStates(this.Transaction).Created;
+            var cancelledState = new RequirementStates(this.Transaction).Cancelled;
+            var closedState = new RequirementStates(this.Transaction).Closed;
 
-            config.Deny(this.ObjectType, createdState, this.M.WorkEffort.Reopen);
+            var cancel = this.Meta.Cancel;
+            var reopen = this.Meta.Reopen;
+            var createWorkTask = this.Meta.CreateWorkTask;
 
-            config.Deny(this.ObjectType, cancelledState, Operations.Execute, Operations.Write);
-            config.Deny(this.ObjectType, finishedState, Operations.Execute, Operations.Read);
+            config.Deny(this.ObjectType, createdState, this.M.Requirement.Reopen);
+            config.Deny(this.ObjectType, closedState, Operations.Execute, Operations.Write);
+
+            var except = new HashSet<IOperandType>
+            {
+                this.Meta.Reopen,
+            };
+
+            config.DenyExcept(this.ObjectType, cancelledState, except, Operations.Write);
         }
     }
 }

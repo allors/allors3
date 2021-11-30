@@ -35,6 +35,8 @@ namespace Allors.Repository
 
         public QuoteSequence QuoteSequence { get; set; }
 
+        public RequirementSequence RequirementSequence { get; set; }
+
         public CustomerShipmentSequence CustomerShipmentSequence { get; set; }
 
         public CustomerReturnSequence CustomerReturnSequence { get; set; }
@@ -214,6 +216,10 @@ namespace Allors.Repository
         public Counter WorkEffortNumberCounter { get; set; }
 
         public string WorkEffortNumberPrefix { get; set; }
+
+        public Counter RequirementNumberCounter { get; set; }
+
+        public string RequirementNumberPrefix { get; set; }
 
         public bool RequireExistingWorkEffortPartyAssignment { get; set; }
 

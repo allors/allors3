@@ -40,7 +40,6 @@ namespace Allors.Database.Domain
             && !this.ExistRequirementsWhereAuthorizer
             && !this.ExistRequirementsWhereNeededFor
             && !this.ExistRequirementsWhereOriginator
-            && !this.ExistRequirementsWhereServicedBy
             && !this.ExistSalesInvoicesWhereBillToCustomer
             && !this.ExistSalesInvoicesWhereBillToEndCustomer
             && !this.ExistSalesInvoicesWhereShipToCustomer

@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<User>().Where(v => v.ExistInExistingUserPassword && v.ExistInUserPassword))
+            foreach (var @this in matches.Cast<User>())
             {
                 var passwordHasher = @this.Transaction().Database.Services.Get<IPasswordHasher>();
                 var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
@@ -43,13 +43,16 @@ namespace Allors.Database.Domain
                         continue;
                     }
 
-                    if (!passwordHasher.CheckStrength(@this.InUserPassword))
+                    if (@this.ExistInUserPassword && !passwordHasher.CheckStrength(@this.InUserPassword))
                     {
                         cycle.Validation.AddError(@this, m.User.InUserPassword, DomainErrors.InvalidNewPassword);
                         continue;
                     }
 
-                    @this.UserPasswordHash = passwordHasher.HashPassword(@this.UserName, @this.InUserPassword);
+                    if (@this.ExistInUserPassword)
+                    {
+                        @this.UserPasswordHash = passwordHasher.HashPassword(@this.UserName, @this.InUserPassword);
+                    }
                 }
                 finally
                 {

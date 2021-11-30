@@ -97,5 +97,11 @@ namespace Allors.Database.Domain
             var number = this.WorkEffortNumberCounter.NextValue();
             return string.Concat(this.ExistWorkEffortNumberPrefix ? this.WorkEffortNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
         }
+
+        public string NextRequirementNumber(int year)
+        {
+            var number = this.RequirementNumberCounter.NextValue();
+            return string.Concat(this.ExistRequirementNumberPrefix ? this.RequirementNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
+        }
     }
 }

@@ -51,6 +51,7 @@ namespace Allors.Database.Domain
             string quoteNumberPrefix,
             string productNumberPrefix,
             string workEffortPrefix,
+            string requirementPrefix,
             string creditNoteNumberPrefix,
             bool isImmediatelyPicked,
             bool autoGenerateShipmentPackage,
@@ -76,7 +77,8 @@ namespace Allors.Database.Domain
             QuoteSequence quoteSequence,
             CustomerShipmentSequence customerShipmentSequence,
             PurchaseShipmentSequence purchaseShipmentSequence,
-            WorkEffortSequence workEffortSequence)
+            WorkEffortSequence workEffortSequence,
+            RequirementSequence requirementSequence)
         {
             var m = transaction.Database.Services.Get<MetaPopulation>();
 
@@ -235,6 +237,22 @@ namespace Allors.Database.Domain
             else
             {
                 internalOrganisation.WorkEffortNumberPrefix = workEffortPrefix;
+            }
+
+            if (requirementSequence == new RequirementSequences(transaction).RestartOnFiscalYear)
+            {
+                var sequenceNumbers = internalOrganisation.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == transaction.Now().Year);
+                if (sequenceNumbers == null)
+                {
+                    sequenceNumbers = new FiscalYearInternalOrganisationSequenceNumbersBuilder(transaction).WithFiscalYear(transaction.Now().Year).Build();
+                    internalOrganisation.AddFiscalYearsInternalOrganisationSequenceNumber(sequenceNumbers);
+                }
+
+                sequenceNumbers.RequirementNumberPrefix = requirementPrefix;
+            }
+            else
+            {
+                internalOrganisation.RequirementNumberPrefix = workEffortPrefix;
             }
 
             OwnBankAccount defaultCollectionMethod = null;

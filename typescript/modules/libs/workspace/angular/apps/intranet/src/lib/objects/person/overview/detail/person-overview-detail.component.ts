@@ -25,6 +25,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   locales: Locale[];
   genders: Enumeration[];
   salutations: Enumeration[];
+  public confirmPassword: string
 
   private subscription: Subscription;
   currencies: Currency[];

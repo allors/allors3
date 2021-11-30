@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
             m.Party.AssociationPattern(v => v.RequirementsWhereAuthorizer,m.Organisation),
             m.Party.AssociationPattern(v => v.RequirementsWhereNeededFor,m.Organisation),
             m.Party.AssociationPattern(v => v.RequirementsWhereOriginator,m.Organisation),
-            m.Party.AssociationPattern(v => v.RequirementsWhereServicedBy,m.Organisation),
+            m.Organisation.AssociationPattern(v => v.RequirementsWhereServicedBy,m.Organisation),
             m.InternalOrganisation.AssociationPattern(v => v.SalesInvoicesWhereBilledFrom,m.Organisation),
             m.Party.AssociationPattern(v => v.SalesInvoicesWhereBillToCustomer,m.Organisation),
             m.Party.AssociationPattern(v => v.SalesInvoicesWhereBillToEndCustomer,m.Organisation),

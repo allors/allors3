@@ -80,6 +80,14 @@ namespace Allors.Repository
         QuoteSequence QuoteSequence { get; set; }
 
         #region Allors
+        [Id("e1a0a2a3-4ba0-42af-a84a-ace2abcea39f")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        RequirementSequence RequirementSequence { get; set; }
+
+        #region Allors
         [Id("ccbc587c-f01c-4bd8-805c-1491f8e41f23")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -415,6 +423,21 @@ namespace Allors.Repository
         [Size(256)]
         [Workspace(Default)]
         string WorkEffortNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("1d991514-c294-4e49-bfdb-4513f34fa5f1")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        Counter RequirementNumberCounter { get; set; }
+
+        #region Allors
+        [Id("a4825eb7-7cc9-45bc-bb18-f2321a1f2b91")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        string RequirementNumberPrefix { get; set; }
 
         /// <summary>
         /// Gets or sets a flag to indicate if this InternalOrganisation Requires Existing WorkEffortPartyAssignment

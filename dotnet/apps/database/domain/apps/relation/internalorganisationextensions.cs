@@ -96,6 +96,11 @@ namespace Allors.Database.Domain
                     @this.WorkEffortSequence = new WorkEffortSequences(@this.Strategy.Transaction).EnforcedSequence;
                 }
 
+                if (!@this.ExistRequirementSequence)
+                {
+                    @this.RequirementSequence = new RequirementSequences(@this.Strategy.Transaction).EnforcedSequence;
+                }
+
                 if (!@this.ExistDefaultCollectionMethod && @this.Strategy.Transaction.Extent<PaymentMethod>().Count == 1)
                 {
                     @this.DefaultCollectionMethod = @this.Strategy.Transaction.Extent<PaymentMethod>().First;
@@ -304,6 +309,26 @@ namespace Allors.Database.Domain
                 }
 
                 return fiscalYearInternalOrganisationSequenceNumbers.NextWorkEffortNumber(year);
+            }
+        }
+
+        public static string NextRequirementNumber(this InternalOrganisation @this, int year)
+        {
+            if (@this.RequirementSequence.Equals(new RequirementSequences(@this.Transaction()).EnforcedSequence))
+            {
+                return string.Concat(@this.RequirementNumberPrefix, @this.RequirementNumberCounter?.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearInternalOrganisationSequenceNumbers = @this.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearInternalOrganisationSequenceNumbers == null)
+                {
+                    fiscalYearInternalOrganisationSequenceNumbers = new FiscalYearInternalOrganisationSequenceNumbersBuilder(@this.Transaction()).WithFiscalYear(year).Build();
+                    @this.AddFiscalYearsInternalOrganisationSequenceNumber(fiscalYearInternalOrganisationSequenceNumbers);
+                }
+
+                return fiscalYearInternalOrganisationSequenceNumbers.NextRequirementNumber(year);
             }
         }
 

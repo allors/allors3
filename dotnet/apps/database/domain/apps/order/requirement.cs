@@ -16,31 +16,19 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistRequirementState)
             {
-                this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
+                this.RequirementState = new RequirementStates(this.Strategy.Transaction).Created;
             }
         }
 
-        public void AppsClose(RequirementClose method)
+        public void AppsCreateWorkTask(RequirementCreateWorkTask method)
         {
             this.RequirementState = new RequirementStates(this.Strategy.Transaction).Closed;
-            method.StopPropagation = true;
-        }
-
-        public void AppsReopen(RequirementReopen method)
-        {
-            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
             method.StopPropagation = true;
         }
 
         public void AppsCancel(RequirementCancel method)
         {
             this.RequirementState = new RequirementStates(this.Strategy.Transaction).Cancelled;
-            method.StopPropagation = true;
-        }
-
-        public void AppsHold(RequirementHold method)
-        {
-            this.RequirementState = new RequirementStates(this.Strategy.Transaction).OnHold;
             method.StopPropagation = true;
         }
     }

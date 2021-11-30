@@ -67,6 +67,12 @@ namespace Allors.Repository
         public string Reason { get; set; }
 
         #region Allors
+        [Id("11ef6710-9563-42b3-b4f5-239ced01b1fd")]
+        #endregion
+        [Workspace(Default)]
+        public string Location { get; set; }
+
+        #region Allors
         [Id("58872073-760D-4E9C-9926-A6A784329010")]
         [Indexed]
         #endregion
@@ -91,6 +97,22 @@ namespace Allors.Repository
         public Party Originator { get; set; }
 
         #region Allors
+        [Id("cbdec45c-76cc-43a8-a2c5-deae327dc2d3")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public FixedAsset FixedAsset { get; set; }
+
+        #region Allors
+        [Id("dd839107-60fb-49f9-9b4d-25abc4c0dbda")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Priority Priority { get; set; }
+
+        #region Allors
         [Id("6775C4EA-06F2-48DC-854A-7913510D117A")]
         [Indexed]
         #endregion
@@ -104,7 +126,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        public Party ServicedBy { get; set; }
+        public Organisation ServicedBy { get; set; }
 
         #region Allors
         [Id("9E02E045-F22F-4D4B-9382-42593FDF7FD6")]
