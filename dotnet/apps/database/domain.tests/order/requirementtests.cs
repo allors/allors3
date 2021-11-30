@@ -19,7 +19,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(new RequirementStates(this.Transaction).Active, requirement.RequirementState);
+            Assert.Equal(new RequirementStates(this.Transaction).Created, requirement.RequirementState);
             Assert.Equal(requirement.LastRequirementState, requirement.RequirementState);
         }
 

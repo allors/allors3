@@ -736,21 +736,6 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
-        [Fact]
-        public void OnChangedRequirementServicedByDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Derive();
-
-            var requirement = new RequirementBuilder(this.Transaction).Build();
-            this.Derive();
-
-            requirement.ServicedBy = person;
-            this.Derive();
-
-            Assert.Contains(this.deleteRevocation, person.Revocations);
-        }
 
         [Fact]
         public void OnChangedSalesInvoiceBillToCustomerDeriveDeletePermission()

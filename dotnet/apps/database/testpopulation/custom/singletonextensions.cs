@@ -72,6 +72,7 @@ namespace Allors
                 quoteNumberPrefix: "a-Q",
                 productNumberPrefix: "A-",
                 workEffortPrefix: "a-WO-",
+                requirementPrefix: "a-REQ-",
                 creditNoteNumberPrefix: "a-CN-",
                 isImmediatelyPicked: true,
                 autoGenerateShipmentPackage: true,
@@ -97,7 +98,8 @@ namespace Allors
                 quoteSequence: new QuoteSequences(@this.Transaction()).EnforcedSequence,
                 customerShipmentSequence: new CustomerShipmentSequences(@this.Transaction()).EnforcedSequence,
                 purchaseShipmentSequence: new PurchaseShipmentSequences(@this.Transaction()).EnforcedSequence,
-                workEffortSequence: new WorkEffortSequences(@this.Transaction()).EnforcedSequence);
+                workEffortSequence: new WorkEffortSequences(@this.Transaction()).EnforcedSequence,
+                requirementSequence: new RequirementSequences(@this.Transaction()).EnforcedSequence);
 
             var dipu = Organisations.CreateInternalOrganisation(
                 transaction: @this.Transaction(),
@@ -131,7 +133,8 @@ namespace Allors
                 requestNumberPrefix: "d-RFQ",
                 quoteNumberPrefix: "d-Q",
                 productNumberPrefix: "D-",
-                workEffortPrefix: "a-WO-",
+                workEffortPrefix: "d-WO-",
+                requirementPrefix: "d-REQ-",
                 creditNoteNumberPrefix: "d-CN-",
                 isImmediatelyPicked: true,
                 autoGenerateShipmentPackage: true,
@@ -157,7 +160,8 @@ namespace Allors
                 quoteSequence: new QuoteSequences(@this.Transaction()).EnforcedSequence,
                 customerShipmentSequence: new CustomerShipmentSequences(@this.Transaction()).EnforcedSequence,
                 purchaseShipmentSequence: new PurchaseShipmentSequences(@this.Transaction()).EnforcedSequence,
-                workEffortSequence: new WorkEffortSequences(@this.Transaction()).EnforcedSequence);
+                workEffortSequence: new WorkEffortSequences(@this.Transaction()).EnforcedSequence,
+                requirementSequence: new RequirementSequences(@this.Transaction()).EnforcedSequence);
 
             // Give Administrator access
             new EmploymentBuilder(@this.Transaction()).WithEmployee(administrator).WithEmployer(allors).Build();
