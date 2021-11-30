@@ -61,7 +61,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} at least one!.
+        ///   Looks up a localized string similar to {0} at least one.
         /// </summary>
         public static string DerivationErrorAtLeastOne {
             get {
@@ -120,6 +120,24 @@ namespace Resources {
         public static string DerivationErrorUnique {
             get {
                 return ResourceManager.GetString("DerivationErrorUnique", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New password does not meet complexity requirements.
+        /// </summary>
+        public static string InvalidNewPassword {
+            get {
+                return ResourceManager.GetString("InvalidNewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid password..
+        /// </summary>
+        public static string InvalidPassword {
+            get {
+                return ResourceManager.GetString("InvalidPassword", resourceCulture);
             }
         }
         

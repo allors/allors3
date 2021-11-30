@@ -24,6 +24,8 @@ namespace Allors.Database.Configuration
             public string HashPassword(string user, string password) => password;
 
             public bool VerifyHashedPassword(string user, string hashedPassword, string providedPassword) => hashedPassword == providedPassword;
+
+            public bool CheckStrength(string password) => true;
         }
     }
 }
