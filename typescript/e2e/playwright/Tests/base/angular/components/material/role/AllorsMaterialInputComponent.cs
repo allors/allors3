@@ -26,7 +26,7 @@ namespace Angular.Components
         public async Task<string> GetValueAsync()
         {
             await this.Page.WaitForAngular();
-            return await this.InputLocator.GetAttributeAsync("value");
+            return await this.InputLocator.InputValueAsync();
         }
 
         public async Task SetValueAsync(string value)

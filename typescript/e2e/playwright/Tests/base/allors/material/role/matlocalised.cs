@@ -28,7 +28,7 @@ namespace Components
             await this.Page.WaitForAngular();
 
             var element = this.Page.Locator(this.Selector);
-            return await element.GetAttributeAsync("value");
+            return await element.InputValueAsync();
         }
     }
 

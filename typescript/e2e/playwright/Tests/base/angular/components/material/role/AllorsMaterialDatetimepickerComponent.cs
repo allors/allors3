@@ -30,7 +30,7 @@ namespace Angular.Components
         {
             await this.Page.WaitForAngular();
 
-            var attributeValue = await this.DateLocator.GetAttributeAsync("value");
+            var attributeValue = await this.DateLocator.InputValueAsync();
             if (string.IsNullOrWhiteSpace(attributeValue))
             {
                 return null;
@@ -38,10 +38,10 @@ namespace Angular.Components
 
             var dateValue = DateTime.Parse(attributeValue);
 
-            var hourValue = await this.HourLocator.GetAttributeAsync("value");
+            var hourValue = await this.HourLocator.InputValueAsync();
             int.TryParse(hourValue, out var hours);
 
-            var minuteValue = await this.MinuteLocator.GetAttributeAsync("value");
+            var minuteValue = await this.MinuteLocator.InputValueAsync();
             int.TryParse(minuteValue, out var minutes);
 
             return new DateTime(dateValue.Year, dateValue.Month, dateValue.Day, hours, minutes, 0);

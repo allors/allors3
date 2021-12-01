@@ -44,15 +44,14 @@ namespace Tests
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
             var data = new DataBuilder(this.Transaction).Build();
-            var expected = this.Transaction.Database.Services.Get<ITime>().Now();
-            data.DateTime = expected.ToUniversalTime();
+            data.DateTime = this.Transaction.Database.Services.Get<ITime>().Now();
             this.Transaction.Commit();
 
             await this.GotoAsync("/tests/form");
 
             var actual = await this.FormPage.DateTime.GetAsync();
 
-            Assert.AreEqual(expected.Date, actual);
+            Assert.That(data.DateTime.Value.ToLocalTime(), Is.EqualTo(actual).Within(1).Minutes);
         }
 
         [Test]
@@ -62,7 +61,7 @@ namespace Tests
 
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var date = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+            var date = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Local);
 
             await this.FormPage.DateTime.SetAsync(date);
 
@@ -73,7 +72,7 @@ namespace Tests
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
             Assert.True(data.ExistDateTime);
-            Assert.AreEqual(date, data.DateTime);
+            Assert.AreEqual(date, data.DateTime.Value.ToLocalTime());
         }
 
         [Test]
@@ -83,12 +82,12 @@ namespace Tests
 
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var date = new DateTime(2019, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+            var date = new DateTime(2019, 1, 1, 12, 0, 0, DateTimeKind.Local);
             await this.FormPage.DateTime.SetAsync(date);
 
             await this.FormPage.SaveAsync();
 
-            date = new DateTime(2019, 1, 1, 18, 0, 0, DateTimeKind.Utc);
+            date = new DateTime(2019, 1, 1, 18, 0, 0, DateTimeKind.Local);
             await this.FormPage.DateTime.SetAsync(date);
 
             await this.FormPage.SaveAsync();
@@ -97,7 +96,7 @@ namespace Tests
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(date, data.DateTime);
+            Assert.AreEqual(date, data.DateTime.Value.ToLocalTime());
         }
     }
 }

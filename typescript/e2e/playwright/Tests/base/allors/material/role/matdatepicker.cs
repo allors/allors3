@@ -27,7 +27,7 @@ namespace Components
         {
             await this.Page.WaitForAngular();
 
-            var value = await this.Element.GetAttributeAsync("value");
+            var value = await this.Element.InputValueAsync();
             if (!string.IsNullOrEmpty(value))
             {
                 return DateTime.Parse(value);

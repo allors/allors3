@@ -24,7 +24,7 @@ namespace Angular.Components
         {
             await this.Page.WaitForAngular();
 
-            var attributeValue = await this.InputLocator.GetAttributeAsync("value");
+            var attributeValue = await this.InputLocator.InputValueAsync();
             if (string.IsNullOrWhiteSpace(attributeValue))
             {
                 return null;

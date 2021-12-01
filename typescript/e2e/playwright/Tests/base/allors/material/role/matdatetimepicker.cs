@@ -31,14 +31,14 @@ namespace Components
             await this.Page.WaitForAngular();
 
             var dateElement = this.DateElement;
-            var dateValue = await dateElement.GetAttributeAsync("value");
+            var dateValue = await dateElement.InputValueAsync();
 
             if (!string.IsNullOrEmpty(dateValue))
             {
-                var hourValue = await this.HourElement.GetAttributeAsync("value");
+                var hourValue = await this.HourElement.InputValueAsync();
                 int.TryParse(hourValue, out var hours);
 
-                var minuteValue = await this.MinuteElement.GetAttributeAsync("value");
+                var minuteValue = await this.MinuteElement.InputValueAsync();
                 int.TryParse(minuteValue, out var minutes);
 
                 if (DateTime.TryParse(dateValue, out var date))
