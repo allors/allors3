@@ -698,7 +698,7 @@ namespace Allors.Database.Domain.Tests
             var person = new PersonBuilder(this.Transaction).Build();
             this.Derive();
 
-            var requirement = new RequirementBuilder(this.Transaction).Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).Build();
             this.Derive();
 
             requirement.Authorizer = person;
@@ -713,7 +713,7 @@ namespace Allors.Database.Domain.Tests
             var person = new PersonBuilder(this.Transaction).Build();
             this.Derive();
 
-            var requirement = new RequirementBuilder(this.Transaction).Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).Build();
             this.Derive();
 
             requirement.NeededFor = person;
@@ -728,7 +728,7 @@ namespace Allors.Database.Domain.Tests
             var person = new PersonBuilder(this.Transaction).Build();
             this.Derive();
 
-            var requirement = new RequirementBuilder(this.Transaction).Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).Build();
             this.Derive();
 
             requirement.Originator = person;

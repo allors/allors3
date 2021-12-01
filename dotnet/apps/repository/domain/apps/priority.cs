@@ -30,6 +30,14 @@ namespace Allors.Repository
 
         #endregion
 
+        #region Allors
+        [Id("5fc5b558-be52-4a09-b100-b8d1a01a9743")]
+        #endregion
+        [Required]
+        [Indexed]
+        [Workspace(Default)]
+        public int DisplayOrder { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

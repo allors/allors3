@@ -807,7 +807,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Derive();
 
-            var requirement = new RequirementBuilder(this.Transaction).Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).Build();
             this.Derive();
 
             requirement.Authorizer = organisation;
@@ -822,7 +822,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Derive();
 
-            var requirement = new RequirementBuilder(this.Transaction).Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).Build();
             this.Derive();
 
             requirement.NeededFor = organisation;
@@ -837,7 +837,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Derive();
 
-            var requirement = new RequirementBuilder(this.Transaction).Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).Build();
             this.Derive();
 
             requirement.Originator = organisation;
@@ -852,7 +852,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Derive();
 
-            var requirement = new RequirementBuilder(this.Transaction).Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).Build();
             this.Derive();
 
             requirement.ServicedBy = organisation;

@@ -10,12 +10,15 @@ namespace Allors.Database.Domain
     public partial class RequirementStates
     {
         public static readonly Guid CreatedId = new Guid("7435eaa5-4739-4e48-8c6a-3e5645b69d9c");
+        public static readonly Guid ActiveId = new Guid("ba14a0d7-da59-4317-b29a-ac8e63bec74c");
         public static readonly Guid CancelledId = new Guid("d1f0e06a-4624-4807-8e5d-184938d48fd6");
         public static readonly Guid ClosedId = new Guid("b2fdc5f7-8475-43ab-a8e5-af5d19f0af7c");
 
         private UniquelyIdentifiableCache<RequirementState> cache;
 
         public RequirementState Created => this.Cache[CreatedId];
+
+        public RequirementState Active => this.Cache[ActiveId];
 
         public RequirementState Closed => this.Cache[ClosedId];
 
@@ -30,7 +33,8 @@ namespace Allors.Database.Domain
             var merge = this.Cache.Merger().Action();
 
             merge(CreatedId, v => v.Name = "Created");
-            merge(ClosedId, v => v.Name = "Closed");
+            merge(ActiveId, v => v.Name = "Active");
+            merge(CreatedId, v => v.Name = "Created");
             merge(CancelledId, v => v.Name = "Cancelled");
         }
     }
