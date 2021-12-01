@@ -23,6 +23,8 @@ namespace Tests
 
         public AllorsMaterialDatetimepickerComponent DateTime => new AllorsMaterialDatetimepickerComponent(this, this.M.Data.DateTime);
 
+        public AllorsMaterialFileComponent File => new AllorsMaterialFileComponent(this, this.M.Data.File);
+
         public AllorsMaterialInputComponent String => new AllorsMaterialInputComponent(this, this.M.Data.String);
 
         public async Task SaveAsync()
