@@ -6,7 +6,6 @@
 namespace Tests
 {
     using System.Linq;
-    using System.Threading;
     using Allors.Database.Domain;
     using Microsoft.Playwright;
     using NUnit.Framework;

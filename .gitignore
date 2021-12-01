@@ -1,5 +1,6 @@
 # Allors
 # ------
+[Gg]enerated/
 [Aa]rtifacts/
 build/Properties/launchSettings.json
 **/package-lock.json
