@@ -11,10 +11,24 @@ namespace Tests
 
         public AllorsMaterialAutocompleteComponent AutocompleteFilter => new AllorsMaterialAutocompleteComponent(this, this.M.Data.AutocompleteFilter);
 
+        public AllorsMaterialAutocompleteComponent AutocompleteOptions => new AllorsMaterialAutocompleteComponent(this, this.M.Data.AutocompleteOptions);
+
+        public AllorsMaterialCheckboxComponent Checkbox => new AllorsMaterialCheckboxComponent(this, this.M.Data.Checkbox);
+
+        public AllorsMaterialChipsComponent Chips => new AllorsMaterialChipsComponent(this, this.M.Data.Chips);
+
         public AllorsMaterialInputComponent Decimal => new AllorsMaterialInputComponent(this, this.M.Data.Decimal);
+
+        public AllorsMaterialDatepickerComponent Date => new AllorsMaterialDatepickerComponent(this, this.M.Data.Date);
+
+        public AllorsMaterialDatetimepickerComponent DateTime => new AllorsMaterialDatetimepickerComponent(this, this.M.Data.DateTime);
 
         public AllorsMaterialInputComponent String => new AllorsMaterialInputComponent(this, this.M.Data.String);
 
-        public async Task SaveAsync() => await this.Locator.Locator("text=SAVE").ClickAsync();
+        public async Task SaveAsync()
+        {
+            await this.Locator.Locator("text=SAVE").ClickAsync();
+            await this.Page.WaitForAngular();
+        }
     }
 }

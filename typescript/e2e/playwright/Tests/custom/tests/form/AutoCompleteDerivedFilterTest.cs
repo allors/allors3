@@ -46,8 +46,6 @@ namespace Tests
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             await this.FormPage.SaveAsync();
-
-            await this.Page.WaitForAngular();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -65,8 +63,6 @@ namespace Tests
             await this.FormPage.AutocompleteDerivedFilter.SelectAsync("jane@example.com");
 
             await this.FormPage.SaveAsync();
-
-            await this.Page.WaitForAngular();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -84,8 +80,6 @@ namespace Tests
             await this.FormPage.AutocompleteDerivedFilter.SelectAsync("jenny@example.com");
 
             await this.FormPage.SaveAsync();
-
-            await this.Page.WaitForAngular();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();

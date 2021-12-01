@@ -5,13 +5,15 @@
 
 namespace Tests
 {
+    using System;
+    using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class AutoCompleteFilterTest : Test
+    public class DatetimepickerTest : Test
     {
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
@@ -27,46 +29,42 @@ namespace Tests
         }
 
         [Test]
-        public async Task Full()
+        public async Task Initial()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
-            var before = new Datas(this.Transaction).Extent().ToArray();
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            await this.FormPage.AutocompleteFilter.SelectAsync("jane@example.com");
+            var date = await this.FormPage.DateTime.GetAsync();
 
-            await this.FormPage.SaveAsync();
-            this.Transaction.Rollback();
-
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
-            var data = after.Except(before).First();
-            Assert.AreEqual(jane, data.AutocompleteFilter);
+            Assert.IsNull(date);
         }
 
         [Test]
-        public async Task Partial()
+        public async Task Populated()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
-            var before = new Datas(this.Transaction).Extent().ToArray();
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            await this.FormPage.AutocompleteFilter.SelectAsync("j", "jane@example.com");
+            var data = new DataBuilder(this.Transaction).Build();
+            var expected = this.Transaction.Database.Services.Get<ITime>().Now();
+            data.DateTime = expected.ToUniversalTime();
+            this.Transaction.Commit();
 
-            await this.FormPage.SaveAsync();
-            this.Transaction.Rollback();
+            await this.GotoAsync("/tests/form");
 
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
-            var data = after.Except(before).First();
-            Assert.AreEqual(jane, data.AutocompleteFilter);
+            var actual = await this.FormPage.DateTime.GetAsync();
+
+            Assert.AreEqual(expected.Date, actual);
         }
 
         [Test]
-        public async Task Blank()
+        public async Task SetDate()
         {
-            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
+
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.AutocompleteFilter.SelectAsync("", "jane@example.com");
+            var date = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+
+            await this.FormPage.DateTime.SetAsync(date);
 
             await this.FormPage.SaveAsync();
             this.Transaction.Rollback();
@@ -74,7 +72,32 @@ namespace Tests
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(jane, data.AutocompleteFilter);
+            Assert.True(data.ExistDateTime);
+            Assert.AreEqual(date, data.DateTime);
+        }
+
+        [Test]
+        public async Task ChangeDate()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
+
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            var date = new DateTime(2019, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+            await this.FormPage.DateTime.SetAsync(date);
+
+            await this.FormPage.SaveAsync();
+
+            date = new DateTime(2019, 1, 1, 18, 0, 0, DateTimeKind.Utc);
+            await this.FormPage.DateTime.SetAsync(date);
+
+            await this.FormPage.SaveAsync();
+            this.Transaction.Rollback();
+
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
+            var data = after.Except(before).First();
+            Assert.AreEqual(date, data.DateTime);
         }
     }
 }

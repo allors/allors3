@@ -14,7 +14,7 @@ namespace Tests
             var page = new LoginPage(this.Page);
             await page.Login("jane@example.com");
 
-            Assert.AreEqual("AngularBaseApp", await this.Page.TitleAsync());
+            Assert.AreEqual("Dashboard", await this.Page.TitleAsync());
         }
     }
 }

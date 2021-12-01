@@ -1,4 +1,4 @@
-// <copyright file="InputTest.cs" company="Allors bvba">
+// <copyright file="AutoCompleteFilterTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,7 +11,7 @@ namespace Tests
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class InputTest : Test
+    public class ChipsTest : Test
     {
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
@@ -27,11 +27,12 @@ namespace Tests
         }
 
         [Test]
-        public async Task String()
+        public async Task AddOne()
         {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.String.SetAsync("Hello");
+            await this.FormPage.Chips.AddAsync("jane", "jane@example.com");
 
             await this.FormPage.SaveAsync();
             this.Transaction.Rollback();
@@ -39,15 +40,18 @@ namespace Tests
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual("Hello", data.String);
+            Assert.Contains(jane, data.Chips.ToArray());
         }
 
         [Test]
-        public async Task Decimal()
+        public async Task AddTwo()
         {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
+            var john = new People(this.Transaction).FindBy(this.M.Person.UserName, "john@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.Decimal.SetAsync(100.50m);
+            await this.FormPage.Chips.AddAsync("jane", "jane@example.com");
+            await this.FormPage.Chips.AddAsync("john", "john@example.com");
 
             await this.FormPage.SaveAsync();
             this.Transaction.Rollback();
@@ -55,7 +59,28 @@ namespace Tests
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(100.50m, data.Decimal);
+            Assert.Contains(jane, data.Chips.ToArray());
+            Assert.Contains(john, data.Chips.ToArray());
+        }
+
+        [Test]
+        public async Task RemoveOne()
+        {
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            await this.FormPage.Chips.AddAsync("jane", "jane@example.com");
+
+            await this.FormPage.SaveAsync();
+
+            await this.FormPage.Chips.RemoveAsync("jane@example.com");
+
+            await this.FormPage.SaveAsync();
+            this.Transaction.Rollback();
+
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
+            var data = after.Except(before).First();
+            Assert.IsEmpty(data.Chips);
         }
     }
 }
