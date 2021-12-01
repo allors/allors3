@@ -1,4 +1,4 @@
-// <copyright file="RequirementTests.cs" company="Allors bvba">
+// <copyright file="WorkRequirementTests.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,14 +8,14 @@ namespace Allors.Database.Domain.Tests
 {
     using Xunit;
 
-    public class RequirementTests : DomainTest, IClassFixture<Fixture>
+    public class WorkRequirementTests : DomainTest, IClassFixture<Fixture>
     {
-        public RequirementTests(Fixture fixture) : base(fixture) { }
+        public WorkRequirementTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenCustomerRequirement_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
+        public void GivenWorkRequirement_WhenBuild_ThenLastObjectStateEqualsCurrencObjectState()
         {
-            var requirement = new RequirementBuilder(this.Transaction).WithDescription("CustomerRequirement").Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).WithDescription("WorkRequirement").Build();
 
             this.Transaction.Derive();
 
@@ -24,9 +24,9 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenCustomerRequirement_WhenBuild_ThenPreviousObjectStateIsNull()
+        public void GivenWorkRequirement_WhenBuild_ThenPreviousObjectStateIsNull()
         {
-            var requirement = new RequirementBuilder(this.Transaction).WithDescription("CustomerRequirement").Build();
+            var requirement = new WorkRequirementBuilder(this.Transaction).WithDescription("WorkRequirement").Build();
 
             this.Transaction.Derive();
 
@@ -34,16 +34,16 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenCustomerRequirement_WhenDeriving_ThenDescriptionIsRequired()
+        public void GivenWorkRequirement_WhenDeriving_ThenDescriptionIsRequired()
         {
-            var builder = new RequirementBuilder(this.Transaction);
-            var customerRequirement = builder.Build();
+            var builder = new WorkRequirementBuilder(this.Transaction);
+            var WorkRequirement = builder.Build();
 
             Assert.True(this.Derive().HasErrors);
 
             this.Transaction.Rollback();
 
-            builder.WithDescription("CustomerRequirement");
+            builder.WithDescription("WorkRequirement");
             builder.Build();
 
             Assert.False(this.Derive().HasErrors);
