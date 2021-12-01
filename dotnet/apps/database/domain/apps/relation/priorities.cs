@@ -47,6 +47,7 @@ namespace Allors.Database.Domain
                 v.Name = "Very High";
                 localisedName.Set(v, dutchLocale, "Zeer hoog");
                 v.IsActive = true;
+                v.DisplayOrder = 1;
             });
 
             merge(HighId, v =>
@@ -54,6 +55,7 @@ namespace Allors.Database.Domain
                 v.Name = "High";
                 localisedName.Set(v, dutchLocale, "Hoog");
                 v.IsActive = true;
+                v.DisplayOrder = 2;
             });
 
             merge(MediumId, v =>
@@ -61,6 +63,7 @@ namespace Allors.Database.Domain
                 v.Name = "Medium";
                 localisedName.Set(v, dutchLocale, "Gemiddeld");
                 v.IsActive = true;
+                v.DisplayOrder = 3;
             });
 
             merge(LowId, v =>
@@ -68,6 +71,7 @@ namespace Allors.Database.Domain
                 v.Name = "Low";
                 localisedName.Set(v, dutchLocale, "Laag");
                 v.IsActive = true;
+                v.DisplayOrder = 4;
             });
 
             merge(FirstId, v =>
@@ -75,6 +79,7 @@ namespace Allors.Database.Domain
                 v.Name = "First";
                 localisedName.Set(v, dutchLocale, "Eerste");
                 v.IsActive = true;
+                v.DisplayOrder = 1;
             });
 
             merge(SecondId, v =>
@@ -82,6 +87,7 @@ namespace Allors.Database.Domain
                 v.Name = "Second";
                 localisedName.Set(v, dutchLocale, "Tweede");
                 v.IsActive = true;
+                v.DisplayOrder = 2;
             });
 
             merge(ThirdId, v =>
@@ -89,6 +95,7 @@ namespace Allors.Database.Domain
                 v.Name = "Third";
                 localisedName.Set(v, dutchLocale, "Derde");
                 v.IsActive = true;
+                v.DisplayOrder = 3;
             });
         }
     }

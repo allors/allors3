@@ -11,44 +11,18 @@ namespace Allors.Repository
     using static Workspaces;
 
     #region Allors
-    [Id("d3f90525-b7fe-4f81-bccd-adf4f57260bc")]
+    [Id("b05ce5be-e217-4cb8-abef-772b1221b3b2")]
     #endregion
-    public partial class Requirement : Transitional, UniquelyIdentifiable, Versioned
+    public partial interface Requirement : Transitional, UniquelyIdentifiable, Deletable
     {
-        #region inherited properties
-
-        public Revocation[] Revocations { get; set; }
-
-        public Revocation[] TransitionalRevocations { get; set; }
-
-        public SecurityToken[] SecurityTokens { get; set; }
-
-        public ObjectState[] PreviousObjectStates { get; set; }
-
-        public ObjectState[] LastObjectStates { get; set; }
-
-        public ObjectState[] ObjectStates { get; set; }
-
-        public Guid UniqueId { get; set; }
-
-        public User CreatedBy { get; set; }
-
-        public User LastModifiedBy { get; set; }
-
-        public DateTime CreationDate { get; set; }
-
-        public DateTime LastModifiedDate { get; set; }
-        #endregion
-
         #region ObjectStates
-        #region RequirementState
         #region Allors
         [Id("048F8002-E484-4AB7-880A-DB57B9F3634A")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        public RequirementState PreviousRequirementState { get; set; }
+        RequirementState PreviousRequirementState { get; set; }
 
         #region Allors
         [Id("DCCF39B6-E085-4778-B732-F45A51BA4CA2")]
@@ -56,7 +30,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        public RequirementState LastRequirementState { get; set; }
+        RequirementState LastRequirementState { get; set; }
 
         #region Allors
         [Id("B0009B12-8439-4F1A-81F6-7126E5B10D47")]
@@ -64,27 +38,16 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        public RequirementState RequirementState { get; set; }
-        #endregion
+        RequirementState RequirementState { get; set; }
         #endregion
 
-        #region Versioning
         #region Allors
-        [Id("3651CD57-2472-44F1-8140-4260434C1A1C")]
+        [Id("dba6efbf-0098-42e1-a5e2-076c3d89b727")]
+        #endregion
         [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Derived]
         [Workspace(Default)]
-        public RequirementVersion CurrentVersion { get; set; }
-
-        #region Allors
-        [Id("A473CA42-DDB5-4021-B629-8D407A59EB1A")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace(Default)]
-        public RequirementVersion[] AllVersions { get; set; }
-        #endregion
+        string RequirementStateName { get; set; }
 
         #region Allors
         [Id("abbc250a-550a-4328-9bea-a531f5ea76c6")]
@@ -92,7 +55,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Derived]
         [Required]
-        public string RequirementNumber { get; set; }
+        string RequirementNumber { get; set; }
 
         #region Allors
         [Id("de474afa-f179-443e-bdd7-10a876ba2352")]
@@ -100,13 +63,13 @@ namespace Allors.Repository
         [Indexed]
         [Derived]
         [Workspace(Default)]
-        public int SortableRequirementNumber { get; set; }
+        int SortableRequirementNumber { get; set; }
 
         #region Allors
         [Id("0f2c9ca2-9f2a-403e-8110-311fc0622326")]
         #endregion
         [Workspace(Default)]
-        public DateTime RequiredByDate { get; set; }
+        DateTime RequiredByDate { get; set; }
 
         #region Allors
         [Id("2202F95A-9D57-4792-BD8F-E35DECDD515E")]
@@ -114,7 +77,15 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        public RequirementType RequirementType { get; set; }
+        RequirementType RequirementType { get; set; }
+
+        #region Allors
+        [Id("98ea33ed-1edf-43d7-9e4d-86294b71b47d")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        string RequirementTypeName { get; set; }
 
         #region Allors
         [Id("2b828f2b-201d-4ae2-b64c-b2c5be713653")]
@@ -122,20 +93,14 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Party Authorizer { get; set; }
+        Party Authorizer { get; set; }
 
         #region Allors
         [Id("3a6ba1d0-3efb-44f3-b90b-7e504ed11140")]
         #endregion
         [Size(-1)]
         [Workspace(Default)]
-        public string Reason { get; set; }
-
-        #region Allors
-        [Id("7fdad417-99be-4e64-850b-da0f7cd64534")]
-        #endregion
-        [Workspace(Default)]
-        public string Location { get; set; }
+        string Reason { get; set; }
 
         #region Allors
         [Id("3ecf2b1e-ac3d-4533-9da1-341111fca04d")]
@@ -143,7 +108,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public Requirement[] Children { get; set; }
+        Requirement[] Children { get; set; }
 
         #region Allors
         [Id("43e11ee6-dcee-4a2c-80a7-8e04ee36ceb8")]
@@ -151,7 +116,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Party NeededFor { get; set; }
+        Party NeededFor { get; set; }
 
         #region Allors
         [Id("5ed2803c-02d4-4187-8155-bee79e1a0829")]
@@ -159,7 +124,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Party Originator { get; set; }
+        Party Originator { get; set; }
 
         #region Allors
         [Id("b6b7e1e9-6cce-4ca0-a085-0afd3a58ec50")]
@@ -167,7 +132,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Facility Facility { get; set; }
+        Facility Facility { get; set; }
 
         #region Allors
         [Id("bfce13c0-b5c2-46f0-b0fd-d0d288f8dc07")]
@@ -175,15 +140,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Organisation ServicedBy { get; set; }
-
-        #region Allors
-        [Id("d54f8b8f-8e91-4e84-972f-18641701d88d")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public FixedAsset FixedAsset { get; set; }
+        Organisation ServicedBy { get; set; }
 
         #region Allors
         [Id("61ad0824-c7ff-472d-9392-d3b74e987349")]
@@ -191,7 +148,15 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        public Priority Priority { get; set; }
+        Priority Priority { get; set; }
+
+        #region Allors
+        [Id("e53e48f8-1a6a-42cd-83f0-296527e896e5")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        string PriorityName { get; set; }
 
         #region Allors
         [Id("c34694b4-bd8e-46e9-8bf1-fb1296738ab4")]
@@ -199,7 +164,7 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]
-        public decimal EstimatedBudget { get; set; }
+        decimal EstimatedBudget { get; set; }
 
         #region Allors
         [Id("d902fe48-c91f-43fe-b402-e0d87606124a")]
@@ -207,27 +172,21 @@ namespace Allors.Repository
         [Required]
         [Size(-1)]
         [Workspace(Default)]
-        public string Description { get; set; }
+        string Description { get; set; }
 
         #region Allors
         [Id("f553ad3c-675f-4b97-95c9-42f4d85eb5f9")]
         #endregion
         [Workspace(Default)]
-        public int Quantity { get; set; }
+        int Quantity { get; set; }
 
-        #region inherited methods
-
-        public void OnBuild() { }
-
-        public void OnPostBuild() { }
-
-        public void OnInit()
-        {
-        }
-
-        public void OnPostDerive() { }
-
+        #region Allors
+        [Id("49a550dd-a885-4669-9825-722281ec4056")]
+        [Indexed]
         #endregion
+        [Workspace(Default)]
+        [Multiplicity(Multiplicity.ManyToMany)]
+        Media[] Pictures { get; set; }
 
         #region Allors
 
@@ -235,9 +194,7 @@ namespace Allors.Repository
 
         #endregion
         [Workspace(Default)]
-        public void Reopen()
-        {
-        }
+        void Reopen();
 
         #region Allors
 
@@ -245,14 +202,6 @@ namespace Allors.Repository
 
         #endregion
         [Workspace(Default)]
-        public void Cancel()
-        {
-        }
-
-        #region Allors
-        [Id("59056183-a6c4-4ae0-81a6-bb6a236758e5")]
-        #endregion
-        [Workspace(Default)]
-        public void CreateWorkTask() { }
+        void Cancel();
     }
 }

@@ -14,9 +14,9 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Resources;
 
-    public class RequirementServicedByRule : Rule
+    public class WorkRequirementServicedByRule : Rule
     {
-        public RequirementServicedByRule(MetaPopulation m) : base(m, new Guid("77a37bb7-a664-4351-b264-271e583a2194")) =>
+        public WorkRequirementServicedByRule(MetaPopulation m) : base(m, new Guid("77a37bb7-a664-4351-b264-271e583a2194")) =>
             this.Patterns = new Pattern[]
         {
             m.Requirement.RolePattern(v => v.ServicedBy),
@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<Requirement>())
+            foreach (var @this in matches.Cast<WorkRequirement>())
             {
                 if (@this.ExistCurrentVersion
                     && @this.CurrentVersion.ExistServicedBy
