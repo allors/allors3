@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
 
             merge(CreatedId, v => v.Name = "Created");
             merge(ActiveId, v => v.Name = "Active");
-            merge(CreatedId, v => v.Name = "Created");
+            merge(ClosedId, v => v.Name = "Closed");
             merge(CancelledId, v => v.Name = "Cancelled");
         }
     }

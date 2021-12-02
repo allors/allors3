@@ -319,6 +319,9 @@ import {
   WorkEffortPartyAssignmentOverviewPanelComponent,
   WorkEffortPurchaseOrderItemAssignmentEditComponent,
   WorkEffortPOIAssignmentOverviewPanelComponent,
+  WorkRequirementEditComponent,
+  WorkRequirementListComponent,
+  WorkRequirementOverviewPanelComponent,
   WorkTaskCreateComponent,
   WorkTaskOverviewComponent,
   WorkTaskOverviewDetailComponent,
@@ -448,6 +451,8 @@ export const routes: Routes = [
       {
         path: 'workefforts',
         children: [
+          { path: 'workrequirements', component: WorkRequirementListComponent },
+          // { path: 'worktask/:id', component: WorkTaskOverviewComponent },
           { path: 'workefforts', component: WorkEffortListComponent },
           { path: 'worktask/:id', component: WorkTaskOverviewComponent },
         ],
@@ -549,6 +554,7 @@ export const create = {
   [tags.WorkEffortInventoryAssignment]: WorkEffortInventoryAssignmentEditComponent,
   [tags.WorkEffortInvoiceItemAssignment]: WorkEffortInvoiceItemAssignmentEditComponent,
   [tags.WorkEffortPartyAssignment]: WorkEffortPartyAssignmentEditComponent,
+  [tags.WorkRequirement]: WorkRequirementEditComponent,
   // [tags.WorkEffortPurchaseOrderItemAssignment]: WorkEffortPurchaseOrderItemAssignmentEditComponent,
   [tags.WorkTask]: WorkTaskCreateComponent,
 };
@@ -618,6 +624,7 @@ export const edit = {
   [tags.WorkEffortFixedAssetAssignment]: WorkEffortFixedAssetAssignmentEditComponent,
   [tags.WorkEffortInventoryAssignment]: WorkEffortInventoryAssignmentEditComponent,
   [tags.WorkEffortInvoiceItemAssignment]: WorkEffortInvoiceItemAssignmentEditComponent,
+  [tags.WorkRequirement]: WorkRequirementEditComponent,
   // [tags.WorkEffortPurchaseOrderItemAssignment]: WorkEffortPurchaseOrderItemAssignmentEditComponent,
   [tags.WorkEffortPartyAssignment]: WorkEffortPartyAssignmentEditComponent,
 };
@@ -862,6 +869,9 @@ export const edit = {
     WorkEffortPartyAssignmentOverviewPanelComponent,
     WorkEffortPurchaseOrderItemAssignmentEditComponent,
     WorkEffortPOIAssignmentOverviewPanelComponent,
+    WorkRequirementEditComponent,
+    WorkRequirementListComponent,
+    WorkRequirementOverviewPanelComponent,
     WorkTaskCreateComponent,
     WorkTaskOverviewComponent,
     WorkTaskOverviewDetailComponent,

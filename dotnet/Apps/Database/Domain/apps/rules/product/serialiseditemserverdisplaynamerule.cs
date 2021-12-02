@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.Name = $"{ @this.ItemNumber} ${ @this.Name} SN: ${ @this.SerialNumber}";
+                @this.ServerDisplayName = $"{ @this.ItemNumber} { @this.Name} SN: { @this.SerialNumber}";
             }
         }
     }
