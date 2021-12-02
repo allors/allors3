@@ -9,6 +9,7 @@ import { MediaService } from '../../../services/media/media.service';
 
 import { AllorMediaPreviewComponent } from './preview/media-preview.component';
 import { isImage } from './media';
+import { TestScope } from '../../../components/test/test.scope';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -16,12 +17,18 @@ import { isImage } from './media';
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss'],
 })
-export class AllorsMaterialMediaComponent {
+export class AllorsMaterialMediaComponent extends TestScope {
   @Input() media: Media;
 
   @Output() public delete: EventEmitter<IObject> = new EventEmitter();
 
-  constructor(@Optional() parentForm: NgForm, private dialog: MatDialog, private mediaService: MediaService) {}
+  constructor(@Optional() parentForm: NgForm, private dialog: MatDialog, private mediaService: MediaService) {
+    super();
+  }
+
+  get dataAllorsId(): number {
+    return this.media?.id;
+  }
 
   get src(): string | null {
     if (this.media.InDataUri) {

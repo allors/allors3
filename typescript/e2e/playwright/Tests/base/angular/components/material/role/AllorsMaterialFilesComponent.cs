@@ -12,9 +12,9 @@ namespace Angular.Components
     using Media = Allors.Database.Domain.Media;
     using Task = System.Threading.Tasks.Task;
 
-    public class AllorsMaterialFileComponent : RoleControl
+    public class AllorsMaterialFilesComponent : RoleControl
     {
-        public AllorsMaterialFileComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-file")
+        public AllorsMaterialFilesComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-files")
         {
         }
 

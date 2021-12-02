@@ -8,12 +8,11 @@ namespace Tests
     using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
-    using Angular.Components;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class FileTest : Test
+    public class FilesTest : Test
     {
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
@@ -29,12 +28,12 @@ namespace Tests
         }
 
         [Test]
-        public async Task Upload()
+        public async Task UploadOne()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file = new FileInfo("logo.png");
-            await this.FormPage.File.UploadAsync(file);
+            await this.FormPage.MultipleFiles.UploadAsync(file);
 
             await this.FormPage.SaveAsync();
             this.Transaction.Rollback();
@@ -42,7 +41,27 @@ namespace Tests
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.ExistFile);
+            Assert.AreEqual(1, data.MultipleFiles.Count());
+        }
+
+        [Test]
+        public async Task UploadTwo()
+        {
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            var file1 = new FileInfo("logo.png");
+            await this.FormPage.MultipleFiles.UploadAsync(file1);
+
+            var file2 = new FileInfo("logo2.png");
+            await this.FormPage.MultipleFiles.UploadAsync(file2);
+
+            await this.FormPage.SaveAsync();
+            this.Transaction.Rollback();
+
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
+            var data = after.Except(before).First();
+            Assert.AreEqual(2, data.MultipleFiles.Count());
         }
 
         [Test]
@@ -50,22 +69,28 @@ namespace Tests
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var file = new FileInfo("logo.png");
-            await this.FormPage.File.UploadAsync(file);
+            var file1 = new FileInfo("logo.png");
+            await this.FormPage.MultipleFiles.UploadAsync(file1);
+
+            var file2 = new FileInfo("logo2.png");
+            await this.FormPage.MultipleFiles.UploadAsync(file2);
 
             await this.FormPage.SaveAsync();
-
             this.Transaction.Rollback();
             var after = new Datas(this.Transaction).Extent().ToArray();
             var data = after.Except(before).First();
 
-            var media = this.FormPage.File.Media(data.File);
+            var logo1 = data.MultipleFiles.First(v => v.Name.Equals("logo"));
+            var logo2 = data.MultipleFiles.First(v => v.Name.Equals("logo2"));
+
+            var media = this.FormPage.MultipleFiles.Media(logo1);
             await media.RemoveAsync();
 
             await this.FormPage.SaveAsync();
             this.Transaction.Rollback();
 
-            Assert.False(data.ExistFile);
+            Assert.AreEqual(1, data.MultipleFiles.Count());
+            Assert.AreEqual(logo2, data.MultipleFiles.First());
         }
     }
 }
