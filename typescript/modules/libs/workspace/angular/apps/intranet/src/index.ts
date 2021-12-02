@@ -292,6 +292,10 @@ export { WorkEffortPartyAssignmentOverviewPanelComponent } from './lib/objects/w
 export { WorkEffortPurchaseOrderItemAssignmentEditComponent } from './lib/objects/workeffortpoiassignment/edit/workeffortpoiassignment-edit.component';
 export { WorkEffortPOIAssignmentOverviewPanelComponent } from './lib/objects/workeffortpoiassignment/overview/panel/workeffortpoiassignment-overview-panel.component';
 
+export { WorkRequirementEditComponent } from './lib/objects/workrequirement/edit/workrequirement-edit.component';
+export { WorkRequirementListComponent } from './lib/objects/workrequirement/list/workrequirement-list.component';
+export { WorkRequirementOverviewPanelComponent } from './lib/objects/workrequirement/overview/panel/workrequirement-overview-panel.component';
+
 export { WorkTaskCreateComponent } from './lib/objects/worktask/create/worktask-create.component';
 export { WorkTaskOverviewComponent } from './lib/objects/worktask/overview/worktask-overview.component';
 export { WorkTaskOverviewDetailComponent } from './lib/objects/worktask/overview/detail/worktask-overview-detail.component';

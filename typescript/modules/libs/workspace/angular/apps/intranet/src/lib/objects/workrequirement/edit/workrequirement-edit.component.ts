@@ -7,7 +7,7 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Party, Priority, WorkRequirement, SerialisedItem, InternalOrganisation } from '@allors/workspace/domain/default';
-import { ObjectData, PanelService, RadioGroupOption, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, PanelService, RadioGroupOption, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -21,7 +21,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './workrequirement-edit.component.html',
   providers: [PanelService, ContextService],
 })
-export class WorkRequirementEditComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkRequirementEditComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title: string;
 
@@ -45,8 +45,6 @@ export class WorkRequirementEditComponent extends TestScope implements OnInit, O
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId,
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
