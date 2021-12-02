@@ -51,7 +51,7 @@ namespace Tests
 
             var actual = await this.FormPage.DateTime.GetAsync();
 
-            Assert.That(data.DateTime.Value.ToLocalTime(), Is.EqualTo(actual).Within(1).Minutes);
+            Assert.That(actual, Is.EqualTo(data.DateTime.Value.ToLocalTime()).Within(1).Minutes);
         }
 
         [Test]

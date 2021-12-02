@@ -76,6 +76,12 @@ namespace Allors.Repository
         public Media File { get; set; }
 
         #region Allors
+        [Id("BC8943B1-7A8A-4C67-B8DB-BC0ECFF478DF")]
+        #endregion
+        [Workspace(Default)]
+        public DateTime Month { get; set; }
+
+        #region Allors
         [Id("68515CCE-3E87-4D21-B5E5-2136CC3D4F5C")]
         [Indexed]
         #endregion

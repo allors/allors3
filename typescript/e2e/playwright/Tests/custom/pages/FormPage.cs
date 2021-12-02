@@ -27,7 +27,21 @@ namespace Tests
 
         public AllorsMaterialFilesComponent MultipleFiles => new AllorsMaterialFilesComponent(this, this.M.Data.MultipleFiles);
 
+        public AllorsMaterialMarkdownComponent Markdown => new AllorsMaterialMarkdownComponent(this, this.M.Data.Markdown);
+
+        public AllorsMaterialRadioGroupComponent RadioGroup => new AllorsMaterialRadioGroupComponent(this, this.M.Data.RadioGroup);
+
+        public AllorsMaterialSelectComponent Select => new AllorsMaterialSelectComponent(this, this.M.Data.Select);
+
+        public AllorsMaterialSelectComponent SelectDerived => new AllorsMaterialSelectComponent(this, this.M.Data.SelectDerived);
+
+        public AllorsMaterialSliderComponent Slider => new AllorsMaterialSliderComponent(this, this.M.Data.Slider);
+
+        public AllorsMaterialSlideToggleComponent SlideToggle => new AllorsMaterialSlideToggleComponent(this, this.M.Data.SlideToggle);
+
         public AllorsMaterialInputComponent String => new AllorsMaterialInputComponent(this, this.M.Data.String);
+
+        public AllorsMaterialTextareaComponent PlainText => new AllorsMaterialTextareaComponent(this, this.M.Data.PlainText);
 
         public async Task SaveAsync()
         {
