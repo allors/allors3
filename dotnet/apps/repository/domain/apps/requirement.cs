@@ -127,6 +127,14 @@ namespace Allors.Repository
         Party Originator { get; set; }
 
         #region Allors
+        [Id("809e41dc-6da4-4f7d-87dd-db984e6d57f9")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        string OriginatorName { get; set; }
+
+        #region Allors
         [Id("b6b7e1e9-6cce-4ca0-a085-0afd3a58ec50")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -141,6 +149,14 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         Organisation ServicedBy { get; set; }
+
+        #region Allors
+        [Id("70042dae-d4b0-4f18-acf6-eac685d8cec2")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        string ServicedByName { get; set; }
 
         #region Allors
         [Id("61ad0824-c7ff-472d-9392-d3b74e987349")]

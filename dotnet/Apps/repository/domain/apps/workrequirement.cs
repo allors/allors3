@@ -72,6 +72,10 @@ namespace Allors.Repository
 
         public string PriorityName { get; set; }
 
+        public string OriginatorName { get; set; }
+
+        public string ServicedByName { get; set; }
+
         public Guid UniqueId { get; set; }
 
         public User CreatedBy { get; set; }
