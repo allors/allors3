@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -19,7 +19,7 @@ interface Row extends TableRow {
   templateUrl: './workeffortpoiassignment-overview-panel.component.html',
   providers: [PanelService],
 })
-export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope implements OnInit {
+export class WorkEffortPOIAssignmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -49,8 +49,6 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent extends TestScope imp
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

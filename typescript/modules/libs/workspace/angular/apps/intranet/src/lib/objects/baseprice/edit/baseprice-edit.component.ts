@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './baseprice-edit.component.html',
   providers: [ContextService],
 })
-export class BasepriceEditComponent extends TestScope implements OnInit, OnDestroy {
+export class BasepriceEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   nonUnifiedGood: Good;
@@ -36,8 +36,6 @@ export class BasepriceEditComponent extends TestScope implements OnInit, OnDestr
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding, Input } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentification } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { RoleType } from '@allors/workspace/meta/system';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -18,7 +18,7 @@ interface Row extends TableRow {
   templateUrl: './productIdentification-panel.component.html',
   providers: [PanelService],
 })
-export class ProductIdentificationsPanelComponent extends TestScope implements OnInit {
+export class ProductIdentificationsPanelComponent implements OnInit {
   @Input() roleType: RoleType;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -41,8 +41,6 @@ export class ProductIdentificationsPanelComponent extends TestScope implements O
     };
   }
   constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public objectService: ObjectService, public refreshService: RefreshService, public editService: EditService, public deleteService: DeleteService) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

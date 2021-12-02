@@ -6,7 +6,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, Receipt, PaymentApplication, PurchaseInvoice, Disbursement, InternalOrganisation } from '@allors/workspace/domain/default';
+import { Person, Receipt, PaymentApplication, PurchaseInvoice, Disbursement, InternalOrganisation } from '@allors/workspace/domain/default';
 import {
   Action,
   DeleteService,
@@ -17,7 +17,6 @@ import {
   RefreshService,
   Table,
   TableRow,
-  TestScope,
   UserId,
   OverviewService,
   ActionTarget,
@@ -52,7 +51,7 @@ interface Row extends TableRow {
   templateUrl: './purchaseinvoice-list.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceListComponent extends TestScope implements OnInit, OnDestroy {
+export class PurchaseInvoiceListComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Purchase Invoices';
@@ -91,8 +90,6 @@ export class PurchaseInvoiceListComponent extends TestScope implements OnInit, O
     private fetcher: FetcherService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

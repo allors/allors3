@@ -3,7 +3,7 @@ import { format, isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { SupplierOffering } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -21,7 +21,7 @@ interface Row extends TableRow {
   templateUrl: './supplieroffering-overview-panel.component.html',
   providers: [PanelService],
 })
-export class SupplierOfferingOverviewPanelComponent extends TestScope implements OnInit {
+export class SupplierOfferingOverviewPanelComponent implements OnInit {
   currentObjects: SupplierOffering[];
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -53,8 +53,6 @@ export class SupplierOfferingOverviewPanelComponent extends TestScope implements
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { SalesInvoice, SalesOrder, SalesTerm, TermType } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -13,7 +13,7 @@ import { IObject } from '@allors/workspace/domain/system';
   templateUrl: './salesterm-edit.component.html',
   providers: [ContextService],
 })
-export class SalesTermEditComponent extends TestScope implements OnInit, OnDestroy {
+export class SalesTermEditComponent implements OnInit, OnDestroy {
   public m: M;
 
   public title = 'Edit Term Type';
@@ -25,8 +25,6 @@ export class SalesTermEditComponent extends TestScope implements OnInit, OnDestr
   private subscription: Subscription;
 
   constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<SalesTermEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

@@ -6,7 +6,22 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, SalesOrder } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  Filter,
+  MediaService,
+  MethodService,
+  NavigationService,
+  RefreshService,
+  Table,
+  TableRow,
+  UserId,
+  OverviewService,
+  angularFilterFromDefinition,
+  angularSorter,
+  FilterField,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -29,7 +44,7 @@ interface Row extends TableRow {
   templateUrl: './salesorder-list.component.html',
   providers: [ContextService],
 })
-export class SalesOrderListComponent extends TestScope implements OnInit, OnDestroy {
+export class SalesOrderListComponent implements OnInit, OnDestroy {
   public title = 'Sales Orders';
 
   m: M;
@@ -63,8 +78,6 @@ export class SalesOrderListComponent extends TestScope implements OnInit, OnDest
     private fetcher: FetcherService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

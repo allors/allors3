@@ -21,7 +21,7 @@ import {
   PurchaseInvoiceType,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -33,7 +33,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './purchaseinvoice-create.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class PurchaseInvoiceCreateComponent implements OnInit, OnDestroy {
   public m: M;
 
   title = 'Add Purchase Invoice';
@@ -109,8 +109,6 @@ export class PurchaseInvoiceCreateComponent extends TestScope implements OnInit,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

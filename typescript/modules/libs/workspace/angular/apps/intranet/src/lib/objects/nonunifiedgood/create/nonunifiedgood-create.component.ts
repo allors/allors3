@@ -5,7 +5,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { NonUnifiedGood, Organisation, ProductIdentificationType, ProductType, Settings, Good, ProductCategory, Ownership, ProductNumber, Locale } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -15,7 +15,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './nonunifiedgood-create.component.html',
   providers: [ContextService],
 })
-export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class NonUnifiedGoodCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
   good: Good;
 
@@ -47,8 +47,6 @@ export class NonUnifiedGoodCreateComponent extends TestScope implements OnInit, 
     private saveService: SaveService,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

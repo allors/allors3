@@ -22,7 +22,7 @@ import {
   PurchaseInvoice,
   PurchaseInvoiceItem,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And, IObject } from '@allors/workspace/domain/system';
 
@@ -33,7 +33,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './purchaseinvoiceitem-edit.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceItemEditComponent extends TestScope implements OnInit, OnDestroy {
+export class PurchaseInvoiceItemEditComponent implements OnInit, OnDestroy {
   m: M;
 
   title: string;
@@ -75,8 +75,6 @@ export class PurchaseInvoiceItemEditComponent extends TestScope implements OnIni
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

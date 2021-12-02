@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { scan, switchMap } from 'rxjs/operators';
 
-import { Action, angularFilter, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { Organisation } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   templateUrl: './organisations.component.html',
   providers: [ContextService],
 })
-export class OrganisationsComponent extends TestScope implements OnInit, OnDestroy {
+export class OrganisationsComponent implements OnInit, OnDestroy {
   title = 'Organisations';
 
   table: Table<Row>;
@@ -34,8 +34,6 @@ export class OrganisationsComponent extends TestScope implements OnInit, OnDestr
   m: M;
 
   constructor(@Self() public allors: ContextService, public refreshService: RefreshService, public deleteService: DeleteService, public overviewService: OverviewService, private titleService: Title) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.titleService.setTitle(this.title);
 

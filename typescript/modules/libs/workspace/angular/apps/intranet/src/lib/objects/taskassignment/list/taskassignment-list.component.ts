@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { TaskAssignment } from '@allors/workspace/domain/default';
-import { Action, EditService, Filter, FilterDefinition, FilterField, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
+import { Action, EditService, Filter, FilterDefinition, FilterField, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, UserId } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 import { Sort } from '@angular/material/sort';
@@ -22,7 +22,7 @@ interface Row extends TableRow {
   templateUrl: './taskassignment-list.component.html',
   providers: [ContextService],
 })
-export class TaskAssignmentListComponent extends TestScope implements OnInit, OnDestroy {
+export class TaskAssignmentListComponent implements OnInit, OnDestroy {
   public title = 'Tasks';
 
   table: Table<Row>;
@@ -44,8 +44,6 @@ export class TaskAssignmentListComponent extends TestScope implements OnInit, On
     private userId: UserId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { NonUnifiedGood, Good, ProductCategory, UnifiedGood } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -22,7 +22,7 @@ interface Row extends TableRow {
   templateUrl: './good-list.component.html',
   providers: [ContextService],
 })
-export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
+export class GoodListComponent implements OnInit, OnDestroy {
   public title = 'Goods';
 
   table: Table<Row>;
@@ -43,8 +43,6 @@ export class GoodListComponent extends TestScope implements OnInit, OnDestroy {
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

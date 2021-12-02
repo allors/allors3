@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -19,7 +19,7 @@ interface Row extends TableRow {
   templateUrl: './workeffort-overview-panel.component.html',
   providers: [PanelService],
 })
-export class WorkEffortOverviewPanelComponent extends TestScope implements OnInit {
+export class WorkEffortOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -49,8 +49,6 @@ export class WorkEffortOverviewPanelComponent extends TestScope implements OnIni
     public editService: EditService,
     public overviewService: OverviewService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

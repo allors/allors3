@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, Party, InternalOrganisation, Employment } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject, ISession } from '@allors/workspace/domain/system';
 
@@ -16,7 +16,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './employment-edit.component.html',
   providers: [ContextService],
 })
-export class EmploymentEditComponent extends TestScope implements OnInit, OnDestroy {
+export class EmploymentEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   partyRelationship: Employment;
@@ -41,8 +41,6 @@ export class EmploymentEditComponent extends TestScope implements OnInit, OnDest
     private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

@@ -3,7 +3,7 @@ import { format, isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { PartyRate } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -21,7 +21,7 @@ interface Row extends TableRow {
   templateUrl: './partyrate-overview-panel.component.html',
   providers: [PanelService],
 })
-export class PartyRateOverviewPanelComponent extends TestScope implements OnInit {
+export class PartyRateOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -54,8 +54,6 @@ export class PartyRateOverviewPanelComponent extends TestScope implements OnInit
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

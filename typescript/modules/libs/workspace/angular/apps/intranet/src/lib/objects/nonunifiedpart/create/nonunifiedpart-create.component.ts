@@ -7,7 +7,7 @@ import { isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Part, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, NonUnifiedPart, Locale } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope, SearchFactory } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -17,7 +17,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './nonunifiedpart-create.component.html',
   providers: [ContextService],
 })
-export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class NonUnifiedPartCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Part';
@@ -55,8 +55,6 @@ export class NonUnifiedPartCreateComponent extends TestScope implements OnInit, 
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

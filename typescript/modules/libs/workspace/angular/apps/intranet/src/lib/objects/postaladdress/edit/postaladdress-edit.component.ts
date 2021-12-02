@@ -5,7 +5,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PartyContactMechanism, Party, PostalAddress, Country } from '@allors/workspace/domain/default';
-import { RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './postaladdress-edit.component.html',
   providers: [ContextService],
 })
-export class PostalAddressEditComponent extends TestScope implements OnInit, OnDestroy {
+export class PostalAddressEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   contactMechanism: PostalAddress;
@@ -35,8 +35,6 @@ export class PostalAddressEditComponent extends TestScope implements OnInit, OnD
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

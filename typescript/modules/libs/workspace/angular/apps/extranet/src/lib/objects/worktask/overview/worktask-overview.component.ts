@@ -6,14 +6,14 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkTask } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './worktask-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class WorkTaskOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class WorkTaskOverviewComponent implements AfterViewInit, OnDestroy {
   readonly m: M;
   title = 'WorkTask';
 
@@ -31,8 +31,6 @@ export class WorkTaskOverviewComponent extends TestScope implements AfterViewIni
     public injector: Injector,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

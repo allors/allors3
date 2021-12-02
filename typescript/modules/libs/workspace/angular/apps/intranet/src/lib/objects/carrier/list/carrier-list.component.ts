@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { Carrier } from '@allors/workspace/domain/default';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
@@ -19,7 +19,7 @@ interface Row extends TableRow {
   templateUrl: './carrier-list.component.html',
   providers: [ContextService],
 })
-export class CarrierListComponent extends TestScope implements OnInit, OnDestroy {
+export class CarrierListComponent implements OnInit, OnDestroy {
   public title = 'Carriers';
 
   table: Table<Row>;
@@ -42,8 +42,6 @@ export class CarrierListComponent extends TestScope implements OnInit, OnDestroy
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

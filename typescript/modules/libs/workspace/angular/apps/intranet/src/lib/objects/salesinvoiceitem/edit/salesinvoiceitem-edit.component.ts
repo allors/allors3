@@ -25,7 +25,7 @@ import {
   SalesInvoiceItem,
   Product,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -36,7 +36,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './salesinvoiceitem-edit.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, OnDestroy {
+export class SalesInvoiceItemEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -79,8 +79,6 @@ export class SalesInvoiceItemEditComponent extends TestScope implements OnInit, 
     private fetcher: FetcherService,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

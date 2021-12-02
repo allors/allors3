@@ -5,14 +5,14 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Carrier, SerialisedItemCharacteristicType } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './carrier-edit.component.html',
   providers: [ContextService],
 })
-export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy {
+export class CarrierEditComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
@@ -32,8 +32,6 @@ export class CarrierEditComponent extends TestScope implements OnInit, OnDestroy
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

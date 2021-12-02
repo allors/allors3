@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, InternalOrganisation, SubContractorRelationship } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -16,7 +16,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './subcontractorrelationship-edit.component.html',
   providers: [ContextService],
 })
-export class SubContractorRelationshipEditComponent extends TestScope implements OnInit, OnDestroy {
+export class SubContractorRelationshipEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   partyRelationship: SubContractorRelationship;
@@ -36,8 +36,6 @@ export class SubContractorRelationshipEditComponent extends TestScope implements
     private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

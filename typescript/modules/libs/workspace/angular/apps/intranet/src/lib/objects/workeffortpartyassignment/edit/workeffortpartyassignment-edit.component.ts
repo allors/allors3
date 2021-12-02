@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Party, WorkEffort, WorkEffortPartyAssignment, Employment } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './workeffortpartyassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortPartyAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   workEffortPartyAssignment: WorkEffortPartyAssignment;
@@ -38,8 +38,6 @@ export class WorkEffortPartyAssignmentEditComponent extends TestScope implements
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

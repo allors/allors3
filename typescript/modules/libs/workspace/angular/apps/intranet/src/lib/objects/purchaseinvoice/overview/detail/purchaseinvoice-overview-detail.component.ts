@@ -20,7 +20,7 @@ import {
   PurchaseInvoiceType,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -33,7 +33,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './purchaseinvoice-overview-detail.component.html',
   providers: [ContextService, PanelService],
 })
-export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   invoice: PurchaseInvoice;
@@ -101,8 +101,6 @@ export class PurchaseInvoiceOverviewDetailComponent extends TestScope implements
     public fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

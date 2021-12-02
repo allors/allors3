@@ -4,7 +4,7 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { InternalOrganisation, Locale, Organisation, Currency, CustomOrganisationClassification, IndustryClassification, LegalForm } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, TestScope, SingletonId } from '@allors/workspace/angular/base';
+import { PanelService, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -15,7 +15,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   templateUrl: './organisation-overview-detail.component.html',
   providers: [ContextService, PanelService],
 })
-export class OrganisationOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   organisation: Organisation;
@@ -29,8 +29,6 @@ export class OrganisationOverviewDetailComponent extends TestScope implements On
   currencies: Currency[];
 
   constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId, private fetcher: FetcherService) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

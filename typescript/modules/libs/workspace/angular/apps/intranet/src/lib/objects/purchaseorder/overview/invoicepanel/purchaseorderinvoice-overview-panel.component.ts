@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling, PurchaseInvoiceItem, InternalOrganisation } from '@allors/workspace/domain/default';
-import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, SaveService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, SaveService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -26,7 +26,7 @@ interface Row extends TableRow {
   templateUrl: './purchaseorderinvoice-overview-panel.component.html',
   providers: [ContextService, PanelService],
 })
-export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
+export class PurchaseOrderInvoiceOverviewPanelComponent {
   internalOrganisation: InternalOrganisation;
   purchaseInvoice: PurchaseInvoice;
 
@@ -70,8 +70,6 @@ export class PurchaseOrderInvoiceOverviewPanelComponent extends TestScope {
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

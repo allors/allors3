@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { Notification } from '@allors/workspace/domain/default';
-import { Action, Filter, FilterDefinition, MediaService, MethodService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, UserId } from '@allors/workspace/angular/base';
+import { Action, Filter, FilterDefinition, MediaService, MethodService, NavigationService, ObjectService, RefreshService, Table, TableRow, UserId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { And } from '@allors/workspace/domain/system';
@@ -21,7 +21,7 @@ interface Row extends TableRow {
   templateUrl: './notification-list.component.html',
   providers: [ContextService],
 })
-export class NotificationListComponent extends TestScope implements OnInit, OnDestroy {
+export class NotificationListComponent implements OnInit, OnDestroy {
   public title = 'Notifications';
 
   table: Table<Row>;
@@ -44,8 +44,6 @@ export class NotificationListComponent extends TestScope implements OnInit, OnDe
     private userId: UserId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;

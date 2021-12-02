@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { CommunicationEvent } from '@allors/workspace/domain/default';
 import { Sort } from '@angular/material/sort';
@@ -27,7 +27,7 @@ interface Row extends TableRow {
   templateUrl: './communicationevent-list.component.html',
   providers: [ContextService],
 })
-export class CommunicationEventListComponent extends TestScope implements OnInit, OnDestroy {
+export class CommunicationEventListComponent implements OnInit, OnDestroy {
   public title = 'Communications';
 
   table: Table<Row>;
@@ -49,8 +49,6 @@ export class CommunicationEventListComponent extends TestScope implements OnInit
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

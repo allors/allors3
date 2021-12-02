@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { SalesOrder } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './salesorder-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class SalesOrderOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class SalesOrderOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Sales Order';
 
   subscription: Subscription;
@@ -33,8 +33,6 @@ export class SalesOrderOverviewComponent extends TestScope implements AfterViewI
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

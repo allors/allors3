@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ContextService } from '@allors/workspace/angular/core';
-import { TestScope } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 import { assert } from '@allors/workspace/meta/system';
@@ -15,7 +14,7 @@ import { IPullResult } from '@allors/workspace/domain/system';
   templateUrl: './organisation-overview.component.html',
   providers: [ContextService],
 })
-export class OrganisationOverviewComponent extends TestScope implements OnInit, OnDestroy {
+export class OrganisationOverviewComponent implements OnInit, OnDestroy {
   public title: string;
 
   public m: M;
@@ -26,8 +25,6 @@ export class OrganisationOverviewComponent extends TestScope implements OnInit, 
   private subscription: Subscription;
 
   constructor(@Self() private allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.title = 'Organisation Overview';
     this.titleService.setTitle(this.title);

@@ -6,7 +6,7 @@ import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Request, Person, Organisation, InternalOrganisation } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, UserId, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -29,7 +29,7 @@ interface Row extends TableRow {
   templateUrl: './requestforquote-list.component.html',
   providers: [ContextService],
 })
-export class RequestForQuoteListComponent extends TestScope implements OnInit, OnDestroy {
+export class RequestForQuoteListComponent implements OnInit, OnDestroy {
   public title = 'Requests';
 
   delete: Action;
@@ -56,8 +56,6 @@ export class RequestForQuoteListComponent extends TestScope implements OnInit, O
     private fetcher: FetcherService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

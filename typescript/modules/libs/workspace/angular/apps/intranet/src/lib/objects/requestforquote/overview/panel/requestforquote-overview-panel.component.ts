@@ -3,7 +3,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { RequestForQuote } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   templateUrl: './requestforquote-overview-panel.component.html',
   providers: [PanelService],
 })
-export class RequestForQuoteOverviewPanelComponent extends TestScope implements OnInit {
+export class RequestForQuoteOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -48,8 +48,6 @@ export class RequestForQuoteOverviewPanelComponent extends TestScope implements 
     public overviewService: OverviewService,
     public deleteService: DeleteService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

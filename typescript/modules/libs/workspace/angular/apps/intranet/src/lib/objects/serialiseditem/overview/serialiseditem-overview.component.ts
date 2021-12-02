@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { M } from '@allors/workspace/meta/default';
 import { Party, Part, SerialisedItem } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './serialiseditem-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class SerialisedItemOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class SerialisedItemOverviewComponent implements AfterViewInit, OnDestroy {
   readonly m: M;
   title = 'Asset';
 
@@ -36,8 +36,6 @@ export class SerialisedItemOverviewComponent extends TestScope implements AfterV
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     titleService.setTitle(this.title);

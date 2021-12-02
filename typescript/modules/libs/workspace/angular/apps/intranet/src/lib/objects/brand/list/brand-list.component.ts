@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Brand } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, FilterDefinition, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Sorter, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, FilterDefinition, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Sorter, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And } from '@allors/workspace/domain/system';
 import { Sort } from '@angular/material/sort';
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   templateUrl: './brand-list.component.html',
   providers: [ContextService],
 })
-export class BrandsOverviewComponent extends TestScope implements OnInit, OnDestroy {
+export class BrandsOverviewComponent implements OnInit, OnDestroy {
   public title = 'Brands';
 
   table: Table<Row>;
@@ -43,8 +43,6 @@ export class BrandsOverviewComponent extends TestScope implements OnInit, OnDest
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

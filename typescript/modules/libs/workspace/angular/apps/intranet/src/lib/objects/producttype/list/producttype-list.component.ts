@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductType } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -19,7 +19,7 @@ interface Row extends TableRow {
   templateUrl: './producttype-list.component.html',
   providers: [ContextService],
 })
-export class ProductTypesOverviewComponent extends TestScope implements OnInit, OnDestroy {
+export class ProductTypesOverviewComponent implements OnInit, OnDestroy {
   public title = 'Product Types';
 
   table: Table<Row>;
@@ -41,8 +41,6 @@ export class ProductTypesOverviewComponent extends TestScope implements OnInit, 
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

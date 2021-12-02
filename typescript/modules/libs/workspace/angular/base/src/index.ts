@@ -56,8 +56,6 @@ export { RefreshServiceCore } from './lib/components/refresh/refresh.service.cor
 export { SearchFactory } from './lib/components/search/search-factory';
 export { SearchOptions } from './lib/components/search/search-options';
 
-export { TestScope } from './lib/components/test/test.scope';
-
 // Material
 export { DialogConfig, PromptType } from './lib/material/services/dialog/dialog.config';
 export { AllorsMaterialDialogService } from './lib/material/services/dialog/dialog.service';

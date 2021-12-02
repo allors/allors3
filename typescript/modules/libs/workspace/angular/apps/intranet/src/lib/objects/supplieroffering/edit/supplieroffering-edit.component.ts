@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Part, SupplierOffering, UnitOfMeasure, Settings, Currency, RatingType, Ordinal } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -16,7 +16,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './supplieroffering-edit.component.html',
   providers: [ContextService],
 })
-export class SupplierOfferingEditComponent extends TestScope implements OnInit, OnDestroy {
+export class SupplierOfferingEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   supplierOffering: SupplierOffering;
@@ -41,8 +41,6 @@ export class SupplierOfferingEditComponent extends TestScope implements OnInit, 
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

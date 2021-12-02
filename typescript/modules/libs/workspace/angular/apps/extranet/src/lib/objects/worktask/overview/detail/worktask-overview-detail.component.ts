@@ -3,19 +3,9 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  ContactMechanism,
-  PartyContactMechanism,
-  WorkEffort,
-  WorkTask,
-} from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { Person, Party, ContactMechanism, PartyContactMechanism, WorkEffort, WorkTask } from '@allors/workspace/domain/default';
+import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -23,7 +13,7 @@ import { IObject } from '@allors/workspace/domain/system';
   templateUrl: './worktask-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   workTask: WorkTask;
@@ -35,8 +25,6 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
   workEfforts: WorkEffort[];
 
   constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public refreshService: RefreshService, public navigationService: NavigationService, private saveService: SaveService) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
@@ -107,7 +95,7 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
                 CreatedBy: x,
                 Customer: x,
                 PublicElectronicDocuments: x,
-                },
+              },
             }),
             pull.Locale({
               sorting: [{ roleType: m.Locale.Name }],

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductCategory } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -25,7 +25,7 @@ interface Row extends TableRow {
   templateUrl: './productcategory-list.component.html',
   providers: [ContextService],
 })
-export class ProductCategoryListComponent extends TestScope implements OnInit, OnDestroy {
+export class ProductCategoryListComponent implements OnInit, OnDestroy {
   public title = 'Categories';
 
   table: Table<Row>;
@@ -48,8 +48,6 @@ export class ProductCategoryListComponent extends TestScope implements OnInit, O
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

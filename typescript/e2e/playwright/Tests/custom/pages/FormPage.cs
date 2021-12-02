@@ -5,7 +5,7 @@ namespace Tests
 
     public class FormPage : ContainerComponent
     {
-        public FormPage(IComponent container) : base(container, "FormComponent") { }
+        public FormPage(IComponent container) : base(container) { }
 
         public AllorsMaterialAutocompleteComponent AutocompleteDerivedFilter => new AllorsMaterialAutocompleteComponent(this, this.M.Data.AutocompleteDerivedFilter);
 

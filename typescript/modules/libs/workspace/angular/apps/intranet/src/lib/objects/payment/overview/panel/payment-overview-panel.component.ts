@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { SalesInvoice, PurchaseInvoice, Payment, Invoice } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -19,7 +19,7 @@ interface Row extends TableRow {
   templateUrl: './payment-overview-panel.component.html',
   providers: [ContextService, PanelService],
 })
-export class PaymentOverviewPanelComponent extends TestScope {
+export class PaymentOverviewPanelComponent {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -51,8 +51,6 @@ export class PaymentOverviewPanelComponent extends TestScope {
     public editService: EditService,
     public snackBar: MatSnackBar
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

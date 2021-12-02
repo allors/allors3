@@ -3,7 +3,7 @@ import { isBefore, isAfter, format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { PriceComponent } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -21,7 +21,7 @@ interface Row extends TableRow {
   templateUrl: './pricecomponent-overview-panel.component.html',
   providers: [PanelService],
 })
-export class PriceComponentOverviewPanelComponent extends TestScope implements OnInit {
+export class PriceComponentOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -52,8 +52,6 @@ export class PriceComponentOverviewPanelComponent extends TestScope implements O
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

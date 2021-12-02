@@ -23,7 +23,7 @@ import {
   RequestItem,
   Product,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { Filters } from '../../../filters/filters';
@@ -32,7 +32,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './requestitem-edit.component.html',
   providers: [ContextService],
 })
-export class RequestItemEditComponent extends TestScope implements OnInit, OnDestroy {
+export class RequestItemEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -95,8 +95,6 @@ export class RequestItemEditComponent extends TestScope implements OnInit, OnDes
     public refreshService: RefreshService,
     public snackBar: MatSnackBar
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

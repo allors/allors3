@@ -6,7 +6,7 @@ import { format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, InternalOrganisation, Quote } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, UserId, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, UserId, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -30,7 +30,7 @@ interface Row extends TableRow {
   templateUrl: './productquote-list.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteListComponent extends TestScope implements OnInit, OnDestroy {
+export class ProductQuoteListComponent implements OnInit, OnDestroy {
   public title = 'Quotes';
 
   table: Table<Row>;
@@ -59,8 +59,6 @@ export class ProductQuoteListComponent extends TestScope implements OnInit, OnDe
     private fetcher: FetcherService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

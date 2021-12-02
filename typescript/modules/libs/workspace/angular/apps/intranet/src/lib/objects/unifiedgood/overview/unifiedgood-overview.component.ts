@@ -5,7 +5,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { Good, UnifiedGood } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { M } from '@allors/workspace/meta/default';
   templateUrl: './unifiedgood-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class UnifiedGoodOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class UnifiedGoodOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Good';
 
   good: Good;
@@ -35,8 +35,6 @@ export class UnifiedGoodOverviewComponent extends TestScope implements AfterView
     public injector: Injector,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

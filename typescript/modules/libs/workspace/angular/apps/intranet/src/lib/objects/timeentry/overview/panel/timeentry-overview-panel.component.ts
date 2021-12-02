@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, TimeEntry } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   templateUrl: './timeentry-overview-panel.component.html',
   providers: [PanelService, ContextService],
 })
-export class TimeEntryOverviewPanelComponent extends TestScope {
+export class TimeEntryOverviewPanelComponent {
   workEffort: WorkEffort;
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
@@ -49,8 +49,6 @@ export class TimeEntryOverviewPanelComponent extends TestScope {
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;

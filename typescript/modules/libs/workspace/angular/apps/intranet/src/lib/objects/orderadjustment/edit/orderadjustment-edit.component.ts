@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Invoice, Order, OrderAdjustment, Quote } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -13,7 +13,7 @@ import { IObject } from '@allors/workspace/domain/system';
   templateUrl: './orderadjustment-edit.component.html',
   providers: [ContextService],
 })
-export class OrderAdjustmentEditComponent extends TestScope implements OnInit, OnDestroy {
+export class OrderAdjustmentEditComponent implements OnInit, OnDestroy {
   public m: M;
 
   public title: string;
@@ -31,8 +31,6 @@ export class OrderAdjustmentEditComponent extends TestScope implements OnInit, O
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

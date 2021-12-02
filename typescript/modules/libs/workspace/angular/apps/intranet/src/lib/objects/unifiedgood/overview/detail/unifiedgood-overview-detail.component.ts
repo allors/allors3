@@ -20,7 +20,7 @@ import {
   ProductNumber,
   UnifiedGood,
 } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, TestScope, SearchFactory } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -32,7 +32,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './unifiedgood-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   good: UnifiedGood;
@@ -73,8 +73,6 @@ export class UnifiedGoodOverviewDetailComponent extends TestScope implements OnI
     private fetcher: FetcherService,
     private snackBar: MatSnackBar
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject(new Date());

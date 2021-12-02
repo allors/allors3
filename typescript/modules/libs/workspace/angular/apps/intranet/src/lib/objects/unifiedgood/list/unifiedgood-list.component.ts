@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { UnifiedGood } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -25,7 +25,7 @@ interface Row extends TableRow {
   templateUrl: './unifiedgood-list.component.html',
   providers: [ContextService],
 })
-export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDestroy {
+export class UnifiedGoodListComponent implements OnInit, OnDestroy {
   public title = 'Unified Goods';
 
   table: Table<Row>;
@@ -46,8 +46,6 @@ export class UnifiedGoodListComponent extends TestScope implements OnInit, OnDes
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

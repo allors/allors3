@@ -3,19 +3,17 @@ import { ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { isBefore, isAfter } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask } from '@allors/workspace/domain/default';
-import { NavigationService, RefreshService, SaveService, SearchFactory, TestScope, UserId } from '@allors/workspace/angular/base';
+import { Person, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask } from '@allors/workspace/domain/default';
+import { NavigationService, RefreshService, SaveService, SearchFactory, UserId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './worktask-create.component.html',
   providers: [ContextService],
 })
-export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkTaskCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Work Task';
@@ -46,8 +44,6 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
     private route: ActivatedRoute,
     private userId: UserId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject<Date>(undefined);

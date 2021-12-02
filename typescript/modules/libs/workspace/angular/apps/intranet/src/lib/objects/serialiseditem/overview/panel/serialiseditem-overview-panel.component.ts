@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+import { Action, DeleteService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -21,7 +21,7 @@ interface Row extends TableRow {
   templateUrl: './serialiseditem-overview-panel.component.html',
   providers: [PanelService],
 })
-export class SerialisedItemOverviewPanelComponent extends TestScope implements OnInit {
+export class SerialisedItemOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -50,8 +50,6 @@ export class SerialisedItemOverviewPanelComponent extends TestScope implements O
     public overviewService: OverviewService,
     public deleteService: DeleteService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

@@ -17,7 +17,7 @@ import {
   NonSerialisedInventoryItemState,
   SerialisedInventoryItemState,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -26,7 +26,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './inventoryitemtransaction-edit.component.html',
   providers: [ContextService],
 })
-export class InventoryItemTransactionEditComponent extends TestScope implements OnInit, OnDestroy {
+export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title = 'Add Inventory Item Transaction';
@@ -59,8 +59,6 @@ export class InventoryItemTransactionEditComponent extends TestScope implements 
     private saveService: SaveService,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, WorkEffortFixedAssetAssignment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -22,7 +22,7 @@ interface Row extends TableRow {
   templateUrl: './workeffortfixedassetassignment-overview-panel.component.html',
   providers: [PanelService],
 })
-export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope implements OnInit {
+export class WorkEffortFAAssignmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -54,8 +54,6 @@ export class WorkEffortFAAssignmentOverviewPanelComponent extends TestScope impl
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

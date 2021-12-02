@@ -6,7 +6,22 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Shipment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, MethodService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, Sorter, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  Filter,
+  MediaService,
+  MethodService,
+  NavigationService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+  Sorter,
+  angularFilterFromDefinition,
+  angularSorter,
+  FilterField,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -28,7 +43,7 @@ interface Row extends TableRow {
   templateUrl: './shipment-list.component.html',
   providers: [ContextService],
 })
-export class ShipmentListComponent extends TestScope implements OnInit, OnDestroy {
+export class ShipmentListComponent implements OnInit, OnDestroy {
   public title = 'Shipments';
 
   m: M;
@@ -53,8 +68,6 @@ export class ShipmentListComponent extends TestScope implements OnInit, OnDestro
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     titleService.setTitle(this.title);
 
     this.allors.context.name = this.constructor.name;

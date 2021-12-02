@@ -21,7 +21,6 @@ import {
   RefreshService,
   Table,
   TableRow,
-  TestScope,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -45,7 +44,7 @@ interface Row extends TableRow {
   templateUrl: './organisation-list.component.html',
   providers: [ContextService],
 })
-export class OrganisationListComponent extends TestScope implements OnInit, OnDestroy {
+export class OrganisationListComponent implements OnInit, OnDestroy {
   public title = 'Organisations';
 
   table: Table<Row>;
@@ -70,8 +69,6 @@ export class OrganisationListComponent extends TestScope implements OnInit, OnDe
     private fetcher: FetcherService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

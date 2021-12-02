@@ -5,8 +5,20 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask, SerialisedItem, WorkEffortFixedAssetAssignment } from '@allors/workspace/domain/default';
-import { NavigationService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import {
+  Locale,
+  Person,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  InternalOrganisation,
+  ContactMechanism,
+  PartyContactMechanism,
+  WorkTask,
+  SerialisedItem,
+  WorkEffortFixedAssetAssignment,
+} from '@allors/workspace/domain/default';
+import { NavigationService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -19,7 +31,7 @@ import { ObjectData } from '../../../../../../../base/src/lib/material/services/
   templateUrl: './worktask-create.component.html',
   providers: [ContextService],
 })
-export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkTaskCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Work Task';
@@ -53,8 +65,6 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject<Date>(undefined);
@@ -98,7 +108,7 @@ export class WorkTaskCreateComponent extends TestScope implements OnInit, OnDest
         this.locales = loaded.collection<Locale>(m.Locale);
 
         const fromSerialiseditem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        const fromCustomer  = loaded.object<Party>(m.Party);
+        const fromCustomer = loaded.object<Party>(m.Party);
 
         this.workTask = this.allors.context.create<WorkTask>(m.WorkTask);
         this.workTask.TakenBy = this.internalOrganisation as Organisation;

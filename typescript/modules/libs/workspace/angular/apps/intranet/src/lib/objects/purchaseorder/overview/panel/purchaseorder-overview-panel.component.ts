@@ -2,7 +2,7 @@ import { Component, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
-import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -25,7 +25,7 @@ interface Row extends TableRow {
   templateUrl: './purchaseorder-overview-panel.component.html',
   providers: [ContextService, PanelService],
 })
-export class PurchaseOrderOverviewPanelComponent extends TestScope {
+export class PurchaseOrderOverviewPanelComponent {
   internalOrganisation: InternalOrganisation;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -60,8 +60,6 @@ export class PurchaseOrderOverviewPanelComponent extends TestScope {
     public printService: PrintService,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

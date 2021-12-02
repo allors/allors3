@@ -6,7 +6,7 @@ import { format, formatDistance } from 'date-fns';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, SalesInvoice, Disbursement, Receipt, PaymentApplication } from '@allors/workspace/domain/default';
+import { Person, InternalOrganisation, SalesInvoice, Disbursement, Receipt, PaymentApplication } from '@allors/workspace/domain/default';
 import {
   Action,
   DeleteService,
@@ -17,7 +17,6 @@ import {
   RefreshService,
   Table,
   TableRow,
-  TestScope,
   UserId,
   OverviewService,
   ActionTarget,
@@ -54,7 +53,7 @@ interface Row extends TableRow {
   templateUrl: './salesinvoice-list.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDestroy {
+export class SalesInvoiceListComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Sales Invoices';
@@ -94,8 +93,6 @@ export class SalesInvoiceListComponent extends TestScope implements OnInit, OnDe
     private fetcher: FetcherService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
     this.m = this.allors.context.configuration.metaPopulation as M;

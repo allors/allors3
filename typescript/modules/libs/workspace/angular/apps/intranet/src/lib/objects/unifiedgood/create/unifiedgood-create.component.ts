@@ -5,7 +5,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentificationType, InventoryItemKind, ProductType, Settings, Good, ProductNumber, UnifiedGood } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -15,7 +15,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './unifiedgood-create.component.html',
   providers: [ContextService],
 })
-export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class UnifiedGoodCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
   good: Good;
 
@@ -39,8 +39,6 @@ export class UnifiedGoodCreateComponent extends TestScope implements OnInit, OnD
     private saveService: SaveService,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

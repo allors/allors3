@@ -3,7 +3,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem, WorkEffort } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -22,7 +22,7 @@ interface Row extends TableRow {
   templateUrl: './worktask-overview-panel.component.html',
   providers: [PanelService],
 })
-export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit {
+export class WorkTaskOverviewPanelComponent implements OnInit {
   serialisedItem: SerialisedItem;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -51,8 +51,6 @@ export class WorkTaskOverviewPanelComponent extends TestScope implements OnInit 
     public overviewService: OverviewService,
     public deleteService: DeleteService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

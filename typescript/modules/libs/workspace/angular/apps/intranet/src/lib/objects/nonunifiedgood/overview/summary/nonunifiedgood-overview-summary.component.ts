@@ -1,7 +1,7 @@
 import { Component, Self } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { NavigationService, PanelService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService } from '@allors/workspace/angular/base';
 import { NonUnifiedGood } from '@allors/workspace/domain/default';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -11,14 +11,12 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
   templateUrl: './nonunifiedgood-overview-summary.component.html',
   providers: [PanelService],
 })
-export class NonUnifiedGoodOverviewSummaryComponent extends TestScope {
+export class NonUnifiedGoodOverviewSummaryComponent {
   m: M;
 
   good: NonUnifiedGood;
 
   constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';

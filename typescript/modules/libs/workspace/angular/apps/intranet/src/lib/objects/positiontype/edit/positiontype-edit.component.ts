@@ -5,15 +5,14 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PositionType } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
   templateUrl: './positiontype-edit.component.html',
   providers: [ContextService],
 })
-export class PositionTypeEditComponent extends TestScope implements OnInit, OnDestroy {
+export class PositionTypeEditComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
@@ -24,8 +23,6 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
   private subscription: Subscription;
 
   constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<PositionTypeEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

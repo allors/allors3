@@ -10,10 +10,12 @@ namespace Angular.Components
 
     public class ContainerComponent : IComponent
     {
-        protected ContainerComponent(IComponent container, string componentType)
+        private readonly string selector;
+
+        protected ContainerComponent(IComponent container, string selector = null)
         {
+            this.selector = selector;
             this.Container = container;
-            this.Locator = this.Page.Locator($"ng-component[data-allors-component-type='{componentType}']");
         }
 
         public IComponent Container { get; }
@@ -22,6 +24,8 @@ namespace Angular.Components
 
         public MetaPopulation M => this.Container.M;
 
-        public ILocator Locator { get; }
+        public ILocator Locator => !string.IsNullOrWhiteSpace(this.selector)
+            ? this.Container.Locator.Locator(this.selector)
+            : this.Container.Locator;
     }
 }

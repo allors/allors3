@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { PartyRelationship } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   templateUrl: './partyrelationship-overview-panel.component.html',
   providers: [PanelService],
 })
-export class PartyRelationshipOverviewPanelComponent extends TestScope implements OnInit {
+export class PartyRelationshipOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -53,8 +53,6 @@ export class PartyRelationshipOverviewPanelComponent extends TestScope implement
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

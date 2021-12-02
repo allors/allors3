@@ -20,7 +20,7 @@ import {
   SalesInvoiceType,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -32,7 +32,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './salesinvoice-create.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class SalesInvoiceCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title = 'Add Sales Invoice';
 
@@ -106,8 +106,6 @@ export class SalesInvoiceCreateComponent extends TestScope implements OnInit, On
     public internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

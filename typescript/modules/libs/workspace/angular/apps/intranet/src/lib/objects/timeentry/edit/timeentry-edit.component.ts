@@ -6,14 +6,14 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Party, WorkEffort, WorkEffortPartyAssignment, WorkEffortAssignmentRate, TimeFrequency, RateType, TimeEntry, TimeSheet, PartyRate } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './timeentry-edit.component.html',
   providers: [ContextService],
 })
-export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestroy {
+export class TimeEntryEditComponent implements OnInit, OnDestroy {
   title: string;
   subTitle: string;
 
@@ -42,8 +42,6 @@ export class TimeEntryEditComponent extends TestScope implements OnInit, OnDestr
     private snackBar: MatSnackBar,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

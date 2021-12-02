@@ -20,7 +20,7 @@ import {
   ShipmentPackage,
   InternalOrganisation,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope, PanelManagerService } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory, PanelManagerService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -32,7 +32,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './customershipment-create.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class CustomerShipmentCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title: string;
   public subTitle: string;
@@ -75,8 +75,6 @@ export class CustomerShipmentCreateComponent extends TestScope implements OnInit
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PartyContactMechanism, Party, ContactMechanism, Enumeration, ContactMechanismPurpose } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './partycontactmechanism-edit.component.html',
   providers: [ContextService],
 })
-export class PartyContactmechanismEditComponent extends TestScope implements OnInit, OnDestroy {
+export class PartyContactmechanismEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   partyContactMechanism: PartyContactMechanism;
@@ -36,8 +36,6 @@ export class PartyContactmechanismEditComponent extends TestScope implements OnI
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

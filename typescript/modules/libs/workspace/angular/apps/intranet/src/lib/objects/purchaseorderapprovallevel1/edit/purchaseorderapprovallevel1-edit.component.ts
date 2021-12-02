@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrderApprovalLevel1 } from '@allors/workspace/domain/default';
-import { Action, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { Action, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject, IResult } from '@allors/workspace/domain/system';
 
@@ -15,7 +15,7 @@ import { PrintService } from '../../../actions/print/print.service';
   templateUrl: './purchaseorderapprovallevel1-edit.component.html',
   providers: [ContextService],
 })
-export class PurchaseOrderApprovalLevel1EditComponent extends TestScope implements OnInit, OnDestroy {
+export class PurchaseOrderApprovalLevel1EditComponent implements OnInit, OnDestroy {
   title: string;
   subTitle: string;
 
@@ -36,8 +36,6 @@ export class PurchaseOrderApprovalLevel1EditComponent extends TestScope implemen
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

@@ -8,13 +8,13 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Singleton } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
-import { AuthenticationService, SingletonId, TestScope } from '@allors/workspace/angular/base';
+import { AuthenticationService, SingletonId } from '@allors/workspace/angular/base';
 
 @Component({
   templateUrl: './login.component.html',
   providers: [ContextService],
 })
-export class LoginComponent extends TestScope implements OnDestroy {
+export class LoginComponent implements OnDestroy {
   public loginForm = this.formBuilder.group({
     password: ['', Validators.required],
     userName: ['', Validators.required],
@@ -24,8 +24,6 @@ export class LoginComponent extends TestScope implements OnDestroy {
   m: M;
 
   constructor(@Self() private allors: ContextService, private authService: AuthenticationService, private singletonId: SingletonId, private router: Router, public formBuilder: FormBuilder) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

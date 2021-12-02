@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Catalogue } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And, Equals } from '@allors/workspace/domain/system';
 
@@ -24,7 +24,7 @@ interface Row extends TableRow {
   templateUrl: './catalogue-list.component.html',
   providers: [ContextService],
 })
-export class CataloguesListComponent extends TestScope implements OnInit, OnDestroy {
+export class CataloguesListComponent implements OnInit, OnDestroy {
   public title = 'Catalogues';
 
   table: Table<Row>;
@@ -48,8 +48,6 @@ export class CataloguesListComponent extends TestScope implements OnInit, OnDest
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

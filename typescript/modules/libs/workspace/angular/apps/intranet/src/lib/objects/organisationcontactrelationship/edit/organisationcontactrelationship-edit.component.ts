@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, OrganisationContactKind } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -16,7 +16,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './organisationcontactrelationship-edit.component.html',
   providers: [ContextService],
 })
-export class OrganisationContactRelationshipEditComponent extends TestScope implements OnInit, OnDestroy {
+export class OrganisationContactRelationshipEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   partyRelationship: OrganisationContactRelationship;
@@ -42,8 +42,6 @@ export class OrganisationContactRelationshipEditComponent extends TestScope impl
     private saveService: SaveService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

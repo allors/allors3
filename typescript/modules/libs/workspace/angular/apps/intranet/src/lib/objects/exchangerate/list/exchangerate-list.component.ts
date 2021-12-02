@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { ExchangeRate } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -23,7 +23,7 @@ interface Row extends TableRow {
   templateUrl: './exchangerate-list.component.html',
   providers: [ContextService],
 })
-export class ExchangeRateListComponent extends TestScope implements OnInit, OnDestroy {
+export class ExchangeRateListComponent implements OnInit, OnDestroy {
   public title = 'Exchange Rates';
 
   table: Table<Row>;
@@ -45,8 +45,6 @@ export class ExchangeRateListComponent extends TestScope implements OnInit, OnDe
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

@@ -4,7 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { TestScope } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Person } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
@@ -15,7 +14,7 @@ import { assert } from '@allors/workspace/meta/system';
   templateUrl: './person-overview.component.html',
   providers: [ContextService],
 })
-export class PersonOverviewComponent extends TestScope implements OnInit, OnDestroy {
+export class PersonOverviewComponent implements OnInit, OnDestroy {
   public title: string;
   public m: M;
 
@@ -24,8 +23,6 @@ export class PersonOverviewComponent extends TestScope implements OnInit, OnDest
   private subscription: Subscription;
 
   constructor(@Self() private allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.title = 'Person Overview';
     this.titleService.setTitle(this.title);

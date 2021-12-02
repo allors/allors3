@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
 import { SalesOrder, SalesInvoice, SalesTerm } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -18,7 +18,7 @@ interface Row extends TableRow {
   templateUrl: './salesordertransfer-overview-panel.component.html',
   providers: [PanelService],
 })
-export class SalesOrderTransferOverviewPanelComponent extends TestScope {
+export class SalesOrderTransferOverviewPanelComponent {
   container: SalesOrder | SalesInvoice;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -59,8 +59,6 @@ export class SalesOrderTransferOverviewPanelComponent extends TestScope {
     public deleteService: DeleteService,
     public snackBar: MatSnackBar
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'salesterm';

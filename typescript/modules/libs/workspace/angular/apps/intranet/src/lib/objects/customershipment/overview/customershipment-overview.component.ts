@@ -4,8 +4,8 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Good, CustomerShipment, ShipmentItem, SalesInvoice, BillingProcess, SerialisedInventoryItemState, Shipment } from '@allors/workspace/domain/default';
-import { NavigationService, RefreshService, TestScope, PanelManagerService, NavigationActivatedRoute } from '@allors/workspace/angular/base';
+import { Good, CustomerShipment, ShipmentItem, SalesInvoice, BillingProcess, SerialisedInventoryItemState } from '@allors/workspace/domain/default';
+import { NavigationService, RefreshService, PanelManagerService, NavigationActivatedRoute } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './customershipment-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class CustomerShipmentOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class CustomerShipmentOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Customer Shipment';
 
   public shipment: CustomerShipment;
@@ -41,8 +41,6 @@ export class CustomerShipmentOverviewComponent extends TestScope implements Afte
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     titleService.setTitle(this.title);
 
     this.allors.context.name = this.constructor.name;

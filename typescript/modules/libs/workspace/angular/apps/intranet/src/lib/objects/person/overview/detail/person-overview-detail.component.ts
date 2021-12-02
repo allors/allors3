@@ -4,7 +4,7 @@ import { switchMap, filter, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Currency, Enumeration, GenderType, InternalOrganisation, Locale, Person, Salutation, ContactMechanism, PartyContactMechanism, EmailAddress } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -15,7 +15,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   templateUrl: './person-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class PersonOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   person: Person;
@@ -25,7 +25,7 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
   locales: Locale[];
   genders: Enumeration[];
   salutations: Enumeration[];
-  public confirmPassword: string
+  public confirmPassword: string;
 
   private subscription: Subscription;
   currencies: Currency[];
@@ -39,8 +39,6 @@ export class PersonOverviewDetailComponent extends TestScope implements OnInit, 
     private singletonId: SingletonId,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

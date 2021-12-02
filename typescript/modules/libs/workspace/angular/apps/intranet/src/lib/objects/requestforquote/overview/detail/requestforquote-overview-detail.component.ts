@@ -4,7 +4,7 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, Quote, CustomerRelationship } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -17,7 +17,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './requestforquote-overview-detail.component.html',
   providers: [ContextService, PanelService],
 })
-export class RequestForQuoteOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   request: RequestForQuote;
@@ -44,8 +44,6 @@ export class RequestForQuoteOverviewDetailComponent extends TestScope implements
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

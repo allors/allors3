@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { NonSerialisedInventoryItem } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './nonserialisedinventoryitem-edit.component.html',
   providers: [ContextService],
 })
-export class NonSerialisedInventoryItemEditComponent extends TestScope implements OnInit, OnDestroy {
+export class NonSerialisedInventoryItemEditComponent implements OnInit, OnDestroy {
   public m: M;
   public title: string;
 
@@ -33,8 +33,6 @@ export class NonSerialisedInventoryItemEditComponent extends TestScope implement
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

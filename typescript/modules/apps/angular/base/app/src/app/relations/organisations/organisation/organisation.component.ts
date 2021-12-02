@@ -4,7 +4,7 @@ import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Organisation, Person } from '@allors/workspace/domain/default';
 import { IObject, IPullResult } from '@allors/workspace/domain/system';
@@ -14,7 +14,7 @@ import { M } from '@allors/workspace/meta/default';
   templateUrl: './organisation.component.html',
   providers: [ContextService],
 })
-export class OrganisationComponent extends TestScope implements OnInit, OnDestroy {
+export class OrganisationComponent implements OnInit, OnDestroy {
   title: string;
   m: M;
   peopleFilter: SearchFactory;
@@ -28,8 +28,6 @@ export class OrganisationComponent extends TestScope implements OnInit, OnDestro
   private refresh$: BehaviorSubject<Date>;
 
   constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.title = 'Organisation';
     this.titleService.setTitle(this.title);

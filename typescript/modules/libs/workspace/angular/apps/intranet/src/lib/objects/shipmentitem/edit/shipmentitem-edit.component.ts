@@ -32,7 +32,7 @@ import {
   Product,
   UnifiedGood,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { And, IObject } from '@allors/workspace/domain/system';
 import { Filters } from '../../../filters/filters';
@@ -41,7 +41,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './shipmentitem-edit.component.html',
   providers: [ContextService],
 })
-export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDestroy {
+export class ShipmentItemEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -120,8 +120,6 @@ export class ShipmentItemEditComponent extends TestScope implements OnInit, OnDe
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

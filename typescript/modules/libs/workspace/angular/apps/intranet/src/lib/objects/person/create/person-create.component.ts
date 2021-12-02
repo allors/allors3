@@ -20,7 +20,7 @@ import {
   GenderType,
   Salutation,
 } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService, SingletonId, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -30,7 +30,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './person-create.component.html',
   providers: [ContextService],
 })
-export class PersonCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class PersonCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Person';
@@ -71,8 +71,6 @@ export class PersonCreateComponent extends TestScope implements OnInit, OnDestro
     private singletonId: SingletonId,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject<Date>(undefined);

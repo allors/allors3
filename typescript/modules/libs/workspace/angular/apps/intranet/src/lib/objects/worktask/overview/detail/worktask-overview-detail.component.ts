@@ -17,7 +17,7 @@ import {
   Priority,
   WorkEffortPurpose,
 } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -31,7 +31,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './worktask-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   workTask: WorkTask;
@@ -59,8 +59,6 @@ export class WorkTaskOverviewDetailComponent extends TestScope implements OnInit
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

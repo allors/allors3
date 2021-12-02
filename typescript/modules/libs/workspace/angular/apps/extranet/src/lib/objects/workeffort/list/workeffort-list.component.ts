@@ -8,7 +8,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { And } from '@allors/workspace/domain/system';
@@ -27,7 +27,7 @@ interface Row extends TableRow {
   templateUrl: './workeffort-list.component.html',
   providers: [ContextService],
 })
-export class WorkEffortListComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkEffortListComponent implements OnInit, OnDestroy {
   public title = 'Work Orders';
 
   table: Table<Row>;
@@ -49,8 +49,6 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
@@ -63,14 +61,7 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'number', sort: true },
-        { name: 'name', sort: true },
-        { name: 'state' },
-        { name: 'executedBy' },
-        { name: 'equipment' },
-        { name: 'lastModifiedDate', sort: true },
-      ],
+      columns: [{ name: 'number', sort: true }, { name: 'name', sort: true }, { name: 'state' }, { name: 'executedBy' }, { name: 'equipment' }, { name: 'lastModifiedDate', sort: true }],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,

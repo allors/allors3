@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Person, Employment } from '@allors/workspace/domain/default';
 
@@ -15,7 +15,7 @@ import { M } from '@allors/workspace/meta/default';
   templateUrl: './person-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class PersonOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class PersonOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Person';
 
   person: Person;
@@ -34,8 +34,6 @@ export class PersonOverviewComponent extends TestScope implements AfterViewInit,
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

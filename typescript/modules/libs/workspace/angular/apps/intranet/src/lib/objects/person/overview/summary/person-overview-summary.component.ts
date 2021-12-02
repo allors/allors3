@@ -2,7 +2,7 @@ import { Component, Self } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, User, Organisation, OrganisationContactRelationship, OrganisationContactKind, Media } from '@allors/workspace/domain/default';
-import { MediaService, NavigationService, PanelService, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { MediaService, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './person-overview-summary.component.html',
   providers: [PanelService],
 })
-export class PersonOverviewSummaryComponent extends TestScope {
+export class PersonOverviewSummaryComponent {
   m: M;
 
   person: Person;
@@ -31,8 +31,6 @@ export class PersonOverviewSummaryComponent extends TestScope {
     private saveService: SaveService,
     public snackBar: MatSnackBar
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const m = this.m;
     const { pullBuilder: pull, treeBuilder: tree } = m;

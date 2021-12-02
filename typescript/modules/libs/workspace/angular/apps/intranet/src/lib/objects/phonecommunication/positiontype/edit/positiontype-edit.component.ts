@@ -5,14 +5,14 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ContextService } from '@allors/workspace/angular/core';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { PositionType } from '@allors/workspace/domain/default';
 
 @Component({
   templateUrl: './positiontype-edit.component.html',
   providers: [ContextService],
 })
-export class PositionTypeEditComponent extends TestScope implements OnInit, OnDestroy {
+export class PositionTypeEditComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
@@ -30,8 +30,6 @@ export class PositionTypeEditComponent extends TestScope implements OnInit, OnDe
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

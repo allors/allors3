@@ -9,7 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { AllorsMaterialDialogService, angularFilterFromDefinition, angularSorter, Filter, FilterField, MediaService, NavigationService, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { AllorsMaterialDialogService, angularFilterFromDefinition, angularSorter, Filter, FilterField, MediaService, NavigationService, TableRow } from '@allors/workspace/angular/base';
 import { Person } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
@@ -25,7 +25,7 @@ interface Row extends TableRow {
   templateUrl: './people.component.html',
   providers: [ContextService],
 })
-export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
+export class PeopleComponent implements OnInit, OnDestroy {
   public title = 'People';
 
   public displayedColumns = ['select', 'firstName', 'lastName', 'email', 'menu'];
@@ -52,8 +52,6 @@ export class PeopleComponent extends TestScope implements OnInit, OnDestroy {
     private location: Location,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

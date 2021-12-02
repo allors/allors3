@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -22,7 +22,7 @@ interface Row extends TableRow {
   templateUrl: './workeffortpartyassignment-overview-panel.component.html',
   providers: [PanelService, ContextService],
 })
-export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope implements OnInit {
+export class WorkEffortPartyAssignmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
   fromParty: WorkEffortPartyAssignment[];
   fromWorkEffort: WorkEffortPartyAssignment[];
@@ -47,8 +47,6 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent extends TestScope i
   }
 
   constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public refreshService: RefreshService, public navigation: NavigationService, public deleteService: DeleteService, public editService: EditService) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

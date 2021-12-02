@@ -4,8 +4,8 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Organisation, CustomerRelationship, Party } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { InternalOrganisation, CustomerRelationship, Party } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './customerrelationship-edit.component.html',
   providers: [ContextService],
 })
-export class CustomerRelationshipEditComponent extends TestScope implements OnInit, OnDestroy {
+export class CustomerRelationshipEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   partyRelationship: CustomerRelationship;
@@ -34,8 +34,6 @@ export class CustomerRelationshipEditComponent extends TestScope implements OnIn
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

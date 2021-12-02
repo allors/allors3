@@ -5,7 +5,7 @@ import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ContextService } from '@allors/workspace/angular/core';
-import { RadioGroupOption, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { RadioGroupOption, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
 import { Data, Organisation, Person, Locale } from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
@@ -14,7 +14,7 @@ import { IPullResult } from '@allors/workspace/domain/system';
   templateUrl: './form.component.html',
   providers: [ContextService],
 })
-export class FormComponent extends TestScope implements OnInit, OnDestroy {
+export class FormComponent implements OnInit, OnDestroy {
   title: string;
   m: M;
 
@@ -47,8 +47,6 @@ export class FormComponent extends TestScope implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.title = 'Form';
     this.titleService.setTitle(this.title);

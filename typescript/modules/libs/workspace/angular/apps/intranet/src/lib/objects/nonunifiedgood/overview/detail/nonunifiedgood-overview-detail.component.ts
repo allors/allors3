@@ -2,7 +2,7 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Brand, Model, NonUnifiedGood, Organisation, Ownership, ProductCategory, ProductDimension, ProductFeatureApplicability, ProductIdentificationType, ProductNumber, ProductType, Locale } from '@allors/workspace/domain/default';
 import { M } from '@allors/workspace/meta/default';
@@ -15,7 +15,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './nonunifiedgood-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class NonUnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   good: NonUnifiedGood;
@@ -52,8 +52,6 @@ export class NonUnifiedGoodOverviewDetailComponent extends TestScope implements 
     private saveService: SaveService,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject(new Date());

@@ -17,7 +17,7 @@ import {
   PartyContactMechanism,
   PostalAddress,
 } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -27,7 +27,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './lettercorrespondence-edit.component.html',
   providers: [ContextService],
 })
-export class LetterCorrespondenceEditComponent extends TestScope implements OnInit, OnDestroy {
+export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   addFromParty = false;
@@ -59,8 +59,6 @@ export class LetterCorrespondenceEditComponent extends TestScope implements OnIn
     public navigation: NavigationService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Good, NonUnifiedGood } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './nonunifiedgood-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class NonUnifiedGoodOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Good';
 
   good: Good;
@@ -34,8 +34,6 @@ export class NonUnifiedGoodOverviewComponent extends TestScope implements AfterV
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     titleService.setTitle(this.title);
 
     this.allors.context.name = this.constructor.name;

@@ -4,7 +4,7 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, Facility, InternalOrganisation, PartyContactMechanism, PostalAddress, Currency, PurchaseShipment, ShipmentMethod, Carrier } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -18,7 +18,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './purchaseshipment-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class PurchaseShipmentOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   purchaseShipment: PurchaseShipment;
@@ -57,8 +57,6 @@ export class PurchaseShipmentOverviewDetailComponent extends TestScope implement
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
     this.refresh$ = new BehaviorSubject(new Date());

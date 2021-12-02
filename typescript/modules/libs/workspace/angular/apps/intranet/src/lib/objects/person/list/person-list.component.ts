@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -24,7 +24,7 @@ interface Row extends TableRow {
   templateUrl: './person-list.component.html',
   providers: [{ provide: 'dependencies', useValue: 'person-list' }, ContextService],
 })
-export class PersonListComponent extends TestScope implements OnInit, OnDestroy {
+export class PersonListComponent implements OnInit, OnDestroy {
   public title = 'People';
 
   table: Table<Row>;
@@ -45,8 +45,6 @@ export class PersonListComponent extends TestScope implements OnInit, OnDestroy 
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

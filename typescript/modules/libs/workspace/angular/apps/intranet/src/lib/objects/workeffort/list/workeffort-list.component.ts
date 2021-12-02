@@ -6,7 +6,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, TestScope, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -32,7 +32,7 @@ interface Row extends TableRow {
   templateUrl: './workeffort-list.component.html',
   providers: [ContextService],
 })
-export class WorkEffortListComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkEffortListComponent implements OnInit, OnDestroy {
   public title = 'Work Orders';
 
   table: Table<Row>;
@@ -56,8 +56,6 @@ export class WorkEffortListComponent extends TestScope implements OnInit, OnDest
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

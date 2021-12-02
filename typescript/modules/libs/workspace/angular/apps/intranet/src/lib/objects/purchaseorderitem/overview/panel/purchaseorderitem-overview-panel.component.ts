@@ -4,7 +4,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrder, PurchaseOrderItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -25,7 +25,7 @@ interface Row extends TableRow {
   templateUrl: './purchaseorderitem-overview-panel.component.html',
   providers: [ContextService, PanelService],
 })
-export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
+export class PurchaseOrderItemOverviewPanelComponent {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -62,8 +62,6 @@ export class PurchaseOrderItemOverviewPanelComponent extends TestScope {
     public editService: EditService,
     public snackBar: MatSnackBar
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

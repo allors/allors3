@@ -17,7 +17,7 @@ import {
   WorkEffort,
   WorkEffortInventoryAssignment,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -26,7 +26,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './workeffortinventoryassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortInventoryAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkEffortInventoryAssignmentEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -49,8 +49,6 @@ export class WorkEffortInventoryAssignmentEditComponent extends TestScope implem
     private internalOrganisationId: InternalOrganisationId,
     private snackBar: MatSnackBar
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

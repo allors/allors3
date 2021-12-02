@@ -19,7 +19,7 @@ namespace Angular.Components
         {
             this.Container = container;
             this.RoleType = roleType;
-            this.Locator = this.Page.Locator($"{elementName}[data-allors-component-type='{this.GetType().Name}']:has([data-allors-roletype='{roleType.RelationType.Tag}'])");
+            this.Locator = this.Container.Locator.Locator($"{elementName}:has([data-allors-roletype='{roleType.RelationType.Tag}'])");
         }
 
         public IComponent Container { get; }

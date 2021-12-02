@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Locale, UnitOfMeasure, TimeFrequency, Singleton, SerialisedItemCharacteristicType, IUnitOfMeasure } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -16,7 +16,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './serialiseditemcharacteristic-edit.component.html',
   providers: [ContextService],
 })
-export class SerialisedItemCharacteristicEditComponent extends TestScope implements OnInit, OnDestroy {
+export class SerialisedItemCharacteristicEditComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
@@ -41,8 +41,6 @@ export class SerialisedItemCharacteristicEditComponent extends TestScope impleme
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

@@ -5,7 +5,7 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Part, PriceComponent, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, Locale } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, TestScope, SearchFactory } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
@@ -16,7 +16,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './nonunifiedpart-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class NonUnifiedPartOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   part: Part;
@@ -55,8 +55,6 @@ export class NonUnifiedPartOverviewDetailComponent extends TestScope implements 
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

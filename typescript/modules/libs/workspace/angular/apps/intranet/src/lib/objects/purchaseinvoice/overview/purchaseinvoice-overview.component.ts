@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PurchaseOrder, PurchaseInvoice } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService, TestScope } from '@allors/workspace/angular/base';
+import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
 import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './purchaseinvoice-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class PurchaseInvoiceOverviewComponent extends TestScope implements AfterViewInit, OnDestroy {
+export class PurchaseInvoiceOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Purchase Invoice';
 
   order: PurchaseOrder;
@@ -35,8 +35,6 @@ export class PurchaseInvoiceOverviewComponent extends TestScope implements After
     public injector: Injector,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

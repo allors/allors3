@@ -19,7 +19,7 @@ import {
   IrpfRegime,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -31,7 +31,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './productquote-create.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteCreateComponent extends TestScope implements OnInit, OnDestroy {
+export class ProductQuoteCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title = 'Add Quote';
@@ -65,8 +65,6 @@ export class ProductQuoteCreateComponent extends TestScope implements OnInit, On
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

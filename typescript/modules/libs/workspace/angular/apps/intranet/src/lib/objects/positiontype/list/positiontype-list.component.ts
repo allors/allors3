@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { PositionType } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -20,7 +20,7 @@ interface Row extends TableRow {
   templateUrl: './positiontype-list.component.html',
   providers: [ContextService],
 })
-export class PositionTypesOverviewComponent extends TestScope implements OnInit, OnDestroy {
+export class PositionTypesOverviewComponent implements OnInit, OnDestroy {
   public title = 'Position Types';
 
   table: Table<Row>;
@@ -42,8 +42,6 @@ export class PositionTypesOverviewComponent extends TestScope implements OnInit,
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

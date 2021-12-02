@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkEffort, WorkEffortPartyAssignment, WorkEffortAssignmentRate, TimeFrequency, RateType } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -13,7 +13,7 @@ import { IObject } from '@allors/workspace/domain/system';
   templateUrl: './workeffortassignmentrate-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortAssignmentRateEditComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkEffortAssignmentRateEditComponent implements OnInit, OnDestroy {
   title: string;
   subTitle: string;
 
@@ -34,8 +34,6 @@ export class WorkEffortAssignmentRateEditComponent extends TestScope implements 
     public refreshService: RefreshService,
     private saveService: SaveService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

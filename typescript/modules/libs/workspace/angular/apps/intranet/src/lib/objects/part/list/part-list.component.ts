@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentificationType, Part } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow, TestScope } from '@allors/workspace/angular/base';
+import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -25,7 +25,7 @@ interface Row extends TableRow {
   templateUrl: './part-list.component.html',
   providers: [ContextService],
 })
-export class PartListComponent extends TestScope implements OnInit, OnDestroy {
+export class PartListComponent implements OnInit, OnDestroy {
   public title = 'Parts';
 
   table: Table<Row>;
@@ -48,8 +48,6 @@ export class PartListComponent extends TestScope implements OnInit, OnDestroy {
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 

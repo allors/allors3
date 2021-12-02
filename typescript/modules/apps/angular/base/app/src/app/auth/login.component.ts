@@ -3,12 +3,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { AuthenticationService, TestScope } from '@allors/workspace/angular/base';
+import { AuthenticationService } from '@allors/workspace/angular/base';
 
 @Component({
   templateUrl: './login.component.html',
 })
-export class LoginComponent extends TestScope implements OnDestroy {
+export class LoginComponent implements OnDestroy {
   public loginForm = this.formBuilder.group({
     password: ['', Validators.required],
     userName: ['', Validators.required],
@@ -16,9 +16,7 @@ export class LoginComponent extends TestScope implements OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(private authService: AuthenticationService, private router: Router, public formBuilder: FormBuilder) {
-    super();
-  }
+  constructor(private authService: AuthenticationService, private router: Router, public formBuilder: FormBuilder) {}
 
   public login() {
     const userName = this.loginForm.controls.userName.value;

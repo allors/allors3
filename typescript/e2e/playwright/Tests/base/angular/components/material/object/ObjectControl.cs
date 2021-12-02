@@ -20,7 +20,7 @@ namespace Angular.Components
         {
             this.Container = container;
             this.Object = @object;
-            this.Locator = this.Page.Locator($"{elementName}[data-allors-component-type='{this.GetType().Name}']:has([data-allors-id='{@object.Id}'])");
+            this.Locator = this.Page.Locator($"{elementName}:has([data-allors-id='{@object.Id}'])");
         }
 
         public IComponent Container { get; }

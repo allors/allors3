@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { TimeFrequency, SalesInvoice, RepeatingSalesInvoice, DayOfWeek } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -13,7 +13,7 @@ import { IObject } from '@allors/workspace/domain/system';
   templateUrl: './repeatingsalesinvoice-edit.component.html',
   providers: [ContextService],
 })
-export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnInit, OnDestroy {
+export class RepeatingSalesInvoiceEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -31,8 +31,6 @@ export class RepeatingSalesInvoiceEditComponent extends TestScope implements OnI
     private saveService: SaveService,
     public refreshService: RefreshService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

@@ -5,7 +5,7 @@ import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Party, TimeFrequency, RateType, PartyRate } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -13,7 +13,7 @@ import { IObject } from '@allors/workspace/domain/system';
   templateUrl: './partyrate-edit.component.html',
   providers: [ContextService],
 })
-export class PartyRateEditComponent extends TestScope implements OnInit, OnDestroy {
+export class PartyRateEditComponent implements OnInit, OnDestroy {
   title: string;
   subTitle: string;
 
@@ -27,8 +27,6 @@ export class PartyRateEditComponent extends TestScope implements OnInit, OnDestr
   party: Party;
 
   constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<PartyRateEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

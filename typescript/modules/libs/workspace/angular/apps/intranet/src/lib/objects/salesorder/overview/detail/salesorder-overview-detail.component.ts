@@ -27,7 +27,7 @@ import {
   BillingProcess,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory, TestScope } from '@allors/workspace/angular/base';
+import { PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -41,7 +41,7 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './salesorder-overview-detail.component.html',
   providers: [ContextService, PanelService],
 })
-export class SalesOrderOverviewDetailComponent extends TestScope implements OnInit, OnDestroy {
+export class SalesOrderOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   order: SalesOrder;
@@ -123,8 +123,6 @@ export class SalesOrderOverviewDetailComponent extends TestScope implements OnIn
     private snackBar: MatSnackBar,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 

@@ -4,18 +4,17 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent, Brand, Model, Locale } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { Brand, Model, Locale } from '@allors/workspace/domain/default';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './brand-edit.component.html',
   providers: [ContextService],
 })
-export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
+export class BrandEditComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
@@ -37,8 +36,6 @@ export class BrandEditComponent extends TestScope implements OnInit, OnDestroy {
     private saveService: SaveService,
     private fetcher: FetcherService
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

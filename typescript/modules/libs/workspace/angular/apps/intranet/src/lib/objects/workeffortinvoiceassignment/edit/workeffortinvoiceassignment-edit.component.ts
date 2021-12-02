@@ -5,7 +5,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { ObjectData, RefreshService, SaveService, TestScope } from '@allors/workspace/angular/base';
+import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { InternalOrganisation, InvoiceItemType, WorkEffortInvoiceItem, WorkEffort, WorkEffortInvoiceItemAssignment } from '@allors/workspace/domain/default';
 
@@ -16,7 +16,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './workeffortinvoiceassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortInvoiceItemAssignmentEditComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkEffortInvoiceItemAssignmentEditComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -38,8 +38,6 @@ export class WorkEffortInvoiceItemAssignmentEditComponent extends TestScope impl
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
