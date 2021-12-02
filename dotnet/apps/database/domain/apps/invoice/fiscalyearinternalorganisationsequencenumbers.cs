@@ -48,6 +48,11 @@ namespace Allors.Database.Domain
             {
                 this.WorkEffortNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
+
+            if (!this.ExistRequirementNumberCounter)
+            {
+                this.RequirementNumberCounter = new CounterBuilder(this.Transaction()).Build();
+            }
         }
 
         public string NextPurchaseOrderNumber(int year)
