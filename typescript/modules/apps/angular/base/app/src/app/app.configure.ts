@@ -27,6 +27,7 @@ export function configure(m: M) {
   // Navigation
   nav(m.Person, '/contacts/people', '/contacts/person/:id');
   nav(m.Organisation, '/contacts/organisations', '/contacts/organisation/:id');
+  nav(m.LegalForm, '/contacts/legalform');
 
   // Filter & Sort
   angularFilterDefinition(m.Person,  new FilterDefinition({

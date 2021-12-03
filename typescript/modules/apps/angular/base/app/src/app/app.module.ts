@@ -108,13 +108,17 @@ import {
 import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { OrganisationOverviewComponent } from './relations/organisations/organisation/organisation-overview.component';
-import { OrganisationComponent } from './relations/organisations/organisation/organisation.component';
-import { OrganisationsComponent } from './relations/organisations/organisations.component';
-import { PersonOverviewComponent } from './relations/people/person/person-overview.component';
-import { PersonComponent } from './relations/people/person/person.component';
-import { PeopleComponent } from './relations/people/people.component';
 import { FormComponent } from './tests/form/form.component';
+import { tags } from '@allors/workspace/meta/default';
+
+import { PersonCreateComponent } from './objects/person/create/person-create.component';
+import { PersonListComponent } from './objects/person/list/person-list.component';
+import { PersonOverviewComponent } from './objects/person/overview/person-overview.component';
+import { OrganisationCreateComponent } from './objects/organisation/create/organisation-create.component';
+import { OrganisationListComponent } from './objects/organisation/list/organisation-list.component';
+import { OrganisationOverviewComponent } from './objects/organisation/overview/organisation-overview.component';
+import { LegalFormEditComponent } from './objects/legalform/edit/legalform-edit.component';
+import { LegalFormListComponent } from './objects/legalform/list/legalform-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -131,14 +135,11 @@ export const routes: Routes = [
       {
         path: 'contacts',
         children: [
-          { path: 'organisations', component: OrganisationsComponent },
-          { path: 'organisation/:id', component: OrganisationOverviewComponent },
-          { path: 'addorganisation', component: OrganisationComponent },
-          { path: 'editorganisation/:id', component: OrganisationComponent },
-          { path: 'people', component: PeopleComponent },
+          { path: 'people', component: PersonListComponent },
           { path: 'person/:id', component: PersonOverviewComponent },
-          { path: 'addperson', component: PersonComponent },
-          { path: 'editperson/:id', component: PersonComponent },
+          { path: 'organisations', component: OrganisationListComponent },
+          { path: 'organisation/:id', component: OrganisationOverviewComponent },
+          { path: 'legalform', component: LegalFormListComponent },
         ],
       },
       {
@@ -153,6 +154,16 @@ export const routes: Routes = [
     ],
   },
 ];
+
+export const create = {
+  [tags.Organisation]: OrganisationCreateComponent,
+  [tags.Person]: PersonCreateComponent,
+  [tags.LegalForm]: LegalFormEditComponent,
+};
+
+export const edit = {
+  [tags.LegalForm]: LegalFormEditComponent,
+};
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -199,12 +210,16 @@ export const routes: Routes = [
     LoginComponent,
     MainComponent,
     DashboardComponent,
-    OrganisationOverviewComponent,
-    OrganisationComponent,
-    OrganisationsComponent,
+
+    PersonCreateComponent,
+    PersonListComponent,
     PersonOverviewComponent,
-    PersonComponent,
-    PeopleComponent,
+    OrganisationCreateComponent,
+    OrganisationListComponent,
+    OrganisationOverviewComponent,
+    LegalFormEditComponent,
+    LegalFormListComponent,
+
     FormComponent,
     // App
     AppComponent,

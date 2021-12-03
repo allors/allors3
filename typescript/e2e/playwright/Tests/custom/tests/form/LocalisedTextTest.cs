@@ -22,7 +22,7 @@ namespace Tests
         [SetUp]
         public async Task Setup()
         {
-            await this.Login("jane@example.com");
+            await this.LoginAsync("jane@example.com");
             await this.GotoAsync("/tests/form");
         }
 

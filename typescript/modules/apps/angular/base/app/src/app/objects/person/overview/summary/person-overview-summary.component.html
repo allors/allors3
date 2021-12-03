@@ -1,0 +1,24 @@
+<mat-card *ngIf="person">
+  <mat-card-header (click)="panel.manager.toggle('detail')" style="cursor: pointer">
+    <div mat-card-avatar>
+      <mat-icon *ngIf="!person.Picture" style="font-size: 36px">person</mat-icon>
+
+      <div *ngIf="person.Photo">
+        <img mat-card-image [src]="src" />
+      </div>
+    </div>
+    <mat-card-title>{{ person.FirstName }}</mat-card-title>
+    <mat-card-subtitle>
+      <div>person.LastName</div>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div *ngIf="person.OrganisationWhereOwner" (click)="navigation.overview(person.OrganisationWhereOwner)" style="cursor: pointer">
+      <div style="color: grey">Organisation</div>
+      <div>
+        {{ person.OrganisationWhereOwner.Name }}
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

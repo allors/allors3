@@ -1,45 +1,70 @@
-import { Component, OnDestroy, Self, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
-import { scan, switchMap } from 'rxjs/operators';
+import { switchMap, scan } from 'rxjs/operators';
+import { formatDistance } from 'date-fns';
 
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
-import { Organisation } from '@allors/workspace/domain/default';
-import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
+import { Organisation } from '@allors/workspace/domain/default';
+import {
+  Action,
+  angularFilterFromDefinition,
+  angularSorter,
+  DeleteService,
+  Filter,
+  FilterField,
+  MediaService,
+  MethodService,
+  NavigationService,
+  ObjectService,
+  OverviewService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
+import { ContextService } from '@allors/workspace/angular/core';
+
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Organisation;
-  name: string | null;
-  owner: string | null;
+  name: string;
+  owner: string;
 }
 
 @Component({
-  templateUrl: './organisations.component.html',
+  templateUrl: './organisation-list.component.html',
   providers: [ContextService],
 })
-export class OrganisationsComponent implements OnInit, OnDestroy {
-  title = 'Organisations';
+export class OrganisationListComponent implements OnInit, OnDestroy {
+  public title = 'Organisations';
 
   table: Table<Row>;
 
-  overview: Action;
   delete: Action;
 
-  filter: Filter;
-
   private subscription: Subscription;
+  filter: Filter;
   m: M;
 
-  constructor(@Self() public allors: ContextService, public refreshService: RefreshService, public deleteService: DeleteService, public overviewService: OverviewService, private titleService: Title) {
+  constructor(
+    @Self() public allors: ContextService,
+
+    public factoryService: ObjectService,
+    public refreshService: RefreshService,
+    public overviewService: OverviewService,
+    public deleteService: DeleteService,
+    public methodService: MethodService,
+    public navigation: NavigationService,
+    public mediaService: MediaService,
+    titleService: Title
+  ) {
     this.allors.context.name = this.constructor.name;
-    this.titleService.setTitle(this.title);
+    titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.overview = overviewService.overview();
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -48,28 +73,39 @@ export class OrganisationsComponent implements OnInit, OnDestroy {
     this.table = new Table({
       selection: true,
       columns: [{ name: 'name', sort: true }, 'owner'],
-      actions: [this.overview, this.delete],
-      defaultAction: this.overview,
+      actions: [overviewService.overview(), this.delete],
+      defaultAction: overviewService.overview(),
+      pageSize: 50,
     });
   }
 
   public ngOnInit(): void {
     const m = this.m;
-    const { pullBuilder: p } = m;
+    const { pullBuilder: pull } = m;
+    const x = {};
 
     this.filter = angularFilterFromDefinition(m.Organisation);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => [
-          refresh,
-          filterFields,
-          sort,
-          previousRefresh !== refresh || filterFields !== previousFilterFields ? Object.assign({ pageIndex: 0 }, pageEvent) : pageEvent,
-        ]),
+        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
+          pageEvent =
+            previousRefresh !== refresh || filterFields !== previousFilterFields
+              ? {
+                  ...pageEvent,
+                  pageIndex: 0,
+                }
+              : pageEvent;
+
+          if (pageEvent.pageIndex === 0) {
+            this.table.pageIndex = 0;
+          }
+
+          return [refresh, filterFields, sort, pageEvent];
+        }),
         switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
-            p.Organisation({
+            pull.Organisation({
               predicate: this.filter.definition.predicate,
               sorting: sort ? angularSorter(m.Organisation)?.create(sort) : null,
               include: {
@@ -87,14 +123,15 @@ export class OrganisationsComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
+
         const organisations = loaded.collection<Organisation>(m.Organisation);
-        this.table.total = loaded.value('Organisations_total') as number;
-        this.table.data = organisations.map((v) => {
+        this.table.total = (loaded.value('Organisations_total') ?? 0) as number;
+        this.table.data = organisations?.map((v) => {
           return {
             object: v,
             name: v.Name,
             owner: v.Owner?.UserName ?? null,
-          };
+          } as Row;
         });
       });
   }
