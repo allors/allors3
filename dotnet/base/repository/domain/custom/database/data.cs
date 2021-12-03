@@ -132,6 +132,12 @@ namespace Allors.Repository
         public string Html { get; set; }
 
         #region Allors
+        [Id("6F504BB6-8A55-46EF-BC3E-503486AF7384")]
+        #endregion
+        [Workspace(Default)]
+        public string Static { get; set; }
+
+        #region Allors
         [Id("36FA4EB8-5EA9-4F56-B5AA-9908EF2B417F")]
         [Indexed]
         #endregion

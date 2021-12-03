@@ -29,6 +29,8 @@ namespace Tests
 
         public AllorsMaterialMarkdownComponent Markdown => new AllorsMaterialMarkdownComponent(this, this.M.Data.Markdown);
 
+        public AllorsMaterialLocalisedMarkdownComponent LocalisedMarkdown => new AllorsMaterialLocalisedMarkdownComponent(this, this.M.Data.LocalisedMarkdowns);
+
         public AllorsMaterialRadioGroupComponent RadioGroup => new AllorsMaterialRadioGroupComponent(this, this.M.Data.RadioGroup);
 
         public AllorsMaterialSelectComponent Select => new AllorsMaterialSelectComponent(this, this.M.Data.Select);
@@ -41,7 +43,11 @@ namespace Tests
 
         public AllorsMaterialInputComponent String => new AllorsMaterialInputComponent(this, this.M.Data.String);
 
+        public AllorsMaterialStaticComponent Static => new AllorsMaterialStaticComponent(this, this.M.Data.Static);
+
         public AllorsMaterialTextareaComponent PlainText => new AllorsMaterialTextareaComponent(this, this.M.Data.PlainText);
+
+        public AllorsMaterialLocalisedTextComponent LocalisedText => new AllorsMaterialLocalisedTextComponent(this, this.M.Data.LocalisedTexts);
 
         public async Task SaveAsync()
         {

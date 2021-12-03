@@ -27,6 +27,20 @@ namespace Tests
         }
 
         [Test]
+        public async Task Populated()
+        {
+            var data = new DataBuilder(this.Transaction).Build();
+            data.PlainText = "This is plain text.";
+            this.Transaction.Commit();
+
+            await this.GotoAsync("/tests/form");
+
+            var actual = await this.FormPage.PlainText.GetAsync();
+
+            Assert.That(actual, Is.EqualTo("This is plain text."));
+        }
+
+        [Test]
         public async Task Set()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();

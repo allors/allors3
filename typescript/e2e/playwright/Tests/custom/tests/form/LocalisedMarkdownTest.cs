@@ -5,14 +5,13 @@
 
 namespace Tests
 {
-    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class FileTest : Test
+    public class LocalisedMarkdownTest : Test
     {
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
@@ -28,12 +27,28 @@ namespace Tests
         }
 
         [Test]
-        public async Task Upload()
+        public async Task Populated()
         {
+            var locale = new Locales(this.Transaction).DutchBelgium;
+            var localisedMarkdown = new LocalisedTextBuilder(this.Transaction).WithLocale(locale).WithText("*** Hello ***").Build();
+            var data = new DataBuilder(this.Transaction).Build();
+            data.AddLocalisedMarkdown(localisedMarkdown);
+            this.Transaction.Commit();
+
+            await this.GotoAsync("/tests/form");
+
+            var actual = await this.FormPage.LocalisedMarkdown.GetAsync();
+
+            Assert.That(actual, Is.EqualTo("*** Hello ***"));
+        }
+
+        [Test]
+        public async Task Set()
+        {
+            var locale = new Locales(this.Transaction).DutchBelgium;
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var file = new FileInfo("logo.png");
-            await this.FormPage.File.UploadAsync(file);
+            await this.FormPage.LocalisedMarkdown.SetAsync("*** Hello ***");
 
             await this.FormPage.SaveAsync();
             this.Transaction.Rollback();
@@ -41,30 +56,7 @@ namespace Tests
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.ExistFile);
-        }
-
-        [Test]
-        public async Task Remove()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
-
-            var file = new FileInfo("logo.png");
-            await this.FormPage.File.UploadAsync(file);
-
-            await this.FormPage.SaveAsync();
-
-            this.Transaction.Rollback();
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            var data = after.Except(before).First();
-
-            var media = this.FormPage.File.Media(data.File);
-            await media.RemoveAsync();
-
-            await this.FormPage.SaveAsync();
-            this.Transaction.Rollback();
-
-            Assert.False(data.ExistFile);
+            Assert.AreEqual("*** Hello ***", data.LocalisedMarkdowns.First(v => v.Locale.Equals(locale)).Text);
         }
     }
 }

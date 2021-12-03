@@ -5,7 +5,6 @@
 
 namespace Tests
 {
-    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Microsoft.Playwright;

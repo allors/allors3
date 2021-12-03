@@ -11,7 +11,7 @@ namespace Tests
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class MarkdownTest : Test
+    public class StaticTest : Test
     {
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
@@ -30,30 +30,14 @@ namespace Tests
         public async Task Populated()
         {
             var data = new DataBuilder(this.Transaction).Build();
-            data.Markdown = "*** Hello ***";
+            data.Static = "A Static String!";
             this.Transaction.Commit();
 
             await this.GotoAsync("/tests/form");
 
-            var actual = await this.FormPage.Markdown.GetAsync();
+            var actual = await this.FormPage.Static.GetAsync();
 
-            Assert.That(actual, Is.EqualTo("*** Hello ***"));
-        }
-
-        [Test]
-        public async Task Set()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
-
-            await this.FormPage.Markdown.SetAsync("*** Hello ***");
-
-            await this.FormPage.SaveAsync();
-            this.Transaction.Rollback();
-
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
-            var data = after.Except(before).First();
-            Assert.AreEqual("*** Hello ***", data.Markdown);
+            Assert.That(actual, Is.EqualTo("A Static String!"));
         }
     }
 }

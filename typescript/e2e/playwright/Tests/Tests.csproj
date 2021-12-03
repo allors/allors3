@@ -6,7 +6,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-		<PackageReference Include="Microsoft.Playwright" Version="1.17.0" />
+		<PackageReference Include="Microsoft.Playwright" Version="1.17.1" />
 		<PackageReference Include="NUnit" Version="3.13.2" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
 	</ItemGroup>
@@ -16,6 +16,7 @@
 		<ProjectReference Include="..\..\..\..\dotnet\base\database\domain\Domain.csproj" />
 		<ProjectReference Include="..\..\..\..\dotnet\base\database\meta\Meta.csproj" />
 		<ProjectReference Include="..\..\..\..\dotnet\system\database\adapters\allors.database.adapters.sql.sqlclient\allors.database.adapters.sql.sqlclient.csproj" />
+		<ProjectReference Include="..\E2E\Allors.E2E.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,10 +35,6 @@
 	  <None Update="logo2.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="custom\components\" />
 	</ItemGroup>
 
 </Project>

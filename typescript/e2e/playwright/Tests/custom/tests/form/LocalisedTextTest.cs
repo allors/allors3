@@ -1,18 +1,17 @@
-// <copyright file="AutoCompleteFilterTest.cs" company="Allors bvba">
+// <copyright file="InputTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Tests
 {
-    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class FileTest : Test
+    public class LocalisedTextTest : Test
     {
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
@@ -28,12 +27,28 @@ namespace Tests
         }
 
         [Test]
-        public async Task Upload()
+        public async Task Populated()
         {
+            var locale = new Locales(this.Transaction).DutchBelgium;
+            var localisedMarkdown = new LocalisedTextBuilder(this.Transaction).WithLocale(locale).WithText("*** Hello ***").Build();
+            var data = new DataBuilder(this.Transaction).Build();
+            data.AddLocalisedText(localisedMarkdown);
+            this.Transaction.Commit();
+
+            await this.GotoAsync("/tests/form");
+
+            var actual = await this.FormPage.LocalisedText.GetAsync();
+
+            Assert.That(actual, Is.EqualTo("*** Hello ***"));
+        }
+
+        [Test]
+        public async Task Set()
+        {
+            var locale = new Locales(this.Transaction).DutchBelgium;
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var file = new FileInfo("logo.png");
-            await this.FormPage.File.UploadAsync(file);
+            await this.FormPage.LocalisedText.SetAsync("*** Hello ***");
 
             await this.FormPage.SaveAsync();
             this.Transaction.Rollback();
@@ -41,30 +56,7 @@ namespace Tests
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.ExistFile);
-        }
-
-        [Test]
-        public async Task Remove()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
-
-            var file = new FileInfo("logo.png");
-            await this.FormPage.File.UploadAsync(file);
-
-            await this.FormPage.SaveAsync();
-
-            this.Transaction.Rollback();
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            var data = after.Except(before).First();
-
-            var media = this.FormPage.File.Media(data.File);
-            await media.RemoveAsync();
-
-            await this.FormPage.SaveAsync();
-            this.Transaction.Rollback();
-
-            Assert.False(data.ExistFile);
+            Assert.AreEqual("*** Hello ***", data.LocalisedTexts.First(v => v.Locale.Equals(locale)).Text);
         }
     }
 }

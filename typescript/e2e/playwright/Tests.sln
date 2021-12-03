@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meta", "..\..\..\dotnet\bas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "allors.database.adapters.sql.sqlclient", "..\..\..\dotnet\system\database\adapters\allors.database.adapters.sql.sqlclient\allors.database.adapters.sql.sqlclient.csproj", "{BB36C267-FD8D-4233-ABD6-6851526C4E4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{C7141FC7-09A1-4A0D-A6E8-84528B9BB9D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{C7141FC7-09A1-4A0D-A6E8-84528B9BB9D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.E2E", "E2E\Allors.E2E.csproj", "{BE25D375-245E-425D-A94C-6185A1B51D2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{C7141FC7-09A1-4A0D-A6E8-84528B9BB9D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7141FC7-09A1-4A0D-A6E8-84528B9BB9D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7141FC7-09A1-4A0D-A6E8-84528B9BB9D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE25D375-245E-425D-A94C-6185A1B51D2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE25D375-245E-425D-A94C-6185A1B51D2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE25D375-245E-425D-A94C-6185A1B51D2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE25D375-245E-425D-A94C-6185A1B51D2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
