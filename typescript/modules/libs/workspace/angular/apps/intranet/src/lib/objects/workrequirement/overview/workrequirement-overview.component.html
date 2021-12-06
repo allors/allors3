@@ -1,0 +1,19 @@
+<div class="a-main">
+  <div class="a-breadcrumb container-fluid mat-elevation-z4">
+    <div class="row">
+      <div class="col"><a (click)="navigationService.list(m.WorkEffort)">WorkRequirements</a>/ {{ requirement?.Description }}</div>
+    </div>
+  </div>
+
+  <div class="a-overview container">
+    <div class="a-content row">
+      <div class="col-md-4 mb-3">
+        <workrequirement-overview-summary></workrequirement-overview-summary>
+      </div>
+
+      <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
+        <workrequirement-overview-detail></workrequirement-overview-detail>
+      </div>
+    </div>
+  </div>
+</div>

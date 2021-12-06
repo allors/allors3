@@ -22,6 +22,7 @@ import {
   FilterField,
   EditService,
   angularFilterFromDefinition,
+  OverviewService,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -60,6 +61,7 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
 
     public factoryService: ObjectService,
     public refreshService: RefreshService,
+    public overviewService: OverviewService,
     public editService: EditService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
@@ -89,8 +91,8 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
         { name: 'location', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      actions: [overviewService.overview(), this.edit, this.delete],
+      defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
       initialSortDirection: 'desc',

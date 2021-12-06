@@ -1,0 +1,40 @@
+<mat-card *ngIf="requirement">
+  <mat-card-header (click)="panel.manager.toggle('detail')" style="cursor: pointer">
+    <div mat-card-avatar>
+      <mat-icon style="font-size: 36px">business</mat-icon>
+    </div>
+    <mat-card-title>{{ requirement.RequirementNumber }} {{ requirement.Description }}</mat-card-title>
+    <mat-card-subtitle>
+      <div>
+        {{ requirement.RequirementStateName }}
+      </div>
+    </mat-card-subtitle>
+
+    <mat-card-subtitle>
+      <div>last modified: {{ requirement.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ requirement.LastModifiedBy?.DisplayName }}</div>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div (click)="navigation.overview(requirement.Originator)" style="cursor: pointer">
+      <div style="color: grey">Customer</div>
+      <div>
+        {{ requirement.OriginatorName }}
+      </div>
+    </div>
+
+    <div (click)="navigation.overview(requirement.FixedAsset)" style="cursor: pointer">
+      <div style="color: grey">Asset</div>
+      <div>
+        {{ requirement.FixedAssetName }}
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button *ngIf="requirement.canExecuteCancel" mat-button (click)="cancel()">Cancel</button>
+    <button *ngIf="requirement.canExecuteReopen" mat-button (click)="reopen()">Reopen</button>
+    <button *ngIf="requirement.canExecuteClose" mat-button (click)="close()">Close</button>
+    <button *ngIf="requirement.canExecuteCreateWorkTask" mat-button (click)="createWorkTask()">Create Work Order</button>
+  </mat-card-actions>
+</mat-card>

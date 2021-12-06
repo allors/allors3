@@ -292,9 +292,12 @@ export { WorkEffortPartyAssignmentOverviewPanelComponent } from './lib/objects/w
 export { WorkEffortPurchaseOrderItemAssignmentEditComponent } from './lib/objects/workeffortpoiassignment/edit/workeffortpoiassignment-edit.component';
 export { WorkEffortPOIAssignmentOverviewPanelComponent } from './lib/objects/workeffortpoiassignment/overview/panel/workeffortpoiassignment-overview-panel.component';
 
-export { WorkRequirementEditComponent } from './lib/objects/workrequirement/edit/workrequirement-edit.component';
+export { WorkRequirementCreateComponent } from './lib/objects/workrequirement/create/workrequirement-create.component';
 export { WorkRequirementListComponent } from './lib/objects/workrequirement/list/workrequirement-list.component';
+export { WorkRequirementOverviewComponent } from './lib/objects/workrequirement/overview/workrequirement-overview.component';
+export { WorkRequirementOverviewDetailComponent } from './lib/objects/workrequirement/overview/detail/workrequirement-overview-detail.component';
 export { WorkRequirementOverviewPanelComponent } from './lib/objects/workrequirement/overview/panel/workrequirement-overview-panel.component';
+export { WorkRequirementOverviewSummaryComponent } from './lib/objects/workrequirement/overview/summary/workrequirement-overview-summary.component';
 
 export { WorkTaskCreateComponent } from './lib/objects/worktask/create/worktask-create.component';
 export { WorkTaskOverviewComponent } from './lib/objects/worktask/overview/worktask-overview.component';
