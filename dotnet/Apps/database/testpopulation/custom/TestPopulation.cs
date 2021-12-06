@@ -66,26 +66,76 @@ namespace Allors
                 .WithCountry(belgium)
                 .Build();
 
-            var internalOrganisation = new OrganisationBuilder(this.Transaction)
-                .WithIsInternalOrganisation(true)
-                .WithDoAccounting(true)
-                .WithName("internalOrganisation")
-                .WithPreferredCurrency(new Currencies(this.Transaction).CurrencyByCode["EUR"])
-                .WithInvoiceSequence(new InvoiceSequences(this.Transaction).EnforcedSequence)
-                .WithRequestSequence(new RequestSequences(this.Transaction).EnforcedSequence)
-                .WithQuoteSequence(new QuoteSequences(this.Transaction).EnforcedSequence)
-                .WithCustomerShipmentSequence(new CustomerShipmentSequences(this.Transaction).EnforcedSequence)
-                .WithCustomerReturnSequence(new CustomerReturnSequences(this.Transaction).EnforcedSequence)
-                .WithPurchaseShipmentSequence(new PurchaseShipmentSequences(this.Transaction).EnforcedSequence)
-                .WithPurchaseReturnSequence(new PurchaseReturnSequences(this.Transaction).EnforcedSequence)
-                .WithDropShipmentSequence(new DropShipmentSequences(this.Transaction).EnforcedSequence)
-                .WithIncomingTransferSequence(new IncomingTransferSequences(this.Transaction).EnforcedSequence)
-                .WithOutgoingTransferSequence(new OutgoingTransferSequences(this.Transaction).EnforcedSequence)
-                .WithWorkEffortSequence(new WorkEffortSequences(this.Transaction).EnforcedSequence)
-                .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")
-                .WithPurchaseInvoiceNumberPrefix("incoming invoiceno: ")
-                .WithPurchaseOrderNumberPrefix("purchase orderno: ")
-                .Build();
+            var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
+
+            var internalOrganisation = Organisations.CreateInternalOrganisation(
+                transaction: this.Transaction,
+                name: "internalOrganisation",
+                address: "address",
+                postalCode: "code",
+                locality: "city",
+                country: belgium,
+                phone1CountryCode: "+32",
+                phone1: "111",
+                phone1Purpose: new ContactMechanismPurposes(this.Transaction).GeneralPhoneNumber,
+                phone2CountryCode: string.Empty,
+                phone2: string.Empty,
+                phone2Purpose: null,
+                emailAddress: "email@internalOrganisation.com",
+                websiteAddress: "www.internalOrganisation.com",
+                taxNumber: "BE 1234567",
+                bankName: "ING",
+                facilityName: "Warehouse",
+                bic: "BBRUBEBB",
+                iban: "BE89 3200 1467 7685",
+                currency: euro,
+                logo: "allors.png",
+                storeName: "Store",
+                billingProcess: new BillingProcesses(this.Transaction).BillingForOrderItems,
+                customerShipmentNumberPrefix: "i-CS",
+                salesInvoiceNumberPrefix: "i-SI",
+                salesOrderNumberPrefix: "i-SO",
+                purchaseOrderNumberPrefix: "purchase orderno: ",
+                purchaseInvoiceNumberPrefix: "incoming invoiceno: ",
+                requestNumberPrefix: "i-RFQ",
+                quoteNumberPrefix: "i-Q",
+                productNumberPrefix: "i-",
+                workEffortPrefix: "i-WO-",
+                requirementPrefix: "i-REQ-",
+                creditNoteNumberPrefix: "i-CN-",
+                isImmediatelyPicked: true,
+                autoGenerateShipmentPackage: true,
+                isImmediatelyPacked: true,
+                isAutomaticallyShipped: true,
+                autoGenerateCustomerShipment: true,
+                isAutomaticallyReceived: false,
+                autoGeneratePurchaseShipment: false,
+                useCreditNoteSequence: true,
+                requestCounterValue: 0,
+                quoteCounterValue: 0,
+                orderCounterValue: 0,
+                purchaseOrderCounterValue: 0,
+                invoiceCounterValue: 0,
+                purchaseInvoiceCounterValue: 0,
+                purchaseOrderNeedsApproval: false,
+                purchaseOrderApprovalThresholdLevel1: null,
+                purchaseOrderApprovalThresholdLevel2: null,
+                serialisedItemSoldOns: serialisedItemSoldOns,
+                collectiveWorkEffortInvoice: true,
+                invoiceSequence: new InvoiceSequences(this.Transaction).EnforcedSequence,
+                requestSequence: new RequestSequences(this.Transaction).EnforcedSequence,
+                quoteSequence: new QuoteSequences(this.Transaction).EnforcedSequence,
+                customerShipmentSequence: new CustomerShipmentSequences(this.Transaction).EnforcedSequence,
+                purchaseShipmentSequence: new PurchaseShipmentSequences(this.Transaction).EnforcedSequence,
+                workEffortSequence: new WorkEffortSequences(this.Transaction).EnforcedSequence,
+                requirementSequence: new RequirementSequences(this.Transaction).EnforcedSequence);
+
+            internalOrganisation.PurchaseShipmentNumberPrefix = "incoming shipmentno: ";
+            internalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.PurchaseReturnSequence = new PurchaseReturnSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.DropShipmentSequence = new DropShipmentSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.IncomingTransferSequence = new IncomingTransferSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.OutgoingTransferSequence = new OutgoingTransferSequences(this.Transaction).EnforcedSequence;
 
             this.Transaction.Derive();
 

@@ -98,7 +98,6 @@ export { AllorsMaterialInputComponent } from './lib/material/components/role/inp
 export { AllorsMaterialLocalisedMarkdownComponent } from './lib/material/components/role/localisedmarkdown/localised-markdown.component';
 export { AllorsMaterialLocalisedTextComponent } from './lib/material/components/role/localisedtext/localised-text.component';
 export { AllorsMaterialMarkdownComponent } from './lib/material/components/role/markdown/markdown.component';
-export { AllorsMaterialMonthpickerComponent } from './lib/material/components/role/monthpicker/monthpicker.component';
 export { AllorsMaterialRadioGroupComponent, RadioGroupOption } from './lib/material/components/role/radiogroup/radio-group.component';
 export { AllorsMaterialSelectComponent } from './lib/material/components/role/select/select.component';
 export { AllorsMaterialSliderComponent } from './lib/material/components/role/slider/slider.component';

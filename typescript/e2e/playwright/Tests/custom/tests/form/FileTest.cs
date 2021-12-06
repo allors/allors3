@@ -8,7 +8,6 @@ namespace Tests
     using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
-    using Angular.Components;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -24,7 +23,7 @@ namespace Tests
         [SetUp]
         public async Task Setup()
         {
-            await this.Login("jane@example.com");
+            await this.LoginAsync("jane@example.com");
             await this.GotoAsync("/tests/form");
         }
 

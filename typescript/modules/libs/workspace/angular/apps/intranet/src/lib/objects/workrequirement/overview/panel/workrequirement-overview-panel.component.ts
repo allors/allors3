@@ -3,7 +3,7 @@ import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { SerialisedItem, WorkRequirement } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, TestScope, OverviewService } from '@allors/workspace/angular/base';
+import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -49,8 +49,6 @@ export class WorkRequirementOverviewPanelComponent implements OnInit {
     public overviewService: OverviewService,
     public deleteService: DeleteService
   ) {
-    super();
-
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 

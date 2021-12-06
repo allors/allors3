@@ -17,5 +17,13 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Indexed]
         public Person AutocompleteDefault { get; set; }
+
+        #region Allors
+        [Id("E459A1DF-8866-4B56-9EB2-F8F890BC67ED")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Indexed]
+        public Person SelectDefault { get; set; }
     }
 }

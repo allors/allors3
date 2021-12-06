@@ -93,7 +93,7 @@ namespace Tests
         {
         }
 
-        protected async Task Login(string username, string password = null)
+        protected async Task LoginAsync(string username, string password = null)
         {
             var loginPage = new LoginPage(this.Page);
             await loginPage.Login(username, password);

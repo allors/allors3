@@ -18,7 +18,6 @@ import {
   RefreshService,
   Table,
   TableRow,
-  TestScope,
   angularSorter,
   FilterField,
   EditService,
@@ -37,7 +36,6 @@ interface Row extends TableRow {
   originator: string;
   equipment: string;
   location: string;
-  fleetCode: string;
   lastModifiedDate: string;
 }
 
@@ -69,8 +67,6 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
     public mediaService: MediaService,
     titleService: Title
   ) {
-    super();
-
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
@@ -91,7 +87,6 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
         { name: 'originator', sort: true },
         { name: 'equipment', sort: true },
         { name: 'location', sort: true },
-        { name: 'fleetCode', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
       actions: [this.edit, this.delete],
@@ -158,7 +153,6 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
             originator: v.OriginatorName,
             equipment: v.FixedAssetName,
             location: v.Location,
-            fleetCode: v.FleetCode,
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;
         });

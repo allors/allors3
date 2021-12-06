@@ -19,6 +19,7 @@ import {
   Party,
   Person,
   PositionType,
+  Priority,
   Product,
   ProductCategory,
   ProductIdentification,
@@ -29,6 +30,7 @@ import {
   QuoteState,
   RateType,
   RequestState,
+  RequirementState,
   SalesInvoiceState,
   SalesInvoiceType,
   SalesOrderState,
@@ -86,7 +88,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
     {
       title: 'WorkEfforts',
       icon: 'schedule',
-      children: [{ objectType: m.WorkEffort }],
+      children: [{ objectType: m.WorkRequirement }, { objectType: m.WorkEffort }],
     },
     {
       title: 'HR',
@@ -130,6 +132,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   nav(m.Carrier, '/shipment/carriers');
 
   nav(m.WorkEffort, '/workefforts/workefforts');
+  nav(m.WorkRequirement, '/workefforts/workrequirements', '/workefforts/workrequirement/:id');
   nav(m.WorkTask, '/workefforts/workefforts', '/workefforts/worktask/:id');
 
   nav(m.PositionType, '/humanresource/positiontypes');
@@ -143,6 +146,17 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   const currencySearch = new SearchFactory({
     objectType: m.Currency,
     roleTypes: [m.Currency.IsoCode],
+  });
+
+  const requirementStateSearch = new SearchFactory({
+    objectType: m.RequirementState,
+    roleTypes: [m.RequirementState.Name],
+  });
+
+  const prioritySearch = new SearchFactory({
+    objectType: m.Priority,
+    predicates: [{ kind: 'Equals', propertyType: m.Enumeration.IsActive, value: true }],
+    roleTypes: [m.Priority.Name],
   });
 
   const inventoryItemKindSearch = new SearchFactory({
@@ -896,6 +910,29 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
     )
   );
 
+  angularFilterDefinition(m.WorkRequirement, new FilterDefinition(
+    {
+      kind: 'And',
+      operands: [
+        { kind: 'Equals', propertyType: m.WorkRequirement.RequirementState, parameter: 'state' },
+        { kind: 'Equals', propertyType: m.WorkRequirement.Priority, parameter: 'priority' },
+        { kind: 'Like', roleType: m.WorkRequirement.RequirementNumber, parameter: 'Number' },
+        { kind: 'Like', roleType: m.WorkRequirement.Location, parameter: 'Location' },
+        { kind: 'Equals', propertyType: m.WorkRequirement.FixedAsset, parameter: 'equipment' },
+        {
+          kind: 'ContainedIn',
+          propertyType: m.WorkRequirement.FixedAsset,
+          extent: { kind: 'Filter', objectType: m.SerialisedItem, predicate: { kind: 'Like', roleType: m.SerialisedItem.CustomerReferenceNumber, parameter: 'fleetcode' } },
+        },
+      ],
+    },
+    {
+      state: { search: () => requirementStateSearch, display: (v: RequirementState) => v && v.Name },
+      priority: { search: () => prioritySearch, display: (v: Priority) => v && v.Name },
+      equipment: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.DisplayName },
+    }
+  ));
+
   angularSorter(
     m.Carrier,
     new Sorter({
@@ -1100,6 +1137,18 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       name: [m.WorkEffort.Name],
       description: [m.WorkEffort.Description],
       lastModifiedDate: m.Person.LastModifiedDate,
+    })
+  );
+
+  angularSorter(
+    m.WorkRequirement,
+    new Sorter({
+      number: [m.WorkRequirement.SortableRequirementNumber],
+      state: [m.WorkRequirement.RequirementStateName],
+      priority: [m.WorkRequirement.SortableRequirementNumber],
+      equipment: [m.WorkRequirement.FixedAssetName],
+      location: [m.WorkRequirement.Location],
+      lastModifiedDate: m.WorkRequirement.LastModifiedDate,
     })
   );
 }

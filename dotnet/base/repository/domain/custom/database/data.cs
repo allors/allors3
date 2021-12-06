@@ -76,6 +76,12 @@ namespace Allors.Repository
         public Media File { get; set; }
 
         #region Allors
+        [Id("BC8943B1-7A8A-4C67-B8DB-BC0ECFF478DF")]
+        #endregion
+        [Workspace(Default)]
+        public DateTime Month { get; set; }
+
+        #region Allors
         [Id("68515CCE-3E87-4D21-B5E5-2136CC3D4F5C")]
         [Indexed]
         #endregion
@@ -124,6 +130,12 @@ namespace Allors.Repository
         [Size(-1)]
         [MediaType("text/html")]
         public string Html { get; set; }
+
+        #region Allors
+        [Id("6F504BB6-8A55-46EF-BC3E-503486AF7384")]
+        #endregion
+        [Workspace(Default)]
+        public string Static { get; set; }
 
         #region Allors
         [Id("36FA4EB8-5EA9-4F56-B5AA-9908EF2B417F")]

@@ -36,6 +36,5 @@ namespace Allors.Repository
         public void Delete() { }
 
         #endregion
-
     }
 }

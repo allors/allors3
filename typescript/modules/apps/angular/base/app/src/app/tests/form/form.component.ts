@@ -83,6 +83,7 @@ export class FormComponent implements OnInit, OnDestroy {
                 File: {},
                 MultipleFiles: {},
                 LocalisedTexts: {},
+                LocalisedMarkdowns: {},
               },
             }),
             p.Organisation({
