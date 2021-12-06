@@ -15,12 +15,12 @@ import { FetcherService } from '../../../..';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
-  selector: 'requirement-edit',
-  templateUrl: './workrequirement-edit.component.html',
+  // tslint:disable-next-line:component-selector
+  selector: 'workrequirement-create',
+  templateUrl: './workrequirement-create.component.html',
   providers: [PanelService, ContextService],
 })
-export class WorkRequirementEditComponent implements OnInit, OnDestroy {
+export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title: string;
 
@@ -37,7 +37,7 @@ export class WorkRequirementEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkRequirementEditComponent>,
+    public dialogRef: MatDialogRef<WorkRequirementCreateComponent>,
 
     public refreshService: RefreshService,
     private saveService: SaveService,

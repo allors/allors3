@@ -1,0 +1,51 @@
+<form *ngIf="requirement" #form="ngForm" (submit)="save()" novalidate>
+  <h3 mat-dialog-title>{{ title }}</h3>
+
+  <mat-dialog-content>
+
+    <div class="row">
+      <div class="col-md">
+        <div class="row">
+          <a-mat-autocomplete
+            class="col-md"
+            [object]="requirement"
+            [roleType]="m.WorkRequirement.Originator"
+            [filter]="customersFilter.create(allors.context)"
+            display="DisplayName"
+            (changed)="originatorSelected($event)"
+            label="From"
+          ></a-mat-autocomplete>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <a-mat-select class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.FixedAsset" [options]="serialisedItems" display="DisplayName"></a-mat-select>
+    </div>
+
+    <div class="row">
+      <a-mat-radio-group class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.Priority" [options]="priorityOptions"></a-mat-radio-group>
+    </div>
+
+    <div class="row">
+      <a-mat-input class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.Location"></a-mat-input>
+    </div>
+
+    <div class="row">
+      <a-mat-textarea class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.Reason"></a-mat-textarea>
+    </div>
+
+    <div class="row pt-3">
+      <a-mat-files class="col-md-12" [object]="requirement" [roleType]="m.WorkRequirement.Pictures" accept="image/*"></a-mat-files>
+    </div>
+
+    <div class="row">
+      <a-mat-slidetoggle class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.UnOperable"></a-mat-slidetoggle>
+    </div>
+</mat-dialog-content>
+
+  <div mat-dialog-actions>
+    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
+</div>
+</form>

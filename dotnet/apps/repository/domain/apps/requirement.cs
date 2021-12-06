@@ -219,5 +219,13 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         void Cancel();
+
+        #region Allors
+
+        [Id("b2c4db2c-b2c9-44a4-bb81-da353071735b")]
+
+        #endregion
+        [Workspace(Default)]
+        void Close();
     }
 }
