@@ -4,7 +4,7 @@ import { NgForm } from '@angular/forms';
 import { LocalisedRoleField } from '../../../../components/forms/localised-role-field';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-localised-text',
   templateUrl: './localised-text.component.html',
 })

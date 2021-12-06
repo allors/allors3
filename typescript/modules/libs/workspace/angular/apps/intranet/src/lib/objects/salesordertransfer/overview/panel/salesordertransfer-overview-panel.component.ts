@@ -13,7 +13,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'salesordertransfer-overview-panel',
   templateUrl: './salesordertransfer-overview-panel.component.html',
   providers: [PanelService],

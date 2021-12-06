@@ -5,7 +5,7 @@ import { Brand } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'brand-inline',
   templateUrl: './brand-inline.component.html',
 })

@@ -4,7 +4,7 @@ TemplateId() ::= <<FA2E53B4-915D-4227-8571-456FC8E04DB0>>
 TemplateName() ::= <<Allors C# Uml>>
 TemplateVersion() ::= <<1.0.23>>
 TemplateAllors() ::= <<1.0>>
-TemplateConfiguration(meta) ::= <<
+TemplateConfiguration(meta, workspaceName) ::= <<
 $!
 Copyright 2002-2013 Allors bvba.
 
@@ -27,28 +27,28 @@ For more information visit http://www.allors.com/legal
 </generations>
 >>
 
-domain(meta) ::= <<
+domain(meta, workspaceName) ::= <<
 namespace Allors.Domain
 {
-	$meta.Composites:{objectType|
-		$composite(meta=meta,composite=objectType)$
+	$meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{objectType|
+		$composite(composite=objectType)$
 	}$
 }
 >>
 
-composite(meta,composite) ::= <<
+composite(composite) ::= <<
 
-	public interface $composite.Name$ $if(composite.DirectSupertypes)$: $composite.DirectSupertypes:{directSupertype|$directSupertype.SingularName$}; separator=", "$ $endif$
+	public interface $composite.Name$ $if(composite.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName))$: $composite.WorkspaceDirectSupertypesByWorkspaceName.(workspaceName):{directSupertype|$directSupertype.SingularName$}; separator=", "$ $endif$
 	{
-		$composite.ExclusiveRoleTypes:{roleType|$roleType(roleType=roleType)$}; separator="\n"$
+		$composite.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$roleType(roleType=roleType)$}; separator="\n"$
 	}
 >>
 
 roleType(roleType) ::= <<
 $if(roleType.IsOne)$
-			$nullableName(roleType)$ $roleType.SingularPropertyName$ {set;}
+			$nullableName(roleType)$ $roleType.SingularName$ {set;}
 $else$
-			$nullableName(roleType)$ $roleType.PluralPropertyName$ {set;}
+			$nullableName(roleType)$ $roleType.PluralName$ {set;}
 $endif$
 >>
 

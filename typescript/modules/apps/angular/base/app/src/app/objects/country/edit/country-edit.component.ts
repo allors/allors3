@@ -4,25 +4,25 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { LegalForm } from '@allors/workspace/domain/default';
+import { Country } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  templateUrl: './legalform-edit.component.html',
+  templateUrl: './country-edit.component.html',
   providers: [ContextService],
 })
-export class LegalFormEditComponent implements OnInit, OnDestroy {
+export class CountryEditComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
   public m: M;
 
-  public legalForm: LegalForm;
+  public country: Country;
 
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<LegalFormEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
+  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<CountryEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
@@ -31,7 +31,7 @@ export class LegalFormEditComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
+    this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -40,7 +40,7 @@ export class LegalFormEditComponent implements OnInit, OnDestroy {
 
           if (!isCreate) {
             pulls.push(
-              pull.LegalForm({
+              pull.Country({
                 objectId: this.data.id,
               })
             );
@@ -53,15 +53,15 @@ export class LegalFormEditComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         if (isCreate) {
-          this.title = 'Add Position Type';
-          this.legalForm = this.allors.context.create<LegalForm>(m.LegalForm);
+          this.title = 'Add Country';
+          this.country = this.allors.context.create<Country>(m.Country);
         } else {
-          this.legalForm = loaded.object<LegalForm>(m.LegalForm);
+          this.country = loaded.object<Country>(m.Country);
 
-          if (this.legalForm.canWriteName) {
-            this.title = 'Edit Legal Form';
+          if (this.country.canWriteName) {
+            this.title = 'Edit Country';
           } else {
-            this.title = 'View Legal Form';
+            this.title = 'View Country';
           }
         }
       });
@@ -75,7 +75,7 @@ export class LegalFormEditComponent implements OnInit, OnDestroy {
 
   public save(): void {
     this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.legalForm);
+      this.dialogRef.close(this.country);
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

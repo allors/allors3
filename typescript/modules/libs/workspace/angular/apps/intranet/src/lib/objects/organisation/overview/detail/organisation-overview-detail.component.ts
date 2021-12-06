@@ -10,7 +10,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'organisation-overview-detail',
   templateUrl: './organisation-overview-detail.component.html',
   providers: [ContextService, PanelService],

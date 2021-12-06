@@ -11,7 +11,7 @@ import { AllorMediaPreviewComponent } from './preview/media-preview.component';
 import { isImage } from './media';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-media',
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss'],

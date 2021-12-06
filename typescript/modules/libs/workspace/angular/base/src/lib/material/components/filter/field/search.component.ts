@@ -9,7 +9,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { FilterFieldDefinition } from '../../../../components/filter/filter-field-definition';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-filter-field-search',
   templateUrl: './search.component.html',
 })

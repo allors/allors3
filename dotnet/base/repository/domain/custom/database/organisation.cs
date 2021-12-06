@@ -63,7 +63,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         public Person[] Shareholders { get; set; }
 
-
         #region Allors
         [Id("17e55fcd-2c82-462b-8e31-b4a515acdaa9")]
         [Multiplicity(Multiplicity.OneToMany)]
@@ -159,6 +158,14 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         public bool JustDidIt { get; set; }
+
+        #region Allors
+        [Id("0E1BA7CE-1712-4664-8CE0-9180E49734DE")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        public Country Country { get; set; }
 
         #region inherited methods
         public void OnBuild() { }

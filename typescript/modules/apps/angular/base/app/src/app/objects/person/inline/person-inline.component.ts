@@ -5,7 +5,7 @@ import { Locale, Person } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'person-inline',
   templateUrl: './person-inline.component.html',
 })

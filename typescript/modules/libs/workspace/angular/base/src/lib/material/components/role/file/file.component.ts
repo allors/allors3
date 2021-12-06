@@ -11,7 +11,7 @@ import { RoleField } from '../../../../components/forms/role-field';
 import { MediaService } from '../../../../services/media/media.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-file',
   templateUrl: './file.component.html',
 })

@@ -4,7 +4,7 @@ import { PartyContactMechanism } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'party-contactmechanism',
   templateUrl: './contactmechanism-inline.component.html',
 })

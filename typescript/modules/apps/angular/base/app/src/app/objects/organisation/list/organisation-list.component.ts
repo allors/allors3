@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
@@ -30,6 +29,7 @@ import { PageEvent } from '@angular/material/paginator';
 interface Row extends TableRow {
   object: Organisation;
   name: string;
+  country: string;
   owner: string;
 }
 
@@ -72,7 +72,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }, 'owner'],
+      columns: [{ name: 'name', sort: true }, 'country', 'owner'],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -82,7 +82,6 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
-    const x = {};
 
     this.filter = angularFilterFromDefinition(m.Organisation);
 
@@ -110,7 +109,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
               sorting: sort ? angularSorter(m.Organisation)?.create(sort) : null,
               include: {
                 Owner: {},
-                Employees: {},
+                Country: {},
               },
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -130,6 +129,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
           return {
             object: v,
             name: v.Name,
+            country: v.Country?.Name ?? null,
             owner: v.Owner?.UserName ?? null,
           } as Row;
         });

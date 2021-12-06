@@ -7,7 +7,8 @@ import { FilterField } from '../../../components/filter/filter-field';
 import { AllorsMaterialFilterFieldDialogComponent } from './field/dialog.component';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+    // eslint-disable-next-line @angular-eslint/component-selector
+
   selector: 'a-mat-filter',
   templateUrl: './filter.component.html',
 })

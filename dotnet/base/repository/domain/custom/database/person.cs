@@ -78,6 +78,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         #endregion
+        [Workspace(Default)]
         public Gender Gender { get; set; }
 
         #region Allors

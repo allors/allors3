@@ -8,7 +8,7 @@ import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'productquote-overview-summary',
   templateUrl: './productquote-overview-summary.component.html',
   providers: [PanelService],

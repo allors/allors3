@@ -8,7 +8,7 @@ import { NavigationService, PanelService, RefreshService, SaveService } from '@a
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'worktask-overview-detail',
   templateUrl: './worktask-overview-detail.component.html',
   providers: [PanelService, ContextService],

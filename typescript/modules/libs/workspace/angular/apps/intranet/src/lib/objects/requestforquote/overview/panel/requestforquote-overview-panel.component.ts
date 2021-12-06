@@ -15,7 +15,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'requestforquote-overview-panel',
   templateUrl: './requestforquote-overview-panel.component.html',
   providers: [PanelService],

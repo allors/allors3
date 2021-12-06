@@ -14,7 +14,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'workeffort-overview-panel',
   templateUrl: './workeffort-overview-panel.component.html',
   providers: [PanelService],

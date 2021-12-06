@@ -34,6 +34,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { AuthorizationService } from './auth/authorization.service';
@@ -103,6 +104,8 @@ import {
   ObjectServiceCore,
   SaveServiceCore,
   AllorsMaterialSideNavServiceCore,
+  OBJECT_CREATE_TOKEN,
+  OBJECT_EDIT_TOKEN,
 } from '@allors/workspace/angular/base';
 
 import { LoginComponent } from './auth/login.component';
@@ -111,14 +114,19 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { FormComponent } from './tests/form/form.component';
 import { tags } from '@allors/workspace/meta/default';
 
-import { PersonCreateComponent } from './objects/person/create/person-create.component';
-import { PersonListComponent } from './objects/person/list/person-list.component';
-import { PersonOverviewComponent } from './objects/person/overview/person-overview.component';
+import { CountryEditComponent } from './objects/country/edit/country-edit.component';
+import { CountryListComponent } from './objects/country/list/country-list.component';
 import { OrganisationCreateComponent } from './objects/organisation/create/organisation-create.component';
 import { OrganisationListComponent } from './objects/organisation/list/organisation-list.component';
 import { OrganisationOverviewComponent } from './objects/organisation/overview/organisation-overview.component';
-import { LegalFormEditComponent } from './objects/legalform/edit/legalform-edit.component';
-import { LegalFormListComponent } from './objects/legalform/list/legalform-list.component';
+import { OrganisationOverviewDetailComponent } from './objects/organisation/overview/detail/organisation-overview-detail.component';
+import { OrganisationOverviewSummaryComponent } from './objects/organisation/overview/summary/organisation-overview-summary.component';
+import { PersonCreateComponent } from './objects/person/create/person-create.component';
+import { PersonInlineComponent } from './objects/person/inline/person-inline.component';
+import { PersonListComponent } from './objects/person/list/person-list.component';
+import { PersonOverviewComponent } from './objects/person/overview/person-overview.component';
+import { PersonOverviewDetailComponent } from './objects/person/overview/detail/person-overview-detail.component';
+import { PersonOverviewSummaryComponent } from './objects/person/overview/summary/person-overview-summary.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -139,7 +147,7 @@ export const routes: Routes = [
           { path: 'person/:id', component: PersonOverviewComponent },
           { path: 'organisations', component: OrganisationListComponent },
           { path: 'organisation/:id', component: OrganisationOverviewComponent },
-          { path: 'legalform', component: LegalFormListComponent },
+          { path: 'countries', component: CountryListComponent },
         ],
       },
       {
@@ -158,11 +166,11 @@ export const routes: Routes = [
 export const create = {
   [tags.Organisation]: OrganisationCreateComponent,
   [tags.Person]: PersonCreateComponent,
-  [tags.LegalForm]: LegalFormEditComponent,
+  [tags.Country]: CountryEditComponent,
 };
 
 export const edit = {
-  [tags.LegalForm]: LegalFormEditComponent,
+  [tags.Country]: CountryEditComponent,
 };
 
 @NgModule({
@@ -211,14 +219,19 @@ export const edit = {
     MainComponent,
     DashboardComponent,
 
-    PersonCreateComponent,
-    PersonListComponent,
-    PersonOverviewComponent,
+    CountryEditComponent,
+    CountryListComponent,
     OrganisationCreateComponent,
     OrganisationListComponent,
     OrganisationOverviewComponent,
-    LegalFormEditComponent,
-    LegalFormListComponent,
+    PersonCreateComponent,
+    PersonInlineComponent,
+    PersonListComponent,
+    PersonOverviewComponent,
+    OrganisationOverviewDetailComponent,
+    OrganisationOverviewSummaryComponent,
+    PersonOverviewDetailComponent,
+    PersonOverviewSummaryComponent,
 
     FormComponent,
     // App
@@ -255,6 +268,7 @@ export const edit = {
     MatSortModule,
     MatStepperModule,
     MatTableModule,
+    MatTabsModule,
     MatToolbarModule,
   ],
   providers: [
@@ -295,6 +309,8 @@ export const edit = {
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
     { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
+    { provide: OBJECT_CREATE_TOKEN, useValue: create },
+    { provide: OBJECT_EDIT_TOKEN, useValue: edit },
     ...environment.providers,
   ],
 })

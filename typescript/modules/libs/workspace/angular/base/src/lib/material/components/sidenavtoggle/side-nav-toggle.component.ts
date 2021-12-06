@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { AllorsMaterialSideNavService } from '../../services/sidenav/side-nav.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-sidenavtoggle',
   templateUrl: './side-nav-toggle.component.html',
 })

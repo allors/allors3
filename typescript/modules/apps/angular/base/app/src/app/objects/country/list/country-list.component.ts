@@ -4,23 +4,23 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { LegalForm } from '@allors/workspace/domain/default';
+import { Country } from '@allors/workspace/domain/default';
 import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
-  object: LegalForm;
+  object: Country;
   name: string;
 }
 
 @Component({
-  templateUrl: './legalform-list.component.html',
+  templateUrl: './country-list.component.html',
   providers: [ContextService],
 })
-export class LegalFormListComponent implements OnInit, OnDestroy {
-  public title = 'Position Types';
+export class CountryListComponent implements OnInit, OnDestroy {
+  public title = 'Countries';
 
   table: Table<Row>;
 
@@ -70,7 +70,7 @@ export class LegalFormListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.LegalForm);
+    this.filter = angularFilterFromDefinition(m.Country);
 
     this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
       .pipe(
@@ -91,11 +91,11 @@ export class LegalFormListComponent implements OnInit, OnDestroy {
         }),
         switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
           const pulls = [
-            pull.LegalForm({
+            pull.Country({
               predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.LegalForm)?.create(sort) : null,
+              sorting: sort ? angularSorter(m.Country)?.create(sort) : null,
               include: {
-                LegalFormRate: x,
+                LocalisedNames: x,
               },
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -109,8 +109,8 @@ export class LegalFormListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<LegalForm>(m.LegalForm);
-        this.table.total = (loaded.value('LegalForms_total') ?? 0) as number;
+        const objects = loaded.collection<Country>(m.Country);
+        this.table.total = (loaded.value('Countrys_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

@@ -8,7 +8,7 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
 import { SortDirection } from '@allors/workspace/domain/system';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'nonunifiedpart-overview-summary',
   templateUrl: './nonunifiedpart-overview-summary.component.html',
   providers: [PanelService],

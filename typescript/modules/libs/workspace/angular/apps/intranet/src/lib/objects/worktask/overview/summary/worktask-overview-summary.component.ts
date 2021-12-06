@@ -10,7 +10,7 @@ import { PrintService } from '../../../../actions/print/print.service';
 import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'worktask-overview-summary',
   templateUrl: './worktask-overview-summary.component.html',
   providers: [PanelService],

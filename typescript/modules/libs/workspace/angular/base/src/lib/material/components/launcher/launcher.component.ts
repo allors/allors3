@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PanelManagerService } from '../../../services/panel/panel-manager.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-launcher',
   templateUrl: './launcher.component.html',
   styleUrls: ['./launcher.component.scss'],

@@ -8,7 +8,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'userprofile-link',
   templateUrl: './userprofile-link.component.html',
   providers: [ContextService],

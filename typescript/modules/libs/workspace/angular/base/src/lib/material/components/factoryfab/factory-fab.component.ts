@@ -10,7 +10,8 @@ import { angularIcon } from '../../../meta/angular.icon';
 import { angularDisplayName } from '../../../meta/angular.display.name';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+    // eslint-disable-next-line @angular-eslint/component-selector
+
   selector: 'a-mat-factory-fab',
   templateUrl: './factory-fab.component.html',
   styleUrls: ['./factory-fab.component.scss'],

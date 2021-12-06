@@ -4,7 +4,7 @@ import { NgForm } from '@angular/forms';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-footer-save-cancel',
   templateUrl: './save-cancel.component.html',
 })

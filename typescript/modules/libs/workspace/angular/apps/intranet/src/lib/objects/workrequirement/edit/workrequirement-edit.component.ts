@@ -1,5 +1,4 @@
 import { Component, OnInit, Self, OnDestroy, Inject } from '@angular/core';
-import { isBefore, isAfter } from 'date-fns';
 
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
@@ -16,7 +15,7 @@ import { FetcherService } from '../../../..';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'requirement-edit',
   templateUrl: './workrequirement-edit.component.html',
   providers: [PanelService, ContextService],
@@ -43,7 +42,7 @@ export class WorkRequirementEditComponent implements OnInit, OnDestroy {
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -85,7 +84,7 @@ export class WorkRequirementEditComponent implements OnInit, OnDestroy {
             pulls.push(
               pull.SerialisedItem({
                 objectId: this.data.associationId,
-              }),
+              })
             );
           }
 
@@ -135,7 +134,7 @@ export class WorkRequirementEditComponent implements OnInit, OnDestroy {
   }
 
   public save(): void {
-    this.onSave()
+    this.onSave();
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.requirement);
       this.refreshService.refresh();
@@ -150,17 +149,17 @@ export class WorkRequirementEditComponent implements OnInit, OnDestroy {
     const pulls = [
       pull.SerialisedItem({
         predicate: {
-            kind: 'And',
-            operands: [
-              {
-                kind: 'Or',
-                operands: [
-                  { kind: 'Equals', propertyType: m.SerialisedItem.OwnedBy, object: party },
-                  { kind: 'Equals', propertyType: m.SerialisedItem.RentedBy, object: party },
-                ],
-              },
-            ],
-          },
+          kind: 'And',
+          operands: [
+            {
+              kind: 'Or',
+              operands: [
+                { kind: 'Equals', propertyType: m.SerialisedItem.OwnedBy, object: party },
+                { kind: 'Equals', propertyType: m.SerialisedItem.RentedBy, object: party },
+              ],
+            },
+          ],
+        },
       }),
     ];
 

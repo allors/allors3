@@ -1,13 +1,13 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Facility, InternalOrganisation, FacilityType } from '@allors/workspace/domain/default';
+import { Facility, InternalOrganisation, FacilityType } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'facility-inline',
   templateUrl: './facility-inline.component.html',
 })

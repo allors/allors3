@@ -40,7 +40,6 @@ export class OrganisationOverviewComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
-    const x = {};
 
     this.subscription = combineLatest([this.route.url, this.route.queryParams, this.refreshService.refresh$])
       .pipe(

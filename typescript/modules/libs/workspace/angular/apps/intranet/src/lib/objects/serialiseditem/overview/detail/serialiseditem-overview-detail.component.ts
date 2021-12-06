@@ -13,7 +13,7 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'serialiseditem-overview-detail',
   templateUrl: './serialiseditem-overview-detail.component.html',
   providers: [PanelService, ContextService],

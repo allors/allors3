@@ -1,10 +1,10 @@
-<form *ngIf="positionType" #form="ngForm" (submit)="save()" novalidate>
+<form *ngIf="country" #form="ngForm" (submit)="save()" novalidate>
   <h3 mat-dialog-title>{{ title }}</h3>
 
   <mat-dialog-content>
     <div class="row">
-      <a-mat-input class="col-md" [object]="legalForm" [roleType]="m.LegalForm.UniqueId"></a-mat-input>
-      <a-mat-input class="col-md" [object]="legalForm" [roleType]="m.LegalForm.Name"></a-mat-input>
+      <a-mat-input class="col-md" [object]="country" [roleType]="m.Country.IsoCode"></a-mat-input>
+      <a-mat-input class="col-md" [object]="country" [roleType]="m.Country.Name"></a-mat-input>
     </div>
   </mat-dialog-content>
 

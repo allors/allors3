@@ -15,7 +15,7 @@ export function configure(m: M) {
     {
       title: 'Contacts',
       icon: 'business',
-      children: [{ objectType: m.Person }, { objectType: m.Organisation }],
+      children: [{ objectType: m.Person }, { objectType: m.Organisation }, { objectType: m.Country }],
     },
     {
       title: 'Tests',
@@ -27,45 +27,70 @@ export function configure(m: M) {
   // Navigation
   nav(m.Person, '/contacts/people', '/contacts/person/:id');
   nav(m.Organisation, '/contacts/organisations', '/contacts/organisation/:id');
-  nav(m.LegalForm, '/contacts/legalform');
+  nav(m.Country, '/contacts/countries');
 
   // Filter & Sort
-  angularFilterDefinition(m.Person,  new FilterDefinition({
-    kind: 'And',
-    operands: [
-      {
-        kind: 'Like',
-        roleType: m.Person.FirstName,
-        parameter: 'firstName',
-      },
-      {
-        kind: 'Like',
-        roleType: m.Person.LastName,
-        parameter: 'lastName',
-      },
-      {
-        kind: 'Like',
-        roleType: m.Person.UserEmail,
-        parameter: 'email',
-      },
-    ],
-  }));
-  
-  angularSorter(m.Person,  new Sorter({
-    firstName: m.Person.FirstName,
-    lastName: m.Person.LastName,
-    email: m.Person.UserEmail,
-  }));
+  angularFilterDefinition(
+    m.Person,
+    new FilterDefinition({
+      kind: 'And',
+      operands: [
+        {
+          kind: 'Like',
+          roleType: m.Person.FirstName,
+          parameter: 'firstName',
+        },
+        {
+          kind: 'Like',
+          roleType: m.Person.LastName,
+          parameter: 'lastName',
+        },
+        {
+          kind: 'Like',
+          roleType: m.Person.UserEmail,
+          parameter: 'email',
+        },
+      ],
+    })
+  );
 
-  angularFilterDefinition(m.Organisation,  new FilterDefinition({
-    kind: 'And',
-    operands: [
-      {
-        kind: 'Like',
-        roleType: m.Organisation.Name,
-        parameter: 'name',
-      },
-    ],
-  }));
-  angularSorter(m.Organisation,  new Sorter({ name: m.Organisation.Name }));
+  angularSorter(
+    m.Person,
+    new Sorter({
+      firstName: m.Person.FirstName,
+      lastName: m.Person.LastName,
+      email: m.Person.UserEmail,
+    })
+  );
+
+  angularFilterDefinition(
+    m.Organisation,
+    new FilterDefinition({
+      kind: 'And',
+      operands: [
+        {
+          kind: 'Like',
+          roleType: m.Organisation.Name,
+          parameter: 'name',
+        },
+      ],
+    })
+  );
+  angularSorter(m.Organisation, new Sorter({ name: m.Organisation.Name }));
+
+
+  angularFilterDefinition(
+    m.Country,
+    new FilterDefinition({
+      kind: 'And',
+      operands: [
+        {
+          kind: 'Like',
+          roleType: m.Country.Name,
+          parameter: 'name',
+        },
+      ],
+    })
+  );
+  angularSorter(m.Country, new Sorter({ name: m.Country.Name }));
 }

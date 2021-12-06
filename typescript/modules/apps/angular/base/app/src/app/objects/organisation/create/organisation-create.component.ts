@@ -5,7 +5,7 @@ import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Organisation, LegalForm } from '@allors/workspace/domain/default';
+import { Organisation, Country } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -20,8 +20,7 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
 
   organisation: Organisation;
 
-  locales: Locale[];
-  legalForms: LegalForm[];
+  countries: Country[];
 
   private refresh$: BehaviorSubject<Date>;
   private subscription: Subscription;
@@ -44,7 +43,7 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
-    
+
     this.subscription = combineLatest([this.route.url, this.refresh$])
       .pipe(
         switchMap(([,]) => {
@@ -54,7 +53,7 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
             pull.Locale({
               sorting: [{ roleType: m.Locale.Country }],
             }),
-            pull.LegalForm({}),
+            pull.Country({}),
           ];
 
           return this.allors.context.pull(pulls);
@@ -62,8 +61,7 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.organisation = this.allors.context.create<Organisation>(m.Organisation);
-        this.locales = loaded.collection<Locale>(m.Locale) || [];
-        this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
+        this.countries = loaded.collection<Country>(m.Country);
       });
   }
 

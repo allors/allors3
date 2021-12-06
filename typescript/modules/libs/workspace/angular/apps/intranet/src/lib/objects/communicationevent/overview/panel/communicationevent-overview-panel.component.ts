@@ -15,7 +15,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'communicationevent-overview-panel',
   templateUrl: './communicationevent-overview-panel.component.html',
   providers: [PanelService],

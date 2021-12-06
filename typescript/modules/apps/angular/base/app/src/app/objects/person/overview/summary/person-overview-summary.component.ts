@@ -7,7 +7,7 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'person-overview-summary',
   templateUrl: './person-overview-summary.component.html',
   providers: [PanelService],

@@ -13,7 +13,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'customershipment-overview-detail',
   templateUrl: './customershipment-overview-detail.component.html',
   providers: [PanelService, ContextService],

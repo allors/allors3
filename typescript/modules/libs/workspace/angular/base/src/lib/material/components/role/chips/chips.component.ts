@@ -9,7 +9,7 @@ import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 import { RoleField } from '../../../../components/forms/role-field';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-chips',
   templateUrl: './chips.component.html',
 })

@@ -28,7 +28,7 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'purchaseinvoice-overview-detail',
   templateUrl: './purchaseinvoice-overview-detail.component.html',
   providers: [ContextService, PanelService],

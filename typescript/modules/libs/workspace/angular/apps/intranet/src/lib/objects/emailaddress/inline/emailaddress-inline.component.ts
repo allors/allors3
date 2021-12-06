@@ -5,7 +5,7 @@ import { PartyContactMechanism, ContactMechanismPurpose, EmailAddress } from '@a
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'party-contactmechanism-emailAddress',
   templateUrl: './emailaddress-inline.component.html',
 })

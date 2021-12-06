@@ -11,7 +11,7 @@ export interface RadioGroupOption {
 }
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'a-mat-radio-group',
   templateUrl: './radio-group.component.html',
 })

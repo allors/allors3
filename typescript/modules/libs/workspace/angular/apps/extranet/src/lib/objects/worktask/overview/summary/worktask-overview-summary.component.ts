@@ -8,7 +8,7 @@ import { Action, NavigationService, PanelService, RefreshService, SaveService } 
 import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'worktask-overview-summary',
   templateUrl: './worktask-overview-summary.component.html',
   providers: [PanelService],
@@ -31,8 +31,8 @@ export class WorkTaskOverviewSummaryComponent {
     public refreshService: RefreshService,
     private saveService: SaveService,
     public snackBar: MatSnackBar,
-    public printService: PrintService,
-    ) {
+    public printService: PrintService
+  ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const m = this.m;
 

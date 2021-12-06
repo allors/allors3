@@ -8,7 +8,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'internalorganisation-select',
   templateUrl: './internalorganisation-select.component.html',
   providers: [ContextService],
