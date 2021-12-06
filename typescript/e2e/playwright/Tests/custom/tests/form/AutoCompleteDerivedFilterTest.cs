@@ -36,7 +36,7 @@ namespace Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            await this.Login("jane@example.com");
+            await this.LoginAsync("jane@example.com");
             await this.GotoAsync("/tests/form");
         }
 

@@ -61,7 +61,6 @@ import {
   AllorsMaterialLocalisedMarkdownComponent,
   AllorsMaterialLocalisedTextComponent,
   AllorsMaterialMarkdownComponent,
-  AllorsMaterialMonthpickerComponent,
   AllorsMaterialRadioGroupComponent,
   AllorsMaterialSelectComponent,
   AllorsMaterialSliderComponent,
@@ -74,7 +73,6 @@ import {
   AllorsMaterialTableComponent,
   FactoryFabComponent,
 } from './index';
-
 
 @NgModule({
   declarations: [
@@ -103,7 +101,6 @@ import {
     AllorsMaterialLocalisedMarkdownComponent,
     AllorsMaterialLocalisedTextComponent,
     AllorsMaterialMarkdownComponent,
-    AllorsMaterialMonthpickerComponent,
     AllorsMaterialRadioGroupComponent,
     AllorsMaterialSelectComponent,
     AllorsMaterialSliderComponent,

@@ -11,10 +11,12 @@ namespace Allors.Repository
     using static Workspaces;
 
     [Workspace(Default)]
-    public partial class Person : Addressable, Deletable
+    public partial class Person : Addressable, Localised
     {
         #region inherited properties
         public Address Address { get; set; }
+
+        public Locale Locale { get; set; }
 
         #endregion
 
@@ -54,7 +56,7 @@ namespace Allors.Repository
         [Origin(Origin.Session)]
         [Derived]
         public string WorkingFullName { get; set; }
-        
+
         #region Allors
         [Id("105CF367-F076-45F8-8E2A-2431BB2D65C7")]
         [Size(256)]

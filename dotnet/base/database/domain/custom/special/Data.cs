@@ -18,6 +18,11 @@ namespace Allors.Database.Domain
             {
                 this.AutocompleteDerivedFilter ??= singleton.AutocompleteDefault;
             }
+
+            if (!this.ExistSelectDerived)
+            {
+                this.SelectDerived ??= singleton.SelectDefault;
+            }
         }
 
         public void CustomOnPostDerive(ObjectOnPostDerive method)
