@@ -87,8 +87,6 @@ namespace Allors.Repository
 
         public WorkEffortType WorkEffortType { get; set; }
 
-        public Requirement[] RequirementFulfillments { get; set; }
-
         public string SpecialTerms { get; set; }
 
         public WorkEffort[] Concurrencies { get; set; }

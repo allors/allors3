@@ -41,7 +41,6 @@ export class WorkRequirementOverviewSummaryComponent {
           objectId: id,
           include: {
             FixedAsset: x,
-            WorkEffortsWhereRequirementFulfillment: x,
             LastModifiedBy: x,
           },
         }),
