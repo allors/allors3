@@ -21,7 +21,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './workrequirement-edit.component.html',
   providers: [PanelService, ContextService],
 })
-export class WorkRequirementEditComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkRequirementEditComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title: string;
 

@@ -45,7 +45,7 @@ interface Row extends TableRow {
   templateUrl: './workrequirement-list.component.html',
   providers: [ContextService],
 })
-export class WorkRequirementListComponent extends TestScope implements OnInit, OnDestroy {
+export class WorkRequirementListComponent implements OnInit, OnDestroy {
   public title = 'Service Requests';
 
   table: Table<Row>;
