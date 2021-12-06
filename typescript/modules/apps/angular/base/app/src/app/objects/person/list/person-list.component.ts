@@ -54,7 +54,7 @@ export class PersonListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'firstName', sort: true }, { name: 'firstName' }, { name: 'email' }],
+      columns: [{ name: 'firstName', sort: true }, { name: 'lastName' }, { name: 'email' }],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,

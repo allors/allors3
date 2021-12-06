@@ -9,7 +9,5 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-@import '../../../../../libs/workspace/angular/base/src//lib/material/styles/bootstrap';
-@import '../../../../../libs/workspace/angular/base/src//lib/material/styles/layout';
-
-@import './styles/layout';
+@import '../../../../../libs/workspace/angular/base/src/lib/material/styles/bootstrap';
+@import '../../../../../libs/workspace/angular/base/src/lib/material/styles/layout';
