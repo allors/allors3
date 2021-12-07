@@ -139,13 +139,6 @@ namespace Allors.Repository
         WorkEffortType WorkEffortType { get; set; }
 
         #region Allors
-        [Id("AC3B999B-A4C9-4BFD-A666-6AD131DB6D37")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        Requirement[] RequirementFulfillments { get; set; }
-
-        #region Allors
         [Id("CF1F73FA-0517-4D5C-81B9-35EE1243309F")]
         #endregion
         [Workspace(Default)]

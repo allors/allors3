@@ -5,7 +5,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Party, Priority, WorkRequirement, SerialisedItem, InternalOrganisation } from '@allors/workspace/domain/default';
-import { PanelService, RadioGroupOption, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { NavigationService, PanelService, RadioGroupOption, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 
@@ -35,6 +35,7 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: PanelService,
+    public navigationService: NavigationService,
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,

@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Linq;
+
 namespace Allors.Database.Domain
 {
     public partial class WorkRequirement
@@ -11,10 +13,56 @@ namespace Allors.Database.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.WorkRequirement, this.M.WorkRequirement.RequirementState),
         };
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistRequirementState)
+            {
+                this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
+            }
+        }
+
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            var internalOrganisations = new Organisations(this.Strategy.Transaction).Extent().Where(v => Equals(v.IsInternalOrganisation, true)).ToArray();
+
+            if (!this.ExistServicedBy && internalOrganisations.Length == 1)
+            {
+                this.ServicedBy = internalOrganisations[0];
+            }
+        }
+
+        public void AppsCancel(WorkRequirementCancel method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Cancelled;
+            method.StopPropagation = true;
+        }
+
+        public void AppsReopen(WorkRequirementReopen method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
+            method.StopPropagation = true;
+        }
+
+        public void AppsClose(WorkRequirementClose method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Closed;
+            method.StopPropagation = true;
+        }
 
         public void AppsCreateWorkTask(WorkRequirementCreateWorkTask method)
         {
-            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Closed;
+            var transaction = this.Strategy.Transaction;
+
+            this.RequirementState = new RequirementStates(transaction).Closed;
+
+            var workTask = new WorkTaskBuilder(transaction)
+                .WithTakenBy(this.ServicedBy)
+                .WithCustomer(this.Originator)
+                .Build();
+
+            new WorkEffortFixedAssetAssignmentBuilder(transaction).WithAssignment(workTask).WithFixedAsset(this.FixedAsset).Build();
+            new WorkRequirementFulfillmentBuilder(transaction).WithFullfilledBy(this).WithFullfillmentOf(workTask).Build();
+
             method.StopPropagation = true;
         }
     }
