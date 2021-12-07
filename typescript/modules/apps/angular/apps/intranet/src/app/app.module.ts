@@ -325,6 +325,7 @@ import {
   WorkRequirementOverviewDetailComponent,
   WorkRequirementOverviewPanelComponent,
   WorkRequirementOverviewSummaryComponent,
+  WorkRequirementFulfillmentCreateComponent,
   WorkRequirementFulfillmentOverviewPanelComponent,
   WorkTaskCreateComponent,
   WorkTaskOverviewComponent,
@@ -559,6 +560,7 @@ export const create = {
   [tags.WorkEffortInvoiceItemAssignment]: WorkEffortInvoiceItemAssignmentEditComponent,
   [tags.WorkEffortPartyAssignment]: WorkEffortPartyAssignmentEditComponent,
   [tags.WorkRequirement]: WorkRequirementCreateComponent,
+  [tags.WorkRequirementFulfillment]: WorkRequirementFulfillmentCreateComponent,
   // [tags.WorkEffortPurchaseOrderItemAssignment]: WorkEffortPurchaseOrderItemAssignmentEditComponent,
   [tags.WorkTask]: WorkTaskCreateComponent,
 };
@@ -878,6 +880,7 @@ export const edit = {
     WorkRequirementOverviewDetailComponent,
     WorkRequirementOverviewPanelComponent,
     WorkRequirementOverviewSummaryComponent,
+    WorkRequirementFulfillmentCreateComponent,
     WorkRequirementFulfillmentOverviewPanelComponent,
     WorkTaskCreateComponent,
     WorkTaskOverviewComponent,

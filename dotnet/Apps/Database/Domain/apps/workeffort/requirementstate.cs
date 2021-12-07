@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
     {
         public bool IsCreated => this.Equals(new RequirementStates(this.Strategy.Transaction).Created);
 
-        public bool IsActive => this.Equals(new RequirementStates(this.Strategy.Transaction).Active);
+        public bool IsActive => this.Equals(new RequirementStates(this.Strategy.Transaction).InProgress);
 
         public bool IsCancelled => this.Equals(new RequirementStates(this.Strategy.Transaction).Cancelled);
 

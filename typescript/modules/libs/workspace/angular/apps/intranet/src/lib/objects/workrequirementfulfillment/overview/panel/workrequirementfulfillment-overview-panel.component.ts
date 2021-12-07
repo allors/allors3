@@ -1,9 +1,10 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkRequirementFulfillment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { WorkEffort, WorkRequirementFulfillment } from '@allors/workspace/domain/default';
+import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkRequirementFulfillmentWhereFullfilledBy } from '../../../../../../../../../meta/apps/extranet/src/lib/generated/m.g';
 
 interface Row extends TableRow {
   object: WorkRequirementFulfillment;
@@ -19,6 +20,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit {
+  workEffort: WorkEffort;
     @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -28,7 +30,6 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
   objects: WorkRequirementFulfillment[] = [];
 
   delete: Action;
-  edit: Action;
   table: Table<TableRow>;
 
   get createData(): ObjectData {
@@ -46,14 +47,12 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
     public navigation: NavigationService,
 
     public deleteService: DeleteService,
-    public editService: EditService
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {
     this.delete = this.deleteService.delete(this.panel.manager.context);
-    this.edit = this.editService.edit();
 
     this.panel.name = 'workrequirementfulfillment';
     this.panel.title = 'Work Requirement Fulfillment';
@@ -68,14 +67,13 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
         { name: 'workRequirementNumber', sort },
         { name: 'workRequirementDescription', sort },
       ],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      actions: [this.delete],
       autoSort: true,
       autoFilter: true,
     });
 
-    const workEffortPullName = `${this.panel.name}_${this.m.WorkEffortFixedAssetAssignment.tag}_workEffort`;
-    const fixedAssetPullName = `${this.panel.name}_${this.m.WorkEffortFixedAssetAssignment.tag}_fixedAsset`;
+    const workEffortPullName = `${this.panel.name}_${this.m.WorkRequirementFulfillment.tag}_workEffort`;
+    const fixedAssetPullName = `${this.panel.name}_${this.m.WorkRequirementFulfillment.tag}_fixedAsset`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;
@@ -96,13 +94,20 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
           name: fixedAssetPullName,
           objectId: id,
           select: {
-            WorkRequirementFulfillmentsWhereFixedAsset: x,
+            WorkRequirementsWhereFixedAsset: {
+              WorkRequirementFulfillmentWhereFullfilledBy: x,
+            }
           },
+        }),
+        pull.WorkEffort({
+          objectId: id,
         }),
       );
     };
 
     this.panel.onPulled = (loaded) => {
+      this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
+
       const fromWorkEffort = loaded.collection<WorkRequirementFulfillment>(workEffortPullName);
       const fromFixedAsset = loaded.collection<WorkRequirementFulfillment>(fixedAssetPullName);
 
@@ -118,8 +123,8 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,
-          workEffortNumber: v.WorkEffortName,
-          workRequirementNumber: v.WorkEffortName,
+          workEffortNumber: v.WorkEffortNumber,
+          workRequirementNumber: v.WorkRequirementNumber,
           workRequirementDescription: v.WorkRequirementDescription,
         } as Row;
       });

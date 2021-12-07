@@ -24,7 +24,9 @@
     </div>
   </div>
 
-  <a-mat-factory-fab [objectType]="m.WorkRequirementFulfillment" [createData]="createData" (created)="this.refreshService.refresh()"></a-mat-factory-fab>
+  <div *ngIf="workEffort?.canWriteWorkDone">
+    <a-mat-factory-fab [objectType]="m.WorkRequirementFulfillment" [createData]="createData" (created)="this.refreshService.refresh()"></a-mat-factory-fab>
+  </div>
 
   <a-mat-table [table]="table"></a-mat-table>
 </div>

@@ -81,7 +81,6 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
-    const id = this.panel.manager.id;
 
     // Maximized
     this.subscription = this.panel.manager.on$
@@ -93,7 +92,7 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.WorkRequirement({
-              objectId: id,
+              objectId: this.panel.manager.id,
               include: {
                 Originator: x,
                 Priority: x,

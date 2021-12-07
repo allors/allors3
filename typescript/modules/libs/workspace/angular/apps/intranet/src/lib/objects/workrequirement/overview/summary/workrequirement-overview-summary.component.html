@@ -29,6 +29,13 @@
         {{ requirement.FixedAssetName }}
       </div>
     </div>
+
+    <div *ngIf="workEffort" (click)="navigation.overview(workEffort)" style="cursor: pointer">
+      <div style="color: grey">Work Effort</div>
+      <div>
+        {{ workEffort.WorkEffortNumber }}
+      </div>
+    </div>
   </mat-card-content>
 
   <mat-card-actions>

@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         {
             if (!this.ExistRequirementState)
             {
-                this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
+                this.RequirementState = new RequirementStates(this.Strategy.Transaction).Created;
             }
         }
 
@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
         public void AppsReopen(WorkRequirementReopen method)
         {
-            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Active;
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Created;
             method.StopPropagation = true;
         }
 
@@ -53,9 +53,9 @@ namespace Allors.Database.Domain
         {
             var transaction = this.Strategy.Transaction;
 
-            this.RequirementState = new RequirementStates(transaction).Closed;
-
             var workTask = new WorkTaskBuilder(transaction)
+                .WithName(this.Description)
+                .WithDescription(this.Reason)
                 .WithTakenBy(this.ServicedBy)
                 .WithCustomer(this.Originator)
                 .Build();

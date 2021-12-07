@@ -252,7 +252,7 @@ namespace Allors.Database.Domain
             }
             else
             {
-                internalOrganisation.RequirementNumberPrefix = workEffortPrefix;
+                internalOrganisation.RequirementNumberPrefix = requirementPrefix;
             }
 
             OwnBankAccount defaultCollectionMethod = null;
