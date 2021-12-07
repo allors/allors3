@@ -49,7 +49,7 @@ namespace Allors.Repository
         #region Allors
         [Id("5acce8f1-93be-4866-b668-1dfccfa73c49")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Required]
         [Workspace(Default)]

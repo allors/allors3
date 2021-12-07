@@ -13,10 +13,12 @@ namespace Allors.Database.Domain
     {
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.RequirementState);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSecure(Security config)
         {
             var createdState = new RequirementStates(this.Transaction).Created;
-            var activeState = new RequirementStates(this.Transaction).Active;
+            var inProgressState = new RequirementStates(this.Transaction).InProgress;
             var cancelledState = new RequirementStates(this.Transaction).Cancelled;
             var closedState = new RequirementStates(this.Transaction).Closed;
 
@@ -26,15 +28,41 @@ namespace Allors.Database.Domain
             var delete = this.Meta.Delete;
 
             config.Deny(this.ObjectType, createdState, reopen);
-            config.Deny(this.ObjectType, activeState, cancel, delete, createWorkTask);
-            config.Deny(this.ObjectType, closedState, Operations.Execute, Operations.Write);
+            config.Deny(this.ObjectType, inProgressState, Operations.Execute, Operations.Write);
 
-            var except = new HashSet<IOperandType>
+            var cancelExcept = new HashSet<IOperandType>
+            {
+                this.Meta.Reopen,
+                this.Meta.Delete,
+            };
+
+            config.DenyExcept(this.ObjectType, cancelledState, cancelExcept, Operations.Execute, Operations.Write);
+
+            var closeExcept = new HashSet<IOperandType>
             {
                 this.Meta.Reopen,
             };
 
-            config.DenyExcept(this.ObjectType, cancelledState, except, Operations.Write);
+            config.DenyExcept(this.ObjectType, closedState, closeExcept, Operations.Execute, Operations.Write);
+
+
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.WorkRequirementCancelRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Cancel),
+            };
+
+            revocations.WorkRequirementDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
+
+            revocations.WorkRequirementReopenRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Reopen),
+            };
         }
     }
 }

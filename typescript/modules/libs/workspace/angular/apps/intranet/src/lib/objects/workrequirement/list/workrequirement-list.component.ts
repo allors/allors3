@@ -45,7 +45,7 @@ interface Row extends TableRow {
   providers: [ContextService],
 })
 export class WorkRequirementListComponent implements OnInit, OnDestroy {
-  public title = 'Service Requests';
+  public title = 'Work Requirements';
 
   table: Table<Row>;
 

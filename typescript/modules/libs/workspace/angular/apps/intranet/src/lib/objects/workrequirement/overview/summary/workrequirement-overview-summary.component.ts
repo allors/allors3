@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/workspace/meta/default';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { WorkTask, FixedAsset, WorkRequirement } from '@allors/workspace/domain/default';
+import { WorkEffort, WorkRequirement } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
 
 @Component({
@@ -16,6 +16,7 @@ export class WorkRequirementOverviewSummaryComponent {
   m: M;
 
   requirement: WorkRequirement;
+  workEffort: WorkEffort;
 
   constructor(
     @Self() public panel: PanelService,
@@ -40,7 +41,11 @@ export class WorkRequirementOverviewSummaryComponent {
         pull.WorkRequirement({
           objectId: id,
           include: {
+            Originator: x,
             FixedAsset: x,
+            WorkRequirementFulfillmentWhereFullfilledBy: {
+              FullfillmentOf: x,
+            },
             LastModifiedBy: x,
           },
         }),
@@ -49,6 +54,7 @@ export class WorkRequirementOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.requirement = loaded.object<WorkRequirement>(m.WorkRequirement);
+      this.workEffort = this.requirement.WorkRequirementFulfillmentWhereFullfilledBy?.FullfillmentOf;
     };
   }
 

@@ -299,6 +299,7 @@ export { WorkRequirementOverviewDetailComponent } from './lib/objects/workrequir
 export { WorkRequirementOverviewPanelComponent } from './lib/objects/workrequirement/overview/panel/workrequirement-overview-panel.component';
 export { WorkRequirementOverviewSummaryComponent } from './lib/objects/workrequirement/overview/summary/workrequirement-overview-summary.component';
 
+export { WorkRequirementFulfillmentCreateComponent } from './lib/objects/workrequirementfulfillment/create/workrequirementfulfillment-create.component';
 export { WorkRequirementFulfillmentOverviewPanelComponent } from './lib/objects/workrequirementfulfillment/overview/panel/workrequirementfulfillment-overview-panel.component';
 
 export { WorkTaskCreateComponent } from './lib/objects/worktask/create/worktask-create.component';

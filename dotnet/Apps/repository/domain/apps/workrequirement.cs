@@ -128,6 +128,14 @@ namespace Allors.Repository
         public string FixedAssetName { get; set; }
 
         #region Allors
+        [Id("5e3c47a5-a434-4d3d-abe9-b6fc566501a5")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string WorkEffortNumber { get; set; }
+
+        #region Allors
         [Id("51e8d0b1-630c-4471-bc90-c5bccbfb261b")]
         [Indexed]
         #endregion
