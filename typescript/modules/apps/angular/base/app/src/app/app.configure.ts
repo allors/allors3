@@ -78,12 +78,16 @@ export function configure(m: M) {
   );
   angularSorter(m.Organisation, new Sorter({ name: m.Organisation.Name }));
 
-
   angularFilterDefinition(
     m.Country,
     new FilterDefinition({
       kind: 'And',
       operands: [
+        {
+          kind: 'Like',
+          roleType: m.Country.IsoCode,
+          parameter: 'name',
+        },
         {
           kind: 'Like',
           roleType: m.Country.Name,
@@ -92,5 +96,5 @@ export function configure(m: M) {
       ],
     })
   );
-  angularSorter(m.Country, new Sorter({ name: m.Country.Name }));
+  angularSorter(m.Country, new Sorter({ isoCode: m.Country.IsoCode, name: m.Country.Name }));
 }

@@ -22,10 +22,11 @@
       <div class="container-fluid">
         <div class="row">
           <a-mat-input class="col-md" [object]="organisation" [roleType]="m.Organisation.Name"></a-mat-input>
+          <a-mat-select class="col-md" [object]="organisation" [roleType]="m.Organisation.Country" [options]="countries" display="Name"></a-mat-select>
         </div>
 
         <div class="row">
-          <a-mat-select class="col-md" [object]="organisation" [roleType]="m.Organisation.Country" [options]="countries" display="Name"></a-mat-select>
+          <a-mat-autocomplete class="col-md" [object]="organisation" [roleType]="m.Organisation.Owner" [filter]="peopleFilter.create(allors.context)" display="UserName"></a-mat-autocomplete>
         </div>
       </div>
     </mat-card-content>

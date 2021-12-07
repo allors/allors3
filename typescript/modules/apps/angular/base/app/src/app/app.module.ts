@@ -13,6 +13,7 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
@@ -116,6 +117,8 @@ import { tags } from '@allors/workspace/meta/default';
 
 import { CountryEditComponent } from './objects/country/edit/country-edit.component';
 import { CountryListComponent } from './objects/country/list/country-list.component';
+import { EmploymentEditComponent } from './objects/employment/edit/employment-edit.component';
+import { EmploymentOverviewPanelComponent } from './objects/employment/overview/panel/employment-overview-panel.component';
 import { OrganisationCreateComponent } from './objects/organisation/create/organisation-create.component';
 import { OrganisationListComponent } from './objects/organisation/list/organisation-list.component';
 import { OrganisationOverviewComponent } from './objects/organisation/overview/organisation-overview.component';
@@ -164,13 +167,15 @@ export const routes: Routes = [
 ];
 
 export const create = {
+  [tags.Country]: CountryEditComponent,
+  [tags.Employment]: EmploymentEditComponent,
   [tags.Organisation]: OrganisationCreateComponent,
   [tags.Person]: PersonCreateComponent,
-  [tags.Country]: CountryEditComponent,
 };
 
 export const edit = {
   [tags.Country]: CountryEditComponent,
+  [tags.Employment]: EmploymentEditComponent,
 };
 
 @NgModule({
@@ -221,6 +226,8 @@ export const edit = {
 
     CountryEditComponent,
     CountryListComponent,
+    EmploymentEditComponent,
+    EmploymentOverviewPanelComponent,
     OrganisationCreateComponent,
     OrganisationListComponent,
     OrganisationOverviewComponent,
@@ -247,6 +254,7 @@ export const edit = {
     MatLuxonDateModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,

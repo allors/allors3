@@ -12,6 +12,7 @@ import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Country;
+  isoCode: string;
   name: string;
 }
 
@@ -58,10 +59,14 @@ export class CountryListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }],
+      columns: [
+        { name: 'isoCode', sort: true },
+        { name: 'name', sort: true },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
+      initialSort: 'isoCode',
     });
   }
 
@@ -114,6 +119,7 @@ export class CountryListComponent implements OnInit, OnDestroy {
         this.table.data = objects?.map((v) => {
           return {
             object: v,
+            isoCode: v.IsoCode,
             name: v.Name,
           } as Row;
         });

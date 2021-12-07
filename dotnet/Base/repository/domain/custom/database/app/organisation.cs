@@ -64,6 +64,33 @@ namespace Allors.Repository
         public Person[] Shareholders { get; set; }
 
         #region Allors
+        [Id("0C4DED17-5619-4841-BDB6-4990E8242695")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Derived]
+        [Workspace(Default)]
+        public Employment[] ActiveEmployments { get; set; }
+
+        #region Allors
+        [Id("1103194D-431E-4D3C-8634-574FF2FC5E8C")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Derived]
+        [Workspace(Default)]
+        public Employment[] InactiveEmployments { get; set; }
+
+        #region Allors
+        [Id("1850E413-1413-4992-9415-E45F5FCDA76F")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Derived]
+        [Indexed]
+        public Person[] ActiveEmployees { get; set; }
+
+        #region Allors
         [Id("17e55fcd-2c82-462b-8e31-b4a515acdaa9")]
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
