@@ -3,11 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Tests.Form
 {
     using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.E2E.Angular.Material.Form;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -18,7 +19,7 @@ namespace Tests
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
 
-        public FormPage FormPage => new FormPage(this.AppRoot);
+        public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -33,9 +34,9 @@ namespace Tests
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file = new FileInfo("logo.png");
-            await this.FormPage.MultipleFiles.UploadAsync(file);
+            await this.FormComponent.MultipleFiles.UploadAsync(file);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -50,12 +51,12 @@ namespace Tests
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file1 = new FileInfo("logo.png");
-            await this.FormPage.MultipleFiles.UploadAsync(file1);
+            await this.FormComponent.MultipleFiles.UploadAsync(file1);
 
             var file2 = new FileInfo("logo2.png");
-            await this.FormPage.MultipleFiles.UploadAsync(file2);
+            await this.FormComponent.MultipleFiles.UploadAsync(file2);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -70,12 +71,12 @@ namespace Tests
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file1 = new FileInfo("logo.png");
-            await this.FormPage.MultipleFiles.UploadAsync(file1);
+            await this.FormComponent.MultipleFiles.UploadAsync(file1);
 
             var file2 = new FileInfo("logo2.png");
-            await this.FormPage.MultipleFiles.UploadAsync(file2);
+            await this.FormComponent.MultipleFiles.UploadAsync(file2);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
             var after = new Datas(this.Transaction).Extent().ToArray();
             var data = after.Except(before).First();
@@ -83,10 +84,10 @@ namespace Tests
             var logo1 = data.MultipleFiles.First(v => v.Name.Equals("logo"));
             var logo2 = data.MultipleFiles.First(v => v.Name.Equals("logo2"));
 
-            var media = this.FormPage.MultipleFiles.Media(logo1);
+            var media = this.FormComponent.MultipleFiles.Media(logo1);
             await media.RemoveAsync();
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             Assert.AreEqual(1, data.MultipleFiles.Count());

@@ -3,11 +3,12 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Tests.Form
 {
     using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.E2E.Angular.Material.Form;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -18,7 +19,7 @@ namespace Tests
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
 
-        public FormPage FormPage => new FormPage(this.AppRoot);
+        public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -32,7 +33,7 @@ namespace Tests
         {
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            var date = await this.FormPage.Date.GetAsync();
+            var date = await this.FormComponent.Date.GetAsync();
 
             Assert.IsNull(date);
         }
@@ -46,9 +47,9 @@ namespace Tests
 
             var now = this.Transaction.Now();
 
-            await this.FormPage.Date.SetAsync(now);
+            await this.FormComponent.Date.SetAsync(now);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();

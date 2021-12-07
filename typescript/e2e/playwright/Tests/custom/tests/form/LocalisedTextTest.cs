@@ -3,10 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.E2E.Angular.Material.Form;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -17,7 +18,7 @@ namespace Tests
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
 
-        public FormPage FormPage => new FormPage(this.AppRoot);
+        public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -37,7 +38,7 @@ namespace Tests
 
             await this.GotoAsync("/tests/form");
 
-            var actual = await this.FormPage.LocalisedText.GetAsync();
+            var actual = await this.FormComponent.LocalisedText.GetAsync();
 
             Assert.That(actual, Is.EqualTo("*** Hello ***"));
         }
@@ -48,9 +49,9 @@ namespace Tests
             var locale = new Locales(this.Transaction).DutchBelgium;
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.LocalisedText.SetAsync("*** Hello ***");
+            await this.FormComponent.LocalisedText.SetAsync("*** Hello ***");
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
