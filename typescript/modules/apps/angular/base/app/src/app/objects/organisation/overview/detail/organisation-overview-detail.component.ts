@@ -4,11 +4,11 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Country } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
+import { PanelService, RefreshService, SaveService, SearchFactory, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+
   selector: 'organisation-overview-detail',
   templateUrl: './organisation-overview-detail.component.html',
   providers: [ContextService, PanelService],
@@ -18,7 +18,8 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
 
   organisation: Organisation;
   countries: Country[];
-
+  peopleFilter: SearchFactory;
+  
   private subscription: Subscription;
 
   constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId) {
@@ -53,6 +54,11 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
         this.organisation = loaded.object<Organisation>(pullName);
       }
     };
+
+    this.peopleFilter = new SearchFactory({
+      objectType: this.m.Person,
+      roleTypes: [this.m.Person.FirstName, this.m.Person.LastName],
+    });
   }
 
   public ngOnInit(): void {

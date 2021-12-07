@@ -9,6 +9,7 @@
     <ShowAsAssociation>
       <Property Name="Owner" />
       <Property Name="Country" />
+      <Property Name="Employees" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Person">

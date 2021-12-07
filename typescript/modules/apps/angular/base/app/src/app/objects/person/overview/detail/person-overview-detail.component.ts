@@ -8,7 +8,7 @@ import { NavigationService, PanelService, RefreshService, SaveService, Singleton
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+
   selector: 'person-overview-detail',
   templateUrl: './person-overview-detail.component.html',
   providers: [PanelService, ContextService],
@@ -97,6 +97,8 @@ export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
                 Locale: x,
               },
             }),
+            pull.Locale({}),
+            pull.Gender({}),
           ];
 
           return this.allors.context.pull(pulls);

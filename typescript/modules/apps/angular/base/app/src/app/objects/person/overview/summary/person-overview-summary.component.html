@@ -2,12 +2,12 @@
   <mat-card-header (click)="panel.manager.toggle('detail')" style="cursor: pointer">
     <mat-card-title>{{ person.FirstName }}</mat-card-title>
     <mat-card-subtitle>
-      <div>person.LastName</div>
+      <div>{{ person.LastName }}</div>
     </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
-    <div *ngIf="person.OrganisationsWhereOwner" style="cursor: pointer">
+    <div *ngIf="person.OrganisationsWhereOwner.length > 0" style="cursor: pointer">
       <div style="color: grey">Organisation</div>
       <div *ngFor="let organisation of person.OrganisationsWhereOwner" (click)="navigation.overview(organisation)">
         {{ organisation.Name }}
