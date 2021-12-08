@@ -1,25 +1,24 @@
-import { APP_INITIALIZER } from '@angular/core';
+import { APP_BOOTSTRAP_LISTENER, APP_INITIALIZER, ComponentRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { AllorsMaterialSideNavService } from '@allors/workspace/angular/base';
+import { AllorsMaterialSideNavService, ReflectionService } from '@allors/workspace/angular/base';
 import { init } from '../app/app.init';
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, router: Router, sideNavService: AllorsMaterialSideNavService) {
+export function appInitializerFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
   return async () => {
     init(workspaceService, httpClient, environment.baseUrl, environment.authUrl);
+  };
+}
 
-    const allors: any = (window['allors'] = {});
-
-    allors.info = {
-      router,
-      workspaceService,
-      sideNavService,
-    };
+export function appBootstrapListenerFactory(reflectionService: ReflectionService) {
+  return (component: ComponentRef<any>) => {
+    component.location.nativeElement.allors ??= {};
+    component.location.nativeElement.allors.reflection = reflectionService;
   };
 }
 
@@ -28,10 +27,17 @@ export const environment = {
   baseUrl: 'http://localhost:5000/allors/',
   authUrl: 'TestAuthentication/Token',
   providers: [
+    ReflectionService,
     {
       provide: APP_INITIALIZER,
-      useFactory: appInitFactory,
-      deps: [WorkspaceService, HttpClient, Router, AllorsMaterialSideNavService],
+      useFactory: appInitializerFactory,
+      deps: [WorkspaceService, HttpClient],
+      multi: true,
+    },
+    {
+      provide: APP_BOOTSTRAP_LISTENER,
+      useFactory: appBootstrapListenerFactory,
+      deps: [ReflectionService],
       multi: true,
     },
   ],
@@ -44,4 +50,4 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-import 'zone.js/plugins/zone-error'; // Included with Angular CLI.import { init } from '../app/app.init';
+import 'zone.js/plugins/zone-error'; // Included with Angular CLI.import { init } from '../app/app.init';import { create } from '../app/app.module';

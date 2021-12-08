@@ -6,13 +6,13 @@
 namespace Allors.E2E.Angular.Material.Role
 {
     using System.Threading.Tasks;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialMarkdownComponent : RoleComponent
     {
-        public AllorsMaterialMarkdownComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-markdown")
+        public AllorsMaterialMarkdownComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-markdown")
         {
         }
 

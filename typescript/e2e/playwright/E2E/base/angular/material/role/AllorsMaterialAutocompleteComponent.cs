@@ -5,13 +5,13 @@
 
 namespace Allors.E2E.Angular.Material.Role
 {
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialAutocompleteComponent : RoleComponent
     {
-        public AllorsMaterialAutocompleteComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-autocomplete")
+        public AllorsMaterialAutocompleteComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-autocomplete")
         {
         }
 

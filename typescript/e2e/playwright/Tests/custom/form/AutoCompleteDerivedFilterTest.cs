@@ -1,4 +1,4 @@
-// <copyright file="AutoCompleteFilterTest.cs" company="Allors bvba">
+// <copyright file="InputTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -8,16 +8,11 @@ namespace Tests.Form
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
-    using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class SelectDerivedTest : Test
+    public class AutoCompleteDerivedFilterTest : Test
     {
-        public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
-
-        public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
-
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         private Person john;
@@ -32,7 +27,7 @@ namespace Tests.Form
             this.jenny = new People(this.Transaction).FindBy(this.M.Person.UserName, "jenny@example.com");
 
             var singleton = this.Transaction.GetSingleton();
-            singleton.SelectDefault = this.jane;
+            singleton.AutocompleteDefault = this.jane;
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -53,7 +48,7 @@ namespace Tests.Form
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
             Assert.Null(data.AutocompleteAssignedFilter);
-            Assert.AreEqual(this.jane, data.SelectDerived);
+            Assert.AreEqual(this.jane, data.AutocompleteDerivedFilter);
         }
 
         [Test]
@@ -61,7 +56,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.SelectDerived.SelectAsync(this.jane);
+            await this.FormComponent.AutocompleteDerivedFilter.SelectAsync("jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -70,7 +65,7 @@ namespace Tests.Form
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
             Assert.Null(data.AutocompleteAssignedFilter);
-            Assert.AreEqual(this.jane, data.SelectDerived);
+            Assert.AreEqual(this.jane, data.AutocompleteDerivedFilter);
         }
 
         [Test]
@@ -78,7 +73,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.SelectDerived.SelectAsync(this.jenny);
+            await this.FormComponent.AutocompleteDerivedFilter.SelectAsync("jenny@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -86,8 +81,8 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(this.jenny, data.SelectAssigned);
-            Assert.AreEqual(this.jenny, data.SelectDerived);
+            Assert.AreEqual(this.jenny, data.AutocompleteAssignedFilter);
+            Assert.AreEqual(this.jenny, data.AutocompleteDerivedFilter);
         }
     }
 }

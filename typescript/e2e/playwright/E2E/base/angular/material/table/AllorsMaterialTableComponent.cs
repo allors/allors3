@@ -9,7 +9,7 @@ namespace Allors.E2E.Angular.Material.Table
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Allors.Database;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Menu;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
@@ -24,9 +24,9 @@ namespace Allors.E2E.Angular.Material.Table
 
         public IComponent Container { get; }
 
-        public IPage Page => this.Container.Page;
-
         public MetaPopulation M => this.Container.M;
+
+        public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
 

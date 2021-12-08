@@ -6,7 +6,7 @@
 namespace Allors.E2E.Angular
 {
     using System.Threading.Tasks;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
 
     public class AppRoot : IComponent
@@ -18,11 +18,11 @@ namespace Allors.E2E.Angular
             this.Locator = this.Page.Locator(selector);
         }
 
+        public MetaPopulation M { get; set; }
+
         public IComponent Container => null;
 
         public IPage Page { get; }
-
-        public MetaPopulation M { get; set; }
 
         public ILocator Locator { get; }
 

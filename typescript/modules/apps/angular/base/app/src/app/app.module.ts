@@ -112,7 +112,7 @@ import {
 import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { FormComponent } from './tests/form/form.component';
+import { FormComponent } from './form/form.component';
 import { tags } from '@allors/workspace/meta/default';
 
 import { CountryEditComponent } from './objects/country/edit/country-edit.component';
@@ -154,13 +154,8 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'tests',
-        children: [
-          {
-            path: 'form',
-            component: FormComponent,
-          },
-        ],
+        path: 'form',
+        component: FormComponent,
       },
     ],
   },

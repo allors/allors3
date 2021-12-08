@@ -5,7 +5,6 @@
 
 namespace Tests.Relations
 {
-    using Allors.Database.Domain;
     using NUnit.Framework;
 
     public class PersonListTest : Test

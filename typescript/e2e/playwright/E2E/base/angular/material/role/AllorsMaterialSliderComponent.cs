@@ -5,13 +5,13 @@
 
 namespace Allors.E2E.Angular.Material.Role
 {
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialSliderComponent : RoleComponent
     {
-        public AllorsMaterialSliderComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-slider")
+        public AllorsMaterialSliderComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-slider")
         {
         }
 

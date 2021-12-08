@@ -14,7 +14,7 @@ namespace Allors.E2E.Angular.Material.Role
 
     public class AllorsMaterialFileComponent : RoleComponent
     {
-        public AllorsMaterialFileComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-file")
+        public AllorsMaterialFileComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-file")
         {
         }
 

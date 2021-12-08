@@ -6,13 +6,13 @@
 namespace Allors.E2E.Angular.Material.Role
 {
     using System.Threading.Tasks;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialCheckboxComponent : RoleComponent
     {
-        public AllorsMaterialCheckboxComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-checkbox")
+        public AllorsMaterialCheckboxComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-checkbox")
         {
         }
 

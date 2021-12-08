@@ -5,19 +5,15 @@
 
 namespace Tests.Form
 {
+    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
-    using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class SlideToggleTest : Test
+    public class FileTest : Test
     {
-        public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
-
-        public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
-
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
@@ -28,11 +24,12 @@ namespace Tests.Form
         }
 
         [Test]
-        public async Task SetTrue()
+        public async Task Upload()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.SlideToggle.SetAsync(true);
+            var file = new FileInfo("logo.png");
+            await this.FormComponent.File.UploadAsync(file);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -40,7 +37,30 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.IsTrue(data.SlideToggle);
+            Assert.True(data.ExistFile);
+        }
+
+        [Test]
+        public async Task Remove()
+        {
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            var file = new FileInfo("logo.png");
+            await this.FormComponent.File.UploadAsync(file);
+
+            await this.FormComponent.SaveAsync();
+
+            this.Transaction.Rollback();
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            var data = after.Except(before).First();
+
+            var media = this.FormComponent.File.Media(data.File);
+            await media.RemoveAsync();
+
+            await this.FormComponent.SaveAsync();
+            this.Transaction.Rollback();
+
+            Assert.False(data.ExistFile);
         }
     }
 }

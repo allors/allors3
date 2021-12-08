@@ -5,20 +5,14 @@
 
 namespace Tests.Form
 {
-    using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
-    using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class DatepickerTest : Test
+    public class CheckboxTest : Test
     {
-        public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
-
-        public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
-
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
@@ -29,36 +23,45 @@ namespace Tests.Form
         }
 
         [Test]
-        public async Task Initial()
+        public async Task Indeterminate()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var date = await this.FormComponent.Date.GetAsync();
+            var value = await this.FormComponent.Checkbox.GetAsync();
 
-            Assert.IsNull(date);
+            Assert.Null(value);
         }
 
         [Test]
-        public async Task SetDate()
+        public async Task SetTrue()
         {
-            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
-
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var now = this.Transaction.Now();
-
-            await this.FormComponent.Date.SetAsync(now);
+            await this.FormComponent.Checkbox.SetAsync(true);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(before.Length + 1, after.Length);
+            Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.Date != null);
-            Assert.AreEqual(now.Year, data.Date.Value.Year);
-            Assert.AreEqual(now.Month, data.Date.Value.Month);
-            Assert.AreEqual(now.Day, data.Date.Value.Day);
+            Assert.True(data.Checkbox);
+        }
+
+        [Test]
+        public async Task SetFalse()
+        {
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            await this.FormComponent.Checkbox.SetAsync(false);
+
+            await this.FormComponent.SaveAsync();
+            this.Transaction.Rollback();
+
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
+            var data = after.Except(before).First();
+            Assert.False(data.Checkbox);
         }
     }
 }

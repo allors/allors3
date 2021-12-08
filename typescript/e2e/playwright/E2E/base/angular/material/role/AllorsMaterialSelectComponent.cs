@@ -7,13 +7,13 @@ namespace Allors.E2E.Angular.Material.Role
 {
     using System.Threading.Tasks;
     using Database;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialSelectComponent : RoleComponent
     {
-        public AllorsMaterialSelectComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-select")
+        public AllorsMaterialSelectComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-select")
         {
         }
 

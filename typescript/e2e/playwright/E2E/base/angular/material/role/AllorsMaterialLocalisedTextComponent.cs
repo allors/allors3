@@ -6,13 +6,13 @@
 namespace Allors.E2E.Angular.Material.Role
 {
     using System.Threading.Tasks;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialLocalisedTextComponent : RoleComponent
     {
-        public AllorsMaterialLocalisedTextComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-localised-text")
+        public AllorsMaterialLocalisedTextComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-localised-text")
         {
         }
 

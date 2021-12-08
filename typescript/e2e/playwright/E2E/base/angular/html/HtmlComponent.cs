@@ -6,7 +6,7 @@
 namespace Allors.E2E.Angular.Html
 {
     using System.Threading.Tasks;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
@@ -20,9 +20,9 @@ namespace Allors.E2E.Angular.Html
 
         public IComponent Container { get; }
 
-        public IPage Page => this.Container.Page;
-
         public MetaPopulation M => this.Container.M;
+
+        public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
 

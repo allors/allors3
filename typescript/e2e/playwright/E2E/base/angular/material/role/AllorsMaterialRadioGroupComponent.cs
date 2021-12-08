@@ -5,12 +5,12 @@
 
 namespace Allors.E2E.Angular.Material.Role
 {
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialRadioGroupComponent : RoleComponent
     {
-        public AllorsMaterialRadioGroupComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-radio-group")
+        public AllorsMaterialRadioGroupComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-radio-group")
         {
         }
 

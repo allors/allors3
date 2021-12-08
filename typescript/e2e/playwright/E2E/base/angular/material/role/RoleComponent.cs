@@ -7,7 +7,7 @@ namespace Allors.E2E.Angular.Material.Role
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
 
     public abstract class RoleComponent : IComponent
@@ -15,7 +15,7 @@ namespace Allors.E2E.Angular.Material.Role
         private static readonly char[] CssEscapeCharacters = new char[] { '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~' };
         private static readonly IDictionary<char, string> CssReplacements = CssEscapeCharacters.ToDictionary(v => v, v => $"\\{v}");
 
-        protected RoleComponent(IComponent container, RoleType roleType, string elementName)
+        protected RoleComponent(IComponent container, IRoleType roleType, string elementName)
         {
             this.Container = container;
             this.RoleType = roleType;
@@ -24,13 +24,13 @@ namespace Allors.E2E.Angular.Material.Role
 
         public IComponent Container { get; }
 
-        public IPage Page => this.Container.Page;
-
         public MetaPopulation M => this.Container.M;
+
+        public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
 
-        public RoleType RoleType { get; }
+        public IRoleType RoleType { get; }
 
         public string CssEscape(string value) => string.Join("", value.Select(v => CssReplacements.TryGetValue(v, out var replacement) ? replacement : v.ToString()));
     }
