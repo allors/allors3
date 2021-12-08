@@ -24,7 +24,7 @@
     </div>
   </div>
 
-  <div *ngIf="workEffort?.canWriteWorkDone">
+  <div *ngIf="fixedAsset && workEffort?.canWriteWorkDone">
     <a-mat-factory-fab [objectType]="m.WorkRequirementFulfillment" [createData]="createData" (created)="this.refreshService.refresh()"></a-mat-factory-fab>
   </div>
 

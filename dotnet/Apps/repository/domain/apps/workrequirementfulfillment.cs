@@ -11,7 +11,7 @@ namespace Allors.Repository
     #region Allors
     [Id("41276954-bb1e-4331-bdb1-494deeec1424")]
     #endregion
-    public partial class WorkRequirementFulfillment : Deletable, DelegatedAccessObject
+    public partial class WorkRequirementFulfillment : Deletable
     {
         #region inherited properties
 
@@ -93,8 +93,6 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         public void Delete() { }
-
-        public void DelegateAccess() { }
 
         #endregion
     }

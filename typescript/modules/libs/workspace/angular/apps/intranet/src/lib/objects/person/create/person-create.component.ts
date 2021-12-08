@@ -20,11 +20,12 @@ import {
   GenderType,
   Salutation,
 } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
+import { NavigationService, ObjectData, RefreshService, SaveService, SearchFactory, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './person-create.component.html',
@@ -38,7 +39,6 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
   internalOrganisation: InternalOrganisation;
   person: Person;
   organisation: Organisation;
-  organisations: Organisation[];
   organisationContactRelationship: OrganisationContactRelationship;
 
   locales: Locale[];
@@ -51,6 +51,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
   selectedRoles: PersonRole[] = [];
   customerRelationship: CustomerRelationship;
   employment: Employment;
+  organisationsFilter: SearchFactory;
 
   private customerRole: PersonRole;
   private employeeRole: PersonRole;
@@ -115,14 +116,9 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
             pull.OrganisationContactKind({
               sorting: [{ roleType: m.OrganisationContactKind.Description }],
             }),
-            pull.Organisation({
-              objectId: this.data.associationId,
-            }),
-            pull.Organisation({
-              name: 'AllOrganisations',
-              sorting: [{ roleType: m.Organisation.PartyName }],
-            }),
           ];
+
+          this.organisationsFilter = Filters.organisationsFilter(m);
 
           return this.allors.context.pull(pulls);
         })
@@ -131,8 +127,6 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.person = loaded.object<Person>(m.Person);
-        this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.organisations = loaded.collection<Organisation>(m.Organisation);
         this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
