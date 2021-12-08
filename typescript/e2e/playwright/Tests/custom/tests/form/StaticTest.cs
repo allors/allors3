@@ -3,10 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.E2E.Angular.Material.Form;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -17,7 +18,7 @@ namespace Tests
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
 
-        public FormPage FormPage => new FormPage(this.AppRoot);
+        public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -35,7 +36,7 @@ namespace Tests
 
             await this.GotoAsync("/tests/form");
 
-            var actual = await this.FormPage.Static.GetAsync();
+            var actual = await this.FormComponent.Static.GetAsync();
 
             Assert.That(actual, Is.EqualTo("A Static String!"));
         }

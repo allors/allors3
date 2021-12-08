@@ -3,12 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Tests.Form
 {
     using System;
     using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.E2E.Angular.Material.Form;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -19,7 +20,7 @@ namespace Tests
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
 
-        public FormPage FormPage => new FormPage(this.AppRoot);
+        public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -33,7 +34,7 @@ namespace Tests
         {
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            var date = await this.FormPage.DateTime.GetAsync();
+            var date = await this.FormComponent.DateTime.GetAsync();
 
             Assert.IsNull(date);
         }
@@ -49,7 +50,7 @@ namespace Tests
 
             await this.GotoAsync("/tests/form");
 
-            var actual = await this.FormPage.DateTime.GetAsync();
+            var actual = await this.FormComponent.DateTime.GetAsync();
 
             Assert.That(actual, Is.EqualTo(data.DateTime.Value.ToLocalTime()).Within(1).Minutes);
         }
@@ -63,9 +64,9 @@ namespace Tests
 
             var date = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Local);
 
-            await this.FormPage.DateTime.SetAsync(date);
+            await this.FormComponent.DateTime.SetAsync(date);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -83,14 +84,14 @@ namespace Tests
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var date = new DateTime(2019, 1, 1, 12, 0, 0, DateTimeKind.Local);
-            await this.FormPage.DateTime.SetAsync(date);
+            await this.FormComponent.DateTime.SetAsync(date);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
 
             date = new DateTime(2019, 1, 1, 18, 0, 0, DateTimeKind.Local);
-            await this.FormPage.DateTime.SetAsync(date);
+            await this.FormComponent.DateTime.SetAsync(date);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();

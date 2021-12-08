@@ -3,10 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.E2E.Angular.Material.Form;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -17,7 +18,7 @@ namespace Tests
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
 
-        public FormPage FormPage => new FormPage(this.AppRoot);
+        public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -31,7 +32,7 @@ namespace Tests
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var value = await this.FormPage.Checkbox.GetAsync();
+            var value = await this.FormComponent.Checkbox.GetAsync();
 
             Assert.Null(value);
         }
@@ -41,9 +42,9 @@ namespace Tests
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.Checkbox.SetAsync(true);
+            await this.FormComponent.Checkbox.SetAsync(true);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -57,9 +58,9 @@ namespace Tests
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.Checkbox.SetAsync(false);
+            await this.FormComponent.Checkbox.SetAsync(false);
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();

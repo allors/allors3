@@ -3,10 +3,11 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests
+namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
+    using Allors.E2E.Angular.Material.Form;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -17,7 +18,7 @@ namespace Tests
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
 
-        public FormPage FormPage => new FormPage(this.AppRoot);
+        public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -32,9 +33,9 @@ namespace Tests
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.AutocompleteFilter.SelectAsync("jane@example.com");
+            await this.FormComponent.AutocompleteFilter.SelectAsync("jane@example.com");
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -49,9 +50,9 @@ namespace Tests
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.AutocompleteFilter.SelectAsync("j", "jane@example.com");
+            await this.FormComponent.AutocompleteFilter.SelectAsync("j", "jane@example.com");
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
@@ -66,9 +67,9 @@ namespace Tests
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormPage.AutocompleteFilter.SelectAsync("", "jane@example.com");
+            await this.FormComponent.AutocompleteFilter.SelectAsync("", "jane@example.com");
 
-            await this.FormPage.SaveAsync();
+            await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
