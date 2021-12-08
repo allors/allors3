@@ -1,10 +1,9 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkRequirementFulfillment } from '@allors/workspace/domain/default';
+import { FixedAsset, WorkEffort, WorkRequirementFulfillment } from '@allors/workspace/domain/default';
 import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { WorkRequirementFulfillmentWhereFullfilledBy } from '../../../../../../../../../meta/apps/extranet/src/lib/generated/m.g';
 
 interface Row extends TableRow {
   object: WorkRequirementFulfillment;
@@ -21,6 +20,7 @@ interface Row extends TableRow {
 })
 export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
+  fixedAsset: FixedAsset;
     @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
@@ -101,12 +101,19 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
         }),
         pull.WorkEffort({
           objectId: id,
+          include: {
+            WorkEffortFixedAssetAssignmentsWhereAssignment:
+            {
+              FixedAsset: x,
+            }
+          }
         }),
       );
     };
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
+      this.fixedAsset = this.workEffort.WorkEffortFixedAssetAssignmentsWhereAssignment[0]?.FixedAsset;
 
       const fromWorkEffort = loaded.collection<WorkRequirementFulfillment>(workEffortPullName);
       const fromFixedAsset = loaded.collection<WorkRequirementFulfillment>(fixedAssetPullName);

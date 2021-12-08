@@ -62,7 +62,6 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editService: EditService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     private internalOrganisationId: InternalOrganisationId,
@@ -74,7 +73,6 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.edit = editService.edit();
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -91,7 +89,7 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
         { name: 'location', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [overviewService.overview(), this.edit, this.delete],
+      actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
