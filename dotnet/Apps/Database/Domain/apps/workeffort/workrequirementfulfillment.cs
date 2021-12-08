@@ -9,19 +9,6 @@ namespace Allors.Database.Domain
 
     public partial class WorkRequirementFulfillment
     {
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.FixedAsset?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.FixedAsset?.Revocations.ToArray();
-            }
-        }
-
         public void AppsDelete(DeletableDelete method) => this.FullfilledBy.RequirementState = new RequirementStates(this.Strategy.Transaction).Created;
     }
 }
