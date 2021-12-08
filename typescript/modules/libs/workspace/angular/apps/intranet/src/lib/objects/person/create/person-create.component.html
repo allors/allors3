@@ -16,11 +16,7 @@
       </div>
 
       <div class="row">
-        <mat-form-field class="col-md">
-          <mat-select name="role" [(ngModel)]="organisation" placeholder="Organisations">
-            <mat-option *ngFor="let organisation of organisations" [value]="organisation">{{ organisation.Name }} </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <!-- <a-mat-autocomplete class="col-md" [(ngModel)]="organisation" [filter]="organisationsFilter.create(allors.context)" display="DisplayName"></a-mat-autocomplete> -->
         <mat-form-field class="col-md">
           <mat-select name="role" [(ngModel)]="selectedRoles" placeholder="Roles" multiple="true">
             <mat-option *ngFor="let role of roles" [value]="role">{{ role.Name }}</mat-option>
