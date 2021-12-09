@@ -1,7 +1,9 @@
 export { MenuItem } from './lib/menu/menu-item';
 
-// Reflection
-export { ReflectionService } from './lib/reflection/reflection.service';
+// Info
+export * from './lib/info/dialog-info.service';
+export * from './lib/info/menu-info.service';
+export * from './lib/info/meta-info.service';
 
 // Services
 export { AuthenticationTokenRequest } from './lib/services/authentication/authentication-token-request';

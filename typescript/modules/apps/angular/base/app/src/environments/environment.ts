@@ -1,8 +1,7 @@
 import { APP_BOOTSTRAP_LISTENER, APP_INITIALIZER, ComponentRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { AllorsMaterialSideNavService, ReflectionService } from '@allors/workspace/angular/base';
+import { DialogInfoService, MenuInfoService, MetaInfoService } from '@allors/workspace/angular/base';
 import { init } from '../app/app.init';
 
 // This file can be replaced during build by using the `fileReplacements` array.
@@ -15,10 +14,12 @@ export function appInitializerFactory(workspaceService: WorkspaceService, httpCl
   };
 }
 
-export function appBootstrapListenerFactory(reflectionService: ReflectionService) {
+export function appBootstrapListenerFactory(dialogInfo: DialogInfoService, menuInfo: MenuInfoService, metaInfo: MetaInfoService) {
   return (component: ComponentRef<any>) => {
-    component.location.nativeElement.allors ??= {};
-    component.location.nativeElement.allors.reflection = reflectionService;
+    const allors: { [key: string]: unknown } = (component.location.nativeElement.allors ??= {});
+    dialogInfo.write(allors);
+    menuInfo.write(allors);
+    metaInfo.write(allors);
   };
 }
 
@@ -27,7 +28,9 @@ export const environment = {
   baseUrl: 'http://localhost:5000/allors/',
   authUrl: 'TestAuthentication/Token',
   providers: [
-    ReflectionService,
+    DialogInfoService,
+    MenuInfoService,
+    MetaInfoService,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
@@ -37,7 +40,7 @@ export const environment = {
     {
       provide: APP_BOOTSTRAP_LISTENER,
       useFactory: appBootstrapListenerFactory,
-      deps: [ReflectionService],
+      deps: [DialogInfoService, MenuInfoService, MetaInfoService],
       multi: true,
     },
   ],
