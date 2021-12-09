@@ -64,6 +64,10 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   }
 
   isPermitted(permission: number): boolean {
+    if(permission == null){
+      return false;
+    }
+
     if (this.grants == null) {
       return false;
     }
