@@ -8,6 +8,7 @@ import { Locale, Organisation, UserProfile, Singleton } from '@allors/workspace/
 import { ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
+import { PersonPicture } from '../../../../../../../../meta/apps/intranet/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './userprofile-edit.component.html',
@@ -24,6 +25,9 @@ export class UserProfileEditComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   internalOrganizations: Organisation[];
   supportedLocales: Locale[];
+  public confirmPassword: string;
+
+  user: import("c:/Users/MartienvKnippenberg/source/Repos/Allors/allors3/typescript/modules/libs/workspace/domain/apps/intranet/src/index").User;
 
   constructor(
     @Self() public allors: ContextService,
@@ -55,6 +59,9 @@ export class UserProfileEditComponent implements OnInit, OnDestroy {
             pull.UserProfile({
               objectId: this.data.id,
               include: {
+                UserWhereUserProfile: {
+                  Person_Picture: x,
+                },
                 DefaultInternalOrganization: x,
                 DefaulLocale: x,
               },
@@ -72,6 +79,7 @@ export class UserProfileEditComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.userProfile = loaded.object<UserProfile>(m.UserProfile);
+        this.user = this.userProfile.UserWhereUserProfile;
         this.internalOrganizations = loaded.collection<Organisation>(m.Organisation);
 
         const singleton = loaded.object<Singleton>(m.Singleton);
