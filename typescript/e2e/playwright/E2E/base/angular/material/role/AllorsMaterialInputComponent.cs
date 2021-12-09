@@ -10,13 +10,13 @@ namespace Allors.E2E.Angular.Material.Role
     using System.Threading.Tasks;
     using System.Xml;
     using Allors;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialInputComponent : RoleComponent
     {
-        public AllorsMaterialInputComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-input")
+        public AllorsMaterialInputComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-input")
         {
         }
 
@@ -45,7 +45,7 @@ namespace Allors.E2E.Angular.Material.Role
                 return null;
             }
 
-            var unit = (Unit)this.RoleType.ObjectType;
+            var unit = (IUnit)this.RoleType.ObjectType;
             return unit.Tag switch
             {
                 UnitTags.String => text,
@@ -71,7 +71,7 @@ namespace Allors.E2E.Angular.Material.Role
             var locale = await this.Page.Locale();
             var cultureInfo = new CultureInfo(locale);
 
-            var unit = (Unit)this.RoleType.ObjectType;
+            var unit = (IUnit)this.RoleType.ObjectType;
             switch (unit.Tag)
             {
                 case UnitTags.String:

@@ -19,9 +19,9 @@ namespace Allors.E2E.Angular.Material.Menu
 
         public IComponent Container { get; }
 
-        public IPage Page => this.Container.Page;
-
         public MetaPopulation M => this.Container.M;
+
+        public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
 

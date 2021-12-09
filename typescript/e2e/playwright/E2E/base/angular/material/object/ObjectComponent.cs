@@ -5,11 +5,12 @@
 
 namespace Allors.E2E.Angular.Material.Object
 {
+    using Allors.Database.Meta;
     using Database;
-    using Database.Meta;
     using Microsoft.Playwright;
 
-    public abstract class ObjectComponent<T> : IComponent where T : IObject
+    public abstract class ObjectComponent<T> : IComponent
+        where T : IObject
     {
         protected ObjectComponent(IComponent container, T @object, string elementName)
         {
@@ -20,9 +21,9 @@ namespace Allors.E2E.Angular.Material.Object
 
         public IComponent Container { get; }
 
-        public IPage Page => this.Container.Page;
-
         public MetaPopulation M => this.Container.M;
+
+        public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
 

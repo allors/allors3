@@ -17,11 +17,7 @@ export function configure(m: M) {
       icon: 'business',
       children: [{ objectType: m.Person }, { objectType: m.Organisation }, { objectType: m.Country }],
     },
-    {
-      title: 'Tests',
-      icon: 'build',
-      children: [{ title: 'Form', icon: 'share', link: '/tests/form' }],
-    },
+    { title: 'Form', icon: 'build', link: '/form' },
   ]);
 
   // Navigation

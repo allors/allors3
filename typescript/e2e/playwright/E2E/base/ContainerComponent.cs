@@ -5,7 +5,7 @@
 
 namespace Allors.E2E
 {
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
 
     public class ContainerComponent : IComponent

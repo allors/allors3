@@ -6,14 +6,14 @@
 namespace Allors.E2E.Angular.Material.Role
 {
     using System.Threading.Tasks;
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
     using DateTime = System.DateTime;
     using Task = System.Threading.Tasks.Task;
 
     public class AllorsMaterialDatetimepickerComponent : RoleComponent
     {
-        public AllorsMaterialDatetimepickerComponent(IComponent container, RoleType roleType) : base(container, roleType, "a-mat-datetimepicker")
+        public AllorsMaterialDatetimepickerComponent(IComponent container, IRoleType roleType) : base(container, roleType, "a-mat-datetimepicker")
         {
         }
 

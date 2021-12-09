@@ -5,9 +5,7 @@
 
 namespace Tests.Relations
 {
-    using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Person;
-    using NUnit.Framework;
 
     public class PersonOverviewTest : Test
     {

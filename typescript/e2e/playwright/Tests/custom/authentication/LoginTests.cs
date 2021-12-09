@@ -2,13 +2,10 @@ namespace Tests
 {
     using System.Threading.Tasks;
     using Allors.E2E.Angular.Material.Authentication;
-    using Microsoft.Playwright;
     using NUnit.Framework;
 
     public class LoginTests : Test
     {
-        public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
-
         [Test]
         public async Task Login()
         {

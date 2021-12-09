@@ -5,19 +5,15 @@
 
 namespace Tests.Form
 {
+    using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
-    using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class RadioGroupTest : Test
+    public class DatepickerTest : Test
     {
-        public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
-
-        public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
-
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]
@@ -28,27 +24,25 @@ namespace Tests.Form
         }
 
         [Test]
-        public async Task SetFirst()
+        public async Task Initial()
         {
-            var before = new Datas(this.Transaction).Extent().ToArray();
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            await this.FormComponent.RadioGroup.SelectAsync("one");
+            var date = await this.FormComponent.Date.GetAsync();
 
-            await this.FormComponent.SaveAsync();
-            this.Transaction.Rollback();
-
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(before.Length + 1, after.Length);
-            var data = after.Except(before).First();
-            Assert.AreEqual("one", data.RadioGroup);
+            Assert.IsNull(date);
         }
 
         [Test]
-        public async Task SetSecond()
+        public async Task SetDate()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
+
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.RadioGroup.SelectAsync("two");
+            var now = this.Transaction.Now();
+
+            await this.FormComponent.Date.SetAsync(now);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -56,7 +50,10 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(before.Length + 1, after.Length);
             var data = after.Except(before).First();
-            Assert.AreEqual("two", data.RadioGroup);
+            Assert.True(data.Date != null);
+            Assert.AreEqual(now.Year, data.Date.Value.Year);
+            Assert.AreEqual(now.Month, data.Date.Value.Month);
+            Assert.AreEqual(now.Day, data.Date.Value.Day);
         }
     }
 }

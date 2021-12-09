@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.E2E.Angular.Material.MatFactoryFab
+namespace Allors.E2E.Angular.Material.Factory
 {
     using System;
     using System.Linq;
@@ -15,7 +15,7 @@ namespace Allors.E2E.Angular.Material.MatFactoryFab
 
     public class FactoryFabComponent : IComponent
     {
-        public FactoryFabComponent(IComponent container, Composite composite)
+        public FactoryFabComponent(IComponent container, IComposite composite)
         {
             this.Container = container;
             this.Composite = composite;
@@ -24,36 +24,36 @@ namespace Allors.E2E.Angular.Material.MatFactoryFab
 
         public IComponent Container { get; }
 
-        public IPage Page => this.Container.Page;
-
         public MetaPopulation M => this.Container.M;
+
+        public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
 
-        public Composite Composite { get; set; }
+        public IComposite Composite { get; set; }
 
         public Anchor Anchor => new Anchor(this, @"[mat-fab]");
 
         public Element MatMenu => new Element(this, @"mat-menu");
 
-        public async Task Create(Class @class = null)
+        public async Task Create(IClass @class = null)
         {
             await this.Anchor.ClickAsync();
 
             var classes = await this.Classes();
             if (@class != null && classes.Length > 1)
             {
-                var button = new Button(this, $"button[data-allors-class='{@class.Name}']");
+                var button = new Button(this, $"button[data-allors-class='{@class.SingularName}']");
                 await button.ClickAsync();
             }
         }
 
-        private async Task<Class[]> Classes()
+        public async Task<IClass[]> Classes()
         {
             var attribute = await this.MatMenu.GetAttributeAsync("data-allors-actions");
             var actions = !string.IsNullOrWhiteSpace(attribute) ? attribute.Split(",") : Array.Empty<string>();
 
-            return this.Composite.Classes.Where(v => actions.Contains(v.SingularName)).Cast<Class>().ToArray();
+            return this.Composite.Classes.Where(v => actions.Contains(v.SingularName)).Cast<IClass>().ToArray();
         }
     }
 }

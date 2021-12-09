@@ -5,10 +5,7 @@
 
 namespace Tests.Relations
 {
-    using System.Linq;
-    using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Person;
-    using NUnit.Framework;
 
     public class PersonEditTest : Test
     {

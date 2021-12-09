@@ -5,19 +5,13 @@
 
 namespace Tests.Form
 {
-    using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
-    using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class StaticTest : Test
     {
-        public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
-
-        public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";
-
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
         [SetUp]

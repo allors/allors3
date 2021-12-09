@@ -5,16 +5,16 @@
 
 namespace Allors.E2E
 {
-    using Database.Meta;
+    using Allors.Database.Meta;
     using Microsoft.Playwright;
 
     public interface IComponent
     {
+        MetaPopulation M { get; }
+
         IComponent Container { get; }
 
         IPage Page { get; }
-
-        MetaPopulation M { get; }
 
         ILocator Locator { get; }
     }
