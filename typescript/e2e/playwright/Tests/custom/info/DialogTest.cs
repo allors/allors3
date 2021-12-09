@@ -3,13 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Form
+namespace Tests.Info
 {
     using Autotest;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class ReflectionTest : Test
+    public class DialogTest : Test
     {
         [SetUp]
         public async Task Setup()
@@ -19,12 +19,23 @@ namespace Tests.Form
         }
 
         [Test]
-        public async Task Meta()
+        public async Task Create()
         {
-            var model = new Reflection(this.AppRoot, this.M);
+            var dialogInfo = await this.AppRoot.GetDialogInfo();
 
-            var menu = await model.Menu();
-            var metaExtensions = await model.MetaExtensions();
+            var create = dialogInfo.Create;
+            Assert.NotNull(create);
+            Assert.IsNotEmpty(create);
+        }
+
+        [Test]
+        public async Task Edit()
+        {
+            var dialogInfo = await this.AppRoot.GetDialogInfo();
+
+            var edit = dialogInfo.Edit;
+            Assert.NotNull(edit);
+            Assert.IsNotEmpty(edit);
         }
     }
 }
