@@ -56,13 +56,13 @@
 
             <div class="row">
               <mat-form-field class="col-md">
-                <input matInput [(ngModel)]="person.InUserPassword" placeholder="New password" type="password" name="newpassword" />
+                <input matInput [(ngModel)]="person.InUserPassword" placeholder="New password" type="password" name="newpassword" [disabled]=!person.canWriteInUserPassword/>
               </mat-form-field>
             </div>
 
             <div class="row">
               <mat-form-field class="col-md">
-                <input matInput [(ngModel)]="confirmPassword" placeholder="Confirm new password" type="Password" name="confirmPassword" />
+                <input matInput [(ngModel)]="confirmPassword" placeholder="Confirm new password" type="Password" name="confirmPassword" [disabled]=!person.canWriteInUserPassword/>
               </mat-form-field>
             </div>
           </div>

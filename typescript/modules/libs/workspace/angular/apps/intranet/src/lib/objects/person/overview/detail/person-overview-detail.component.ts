@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Currency, Enumeration, GenderType, InternalOrganisation, Locale, Person, Salutation, ContactMechanism, PartyContactMechanism, EmailAddress } from '@allors/workspace/domain/default';
+import { Currency, Enumeration, GenderType, InternalOrganisation, Locale, Person, Salutation, ContactMechanism, PartyContactMechanism, EmailAddress, User } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
