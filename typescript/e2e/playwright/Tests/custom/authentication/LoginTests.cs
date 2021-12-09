@@ -1,4 +1,4 @@
-namespace Tests
+namespace Tests.Authentication
 {
     using System.Threading.Tasks;
     using Allors.E2E.Angular.Material.Authentication;

@@ -8,6 +8,7 @@ namespace Allors.E2E.Angular
     using System.Threading.Tasks;
     using Allors.Database.Meta;
     using Microsoft.Playwright;
+    using Task = System.Threading.Tasks.Task;
 
     public class AppRoot : IComponent
     {
@@ -27,5 +28,7 @@ namespace Allors.E2E.Angular
         public ILocator Locator { get; }
 
         public async Task<string> GetAngularVersionAsync() => await this.Locator.GetAttributeAsync("ng-version");
+
+        public async Task<string> GetAllors(string property) => await this.Locator.EvaluateAsync<string>($"(element) => element.allors.{property}");
     }
 }
