@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
@@ -38,7 +38,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AuthorizationService } from './auth/authorization.service';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 
@@ -109,69 +108,15 @@ import {
   OBJECT_EDIT_TOKEN,
 } from '@allors/workspace/angular/base';
 
-import { LoginComponent } from './auth/login.component';
-import { MainComponent } from './main/main.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { FormComponent } from './form/form.component';
-import { tags } from '@allors/workspace/meta/default';
+import { routes, components as routesComponents } from './app.routes';
+import { dialogs, components as dialogsComponents } from './app.dialogs';
 
-import { CountryEditComponent } from './objects/country/edit/country-edit.component';
-import { CountryListComponent } from './objects/country/list/country-list.component';
-import { EmploymentEditComponent } from './objects/employment/edit/employment-edit.component';
 import { EmploymentOverviewPanelComponent } from './objects/employment/overview/panel/employment-overview-panel.component';
-import { OrganisationCreateComponent } from './objects/organisation/create/organisation-create.component';
-import { OrganisationListComponent } from './objects/organisation/list/organisation-list.component';
-import { OrganisationOverviewComponent } from './objects/organisation/overview/organisation-overview.component';
 import { OrganisationOverviewDetailComponent } from './objects/organisation/overview/detail/organisation-overview-detail.component';
 import { OrganisationOverviewSummaryComponent } from './objects/organisation/overview/summary/organisation-overview-summary.component';
-import { PersonCreateComponent } from './objects/person/create/person-create.component';
 import { PersonInlineComponent } from './objects/person/inline/person-inline.component';
-import { PersonListComponent } from './objects/person/list/person-list.component';
-import { PersonOverviewComponent } from './objects/person/overview/person-overview.component';
 import { PersonOverviewDetailComponent } from './objects/person/overview/detail/person-overview-detail.component';
 import { PersonOverviewSummaryComponent } from './objects/person/overview/summary/person-overview-summary.component';
-
-export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  {
-    path: '',
-    component: MainComponent,
-    canActivate: [AuthorizationService],
-    children: [
-      {
-        path: 'dashboard',
-        component: DashboardComponent,
-      },
-      {
-        path: 'contacts',
-        children: [
-          { path: 'people', component: PersonListComponent },
-          { path: 'person/:id', component: PersonOverviewComponent },
-          { path: 'organisations', component: OrganisationListComponent },
-          { path: 'organisation/:id', component: OrganisationOverviewComponent },
-          { path: 'countries', component: CountryListComponent },
-        ],
-      },
-      {
-        path: 'form',
-        component: FormComponent,
-      },
-    ],
-  },
-];
-
-export const create = {
-  [tags.Country]: CountryEditComponent,
-  [tags.Employment]: EmploymentEditComponent,
-  [tags.Organisation]: OrganisationCreateComponent,
-  [tags.Person]: PersonCreateComponent,
-};
-
-export const edit = {
-  [tags.Country]: CountryEditComponent,
-  [tags.Employment]: EmploymentEditComponent,
-};
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -214,28 +159,16 @@ export const edit = {
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
-    // Allors Angular Material Custom
-    LoginComponent,
-    MainComponent,
-    DashboardComponent,
-
-    CountryEditComponent,
-    CountryListComponent,
-    EmploymentEditComponent,
+    // Routed and dialog components
+    ...routesComponents,
+    ...dialogsComponents,
+    // Non routed and non dialog components
     EmploymentOverviewPanelComponent,
-    OrganisationCreateComponent,
-    OrganisationListComponent,
-    OrganisationOverviewComponent,
-    PersonCreateComponent,
     PersonInlineComponent,
-    PersonListComponent,
-    PersonOverviewComponent,
     OrganisationOverviewDetailComponent,
     OrganisationOverviewSummaryComponent,
     PersonOverviewDetailComponent,
     PersonOverviewSummaryComponent,
-
-    FormComponent,
     // App
     AppComponent,
   ],
@@ -312,8 +245,8 @@ export const edit = {
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
     { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
-    { provide: OBJECT_CREATE_TOKEN, useValue: create },
-    { provide: OBJECT_EDIT_TOKEN, useValue: edit },
+    { provide: OBJECT_CREATE_TOKEN, useValue: dialogs.create },
+    { provide: OBJECT_EDIT_TOKEN, useValue: dialogs.edit },
     ...environment.providers,
   ],
 })

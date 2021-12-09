@@ -11,10 +11,10 @@ namespace Autotest
 
     public static partial class AppRootExtensions
     {
-        public static async Task<MenuInfo[]> GetMenuInfo(this AppRoot @this)
+        public static async Task<RouteInfo[]> GetRouteInfo(this AppRoot @this)
         {
-            var jsonString = await @this.GetAllors("menu");
-            return JsonSerializer.Deserialize<MenuInfo[]>(
+            var jsonString = await @this.GetAllors("route");
+            return JsonSerializer.Deserialize<RouteInfo[]>(
                 jsonString,
                 new JsonSerializerOptions
                 {

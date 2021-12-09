@@ -13,7 +13,7 @@ namespace Autotest
     {
         public static async Task<DialogInfo> GetDialogInfo(this AppRoot @this)
         {
-            var jsonString = await @this.GetAllors("meta");
+            var jsonString = await @this.GetAllors("dialog");
             return JsonSerializer.Deserialize<DialogInfo>(
                 jsonString,
                 new JsonSerializerOptions

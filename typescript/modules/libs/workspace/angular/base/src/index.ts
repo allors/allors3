@@ -3,7 +3,8 @@ export { MenuItem } from './lib/menu/menu-item';
 // Info
 export * from './lib/info/dialog-info.service';
 export * from './lib/info/menu-info.service';
-export * from './lib/info/meta-info.service';
+export * from './lib/info/navigation-info.service';
+export * from './lib/info/route-info.service';
 
 // Services
 export { AuthenticationTokenRequest } from './lib/services/authentication/authentication-token-request';
