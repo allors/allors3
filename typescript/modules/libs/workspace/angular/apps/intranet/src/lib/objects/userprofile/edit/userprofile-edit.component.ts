@@ -4,11 +4,9 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Locale, Organisation, UserProfile, Singleton } from '@allors/workspace/domain/default';
+import { Locale, Organisation, UserProfile, Singleton, User } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
-import { PersonPicture } from '../../../../../../../../meta/apps/intranet/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './userprofile-edit.component.html',
@@ -27,7 +25,7 @@ export class UserProfileEditComponent implements OnInit, OnDestroy {
   supportedLocales: Locale[];
   public confirmPassword: string;
 
-  user: import("c:/Users/MartienvKnippenberg/source/Repos/Allors/allors3/typescript/modules/libs/workspace/domain/apps/intranet/src/index").User;
+  user: User;
 
   constructor(
     @Self() public allors: ContextService,
