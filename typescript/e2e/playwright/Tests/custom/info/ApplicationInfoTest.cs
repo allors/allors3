@@ -19,8 +19,7 @@ namespace Tests.Info
         {
             var application = await ApplicationInfo.New(this.AppRoot);
 
-            Assert.IsNotEmpty(application.CreateComponentByObjectType);
-            Assert.IsNotEmpty(application.EditComponentByObjectType);
+            Assert.IsNotEmpty(application.ComponentInfoByName);
         }
     }
 }

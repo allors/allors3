@@ -5,8 +5,23 @@
 
 namespace Allors.E2E.Angular.Info
 {
+    using System;
+    using Database.Meta;
 
     public partial class ComponentInfo
     {
+        public ApplicationInfo ApplicationInfo { get; }
+
+        public Type Type { get; set; }
+
+        public LinkInfo List { get; set; }
+
+        public LinkInfo Overview { get; set; }
+
+        public IComposite Create { get; set; }
+
+        public IComposite Edit { get; set; }
+
+        internal ComponentInfo(ApplicationInfo applicationInfo) => this.ApplicationInfo = applicationInfo;
     }
 }
