@@ -20,6 +20,7 @@ export class SaveServiceCore extends SaveService {
           maxHeight: '90vh',
         });
       } else {
+        window.alert(error.error ?? error.message ?? error);
         throw error;
       }
     };

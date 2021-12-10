@@ -9,7 +9,7 @@ import * as EasyMDE from 'easymde';
   selector: 'a-mat-markdown',
   template: `
     <h4>{{ label }}</h4>
-    <textarea #easymde [attr.data-allors-id]="dataAllorsId" [attr.data-allors-roletype]="dataAllorsRoleType"></textarea>
+    <textarea #easymde [attr.maxlength]="maxlength" [attr.data-allors-id]="dataAllorsId" [attr.data-allors-roletype]="dataAllorsRoleType"></textarea>
   `,
   encapsulation: ViewEncapsulation.None,
 })
