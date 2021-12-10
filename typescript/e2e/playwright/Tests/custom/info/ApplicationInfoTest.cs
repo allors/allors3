@@ -9,22 +9,18 @@ namespace Tests.Info
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class RouteTest : Test
+    public class ApplicationInfoTest : Test
     {
         [SetUp]
-        public async Task Setup()
-        {
-            await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/tests/form");
-        }
+        public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task Route()
+        public async Task New()
         {
-            var routeInfo = await this.AppRoot.GetRouteInfo();
+            var application = await ApplicationInfo.New(this.AppRoot);
 
-            Assert.NotNull(routeInfo);
-            Assert.IsNotEmpty(routeInfo);
+            Assert.IsNotEmpty(application.CreateComponentByObjectType);
+            Assert.IsNotEmpty(application.EditComponentByObjectType);
         }
     }
 }

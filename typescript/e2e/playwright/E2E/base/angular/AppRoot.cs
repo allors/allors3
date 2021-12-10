@@ -8,9 +8,8 @@ namespace Allors.E2E.Angular
     using System.Threading.Tasks;
     using Allors.Database.Meta;
     using Microsoft.Playwright;
-    using Task = System.Threading.Tasks.Task;
 
-    public class AppRoot : IComponent
+    public partial class AppRoot : IComponent
     {
         public AppRoot(IPage page, MetaPopulation m, string selector)
         {

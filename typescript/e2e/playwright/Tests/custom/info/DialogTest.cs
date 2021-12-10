@@ -5,7 +5,7 @@
 
 namespace Tests.Info
 {
-    using Autotest;
+    using Allors.E2E.Angular.Info;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 

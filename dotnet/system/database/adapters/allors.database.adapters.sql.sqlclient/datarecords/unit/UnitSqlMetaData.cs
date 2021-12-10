@@ -6,8 +6,6 @@
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
     using System.Data;
     using Meta;
     using Microsoft.Data.SqlClient.Server;

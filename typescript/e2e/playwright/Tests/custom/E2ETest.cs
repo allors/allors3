@@ -12,7 +12,7 @@ namespace Tests
 
     public abstract class E2ETest
     {
-        private static readonly Task<IPlaywright> PlaywrightFactory = Init();
+        private static readonly Task<IPlaywright> PlaywrightFactory = PlaywrightCreateAsync();
 
         private static readonly object FixtureLockObject = new object();
         private Fixture fixture;
@@ -29,7 +29,7 @@ namespace Tests
 
         public AppRoot AppRoot => new AppRoot(this.Page, this.M, "allors-root");
 
-        public static async Task<IPlaywright> Init() => await Microsoft.Playwright.Playwright.CreateAsync();
+        private static async Task<IPlaywright> PlaywrightCreateAsync() => await Microsoft.Playwright.Playwright.CreateAsync();
 
         public Fixture Fixture
         {

@@ -104,12 +104,7 @@ namespace Allors.Database.Meta
             get
             {
                 var validation = this.Validate();
-                if (validation.ContainsErrors)
-                {
-                    return false;
-                }
-
-                return true;
+                return !validation.ContainsErrors;
             }
         }
 

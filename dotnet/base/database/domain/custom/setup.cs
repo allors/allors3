@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using Domain;
-
     public partial class Setup
     {
         private void CustomOnPrePrepare()
