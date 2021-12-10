@@ -130,6 +130,22 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
     return 'text';
   }
 
+  get pattern(): string {
+    if (this.roleType.objectType.tag == UnitTags.Decimal) {
+      return '^\\d*(\\.\\d+)?$';
+    }
+
+    return null;
+  }
+
+  get maxlength(): number {
+    if (this.roleType.objectType.tag == UnitTags.String) {
+      return this.roleType.size !== -1 ? this.roleType.size ?? 256 : null;
+    }
+
+    return null;
+  }
+
   get name(): string {
     return this.assignedName ? this.assignedName : this.roleType.name + '_' + this.id;
   }
