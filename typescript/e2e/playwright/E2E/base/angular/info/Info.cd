@@ -11,33 +11,20 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="System.Type" Collapsed="true">
-    <Position X="9.25" Y="0.75" Width="1.5" />
+    <Position X="7.25" Y="1" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Allors.E2E.Angular.Info.LinkInfo">
-    <Position X="7.5" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
-      <FileName>base\angular\info\LinkInfo.cs</FileName>
-      <NewMemberFileName>base\angular\info\ComponentInfo.cs</NewMemberFileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="ObjectType" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="Allors.E2E.Angular.Info.ComponentInfo">
     <Position X="4.25" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAAAEAAEACAQAAAAAAAAI=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAUAAEACAQAAAAAAAAA=</HashCode>
       <FileName>base\angular\info\ComponentInfo.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Property Name="Type" />
       <Property Name="Create" />
       <Property Name="Edit" />
-      <Property Name="List" />
-      <Property Name="Overview" />
-      <Property Name="Type" />
     </ShowAsAssociation>
   </Class>
   <Interface Name="Allors.Database.Meta.IComposite" Collapsed="true">

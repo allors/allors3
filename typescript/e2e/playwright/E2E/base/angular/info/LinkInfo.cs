@@ -6,11 +6,4 @@
 namespace Allors.E2E.Angular.Info
 {
     using Database.Meta;
-
-    public partial class LinkInfo
-    {
-        public IComposite ObjectType { get; set; }
-
-        public string Path { get; set; }
-    }
 }

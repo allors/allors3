@@ -11,15 +11,22 @@ namespace Allors.E2E.Angular.Info
 
     public static partial class AppRootExtensions
     {
-        public static async Task<RouteInfo[]> GetRouteInfo(this AppRoot @this)
+        public static async Task<RouteInfo[]> GetRoutesInfo(this AppRoot @this)
         {
             var jsonString = await @this.GetAllors("route");
-            return JsonSerializer.Deserialize<RouteInfo[]>(
+            var routeInfos = JsonSerializer.Deserialize<RouteInfo[]>(
                 jsonString,
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
+
+            foreach (var routeInfo in routeInfos)
+            {
+                routeInfo.ConnectParentToChildren();
+            }
+
+            return routeInfos;
         }
     }
 }

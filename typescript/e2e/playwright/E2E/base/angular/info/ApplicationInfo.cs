@@ -37,35 +37,46 @@ namespace Allors.E2E.Angular.Info
 
         private async Task Init()
         {
+            ComponentInfo ComponentInfo(string name)
+            {
+                if (this.ComponentInfoByName.TryGetValue(name, out var componentInfo))
+                {
+                    return componentInfo;
+                }
+
+                componentInfo = new ComponentInfo(this);
+                this.ComponentInfoByName.Add(name, componentInfo);
+                return componentInfo;
+            }
+
             var m = this.AppRoot.M;
 
             var dialogInfo = await this.AppRoot.GetDialogInfo();
 
             foreach (var createInfo in dialogInfo.Create)
             {
-                if (!this.ComponentInfoByName.TryGetValue(createInfo.Component, out var componentInfo))
-                {
-                    componentInfo = new ComponentInfo(this);
-                    this.ComponentInfoByName.Add(createInfo.Component, componentInfo);
-                }
-
+                var componentInfo = ComponentInfo(createInfo.Component);
                 componentInfo.Create = (IComposite)m.FindByTag(createInfo.Tag);
             }
 
             foreach (var editInfo in dialogInfo.Edit)
             {
-                if (!this.ComponentInfoByName.TryGetValue(editInfo.Component, out var componentInfo))
-                {
-                    componentInfo = new ComponentInfo(this);
-                    this.ComponentInfoByName.Add(editInfo.Component, componentInfo);
-                }
-
+                var componentInfo = ComponentInfo(editInfo.Component);
                 componentInfo.Edit = (IComposite)m.FindByTag(editInfo.Tag);
             }
 
-            var navigationInfo = await this.AppRoot.GetNavigationInfo();
+            var routesInfo = await this.AppRoot.GetRoutesInfo();
+            var componentRoutesInfo = routesInfo
+                .Flatten()
+                .Where(v => !string.IsNullOrEmpty(v.Component));
 
-            var routeInfo = await this.AppRoot.GetRouteInfo();
+            foreach (var routeInfo in componentRoutesInfo)
+            {
+                var componentInfo = ComponentInfo(routeInfo.Component);
+                componentInfo.RouteInfo = routeInfo;
+            }
+
+            var navigationInfo = await this.AppRoot.GetNavigationInfo();
 
             var menuInfo = await this.AppRoot.GetMenuInfo();
         }

@@ -5,6 +5,9 @@
 
 namespace Allors.E2E.Angular.Info
 {
+    using System;
+    using System.Collections.Generic;
+
     public class RouteInfo
     {
         public string Path { get; set; }
@@ -16,5 +19,19 @@ namespace Allors.E2E.Angular.Info
         public string RedirectTo { get; set; }
 
         public RouteInfo[] Children { get; set; }
+
+        public RouteInfo Parent { get; internal set; }
+
+        internal void ConnectParentToChildren()
+        {
+            if (this.Children != null)
+            {
+                foreach (var child in this.Children)
+                {
+                    child.Parent = this;
+                    child.ConnectParentToChildren();
+                }
+            }
+        }
     }
 }

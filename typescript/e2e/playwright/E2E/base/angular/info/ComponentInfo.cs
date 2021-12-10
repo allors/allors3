@@ -14,9 +14,7 @@ namespace Allors.E2E.Angular.Info
 
         public Type Type { get; set; }
 
-        public LinkInfo List { get; set; }
-
-        public LinkInfo Overview { get; set; }
+        public RouteInfo RouteInfo { get; set; }
 
         public IComposite Create { get; set; }
 

@@ -21,7 +21,7 @@ namespace Tests.Info
         [Test]
         public async Task Route()
         {
-            var routeInfo = await this.AppRoot.GetRouteInfo();
+            var routeInfo = await this.AppRoot.GetRoutesInfo();
 
             Assert.NotNull(routeInfo);
             Assert.IsNotEmpty(routeInfo);
