@@ -5,11 +5,12 @@
 
 namespace Tests.Info
 {
+    using System.Linq;
     using Autotest;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class MetaTest : Test
+    public class NavigationTest : Test
     {
         [SetUp]
         public async Task Setup()
@@ -19,12 +20,15 @@ namespace Tests.Info
         }
 
         [Test]
-        public async Task Meta()
+        public async Task Navigation()
         {
-            var metaInfo = await this.AppRoot.GetMetaInfo();
+            var navigationInfo = await this.AppRoot.GetNavigationInfo();
 
-            Assert.NotNull(metaInfo);
-            Assert.IsNotEmpty(metaInfo);
+            var list = navigationInfo.Where(v => v.List != null).ToArray();
+            var overview = navigationInfo.Where(v => v.List != null).ToArray();
+
+            Assert.NotNull(navigationInfo);
+            Assert.IsNotEmpty(navigationInfo);
         }
     }
 }

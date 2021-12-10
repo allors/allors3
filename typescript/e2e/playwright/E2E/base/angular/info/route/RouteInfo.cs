@@ -5,12 +5,16 @@
 
 namespace Autotest
 {
-    public class MetaInfo
+    public class RouteInfo
     {
-        public string Tag { get; set; }
+        public string Path { get; set; }
 
-        public string List { get; set; }
+        public string PathMatch { get; set; }
 
-        public string Overview { get; set; }
+        public string Component { get; set; }
+
+        public string RedirectTo { get; set; }
+
+        public RouteInfo[] Children { get; set; }
     }
 }

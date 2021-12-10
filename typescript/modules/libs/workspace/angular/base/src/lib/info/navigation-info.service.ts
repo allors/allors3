@@ -4,14 +4,14 @@ import { MetaPopulation } from '@allors/workspace/meta/system';
 import { angularList } from '../meta/angular.list';
 import { angularOverview } from '../meta/angular.overview';
 
-export interface MetaInfo {
+export interface NavigationInfo {
   tag: string;
   list: string;
   overview: string;
 }
 
 @Injectable()
-export class MetaInfoService {
+export class NavigationInfoService {
   metaPopulation: MetaPopulation;
 
   constructor(private workspaceService: WorkspaceService) {
@@ -19,11 +19,11 @@ export class MetaInfoService {
   }
 
   write(allors: { [key: string]: unknown }) {
-    allors.meta = this.meta;
+    allors.navigation = this.navigation;
   }
 
-  private get meta(): string {
-    const meta: MetaInfo[] = [...this.metaPopulation.composites].map((v) => {
+  private get navigation(): string {
+    const meta: NavigationInfo[] = [...this.metaPopulation.composites].map((v) => {
       return {
         tag: v.tag,
         list: angularList(v),
