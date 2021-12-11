@@ -11,10 +11,10 @@ namespace Allors.E2E.Angular.Info
 
     public static partial class AppRootExtensions
     {
-        public static async Task<DialogInfo> GetDialogInfo(this AppRoot @this)
+        public static async Task<DialogsInfo> GetDialogsInfo(this AppRoot @this)
         {
             var jsonString = await @this.GetAllors("dialog");
-            return JsonSerializer.Deserialize<DialogInfo>(
+            return JsonSerializer.Deserialize<DialogsInfo>(
                 jsonString,
                 new JsonSerializerOptions
                 {

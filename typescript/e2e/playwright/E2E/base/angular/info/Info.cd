@@ -3,7 +3,7 @@
   <Class Name="Allors.E2E.Angular.Info.ApplicationInfo">
     <Position X="0.5" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAABAAACAAAAAAEAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAABAAACAAAAAAEAAAAABAAAAAAAACAAAAAAA=</HashCode>
       <FileName>base\angular\info\ApplicationInfo.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -25,6 +25,18 @@
       <Property Name="Type" />
       <Property Name="Create" />
       <Property Name="Edit" />
+      <Property Name="RouteInfo" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Allors.E2E.Angular.Info.RouteInfo">
+    <Position X="9" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAACAAAAAAAAAIAAAAEQAAAAAAAABEAAABCAAAAAAA=</HashCode>
+      <FileName>base\angular\info\route\RouteInfo.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Parent" />
+      <Property Name="Children" />
     </ShowAsAssociation>
   </Class>
   <Interface Name="Allors.Database.Meta.IComposite" Collapsed="true">

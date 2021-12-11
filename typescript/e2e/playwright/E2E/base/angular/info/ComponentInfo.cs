@@ -20,6 +20,10 @@ namespace Allors.E2E.Angular.Info
 
         public IComposite Edit { get; set; }
 
+        public IComposite List { get; set; }
+
+        public IComposite Overview { get; set; }
+
         internal ComponentInfo(ApplicationInfo applicationInfo) => this.ApplicationInfo = applicationInfo;
     }
 }

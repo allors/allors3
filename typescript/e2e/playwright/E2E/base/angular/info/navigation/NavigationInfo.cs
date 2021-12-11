@@ -5,6 +5,9 @@
 
 namespace Allors.E2E.Angular.Info
 {
+    using System.Linq;
+    using Database.Meta;
+
     public class NavigationInfo
     {
         public string Tag { get; set; }
@@ -12,5 +15,29 @@ namespace Allors.E2E.Angular.Info
         public string List { get; set; }
 
         public string Overview { get; set; }
+
+        public void Init(ApplicationInfo applicationInfo)
+        {
+            var m = applicationInfo.AppRoot.M;
+            var objectType = (IComposite)m.FindByTag(this.Tag);
+
+            if (this.List != null)
+            {
+                if (applicationInfo.ComponentInfoByFullPath.TryGetValue(this.List, out var componentInfos))
+                {
+                    var componentInfo = componentInfos.OrderBy(v => v.RouteInfo.Depth).Last();
+                    componentInfo.List = objectType;
+                }
+            }
+
+            if (this.Overview != null)
+            {
+                if (applicationInfo.ComponentInfoByFullPath.TryGetValue(this.Overview, out var componentInfos))
+                {
+                    var componentInfo = componentInfos.OrderBy(v => v.RouteInfo.Depth).Last();
+                    componentInfo.Overview = objectType;
+                }
+            }
+        }
     }
 }

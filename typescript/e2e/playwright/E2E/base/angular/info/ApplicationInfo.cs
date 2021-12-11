@@ -9,7 +9,6 @@ namespace Allors.E2E.Angular.Info
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
-    using Allors.Database.Meta;
     using Task = System.Threading.Tasks.Task;
 
     public partial class ApplicationInfo
@@ -17,6 +16,8 @@ namespace Allors.E2E.Angular.Info
         public AppRoot AppRoot { get; }
 
         public IDictionary<string, ComponentInfo> ComponentInfoByName { get; }
+
+        public IDictionary<string, ComponentInfo[]> ComponentInfoByFullPath { get; private set; }
 
         private ApplicationInfo(AppRoot appRoot)
         {
@@ -35,48 +36,40 @@ namespace Allors.E2E.Angular.Info
             return application;
         }
 
-        private async Task Init()
+        internal ComponentInfo GetOrCreateComponentInfo(string name)
         {
-            ComponentInfo ComponentInfo(string name)
+            if (this.ComponentInfoByName.TryGetValue(name, out var componentInfo))
             {
-                if (this.ComponentInfoByName.TryGetValue(name, out var componentInfo))
-                {
-                    return componentInfo;
-                }
-
-                componentInfo = new ComponentInfo(this);
-                this.ComponentInfoByName.Add(name, componentInfo);
                 return componentInfo;
             }
 
-            var m = this.AppRoot.M;
+            componentInfo = new ComponentInfo(this);
+            this.ComponentInfoByName.Add(name, componentInfo);
+            return componentInfo;
+        }
 
-            var dialogInfo = await this.AppRoot.GetDialogInfo();
+        private async Task Init()
+        {
+            var dialogInfo = await this.AppRoot.GetDialogsInfo();
+            dialogInfo.Init(this);
 
-            foreach (var createInfo in dialogInfo.Create)
+            var routeInfos = await this.AppRoot.GetRouteInfos();
+            foreach (var routeInfo in routeInfos)
             {
-                var componentInfo = ComponentInfo(createInfo.Component);
-                componentInfo.Create = (IComposite)m.FindByTag(createInfo.Tag);
+                routeInfo.Init(this);
             }
 
-            foreach (var editInfo in dialogInfo.Edit)
+            this.ComponentInfoByFullPath = this.ComponentInfoByName
+                .Values
+                .GroupBy(v => v.RouteInfo?.FullPath)
+                .Where(v => v.Key != null)
+                .ToDictionary(v => v.Key, v => v.ToArray());
+
+            var navigationInfos = await this.AppRoot.GetNavigationInfos();
+            foreach (var navigationInfo in navigationInfos)
             {
-                var componentInfo = ComponentInfo(editInfo.Component);
-                componentInfo.Edit = (IComposite)m.FindByTag(editInfo.Tag);
+                navigationInfo.Init(this);
             }
-
-            var routesInfo = await this.AppRoot.GetRoutesInfo();
-            var componentRoutesInfo = routesInfo
-                .Flatten()
-                .Where(v => !string.IsNullOrEmpty(v.Component));
-
-            foreach (var routeInfo in componentRoutesInfo)
-            {
-                var componentInfo = ComponentInfo(routeInfo.Component);
-                componentInfo.RouteInfo = routeInfo;
-            }
-
-            var navigationInfo = await this.AppRoot.GetNavigationInfo();
 
             var menuInfo = await this.AppRoot.GetMenuInfo();
         }

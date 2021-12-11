@@ -7,8 +7,8 @@ namespace Allors.E2E.Angular.Info
 {
     public class DialogInfo
     {
-        public DialogObjectInfo[] Create { get; set; }
+        public string Tag { get; set; }
 
-        public DialogObjectInfo[] Edit { get; set; }
+        public string Component { get; set; }
     }
 }

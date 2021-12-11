@@ -5,9 +5,6 @@
 
 namespace Allors.E2E.Angular.Info
 {
-    using System;
-    using System.Collections.Generic;
-
     public class RouteInfo
     {
         public string Path { get; set; }
@@ -22,15 +19,53 @@ namespace Allors.E2E.Angular.Info
 
         public RouteInfo Parent { get; internal set; }
 
+        public string FullPath
+        {
+            get
+            {
+                var parentPath = this.Parent?.FullPath ?? "/";
+
+                if (string.IsNullOrEmpty(this.Path))
+                {
+                    return parentPath;
+                }
+
+                return parentPath + (!parentPath.EndsWith("/") ? "/" : string.Empty) + this.Path;
+            }
+        }
+
+        public int Depth => (this.Parent?.Depth ?? 0) + 1;
+
         internal void ConnectParentToChildren()
         {
-            if (this.Children != null)
+            if (this.Children == null)
             {
-                foreach (var child in this.Children)
-                {
-                    child.Parent = this;
-                    child.ConnectParentToChildren();
-                }
+                return;
+            }
+
+            foreach (var child in this.Children)
+            {
+                child.Parent = this;
+                child.ConnectParentToChildren();
+            }
+        }
+
+        internal void Init(ApplicationInfo applicationInfo)
+        {
+            if (this.Component != null)
+            {
+                var componentInfo = applicationInfo.GetOrCreateComponentInfo(this.Component);
+                componentInfo.RouteInfo = this;
+            }
+
+            if (this.Children == null)
+            {
+                return;
+            }
+
+            foreach (var child in this.Children)
+            {
+                child.Init(applicationInfo);
             }
         }
     }

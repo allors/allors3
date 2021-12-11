@@ -11,7 +11,7 @@ namespace Allors.E2E.Angular.Info
 
     public static partial class AppRootExtensions
     {
-        public static async Task<NavigationInfo[]> GetNavigationInfo(this AppRoot @this)
+        public static async Task<NavigationInfo[]> GetNavigationInfos(this AppRoot @this)
         {
             var jsonString = await @this.GetAllors("navigation");
             return JsonSerializer.Deserialize<NavigationInfo[]>(

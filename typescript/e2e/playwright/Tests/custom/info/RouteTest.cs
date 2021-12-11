@@ -21,10 +21,10 @@ namespace Tests.Info
         [Test]
         public async Task Route()
         {
-            var routeInfo = await this.AppRoot.GetRoutesInfo();
+            var routeInfos = await this.AppRoot.GetRouteInfos();
 
-            Assert.NotNull(routeInfo);
-            Assert.IsNotEmpty(routeInfo);
+            Assert.NotNull(routeInfos);
+            Assert.IsNotEmpty(routeInfos);
         }
     }
 }

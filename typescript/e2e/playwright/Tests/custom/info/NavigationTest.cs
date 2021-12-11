@@ -22,7 +22,7 @@ namespace Tests.Info
         [Test]
         public async Task Navigation()
         {
-            var navigationInfo = await this.AppRoot.GetNavigationInfo();
+            var navigationInfo = await this.AppRoot.GetNavigationInfos();
 
             var list = navigationInfo.Where(v => v.List != null).ToArray();
             var overview = navigationInfo.Where(v => v.List != null).ToArray();
