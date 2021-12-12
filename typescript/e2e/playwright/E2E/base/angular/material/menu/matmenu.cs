@@ -6,6 +6,7 @@
 namespace Allors.E2E.Angular.Material.Menu
 {
     using Allors.Database.Meta;
+    using Info;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
@@ -24,6 +25,8 @@ namespace Allors.E2E.Angular.Material.Menu
         public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
+
+        public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
         public async Task Select(string value)
         {

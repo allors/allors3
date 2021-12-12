@@ -24,6 +24,8 @@ namespace Allors.E2E.Angular.Info
 
         public IComposite Overview { get; set; }
 
+        public MenuInfo MenuInfo { get; set; }
+
         internal ComponentInfo(ApplicationInfo applicationInfo) => this.ApplicationInfo = applicationInfo;
     }
 }

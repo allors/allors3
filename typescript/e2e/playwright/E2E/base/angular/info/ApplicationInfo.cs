@@ -17,7 +17,7 @@ namespace Allors.E2E.Angular.Info
 
         public IDictionary<string, ComponentInfo> ComponentInfoByName { get; }
 
-        public IDictionary<string, ComponentInfo[]> ComponentInfoByFullPath { get; private set; }
+        internal IDictionary<string, ComponentInfo[]> ComponentInfoByFullPath { get; private set; }
 
         private ApplicationInfo(AppRoot appRoot)
         {
@@ -71,7 +71,11 @@ namespace Allors.E2E.Angular.Info
                 navigationInfo.Init(this);
             }
 
-            var menuInfo = await this.AppRoot.GetMenuInfo();
+            var menuInfos = await this.AppRoot.GetMenuInfos();
+            foreach (var menuInfo in menuInfos)
+            {
+                menuInfo.Init(this);
+            }
         }
     }
 }

@@ -11,15 +11,22 @@ namespace Allors.E2E.Angular.Info
 
     public static partial class AppRootExtensions
     {
-        public static async Task<MenuInfo[]> GetMenuInfo(this AppRoot @this)
+        public static async Task<MenuInfo[]> GetMenuInfos(this AppRoot @this)
         {
             var jsonString = await @this.GetAllors("menu");
-            return JsonSerializer.Deserialize<MenuInfo[]>(
+            var menuInfos = JsonSerializer.Deserialize<MenuInfo[]>(
                 jsonString,
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
+
+            foreach (var menuInfo in menuInfos)
+            {
+                menuInfo.ConnectParentToChildren();
+            }
+
+            return menuInfos;
         }
     }
 }

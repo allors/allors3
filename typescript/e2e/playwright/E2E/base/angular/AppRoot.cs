@@ -7,15 +7,23 @@ namespace Allors.E2E.Angular
 {
     using System.Threading.Tasks;
     using Allors.Database.Meta;
+    using Info;
     using Microsoft.Playwright;
 
     public partial class AppRoot : IComponent
     {
-        public AppRoot(IPage page, MetaPopulation m, string selector)
+        private AppRoot(IPage page, MetaPopulation m, string selector)
         {
             this.Page = page;
             this.M = m;
             this.Locator = this.Page.Locator(selector);
+        }
+
+        public static async Task<AppRoot> New(IPage page, MetaPopulation m, string selector)
+        {
+            var appRoot = new AppRoot(page, m, selector);
+            appRoot.ApplicationInfo = await ApplicationInfo.New(appRoot);
+            return appRoot;
         }
 
         public MetaPopulation M { get; set; }
@@ -25,6 +33,8 @@ namespace Allors.E2E.Angular
         public IPage Page { get; }
 
         public ILocator Locator { get; }
+
+        public ApplicationInfo ApplicationInfo { get; private set; }
 
         public async Task<string> GetAngularVersionAsync() => await this.Locator.GetAttributeAsync("ng-version");
 

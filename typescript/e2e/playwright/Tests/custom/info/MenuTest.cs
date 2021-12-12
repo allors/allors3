@@ -21,7 +21,7 @@ namespace Tests.Info
         [Test]
         public async Task Menu()
         {
-            var menuInfo = await this.AppRoot.GetMenuInfo();
+            var menuInfo = await this.AppRoot.GetMenuInfos();
 
             Assert.NotNull(menuInfo);
             Assert.IsNotEmpty(menuInfo);

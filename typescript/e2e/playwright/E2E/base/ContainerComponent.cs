@@ -6,6 +6,7 @@
 namespace Allors.E2E
 {
     using Allors.Database.Meta;
+    using Angular.Info;
     using Microsoft.Playwright;
 
     public class ContainerComponent : IComponent
@@ -27,5 +28,7 @@ namespace Allors.E2E
         public ILocator Locator => !string.IsNullOrWhiteSpace(this.selector)
             ? this.Container.Locator.Locator(this.selector)
             : this.Container.Locator;
+
+        public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
     }
 }

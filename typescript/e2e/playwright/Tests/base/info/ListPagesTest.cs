@@ -5,44 +5,16 @@
 
 namespace Tests.ApplicationTests
 {
-    using System.Linq;
-    using System.Reflection;
-    using Allors.E2E.Angular.Material.Sidenav;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class ListPagesTest : Test
     {
-        private MethodInfo[] navigateTos;
-
-        public Sidenav Sidenav => new Sidenav(this.AppRoot);
-
         [SetUp]
         public async Task Setup()
         {
-            this.navigateTos = this.Sidenav.GetType()
-                .GetMethods()
-                .Where(v => v.Name.StartsWith("NavigateTo"))
-                .ToArray();
-
-            // Uncomment next line to only test a certain page
-            // this.navigateTos = navigateTos.Where(v => v.Name.Equals("NavigateToSpareParts")).ToArray();
-
             await this.LoginAsync("jane@example.com");
         }
-
-        //[Test]
-        //public async Task Navigate()
-        //{
-        //    foreach (var navigateTo in this.navigateTos)
-        //    {
-        //        var result = (Task)navigateTo.Invoke(this.Sidenav, null);
-        //        if (result != null)
-        //        {
-        //            await result;
-        //        }
-        //    }
-        //}
 
         //[Test]
         //public async Task Create()
