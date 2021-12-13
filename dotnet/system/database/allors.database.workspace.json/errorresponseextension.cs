@@ -31,10 +31,10 @@ namespace Allors.Database.Protocol.Json
                 new List<long>(@this._v) { obj.Id }.ToArray() :
                 new List<long> { obj.Id }.ToArray();
 
-        public static void AddAccessError(this Response @this, IObject obj) =>
+        public static void AddAccessError(this Response @this, long id) =>
             @this._a = @this._a != null ?
-                new List<long>(@this._a) { obj.Id }.ToArray() :
-                new List<long> { obj.Id }.ToArray();
+                new List<long>(@this._a) { id }.ToArray() :
+                new List<long> { id }.ToArray();
 
         public static void AddMissingError(this Response @this, long id) =>
             @this._m = @this._m != null ?

@@ -80,10 +80,14 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
             );
           }
 
-          if (this.data.associationId) {
+          if (isCreate && this.data.associationId) {
             pulls.push(
               pull.SerialisedItem({
                 objectId: this.data.associationId,
+                include: {
+                  OwnedBy: x,
+                  RentedBy: x,
+                }
               })
             );
           }
@@ -108,6 +112,20 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
           this.title = 'Add Work Requirement';
           this.requirement = this.allors.context.create<WorkRequirement>(m.WorkRequirement);
           this.requirement.ServicedBy = this.internalOrganisation as Organisation;
+
+          const serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
+          if (serialisedItem !== undefined) {
+            if (serialisedItem.OwnedBy != null && !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation ) {
+              this.requirement.Originator = serialisedItem.OwnedBy;
+              this.updateOriginator(this.requirement.Originator);
+            } else if (serialisedItem.RentedBy != null && !(<Organisation>serialisedItem.RentedBy).IsInternalOrganisation ) {
+              this.requirement.Originator = serialisedItem.RentedBy;
+              this.updateOriginator(this.requirement.Originator);
+            }
+
+            this.requirement.FixedAsset = serialisedItem;
+          } 
+
         } else {
           this.requirement = loaded.object<WorkRequirement>(m.WorkRequirement);
           this.originatorSelected(this.requirement.Originator);

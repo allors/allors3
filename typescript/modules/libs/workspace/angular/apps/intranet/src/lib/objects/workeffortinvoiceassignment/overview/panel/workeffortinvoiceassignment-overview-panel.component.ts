@@ -6,7 +6,7 @@ import { Action, DeleteService, EditService, NavigationService, ObjectData, Pane
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
-  object: WorkEffortInvoiceItem;
+  object: WorkEffortInvoiceItemAssignment;
   type: string;
   amount: string;
 }
@@ -106,7 +106,7 @@ export class WorkEffortInvoiceItemAssignmentOverviewPanelComponent implements On
       this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
       this.table.data = this.objects?.map((v) => {
         return {
-          object: v.WorkEffortInvoiceItem,
+          object: v,
           type: `${v.WorkEffortInvoiceItem.InvoiceItemType && v.WorkEffortInvoiceItem.InvoiceItemType.Name}`,
           amount: v.WorkEffortInvoiceItem.Amount,
         } as Row;

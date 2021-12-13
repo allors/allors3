@@ -41,7 +41,7 @@
   <mat-card-actions>
     <button *ngIf="requirement.canExecuteCancel" mat-button (click)="cancel()">Cancel</button>
     <button *ngIf="requirement.canExecuteReopen" mat-button (click)="reopen()">Reopen</button>
-    <button *ngIf="requirement.canExecuteClose" mat-button (click)="close()">Close</button>
+    <button *ngIf="requirement.canExecuteClose" mat-button (click)="close()">Finish</button>
     <button *ngIf="requirement.canExecuteCreateWorkTask" mat-button (click)="createWorkTask()">Create Work Order</button>
   </mat-card-actions>
 </mat-card>

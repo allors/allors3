@@ -40,6 +40,7 @@ namespace Allors.Database.Protocol.Json
         {
             var pushResponse = new PushResponse();
             Dictionary<long, IObject> objectByNewId = null;
+            Dictionary<IObject, long> newIdByObject = null;
             if (pushRequest.n != null && pushRequest.n.Length > 0)
             {
                 objectByNewId = pushRequest.n.ToDictionary(
@@ -57,6 +58,8 @@ namespace Allors.Database.Protocol.Json
 
                             return null;
                         });
+
+                newIdByObject = objectByNewId.ToDictionary(v => v.Value, v => v.Key);
             }
 
             if (pushRequest.o != null && pushRequest.o.Length > 0)
@@ -87,11 +90,11 @@ namespace Allors.Database.Protocol.Json
                         else if (this.allowedClasses?.Contains(obj.Strategy.Class) == true)
                         {
                             var pushRequestRoles = pushRequestObject.r;
-                            this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
+                            this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId, newIdByObject);
                         }
                         else
                         {
-                            pushResponse.AddAccessError(obj);
+                            pushResponse.AddAccessError(obj.Id);
                         }
                     }
                 }
@@ -112,7 +115,7 @@ namespace Allors.Database.Protocol.Json
                         var pushRequestRoles = pushRequestNewObject.r;
                         if (pushRequestRoles != null)
                         {
-                            countOutstandingRoles += this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId, true);
+                            countOutstandingRoles += this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId, newIdByObject, true);
                         }
                     }
                 }
@@ -126,7 +129,7 @@ namespace Allors.Database.Protocol.Json
                         var pushRequestRoles = pushRequestNewObject.r;
                         if (pushRequestRoles != null)
                         {
-                            this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId);
+                            this.PushRequestRoles(pushRequestRoles, obj, pushResponse, objectByNewId, newIdByObject);
                         }
                     }
                 }
@@ -173,7 +176,7 @@ namespace Allors.Database.Protocol.Json
             }
         }
 
-        private int PushRequestRoles(IList<PushRequestRole> pushRequestRoles, IObject obj, PushResponse pushResponse, Dictionary<long, IObject> objectByNewId, bool ignore = false)
+        private int PushRequestRoles(IList<PushRequestRole> pushRequestRoles, IObject obj, PushResponse pushResponse, Dictionary<long, IObject> objectByNewId, Dictionary<IObject, long> newIdByObject, bool ignore = false)
         {
             var countOutstandingRoles = 0;
             foreach (var pushRequestRole in pushRequestRoles)
@@ -261,7 +264,14 @@ namespace Allors.Database.Protocol.Json
                     }
                     else if (!ignore)
                     {
-                        pushResponse.AddAccessError(obj);
+                        if (newIdByObject.TryGetValue(obj, out var newId))
+                        {
+                            pushResponse.AddAccessError(newId);
+                        }
+                        else
+                        {
+                            pushResponse.AddAccessError(obj.Id);
+                        }
                     }
                     else
                     {

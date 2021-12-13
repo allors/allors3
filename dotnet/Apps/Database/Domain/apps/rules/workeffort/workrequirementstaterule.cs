@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
                 if (workEffort.WorkEffortState.IsCompleted || workEffort.WorkEffortState.IsFinished)
                 {
-                    @this.RequirementState = new RequirementStates(@this.Strategy.Transaction).Closed;
+                    @this.RequirementState = new RequirementStates(@this.Strategy.Transaction).Finished;
                 }
                 else if (workEffort.WorkEffortState.IsCancelled)
                 {

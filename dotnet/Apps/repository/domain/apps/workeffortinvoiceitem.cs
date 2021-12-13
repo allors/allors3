@@ -30,10 +30,17 @@ namespace Allors.Repository
         public InvoiceItemType InvoiceItemType { get; set; }
 
         #region Allors
+        [Id("605925e0-0658-43f8-a239-933823a1205b")]
+        #endregion
+        [Precision(19)]
+        [Scale(4)]
+        [Workspace(Default)]
+        public decimal AssignedAmount { get; set; }
+
+        #region Allors
         [Id("94ae1041-341a-4638-90b8-501ccb802a9f")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(4)]
         [Workspace(Default)]

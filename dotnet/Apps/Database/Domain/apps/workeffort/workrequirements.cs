@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
             var createdState = new RequirementStates(this.Transaction).Created;
             var inProgressState = new RequirementStates(this.Transaction).InProgress;
             var cancelledState = new RequirementStates(this.Transaction).Cancelled;
-            var closedState = new RequirementStates(this.Transaction).Closed;
+            var closedState = new RequirementStates(this.Transaction).Finished;
 
             var cancel = this.Meta.Cancel;
             var reopen = this.Meta.Reopen;

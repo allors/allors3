@@ -11,10 +11,12 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
     {
         public SalesInvoiceItemAssignmentModel(WorkEffortInvoiceItemAssignment workEffortInvoiceItemAssignment)
         {
+            var amount = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount ?? 0M;
+
             this.Description = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Description;
             this.Quantity = 1;
-            this.UnitSellingPrice = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount.ToString("N2", new CultureInfo("nl-BE"));
-            this.SellingPrice = Rounder.RoundDecimal(this.Quantity * workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount, 2).ToString("N2", new CultureInfo("nl-BE"));
+            this.UnitSellingPrice = amount.ToString("N2", new CultureInfo("nl-BE"));
+            this.SellingPrice = Rounder.RoundDecimal(this.Quantity * amount, 2).ToString("N2", new CultureInfo("nl-BE"));
         }
 
         public string Description { get; }

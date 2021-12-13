@@ -34,7 +34,7 @@ namespace Allors.Database.Protocol.Json
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<PushResponse> Post([FromBody]PushRequest pushRequest) =>
+        public ActionResult<PushResponse> Post([FromBody] PushRequest pushRequest) =>
             this.PolicyService.PushPolicy.Execute(
                 () =>
                 {
@@ -52,3 +52,4 @@ namespace Allors.Database.Protocol.Json
                 });
     }
 }
+

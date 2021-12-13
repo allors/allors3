@@ -94,6 +94,7 @@ export class WorkEffortInvoiceItemAssignmentEditComponent implements OnInit, OnD
 
           this.workEffortInvoiceItemAssignment = this.allors.context.create<WorkEffortInvoiceItemAssignment>(m.WorkEffortInvoiceItemAssignment);
           this.workEffortInvoiceItemAssignment.Assignment = this.workEffort;
+          
           this.workEffortInvoiceItem = this.allors.context.create<WorkEffortInvoiceItem>(m.WorkEffortInvoiceItem);
           this.workEffortInvoiceItemAssignment.WorkEffortInvoiceItem = this.workEffortInvoiceItem;
         } else {

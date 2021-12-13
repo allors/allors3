@@ -116,7 +116,7 @@ namespace Allors.Database.Protocol.Json
 
             if (this.allowedClasses?.Contains(obj.Strategy.Class) != true)
             {
-                invokeResponse.AddAccessError(obj);
+                invokeResponse.AddAccessError(obj.Id);
                 return true;
             }
 
@@ -140,7 +140,7 @@ namespace Allors.Database.Protocol.Json
             var acl = this.accessControl[obj];
             if (!acl.CanExecute(methodType))
             {
-                invokeResponse.AddAccessError(obj);
+                invokeResponse.AddAccessError(obj.Id);
                 return true;
             }
 

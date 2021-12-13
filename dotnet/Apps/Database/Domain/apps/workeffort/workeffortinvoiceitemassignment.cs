@@ -13,12 +13,16 @@ namespace Allors.Database.Domain
         {
             if (method.SecurityTokens == null)
             {
-                method.SecurityTokens = this.Assignment?.SecurityTokens.ToArray();
+                method.SecurityTokens = this.strategy.IsNewInTransaction ?
+                    new SecurityToken[] { new SecurityTokens(this.strategy.Transaction).InitialSecurityToken } :
+                    this.Assignment?.SecurityTokens.ToArray();
             }
 
             if (method.Revocations == null)
             {
-                method.Revocations = this.Assignment?.Revocations.ToArray();
+                method.Revocations = this.strategy.IsNewInTransaction ?
+                    new Revocation[] { } :
+                    this.Assignment?.Revocations.ToArray();
             }
         }
     }

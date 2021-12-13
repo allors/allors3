@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
 
         public void AppsClose(WorkRequirementClose method)
         {
-            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Closed;
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).Finished;
             method.StopPropagation = true;
         }
 

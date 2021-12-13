@@ -13,6 +13,6 @@ namespace Allors.Database.Domain
 
         public bool IsCancelled => this.Equals(new RequirementStates(this.Strategy.Transaction).Cancelled);
 
-        public bool IsClosed => this.Equals(new RequirementStates(this.Strategy.Transaction).Closed);
+        public bool IsClosed => this.Equals(new RequirementStates(this.Strategy.Transaction).Finished);
     }
 }

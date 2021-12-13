@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Organisation, Party, Priority, WorkRequirement, SerialisedItem, InternalOrganisation } from '@allors/workspace/domain/default';
+import { Party, Priority, WorkRequirement, SerialisedItem, InternalOrganisation } from '@allors/workspace/domain/default';
 import { NavigationService, PanelService, RadioGroupOption, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
@@ -98,6 +98,7 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
                 Priority: x,
                 FixedAsset: x,
                 Pictures: x,
+                LastModifiedBy: x,
               },
             }),
             pull.Priority({
