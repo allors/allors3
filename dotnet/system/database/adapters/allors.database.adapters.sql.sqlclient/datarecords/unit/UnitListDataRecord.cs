@@ -5,10 +5,6 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using Microsoft.Data.SqlClient.Server;
 
     // TODO: Use TVP for IN
     //internal class UnitListDataRecord : IEnumerable<SqlDataRecord>

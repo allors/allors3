@@ -6,7 +6,7 @@
 namespace Tests.Info
 {
     using System.Linq;
-    using Autotest;
+    using Allors.E2E.Angular.Info;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
@@ -22,7 +22,7 @@ namespace Tests.Info
         [Test]
         public async Task Navigation()
         {
-            var navigationInfo = await this.AppRoot.GetNavigationInfo();
+            var navigationInfo = await this.AppRoot.GetNavigationInfos();
 
             var list = navigationInfo.Where(v => v.List != null).ToArray();
             var overview = navigationInfo.Where(v => v.List != null).ToArray();

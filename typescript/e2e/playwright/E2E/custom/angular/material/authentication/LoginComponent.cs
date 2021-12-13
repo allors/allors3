@@ -11,7 +11,7 @@ namespace Allors.E2E.Angular.Material.Authentication
 
         public async Task Login(string username, string password = null)
         {
-            await this.Page.GotoAsync("http://localhost:4200");
+            await this.Page.GotoAsync("/");
 
             await this.Page.FillAsync("input[name=\"username\"]", username);
             await this.Page.FillAsync("input[name=\"password\"]", password ?? string.Empty);

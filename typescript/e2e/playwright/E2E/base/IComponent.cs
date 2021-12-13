@@ -6,6 +6,7 @@
 namespace Allors.E2E
 {
     using Allors.Database.Meta;
+    using Angular.Info;
     using Microsoft.Playwright;
 
     public interface IComponent
@@ -17,5 +18,7 @@ namespace Allors.E2E
         IPage Page { get; }
 
         ILocator Locator { get; }
+
+        ApplicationInfo ApplicationInfo { get; }
     }
 }

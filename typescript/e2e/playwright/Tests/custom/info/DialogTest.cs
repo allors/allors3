@@ -5,7 +5,7 @@
 
 namespace Tests.Info
 {
-    using Autotest;
+    using Allors.E2E.Angular.Info;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
@@ -21,7 +21,7 @@ namespace Tests.Info
         [Test]
         public async Task Create()
         {
-            var dialogInfo = await this.AppRoot.GetDialogInfo();
+            var dialogInfo = await this.AppRoot.GetDialogsInfo();
 
             var create = dialogInfo.Create;
             Assert.NotNull(create);
@@ -31,7 +31,7 @@ namespace Tests.Info
         [Test]
         public async Task Edit()
         {
-            var dialogInfo = await this.AppRoot.GetDialogInfo();
+            var dialogInfo = await this.AppRoot.GetDialogsInfo();
 
             var edit = dialogInfo.Edit;
             Assert.NotNull(edit);

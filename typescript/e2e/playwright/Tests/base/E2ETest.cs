@@ -12,7 +12,7 @@ namespace Tests
 
     public abstract class E2ETest
     {
-        private static readonly Task<IPlaywright> PlaywrightFactory = Init();
+        private static readonly Task<IPlaywright> PlaywrightFactory = PlaywrightCreateAsync();
 
         private static readonly object FixtureLockObject = new object();
         private Fixture fixture;
@@ -27,9 +27,7 @@ namespace Tests
 
         public IPage Page { get; private set; }
 
-        public AppRoot AppRoot => new AppRoot(this.Page, this.M, "allors-root");
-
-        public static async Task<IPlaywright> Init() => await Microsoft.Playwright.Playwright.CreateAsync();
+        private static async Task<IPlaywright> PlaywrightCreateAsync() => await Microsoft.Playwright.Playwright.CreateAsync();
 
         public Fixture Fixture
         {
@@ -56,7 +54,7 @@ namespace Tests
         public ITransaction Transaction { get; set; }
 
         [SetUp]
-        public async Task TestSetup()
+        public async Task E2ETestSetup()
         {
             this.Playwright = await PlaywrightFactory;
             this.BrowserType = this.Playwright[(Environment.GetEnvironmentVariable("BROWSER") ?? Microsoft.Playwright.BrowserType.Chromium).ToLower()];

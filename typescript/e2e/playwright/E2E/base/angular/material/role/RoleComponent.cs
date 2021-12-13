@@ -8,6 +8,7 @@ namespace Allors.E2E.Angular.Material.Role
     using System.Collections.Generic;
     using System.Linq;
     using Allors.Database.Meta;
+    using Info;
     using Microsoft.Playwright;
 
     public abstract class RoleComponent : IComponent
@@ -29,6 +30,8 @@ namespace Allors.E2E.Angular.Material.Role
         public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
+
+        public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
         public IRoleType RoleType { get; }
 

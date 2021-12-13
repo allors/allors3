@@ -7,6 +7,7 @@ namespace Allors.E2E.Angular.Material.Sidenav
 {
     using Allors.Database.Meta;
     using Html;
+    using Info;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
@@ -15,7 +16,7 @@ namespace Allors.E2E.Angular.Material.Sidenav
         public Sidenav(IComponent container)
         {
             this.Container = container;
-            this.Locator = this.Container.Locator.Locator("mat-sidenav");
+            this.Locator = this.Container.Locator.Locator("mat-sidenav-container");
         }
 
         public IComponent AppRoot
@@ -40,47 +41,42 @@ namespace Allors.E2E.Angular.Material.Sidenav
 
         public ILocator Locator { get; }
 
-        public Button Toggle => new Button(this, @"button[aria-label=""Toggle sidenav""]");
+        public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
-        public async Task NavigateAsync(string link)
+        public Button Toggle => new Button(this, @"button[aria-label=""Toggle sidenav""] >> nth=0");
+
+        public async Task NavigateAsync(ComponentInfo componentInfo)
         {
-            var anchor = this.Link(link);
+            var menuInfo = componentInfo.MenuInfo;
+            var link = menuInfo.Link ?? componentInfo.RouteInfo.FullPath;
+            var anchor = new Anchor(this, $"a[href='{link}']");
 
-            var isVisible = await anchor.IsVisibleAsync();
-            if (!isVisible)
+            var parentMenuInfo = menuInfo.Parent;
+            if (parentMenuInfo != null)
             {
-                await this.Toggle.ClickAsync();
-            }
+                var span = new Element(this, @$"span:has-text(""{parentMenuInfo.Title}"")");
 
-            await anchor.ClickAsync();
-        }
-
-        public async Task NavigateAsync(string group, string link)
-        {
-            var element = this.Group(@group);
-            var anchor = this.Link(link);
-
-            var isVisible = await anchor.IsVisibleAsync();
-            if (!isVisible)
-            {
-                var groupIsVisible = await element.IsVisibleAsync();
-                if (!groupIsVisible)
+                await this.Page.WaitForAngular();
+                if (!await span.IsVisibleAsync())
                 {
                     await this.Toggle.ClickAsync();
                 }
 
-                isVisible = await anchor.IsVisibleAsync();
-                if (!isVisible)
+                await this.Page.WaitForAngular();
+                if (!await anchor.IsVisibleAsync())
                 {
-                    await element.ClickAsync();
+                    await span.ClickAsync();
                 }
             }
 
+            await this.Page.WaitForAngular();
+            if (!await anchor.IsVisibleAsync())
+            {
+                await this.Toggle.ClickAsync();
+            }
+
+            await this.Page.WaitForAngular();
             await anchor.ClickAsync();
         }
-
-        private Element Group(string name) => new Element(this, $"span[contains(text(), '{name}')]");
-
-        private Anchor Link(string href) => new Anchor(this, $"a[href='{href}']");
     }
 }

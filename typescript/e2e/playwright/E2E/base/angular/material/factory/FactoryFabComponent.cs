@@ -10,6 +10,7 @@ namespace Allors.E2E.Angular.Material.Factory
     using System.Threading.Tasks;
     using Allors.Database.Meta;
     using Html;
+    using Info;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
 
@@ -29,6 +30,8 @@ namespace Allors.E2E.Angular.Material.Factory
         public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
+
+        public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
         public IComposite Composite { get; set; }
 

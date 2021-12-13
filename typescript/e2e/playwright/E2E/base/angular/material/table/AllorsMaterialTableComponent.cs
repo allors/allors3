@@ -10,6 +10,7 @@ namespace Allors.E2E.Angular.Material.Table
     using System.Threading.Tasks;
     using Allors.Database;
     using Allors.Database.Meta;
+    using Info;
     using Menu;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
@@ -29,6 +30,8 @@ namespace Allors.E2E.Angular.Material.Table
         public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
+
+        public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
         public async Task<string[]> GetObjectIds()
         {

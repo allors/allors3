@@ -5,7 +5,7 @@
 
 namespace Tests.Info
 {
-    using Autotest;
+    using Allors.E2E.Angular.Info;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
@@ -21,10 +21,10 @@ namespace Tests.Info
         [Test]
         public async Task Route()
         {
-            var routeInfo = await this.AppRoot.GetRouteInfo();
+            var routeInfos = await this.AppRoot.GetRouteInfos();
 
-            Assert.NotNull(routeInfo);
-            Assert.IsNotEmpty(routeInfo);
+            Assert.NotNull(routeInfos);
+            Assert.IsNotEmpty(routeInfos);
         }
     }
 }

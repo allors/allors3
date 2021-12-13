@@ -7,6 +7,7 @@ namespace Allors.E2E.Angular.Material.Object
 {
     using Allors.Database.Meta;
     using Database;
+    using Info;
     using Microsoft.Playwright;
 
     public abstract class ObjectComponent<T> : IComponent
@@ -26,6 +27,8 @@ namespace Allors.E2E.Angular.Material.Object
         public IPage Page => this.Container.Page;
 
         public ILocator Locator { get; }
+
+        public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
         public T Object { get; }
     }
