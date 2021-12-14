@@ -40,7 +40,7 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
     const pulls = [
       pull.Organisation({
         predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
-        sorting: [{ roleType: m.Organisation.PartyName }],
+        sorting: [{ roleType: m.Organisation.DisplayName }],
       }),
     ];
 
