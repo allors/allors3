@@ -6,6 +6,7 @@
 namespace Allors.Server
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using Database.Adapters;
     using Database.Configuration;
@@ -18,6 +19,7 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -74,6 +76,23 @@ namespace Allors.Server
 
             services.AddResponseCaching();
             services.AddControllersWithViews();
+
+            services.PostConfigure<ApiBehaviorOptions>(options =>
+            {
+                var builtInFactory = options.InvalidModelStateResponseFactory;
+
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var logger = context.HttpContext.RequestServices
+                        .GetRequiredService<ILogger<Startup>>();
+
+                    var problemDetails = new ValidationProblemDetails(context.ModelState);
+                    var message = string.Join("; ", problemDetails.Errors.Select(v => $"{string.Join(",", v.Value)}"));
+                    logger.LogError(problemDetails.Title, message);
+
+                    return builtInFactory(context);
+                };
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
