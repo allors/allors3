@@ -12,23 +12,19 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class OrganisationPartyNameRule : Rule
+    public class AutomatedAgentDisplayNameRule : Rule
     {
-        public OrganisationPartyNameRule(MetaPopulation m) : base(m, new Guid("27c869fa-60ff-478e-abec-c42ff5ba606f")) =>
+        public AutomatedAgentDisplayNameRule(MetaPopulation m) : base(m, new Guid("0735d5f4-62c4-489f-96f4-eadbb4237719")) =>
             this.Patterns = new Pattern[]
             {
-                m.Organisation.RolePattern(v => v.Name),
+                m.AutomatedAgent.RolePattern(v => v.UserName),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            var transaction = cycle.Transaction;
-
-            foreach (var @this in matches.Cast<Organisation>())
+            foreach (var @this in matches.Cast<AutomatedAgent>())
             {
-                transaction.Prefetch(@this.PrefetchPolicy);
-
-                @this.PartyName = @this.Name;
+                @this.DisplayName = @this.UserName ?? "N/A";
             }
         }
     }

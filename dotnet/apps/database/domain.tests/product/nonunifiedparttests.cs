@@ -123,7 +123,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First().PartyName, nonUnifiedPart.SearchString);
+            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First().DisplayName, nonUnifiedPart.SearchString);
         }
 
         [Fact]

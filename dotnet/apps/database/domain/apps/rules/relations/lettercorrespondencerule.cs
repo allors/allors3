@@ -19,14 +19,14 @@ namespace Allors.Database.Domain
             {
                 m.LetterCorrespondence.RolePattern(v => v.Subject),
                 m.LetterCorrespondence.RolePattern(v => v.ToParty),
-                m.Party.RolePattern(v => v.PartyName, v => v.CommunicationEventsWhereToParty, m.LetterCorrespondence),
+                m.Party.RolePattern(v => v.DisplayName, v => v.CommunicationEventsWhereToParty, m.LetterCorrespondence),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<LetterCorrespondence>())
             {
-                @this.WorkItemDescription = $"Letter to {@this.ToParty?.PartyName} about {@this.Subject}";
+                @this.WorkItemDescription = $"Letter to {@this.ToParty?.DisplayName} about {@this.Subject}";
             }
         }
     }

@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
 
                         if (part != null && part.ExistManufacturedBy)
                         {
-                            builder.Append($", Manufacturer: {part.ManufacturedBy.PartyName}");
+                            builder.Append($", Manufacturer: {part.ManufacturedBy.DisplayName}");
                         }
 
                         if (part != null && part.ExistBrand)
@@ -70,7 +70,7 @@ namespace Allors.Database.Domain
 
                         if (unifiedGood != null && unifiedGood.ExistManufacturedBy)
                         {
-                            builder.Append($", Manufacturer: {unifiedGood.ManufacturedBy.PartyName}");
+                            builder.Append($", Manufacturer: {unifiedGood.ManufacturedBy.DisplayName}");
                         }
 
                         if (unifiedGood != null && unifiedGood.ExistBrand)

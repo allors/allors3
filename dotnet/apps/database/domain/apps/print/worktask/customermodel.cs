@@ -12,7 +12,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             if (customer != null)
             {
                 this.Number = customer.Id.ToString();
-                this.Name = customer.PartyName;
+                this.Name = customer.DisplayName;
 
                 if (customer.BillingAddress is PostalAddress postalBillingAddress)
                 {

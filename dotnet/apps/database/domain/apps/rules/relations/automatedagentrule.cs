@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<AutomatedAgent>())
             {
-                @this.PartyName = @this.Name;
+                @this.DisplayName = @this.Name;
             }
         }
     }

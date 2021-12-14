@@ -207,7 +207,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     const manufacturerSearch = new SearchFactory({
       objectType: m.Organisation,
       predicates: [{ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true }],
-      roleTypes: [m.Organisation.PartyName],
+      roleTypes: [m.Organisation.DisplayName],
     });
 
     const idSearch = new SearchFactory({
@@ -221,8 +221,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     });
 
     const filterDefinition = new FilterDefinition(predicate, {
-      supplier: { search: () => Filters.allSuppliersFilter(m), display: (v: Organisation) => v && v.PartyName },
-      manufacturer: { search: () => manufacturerSearch, display: (v: Organisation) => v && v.PartyName },
+      supplier: { search: () => Filters.allSuppliersFilter(m), display: (v: Organisation) => v && v.DisplayName },
+      manufacturer: { search: () => manufacturerSearch, display: (v: Organisation) => v && v.DisplayName },
       brand: { search: () => brandSearch, display: (v: Brand) => v && v.Name },
       model: { search: () => modelSearch, display: (v: Model) => v && v.Name },
       kind: { search: () => kindSearch, display: (v: InventoryItemKind) => v && v.Name },

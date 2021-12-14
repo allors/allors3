@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
                     validation.AddError(@this, this.M.Proposal.Issuer, ErrorMessages.InternalOrganisationChanged);
                 }
 
-                @this.WorkItemDescription = $"ProductQuote: {@this.QuoteNumber} [{@this.Issuer?.PartyName}]";
+                @this.WorkItemDescription = $"ProductQuote: {@this.QuoteNumber} [{@this.Issuer?.DisplayName}]";
             }
         }
     }

@@ -63,7 +63,7 @@ export class PurchaseReturnCreateComponent implements OnInit, OnDestroy {
             this.fetcher.ownWarehouses,
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
-              sorting: [{ roleType: m.Organisation.PartyName }],
+              sorting: [{ roleType: m.Organisation.DisplayName }],
             }),
           ];
 

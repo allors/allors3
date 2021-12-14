@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.RentedByPartyName = @this.ExistRentedBy ? @this.RentedBy.PartyName : string.Empty;
+                @this.RentedByPartyName = @this.ExistRentedBy ? @this.RentedBy.DisplayName : string.Empty;
             }
         }
     }

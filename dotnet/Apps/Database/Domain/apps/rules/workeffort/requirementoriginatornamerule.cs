@@ -18,14 +18,14 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.Requirement.RolePattern(v => v.Originator),
-            m.Party.RolePattern(v => v.PartyName, v => v.RequirementsWhereOriginator),
+            m.Party.RolePattern(v => v.DisplayName, v => v.RequirementsWhereOriginator),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<Requirement>())
             {
-                @this.OriginatorName = @this.Originator?.PartyName;
+                @this.OriginatorName = @this.Originator?.DisplayName;
             }
         }
     }

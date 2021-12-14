@@ -53,9 +53,8 @@ namespace Allors.Repository
         public Media[] PrivateElectronicDocuments { get; set; }
 
         public LocalisedMedia[] PrivateLocalisedElectronicDocuments { get; set; }
-        public string DisplayName { get; set; }
 
-        public string ServerDisplayName { get; set; }
+        public string DisplayName { get; set; }
 
         #endregion
 

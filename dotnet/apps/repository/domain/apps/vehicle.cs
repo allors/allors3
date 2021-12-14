@@ -55,8 +55,6 @@ namespace Allors.Repository
 
         public string DisplayName { get; set; }
 
-        public string ServerDisplayName { get; set; }
-
         #endregion
 
         #region inherited methods

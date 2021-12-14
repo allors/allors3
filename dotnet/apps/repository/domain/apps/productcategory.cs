@@ -101,12 +101,6 @@ namespace Allors.Repository
         public string Name { get; set; }
 
         #region Allors
-        [Id("97CB34DD-4E6A-4DCF-90B4-50071752B2D8")]
-        #endregion
-        [Workspace(Default)]
-        public string LongName { get; set; }
-
-        #region Allors
         [Id("0FB2F768-8313-450C-94AE-5F9C52B758E8")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]

@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
         {
             if (billedFrom != null)
             {
-                this.Name = billedFrom.PartyName;
+                this.Name = billedFrom.DisplayName;
                 this.Email = billedFrom.GeneralEmail?.ElectronicAddressString;
                 this.Website = billedFrom.InternetAddress?.ElectronicAddressString;
                 this.TaxId = billedFrom.TaxNumber;

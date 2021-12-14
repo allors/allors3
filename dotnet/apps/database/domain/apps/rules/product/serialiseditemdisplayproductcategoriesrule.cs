@@ -29,7 +29,7 @@ namespace Allors.Database.Domain
                 if (@this.ExistPartWhereSerialisedItem && @this.PartWhereSerialisedItem.GetType().Name == typeof(UnifiedGood).Name)
                 {
                     var unifiedGood = @this.PartWhereSerialisedItem as UnifiedGood;
-                    @this.ProductCategoriesDisplayName = string.Join(", ", unifiedGood.ProductCategoriesWhereProduct.Select(v => v.LongName));
+                    @this.ProductCategoriesDisplayName = string.Join(", ", unifiedGood.ProductCategoriesWhereProduct.Select(v => v.DisplayName));
                 }
             }
         }

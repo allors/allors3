@@ -19,14 +19,14 @@ namespace Allors.Database.Domain
             {
                 m.FaceToFaceCommunication.RolePattern(v => v.Subject),
                 m.FaceToFaceCommunication.RolePattern(v => v.ToParty),
-                m.Party.RolePattern(v => v.PartyName, v => v.CommunicationEventsWhereToParty, m.FaceToFaceCommunication),
+                m.Party.RolePattern(v => v.DisplayName, v => v.CommunicationEventsWhereToParty, m.FaceToFaceCommunication),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<FaceToFaceCommunication>())
             {
-                @this.WorkItemDescription = $"Meeting with {@this.ToParty?.PartyName} about {@this.Subject}";
+                @this.WorkItemDescription = $"Meeting with {@this.ToParty?.DisplayName} about {@this.Subject}";
             }
         }
     }

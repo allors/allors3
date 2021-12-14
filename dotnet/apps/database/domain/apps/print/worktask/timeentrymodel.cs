@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             this.BillingAmount = Rounder.RoundDecimal(timeEntry.BillingAmount, 2).ToString("N2", new CultureInfo("nl-BE"));
             this.Cost = Rounder.RoundDecimal(timeEntry.Cost, 2).ToString("N2", new CultureInfo("nl-BE"));
             this.TimeFrequency = frequency?.ToUpperInvariant();
-            this.WorkerName = timeEntry.TimeSheetWhereTimeEntry?.Worker?.PartyName;
+            this.WorkerName = timeEntry.TimeSheetWhereTimeEntry?.Worker?.DisplayName;
             this.WorkerId = timeEntry.TimeSheetWhereTimeEntry?.Worker?.FirstName;
             this.Description = timeEntry.Description;
             this.IsBillable = timeEntry.IsBillable == true;

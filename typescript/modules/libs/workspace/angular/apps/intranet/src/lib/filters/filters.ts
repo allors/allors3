@@ -60,7 +60,7 @@ export class Filters {
   static customersFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Party,
-      roleTypes: [m.Party.PartyName],
+      roleTypes: [m.Party.DisplayName],
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
@@ -91,7 +91,7 @@ export class Filters {
   static suppliersFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Organisation,
-      roleTypes: [m.Organisation.PartyName],
+      roleTypes: [m.Organisation.DisplayName],
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
@@ -122,7 +122,7 @@ export class Filters {
   static allSuppliersFilter(m: M) {
     return new SearchFactory({
       objectType: m.Organisation,
-      roleTypes: [m.Organisation.PartyName],
+      roleTypes: [m.Organisation.DisplayName],
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
@@ -152,7 +152,7 @@ export class Filters {
   static subContractorsFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Organisation,
-      roleTypes: [m.Organisation.PartyName],
+      roleTypes: [m.Organisation.DisplayName],
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
@@ -183,7 +183,7 @@ export class Filters {
   static employeeFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
       objectType: m.Person,
-      roleTypes: [m.Person.PartyName, m.Person.UserName],
+      roleTypes: [m.Person.DisplayName, m.Person.UserName],
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
@@ -214,14 +214,14 @@ export class Filters {
   static organisationsFilter(m: M) {
     return new SearchFactory({
       objectType: m.Organisation,
-      roleTypes: [m.Organisation.PartyName],
+      roleTypes: [m.Organisation.DisplayName],
     });
   }
 
   static internalOrganisationsFilter(m: M) {
     return new SearchFactory({
       objectType: m.Organisation,
-      roleTypes: [m.Organisation.PartyName],
+      roleTypes: [m.Organisation.DisplayName],
       post: (predicate: And) => {
         predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true });
       },
@@ -231,7 +231,7 @@ export class Filters {
   static manufacturersFilter(m: M) {
     return new SearchFactory({
       objectType: m.Organisation,
-      roleTypes: [m.Organisation.PartyName],
+      roleTypes: [m.Organisation.DisplayName],
       post: (predicate: And) => {
         predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true });
       },
@@ -241,14 +241,14 @@ export class Filters {
   static peopleFilter(m: M) {
     return new SearchFactory({
       objectType: m.Person,
-      roleTypes: [m.Person.PartyName],
+      roleTypes: [m.Person.DisplayName],
     });
   }
 
   static partiesFilter(m: M) {
     return new SearchFactory({
       objectType: m.Party,
-      roleTypes: [m.Party.PartyName],
+      roleTypes: [m.Party.DisplayName],
     });
   }
 

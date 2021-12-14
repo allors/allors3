@@ -36,12 +36,6 @@ namespace Allors.Repository
         DateTime CreationDate { get; set; }
 
         #region Allors
-        [Id("5079430B-3610-4906-8F58-B34D6DCD1832")]
-        [Workspace(Default)]
-        #endregion
-        string PartyName { get; set; }
-
-        #region Allors
         [Id("3F2F3296-7DA7-48F7-B172-16904F47FA5F")]
         [Indexed]
         #endregion

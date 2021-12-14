@@ -41,17 +41,17 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistOwnedBy)
                 {
-                    builder.Append(string.Join(" ", @this.OwnedBy.PartyName));
+                    builder.Append(string.Join(" ", @this.OwnedBy.DisplayName));
                 }
 
                 if (@this.ExistBuyer)
                 {
-                    builder.Append(string.Join(" ", @this.Buyer.PartyName));
+                    builder.Append(string.Join(" ", @this.Buyer.DisplayName));
                 }
 
                 if (@this.ExistSeller)
                 {
-                    builder.Append(string.Join(" ", @this.Seller.PartyName));
+                    builder.Append(string.Join(" ", @this.Seller.DisplayName));
                 }
 
                 if (@this.ExistPartWhereSerialisedItem)

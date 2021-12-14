@@ -795,7 +795,7 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Derive();
 
-            var expected = $"PurchaseOrder: {order.OrderNumber} [{order.TakenViaSupplier?.PartyName}]";
+            var expected = $"PurchaseOrder: {order.OrderNumber} [{order.TakenViaSupplier?.DisplayName}]";
             Assert.Equal(expected, order.WorkItemDescription);
         }
     }

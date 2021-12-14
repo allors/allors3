@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
                 if (@this.ExistSupplierOfferingsWherePart)
                 {
-                    builder.Append(string.Join(" ", @this.SupplierOfferingsWherePart.Select(v => v.Supplier.PartyName)));
+                    builder.Append(string.Join(" ", @this.SupplierOfferingsWherePart.Select(v => v.Supplier.DisplayName)));
                 }
 
                 if (@this.ExistSerialisedItems)
