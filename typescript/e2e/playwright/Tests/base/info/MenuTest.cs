@@ -30,10 +30,14 @@ namespace Tests.ApplicationTests
         [Test]
         public async Task Navigate()
         {
-            var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null);
+            var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null).ToArray();
+
+            Assert.IsNotEmpty(components);
+
             foreach (var component in components)
             {
                 await this.Sidenav.NavigateAsync(component);
+
             }
         }
     }

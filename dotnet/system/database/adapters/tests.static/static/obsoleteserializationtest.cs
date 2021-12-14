@@ -721,6 +721,43 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void EnsureObjectId()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var xml =
+                    @"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""1"">
+    <objects>
+      <database>
+        <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
+        <ot i=""72c07e8a03f54da8ab37236333d4f74e"">2:1</ot>
+      </database>
+    </objects>
+  </population>
+</allors>";
+                var stringReader = new StringReader(xml);
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    this.Population.Load(reader);
+                }
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    this.c1A = (C1)transaction.Instantiate(1);
+                    this.c2A = (C2)transaction.Instantiate(2);
+
+                    Assert.Equal(2, this.c1A.Strategy.ObjectVersion);
+                    Assert.Equal(2, this.c2A.Strategy.ObjectVersion);
+                }
+            }
+        }
+
+        [Fact]
         public void CantLoadObjects()
         {
             foreach (var init in this.Inits)
