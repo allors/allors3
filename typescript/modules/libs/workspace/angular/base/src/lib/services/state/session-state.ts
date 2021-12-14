@@ -20,6 +20,10 @@ export abstract class SessionState {
     if (value == null) {
       sessionStorage.removeItem(this.key);
     } else {
+      if (!Number.isInteger(value)) {
+        value = parseInt(value as any);
+      }
+
       sessionStorage.setItem(this.key, value.toString());
     }
 

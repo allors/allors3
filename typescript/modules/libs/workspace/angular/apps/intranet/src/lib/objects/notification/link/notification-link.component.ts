@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { Notification, Person } from '@allors/workspace/domain/default';
@@ -44,7 +44,7 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = this.refreshService.refresh$
+    this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
           const pulls = [

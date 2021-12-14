@@ -116,14 +116,14 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         {
             var xmlObjects = new Objects(this.database, this.OnObjectNotLoaded, this.classByObjectId, reader);
             var mapping = this.database.Mapping;
-            using (var writer = this.connection.BeginBinaryImport($"COPY {mapping.TableNameForObjects} ({Mapping.ColumnNameForObject}, {Mapping.ColumnNameForClass}, {Mapping.ColumnNameForVersion}) FROM STDIN (FORMAT BINARY)"))
+            using (var writer = this.connection.BeginBinaryImport($"COPY {mapping.TableNameForObjects} ({Sql.Mapping.ColumnNameForObject}, {Sql.Mapping.ColumnNameForClass}, {Sql.Mapping.ColumnNameForVersion}) FROM STDIN (FORMAT BINARY)"))
             {
                 foreach (var values in xmlObjects)
                 {
                     writer.StartRow();
                     writer.Write(values[0], NpgsqlDbType.Bigint);
                     writer.Write(values[1], NpgsqlDbType.Uuid);
-                    writer.Write(values[2], NpgsqlDbType.Bigint);
+                    writer.Write(Serialization.EnsureVersion((long)values[2]), NpgsqlDbType.Bigint);
                 }
 
                 writer.Complete();

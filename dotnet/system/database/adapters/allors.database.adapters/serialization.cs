@@ -189,5 +189,11 @@ namespace Allors.Database.Adapters
                 UnitTags.Binary => Convert.ToBase64String((byte[])unit),
                 _ => throw new ArgumentException("Unknown Unit ObjectType: " + tag)
             };
+
+        public static long EnsureVersion(long version)
+        {
+            var databaseInitial = (long)global::Allors.Version.DatabaseInitial;
+            return version < databaseInitial ? databaseInitial : version;
+        }
     }
 }

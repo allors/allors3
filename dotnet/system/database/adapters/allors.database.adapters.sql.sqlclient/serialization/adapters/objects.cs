@@ -63,8 +63,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
 
                                     var objectId = long.Parse(objectArray[0]);
                                     var objectVersion = objectArray.Length > 1
-                                        ? long.Parse(objectArray[1])
-                                        : (long) Version.DatabaseInitial;
+                                        ? Serialization.EnsureVersion(long.Parse(objectArray[1]))
+                                        : (long)Version.DatabaseInitial;
 
                                     if (objectType is IClass @class)
                                     {
