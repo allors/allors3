@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Task } from '@allors/workspace/domain/default';
+import { Task } from '@allors/workspace/domain/default';
 import { NavigationService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -49,12 +49,19 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
         switchMap(() => {
           const pulls = [
             pull.Task({
+              predicate: {
+                kind: 'And',
+                operands: [
+                  {
+                    kind: 'Contains',
+                    propertyType: m.Task.Participants,
+                    objectId: this.userId.value,
+                  },
+                ],
+              },
               include: {
                 Participants: x,
               },
-            }),
-            pull.Person({
-              objectId: this.userId.value,
             }),
           ];
 
@@ -64,10 +71,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const user = loaded.object<Person>(m.Person);
-
-        const allTasks = loaded.collection<Task>(m.Task);
-        this.tasks = allTasks?.filter((v) => v.Participants.indexOf(user) > -1);
+        this.tasks = loaded.collection<Task>(m.Task) ?? [];
       });
   }
 

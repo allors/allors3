@@ -6,4 +6,5 @@ export interface Contains extends ParameterizablePredicateBase {
   kind: 'Contains';
   propertyType: PropertyType;
   object?: IObject;
+  objectId?: number;
 }

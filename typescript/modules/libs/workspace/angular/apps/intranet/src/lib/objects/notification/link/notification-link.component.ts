@@ -49,7 +49,7 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
         switchMap(() => {
           const pulls = [
             pull.Person({
-              object: this.userId.value,
+              objectId: this.userId.value,
               include: {
                 NotificationList: {
                   UnconfirmedNotifications: x,

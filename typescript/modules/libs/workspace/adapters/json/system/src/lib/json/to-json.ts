@@ -13,6 +13,7 @@ import {
   IObject,
 } from '@allors/workspace/domain/system';
 import { Extent, ExtentKind, Predicate, Procedure, Pull, Result, Select, Sort, Node, PredicateKind, PullDependency } from '@allors/protocol/json/system';
+import { Object } from '../../../../../../meta/intranet/src/lib/generated/m.g';
 
 export function unitToJson(from: unknown): IUnit {
   if (from == null) {
@@ -154,7 +155,7 @@ export function predicateToJson(from: DataPredicate): Predicate {
         d: from.dependencies,
         a: asAssociationTypeToJson(from.propertyType),
         r: asRoleTypeToJson(from.propertyType),
-        ob: from.object?.id,
+        ob: from.object?.id ?? from.objectId,
         p: from.parameter,
       };
 

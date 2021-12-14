@@ -114,7 +114,7 @@ export class Session extends SystemSession {
         throw new Error('Id is not in the database');
       }
 
-      if (pull.object != null && pull.object.strategy.cls.origin != Origin.Database) {
+      if (pull.object != null && pull.object.strategy?.cls.origin != Origin.Database) {
         throw new Error('Origin is not Database');
       }
     }

@@ -9,13 +9,10 @@ namespace Allors.Database.Domain
     {
         public void BaseOnPostDerive(ObjectOnPostDerive _)
         {
-            if (!this.ExistSecurityTokens)
+            if (!this.ExistSecurityTokens && this.ExistUserWhereNotificationList)
             {
-                if (this.ExistUserWhereNotificationList)
-                {
-                    var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
-                    this.SecurityTokens = new[] { this.UserWhereNotificationList.OwnerSecurityToken, defaultSecurityToken };
-                }
+                var defaultSecurityToken = new SecurityTokens(this.Transaction()).DefaultSecurityToken;
+                this.SecurityTokens = new[] { this.UserWhereNotificationList.OwnerSecurityToken, defaultSecurityToken };
             }
         }
     }
