@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
                 }
 
                 //DeriveWorkflow
-                @this.WorkItemDescription = $"PurchaseInvoice: {@this.InvoiceNumber} [{@this.BilledFrom?.PartyName}]";
+                @this.WorkItemDescription = $"PurchaseInvoice: {@this.InvoiceNumber} [{@this.BilledFrom?.DisplayName}]";
             }
         }
     }

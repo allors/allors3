@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             this.Date = (workTask.ThroughDate() ?? workTask.Strategy.Transaction.Now()).ToString("yyyy-MM-dd");
             this.Purpose = string.Join(", ", workTask.WorkEffortPurposes.Select(v => v.Name));
             this.Facility = workTask.Facility?.Name;
-            this.ContactName = workTask.ContactPerson?.PartyName;
+            this.ContactName = workTask.ContactPerson?.DisplayName;
             this.ContactTelephone = workTask.ContactPerson?.CellPhoneNumber?.Description ?? workTask.ContactPerson?.GeneralPhoneNumber?.Description;
 
             this.TotalLabour = workTask.TotalLabourRevenue.ToString("N2", new CultureInfo("nl-BE"));

@@ -199,7 +199,7 @@ namespace Allors.Database.Domain.Tests
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Derive();
 
-            var expected = $"ProductQuote: {quote.QuoteNumber} [{quote.Issuer?.PartyName}]";
+            var expected = $"ProductQuote: {quote.QuoteNumber} [{quote.Issuer?.DisplayName}]";
             Assert.Equal(expected, quote.WorkItemDescription);
         }
     }

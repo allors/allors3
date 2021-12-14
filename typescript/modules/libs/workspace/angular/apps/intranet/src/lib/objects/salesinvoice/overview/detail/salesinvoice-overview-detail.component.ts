@@ -221,7 +221,7 @@ export class SalesInvoiceOverviewDetailComponent implements OnInit, OnDestroy {
             }),
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
-              sorting: [{ roleType: m.Organisation.PartyName }],
+              sorting: [{ roleType: m.Organisation.DisplayName }],
             }),
           ];
 

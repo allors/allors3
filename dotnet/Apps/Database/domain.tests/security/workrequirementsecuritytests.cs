@@ -92,7 +92,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(new RequirementStates(this.Transaction).Closed, workRequirement.RequirementState);
+            Assert.Equal(new RequirementStates(this.Transaction).Finished, workRequirement.RequirementState);
 
             User user = this.Administrator;
             this.Transaction.SetUser(user);

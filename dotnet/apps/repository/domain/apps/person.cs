@@ -14,8 +14,6 @@ namespace Allors.Repository
         #region inherited properties
         public Locale Locale { get; set; }
 
-        public string PartyName { get; set; }
-
         public ContactMechanism GeneralCorrespondence { get; set; }
 
         public TelecommunicationsNumber BillingInquiriesFax { get; set; }

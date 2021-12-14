@@ -16,7 +16,7 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
         {
             if (quote.Issuer is Organisation issuer)
             {
-                this.Name = issuer.PartyName;
+                this.Name = issuer.DisplayName;
                 this.Email = issuer.GeneralEmail?.ElectronicAddressString;
                 this.Website = issuer.InternetAddress?.ElectronicAddressString;
                 this.TaxId = issuer.TaxNumber;

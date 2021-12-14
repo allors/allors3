@@ -107,7 +107,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent {
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,
-          internalOrganisation: v.InternalOrganisation.PartyName,
+          internalOrganisation: v.InternalOrganisation.DisplayName,
           frequency: v.Frequency.Name,
           dayOfWeek: v.DayOfWeek && v.DayOfWeek.Name,
           previousExecutionDate: v.PreviousExecutionDate && format(new Date(v.PreviousExecutionDate), 'dd-MM-yyyy'),

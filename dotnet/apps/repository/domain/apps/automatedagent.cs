@@ -30,8 +30,6 @@ namespace Allors.Repository
 
         public LocalisedText[] LocalisedComments { get; set; }
 
-        public string PartyName { get; set; }
-
         public ContactMechanism GeneralCorrespondence { get; set; }
 
         public TelecommunicationsNumber BillingInquiriesFax { get; set; }

@@ -346,7 +346,7 @@ namespace Allors.Database.Domain.Tests
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Derive();
 
-            var expected = $"PurchaseInvoice: {invoice.InvoiceNumber} [{invoice.BilledFrom?.PartyName}]";
+            var expected = $"PurchaseInvoice: {invoice.InvoiceNumber} [{invoice.BilledFrom?.DisplayName}]";
             Assert.Equal(expected, invoice.WorkItemDescription);
         }
 

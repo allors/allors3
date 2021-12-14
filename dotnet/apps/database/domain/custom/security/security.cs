@@ -103,7 +103,7 @@ namespace Allors.Database.Domain
                 else if (@class.Equals(m.Organisation))
                 {
                     security.Grant(Roles.CustomerContactId, @class, m.Organisation.Name, Operations.Read);
-                    security.Grant(Roles.CustomerContactId, @class, m.Organisation.PartyName, Operations.Read);
+                    security.Grant(Roles.CustomerContactId, @class, m.Organisation.DisplayName, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.Organisation.CurrentContacts, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.Organisation.CurrentOrganisationContactRelationships, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.Organisation.CurrentPartyContactMechanisms, Operations.Read);

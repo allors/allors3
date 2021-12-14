@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(unifiedGood).Build();
             this.Derive();
 
-            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First().PartyName, unifiedGood.SearchString);
+            Assert.Contains(this.InternalOrganisation.ActiveSuppliers.First().DisplayName, unifiedGood.SearchString);
         }
 
         [Fact]

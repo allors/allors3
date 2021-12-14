@@ -67,7 +67,7 @@ export class PurchaseShipmentCreateComponent implements OnInit, OnDestroy {
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
-              sorting: [{ roleType: m.Organisation.PartyName }],
+              sorting: [{ roleType: m.Organisation.DisplayName }],
             }),
           ];
 

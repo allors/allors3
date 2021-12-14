@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public WorkRequirementFixedAssetNameRule(MetaPopulation m) : base(m, new Guid("02be092e-04ca-4cce-9255-19b562ee6dd4")) =>
             this.Patterns = new Pattern[]
         {
-            m.FixedAsset.RolePattern(v => v.ServerDisplayName, v => v.WorkRequirementsWhereFixedAsset),
+            m.FixedAsset.RolePattern(v => v.DisplayName, v => v.WorkRequirementsWhereFixedAsset),
             m.WorkRequirement.RolePattern(v => v.FixedAsset),
         };
 
@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<WorkRequirement>())
             {
-                @this.FixedAssetName = @this.FixedAsset?.ServerDisplayName;
+                @this.FixedAssetName = @this.FixedAsset?.DisplayName;
             }
         }
     }

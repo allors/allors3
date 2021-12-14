@@ -17,11 +17,11 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
             var billToOrganisation = billedFrom as Organisation;
             if (billedFrom != null)
             {
-                this.Name = billedFrom.PartyName;
+                this.Name = billedFrom.DisplayName;
                 this.TaxId = billToOrganisation?.TaxNumber;
             }
 
-            this.Contact = contactPerson?.PartyName;
+            this.Contact = contactPerson?.DisplayName;
 
             if (contactMechanisam is PostalAddress postalAddress)
             {

@@ -63,8 +63,6 @@ namespace Allors.Repository
 
         public DateTime LastModifiedDate { get; set; }
 
-        public string ServerDisplayName { get; set; }
-
         public string DisplayName { get; set; }
 
         #endregion InheritedProperties

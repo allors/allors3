@@ -14,11 +14,11 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
 
             if (shipTo != null)
             {
-                this.Name = shipTo.PartyName;
+                this.Name = shipTo.DisplayName;
                 this.TaxId = shipToOrganisation?.TaxNumber;
             }
 
-            this.Contact = invoice.ShipToContactPerson?.PartyName;
+            this.Contact = invoice.ShipToContactPerson?.DisplayName;
 
             var shipToAddress = invoice.DerivedShipToAddress ??
                                 invoice.ShipToCustomer?.ShippingAddress ??

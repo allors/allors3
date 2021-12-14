@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.SalesTerms),
                 m.AgreementTerm.RolePattern(v => v.TermType, v => v.AsSalesTerm.OrderWhereSalesTerm.Order.AsSalesOrder),
                 m.SalesOrder.RolePattern(v => v.TakenBy),
-                m.Organisation.RolePattern(v => v.PartyName, v => v.SalesOrdersWhereTakenBy.SalesOrder),
+                m.Organisation.RolePattern(v => v.DisplayName, v => v.SalesOrdersWhereTakenBy.SalesOrder),
                 m.EmailAddress.RolePattern(v => v.ElectronicAddressString, v => v.PartiesWhereGeneralEmail.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
                 m.EmailAddress.RolePattern(v => v.ElectronicAddressString, v => v.PartiesWhereInternetAddress.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
                 m.Organisation.RolePattern(v => v.TaxNumber, v => v.SalesOrdersWhereTakenBy.SalesOrder),

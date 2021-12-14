@@ -34,7 +34,7 @@ namespace Allors.Database.Domain
                 m.Request.RolePattern(v => v.RequestNumber, v => v.QuoteWhereRequest.Quote.AsProductQuote),
 
                 m.ProductQuote.RolePattern(v => v.Issuer, v => v.Issuer.InternalOrganisation.AsOrganisation.QuotesWhereIssuer.Quote.AsProductQuote),
-                m.Organisation.RolePattern(v => v.PartyName, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
+                m.Organisation.RolePattern(v => v.DisplayName, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.GeneralEmail, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.InternetAddress, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.TaxNumber, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
@@ -64,9 +64,9 @@ namespace Allors.Database.Domain
                 m.ElectronicAddress.RolePattern(v => v.ElectronicAddressString, v => v.QuotesWhereFullfillContactMechanism.Quote.AsProductQuote),
 
                 m.ProductQuote.RolePattern(v => v.Receiver),
-                m.Party.RolePattern(v => v.PartyName, v => v.QuotesWhereReceiver.Quote.AsProductQuote),
+                m.Party.RolePattern(v => v.DisplayName, v => v.QuotesWhereReceiver.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.TaxNumber, v => v.QuotesWhereReceiver.Quote.AsProductQuote),
-                m.Person.RolePattern(v => v.PartyName, v => v.QuotesWhereContactPerson.Quote.AsProductQuote),
+                m.Person.RolePattern(v => v.DisplayName, v => v.QuotesWhereContactPerson.Quote.AsProductQuote),
                 m.Person.RolePattern(v => v.FirstName, v => v.QuotesWhereContactPerson.Quote.AsProductQuote),
                 m.Salutation.RolePattern(v => v.Name, v => v.PeopleWhereSalutation.Person.QuotesWhereContactPerson.Quote.AsProductQuote),
                 m.Person.RolePattern(v => v.Function, v => v.QuotesWhereContactPerson.Quote.AsProductQuote),

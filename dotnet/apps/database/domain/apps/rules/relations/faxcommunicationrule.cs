@@ -19,14 +19,14 @@ namespace Allors.Database.Domain
             {
                 m.FaxCommunication.RolePattern(v => v.Subject),
                 m.FaxCommunication.RolePattern(v => v.ToParty),
-                m.Party.RolePattern(v => v.PartyName, v => v.CommunicationEventsWhereToParty, m.FaxCommunication),
+                m.Party.RolePattern(v => v.DisplayName, v => v.CommunicationEventsWhereToParty, m.FaxCommunication),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<FaxCommunication>())
             {
-                @this.WorkItemDescription = $"Fax to {@this.ToParty?.PartyName} about {@this.Subject}";
+                @this.WorkItemDescription = $"Fax to {@this.ToParty?.DisplayName} about {@this.Subject}";
             }
         }
     }

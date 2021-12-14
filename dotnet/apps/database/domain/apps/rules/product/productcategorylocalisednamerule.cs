@@ -29,8 +29,6 @@ namespace Allors.Database.Domain
             {
                 var defaultLocale = @this.Strategy.Transaction.GetSingleton().DefaultLocale;
 
-                @this.LongName = @this.Name;
-
                 if (@this.LocalisedNames.Any(x => x.Locale.Equals(defaultLocale)))
                 {
                     @this.Name = @this.LocalisedNames.First(x => x.Locale.Equals(defaultLocale)).Text;

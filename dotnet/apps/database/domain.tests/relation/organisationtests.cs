@@ -92,7 +92,7 @@ namespace Allors.Database.Domain.Tests
             organisation.Name = "name";
             this.Derive();
 
-            Assert.Equal("name", organisation.PartyName);
+            Assert.Equal("name", organisation.DisplayName);
         }
 
         [Fact]

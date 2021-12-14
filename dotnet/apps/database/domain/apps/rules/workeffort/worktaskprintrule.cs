@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
             m.WorkTask.RolePattern(v => v.ScheduledCompletion),
             m.WorkEffortPurpose.RolePattern(v => v.Name, v => v.WorkEffortsWhereWorkEffortPurpose.WorkEffort.AsWorkTask),
             m.Facility.RolePattern(v => v.Name, v => v.WorkEffortsWhereFacility.WorkEffort.AsWorkTask),
-            m.Person.RolePattern(v => v.PartyName, v => v.WorkEffortsWhereContactPerson.WorkEffort.AsWorkTask),
+            m.Person.RolePattern(v => v.DisplayName, v => v.WorkEffortsWhereContactPerson.WorkEffort.AsWorkTask),
             m.TelecommunicationsNumber.RolePattern(v => v.Description, v => v.PartiesWhereCellPhoneNumber.Party.AsPerson.WorkEffortsWhereContactPerson.WorkEffort.AsWorkTask),
             m.TelecommunicationsNumber.RolePattern(v => v.Description, v => v.PartiesWhereGeneralPhoneNumber.Party.AsPerson.WorkEffortsWhereContactPerson.WorkEffort.AsWorkTask),
             m.WorkTask.RolePattern(v => v.TotalLabourRevenue),
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
             m.WorkTask.RolePattern(v => v.GrandTotal),
 
             m.WorkTask.RolePattern(v => v.Customer),
-            m.Party.RolePattern(v => v.PartyName, v => v.WorkEffortsWhereCustomer.WorkEffort.AsWorkTask),
+            m.Party.RolePattern(v => v.DisplayName, v => v.WorkEffortsWhereCustomer.WorkEffort.AsWorkTask),
             m.Party.RolePattern(v => v.BillingAddress, v => v.WorkEffortsWhereCustomer.WorkEffort.AsWorkTask),
             m.PostalAddress.RolePattern(v => v.Address1, v => v.PartiesWhereBillingAddress.Party.WorkEffortsWhereCustomer.WorkEffort.AsWorkTask),
             m.PostalAddress.RolePattern(v => v.Address2, v => v.PartiesWhereBillingAddress.Party.WorkEffortsWhereCustomer.WorkEffort.AsWorkTask),

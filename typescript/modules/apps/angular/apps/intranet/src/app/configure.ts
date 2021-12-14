@@ -168,7 +168,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   const manufacturerSearch = new SearchFactory({
     objectType: m.Organisation,
     predicates: [{ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true }],
-    roleTypes: [m.Organisation.PartyName],
+    roleTypes: [m.Organisation.DisplayName],
   });
 
   const facilitySearch = new SearchFactory({
@@ -247,7 +247,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
 
   const partySearch = new SearchFactory({
     objectType: m.Party,
-    roleTypes: [m.Party.PartyName],
+    roleTypes: [m.Party.DisplayName],
   });
 
   const requestStateSearch = new SearchFactory({
@@ -317,7 +317,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
 
   const personSearch = new SearchFactory({
     objectType: m.Person,
-    roleTypes: [m.Person.PartyName, m.Person.UserName],
+    roleTypes: [m.Person.DisplayName, m.Person.UserName],
   });
 
   const fixedAssetSearch = new SearchFactory({
@@ -482,8 +482,8 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
         ],
       },
       {
-        supplier: { search: () => Filters.suppliersFilter(m, internalOrganisationId.value), display: (v: Organisation) => v && v.PartyName },
-        manufacturer: { search: () => manufacturerSearch, display: (v: Organisation) => v && v.PartyName },
+        supplier: { search: () => Filters.suppliersFilter(m, internalOrganisationId.value), display: (v: Organisation) => v && v.DisplayName },
+        manufacturer: { search: () => manufacturerSearch, display: (v: Organisation) => v && v.DisplayName },
         brand: { search: () => brandSearch, display: (v: Brand) => v && v && v.Name },
         model: { search: () => modelSearch, display: (v: Model) => v.Name },
         kind: { search: () => inventoryItemKindSearch, display: (v: InventoryItemKind) => v && v.Name },
@@ -596,7 +596,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       {
         active: { initialValue: true },
         state: { search: () => quoteStateSearch, display: (v: QuoteState) => v && v.Name },
-        to: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
+        to: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
       }
     )
   );
@@ -628,7 +628,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       {
         type: { search: () => purchaseInvoiceTypeSearch, display: (v: PurchaseInvoiceType) => v && v.Name },
         state: { search: () => purchaseInvoiceStateSearch, display: (v: PurchaseInvoiceState) => v && v.Name },
-        supplier: { search: () => Filters.suppliersFilter(m, internalOrganisationId.value), display: (v: Party) => v && v.PartyName },
+        supplier: { search: () => Filters.suppliersFilter(m, internalOrganisationId.value), display: (v: Party) => v && v.DisplayName },
         sparePart: { search: () => partSearch, display: (v: Part) => v && v.Name },
         serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
       }
@@ -660,7 +660,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       {
         active: { initialValue: true },
         state: { search: () => purchaseOrderStateSearch, display: (v: PurchaseOrderState) => v && v.Name },
-        supplier: { search: () => Filters.suppliersFilter(m, internalOrganisationId.value), display: (v: Party) => v && v.PartyName },
+        supplier: { search: () => Filters.suppliersFilter(m, internalOrganisationId.value), display: (v: Party) => v && v.DisplayName },
         sparePart: { search: () => partSearch, display: (v: Part) => v && v.Name },
         serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
       }
@@ -680,7 +680,7 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       {
         active: { initialValue: true },
         state: { search: () => requestStateSearch, display: (v: RequestState) => v && v.Name },
-        from: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
+        from: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
       }
     )
   );
@@ -717,10 +717,10 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
         active: { initialValue: true },
         type: { search: () => salesInvoiceTypeSearch, display: (v: SalesInvoiceType) => v && v.Name },
         state: { search: () => salesInvoiceStateSearch, display: (v: SalesInvoiceState) => v && v.Name },
-        shipTo: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        billTo: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        shipToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        billToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
+        shipTo: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        billTo: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        shipToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        billToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
         product: { search: () => productSearch, display: (v: Product) => v && v.Name },
         serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
       }
@@ -755,10 +755,10 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
         state: { search: () => salesOrderstateSearch, display: (v: SalesOrderState) => v && v.Name },
         invoiceState: { search: () => salesOrderInvoiceStateSearch, display: (v: SalesInvoiceState) => v && v.Name },
         shipmentState: { search: () => salesOrderShipmentStateSearch, display: (v: ShipmentState) => v && v.Name },
-        shipTo: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        billTo: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        shipToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        billToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
+        shipTo: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        billTo: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        shipToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        billToEndCustomer: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
         product: { search: () => productSearch, display: (v: Product) => v && v.Name },
         serialisedItem: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.ItemNumber },
       }
@@ -845,8 +845,8 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       {
         active: { initialValue: true },
         state: { search: () => shipmentStateSearch, display: (v: ShipmentState) => v && v.Name },
-        shipFrom: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        shipTo: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
+        shipFrom: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        shipTo: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
       }
     )
   );
@@ -902,8 +902,8 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
       },
       {
         state: { search: () => workEffortStateSearch, display: (v: WorkEffortState) => v && v.Name },
-        customer: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
-        ExecutedBy: { search: () => partySearch, display: (v: Party) => v && v.PartyName },
+        customer: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
+        ExecutedBy: { search: () => partySearch, display: (v: Party) => v && v.DisplayName },
         worker: { search: () => personSearch, display: (v: Person) => v && v.DisplayName },
         equipment: { search: () => fixedAssetSearch, display: (v: FixedAsset) => v && v.DisplayName },
       }

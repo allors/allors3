@@ -13,9 +13,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class PersonPartyNameRule : Rule
+    public class PersonDisplayNameRule : Rule
     {
-        public PersonPartyNameRule(MetaPopulation m) : base(m, new Guid("0df200cd-bc85-4bb4-9d84-939dc2b47492")) =>
+        public PersonDisplayNameRule(MetaPopulation m) : base(m, new Guid("0df200cd-bc85-4bb4-9d84-939dc2b47492")) =>
             this.Patterns = new Pattern[]
             {
                 m.Person.RolePattern(v => v.FirstName),
@@ -62,7 +62,7 @@ namespace Allors.Database.Domain
                     builder.Append($"[{@this.UserName}]");
                 }
 
-                @this.PartyName = builder.ToString();
+                @this.DisplayName = builder.ToString();
             }
         }
     }

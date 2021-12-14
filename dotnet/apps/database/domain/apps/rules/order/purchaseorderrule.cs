@@ -72,7 +72,7 @@ namespace Allors.Database.Domain
                 @this.ValidOrderItems = @this.PurchaseOrderItems.Where(v => v.IsValid).ToArray();
                 @this.PreviousTakenViaSupplier = @this.TakenViaSupplier;
 
-                @this.WorkItemDescription = $"PurchaseOrder: {@this.OrderNumber} [{@this.TakenViaSupplier?.PartyName}]";
+                @this.WorkItemDescription = $"PurchaseOrder: {@this.OrderNumber} [{@this.TakenViaSupplier?.DisplayName}]";
 
                 @this.ResetPrintDocument();
             }

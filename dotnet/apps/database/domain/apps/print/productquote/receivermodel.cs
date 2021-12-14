@@ -21,11 +21,11 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
 
             if (receiver != null)
             {
-                this.Name = receiver.PartyName;
+                this.Name = receiver.DisplayName;
                 this.TaxId = organisationReceiver?.TaxNumber;
             }
 
-            this.Contact = quote.ContactPerson?.PartyName;
+            this.Contact = quote.ContactPerson?.DisplayName;
             this.ContactFirstName = quote.ContactPerson?.FirstName;
             this.Salutation = quote.ContactPerson?.Salutation?.Name;
             this.ContactFunction = quote.ContactPerson?.Function;

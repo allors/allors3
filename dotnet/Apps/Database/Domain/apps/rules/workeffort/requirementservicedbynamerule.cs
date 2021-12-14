@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<Requirement>())
             {
-                @this.ServicedByName = @this.ServicedBy?.PartyName;
+                @this.ServicedByName = @this.ServicedBy?.DisplayName;
             }
         }
     }

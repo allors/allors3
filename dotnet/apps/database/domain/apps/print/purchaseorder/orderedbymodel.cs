@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
         {
             if (orderedBy != null)
             {
-                this.Name = orderedBy.PartyName;
+                this.Name = orderedBy.DisplayName;
                 this.Email = orderedBy.GeneralEmail?.ElectronicAddressString;
                 this.Website = orderedBy.InternetAddress?.ElectronicAddressString;
                 this.TaxId = orderedBy.TaxNumber;

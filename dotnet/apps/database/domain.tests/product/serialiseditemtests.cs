@@ -51,7 +51,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenSerializedItem_WhenDerived_ThenSuppliedByPartyNameIsSet()
+        public void GivenSerializedItem_WhenDerived_ThenSuppliedByDisplayNameIsSet()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
 
@@ -59,11 +59,11 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(supplier.PartyName, newItem.SuppliedByPartyName);
+            Assert.Equal(supplier.DisplayName, newItem.SuppliedByPartyName);
         }
 
         [Fact]
-        public void GivenSerializedItem_WhenDerived_ThenSuppliedByPartyNameIsSetFromSupplierOffering()
+        public void GivenSerializedItem_WhenDerived_ThenSuppliedByDisplayNameIsSetFromSupplierOffering()
         {
             var supplier = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
 
@@ -85,11 +85,11 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(supplier.PartyName, newItem.SuppliedByPartyName);
+            Assert.Equal(supplier.DisplayName, newItem.SuppliedByPartyName);
         }
 
         [Fact]
-        public void GivenSerializedItem_WhenDerived_ThenOwnedByPartyNameIsSet()
+        public void GivenSerializedItem_WhenDerived_ThenOwnedByDisplayNameIsSet()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
@@ -98,11 +98,11 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(customer.PartyName, newItem.OwnedByPartyName);
+            Assert.Equal(customer.DisplayName, newItem.OwnedByPartyName);
         }
 
         [Fact]
-        public void GivenSerializedItem_WhenDerived_ThenRentedByPartyNameIsSet()
+        public void GivenSerializedItem_WhenDerived_ThenRentedByDisplayNameIsSet()
         {
             var customer = this.InternalOrganisation.ActiveCustomers.FirstOrDefault();
 
@@ -111,7 +111,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(customer.PartyName, newItem.RentedByPartyName);
+            Assert.Equal(customer.DisplayName, newItem.RentedByPartyName);
         }
 
         [Fact]

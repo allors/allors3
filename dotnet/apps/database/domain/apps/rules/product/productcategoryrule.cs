@@ -54,10 +54,6 @@ namespace Allors.Database.Domain
                     }
 
                     @this.PrimaryAncestors = primaryAncestors.ToArray();
-
-                    primaryAncestors.Reverse();
-                    primaryAncestors.Add(@this);
-                    @this.LongName = string.Join("/", primaryAncestors.Select(v => v.Name));
                 }
 
                 @this.Children = @this.ProductCategoriesWherePrimaryParent

@@ -32,8 +32,6 @@ namespace Allors.Repository
 
         public DateTime CreationDate { get; set; }
 
-        public string PartyName { get; set; }
-
         public ContactMechanism GeneralCorrespondence { get; set; }
 
         public TelecommunicationsNumber BillingInquiriesFax { get; set; }

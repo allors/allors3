@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SerialisedItemServerDispalyNameRule : Rule
+    public class SerialisedItemDisplayNameRule : Rule
     {
-        public SerialisedItemServerDispalyNameRule(MetaPopulation m) : base(m, new Guid("881d963b-011e-45a2-82cf-e067dfe463e1")) =>
+        public SerialisedItemDisplayNameRule(MetaPopulation m) : base(m, new Guid("881d963b-011e-45a2-82cf-e067dfe463e1")) =>
             this.Patterns = new Pattern[]
             {
                 m.SerialisedItem.RolePattern(v => v.ItemNumber),
@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.ServerDisplayName = $"{ @this.ItemNumber} { @this.Name} SN: { @this.SerialNumber}";
+                @this.DisplayName = $"{ @this.ItemNumber} { @this.Name} SN: { @this.SerialNumber}";
             }
         }
     }

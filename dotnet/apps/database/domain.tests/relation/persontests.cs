@@ -183,7 +183,7 @@ namespace Allors.Database.Domain.Tests
             person.FirstName = "firstname";
             this.Derive();
 
-            Assert.Contains("firstname", person.PartyName);
+            Assert.Contains("firstname", person.DisplayName);
         }
 
         [Fact]
@@ -195,7 +195,7 @@ namespace Allors.Database.Domain.Tests
             person.MiddleName = "middlename";
             this.Derive();
 
-            Assert.Contains("middlename", person.PartyName);
+            Assert.Contains("middlename", person.DisplayName);
         }
 
         [Fact]
@@ -207,7 +207,7 @@ namespace Allors.Database.Domain.Tests
             person.LastName = "lastname";
             this.Derive();
 
-            Assert.Contains("lastname", person.PartyName);
+            Assert.Contains("lastname", person.DisplayName);
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace Allors.Database.Domain.Tests
             person.UserName = "username";
             this.Derive();
 
-            Assert.Contains("username", person.PartyName);
+            Assert.Contains("username", person.DisplayName);
         }
 
         [Fact]

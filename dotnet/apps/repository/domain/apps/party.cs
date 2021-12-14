@@ -16,12 +16,6 @@ namespace Allors.Repository
     public partial interface Party : Localised, Auditable, UniquelyIdentifiable, Commentable, IDisplayName
     {
         #region Allors
-        [Id("BB29E79A-5B37-4CE7-B366-32F67FFD1FA3")]
-        #endregion
-        [Workspace(Default)]
-        string PartyName { get; set; }
-
-        #region Allors
         [Id("130d6e94-51e2-45f9-82d7-380ae7c8aa44")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

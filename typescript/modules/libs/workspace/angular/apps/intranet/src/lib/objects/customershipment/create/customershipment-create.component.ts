@@ -96,7 +96,7 @@ export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
             pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
             pull.Organisation({
               predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
-              sorting: [{ roleType: m.Organisation.PartyName }],
+              sorting: [{ roleType: m.Organisation.DisplayName }],
             }),
           ];
 

@@ -62,7 +62,7 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
                   },
                 },
               },
-              sorting: [{ roleType: m.Person.PartyName }],
+              sorting: [{ roleType: m.Person.DisplayName }],
             }),
           ];
 
