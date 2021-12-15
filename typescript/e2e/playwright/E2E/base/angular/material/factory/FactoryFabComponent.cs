@@ -8,7 +8,7 @@ namespace Allors.E2E.Angular.Material.Factory
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using Allors.Database.Meta;
+    using Database.Meta;
     using Html;
     using Info;
     using Microsoft.Playwright;
@@ -16,10 +16,9 @@ namespace Allors.E2E.Angular.Material.Factory
 
     public class FactoryFabComponent : IComponent
     {
-        public FactoryFabComponent(IComponent container, IComposite composite)
+        public FactoryFabComponent(IComponent container)
         {
             this.Container = container;
-            this.Composite = composite;
             this.Locator = this.Container.Locator.Locator("a-mat-factory-fab");
         }
 
@@ -33,30 +32,30 @@ namespace Allors.E2E.Angular.Material.Factory
 
         public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
-        public IComposite Composite { get; set; }
+        public Button Button => new Button(this, @"button[data-allors-objecttype]");
 
-        public Anchor Anchor => new Anchor(this, @"[mat-fab]");
-
-        public Element MatMenu => new Element(this, @"mat-menu");
+        public async Task<IComposite> ObjectType()
+        {
+            await this.Page.WaitForAngular();
+            var tag = await this.Button.GetAttributeAsync("data-allors-objecttype");
+            return (IComposite)this.M.FindByTag(tag);
+        }
 
         public async Task Create(IClass @class = null)
         {
-            await this.Anchor.ClickAsync();
+            await this.Page.WaitForAngular();
+            await this.Button.ClickAsync();
 
-            var classes = await this.Classes();
-            if (@class != null && classes.Length > 1)
+            if (@class != null)
             {
-                var button = new Button(this, $"button[data-allors-class='{@class.SingularName}']");
-                await button.ClickAsync();
+                await this.Page.WaitForAngular();
+                var button = new Button(this, $"button[data-allors-class='{@class.Tag}']");
+
+                if (await button.IsVisibleAsync())
+                {
+                    await button.ClickAsync();
+                }
             }
-        }
-
-        public async Task<IClass[]> Classes()
-        {
-            var attribute = await this.MatMenu.GetAttributeAsync("data-allors-actions");
-            var actions = !string.IsNullOrWhiteSpace(attribute) ? attribute.Split(",") : Array.Empty<string>();
-
-            return this.Composite.Classes.Where(v => actions.Contains(v.SingularName)).Cast<IClass>().ToArray();
         }
     }
 }

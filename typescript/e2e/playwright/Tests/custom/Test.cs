@@ -9,6 +9,8 @@ namespace Tests
     {
         public AppRoot AppRoot { get; private set; }
 
+        public string WorkspaceName => "Default";
+
         public override void Configure(BrowserTypeLaunchOptions options) => options.Headless = false;
 
         public override void Configure(BrowserNewContextOptions options) => options.BaseURL = "http://localhost:4200";

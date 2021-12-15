@@ -5,75 +5,82 @@
 
 namespace Tests.ApplicationTests
 {
+    using System;
+    using System.ComponentModel;
+    using System.Linq;
+    using Allors.E2E.Angular;
+    using Allors.E2E.Angular.Info;
+    using Allors.E2E.Angular.Material.Factory;
+    using Allors.E2E.Angular.Material.Table;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class ListPagesTest : Test
     {
+        public ApplicationInfo Application => this.AppRoot.ApplicationInfo;
+
+        public ComponentInfo[] Components => this.Application.ComponentInfoByName.Values.ToArray();
+
         [SetUp]
-        public async Task Setup()
+        public async Task Setup() => await this.LoginAsync("jane@example.com");
+
+        [Test]
+        public async Task Open()
         {
-            await this.LoginAsync("jane@example.com");
+            foreach (var component in this.Components.Where(v => v.List != null))
+            {
+                await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                await this.Page.WaitForAngular();
+            }
+
+            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
-        //[Test]
-        //public async Task Create()
-        //{
-        //    foreach (var navigateTo in this.navigateTos)
-        //    {
-        //        var page = (IComponent)navigateTo.Invoke(this.Sidenav, null);
-        //        if (page.GetType().GetProperties().Any(v => v.Name.Equals("Factory")))
-        //        {
-        //            var factory = (FactoryFabComponent)((dynamic)page).Factory;
+        [Test]
+        public async Task Create()
+        {
+            foreach (var component in this.Components.Where(v => v.List != null))
+            {
+                await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                await this.Page.WaitForAngular();
 
-        //            if (await factory.Locator.IsVisibleAsync())
-        //            {
-        //                var classes = await factory.Classes();
+                var factory = new FactoryFabComponent(this.AppRoot);
+                var objectType = await factory.ObjectType();
 
-        //                foreach (var @class in classes)
-        //                {
-        //                    await factory.Create(@class);
+                foreach (var @class in objectType.Classes.Where(v => v.WorkspaceNames.Contains(this.WorkspaceName)))
+                {
+                    await factory.Create(@class);
+                    await this.Page.WaitForAngular();
+                }
+            }
 
-        //                    var dialog = new .GetDialog(this.M);
-        //                    Cancel(dialog);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+            Assert.IsEmpty(this.ConsoleErrorMessages);
+        }
 
-        //[Test]
-        //public async Task Edit()
-        //{
-        //    this.Login();
+        [Test]
+        public async Task Edit()
+        {
+            foreach (var component in this.Components.Where(v => v.List != null))
+            {
+                await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                await this.Page.WaitForAngular();
 
-        //    foreach (var navigateTo in this.navigateTos)
-        //    {
-        //        var page = (Component)navigateTo.Invoke(this.Sidenav, null);
+                var table = new AllorsMaterialTableComponent(this.AppRoot);
+                var actions = await table.Actions();
+                if (actions.Contains("edit"))
+                {
+                    foreach (var @object in this.Transaction.Instantiate(await table.GetObjectIds()))
+                    {
+                        await table.Action(@object, "edit");
+                        await this.Page.WaitForAngular();
 
-        //        var tableProperty = page.GetType().GetProperties().FirstOrDefault(v => v.PropertyType == typeof(MatTable));
-        //        if (tableProperty != null)
-        //        {
-        //            var table = (MatTable)tableProperty?.GetGetMethod().Invoke(page, null);
 
-        //            if (this.Driver.SelectorIsVisible(table.Selector))
-        //            {
-        //                var action = table.Actions.FirstOrDefault(v => v.Equals("edit"));
+                    }
+                }
+            }
 
-        //                if (action != null)
-        //                {
-        //                    var objects = this.Transaction.Instantiate(table.ObjectIds);
-        //                    foreach (var @object in objects)
-        //                    {
-        //                        table.Action(@object, action);
-        //                        var dialog = this.Driver.GetDialog(this.M);
-        //                        Cancel(dialog);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+            Assert.IsEmpty(this.ConsoleErrorMessages);
+        }
 
         //[Test]
         //public async Task Overview()
