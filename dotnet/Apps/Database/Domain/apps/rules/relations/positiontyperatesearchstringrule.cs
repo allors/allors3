@@ -29,9 +29,9 @@ namespace Allors.Database.Domain
                 var array = new string[] {
                     @this.RateType?.Name,
                     @this.Frequency?.Name,
-                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Description)) : null,
-                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Title)) : null,
-                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Responsibilities?.Select(v => v.Description))) : null,
+                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Description ?? string.Empty).ToArray()) : null,
+                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Title ?? string.Empty).ToArray()) : null,
+                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.SelectMany(v => v.Responsibilities?.Select(v => v.Description ?? string.Empty)).ToArray()) : null,
                 };
 
                 if (array.Any(s => !string.IsNullOrEmpty(s)))

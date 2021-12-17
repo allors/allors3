@@ -32,8 +32,8 @@ namespace Allors.Database.Domain
                 var array = new string[] {
                     @this.Description,
                     @this.Title,
-                    @this.ExistResponsibilities ? string.Join(" ", @this.Responsibilities?.Select(v => v.Description)) : null,
-                    @this.ExistPositionTypeRate ? string.Join(" ", @this.PositionTypeRate?.SearchString) : null,
+                    @this.ExistResponsibilities ? string.Join(" ", @this.Responsibilities?.Select(v => v.Description ?? string.Empty).ToArray()) : null,
+                    @this.PositionTypeRate?.SearchString,
                 };
 
                 if (array.Any(s => !string.IsNullOrEmpty(s)))

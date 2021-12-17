@@ -28,8 +28,8 @@ namespace Allors.Database.Domain
             {
                 var array = new string[] {
                     @this.Name,
-                    @this.ExistShipmentsWhereCarrier ? string.Join(" ", @this.ShipmentsWhereCarrier?.Select(v => v.ShipmentNumber)) : null,
-                    @this.ExistStoresWhereDefaultCarrier ? string.Join(" ", @this.StoresWhereDefaultCarrier?.Select(v => v.Name)) : null,
+                    @this.ExistShipmentsWhereCarrier ? string.Join(" ", @this.ShipmentsWhereCarrier?.Select(v => v.ShipmentNumber ?? string.Empty).ToArray()) : null,
+                    @this.ExistStoresWhereDefaultCarrier ? string.Join(" ", @this.StoresWhereDefaultCarrier?.Select(v => v.Name ?? string.Empty).ToArray()) : null,
                 };
 
                 if (array.Any(s => !string.IsNullOrEmpty(s)))

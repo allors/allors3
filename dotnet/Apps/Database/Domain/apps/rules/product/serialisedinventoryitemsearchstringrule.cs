@@ -39,7 +39,7 @@ namespace Allors.Database.Domain
                     @this.UnitOfMeasure?.Name,
                     @this.SerialisedItem?.DisplayName,
                     @this.SerialisedInventoryItemState?.Name,
-                    @this.ExistWorkEffortInventoryAssignmentsWhereInventoryItem ? string.Join(" ", @this.WorkEffortInventoryAssignmentsWhereInventoryItem?.Select(v => v.Assignment?.WorkEffortNumber)) : null,
+                    @this.ExistWorkEffortInventoryAssignmentsWhereInventoryItem ? string.Join(" ", @this.WorkEffortInventoryAssignmentsWhereInventoryItem?.Select(v => v.Assignment?.WorkEffortNumber ?? string.Empty).ToArray()) : null,
                 };
 
                 if (array.Any(s => !string.IsNullOrEmpty(s)))

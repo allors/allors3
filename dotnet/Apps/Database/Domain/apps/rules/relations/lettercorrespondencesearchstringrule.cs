@@ -38,10 +38,10 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<LetterCorrespondence>())
             {
                 var array = new string[] {
-                    @this.ExistInvolvedParties ? string.Join(" ", @this.InvolvedParties?.Select(v => v.DisplayName)) : null,
-                    @this.ExistContactMechanisms ? string.Join(" ", @this.ContactMechanisms?.Select(v => v.DisplayName)) : null,
-                    @this.ExistWorkEfforts ? string.Join(" ", @this.WorkEfforts?.Select(v => v.Name)) : null,
-                    @this.ExistEventPurposes ? string.Join(" ", @this.EventPurposes?.Select(v => v.Name)) : null,
+                    @this.ExistInvolvedParties ? string.Join(" ", @this.InvolvedParties?.Select(v => v.DisplayName ?? string.Empty).ToArray()) : null,
+                    @this.ExistContactMechanisms ? string.Join(" ", @this.ContactMechanisms?.Select(v => v.DisplayName ?? string.Empty).ToArray()) : null,
+                    @this.ExistWorkEfforts ? string.Join(" ", @this.WorkEfforts?.Select(v => v.Name ?? string.Empty).ToArray()) : null,
+                    @this.ExistEventPurposes ? string.Join(" ", @this.EventPurposes?.Select(v => v.Name ?? string.Empty).ToArray()) : null,
                     @this.Description,
                     @this.Subject,
                     @this.Owner?.DisplayName,
