@@ -90,6 +90,8 @@ namespace Allors.Repository
 
         public CommunicationEventState CommunicationEventState { get; set; }
 
+        public string SearchString { get; set; }
+
         #endregion
 
         #region Versioning

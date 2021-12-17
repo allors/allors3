@@ -95,6 +95,8 @@ namespace Allors.Repository
 
         public Scope Scope { get; set; }
 
+        public string DisplayName { get; set; }
+
         #endregion
 
         #region Versioning

@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("a6f4eedb-b0b5-491d-bcc0-09d2bc109e86")]
     #endregion
-    public partial interface Invoice : Commentable, Printable, Auditable, Transitional, Deletable
+    public partial interface Invoice : Commentable, Printable, Auditable, Transitional, Deletable, Searchable
     {
         #region Allors
         [Id("8EBB1372-CA22-4639-85FC-D1C14AB0F500")]

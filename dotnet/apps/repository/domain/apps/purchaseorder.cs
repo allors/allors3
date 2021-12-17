@@ -140,7 +140,10 @@ namespace Allors.Repository
         public decimal TotalBasePriceInPreferredCurrency { get; set; }
 
         public decimal TotalListPriceInPreferredCurrency { get; set; }
+
         public string DisplayName { get; set; }
+
+        public string SearchString { get; set; }
 
         #endregion
 

@@ -246,6 +246,8 @@ namespace Allors.Repository
 
         public string DisplayPhone { get; set; }
 
+        public string SearchString { get; set; }
+
         #endregion
 
         #region Versioning

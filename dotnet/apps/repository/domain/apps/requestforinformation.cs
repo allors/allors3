@@ -84,6 +84,8 @@ namespace Allors.Repository
 
         public int SortableRequestNumber { get; set; }
 
+        public string SearchString { get; set; }
+
         #endregion
 
         #region Versioning

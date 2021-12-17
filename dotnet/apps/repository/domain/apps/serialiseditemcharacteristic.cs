@@ -11,13 +11,15 @@ namespace Allors.Repository
     #region Allors
     [Id("A34F6226-7837-4905-9125-61CD00A07BF4")]
     #endregion
-    public partial class SerialisedItemCharacteristic : Deletable, Object
+    public partial class SerialisedItemCharacteristic : Deletable, Object, Searchable
     {
         #region inherited properties
 
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
+
+        public string SearchString { get; set; }
 
         #endregion
 

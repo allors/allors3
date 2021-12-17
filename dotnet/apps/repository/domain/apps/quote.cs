@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("066bf242-2710-4a68-8ff6-ce4d7d88a04a")]
     #endregion
-    public partial interface Quote : Transitional, WorkItem, Printable, Auditable, Commentable, Localised, Deletable
+    public partial interface Quote : Transitional, WorkItem, Printable, Auditable, Commentable, Localised, Deletable, Searchable
     {
         #region ObjectStates
         #region QuoteState

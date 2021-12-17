@@ -109,4 +109,81 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(noImageAvailableImage, catalogue.CatalogueImage);
         }
     }
+
+    public class CatalogueSearchStringRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public CatalogueSearchStringRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedLocalisedNamesDeriveSearchString()
+        {
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
+
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Derive();
+
+            catalogue.AddLocalisedName(localisedName);
+            this.Derive();
+
+            Assert.Contains(localisedName.Text, catalogue.SearchString);
+        }
+
+        [Fact]
+        public void ChangedNameLocalisedTextTextDeriveSearchString()
+        {
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedName = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultname").Build();
+
+            var catalogue = new CatalogueBuilder(this.Transaction).WithLocalisedName(localisedName).Build();
+            this.Derive();
+
+            localisedName.Text = "changed";
+            this.Derive();
+
+            Assert.Contains(localisedName.Text, catalogue.SearchString);
+        }
+
+        [Fact]
+        public void ChangedLocalisedDescriptionsDeriveSearchString()
+        {
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedDesc = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultdesc").Build();
+
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Derive();
+
+            catalogue.AddLocalisedDescription(localisedDesc);
+            this.Derive();
+
+            Assert.Contains(localisedDesc.Text, catalogue.SearchString);
+        }
+
+        [Fact]
+        public void ChangedDescriptionLocalisedTextTextDeriveSearchString()
+        {
+            var defaultLocale = this.Transaction.GetSingleton().DefaultLocale;
+            var localisedDesc = new LocalisedTextBuilder(this.Transaction).WithLocale(defaultLocale).WithText("defaultdesc").Build();
+
+            var catalogue = new CatalogueBuilder(this.Transaction).WithLocalisedDescription(localisedDesc).Build();
+            this.Derive();
+
+            localisedDesc.Text = "changed";
+            this.Derive();
+
+            Assert.Contains(localisedDesc.Text, catalogue.SearchString);
+        }
+
+        [Fact]
+        public void ChangedCatScopeDeriveSearchString()
+        {
+            var catalogue = new CatalogueBuilder(this.Transaction).Build();
+            this.Derive();
+
+            catalogue.CatScope = new Scopes(this.Transaction).Private;
+            this.Derive();
+
+            Assert.Contains(new Scopes(this.Transaction).Private.Name, catalogue.SearchString);
+        }
+    }
 }

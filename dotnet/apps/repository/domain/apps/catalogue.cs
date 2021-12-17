@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("974DCB55-4D12-460F-A45D-9EBCCA54DA0B")]
     #endregion
-    public partial class Catalogue : UniquelyIdentifiable, Deletable, Object
+    public partial class Catalogue : UniquelyIdentifiable, Deletable, Searchable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -21,6 +21,8 @@ namespace Allors.Repository
         public SecurityToken[] SecurityTokens { get; set; }
 
         public Guid UniqueId { get; set; }
+
+        public string SearchString { get; set; }
 
         #endregion
 
@@ -36,6 +38,7 @@ namespace Allors.Repository
         [Id("21F55EB3-4DC1-42C5-AB16-4C47DBCF0456")]
         #endregion
         [Required]
+        [Derived]
         [Size(256)]
         [Workspace(Default)]
         public string Name { get; set; }

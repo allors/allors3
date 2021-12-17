@@ -10,13 +10,15 @@ namespace Allors.Repository
     using static Workspaces;
 
     [Id("51d4dbfb-98ef-4f38-836a-5948701c4cce")]
-    public partial class ExchangeRate : Object, Deletable
+    public partial class ExchangeRate : Object, Deletable, Searchable
     {
         #region inherited properties
 
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
+
+        public string SearchString { get; set; }
 
         #endregion
 

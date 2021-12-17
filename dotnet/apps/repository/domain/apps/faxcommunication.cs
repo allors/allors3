@@ -89,6 +89,8 @@ namespace Allors.Repository
         public DateTime CreationDate { get; set; }
 
         public DateTime LastModifiedDate { get; set; }
+
+        public string SearchString { get; set; }
         #endregion
 
         #region Allors

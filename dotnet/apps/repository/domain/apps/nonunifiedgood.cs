@@ -104,6 +104,8 @@ namespace Allors.Repository
         public LocalisedMedia[] PrivateLocalisedElectronicDocuments { get; set; }
 
         public Scope Scope { get; set; }
+
+        public string DisplayName { get; set; }
         #endregion
 
         #region Versioning

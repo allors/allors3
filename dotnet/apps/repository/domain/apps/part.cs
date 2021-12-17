@@ -11,7 +11,7 @@ namespace Allors.Repository
     #region Allors
     [Id("894BE589-D536-4FEB-8B94-8E127A170F80")]
     #endregion
-    public partial interface Part : UnifiedProduct, IDisplayName
+    public partial interface Part : UnifiedProduct
     {
         /// <summary>
         /// Gets or sets the Default Facility where this Part is stored.

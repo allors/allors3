@@ -116,6 +116,8 @@ namespace Allors.Repository
 
         public bool IsUser { get; set; }
 
+        public string SearchString { get; set; }
+
         #endregion
 
         #region Versioning

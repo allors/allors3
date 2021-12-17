@@ -138,6 +138,8 @@ namespace Allors.Repository
 
         public decimal TotalListPriceInPreferredCurrency { get; set; }
 
+        public string SearchString { get; set; }
+
         #endregion
 
         #region ObjectStates

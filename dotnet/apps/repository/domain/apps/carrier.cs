@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("4f46f32a-04e6-4ccc-829b-68fb3336f870")]
     #endregion
-    public partial class Carrier : UniquelyIdentifiable, Object
+    public partial class Carrier : UniquelyIdentifiable, Searchable
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
@@ -21,6 +21,8 @@ namespace Allors.Repository
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
+
+        public string SearchString { get; set; }
 
         #endregion
 

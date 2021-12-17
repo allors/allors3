@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("ea83087e-05cc-458c-a6ba-3ce947644a0f")]
     #endregion
-    public partial class ProductCategory : UniquelyIdentifiable, Deletable, IDisplayName
+    public partial class ProductCategory : UniquelyIdentifiable, Deletable, IDisplayName, Searchable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -22,6 +22,8 @@ namespace Allors.Repository
         public Guid UniqueId { get; set; }
 
         public string DisplayName { get; set; }
+
+        public string SearchString { get; set; }
 
         #endregion
 
