@@ -57,11 +57,11 @@ namespace Allors.Database.Domain
             {
                 var array = new string[] {
                     @this.Name,
-                    string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)),
+                    @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)) : null,
                     @this.Description,
-                    string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)),
+                    @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)) : null,
                     @this.Keywords,
-                    string.Join(" ", @this.LocalisedKeywords?.Select(v => v.Text)),
+                    @this.ExistLocalisedKeywords ? string.Join(" ", @this.LocalisedKeywords?.Select(v => v.Text)) : null,
                     @this.ItemNumber,
                     @this.SerialNumber,
                     @this.ProductCategoriesDisplayName,
@@ -69,24 +69,27 @@ namespace Allors.Database.Domain
                     @this.RentedBy?.DisplayName,
                     @this.Buyer?.DisplayName,
                     @this.Seller?.DisplayName,
-                    string.Join(" ", @this.PartWhereSerialisedItem?.DisplayName),
-                    string.Join(" ", @this.PartWhereSerialisedItem?.Brand?.Name),
-                    string.Join(" ", @this.PartWhereSerialisedItem?.Model?.Name),
-                    string.Join(" ", @this.PartyFixedAssetAssignmentsWhereFixedAsset?.Select(v => v.Party?.DisplayName)),
-                    string.Join(" ", @this.PartyFixedAssetAssignmentsWhereFixedAsset?.Select(v => v.AssetAssignmentStatus?.Name)),
-                    string.Join(" ", @this.WorkEffortFixedAssetAssignmentsWhereFixedAsset?.Select(v => v.Assignment?.WorkEffortNumber)),
-                    string.Join(" ", @this.WorkRequirementsWhereFixedAsset?.Select(v => v.RequirementNumber)),
-                    string.Join(" ", @this.PurchaseInvoiceItemsWhereSerialisedItem?.Select(v => v.PurchaseInvoiceWherePurchaseInvoiceItem?.InvoiceNumber)),
-                    string.Join(" ", @this.PurchaseOrderItemsWhereSerialisedItem?.Select(v => v.PurchaseOrderWherePurchaseOrderItem?.OrderNumber)),
-                    string.Join(" ", @this.QuoteItemsWhereSerialisedItem?.Select(v => v.QuoteWhereQuoteItem?.QuoteNumber)),
-                    string.Join(" ", @this.RequestItemsWhereSerialisedItem?.Select(v => v.RequestWhereRequestItem?.RequestNumber)),
-                    string.Join(" ", @this.SalesInvoiceItemsWhereSerialisedItem?.Select(v => v.SalesInvoiceWhereSalesInvoiceItem?.InvoiceNumber)),
-                    string.Join(" ", @this.SerialisedInventoryItemsWhereSerialisedItem?.Select(v => v.Name)),
-                    string.Join(" ", @this.SerialisedInventoryItemsWhereSerialisedItem?.Select(v => v.SerialisedInventoryItemState?.Name)),
-                    string.Join(" ", @this.ShipmentItemsWhereSerialisedItem?.Select(v => v.ShipmentWhereShipmentItem?.ShipmentNumber)),
+                    @this.ExistPartWhereSerialisedItem ? string.Join(" ", @this.PartWhereSerialisedItem?.DisplayName) : null,
+                    @this.ExistPartWhereSerialisedItem ? string.Join(" ", @this.PartWhereSerialisedItem?.Brand?.Name) : null,
+                    @this.ExistPartWhereSerialisedItem ? string.Join(" ", @this.PartWhereSerialisedItem?.Model?.Name) : null,
+                    @this.ExistPartyFixedAssetAssignmentsWhereFixedAsset ? string.Join(" ", @this.PartyFixedAssetAssignmentsWhereFixedAsset?.Select(v => v.Party?.DisplayName)) : null,
+                    @this.ExistPartyFixedAssetAssignmentsWhereFixedAsset ? string.Join(" ", @this.PartyFixedAssetAssignmentsWhereFixedAsset?.Select(v => v.AssetAssignmentStatus?.Name)) : null,
+                    @this.ExistWorkEffortFixedAssetAssignmentsWhereFixedAsset ? string.Join(" ", @this.WorkEffortFixedAssetAssignmentsWhereFixedAsset?.Select(v => v.Assignment?.WorkEffortNumber)) : null,
+                    @this.ExistWorkRequirementsWhereFixedAsset ? string.Join(" ", @this.WorkRequirementsWhereFixedAsset?.Select(v => v.RequirementNumber)) : null,
+                    @this.ExistPurchaseInvoiceItemsWhereSerialisedItem ? string.Join(" ", @this.PurchaseInvoiceItemsWhereSerialisedItem?.Select(v => v.PurchaseInvoiceWherePurchaseInvoiceItem?.InvoiceNumber)) : null,
+                    @this.ExistPurchaseOrderItemsWhereSerialisedItem ? string.Join(" ", @this.PurchaseOrderItemsWhereSerialisedItem?.Select(v => v.PurchaseOrderWherePurchaseOrderItem?.OrderNumber)) : null,
+                    @this.ExistQuoteItemsWhereSerialisedItem ? string.Join(" ", @this.QuoteItemsWhereSerialisedItem?.Select(v => v.QuoteWhereQuoteItem?.QuoteNumber)) : null,
+                    @this.ExistRequestItemsWhereSerialisedItem ? string.Join(" ", @this.RequestItemsWhereSerialisedItem?.Select(v => v.RequestWhereRequestItem?.RequestNumber)) : null,
+                    @this.ExistSalesInvoiceItemsWhereSerialisedItem ? string.Join(" ", @this.SalesInvoiceItemsWhereSerialisedItem?.Select(v => v.SalesInvoiceWhereSalesInvoiceItem?.InvoiceNumber)) : null,
+                    @this.ExistSerialisedInventoryItemsWhereSerialisedItem ? string.Join(" ", @this.SerialisedInventoryItemsWhereSerialisedItem?.Select(v => v.Name)) : null,
+                    @this.ExistSerialisedInventoryItemsWhereSerialisedItem ? string.Join(" ", @this.SerialisedInventoryItemsWhereSerialisedItem?.Select(v => v.SerialisedInventoryItemState?.Name)) : null,
+                    @this.ExistShipmentItemsWhereSerialisedItem ? string.Join(" ", @this.ShipmentItemsWhereSerialisedItem?.Select(v => v.ShipmentWhereShipmentItem?.ShipmentNumber)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

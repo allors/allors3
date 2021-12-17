@@ -37,14 +37,17 @@ namespace Allors.Database.Domain
                 var array = new string[] {
                     @this.Name,
                     @this.Description,
-                    string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)),
-                    string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)),
+                    @this.ExistLocalisedNames ?string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)) : null,
+                    @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)) : null,
                     @this.CatScope?.Name,
-                    string.Join(" ", @this.ProductCategories?.Select(v => v.DisplayName)),
+                    @this.ExistProductCategories ? string.Join(" ", @this.ProductCategories?.Select(v => v.DisplayName)) : null,
                     @this.StoreWhereCatalogue?.Name,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

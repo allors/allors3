@@ -103,13 +103,13 @@ namespace Allors.Database.Domain
                     @this.CustomerReference,
                     @this.OrderNumber,
                     @this.Message,
-                    @this.OrderKind.Description,
+                    @this.OrderKind?.Description,
                     @this.DerivedCurrency?.Abbreviation,
                     @this.DerivedCurrency?.Name,
                     @this.DerivedVatRegime?.Name,
                     @this.DerivedIrpfRegime?.Name,
-                    string.Join(" ", @this.SalesTerms?.Select(v => v.Description)),
-                    string.Join(" ", @this.SalesTerms?.Select(v => v.TermType.Name)),
+                    @this.ExistSalesTerms ? string.Join(" ", @this.SalesTerms?.Select(v => v.Description)) : null,
+                    @this.ExistSalesTerms ? string.Join(" ", @this.SalesTerms?.Select(v => v.TermType?.Name)) : null,
                     @this.SalesOrderState?.Name,
                     @this.TakenBy?.DisplayName,
                     @this.TakenByContactPerson?.DisplayName,
@@ -135,25 +135,28 @@ namespace Allors.Database.Domain
                     @this.SalesChannel?.Name,
                     @this.Store?.Name,
                     @this.Quote?.QuoteNumber,
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.InternalComment)),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.Message)),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.Description)),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.CorrespondingPurchaseOrder.OrderNumber)),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.QuoteItem.QuoteWhereQuoteItem.QuoteNumber)),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.DerivedIrpfRegime.Name)),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.DerivedVatRegime.Name)),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.SalesTerms?.Select(v => v.Description))),
-                    string.Join(" ", @this.ValidOrderItems?.Select(v => v.SalesTerms?.Select(v => v.TermType?.Name))),
-                    string.Join(" ", @this.SalesOrderItems?.Select(v => v.DerivedShipToAddress.DisplayName)),
-                    string.Join(" ", @this.SalesOrderItems?.Select(v => v.DerivedShipToParty.DisplayName)),
-                    string.Join(" ", @this.SalesOrderItems?.Select(v => v.Product.DisplayName)),
-                    string.Join(" ", @this.SalesOrderItems?.Select(v => v.SerialisedItem.DisplayName)),
-                    string.Join(" ", @this.SalesOrderItems?.Select(v => v.OrderedWithFeatures?.Select(v => v.Description))),
-                    string.Join(" ", @this.SalesOrderItems?.Select(v => v.InvoiceItemType.Name)),
-                    string.Join(" ", @this.SalesOrderItems?.Select(v => v.SalesOrderItemState.Name)),
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.InternalComment)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.Message)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.Description)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.CorrespondingPurchaseOrder?.OrderNumber)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.QuoteItem?.QuoteWhereQuoteItem?.QuoteNumber)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.DerivedIrpfRegime?.Name)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.DerivedVatRegime?.Name)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.SalesTerms?.Select(v => v.Description))) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.ValidOrderItems?.Select(v => v.SalesTerms?.Select(v => v.TermType?.Name))) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.DerivedShipToAddress?.DisplayName)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.DerivedShipToParty?.DisplayName)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.Product?.DisplayName)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.SerialisedItem?.DisplayName)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.OrderedWithFeatures?.Select(v => v.Description))) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.InvoiceItemType?.Name)) : null,
+                    @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.SalesOrderItemState?.Name)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

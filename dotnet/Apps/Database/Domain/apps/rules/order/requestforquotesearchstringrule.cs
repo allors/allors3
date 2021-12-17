@@ -63,23 +63,26 @@ namespace Allors.Database.Domain
                     @this.Description,
                     @this.EmailAddress,
                     @this.TelephoneNumber,
-                    @this.ContactPerson.DisplayName,
+                    @this.ContactPerson?.DisplayName,
                     @this.Originator?.DisplayName,
                     @this.FullfillContactMechanism?.DisplayName,
                     @this.QuoteWhereRequest?.QuoteNumber,
-                    string.Join(" ", @this.RequestItems?.Select(v => v.RequestItemState.Name)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.Description)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.Comment)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.InternalComment)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.Product.DisplayName)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.ProductFeature.Description)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.SerialisedItem.DisplayName)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.Requirements.Select(v => v.RequirementNumber))),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.Deliverable.Name)),
-                    string.Join(" ", @this.RequestItems?.Select(v => v.NeededSkill.Skill.Name)),
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.RequestItemState?.Name)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.Description)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.Comment)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.InternalComment)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.Product?.DisplayName)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.ProductFeature?.Description)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.SerialisedItem?.DisplayName)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.Requirements?.Select(v => v.RequirementNumber))) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.Deliverable?.Name)) : null,
+                    @this.ExistRequestItems ? string.Join(" ", @this.RequestItems?.Select(v => v.NeededSkill?.Skill?.Name)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

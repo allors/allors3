@@ -87,8 +87,8 @@ namespace Allors.Database.Domain
                     @this.DerivedCurrency?.Name,
                     @this.DerivedVatRegime?.Name,
                     @this.DerivedIrpfRegime?.Name,
-                    string.Join(" ", @this.SalesTerms?.Select(v => v.Description)),
-                    string.Join(" ", @this.SalesTerms?.Select(v => v.TermType.Name)),
+                    @this.ExistSalesTerms ? string.Join(" ", @this.SalesTerms?.Select(v => v.Description)) : null,
+                    @this.ExistSalesTerms ? string.Join(" ", @this.SalesTerms?.Select(v => v.TermType?.Name)) : null,
                     @this.PurchaseInvoiceState?.Name,
                     @this.BilledFrom?.DisplayName,
                     @this.DerivedBilledFromContactMechanism?.DisplayName,
@@ -106,22 +106,24 @@ namespace Allors.Database.Domain
                     @this.ShipToEndCustomerContactPerson?.DisplayName,
                     @this.PurchaseInvoiceType?.Name,
                     @this.DerivedBillToCustomerPaymentMethod?.Description,
-                    string.Join(" ", @this.PurchaseOrders?.Select(v => v.OrderNumber)),
-
-                    string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.InternalComment)),
-                    string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.Message)),
-                    string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.Description)),
-                    string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.DerivedIrpfRegime.Name)),
-                    string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.DerivedVatRegime.Name)),
-                    string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.SalesTerms?.Select(v => v.Description))),
-                    string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.SalesTerms?.Select(v => v.TermType?.Name))),
-                    string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.Part.DisplayName)),
-                    string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.SerialisedItem.DisplayName)),
-                    string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.InvoiceItemType.Name)),
-                    string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.PurchaseInvoiceItemState.Name)),
+                    @this.ExistPurchaseOrders ? string.Join(" ", @this.PurchaseOrders?.Select(v => v.OrderNumber)) : null,
+                    @this.ExistValidInvoiceItems ? string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.InternalComment)) : null,
+                    @this.ExistValidInvoiceItems ? string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.Message)) : null,
+                    @this.ExistValidInvoiceItems ? string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.Description)) : null,
+                    @this.ExistValidInvoiceItems ? string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.DerivedIrpfRegime?.Name)) : null,
+                    @this.ExistValidInvoiceItems ? string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.DerivedVatRegime?.Name)) : null,
+                    @this.ExistValidInvoiceItems ? string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.SalesTerms?.Select(v => v.Description))) : null,
+                    @this.ExistValidInvoiceItems ? string.Join(" ", @this.ValidInvoiceItems?.Select(v => v.SalesTerms?.Select(v => v.TermType?.Name))) : null,
+                    @this.ExistPurchaseInvoiceItems ? string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.Part?.DisplayName)) : null,
+                    @this.ExistPurchaseInvoiceItems ? string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.SerialisedItem?.DisplayName)) : null,
+                    @this.ExistPurchaseInvoiceItems ? string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.InvoiceItemType?.Name)) : null,
+                    @this.ExistPurchaseInvoiceItems ? string.Join(" ", @this.PurchaseInvoiceItems?.Select(v => v.PurchaseInvoiceItemState?.Name)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

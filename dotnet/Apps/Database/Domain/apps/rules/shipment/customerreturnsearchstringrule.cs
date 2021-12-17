@@ -74,16 +74,19 @@ namespace Allors.Database.Domain
                     @this.Carrier?.Name,
                     @this.HandlingInstruction,
                     @this.Store?.Name,
-                    string.Join(" ", @this.ShipmentItems?.Select(v => v.ShipmentItemState?.Name)),
-                    string.Join(" ", @this.ShipmentItems?.Select(v => v.Part?.DisplayName)),
-                    string.Join(" ", @this.ShipmentItems?.Select(v => v.Good?.DisplayName)),
-                    string.Join(" ", @this.ShipmentItems?.Select(v => v.ContentsDescription)),
-                    string.Join(" ", @this.ShipmentItems?.Select(v => v.SerialisedItem?.DisplayName)),
-                    string.Join(" ", @this.ShipmentItems?.Select(v => v.StoredInFacility?.Name)),
-                    string.Join(" ", @this.SalesInvoicesWhereShipment?.Select(v => v.InvoiceNumber)),
+                    @this.ExistShipmentItems ? string.Join(" ", @this.ShipmentItems?.Select(v => v.ShipmentItemState?.Name)) : null,
+                    @this.ExistShipmentItems ? string.Join(" ", @this.ShipmentItems?.Select(v => v.Part?.DisplayName)) : null,
+                    @this.ExistShipmentItems ? string.Join(" ", @this.ShipmentItems?.Select(v => v.Good?.DisplayName)) : null,
+                    @this.ExistShipmentItems ? string.Join(" ", @this.ShipmentItems?.Select(v => v.ContentsDescription)) : null,
+                    @this.ExistShipmentItems ? string.Join(" ", @this.ShipmentItems?.Select(v => v.SerialisedItem?.DisplayName)) : null,
+                    @this.ExistShipmentItems ? string.Join(" ", @this.ShipmentItems?.Select(v => v.StoredInFacility?.Name)) : null,
+                    @this.ExistSalesInvoicesWhereShipment ? string.Join(" ", @this.SalesInvoicesWhereShipment?.Select(v => v.InvoiceNumber)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

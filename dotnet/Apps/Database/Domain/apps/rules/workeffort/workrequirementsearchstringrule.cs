@@ -58,11 +58,14 @@ namespace Allors.Database.Domain
                     @this.Location,
                     @this.FixedAsset?.DisplayName,
                     @this.WorkRequirementFulfillmentWhereFullfilledBy?.FullfillmentOf.WorkEffortNumber,
-                    string.Join(" ", @this.RequirementCommunicationsWhereRequirement?.Select(v => v.CommunicationEvent?.InvolvedParties?.Select(v => v.DisplayName))),
-                    string.Join(" ", @this.RequirementBudgetAllocationsWhereRequirement?.Select(v => v.BudgetItem?.BudgetWhereBudgetItem?.BudgetNumber)),
+                    @this.ExistRequirementCommunicationsWhereRequirement ? string.Join(" ", @this.RequirementCommunicationsWhereRequirement?.Select(v => v.CommunicationEvent?.InvolvedParties?.Select(v => v.DisplayName))) : null,
+                    @this.ExistRequirementBudgetAllocationsWhereRequirement ? string.Join(" ", @this.RequirementBudgetAllocationsWhereRequirement?.Select(v => v.BudgetItem?.BudgetWhereBudgetItem?.BudgetNumber)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

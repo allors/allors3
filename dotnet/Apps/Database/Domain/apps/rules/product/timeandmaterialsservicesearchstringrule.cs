@@ -53,16 +53,19 @@ namespace Allors.Database.Domain
                     @this.UnitOfMeasure?.Name,
                     @this.Scope?.Name,
                     @this.IntrastatCode,
-                    string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)),
-                    string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)),
-                    string.Join(" ", @this.LocalisedKeywords?.Select(v => v.Text)),
-                    string.Join(" ", @this.ProductIdentifications.Select(v => v.Identification)),
-                    string.Join(" ", @this.ProductCategoriesWhereAllProduct.Select(v => v.DisplayName)),
-                    string.Join(" ", @this.PublicElectronicDocuments?.Select(v => v.Name)),
-                    string.Join(" ", @this.PrivateElectronicDocuments?.Select(v => v.Name)),
+                    @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)) : null,
+                    @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)) : null,
+                    @this.ExistLocalisedKeywords ? string.Join(" ", @this.LocalisedKeywords?.Select(v => v.Text)) : null,
+                    @this.ExistProductIdentifications ? string.Join(" ", @this.ProductIdentifications?.Select(v => v.Identification)) : null,
+                    @this.ExistProductCategoriesWhereAllProduct ? string.Join(" ", @this.ProductCategoriesWhereAllProduct?.Select(v => v.DisplayName)) : null,
+                    @this.ExistPublicElectronicDocuments ? string.Join(" ", @this.PublicElectronicDocuments?.Select(v => v.Name)) : null,
+                    @this.ExistPrivateElectronicDocuments ? string.Join(" ", @this.PrivateElectronicDocuments?.Select(v => v.Name)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

@@ -34,11 +34,14 @@ namespace Allors.Database.Domain
                     @this.DisplayName,
                     @this.Name,
                     @this.Description,
-                    string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)),
-                    string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)),
+                    @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text)) : null,
+                    @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

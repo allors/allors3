@@ -32,11 +32,14 @@ namespace Allors.Database.Domain
                 var array = new string[] {
                     @this.Description,
                     @this.Title,
-                    string.Join(" ", @this.Responsibilities?.Select(v => v.Description)),
-                    string.Join(" ", @this.PositionTypeRate?.SearchString),
+                    @this.ExistResponsibilities ? string.Join(" ", @this.Responsibilities?.Select(v => v.Description)) : null,
+                    @this.ExistPositionTypeRate ? string.Join(" ", @this.PositionTypeRate?.SearchString) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

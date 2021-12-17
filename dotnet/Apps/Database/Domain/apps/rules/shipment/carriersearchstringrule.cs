@@ -28,11 +28,14 @@ namespace Allors.Database.Domain
             {
                 var array = new string[] {
                     @this.Name,
-                    string.Join(" ", @this.ShipmentsWhereCarrier?.Select(v => v.ShipmentNumber)),
-                    string.Join(" ", @this.StoresWhereDefaultCarrier?.Select(v => v.Name)),
+                    @this.ExistShipmentsWhereCarrier ? string.Join(" ", @this.ShipmentsWhereCarrier?.Select(v => v.ShipmentNumber)) : null,
+                    @this.ExistStoresWhereDefaultCarrier ? string.Join(" ", @this.StoresWhereDefaultCarrier?.Select(v => v.Name)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

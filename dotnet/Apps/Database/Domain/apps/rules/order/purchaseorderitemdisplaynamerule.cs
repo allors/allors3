@@ -26,7 +26,11 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
                 var array = new string[] { @this.PurchaseOrderWherePurchaseOrderItem?.DisplayName, @this.Part?.DisplayName };
-                @this.DisplayName = string.Join(", ", array.Where(s => !string.IsNullOrEmpty(s)));
+
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

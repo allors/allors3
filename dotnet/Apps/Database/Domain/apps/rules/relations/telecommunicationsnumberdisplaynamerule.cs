@@ -27,7 +27,11 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<TelecommunicationsNumber>())
             {
                 var array = new string[] { @this.CountryCode, @this.AreaCode, @this.ContactNumber };
-                @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

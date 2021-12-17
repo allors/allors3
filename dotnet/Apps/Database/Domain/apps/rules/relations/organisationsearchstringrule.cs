@@ -54,27 +54,29 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<Organisation>())
             {
                 var array = new string[] {
-                    string.Join(" ", @this.Qualifications?.Select(v => v.Name)),
-                    string.Join(" ", @this.PartySkills?.Select(v => v.Skill.Name)),
-                    string.Join(" ", @this.PartyClassifications?.Select(v => v.Name)),
-                    string.Join(" ", @this.BankAccounts?.Select(v => v.Iban)),
-                    string.Join(" ", @this.CreditCards?.Select(v => v.CardNumber)),
+                    @this.ExistQualifications ? string.Join(" ", @this.Qualifications?.Select(v => v.Name)) : null,
+                    @this.ExistPartySkills ? string.Join(" ", @this.PartySkills?.Select(v => v.Skill?.Name)) : null,
+                    @this.ExistPartyClassifications ? string.Join(" ", @this.PartyClassifications?.Select(v => v.Name)) : null,
+                    @this.ExistBankAccounts ? string.Join(" ", @this.BankAccounts?.Select(v => v.Iban)) : null,
+                    @this.ExistCreditCards ? string.Join(" ", @this.CreditCards?.Select(v => v.CardNumber)) : null,
                     @this.DefaultPaymentMethod?.Description,
                     @this.DefaultShipmentMethod?.Name,
-                    string.Join(" ", @this.PartyContactMechanisms?.Select(v => v.ContactMechanism.DisplayName)),
-                    string.Join(" ", @this.CurrentPartyRelationships?.Select(v => v.Parties.Select(v => v.DisplayName))),
-                    string.Join(" ", @this.InactivePartyRelationships?.Select(v => v.Parties.Select(v => v.DisplayName))),
-                    string.Join(" ", @this.CurrentContacts?.Select(v => v.DisplayName)),
-                    string.Join(" ", @this.InactiveContacts?.Select(v => v.DisplayName)),
-
+                    @this.ExistPartyContactMechanisms ? string.Join(" ", @this.PartyContactMechanisms?.Select(v => v.ContactMechanism?.DisplayName)) : null,
+                    @this.ExistCurrentPartyRelationships ? string.Join(" ", @this.CurrentPartyRelationships?.Select(v => v.Parties.Select(v => v.DisplayName))) : null,
+                    @this.ExistInactivePartyRelationships ? string.Join(" ", @this.InactivePartyRelationships?.Select(v => v.Parties.Select(v => v.DisplayName))) : null,
+                    @this.ExistCurrentContacts ? string.Join(" ", @this.CurrentContacts?.Select(v => v.DisplayName)) : null,
+                    @this.ExistInactiveContacts ? string.Join(" ", @this.InactiveContacts?.Select(v => v.DisplayName)) : null,
                     @this.LegalForm?.Description,
                     @this.DisplayName,
                     @this.TaxNumber,
-                    string.Join(" ", @this.IndustryClassifications?.Select(v => v.Name)),
-                    string.Join(" ", @this.CustomClassifications?.Select(v => v.Name)),
+                    @this.ExistIndustryClassifications ? string.Join(" ", @this.IndustryClassifications?.Select(v => v.Name)) : null,
+                    @this.ExistCustomClassifications ? string.Join(" ", @this.CustomClassifications?.Select(v => v.Name)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

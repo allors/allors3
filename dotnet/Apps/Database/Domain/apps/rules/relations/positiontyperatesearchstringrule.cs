@@ -29,12 +29,15 @@ namespace Allors.Database.Domain
                 var array = new string[] {
                     @this.RateType?.Name,
                     @this.Frequency?.Name,
-                    string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Description)),
-                    string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Title)),
-                    string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Responsibilities.Select(v => v.Description))),
+                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Description)) : null,
+                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Title)) : null,
+                    @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Responsibilities?.Select(v => v.Description))) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

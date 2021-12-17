@@ -80,25 +80,28 @@ namespace Allors.Database.Domain
                     @this.Owner?.DisplayName,
                     @this.Priority?.Name,
                     @this.OrderItemFulfillment?.OrderWhereValidOrderItem?.OrderNumber,
-                    string.Join(" ", @this.WorkEffortPurposes?.Select(v => v.Name)),
-                    string.Join(" ", @this.Children?.Select(v => v.WorkEffortNumber)),
-                    string.Join(" ", @this.DeliverablesProduced?.Select(v => v.Name)),
-                    string.Join(" ", @this.DeliverablesProduced?.Select(v => v.DeliverableType?.Name)),
-                    string.Join(" ", @this.PrivateElectronicDocuments?.Select(v => v.Name)),
-                    string.Join(" ", @this.PublicElectronicDocuments?.Select(v => v.Name)),
-                    string.Join(" ", @this.CommunicationEventsWhereWorkEffort?.Select(v => v.InvolvedParties?.Select(v => v.DisplayName))),
-                    string.Join(" ", @this.QuoteItemsWhereWorkEffort?.Select(v => v.QuoteWhereQuoteItem?.QuoteNumber)),
-                    string.Join(" ", @this.SalesInvoicesWhereWorkEffort?.Select(v => v.InvoiceNumber)),
-                    string.Join(" ", @this.WorkEffortFixedAssetAssignmentsWhereAssignment?.Select(v => v.FixedAsset?.DisplayName)),
-                    string.Join(" ", @this.WorkEffortAssignmentRatesWhereWorkEffort?.Select(v => v.RateType?.Name)),
-                    string.Join(" ", @this.WorkEffortPartyAssignmentsWhereAssignment?.Select(v => v.Party?.DisplayName)),
-                    string.Join(" ", @this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment?.Select(v => v.PurchaseOrderItem?.PurchaseOrderWherePurchaseOrderItem.OrderNumber)),
-                    string.Join(" ", @this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment?.Select(v => v.PurchaseOrder.OrderNumber)),
-                    string.Join(" ", @this.WorkRequirementFulfillmentsWhereFullfillmentOf?.Select(v => v.FullfilledBy.RequirementNumber)),
-                    string.Join(" ", @this.WorkEffortInventoryAssignmentsWhereAssignment?.Select(v => v.InventoryItem?.Part.DisplayName)),
+                    @this.ExistWorkEffortPurposes ? string.Join(" ", @this.WorkEffortPurposes?.Select(v => v.Name)) : null,
+                    @this.ExistChildren ? string.Join(" ", @this.Children?.Select(v => v.WorkEffortNumber)) : null,
+                    @this.ExistDeliverablesProduced ? string.Join(" ", @this.DeliverablesProduced?.Select(v => v.Name)) : null,
+                    @this.ExistDeliverablesProduced ? string.Join(" ", @this.DeliverablesProduced?.Select(v => v.DeliverableType?.Name)) : null,
+                    @this.ExistPrivateElectronicDocuments ? string.Join(" ", @this.PrivateElectronicDocuments?.Select(v => v.Name)) : null,
+                    @this.ExistPublicElectronicDocuments ? string.Join(" ", @this.PublicElectronicDocuments?.Select(v => v.Name)) : null,
+                    @this.ExistCommunicationEventsWhereWorkEffort ? string.Join(" ", @this.CommunicationEventsWhereWorkEffort?.Select(v => v.InvolvedParties?.Select(v => v.DisplayName))) : null,
+                    @this.ExistQuoteItemsWhereWorkEffort ? string.Join(" ", @this.QuoteItemsWhereWorkEffort?.Select(v => v.QuoteWhereQuoteItem?.QuoteNumber)) : null,
+                    @this.ExistSalesInvoicesWhereWorkEffort ? string.Join(" ", @this.SalesInvoicesWhereWorkEffort?.Select(v => v.InvoiceNumber)) : null,
+                    @this.ExistWorkEffortFixedAssetAssignmentsWhereAssignment ? string.Join(" ", @this.WorkEffortFixedAssetAssignmentsWhereAssignment?.Select(v => v.FixedAsset?.DisplayName)) : null,
+                    @this.ExistWorkEffortAssignmentRatesWhereWorkEffort ? string.Join(" ", @this.WorkEffortAssignmentRatesWhereWorkEffort?.Select(v => v.RateType?.Name)) : null,
+                    @this.ExistWorkEffortPartyAssignmentsWhereAssignment ? string.Join(" ", @this.WorkEffortPartyAssignmentsWhereAssignment?.Select(v => v.Party?.DisplayName)) : null,
+                    @this.ExistWorkEffortPurchaseOrderItemAssignmentsWhereAssignment ? string.Join(" ", @this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment?.Select(v => v.PurchaseOrderItem?.PurchaseOrderWherePurchaseOrderItem?.OrderNumber)) : null,
+                    @this.ExistWorkEffortPurchaseOrderItemAssignmentsWhereAssignment ? string.Join(" ", @this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment?.Select(v => v.PurchaseOrder?.OrderNumber)) : null,
+                    @this.ExistWorkRequirementFulfillmentsWhereFullfillmentOf ? string.Join(" ", @this.WorkRequirementFulfillmentsWhereFullfillmentOf?.Select(v => v.FullfilledBy?.RequirementNumber)) : null,
+                    @this.ExistWorkEffortInventoryAssignmentsWhereAssignment ? string.Join(" ", @this.WorkEffortInventoryAssignmentsWhereAssignment?.Select(v => v.InventoryItem?.Part?.DisplayName)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

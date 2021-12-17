@@ -76,31 +76,34 @@ namespace Allors.Database.Domain
                     @this.DerivedVatRegime?.Name,
                     @this.DerivedVatClause?.Name,
                     @this.Request?.RequestNumber,
-                    @this.ContactPerson.DisplayName,
-                    string.Join(" ", @this.QuoteTerms?.Select(v => v.TermValue)),
-                    string.Join(" ", @this.QuoteTerms?.Select(v => v.TermType.Name)),
-                    string.Join(" ", @this.QuoteTerms?.Select(v => v.Description)),
+                    @this.ContactPerson?.DisplayName,
+                    @this.ExistQuoteTerms ? string.Join(" ", @this.QuoteTerms?.Select(v => v.TermValue)) : null,
+                    @this.ExistQuoteTerms ? string.Join(" ", @this.QuoteTerms?.Select(v => v.TermType?.Name)) : null,
+                    @this.ExistQuoteTerms ? string.Join(" ", @this.QuoteTerms?.Select(v => v.Description)) : null,
                     @this.Receiver?.DisplayName,
                     @this.FullfillContactMechanism?.DisplayName,
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteItemState.Name)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.DerivedIrpfRegime.Name)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.DerivedVatRegime.Name)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.InvoiceItemType.Name)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.InternalComment)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.Authorizer.DisplayName)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.Product.DisplayName)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.ProductFeature.Description)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.SerialisedItem.DisplayName)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.WorkEffort.WorkEffortNumber)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteTerms.Select(v => v.TermValue))),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteTerms.Select(v => v.TermType))),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteTerms.Select(v => v.Description))),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.RequestItem.RequestWhereRequestItem.RequestNumber)),
-                    string.Join(" ", @this.QuoteItems?.Select(v => v.Details)),
-                    string.Join(" ", @this.SalesOrderWhereQuote?.OrderNumber),
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteItemState?.Name)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.DerivedIrpfRegime?.Name)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.DerivedVatRegime?.Name)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.InvoiceItemType?.Name)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.InternalComment)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.Authorizer?.DisplayName)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.Product?.DisplayName)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.ProductFeature?.Description)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.SerialisedItem?.DisplayName)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.WorkEffort?.WorkEffortNumber)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteTerms?.Select(v => v.TermValue))) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteTerms?.Select(v => v.TermType?.Name))) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.QuoteTerms?.Select(v => v.Description))) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.RequestItem?.RequestWhereRequestItem?.RequestNumber)) : null,
+                    @this.ExistQuoteItems ? string.Join(" ", @this.QuoteItems?.Select(v => v.Details)) : null,
+                    @this.ExistSalesOrderWhereQuote ? string.Join(" ", @this.SalesOrderWhereQuote?.OrderNumber) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

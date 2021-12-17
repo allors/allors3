@@ -64,37 +64,39 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<Person>())
             {
                 var array = new string[] {
-                    string.Join(" ", @this.Qualifications?.Select(v => v.Name)),
-                    string.Join(" ", @this.PartySkills?.Select(v => v.Skill.Name)),
-                    string.Join(" ", @this.PartyClassifications?.Select(v => v.Name)),
-                    string.Join(" ", @this.BankAccounts?.Select(v => v.Iban)),
-                    string.Join(" ", @this.CreditCards?.Select(v => v.CardNumber)),
+                    @this.ExistQualifications ? string.Join(" ", @this.Qualifications?.Select(v => v.Name)) : null,
+                    @this.ExistPartySkills ? string.Join(" ", @this.PartySkills?.Select(v => v.Skill?.Name)) : null,
+                    @this.ExistPartyClassifications ? string.Join(" ", @this.PartyClassifications?.Select(v => v.Name)) : null,
+                    @this.ExistBankAccounts ? string.Join(" ", @this.BankAccounts?.Select(v => v.Iban)) : null,
+                    @this.ExistCreditCards ? string.Join(" ", @this.CreditCards?.Select(v => v.CardNumber)) : null,
                     @this.DefaultPaymentMethod?.Description,
                     @this.DefaultShipmentMethod?.Name,
-                    string.Join(" ", @this.PartyContactMechanisms?.Select(v => v.ContactMechanism.DisplayName)),
-                    string.Join(" ", @this.CurrentPartyRelationships?.Select(v => v.Parties.Select(v => v.DisplayName))),
-                    string.Join(" ", @this.InactivePartyRelationships?.Select(v => v.Parties.Select(v => v.DisplayName))),
-                    string.Join(" ", @this.CurrentContacts?.Select(v => v.DisplayName)),
-                    string.Join(" ", @this.InactiveContacts?.Select(v => v.DisplayName)),
-
-                    string.Join(" ", @this.PersonClassifications?.Select(v => v.Name)),
-                    string.Join(" ", @this.PersonTrainings?.Select(v => v.Training.Description)),
-                    string.Join(" ", @this.Citizenship?.Passports.Select(v => v.Number)),
-                    @this.Citizenship?.Country.Name,
+                    @this.ExistPartyContactMechanisms ? string.Join(" ", @this.PartyContactMechanisms?.Select(v => v.ContactMechanism?.DisplayName)) : null,
+                    @this.ExistCurrentPartyRelationships ? string.Join(" ", @this.CurrentPartyRelationships?.Select(v => v.Parties?.Select(v => v.DisplayName))) : null,
+                    @this.ExistInactivePartyRelationships ? string.Join(" ", @this.InactivePartyRelationships?.Select(v => v.Parties?.Select(v => v.DisplayName))) : null,
+                    @this.ExistCurrentContacts ? string.Join(" ", @this.CurrentContacts?.Select(v => v.DisplayName)) : null,
+                    @this.ExistInactiveContacts ? string.Join(" ", @this.InactiveContacts?.Select(v => v.DisplayName)) : null,
+                    @this.ExistPersonClassifications ? string.Join(" ", @this.PersonClassifications?.Select(v => v.Name)) : null,
+                    @this.ExistPersonTrainings ? string.Join(" ", @this.PersonTrainings?.Select(v => v.Training?.Description)) : null,
+                    @this.ExistCitizenship ? string.Join(" ", @this.Citizenship?.Passports?.Select(v => v.Number)) : null,
+                    @this.Citizenship?.Country?.Name,
                     @this.DisplayName,
                     @this.FirstName,
                     @this.MiddleName,
                     @this.LastName,
                     @this.GivenName,
                     @this.MothersMaidenName,
-                    @this.Gender.Name,
-                    @this.MaritalStatus.Name,
+                    @this.Gender?.Name,
+                    @this.MaritalStatus?.Name,
                     @this.SocialSecurityNumber,
                     @this.Function,
-                    string.Join(" ", @this.CurrentOrganisationContactRelationships?.Select(v => v.Organisation.DisplayName)),
+                    @this.ExistCurrentOrganisationContactRelationships ? string.Join(" ", @this.CurrentOrganisationContactRelationships?.Select(v => v.Organisation?.DisplayName)) : null,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

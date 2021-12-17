@@ -40,10 +40,10 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<EmailCommunication>())
             {
                 var array = new string[] {
-                    string.Join(" ", @this.InvolvedParties?.Select(v => v.DisplayName)),
-                    string.Join(" ", @this.ContactMechanisms?.Select(v => v.DisplayName)),
-                    string.Join(" ", @this.WorkEfforts?.Select(v => v.Name)),
-                    string.Join(" ", @this.EventPurposes?.Select(v => v.Name)),
+                    @this.ExistInvolvedParties ? string.Join(" ", @this.InvolvedParties?.Select(v => v.DisplayName)) : null,
+                    @this.ExistContactMechanisms ? string.Join(" ", @this.ContactMechanisms?.Select(v => v.DisplayName)) : null,
+                    @this.ExistWorkEfforts ? string.Join(" ", @this.WorkEfforts?.Select(v => v.Name)) : null,
+                    @this.ExistEventPurposes ? string.Join(" ", @this.EventPurposes?.Select(v => v.Name)) : null,
                     @this.Description,
                     @this.Subject,
                     @this.Owner?.DisplayName,
@@ -53,7 +53,10 @@ namespace Allors.Database.Domain
                     @this.WorkItemDescription,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }
