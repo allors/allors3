@@ -1,6 +1,8 @@
 namespace Tests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors.Database;
     using Allors.Database.Meta;
@@ -53,6 +55,10 @@ namespace Tests
 
         public ITransaction Transaction { get; set; }
 
+        public IList<IConsoleMessage> ConsoleMessages { get; private set; }
+
+        public IConsoleMessage[] ConsoleErrorMessages => this.ConsoleMessages.Where(v => "error".Equals(v.Type)).ToArray();
+
         [SetUp]
         public async Task E2ETestSetup()
         {
@@ -71,6 +77,9 @@ namespace Tests
             this.Configure(browserNewContextOptions);
             this.Context = await this.Browser.NewContextAsync(browserNewContextOptions);
             this.Page = await this.Context.NewPageAsync();
+
+            this.ConsoleMessages = new List<IConsoleMessage>();
+            this.Page.Console += (_, message) => this.ConsoleMessages.Add(message);
 
             this.M = this.Fixture.MetaPopulation;
             this.Database = this.Fixture.Init();

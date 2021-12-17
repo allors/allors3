@@ -1,7 +1,8 @@
-import { APP_INITIALIZER } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { init } from '../app/app.init';
+import { ErrorHandlerService } from '../allors/errorhandler.service';
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
@@ -19,6 +20,11 @@ export const environment = {
   authUrl: 'TestAuthentication/Token',
   // authUrl: 'Authentication/Token',
   providers: [
+    {
+      // processes all errors
+      provide: ErrorHandler,
+      useClass: ErrorHandlerService,
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,

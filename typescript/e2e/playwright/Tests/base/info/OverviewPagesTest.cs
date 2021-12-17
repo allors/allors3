@@ -6,29 +6,36 @@
 namespace Tests.ApplicationTests
 {
     using System.Linq;
-    using System.Reflection;
     using System.Threading.Tasks;
-    using Allors.E2E.Angular.Material.Sidenav;
+    using Allors.Database;
+    using Allors.E2E.Angular;
+    using Allors.E2E.Angular.Info;
     using NUnit.Framework;
 
     public class OverviewPagesTest : Test
     {
-        private MethodInfo[] navigateTos;
+        public ApplicationInfo Application => this.AppRoot.ApplicationInfo;
 
-        public Sidenav Sidenav => new Sidenav(this.AppRoot);
+        public ComponentInfo[] Components => this.Application.ComponentInfoByName.Values.ToArray();
 
         [SetUp]
-        public async Task Setup()
+        public async Task Setup() => await this.LoginAsync("jane@example.com");
+
+        [Test]
+        public async Task Open()
         {
-            this.navigateTos = this.Sidenav.GetType()
-                .GetMethods()
-                .Where(v => v.Name.StartsWith("NavigateTo"))
-                .ToArray();
+            foreach (var component in this.Components.Where(v => v.Overview != null))
+            {
+                var objectType = component.Overview;
+                foreach (IObject @object in this.Transaction.Extent(objectType))
+                {
+                    var url = component.RouteInfo.FullPath.Replace(":id", $"{@object.Strategy.ObjectId}");
+                    await this.Page.GotoAsync(url);
+                    await this.Page.WaitForAngular();
+                }
+            }
 
-            // Uncomment next line to only test a certain page
-            // this.navigateTos = navigateTos.Where(v => v.Name.Equals("NavigateToSpareParts")).ToArray();
-
-            await this.LoginAsync("jane@example.com");
+            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
         //[Test]

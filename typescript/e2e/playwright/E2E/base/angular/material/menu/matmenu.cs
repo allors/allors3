@@ -6,6 +6,7 @@
 namespace Allors.E2E.Angular.Material.Menu
 {
     using Allors.Database.Meta;
+    using Cdk;
     using Info;
     using Microsoft.Playwright;
     using Task = System.Threading.Tasks.Task;
@@ -16,6 +17,7 @@ namespace Allors.E2E.Angular.Material.Menu
         {
             this.Container = container;
             this.Locator = this.Container.Locator;
+            this.OverlayContainer = new OverlayContainer(container);
         }
 
         public IComponent Container { get; }
@@ -28,12 +30,13 @@ namespace Allors.E2E.Angular.Material.Menu
 
         public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
 
+        public OverlayContainer OverlayContainer { get; }
+
         public async Task Select(string value)
         {
             await this.Page.WaitForAngular();
-            var arrow = this.Locator.Locator($"button[data-allors-action='{value}']");
+            var arrow = this.OverlayContainer.Locator.Locator($"button[data-allors-action='{value}']");
             await arrow.ClickAsync();
         }
     }
-
 }
