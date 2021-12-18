@@ -24,7 +24,14 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<UnifiedGood>())
             {
-                @this.DisplayName = string.Concat(", ", @this.ProductCategoriesWhereProduct?.Select((v) => v.DisplayName));
+                var array = new string[] {
+                    string.Concat(", ", @this.ProductCategoriesWhereProduct?.Select((v) => v.DisplayName ?? string.Empty).ToArray())
+                };
+
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

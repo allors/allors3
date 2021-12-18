@@ -27,7 +27,14 @@ namespace Allors.Database.Domain
                 var primaryAncestors = @this.PrimaryAncestors.Reverse().ToList();
                 primaryAncestors.Add(@this);
 
-                @this.DisplayName = string.Join("/", primaryAncestors.Select(v => v.Name));
+                var array = new string[] {
+                    string.Concat(", ", string.Join("/", primaryAncestors.Select(v => v.Name ?? string.Empty).ToArray()))
+                };
+
+                if (array.Any(s => !string.IsNullOrEmpty(s)))
+                {
+                    @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
+                }
             }
         }
     }

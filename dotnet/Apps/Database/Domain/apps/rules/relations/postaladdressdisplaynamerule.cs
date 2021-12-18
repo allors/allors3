@@ -29,7 +29,13 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<PostalAddress>())
             {
-                var array = new string[] {@this.Address1, @this.Address2, @this.Address3, @this.PostalCode, @this.Locality, @this.Country?.Name };
+                var array = new string[] {
+                    @this.Address1,
+                    @this.Address2,
+                    @this.Address3,
+                    @this.PostalCode,
+                    @this.Locality,
+                    @this.Country?.Name };
 
                 if (array.Any(s => !string.IsNullOrEmpty(s)))
                 {
