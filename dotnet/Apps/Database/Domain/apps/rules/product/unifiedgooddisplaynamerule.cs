@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<UnifiedGood>())
             {
                 var array = new string[] {
-                    string.Concat(", ", @this.ProductCategoriesWhereProduct?.Select((v) => v.DisplayName ?? string.Empty).ToArray())
+                    string.Join(", ", @this.ProductCategoriesWhereProduct?.Select((v) => v.DisplayName ?? string.Empty).ToArray())
                 };
 
                 if (array.Any(s => !string.IsNullOrEmpty(s)))
