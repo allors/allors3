@@ -58,7 +58,7 @@ namespace Application.Excel
                 }
             }
 
-            this.Cell.Style = this.Object?.Strategy.CanWrite(this.RoleType) == true || this.Factory != null
+            this.Cell.Style = this.Object?.Strategy.CanWrite(this.RoleType) == true
                 ? Constants.WriteStyle
                 : Constants.ReadOnlyStyle;
         }
