@@ -124,6 +124,14 @@ namespace Allors.Database.Domain
 
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertExists(this, this.M.CustomerShipment.ShipToParty);
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public void AppsCancel(CustomerShipmentCancel method)
         {
             this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Cancelled;

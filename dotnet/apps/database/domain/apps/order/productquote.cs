@@ -15,6 +15,14 @@ namespace Allors.Database.Domain
             new TransitionalConfiguration(this.M.ProductQuote, this.M.ProductQuote.QuoteState),
         };
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         private bool AppsNeedsApproval => false;
 
         public void AppsSetReadyForProcessing(ProductQuoteSetReadyForProcessing method)

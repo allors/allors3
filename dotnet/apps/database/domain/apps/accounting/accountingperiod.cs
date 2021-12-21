@@ -23,6 +23,14 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public AccountingPeriod AddNextMonth() => this.AppsAddNextMonth();
 
         private AccountingPeriod AppsAddNextMonth()

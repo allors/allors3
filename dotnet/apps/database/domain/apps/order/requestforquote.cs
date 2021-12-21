@@ -14,6 +14,14 @@ namespace Allors.Database.Domain
             new TransitionalConfiguration(this.M.RequestForQuote, this.M.RequestForQuote.RequestState),
         };
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public void AppsCreateQuote(RequestForQuoteCreateQuote method)
         {
             this.RequestState = new RequestStates(this.Strategy.Transaction).Quoted;

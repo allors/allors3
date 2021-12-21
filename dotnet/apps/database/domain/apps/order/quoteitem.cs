@@ -35,6 +35,11 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(QuoteItemDelete method)
         {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+
             if (this.ExistSerialisedItem)
             {
                 this.SerialisedItem.DerivationTrigger = Guid.NewGuid();

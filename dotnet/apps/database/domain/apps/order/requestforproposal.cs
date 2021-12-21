@@ -12,4 +12,12 @@ namespace Allors.Database.Domain
             new TransitionalConfiguration(this.M.RequestForProposal, this.M.RequestForProposal.RequestState),
         };
     }
+
+    public void AppsDelete(DeletableDelete method)
+    {
+        foreach (var deletable in this.AllVersions)
+        {
+            deletable.Delete();
+        }
+    }
 }

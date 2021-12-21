@@ -20,6 +20,14 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public void AppsClose(CaseClose method)
         {
             this.CaseState = new CaseStates(this.Strategy.Transaction).Closed;

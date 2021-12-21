@@ -36,5 +36,13 @@ namespace Allors.Database.Domain
                 this.ShipToParty = internalOrganisations.First();
             }
         }
+
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
     }
 }

@@ -16,6 +16,11 @@ namespace Allors.Database.Domain
         {
             var transaction = this.strategy.Transaction;
 
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+
             // TODO: Avoid creating a Derivation
             var derivation = this.Strategy.Transaction.Database.Services.Get<IDerivationService>().CreateDerivation(transaction);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);

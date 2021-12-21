@@ -42,6 +42,14 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public void AppsOnPostDerive(ObjectOnPostDerive method) => method.Derivation.Validation.AssertExists(this, this.M.PurchaseShipment.ShipFromParty);
 
         public void AppsReceive(PurchaseShipmentReceive method)

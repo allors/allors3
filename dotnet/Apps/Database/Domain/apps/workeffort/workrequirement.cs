@@ -31,6 +31,14 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public void AppsCancel(WorkRequirementCancel method)
         {
             this.RequirementState = new RequirementStates(this.Strategy.Transaction).Cancelled;

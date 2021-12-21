@@ -26,6 +26,14 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public void AppsPrint(PrintablePrint method)
         {
             var singleton = this.Strategy.Transaction.GetSingleton();

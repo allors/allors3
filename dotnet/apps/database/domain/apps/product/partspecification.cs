@@ -20,6 +20,14 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
+
         public void AppsApprove(PartSpecificationApprove method)
         {
             this.PartSpecificationState = new PartSpecificationStates(this.Strategy.Transaction).Approved;

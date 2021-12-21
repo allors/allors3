@@ -54,5 +54,13 @@ namespace Allors.Database.Domain
                 }
             }
         }
+
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
     }
 }

@@ -19,5 +19,13 @@ namespace Allors.Database.Domain
                 this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Created;
             }
         }
+
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+        }
     }
 }
