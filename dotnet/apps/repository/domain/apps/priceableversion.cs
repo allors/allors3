@@ -39,7 +39,6 @@ namespace Allors.Repository
         [Id("DBB03B6B-93EA-41FD-838D-D89C38D192FA")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal UnitVat { get; set; }
@@ -56,7 +55,6 @@ namespace Allors.Repository
         [Id("D05C5D37-1915-445C-AC89-0CF1E0D1636E")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal TotalVat { get; set; }
@@ -65,7 +63,6 @@ namespace Allors.Repository
         [Id("949C917B-718B-44E9-8E00-C620ECDDB003")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal UnitSurcharge { get; set; }
@@ -74,7 +71,6 @@ namespace Allors.Repository
         [Id("EDFC927F-DFD4-4CAF-B7AE-7349A94BBF20")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal UnitDiscount { get; set; }
@@ -98,7 +94,6 @@ namespace Allors.Repository
         [Id("BBA7B69A-7D79-4E6E-B39C-891A8DF36148")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(4)]
         decimal UnitBasePrice { get; set; }
@@ -107,7 +102,6 @@ namespace Allors.Repository
         [Id("5AABEDB7-9690-402A-9188-1929BAA75D89")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(4)]
         decimal UnitPrice { get; set; }
@@ -116,7 +110,6 @@ namespace Allors.Repository
         [Id("C75F67AF-3875-46F7-9B4D-C569799821E2")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal TotalIncVat { get; set; }
@@ -133,7 +126,6 @@ namespace Allors.Repository
         [Id("9BA0BE40-56FB-4F50-AA08-B5FDE6D8B36B")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal TotalDiscount { get; set; }
@@ -142,7 +134,6 @@ namespace Allors.Repository
         [Id("785DD408-CE58-44FC-8F16-66FFBEA6DF0E")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal TotalSurcharge { get; set; }
@@ -158,7 +149,6 @@ namespace Allors.Repository
         [Id("5AE60592-1B86-4C71-860D-A3C0CFC1C647")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal TotalBasePrice { get; set; }
@@ -167,7 +157,6 @@ namespace Allors.Repository
         [Id("D9E651C1-F508-402E-B599-6EE3206B5924")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         decimal TotalExVat { get; set; }
@@ -176,7 +165,6 @@ namespace Allors.Repository
         [Id("38c29c2f-94a7-4e71-9282-b91b67ef3368")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]

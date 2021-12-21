@@ -98,6 +98,11 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(SalesOrderItemDelete method)
         {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+
             foreach (var salesTerm in this.SalesTerms)
             {
                 salesTerm.Delete();

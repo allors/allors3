@@ -51,6 +51,11 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+
             if (this.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsCreated)
             {
                 this.PurchaseInvoiceWherePurchaseInvoiceItem.RemovePurchaseInvoiceItem(this);

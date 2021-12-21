@@ -223,6 +223,11 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
+                foreach (var deletable in this.AllVersions)
+                {
+                    deletable.Delete();
+                }
+
                 foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();

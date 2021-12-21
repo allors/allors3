@@ -132,6 +132,11 @@ namespace Allors.Database.Domain
                 return;
             }
 
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+
             foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
             {
                 deletable.Delete();

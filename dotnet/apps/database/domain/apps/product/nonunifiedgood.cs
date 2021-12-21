@@ -37,6 +37,11 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
+                foreach (var deletable in this.AllVersions)
+                {
+                    deletable.Delete();
+                }
+
                 foreach (var productIdentification in this.ProductIdentifications)
                 {
                     productIdentification.Delete();

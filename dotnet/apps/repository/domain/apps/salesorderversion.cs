@@ -491,6 +491,8 @@ namespace Allors.Repository
 
         public void OnPostDerive() { }
 
+        public void Delete() { }
+
         #endregion
     }
 }

@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("d8611e48-b0ba-4037-a992-09e3e26c6d5d")]
     #endregion
-    public partial class Store : UniquelyIdentifiable, Object
+    public partial class Store : UniquelyIdentifiable, Deletable
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
@@ -320,6 +320,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
 

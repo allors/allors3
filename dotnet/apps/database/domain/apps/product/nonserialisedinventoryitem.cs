@@ -25,9 +25,9 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
-            foreach (InventoryItemVersion version in this.AllVersions)
+            foreach (var deletable in this.AllVersions)
             {
-                version.Delete();
+                deletable.Delete();
             }
         }
 

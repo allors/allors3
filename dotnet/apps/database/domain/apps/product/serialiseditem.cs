@@ -38,6 +38,11 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
+                foreach (var deletable in this.AllVersions)
+                {
+                    deletable.Delete();
+                }
+
                 foreach (var deletable in this.LocalisedComments)
                 {
                     deletable.Delete();

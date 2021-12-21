@@ -41,8 +41,7 @@ namespace Allors.Database.Domain
         public List<string> Roles => new List<string>() { "Internal organisation" };
 
         public bool IsDeletable =>
-            !this.IsInternalOrganisation
-            && !this.ExistExternalAccountingTransactionsWhereFromParty
+            !this.ExistExternalAccountingTransactionsWhereFromParty
             && !this.ExistExternalAccountingTransactionsWhereToParty
             && !this.ExistShipmentsWhereShipFromParty
             && !this.ExistShipmentsWhereShipToParty
@@ -140,7 +139,22 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
+                foreach (var deletable in this.AllVersions)
+                {
+                    deletable.Delete();
+                }
+
+                foreach (var deletable in this.StoresWhereInternalOrganisation)
+                {
+                    deletable.Delete();
+                }
+
                 foreach (var deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
+                {
+                    deletable.Delete();
+                }
+
+                foreach (var deletable in this.PartyFinancialRelationshipsWhereInternalOrganisation)
                 {
                     deletable.Delete();
                 }
@@ -177,6 +191,11 @@ namespace Allors.Database.Domain
                     deletable.Delete();
                 }
 
+                foreach (var deletable in this.CustomerRelationshipsWhereInternalOrganisation)
+                {
+                    deletable.Delete();
+                }
+
                 foreach (var deletable in this.OrganisationRollUpsWhereChild)
                 {
                     deletable.Delete();
@@ -197,7 +216,17 @@ namespace Allors.Database.Domain
                     deletable.Delete();
                 }
 
+                foreach (var deletable in this.SubContractorRelationshipsWhereContractor)
+                {
+                    deletable.Delete();
+                }
+
                 foreach (var deletable in this.SupplierRelationshipsWhereSupplier)
+                {
+                    deletable.Delete();
+                }
+
+                foreach (var deletable in this.SupplierRelationshipsWhereInternalOrganisation)
                 {
                     deletable.Delete();
                 }

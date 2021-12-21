@@ -50,6 +50,11 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(PickListDelete method)
         {
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
+
             foreach (var pickListItem in this.PickListItems)
             {
                 pickListItem.Delete();
