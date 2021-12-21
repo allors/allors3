@@ -128,7 +128,7 @@ namespace Application.Excel
             else
             {
                 // cell value was changed while not allowed. Reset value.
-                this.SetCellValue(this.SessionObject, this.DisplayRoleType ?? this.RoleType);
+                this.SetCellValue(this.Object, this.DisplayRoleType ?? this.RoleType);
             }
         }
 
