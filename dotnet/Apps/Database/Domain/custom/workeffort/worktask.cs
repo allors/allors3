@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             this.SecurityTokens = new[]
             {
-                this.Strategy.IsNewInTransaction ? new SecurityTokens(this.strategy.Transaction).InitialSecurityToken : new SecurityTokens(this.strategy.Transaction).DefaultSecurityToken
+                new SecurityTokens(this.strategy.Transaction).DefaultSecurityToken
             };
 
             if (this.Customer is Organisation customer)

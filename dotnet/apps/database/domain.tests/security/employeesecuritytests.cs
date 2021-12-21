@@ -55,27 +55,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void WorkTaskNewInTransaction()
-        {
-            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
-            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
-            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
-
-            var workTask = new WorkTaskBuilder(this.Transaction).WithName("worktask").WithCustomer(customer).Build();
-
-            this.Transaction.Derive();
-
-            var employee = new Employments(this.Transaction).Extent().Select(v => v.Employee).First();
-            this.Transaction.SetUser(employee);
-
-            Assert.True(workTask.Strategy.IsNewInTransaction);
-
-            var acl = new DatabaseAccessControl(employee)[workTask];
-            Assert.True(acl.CanRead(this.M.WorkTask.Name));
-            Assert.True(acl.CanWrite(this.M.WorkTask.Name));
-        }
-
-        [Fact]
         public void WorkTask()
         {
             var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
