@@ -106,6 +106,11 @@ namespace Application.Excel
 
                 this.Cell.Style = Constants.ChangedStyle;
             }
+            else
+            {
+                // cell value was changed while not allowed. Reset value.
+                this.SetCellValue(this.SessionObject, this.DisplayRoleType ?? this.RoleType);
+            }
         }
 
         public void Unbind()
