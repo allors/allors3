@@ -11,13 +11,13 @@ namespace Allors.Database.Domain
         public TransitionalConfiguration[] TransitionalConfigurations => new[] {
             new TransitionalConfiguration(this.M.RequestForProposal, this.M.RequestForProposal.RequestState),
         };
-    }
 
-    public void AppsDelete(DeletableDelete method)
-    {
-        foreach (var deletable in this.AllVersions)
+        public void AppsDelete(DeletableDelete method)
         {
-            deletable.Delete();
+            foreach (var deletable in this.AllVersions)
+            {
+                deletable.Delete();
+            }
         }
     }
 }
