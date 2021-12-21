@@ -45,7 +45,7 @@ namespace Allors.Database.Domain.Tests
             var nonUnifiedGood = new NonUnifiedGoodBuilder(this.Transaction).Build();
             this.Derive();
 
-            new ProductCategoryBuilder(this.Transaction).WithName("catname").WithProduct(nonUnifiedGood).Build();
+            var cat = new ProductCategoryBuilder(this.Transaction).WithName("catname").WithProduct(nonUnifiedGood).Build();
             this.Derive();
 
             Assert.Contains("catname", nonUnifiedGood.SearchString);

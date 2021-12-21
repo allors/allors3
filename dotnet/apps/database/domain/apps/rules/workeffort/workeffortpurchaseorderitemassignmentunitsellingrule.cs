@@ -21,6 +21,8 @@ namespace Allors.Database.Domain
             m.WorkEffortPurchaseOrderItemAssignment.RolePattern(v => v.PurchaseOrderItem),
             m.WorkEffortPurchaseOrderItemAssignment.RolePattern(v => v.AssignedUnitSellingPrice),
             m.WorkEffort.RolePattern(v => v.TakenBy, v => v.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.WorkEffort.RolePattern(v => v.ScheduledStart, v => v.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.WorkEffort.RolePattern(v => v.ActualHours, v => v.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
             m.PriceComponent.RolePattern(v => v.PricedBy, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
             m.PriceComponent.RolePattern(v => v.FromDate, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
             m.PriceComponent.RolePattern(v => v.ThroughDate, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
@@ -41,8 +43,9 @@ namespace Allors.Database.Domain
                 {
                     var part = @this.PurchaseOrderItem.Part;
 
+                    var startDate = @this.Assignment?.ActualStart ?? @this.Assignment?.ScheduledStart;
                     var currentPriceComponents = @this.Assignment?.TakenBy?.PriceComponentsWherePricedBy
-                        .Where(v => v.FromDate <= @this.Assignment.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= @this.Assignment.ScheduledStart))
+                        .Where(v => v.FromDate <= startDate && (!v.ExistThroughDate || v.ThroughDate >= startDate))
                         .ToArray();
 
                     if (currentPriceComponents != null)

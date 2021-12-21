@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public PartCategoryDisplayNameRule(MetaPopulation m) : base(m, new Guid("ef3d0304-019d-4580-adae-3f5736ca0211")) =>
             this.Patterns = new Pattern[]
             {
+                m.PartCategory.RolePattern(v => v.Name),
                 m.PartCategory.RolePattern(v => v.PrimaryAncestors),
             };
 

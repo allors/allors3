@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public ProductCategoryDisplayNameRule(MetaPopulation m) : base(m, new Guid("f3227a0c-180c-4cb5-b66c-95adec69516b")) =>
             this.Patterns = new Pattern[]
             {
+                m.ProductCategory.RolePattern(v => v.Name),
                 m.ProductCategory.RolePattern(v => v.PrimaryAncestors),
             };
 

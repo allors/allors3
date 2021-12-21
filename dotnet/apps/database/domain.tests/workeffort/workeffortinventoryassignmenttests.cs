@@ -686,7 +686,7 @@ namespace Allors.Database.Domain.Tests
             new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
             this.Derive();
 
-            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();
             this.Derive();
 
             new InventoryItemTransactionBuilder(this.Transaction)

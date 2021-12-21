@@ -1734,7 +1734,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedCustomerDeriveRevisePermission()
         {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithExecutedBy(this.InternalOrganisation).WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished).Build();
+            var workTask = new WorkTaskBuilder(this.Transaction)
+                .WithExecutedBy(this.InternalOrganisation)
+                .WithActualStart(this.Transaction.Now())
+                .WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished)
+                .Build();
             var result = this.Derive();
 
             var reviseRevocation = new Revocations(this.Transaction).WorkTaskReviseRevocation;
@@ -1752,6 +1756,7 @@ namespace Allors.Database.Domain.Tests
             var workTask = new WorkTaskBuilder(this.Transaction)
                 .WithCustomer(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
                 .WithExecutedBy(this.InternalOrganisation)
+                .WithActualStart(this.Transaction.Now())
                 .WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished)
                 .Build();
             this.Derive();

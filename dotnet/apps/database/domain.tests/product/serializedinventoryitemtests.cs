@@ -208,7 +208,7 @@ namespace Allors.Database.Domain.Tests
             inventoryItem.Part = new UnifiedGoodBuilder(this.Transaction).WithName("partname").Build();
             this.Derive();
 
-            Assert.Equal("partname at  with state In good order", inventoryItem.Name);
+            Assert.Equal("partname at facility with state In good order", inventoryItem.Name);
         }
 
         [Fact]

@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Derive();
 
-            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();
             this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction).WithPurchaseOrderItem(orderItem).Build();
@@ -112,6 +112,7 @@ namespace Allors.Database.Domain.Tests
 
             var workEffort = new WorkTaskBuilder(this.Transaction)
                 .WithTakenBy(anotherInternalOrganisation)
+                .WithActualStart(this.Transaction.Now())
                 .Build();
             this.Derive();
 
@@ -149,6 +150,7 @@ namespace Allors.Database.Domain.Tests
 
             var workEffort = new WorkTaskBuilder(this.Transaction)
                 .WithTakenBy(this.InternalOrganisation)
+                .WithActualStart(this.Transaction.Now())
                 .Build();
             this.Derive();
 
@@ -183,7 +185,7 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Derive();
 
-            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();
             this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)
@@ -218,7 +220,7 @@ namespace Allors.Database.Domain.Tests
             order.AddPurchaseOrderItem(orderItem);
             this.Derive();
 
-            var workEffort = new WorkTaskBuilder(this.Transaction).Build();
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();
             this.Derive();
 
             var purchaseOrderItemAssignment = new WorkEffortPurchaseOrderItemAssignmentBuilder(this.Transaction)

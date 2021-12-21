@@ -116,6 +116,7 @@ namespace Allors.Database.Domain
                 new NonSerialisedInventoryItemDeniedPermissionRule(m),
                 new NonSerialisedInventoryItemQuantitiesRule(m),
                 new NonSerialisedInventoryItemRule(m),
+                new NonSerialisedInventoryItemSearchStringRule(m),
                 new NonUnifiedGoodDeniedPermissionRule(m),
                 new NonUnifiedGoodProductIdentificationsRule(m),
                 new NonUnifiedGoodSearchStringRule(m),

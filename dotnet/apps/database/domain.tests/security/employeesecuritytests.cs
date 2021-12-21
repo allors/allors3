@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Allors.Database.Domain.TestPopulation;
     using Xunit;
 
     [Trait("Category", "Security")]
@@ -18,12 +19,26 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Person()
         {
+            var anotherPerson = new PersonBuilder(this.Transaction).WithDefaults().Build();
+            this.Transaction.Derive();
+
+            var employee = new Employments(this.Transaction).Extent().Select(v => v.Employee).First();
+            this.Transaction.SetUser(employee);
+
+            var acl = new DatabaseAccessControl(employee)[anotherPerson];
+            Assert.True(acl.CanRead(this.M.Person.FirstName));
+            Assert.False(acl.CanWrite(this.M.Person.FirstName));
+        }
+
+        [Fact]
+        public void PersonAsOwner()
+        {
             var employee = new Employments(this.Transaction).Extent().Select(v => v.Employee).First();
             this.Transaction.SetUser(employee);
 
             var acl = new DatabaseAccessControl(employee)[employee];
             Assert.True(acl.CanRead(this.M.Person.FirstName));
-            Assert.False(acl.CanWrite(this.M.Person.FirstName));
+            Assert.True(acl.CanWrite(this.M.Person.FirstName));
         }
 
         [Fact]

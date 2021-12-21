@@ -35,7 +35,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPartDeriveSearchString()
         {
-            var part = new NonUnifiedPartBuilder(this.Transaction).WithSearchString("partsearch").Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).WithName("partname").Build();
+            this.Derive();
 
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
             this.Derive();
@@ -43,7 +44,7 @@ namespace Allors.Database.Domain.Tests
             inventoryItem.Part = part;
             this.Derive();
 
-            Assert.Contains(part.SearchString, inventoryItem.SearchString);
+            Assert.Contains(part.DisplayName, inventoryItem.SearchString);
         }
     }
 }

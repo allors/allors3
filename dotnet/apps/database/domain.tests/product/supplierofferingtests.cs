@@ -256,6 +256,7 @@ namespace Allors.Database.Domain.Tests
                 .WithName("Activity")
                 .WithCustomer(customer)
                 .WithTakenBy(internalOrganisation)
+                .WithActualStart(this.Transaction.Now())
                 .Build();
 
             var workEffortInventoryAssignement = new WorkEffortInventoryAssignmentBuilder(this.Transaction)

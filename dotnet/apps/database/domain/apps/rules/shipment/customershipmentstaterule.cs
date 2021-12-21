@@ -39,7 +39,8 @@ namespace Allors.Database.Domain
                 {
                     //cancel shipment if nothing left to ship
                     if (@this.ExistShipmentItems && @this.PendingPickList == null
-                        && !@this.ShipmentState.Equals(new ShipmentStates(@this.Transaction()).Cancelled))
+                        && !@this.ShipmentState.Equals(new ShipmentStates(@this.Transaction()).Cancelled)
+                        && !@this.ShipmentState.Equals(new ShipmentStates(@this.Transaction()).Shipped))
                     {
                         var canCancel = true;
                         foreach (var shipmentItem in @this.ShipmentItems)

@@ -20,6 +20,8 @@ namespace Allors.Database.Domain
             m.WorkEffortInventoryAssignment.RolePattern(v => v.Assignment),
             m.WorkEffortInventoryAssignment.RolePattern(v => v.InventoryItem),
             m.WorkEffortInventoryAssignment.RolePattern(v => v.AssignedUnitSellingPrice),
+            m.WorkEffort.RolePattern(v => v.ScheduledStart, v => v.WorkEffortInventoryAssignmentsWhereAssignment),
+            m.WorkEffort.RolePattern(v => v.ActualHours, v => v.WorkEffortInventoryAssignmentsWhereAssignment),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -37,8 +39,9 @@ namespace Allors.Database.Domain
                 {
                     var part = @this.InventoryItem.Part;
 
+                    var startDate = @this.Assignment?.ActualStart ?? @this.Assignment?.ScheduledStart;
                     var currentPriceComponents = @this.Assignment?.TakenBy?.PriceComponentsWherePricedBy
-                        .Where(v => v.FromDate <= @this.Assignment.ScheduledStart && (!v.ExistThroughDate || v.ThroughDate >= @this.Assignment.ScheduledStart))
+                        .Where(v => v.FromDate <= startDate && (!v.ExistThroughDate || v.ThroughDate >= startDate))
                         .ToArray();
 
                     if (currentPriceComponents != null)
