@@ -145,6 +145,29 @@ namespace Allors.Repository
         public PartWeightedAverage PartWeightedAverage { get; set; }
 
         public Scope Scope { get; set; }
+
+        public string ProductIdentificationNames { get; set; }
+
+        public string UnitOfMeasureAbbreviation { get; set; }
+
+        public string ScopeName { get; set; }
+
+        public string DefaultFacilityName { get; set; }
+
+        public string ManufacturedByDisplayName { get; set; }
+
+        public string SuppliedByDisplayName { get; set; }
+
+        public string BrandName { get; set; }
+
+        public string ModelName { get; set; }
+
+        public string InventoryItemKindName { get; set; }
+
+        public string ProductTypeName { get; set; }
+
+        public SupplierOffering[] CurrentSupplierOfferings { get; set; }
+
         #endregion
 
         #region Versioning

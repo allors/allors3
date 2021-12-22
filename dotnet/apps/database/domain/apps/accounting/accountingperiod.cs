@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
         {
             foreach (var deletable in this.AllVersions)
             {
-                deletable.Delete();
+                deletable.Strategy.Delete();
             }
         }
 

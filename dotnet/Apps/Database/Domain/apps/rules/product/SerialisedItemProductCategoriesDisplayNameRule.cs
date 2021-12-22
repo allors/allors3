@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SerialisedItemDisplayProductCategoriesRule : Rule
+    public class SerialisedItemProductCategoriesDisplayNameRule : Rule
     {
-        public SerialisedItemDisplayProductCategoriesRule(MetaPopulation m) : base(m, new Guid("8b6c78f6-f165-4179-acf5-1c3ef96b36b1")) =>
+        public SerialisedItemProductCategoriesDisplayNameRule(MetaPopulation m) : base(m, new Guid("8b6c78f6-f165-4179-acf5-1c3ef96b36b1")) =>
             this.Patterns = new Pattern[]
             {
                 m.Product.AssociationPattern(v => v.ProductCategoriesWhereAllProduct, v => v.ProductCategoriesWhereAllProduct.ProductCategory.AllParts.Part.SerialisedItems),

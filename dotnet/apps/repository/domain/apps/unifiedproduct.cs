@@ -30,6 +30,14 @@ namespace Allors.Repository
         string ProductNumber { get; set; }
 
         #region Allors
+        [Id("3d7c31bd-9751-4376-a2ee-5b8892a4440e")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        [Size(-1)]
+        string ProductIdentificationNames { get; set; }
+
+        #region Allors
         [Id("7423a3e3-3619-4afa-ab67-e605b2a62e02")]
         #endregion
         [Required]
@@ -117,6 +125,13 @@ namespace Allors.Repository
         UnitOfMeasure UnitOfMeasure { get; set; }
 
         #region Allors
+        [Id("51d8af70-f6b8-480d-99ac-7c9a70eb16f7")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        string UnitOfMeasureAbbreviation { get; set; }
+
+        #region Allors
         [Id("38010003-F586-49E5-8A6C-11D490738B9A")]
         #endregion
         [Workspace(Default)]
@@ -155,5 +170,12 @@ namespace Allors.Repository
         [Required]
         [Multiplicity(Multiplicity.ManyToOne)]
         public Scope Scope { get; set; }
+
+        #region Allors
+        [Id("bdb8f310-c259-435e-a31c-0a3df594c237")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        string ScopeName { get; set; }
     }
 }

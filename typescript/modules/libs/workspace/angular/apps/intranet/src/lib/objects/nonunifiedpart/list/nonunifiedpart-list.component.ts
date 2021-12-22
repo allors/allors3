@@ -268,11 +268,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
               predicate,
               sorting: sorter.create(sort),
               include: {
-                Brand: x,
-                Model: x,
-                ProductType: x,
                 PrimaryPhoto: x,
-                InventoryItemKind: x,
                 InventoryItemsWherePart: {
                   Facility: x,
                 },
@@ -348,9 +344,9 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             qoh: v.QuantityOnHand,
             localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[])?.find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
             categories: v.PartCategoriesDisplayName,
-            brand: v.Brand ? v.Brand.Name : '',
-            model: v.Model ? v.Model.Name : '',
-            kind: v.InventoryItemKind.Name,
+            brand: v.BrandName,
+            model: v.ModelName,
+            kind: v.InventoryItemKindName,
             lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;
         });

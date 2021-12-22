@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("485C8073-22B6-402B-B0F0-479764CFB67A")]
     #endregion
-    public partial class SerialisedItemVersion : Version, Deletable
+    public partial class SerialisedItemVersion : Version
     {
         #region inherited properties
 
@@ -166,8 +166,6 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
-
-        public void Delete() { }
 
         #endregion
     }

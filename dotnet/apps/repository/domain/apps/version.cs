@@ -8,7 +8,7 @@ namespace Allors.Repository
     using Attributes;
     using static Workspaces;
 
-    public partial interface Version: Deletable
+    public partial interface Version
     {
         #region Allors
         [Id("561C7A91-5232-453F-BA26-9B84D871ECC9")]

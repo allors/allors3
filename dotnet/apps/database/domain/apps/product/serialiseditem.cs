@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
             {
                 foreach (var deletable in this.AllVersions)
                 {
-                    deletable.Delete();
+                    deletable.Strategy.Delete();
                 }
 
                 foreach (var deletable in this.LocalisedComments)
@@ -90,7 +90,7 @@ namespace Allors.Database.Domain
 
                 foreach (var version in this.AllVersions)
                 {
-                    version.Delete();
+                    version.Strategy.Delete();
                 }
             }
         }

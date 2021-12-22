@@ -97,6 +97,12 @@ namespace Allors.Repository
 
         public string DisplayName { get; set; }
 
+        public string ProductIdentificationNames { get; set; }
+
+        public string UnitOfMeasureAbbreviation { get; set; }
+
+        public string ScopeName { get; set; }
+
         #endregion
 
         #region Versioning

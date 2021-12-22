@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Allors.Database.Domain.TestPopulation;
     using Xunit;
 
     public class PartTests : DomainTest, IClassFixture<Fixture>
@@ -371,6 +372,268 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal("parent/child", nonUnifiedPart.PartCategoriesDisplayName);
+        }
+    }
+
+    public class PartDefaultFacilityNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartDefaultFacilityNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultFacilityDeriveDefaultFacilityName()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            Assert.Equal(this.Transaction.GetSingleton().Settings.DefaultFacility.Name, nonUnifiedPart.DefaultFacilityName);
+        }
+
+        [Fact]
+        public void ChangedFacilityNameDeriveDefaultFacilityName()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            this.Transaction.GetSingleton().Settings.DefaultFacility.Name = "changed";
+            this.Derive();
+
+            Assert.Equal("changed", nonUnifiedPart.DefaultFacilityName);
+        }
+    }
+
+    public class PartManufacturedByDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartManufacturedByDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultFacilityDeriveDefaultFacilityName()
+        {
+            var manufacturer = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            nonUnifiedPart.ManufacturedBy = manufacturer;
+            this.Derive();
+
+            Assert.Equal(manufacturer.DisplayName, nonUnifiedPart.ManufacturedByDisplayName);
+        }
+
+        [Fact]
+        public void ChangedFacilityNameDeriveDefaultFacilityName()
+        {
+            var manufacturer = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithManufacturedBy(manufacturer).Build();
+            this.Derive();
+
+            manufacturer.Name = "changed";
+            this.Derive();
+
+            Assert.Equal(manufacturer.DisplayName, nonUnifiedPart.ManufacturedByDisplayName);
+        }
+    }
+
+    public class PartSuppliedByDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartSuppliedByDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultFacilityDeriveDefaultFacilityName()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            new SupplierOfferingBuilder(this.Transaction).WithPart(nonUnifiedPart).WithSupplier(supplier).Build();
+            this.Derive();
+
+            Assert.Equal(supplier.DisplayName, nonUnifiedPart.SuppliedByDisplayName);
+        }
+
+        [Fact]
+        public void ChangedFacilityNameDeriveDefaultFacilityName()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            new SupplierOfferingBuilder(this.Transaction).WithPart(nonUnifiedPart).WithSupplier(supplier).Build();
+            this.Derive();
+
+            supplier.Name = "changed";
+            this.Derive();
+
+            Assert.Equal(supplier.DisplayName, nonUnifiedPart.SuppliedByDisplayName);
+        }
+    }
+
+    public class PartBrandNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartBrandNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultFacilityDeriveDefaultFacilityName()
+        {
+            var brand = new BrandBuilder(this.Transaction).WithDefaults().Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            nonUnifiedPart.Brand = brand;
+            this.Derive();
+
+            Assert.Equal(brand.Name, nonUnifiedPart.BrandName);
+        }
+
+        [Fact]
+        public void ChangedFacilityNameDeriveDefaultFacilityName()
+        {
+            var brand = new BrandBuilder(this.Transaction).WithDefaults().Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithBrand(brand).Build();
+            this.Derive();
+
+            brand.Name = "changed";
+            this.Derive();
+
+            Assert.Equal("changed", nonUnifiedPart.BrandName);
+        }
+    }
+
+    public class PartModelNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartModelNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultFacilityDeriveDefaultFacilityName()
+        {
+            var brand = new ModelBuilder(this.Transaction).WithName("model").Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            nonUnifiedPart.Model = brand;
+            this.Derive();
+
+            Assert.Equal(brand.Name, nonUnifiedPart.ModelName);
+        }
+
+        [Fact]
+        public void ChangedFacilityNameDeriveDefaultFacilityName()
+        {
+            var brand = new ModelBuilder(this.Transaction).WithName("model").Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithModel(brand).Build();
+            this.Derive();
+
+            brand.Name = "changed";
+            this.Derive();
+
+            Assert.Equal("changed", nonUnifiedPart.ModelName);
+        }
+    }
+
+    public class PartInventoryItemKindNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartInventoryItemKindNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultFacilityDeriveDefaultFacilityName()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var serialised = new InventoryItemKinds(this.Transaction).Serialised;
+            nonUnifiedPart.InventoryItemKind = serialised;
+            this.Derive();
+
+            Assert.Equal(serialised.Name, nonUnifiedPart.InventoryItemKindName);
+        }
+
+        [Fact]
+        public void ChangedFacilityNameDeriveDefaultFacilityName()
+        {
+            var serialised = new InventoryItemKinds(this.Transaction).Serialised;
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(serialised).Build();
+            this.Derive();
+
+            serialised.Name = "changed";
+            this.Derive();
+
+            Assert.Equal("changed", nonUnifiedPart.InventoryItemKindName);
+        }
+    }
+
+    public class PartProductTypeNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartProductTypeNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedDefaultFacilityDeriveDefaultFacilityName()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var productType = new ProductTypeBuilder(this.Transaction).WithName("producttype").Build();
+            nonUnifiedPart.ProductType = productType;
+            this.Derive();
+
+            Assert.Equal(productType.Name, nonUnifiedPart.ProductTypeName);
+        }
+
+        [Fact]
+        public void ChangedFacilityNameDeriveDefaultFacilityName()
+        {
+            var productType = new ProductTypeBuilder(this.Transaction).WithName("producttype").Build();
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).WithProductType(productType).Build();
+            this.Derive();
+
+            productType.Name = "changed";
+            this.Derive();
+
+            Assert.Equal("changed", nonUnifiedPart.ProductTypeName);
+        }
+    }
+
+    public class PartCurrentSupplierOfferingsNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PartCurrentSupplierOfferingsNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSupplierOfferingPartDeriveCurrentSupplierOfferings()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction).WithSupplier(supplier).WithFromDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            supplierOffering.Part = part;
+            this.Derive();
+
+            Assert.Contains(supplierOffering, part.CurrentSupplierOfferings);
+        }
+
+        [Fact]
+        public void ChangedSupplierOfferingFromDateDeriveCurrentSupplierOfferings()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction).WithSupplier(supplier).WithPart(part).Build();
+            this.Derive();
+
+            supplierOffering.FromDate = this.Transaction.Now();
+            this.Derive();
+
+            Assert.Contains(supplierOffering, part.CurrentSupplierOfferings);
+        }
+
+        [Fact]
+        public void ChangedSupplierOfferingThroughDateDeriveCurrentSupplierOfferings()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSupplier(supplier).WithPart(part).Build();
+            this.Derive();
+
+            supplierOffering.ThroughDate = supplierOffering.FromDate;
+            this.Derive();
+
+            Assert.DoesNotContain(supplierOffering, part.CurrentSupplierOfferings);
         }
     }
 }

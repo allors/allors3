@@ -65,5 +65,15 @@ namespace Allors.Database.Domain
 
             return genericPriceComponents;
         }
+
+        public static void DeriveRelationships(this Part @this)
+        {
+            var now = @this.Transaction().Now();
+
+            @this.CurrentSupplierOfferings = new SupplierOfferings(@this.Strategy.Transaction).Extent()
+                .Where(v => v.FromDate <= now
+                            && (!v.ExistThroughDate || v.ThroughDate >= now)
+                            && v.Part.Equals(@this));
+        }
     }
 }
