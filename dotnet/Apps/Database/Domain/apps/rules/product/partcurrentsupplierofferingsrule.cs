@@ -20,6 +20,7 @@ namespace Allors.Database.Domain
                 m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart),
                 m.SupplierOffering.RolePattern(v => v.FromDate, v => v.Part),
                 m.SupplierOffering.RolePattern(v => v.ThroughDate, v => v.Part),
+                m.Organisation.AssociationPattern(v => v.InternalOrganisationsWhereActiveSupplier, v => v.ActiveSuppliers.Organisation.SupplierOfferingsWhereSupplier.SupplierOffering.Part.Part),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

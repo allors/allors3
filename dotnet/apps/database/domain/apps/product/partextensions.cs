@@ -73,7 +73,8 @@ namespace Allors.Database.Domain
             @this.CurrentSupplierOfferings = new SupplierOfferings(@this.Strategy.Transaction).Extent()
                 .Where(v => v.FromDate <= now
                             && (!v.ExistThroughDate || v.ThroughDate >= now)
-                            && v.Part.Equals(@this));
+                            && v.Part.Equals(@this)
+                            && ((Organisation)v.Supplier).ExistInternalOrganisationsWhereActiveSupplier);
         }
     }
 }

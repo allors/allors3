@@ -596,6 +596,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingPartDeriveCurrentSupplierOfferings()
         {
             var supplier = new OrganisationBuilder(this.Transaction).Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithInternalOrganisation(this.InternalOrganisation).WithSupplier(supplier).WithFromDate(this.Transaction.Now()).Build();
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction).WithSupplier(supplier).WithFromDate(this.Transaction.Now()).Build();
             this.Derive();
 
@@ -612,6 +613,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedSupplierOfferingFromDateDeriveCurrentSupplierOfferings()
         {
             var supplier = new OrganisationBuilder(this.Transaction).Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithInternalOrganisation(this.InternalOrganisation).WithSupplier(supplier).WithFromDate(this.Transaction.Now()).Build();
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();
             var supplierOffering = new SupplierOfferingBuilder(this.Transaction).WithSupplier(supplier).WithPart(part).Build();
             this.Derive();
@@ -634,6 +636,23 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.DoesNotContain(supplierOffering, part.CurrentSupplierOfferings);
+        }
+
+        [Fact]
+        public void ChangedInternalOrganisationActiveSuppliersDeriveCurrentSupplierOfferings()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
+            var supplierRelationship = new SupplierRelationshipBuilder(this.Transaction).WithInternalOrganisation(this.InternalOrganisation).WithFromDate(this.Transaction.Now().AddDays(1)).WithSupplier(supplier).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction).WithSupplier(supplier).WithPart(part).WithFromDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            Assert.DoesNotContain(supplierOffering, part.CurrentSupplierOfferings);
+
+            supplierRelationship.FromDate = this.Transaction.Now();
+            this.Derive();
+
+            Assert.Contains(supplierOffering, part.CurrentSupplierOfferings);
         }
     }
 }
