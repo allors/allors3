@@ -24,9 +24,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PositionTypeRate>())
             {
-                var array = new string[] {
+                @this.DerivePositionTypeRateSearchString(validation);
+            }
+        }
+    }
+
+    public static class PositionTypeRateSearchStringRuleExtensions
+    {
+        public static void DerivePositionTypeRateSearchString(this PositionTypeRate @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.RateType?.Name,
                     @this.Frequency?.Name,
                     @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.Select(v => v.Description ?? string.Empty).ToArray()) : null,
@@ -34,10 +45,9 @@ namespace Allors.Database.Domain
                     @this.ExistPositionTypesWherePositionTypeRate ? string.Join(" ", @this.PositionTypesWherePositionTypeRate?.SelectMany(v => v.Responsibilities?.Select(v => v.Description ?? string.Empty)).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

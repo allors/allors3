@@ -53,9 +53,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                var array = new string[] {
+                @this.DeriveSerialisedItemSearchString(validation);
+            }
+        }
+    }
+
+    public static class SerialisedItemSearchStringRuleExtensions
+    {
+        public static void DeriveSerialisedItemSearchString(this SerialisedItem @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Name,
                     @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
                     @this.Description,
@@ -86,10 +97,9 @@ namespace Allors.Database.Domain
                     @this.ExistShipmentItemsWhereSerialisedItem ? string.Join(" ", @this.ShipmentItemsWhereSerialisedItem?.Select(v => v.ShipmentWhereShipmentItem?.ShipmentNumber ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

@@ -55,9 +55,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<UnifiedGood>())
             {
-                var array = new string[] {
+                @this.DeriveUnifiedGoodSearchString(validation);
+            }
+        }
+    }
+
+    public static class UnifiedGoodSearchStringRuleExtensions
+    {
+        public static void DeriveUnifiedGoodSearchString(this UnifiedGood @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Name,
                     @this.Description,
                     @this.Keywords,
@@ -87,10 +98,9 @@ namespace Allors.Database.Domain
                     @this.ExistSuppliedBy ? string.Join(" ", @this.SuppliedBy?.Select(v => v.DisplayName ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

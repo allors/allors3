@@ -23,12 +23,22 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedItemCharacteristicType>())
             {
-                @this.DisplayName = @this.ExistUnitOfMeasure ?
-                    @this.Name + " (" + @this.UnitOfMeasure.Abbreviation + ")"
-                    : @this.Name ?? "";
+                @this.DeriveSerialisedItemCharacteristicTypeDisplayName(validation);
             }
+        }
+    }
+
+    public static class SerialisedItemCharacteristicTypeDisplayNameRuleExtensions
+    {
+        public static void DeriveSerialisedItemCharacteristicTypeDisplayName(this SerialisedItemCharacteristicType @this, IValidation validation)
+        {
+            @this.DisplayName = @this.ExistUnitOfMeasure ?
+                @this.Name + " (" + @this.UnitOfMeasure.Abbreviation + ")"
+                : @this.Name ?? "";
         }
     }
 }

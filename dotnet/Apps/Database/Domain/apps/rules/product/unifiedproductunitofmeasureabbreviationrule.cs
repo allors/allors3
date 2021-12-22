@@ -23,10 +23,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<UnifiedProduct>())
             {
-                @this.UnitOfMeasureAbbreviation = @this.UnitOfMeasure?.Abbreviation;
+                @this.DeriveUnifiedProductUnitOfMeasureAbbreviation(validation);
             }
         }
+    }
+
+    public static class UnifiedProductUnitOfMeasureAbbreviationRuleExtensions
+    {
+        public static void DeriveUnifiedProductUnitOfMeasureAbbreviation(this UnifiedProduct @this, IValidation validation) => @this.UnitOfMeasureAbbreviation = @this.UnitOfMeasure?.Abbreviation;
     }
 }

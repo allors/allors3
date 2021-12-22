@@ -23,16 +23,26 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Part>())
             {
-                var array = new string[] {
+                @this.DerivePartSuppliedByDisplayName(validation);
+            }
+        }
+    }
+
+    public static class PartSuppliedByDisplayNameRuleExtensions
+    {
+        public static void DerivePartSuppliedByDisplayName(this Part @this, IValidation validation)
+        {
+            var array = new string[] {
                     string.Join(", ", @this.SuppliedBy?.Select((v) => v.DisplayName?? string.Empty).ToArray())
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SuppliedByDisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SuppliedByDisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

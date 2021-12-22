@@ -26,44 +26,53 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Person>())
             {
                 @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy);
-
-                var builder = new StringBuilder();
-
-                if (@this.ExistFirstName)
-                {
-                    builder.Append(@this.FirstName);
-                }
-
-                if (@this.ExistMiddleName)
-                {
-                    if (builder.Length > 0)
-                    {
-                        builder.Append(" ");
-                    }
-
-                    builder.Append(@this.MiddleName);
-                }
-
-                if (@this.ExistLastName)
-                {
-                    if (builder.Length > 0)
-                    {
-                        builder.Append(" ");
-                    }
-
-                    builder.Append(@this.LastName);
-                }
-
-                if (builder.Length == 0)
-                {
-                    builder.Append($"[{@this.UserName}]");
-                }
-
-                @this.DisplayName = builder.ToString();
+                @this.DerivePersonDisplayName(validation);
             }
+        }
+    }
+
+    public static class PersonDisplayNameRuleExtensions
+    {
+        public static void DerivePersonDisplayName(this Person @this, IValidation validation)
+        {
+            var builder = new StringBuilder();
+
+            if (@this.ExistFirstName)
+            {
+                builder.Append(@this.FirstName);
+            }
+
+            if (@this.ExistMiddleName)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(" ");
+                }
+
+                builder.Append(@this.MiddleName);
+            }
+
+            if (@this.ExistLastName)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(" ");
+                }
+
+                builder.Append(@this.LastName);
+            }
+
+            if (builder.Length == 0)
+            {
+                builder.Append($"[{@this.UserName}]");
+            }
+
+            @this.DisplayName = builder.ToString();
         }
     }
 }

@@ -35,9 +35,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PhoneCommunication>())
             {
-                var array = new string[] {
+                @this.DerivePhoneCommunicationSearchString(validation);
+            }
+        }
+    }
+
+    public static class PhoneCommunicationSearchStringRuleExtensions
+    {
+        public static void DerivePhoneCommunicationSearchString(this PhoneCommunication @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.ExistInvolvedParties ? string.Join(" ", @this.InvolvedParties?.Select(v => v.DisplayName ?? string.Empty).ToArray()) : null,
                     @this.ExistContactMechanisms ? string.Join(" ", @this.ContactMechanisms?.Select(v => v.DisplayName ?? string.Empty).ToArray()) : null,
                     @this.ExistWorkEfforts ? string.Join(" ", @this.WorkEfforts?.Select(v => v.Name ?? string.Empty).ToArray()) : null,
@@ -50,10 +61,9 @@ namespace Allors.Database.Domain
                     @this.WorkItemDescription,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

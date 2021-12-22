@@ -22,16 +22,26 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedItemCharacteristic>())
             {
-                var array = new string[] {
+                @this.DeriveSerialisedItemCharacteristicSearchString(validation);
+            }
+        }
+    }
+
+    public static class SerialisedItemCharacteristicSearchStringRuleExtensions
+    {
+        public static void DeriveSerialisedItemCharacteristicSearchString(this SerialisedItemCharacteristic @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.SerialisedItemCharacteristicType?.Name,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

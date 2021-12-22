@@ -23,13 +23,21 @@ namespace Allors.Database.Domain
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var transaction = cycle.Transaction;
+            var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<Organisation>())
             {
                 transaction.Prefetch(@this.PrefetchPolicy);
-
-                @this.DisplayName = @this.Name ?? "N/A";
+                @this.DeriveOrganisationDisplayName(validation);
             }
+        }
+    }
+
+    public static class OrganisationDisplayNameRuleExtensions
+    {
+        public static void DeriveOrganisationDisplayName(this Organisation @this, IValidation validation)
+        {
+            @this.DisplayName = @this.Name ?? "N/A";
         }
     }
 }

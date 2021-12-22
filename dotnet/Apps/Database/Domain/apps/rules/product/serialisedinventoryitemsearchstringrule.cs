@@ -31,9 +31,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedInventoryItem>())
             {
-                var array = new string[] {
+                @this.DeriveSerialisedInventoryItemSearchString(validation);
+            }
+        }
+    }
+
+    public static class SerialisedInventoryItemSearchStringRuleExtensions
+    {
+        public static void DeriveSerialisedInventoryItemSearchString(this SerialisedInventoryItem @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Part?.DisplayName,
                     @this.Facility?.Name,
                     @this.UnitOfMeasure?.Name,
@@ -42,10 +53,9 @@ namespace Allors.Database.Domain
                     @this.ExistWorkEffortInventoryAssignmentsWhereInventoryItem ? string.Join(" ", @this.WorkEffortInventoryAssignmentsWhereInventoryItem?.Select(v => v.Assignment?.WorkEffortNumber ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

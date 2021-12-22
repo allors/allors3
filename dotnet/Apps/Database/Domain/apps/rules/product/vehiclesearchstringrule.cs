@@ -35,9 +35,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Vehicle>())
             {
-                var array = new string[] {
+                @this.DeriveVehicleSearchString(validation);
+            }
+        }
+    }
+
+    public static class VehicleSearchStringRuleExtensions
+    {
+        public static void DeriveVehicleSearchString(this Vehicle @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Name,
                     @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
                     @this.Description,
@@ -50,10 +61,9 @@ namespace Allors.Database.Domain
                     @this.ExistWorkRequirementsWhereFixedAsset ? string.Join(" ", @this.WorkRequirementsWhereFixedAsset?.Select(v => v.RequirementNumber ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

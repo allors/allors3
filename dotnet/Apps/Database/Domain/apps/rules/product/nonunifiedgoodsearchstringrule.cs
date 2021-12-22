@@ -41,9 +41,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
-                var array = new string[] {
+                @this.DeriveNonUnifiedGoodSearchString(validation);
+            }
+        }
+    }
+
+    public static class NonUnifiedGoodSearchStringRuleExtensions
+    {
+        public static void DeriveNonUnifiedGoodSearchString(this NonUnifiedGood @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Name,
                     @this.Description,
                     @this.Keywords,
@@ -63,10 +74,9 @@ namespace Allors.Database.Domain
                     @this.ExistPrivateElectronicDocuments ? string.Join(" ", @this.PrivateElectronicDocuments?.Select(v => v.Name ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

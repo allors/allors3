@@ -22,10 +22,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<UnifiedGood>())
             {
-                @this.DisplayName = @this.Name ?? "N/A";
+                @this.DeriveUnifiedGoodDisplayName(validation);
             }
+        }
+    }
+
+    public static class UnifiedGoodDisplayNameRuleExtensions
+    {
+        public static void DeriveUnifiedGoodDisplayName(this UnifiedGood @this, IValidation validation)
+        {
+            @this.DisplayName = @this.Name ?? "N/A";
         }
     }
 }

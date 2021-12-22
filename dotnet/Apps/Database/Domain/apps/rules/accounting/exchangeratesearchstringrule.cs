@@ -23,19 +23,29 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<ExchangeRate>())
             {
-                var array = new string[] {
+                @this.DeriveExchangeRateSearchString(validation);
+            }
+        }
+    }
+
+    public static class ExchangeRateSearchStringRuleExtensions
+    {
+        public static void DeriveExchangeRateSearchString(this ExchangeRate @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.FromCurrency?.Abbreviation,
                     @this.FromCurrency?.Name,
                     @this.ToCurrency?.Abbreviation,
                     @this.ToCurrency?.Name,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

@@ -95,9 +95,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SalesOrder>())
             {
-                var array = new string[] {
+                @this.DeriveSalesOrderSearchString(validation);
+            }
+        }
+    }
+
+    public static class SalesOrderSearchStringRuleExtensions
+    {
+        public static void DeriveSalesOrderSearchString(this SalesOrder @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.InternalComment,
                     @this.Description,
                     @this.CustomerReference,
@@ -153,10 +164,9 @@ namespace Allors.Database.Domain
                     @this.ExistValidOrderItems ? string.Join(" ", @this.SalesOrderItems?.Select(v => v.SalesOrderItemState?.Name ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

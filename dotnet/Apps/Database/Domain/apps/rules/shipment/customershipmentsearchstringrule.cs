@@ -57,9 +57,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<CustomerShipment>())
             {
-                var array = new string[] {
+                @this.DeriveCustomerShipmentSearchString(validation);
+            }
+        }
+    }
+
+    public static class CustomerShipmentSearchStringRuleExtensions
+    {
+        public static void DeriveCustomerShipmentSearchString(this CustomerShipment @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.ShipmentState?.Name,
                     @this.ShipmentMethod?.Name,
                     @this.ShipmentNumber,
@@ -83,10 +94,9 @@ namespace Allors.Database.Domain
                     @this.ExistSalesInvoicesWhereShipment ? string.Join(" ", @this.SalesInvoicesWhereShipment?.Select(v => v.InvoiceNumber).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

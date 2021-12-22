@@ -27,17 +27,27 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<NonSerialisedInventoryItem>())
             {
-                var array = new string[] {
+                @this.DeriveNonSerialisedInventoryItemSearchString(validation);
+            }
+        }
+    }
+
+    public static class NonSerialisedInventoryItemSearchStringRuleExtensions
+    {
+        public static void DeriveNonSerialisedInventoryItemSearchString(this NonSerialisedInventoryItem @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Part?.DisplayName,
                     @this.Facility?.Name,
                     @this.UnitOfMeasure?.Name,
                     @this.NonSerialisedInventoryItemState?.Name,
                 };
 
-                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-            }
+            @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
         }
     }
 }

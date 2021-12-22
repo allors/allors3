@@ -23,14 +23,24 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                var array = new string[] { @this.PurchaseOrderWherePurchaseOrderItem?.DisplayName, @this.Part?.DisplayName };
+                @this.DerivePurchaseOrderItemDisplayName(validation);
+            }
+        }
+    }
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+    public static class PurchaseOrderItemDisplayNameRuleExtensions
+    {
+        public static void DerivePurchaseOrderItemDisplayName(this PurchaseOrderItem @this, IValidation validation)
+        {
+            var array = new string[] { @this.PurchaseOrderWherePurchaseOrderItem?.DisplayName, @this.Part?.DisplayName };
+
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

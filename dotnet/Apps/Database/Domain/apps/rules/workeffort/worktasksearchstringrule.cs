@@ -60,9 +60,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<WorkTask>())
             {
-                var array = new string[] {
+                @this.DeriveWorkTaskSearchString(validation);
+            }
+        }
+    }
+
+    public static class WorkTaskSearchStringRuleExtensions
+    {
+        public static void DeriveWorkTaskSearchString(this WorkTask @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.WorkEffortNumber,
                     @this.Name,
                     @this.Description,
@@ -98,10 +109,9 @@ namespace Allors.Database.Domain
                     @this.ExistWorkEffortInventoryAssignmentsWhereAssignment ? string.Join(" ", @this.WorkEffortInventoryAssignmentsWhereAssignment?.Select(v => v.InventoryItem?.Part?.DisplayName ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

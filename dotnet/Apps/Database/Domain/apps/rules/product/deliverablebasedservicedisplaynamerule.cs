@@ -22,10 +22,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<DeliverableBasedService>())
             {
-                @this.DisplayName = @this.Name ?? "N/A";
+                @this.DeriveDeliverableBasedServiceDisplayName(validation);
             }
+        }
+    }
+
+    public static class DeliverableBasedServiceDisplayNameRuleExtensions
+    {
+        public static void DeriveDeliverableBasedServiceDisplayName(this DeliverableBasedService @this, IValidation validation)
+        {
+            @this.DisplayName = @this.Name ?? "N/A";
         }
     }
 }

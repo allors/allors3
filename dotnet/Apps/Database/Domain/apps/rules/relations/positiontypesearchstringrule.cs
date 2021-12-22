@@ -27,19 +27,29 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PositionType>())
             {
-                var array = new string[] {
+                @this.DerivePositionTypeSearchString(validation);
+            }
+        }
+    }
+
+    public static class PositionTypeSearchStringRuleExtensions
+    {
+        public static void DerivePositionTypeSearchString(this PositionType @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Description,
                     @this.Title,
                     @this.ExistResponsibilities ? string.Join(" ", @this.Responsibilities?.Select(v => v.Description ?? string.Empty).ToArray()) : null,
                     @this.PositionTypeRate?.SearchString,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

@@ -51,9 +51,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Organisation>())
             {
-                var array = new string[] {
+                @this.DeriveOrganisationSearchString(validation);
+            }
+        }
+    }
+
+    public static class OrganisationSearchStringRuleExtensions
+    {
+        public static void DeriveOrganisationSearchString(this Organisation @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.ExistQualifications ? string.Join(" ", @this.Qualifications?.Select(v => v.Name ?? string.Empty)?.ToArray()) : null,
                     @this.ExistPartySkills ? string.Join(" ", @this.PartySkills?.Select(v => v.Skill?.Name ?? string.Empty)?.ToArray()) : null,
                     @this.ExistPartyClassifications ? string.Join(" ", @this.PartyClassifications?.Select(v => v.Name ?? string.Empty)?.ToArray()) : null,
@@ -73,10 +84,9 @@ namespace Allors.Database.Domain
                     @this.ExistCustomClassifications ? string.Join(" ", @this.CustomClassifications?.Select(v => v.Name ?? string.Empty)?.ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

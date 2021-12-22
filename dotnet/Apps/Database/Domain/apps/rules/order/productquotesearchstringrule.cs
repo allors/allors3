@@ -62,9 +62,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<ProductQuote>())
             {
-                var array = new string[] {
+                @this.DeriveProductQuoteSearchString(validation);
+            }
+        }
+    }
+
+    public static class ProductQuoteSearchStringRuleExtensions
+    {
+        public static void DeriveProductQuoteSearchString(this ProductQuote @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.QuoteNumber,
                     @this.QuoteState?.Name,
                     @this.Issuer?.DisplayName,
@@ -100,10 +111,9 @@ namespace Allors.Database.Domain
                     @this.SalesOrderWhereQuote?.OrderNumber,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

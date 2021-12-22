@@ -32,9 +32,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Catalogue>())
             {
-                var array = new string[] {
+                @this.DeriveCatalogueSearchString(validation);
+            }
+        }
+    }
+
+    public static class CatalogueSearchStringRuleExtensions
+    {
+        public static void DeriveCatalogueSearchString(this Catalogue @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Name,
                     @this.Description,
                     @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
@@ -44,10 +55,9 @@ namespace Allors.Database.Domain
                     @this.StoreWhereCatalogue?.Name,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

@@ -22,10 +22,19 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<NonUnifiedGood>())
             {
-                @this.DisplayName = @this.Name ?? "N/A";
+                @this.DeriveNonUnifiedGoodDisplayName(validation);
             }
+        }
+    }
+    public static class NonUnifiedGoodDisplayNameRuleExtensions
+    {
+        public static void DeriveNonUnifiedGoodDisplayName(this NonUnifiedGood @this, IValidation validation)
+        {
+            @this.DisplayName = @this.Name ?? "N/A";
         }
     }
 }

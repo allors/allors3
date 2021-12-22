@@ -24,10 +24,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.DisplayName = $"{ @this.ItemNumber} { @this.Name} SN: { @this.SerialNumber}";
+                @this.DeriveSerialisedItemDisplayNameRule(validation);
             }
+        }
+    }
+
+    public static class SerialisedItemDisplayNameRuleExtensions
+    {
+        public static void DeriveSerialisedItemDisplayNameRule(this SerialisedItem @this, IValidation validation)
+        {
+            @this.DisplayName = $"{ @this.ItemNumber} { @this.Name} SN: { @this.SerialNumber}";
         }
     }
 }

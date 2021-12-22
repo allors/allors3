@@ -23,10 +23,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Part>())
             {
-                @this.InventoryItemKindName = @this.InventoryItemKind.Name;
+                @this.DerivePartInventoryItemKindName(validation);
             }
         }
+    }
+
+    public static class PartInventoryItemKindNameRuleExtensions
+    {
+        public static void DerivePartInventoryItemKindName(this Part @this, IValidation validation) => @this.InventoryItemKindName = @this.InventoryItemKind.Name;
     }
 }

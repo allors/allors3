@@ -8,7 +8,6 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using Database.Derivations;
     using Meta;
     using Derivations.Rules;
@@ -23,10 +22,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<NonUnifiedPart>())
             {
-                @this.DisplayName = @this.Name ?? "N/A";
+                @this.DeriveNonUnifiedPartDisplayName(validation);
             }
+        }
+    }
+
+    public static class NonUnifiedPartDisplayNameRuleExtensions
+    {
+        public static void DeriveNonUnifiedPartDisplayName(this NonUnifiedPart @this, IValidation validation)
+        {
+            @this.DisplayName = @this.Name ?? "N/A";
         }
     }
 }

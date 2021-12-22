@@ -24,18 +24,28 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Carrier>())
             {
-                var array = new string[] {
+                @this.DeriveCarrierSearchString(validation);
+            }
+        }
+    }
+
+    public static class CarrierSearchStringRuleExtensions
+    {
+        public static void DeriveCarrierSearchString(this Carrier @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Name,
                     @this.ExistShipmentsWhereCarrier ? string.Join(" ", @this.ShipmentsWhereCarrier?.Select(v => v.ShipmentNumber ?? string.Empty).ToArray()) : null,
                     @this.ExistStoresWhereDefaultCarrier ? string.Join(" ", @this.StoresWhereDefaultCarrier?.Select(v => v.Name ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

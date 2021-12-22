@@ -24,14 +24,24 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<TelecommunicationsNumber>())
             {
-                var array = new string[] { @this.CountryCode, @this.AreaCode, @this.ContactNumber };
+                @this.DeriveTeleCommunicationsNumberDisplayName(validation);
+            }
+        }
+    }
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+    public static class TeleCommunicationsNumberDisplayNameRuleExtensions
+    {
+        public static void DeriveTeleCommunicationsNumberDisplayName(this TelecommunicationsNumber @this, IValidation validation)
+        {
+            var array = new string[] { @this.CountryCode, @this.AreaCode, @this.ContactNumber };
+
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

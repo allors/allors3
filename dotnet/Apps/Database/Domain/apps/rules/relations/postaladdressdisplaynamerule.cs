@@ -27,9 +27,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PostalAddress>())
             {
-                var array = new string[] {
+                @this.DerivePostalAddressDisplayName(validation);
+            }
+        }
+    }
+
+    public static class PostalAddressDisplayNameRuleExtensions
+    {
+        public static void DerivePostalAddressDisplayName(this PostalAddress @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.Address1,
                     @this.Address2,
                     @this.Address3,
@@ -37,10 +48,9 @@ namespace Allors.Database.Domain
                     @this.Locality,
                     @this.Country?.Name };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

@@ -28,9 +28,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<PartCategory>())
             {
-                var array = new string[] {
+                @this.DerivePartCategorySearchString(validation);
+            }
+        }
+    }
+
+    public static class PartCategorySearchStringRuleExtensions
+    {
+        public static void DerivePartCategorySearchString(this PartCategory @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.DisplayName,
                     @this.Name,
                     @this.Description,
@@ -38,10 +49,9 @@ namespace Allors.Database.Domain
                     @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

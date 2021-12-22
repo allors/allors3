@@ -26,11 +26,19 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                if (@this.ExistPartWhereSerialisedItem && @this.PartWhereSerialisedItem.GetType().Name == typeof(UnifiedGood).Name)
-                {
-                    var unifiedGood = @this.PartWhereSerialisedItem as UnifiedGood;
-                    @this.ProductCategoriesDisplayName = string.Join(", ", unifiedGood.ProductCategoriesWhereProduct.Select(v => v.DisplayName));
-                }
+                @this.DeriveSerialisedItemProductCategoriesDisplayName(validation);
+            }
+        }
+    }
+
+    public static class SerialisedItemProductCategoriesDisplayNameRuleExtensions
+    {
+        public static void DeriveSerialisedItemProductCategoriesDisplayName(this SerialisedItem @this, IValidation validation)
+        {
+            if (@this.ExistPartWhereSerialisedItem && @this.PartWhereSerialisedItem.GetType().Name == typeof(UnifiedGood).Name)
+            {
+                var unifiedGood = @this.PartWhereSerialisedItem as UnifiedGood;
+                @this.ProductCategoriesDisplayName = string.Join(", ", unifiedGood.ProductCategoriesWhereProduct.Select(v => v.DisplayName));
             }
         }
     }

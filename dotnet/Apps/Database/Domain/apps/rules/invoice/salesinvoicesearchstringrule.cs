@@ -86,9 +86,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SalesInvoice>())
             {
-                var array = new string[] {
+                @this.DeriveSalesInvoiceSearchString(validation);
+            }
+        }
+    }
+
+    public static class SalesInvoiceSearchStringRuleExtensions
+    {
+        public static void DeriveSalesInvoiceSearchString(this SalesInvoice @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.InternalComment,
                     @this.Description,
                     @this.CustomerReference,
@@ -141,10 +152,9 @@ namespace Allors.Database.Domain
                     @this.ExistValidInvoiceItems ? string.Join(" ", @this.SalesInvoiceItems?.Select(v => v.SalesInvoiceItemState?.Name ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }

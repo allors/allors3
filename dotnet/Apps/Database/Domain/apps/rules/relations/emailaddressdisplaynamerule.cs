@@ -22,10 +22,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<EmailAddress>())
             {
-                @this.DisplayName = @this.ElectronicAddressString ?? "N/A";
+                @this.DeriveEmailAddressDisplayName(validation);
             }
+        }
+    }
+
+    public static class EmailAddressDisplayNameRuleExtensions
+    {
+        public static void DeriveEmailAddressDisplayName(this EmailAddress @this, IValidation validation)
+        {
+            @this.DisplayName = @this.ElectronicAddressString ?? "N/A";
         }
     }
 }

@@ -42,9 +42,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<WorkRequirement>())
             {
-                var array = new string[] {
+                @this.DeriveWorkRequirementSearchString(validation);
+            }
+        }
+    }
+
+    public static class WorkRequirementSearchStringRuleExtensions
+    {
+        public static void DeriveWorkRequirementSearchString(this WorkRequirement @this, IValidation validation)
+        {
+            var array = new string[] {
                     @this.RequirementState?.Name,
                     @this.RequirementNumber,
                     @this.RequirementType?.Name,
@@ -62,10 +73,9 @@ namespace Allors.Database.Domain
                     @this.ExistRequirementBudgetAllocationsWhereRequirement ? string.Join(" ", @this.RequirementBudgetAllocationsWhereRequirement?.Select(v => v.BudgetItem?.BudgetWhereBudgetItem?.BudgetNumber ?? string.Empty).ToArray()) : null,
                 };
 
-                if (array.Any(s => !string.IsNullOrEmpty(s)))
-                {
-                    @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
-                }
+            if (array.Any(s => !string.IsNullOrEmpty(s)))
+            {
+                @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
         }
     }
