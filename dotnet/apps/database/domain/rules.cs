@@ -149,7 +149,7 @@ namespace Allors.Database.Domain
                 new PartCategoryNameRule(m),
                 new PartCategoryRule(m),
                 new PartCategorySearchStringRule(m),
-                new PartCurrentSupplierOfferingsNameRule(m),
+                new PartCurrentSupplierOfferingsRule(m),
                 new PartDefaultFacilityNameRule(m),
                 new PartInventoryItemKindNameRule(m),
                 new PartInventoryItemRule(m),

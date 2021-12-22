@@ -1,4 +1,4 @@
-// <copyright file="PartCurrentSupplierOfferingsNameRule.cs" company="Allors bvba">
+// <copyright file="PartCurrentSupplierOfferingsRule.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class PartCurrentSupplierOfferingsNameRule : Rule
+    public class PartCurrentSupplierOfferingsRule : Rule
     {
-        public PartCurrentSupplierOfferingsNameRule(MetaPopulation m) : base(m, new Guid("b8942f8c-abd2-4fae-a1e0-6d9fcc312a02")) =>
+        public PartCurrentSupplierOfferingsRule(MetaPopulation m) : base(m, new Guid("b8942f8c-abd2-4fae-a1e0-6d9fcc312a02")) =>
             this.Patterns = new Pattern[]
             {
                 m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart),
