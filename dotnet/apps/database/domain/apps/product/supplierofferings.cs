@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 
     public partial class SupplierOfferings
     {
-        public decimal PurchasePrice(Party supplier, DateTime orderDate, Part part = null)
+        public decimal PurchasePrice(Organisation supplier, DateTime orderDate, Part part = null)
         {
             decimal price = 0;
 

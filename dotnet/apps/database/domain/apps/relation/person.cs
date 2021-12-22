@@ -32,7 +32,6 @@ namespace Allors.Database.Domain
             && !this.ExistPartyFixedAssetAssignmentsWhereParty
             && !this.ExistPickListsWhereShipToParty
             && !this.ExistQuotesWhereReceiver
-            && !this.ExistPurchaseInvoicesWhereBilledFrom
             && !this.ExistPurchaseInvoicesWhereShipToCustomer
             && !this.ExistPurchaseInvoicesWhereBillToEndCustomer
             && !this.ExistPurchaseInvoicesWhereShipToEndCustomer

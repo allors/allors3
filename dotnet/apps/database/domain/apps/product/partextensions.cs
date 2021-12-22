@@ -74,7 +74,7 @@ namespace Allors.Database.Domain
                 .Where(v => v.FromDate <= now
                             && (!v.ExistThroughDate || v.ThroughDate >= now)
                             && v.Part.Equals(@this)
-                            && ((Organisation)v.Supplier).ExistInternalOrganisationsWhereActiveSupplier);
+                            && v.Supplier.ExistInternalOrganisationsWhereActiveSupplier);
         }
     }
 }

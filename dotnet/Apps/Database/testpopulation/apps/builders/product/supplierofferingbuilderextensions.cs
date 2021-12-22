@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.TestPopulation
 
     public static partial class SupplierOfferingBuilderExtensions
     {
-        public static SupplierOfferingBuilder WithDefaults(this SupplierOfferingBuilder @this, Party supplier)
+        public static SupplierOfferingBuilder WithDefaults(this SupplierOfferingBuilder @this, Organisation supplier)
         {
             var faker = @this.Transaction.Faker();
 

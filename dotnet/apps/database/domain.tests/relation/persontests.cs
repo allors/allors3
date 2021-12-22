@@ -618,21 +618,6 @@ namespace Allors.Database.Domain.Tests
         }
         
         [Fact]
-        public void OnChangedPurchaseInvoiceBilledFromDeriveDeletePermission()
-        {
-            var person = new PersonBuilder(this.Transaction).Build();
-            this.Derive();
-
-            var purchaseInvoice= new PurchaseInvoiceBuilder(this.Transaction).Build();
-            this.Derive();
-
-            purchaseInvoice.BilledFrom = person;
-            this.Derive();
-
-            Assert.Contains(this.deleteRevocation, person.Revocations);
-        }
-        
-        [Fact]
         public void OnChangedPurchaseInvoiceShipToCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();

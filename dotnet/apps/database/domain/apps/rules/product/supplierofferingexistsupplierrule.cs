@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                         purchaseInvoice.DerivationTrigger = Guid.NewGuid();
                     }
 
-                    foreach (var purchaseOrder in ((Organisation)@this.Supplier).PurchaseOrdersWhereTakenViaSupplier.Where(v => v.ExistPurchaseOrderState && v.PurchaseOrderState.IsCreated))
+                    foreach (var purchaseOrder in @this.Supplier.PurchaseOrdersWhereTakenViaSupplier.Where(v => v.ExistPurchaseOrderState && v.PurchaseOrderState.IsCreated))
                     {
                         purchaseOrder.DerivationTrigger = Guid.NewGuid();
                     }

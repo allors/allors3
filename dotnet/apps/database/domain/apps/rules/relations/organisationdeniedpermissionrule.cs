@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
             m.InternalOrganisation.AssociationPattern(v => v.QuotesWhereIssuer,m.Organisation),
             m.InternalOrganisation.AssociationPattern(v => v.QuotesWhereReceiver,m.Organisation),
             m.InternalOrganisation.AssociationPattern(v => v.PurchaseInvoicesWhereBilledTo,m.Organisation),
-            m.InternalOrganisation.AssociationPattern(v => v.PurchaseInvoicesWhereBilledFrom,m.Organisation),
+            m.Organisation.AssociationPattern(v => v.PurchaseInvoicesWhereBilledFrom,m.Organisation),
             m.InternalOrganisation.AssociationPattern(v => v.PurchaseInvoicesWhereShipToCustomer,m.Organisation),
             m.InternalOrganisation.AssociationPattern(v => v.PurchaseInvoicesWhereShipToEndCustomer,m.Organisation),
             m.InternalOrganisation.AssociationPattern(v => v.PurchaseInvoicesWhereBillToEndCustomer,m.Organisation),

@@ -31,7 +31,6 @@ namespace Allors.Database.Domain
             m.Party.AssociationPattern(v => v.PartyFixedAssetAssignmentsWhereParty, m.Person),
             m.Party.AssociationPattern(v => v.PickListsWhereShipToParty, m.Person),
             m.Party.AssociationPattern(v => v.QuotesWhereReceiver, m.Person),
-            m.Party.AssociationPattern(v => v.PurchaseInvoicesWhereBilledFrom, m.Person),
             m.Party.AssociationPattern(v => v.PurchaseInvoicesWhereShipToCustomer, m.Person),
             m.Party.AssociationPattern(v => v.PurchaseInvoicesWhereBillToEndCustomer, m.Person),
             m.Party.AssociationPattern(v => v.PurchaseInvoicesWhereShipToEndCustomer, m.Person),

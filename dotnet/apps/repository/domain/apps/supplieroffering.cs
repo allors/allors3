@@ -128,7 +128,16 @@ namespace Allors.Repository
         [Indexed]
         [Required]
         [Workspace(Default)]
-        public Party Supplier { get; set; }
+        public Party ObsoleteSupplier { get; set; }
+
+        #region Allors
+        [Id("513c663b-85bb-4b11-a82e-d2b64c579fc4")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Required]
+        [Workspace(Default)]
+        public Organisation Supplier { get; set; }
 
         #region Allors
         [Id("d741765d-d17e-4e6a-88fd-9eee70c82bcf")]

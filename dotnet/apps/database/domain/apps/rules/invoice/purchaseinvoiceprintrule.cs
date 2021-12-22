@@ -62,7 +62,7 @@ namespace Allors.Database.Domain
                 m.PurchaseInvoice.RolePattern(v => v.BilledFrom),
                 m.PurchaseInvoice.RolePattern(v => v.BilledFromContactPerson),
                 m.PurchaseInvoice.RolePattern(v => v.DerivedBilledFromContactMechanism),
-                m.Party.RolePattern(v => v.DisplayName, v => v.PurchaseInvoicesWhereBilledFrom),
+                m.Organisation.RolePattern(v => v.DisplayName, v => v.PurchaseInvoicesWhereBilledFrom),
                 m.Organisation.RolePattern(v => v.TaxNumber, v => v.PurchaseInvoicesWhereBilledFrom),
                 m.Person.RolePattern(v => v.DisplayName, v => v.PurchaseInvoicesWhereBilledFromContactPerson),
                 m.PostalAddress.RolePattern(v => v.Address1, v => v.PurchaseInvoicesWhereDerivedBilledFromContactMechanism),
