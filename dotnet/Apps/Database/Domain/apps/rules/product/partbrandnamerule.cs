@@ -34,6 +34,6 @@ namespace Allors.Database.Domain
 
     public static class PartBrandNameRuleExtensions
     {
-        public static void DerivePartBrandName(this Part @this, IValidation validation) => @this.BrandName = @this.Brand.Name;
+        public static void DerivePartBrandName(this Part @this, IValidation validation) => @this.BrandName = @this.Brand?.Name;
     }
 }

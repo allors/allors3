@@ -34,6 +34,6 @@ namespace Allors.Database.Domain
 
     public static class PartProductTypeNameRuleExtensions
     {
-        public static void DerivePartProductTypeName(this Part @this, IValidation validation) => @this.ProductTypeName = @this.ProductType.Name;
+        public static void DerivePartProductTypeName(this Part @this, IValidation validation) => @this.ProductTypeName = @this.ProductType?.Name;
     }
 }
