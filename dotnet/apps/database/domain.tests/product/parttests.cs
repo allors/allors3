@@ -654,5 +654,22 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(supplierOffering, part.CurrentSupplierOfferings);
         }
+
+        [Fact]
+        public void ChangedInternalOrganisationActiveSuppliersDeriveCurrentSupplierOfferings2()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).Build();
+            var supplierRelationship = new SupplierRelationshipBuilder(this.Transaction).WithInternalOrganisation(this.InternalOrganisation).WithFromDate(this.Transaction.Now()).WithSupplier(supplier).Build();
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var supplierOffering = new SupplierOfferingBuilder(this.Transaction).WithSupplier(supplier).WithPart(part).WithFromDate(this.Transaction.Now()).Build();
+            this.Derive();
+
+            Assert.Contains(supplierOffering, part.CurrentSupplierOfferings);
+
+            supplierRelationship.ThroughDate = supplierRelationship.FromDate;
+            this.Derive();
+
+            Assert.DoesNotContain(supplierOffering, part.CurrentSupplierOfferings);
+        }
     }
 }
