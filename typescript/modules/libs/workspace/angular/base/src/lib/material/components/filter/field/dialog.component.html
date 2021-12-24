@@ -48,8 +48,8 @@
         </div>
 
         <div>
-          <button *ngIf="!useSearch" mat-button color="primary" (click)="apply()">Apply</button>
-          <button mat-button mat-dialog-close>Cancel</button>
+          <button type="button" *ngIf="!useSearch" mat-button color="primary" (click)="apply()">Apply</button>
+          <button type="button" mat-button mat-dialog-close>Cancel</button>
         </div>
       </mat-step>
     </mat-vertical-stepper>
