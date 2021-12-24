@@ -34,6 +34,6 @@ namespace Allors.Database.Domain
 
     public static class PartModelNameRuleExtensions
     {
-        public static void DerivePartModelName(this Part @this, IValidation validation) => @this.ModelName = @this.Model.Name;
+        public static void DerivePartModelName(this Part @this, IValidation validation) => @this.ModelName = @this.Model?.Name;
     }
 }

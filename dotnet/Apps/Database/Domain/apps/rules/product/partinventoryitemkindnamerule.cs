@@ -34,6 +34,6 @@ namespace Allors.Database.Domain
 
     public static class PartInventoryItemKindNameRuleExtensions
     {
-        public static void DerivePartInventoryItemKindName(this Part @this, IValidation validation) => @this.InventoryItemKindName = @this.InventoryItemKind.Name;
+        public static void DerivePartInventoryItemKindName(this Part @this, IValidation validation) => @this.InventoryItemKindName = @this.InventoryItemKind?.Name;
     }
 }

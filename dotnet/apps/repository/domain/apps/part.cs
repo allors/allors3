@@ -68,6 +68,7 @@ namespace Allors.Repository
         #endregion
         [Derived]
         [Workspace(Default)]
+        [Size(-1)]
         string SuppliedByDisplayName { get; set; }
 
         #region Allors

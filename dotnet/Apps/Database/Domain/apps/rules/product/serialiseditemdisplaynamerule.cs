@@ -28,14 +28,14 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.DeriveSerialisedItemDisplayNameRule(validation);
+                @this.DeriveSerialisedItemDisplayName(validation);
             }
         }
     }
 
     public static class SerialisedItemDisplayNameRuleExtensions
     {
-        public static void DeriveSerialisedItemDisplayNameRule(this SerialisedItem @this, IValidation validation)
+        public static void DeriveSerialisedItemDisplayName(this SerialisedItem @this, IValidation validation)
         {
             @this.DisplayName = $"{ @this.ItemNumber} { @this.Name} SN: { @this.SerialNumber}";
         }

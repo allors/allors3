@@ -31,12 +31,6 @@ namespace Allors.Database.Domain
 
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(@this.UserPasswordHash))
-                    {
-                        cycle.Validation.AddError(@this, m.User.UserPasswordHash, DomainErrors.InvalidPassword);
-                        continue;
-                    }
-
                     if (!string.IsNullOrWhiteSpace(@this.InExistingUserPassword) && !passwordHasher.VerifyHashedPassword(@this.UserName, @this.UserPasswordHash, @this.InExistingUserPassword))
                     {
                         cycle.Validation.AddError(@this, m.User.InExistingUserPassword, DomainErrors.InvalidPassword);
