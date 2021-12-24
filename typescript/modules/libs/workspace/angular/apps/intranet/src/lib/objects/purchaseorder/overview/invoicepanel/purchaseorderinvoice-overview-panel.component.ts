@@ -154,7 +154,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
           objectId: id,
           select: {
             BilledFrom: {
-              Organisation_PurchaseOrdersWhereTakenViaSupplier: {
+              PurchaseOrdersWhereTakenViaSupplier: {
                 include: {
                   PurchaseOrderState: x,
                   PurchaseOrderShipmentState: x,
