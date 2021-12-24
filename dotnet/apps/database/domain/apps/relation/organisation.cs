@@ -117,7 +117,6 @@ namespace Allors.Database.Domain
                 .ToArray();
 
             var allContactRelationships = this.OrganisationContactRelationshipsWhereOrganisation.ToArray();
-            var allContacts = allContactRelationships.Select(v => v.Contact);
 
             this.CurrentOrganisationContactRelationships = allContactRelationships
                 .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
@@ -132,6 +131,15 @@ namespace Allors.Database.Domain
 
             this.InactiveContacts = this.InactiveOrganisationContactRelationships
                 .Select(v => v.Contact)
+                .ToArray();
+
+            var activeSupplierReleationships = this.SupplierRelationshipsWhereInternalOrganisation
+                .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
+                .ToArray();
+
+            this.InactiveSuppliers = this.SupplierRelationshipsWhereInternalOrganisation
+                .Except(activeSupplierReleationships)
+                .Select(v => v.Supplier)
                 .ToArray();
         }
 

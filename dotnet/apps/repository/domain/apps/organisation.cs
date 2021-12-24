@@ -97,6 +97,8 @@ namespace Allors.Repository
 
         public Organisation[] ActiveSuppliers { get; set; }
 
+        public Organisation[] InactiveSuppliers { get; set; }
+
         public Organisation[] ActiveSubContractors { get; set; }
 
         public ContactMechanism GeneralCorrespondence { get; set; }

@@ -7,47 +7,36 @@ import { formatDistance } from 'date-fns';
 import { M } from '@allors/workspace/meta/default';
 import {
   Person,
-  Organisation,
   Part,
   ProductIdentificationType,
   Facility,
-  InventoryItemKind,
-  ProductType,
-  Brand,
-  Model,
-  PartCategory,
   NonUnifiedPart,
   NonUnifiedPartBarcodePrint,
   NonSerialisedInventoryItem,
-  ProductIdentification,
   InternalOrganisation,
 } from '@allors/workspace/domain/default';
 import {
   Action,
   DeleteService,
   Filter,
-  FilterDefinition,
   MediaService,
   NavigationService,
   ObjectService,
   RefreshService,
   SaveService,
-  SearchFactory,
   Table,
   TableRow,
   UserId,
   OverviewService,
   SingletonId,
-  Sorter,
   FilterField,
+  angularSorter,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Filters } from '../../../filters/filters';
-import { And } from '@allors/workspace/domain/system';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -120,13 +109,13 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
       columns: [
         { name: 'name', sort: true },
         { name: 'partNo', sort: true },
-        { name: 'type' },
-        { name: 'categories' },
+        { name: 'type', sort: true },
+        { name: 'categories', sort: true },
         { name: 'qoh' },
         { name: 'localQoh' },
-        { name: 'brand' },
-        { name: 'model' },
-        { name: 'kind' },
+        { name: 'brand', sort: true },
+        { name: 'model', sort: true },
+        { name: 'kind', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
       actions: [overviewService.overview(), this.delete],
@@ -139,106 +128,6 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
-
-    const predicate: And = {
-      kind: 'And',
-      operands: [
-        {
-          kind: 'Or',
-          operands: [
-            { kind: 'Like', roleType: m.Part.Name, parameter: 'name' },
-            { kind: 'ContainedIn', propertyType: m.Part.LocalisedNames, extent: { kind: 'Filter', objectType: m.LocalisedText, predicate: { kind: 'Like', roleType: m.LocalisedText.Text, parameter: 'name' } } },
-          ],
-        },
-        { kind: 'Like', roleType: m.Part.Keywords, parameter: 'keyword' },
-        { kind: 'Like', roleType: m.Part.HsCode, parameter: 'hsCode' },
-        { kind: 'Contains', propertyType: m.Part.ProductIdentifications, parameter: 'identification' },
-        { kind: 'Contains', propertyType: m.Part.SuppliedBy, parameter: 'supplier' },
-        {
-          kind: 'ContainedIn',
-          propertyType: m.Part.SupplierOfferingsWherePart,
-          extent: { kind: 'Filter', objectType: m.SupplierOffering, predicate: { kind: 'Like', roleType: m.SupplierOffering.SupplierProductId, parameter: 'supplierReference' } },
-        },
-        { kind: 'Equals', propertyType: m.Part.ManufacturedBy, parameter: 'manufacturer' },
-        { kind: 'Equals', propertyType: m.Part.Brand, parameter: 'brand' },
-        { kind: 'Equals', propertyType: m.Part.Model, parameter: 'model' },
-        { kind: 'Equals', propertyType: m.Part.InventoryItemKind, parameter: 'kind' },
-        { kind: 'Equals', propertyType: m.Part.ProductType, parameter: 'type' },
-        { kind: 'Contains', propertyType: m.NonUnifiedPart.PartCategoriesWherePart, parameter: 'category' },
-        {
-          kind: 'ContainedIn',
-          propertyType: m.Part.InventoryItemsWherePart,
-          extent: { kind: 'Filter', objectType: m.NonSerialisedInventoryItem, predicate: { kind: 'Equals', propertyType: m.InventoryItem.Facility, parameter: 'inStock' } },
-        },
-        {
-          kind: 'ContainedIn',
-          propertyType: m.Part.InventoryItemsWherePart,
-          extent: { kind: 'Filter', objectType: m.NonSerialisedInventoryItem, predicate: { kind: 'Equals', propertyType: m.InventoryItem.Facility, parameter: 'outOfStock' } },
-        },
-      ],
-    };
-
-    const typeSearch = new SearchFactory({
-      objectType: m.ProductType,
-      roleTypes: [m.ProductType.Name],
-    });
-
-    const kindSearch = new SearchFactory({
-      objectType: m.InventoryItemKind,
-      predicates: [{ kind: 'Equals', propertyType: m.Enumeration.IsActive, value: true }],
-      roleTypes: [m.InventoryItemKind.Name],
-    });
-
-    const categorySearch = new SearchFactory({
-      objectType: m.PartCategory,
-      roleTypes: [m.PartCategory.Name],
-    });
-
-    const brandSearch = new SearchFactory({
-      objectType: m.Brand,
-      roleTypes: [m.Brand.Name],
-    });
-
-    const modelSearch = new SearchFactory({
-      objectType: m.Model,
-      roleTypes: [m.Model.Name],
-    });
-
-    const manufacturerSearch = new SearchFactory({
-      objectType: m.Organisation,
-      predicates: [{ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true }],
-      roleTypes: [m.Organisation.DisplayName],
-    });
-
-    const idSearch = new SearchFactory({
-      objectType: m.ProductIdentification,
-      roleTypes: [m.ProductIdentification.Identification],
-    });
-
-    const facilitySearch = new SearchFactory({
-      objectType: m.Facility,
-      roleTypes: [m.Facility.Name],
-    });
-
-    const filterDefinition = new FilterDefinition(predicate, {
-      supplier: { search: () => Filters.allSuppliersFilter(m), display: (v: Organisation) => v && v.DisplayName },
-      manufacturer: { search: () => manufacturerSearch, display: (v: Organisation) => v && v.DisplayName },
-      brand: { search: () => brandSearch, display: (v: Brand) => v && v.Name },
-      model: { search: () => modelSearch, display: (v: Model) => v && v.Name },
-      kind: { search: () => kindSearch, display: (v: InventoryItemKind) => v && v.Name },
-      type: { search: () => typeSearch, display: (v: ProductType) => v && v.Name },
-      category: { search: () => categorySearch, display: (v: PartCategory) => v && v.Name },
-      identification: { search: () => idSearch, display: (v: ProductIdentification) => v && v.Identification },
-      inStock: { search: () => facilitySearch, display: (v: Facility) => v && v.Name },
-      outOfStock: { search: () => facilitySearch, display: (v: Facility) => v && v.Name },
-    });
-    this.filter = new Filter(filterDefinition);
-
-    const sorter = new Sorter({
-      name: m.NonUnifiedPart.Name,
-      partNo: m.NonUnifiedPart.ProductNumber,
-      lastModifiedDate: m.UnifiedProduct.LastModifiedDate,
-    });
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
       .pipe(
@@ -265,8 +154,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
               include: { FacilitiesWhereOwner: x },
             }),
             pull.NonUnifiedPart({
-              predicate,
-              sorting: sorter.create(sort),
+              predicate: this.filter.definition.predicate,
+              sorting: sort ? angularSorter(m.NonUnifiedPart)?.create(sort) : null,
               include: {
                 PrimaryPhoto: x,
                 InventoryItemsWherePart: {

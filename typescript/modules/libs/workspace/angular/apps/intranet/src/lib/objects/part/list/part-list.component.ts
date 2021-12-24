@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
+import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentificationType, Part } from '@allors/workspace/domain/default';
@@ -19,6 +20,7 @@ interface Row extends TableRow {
   brand: string;
   model: string;
   kind: string;
+  lastModifiedDate: string;
 }
 
 @Component({
@@ -60,7 +62,16 @@ export class PartListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }, { name: 'partNo' }, { name: 'type' }, { name: 'qoh' }, { name: 'brand' }, { name: 'model' }, { name: 'kind' }],
+      columns: [
+        { name: 'name', sort: true },
+        { name: 'partNo', sort: true },
+        { name: 'type', sort: true },
+        { name: 'qoh' },
+        { name: 'brand', sort: true },
+        { name: 'model', sort: true },
+        { name: 'kind', sort: true },
+        { name: 'lastModifiedDate', sort: true },
+      ],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -141,6 +152,7 @@ export class PartListComponent implements OnInit, OnDestroy {
             brand: v.Brand ? v.Brand.Name : '',
             model: v.Model ? v.Model.Name : '',
             kind: v.InventoryItemKind.Name,
+            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
           } as Row;
         });
       });

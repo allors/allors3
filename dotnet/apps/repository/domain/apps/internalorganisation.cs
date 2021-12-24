@@ -346,6 +346,15 @@ namespace Allors.Repository
         Organisation[] ActiveSuppliers { get; set; }
 
         #region Allors
+        [Id("c7219fe8-1198-4f92-9074-d56f9c3cb753")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
+        [Derived]
+        [Indexed]
+        Organisation[] InactiveSuppliers { get; set; }
+
+        #region Allors
         [Id("1caf947c-425e-43fa-bcdb-5961bedc0708")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]

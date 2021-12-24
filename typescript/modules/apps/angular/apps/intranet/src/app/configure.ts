@@ -16,6 +16,7 @@ import {
   Organisation,
   Ownership,
   Part,
+  PartCategory,
   Party,
   Person,
   PositionType,
@@ -336,6 +337,22 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
     predicates: [{ kind: 'Equals', propertyType: m.RateType.IsActive, value: true }],
   });
 
+  const typeSearch = new SearchFactory({
+    objectType: m.ProductType,
+    roleTypes: [m.ProductType.Name],
+  });
+
+  const kindSearch = new SearchFactory({
+    objectType: m.InventoryItemKind,
+    predicates: [{ kind: 'Equals', propertyType: m.Enumeration.IsActive, value: true }],
+    roleTypes: [m.InventoryItemKind.Name],
+  });
+
+  const productIdentificationSearch = new SearchFactory({
+    objectType: m.ProductIdentification,
+    roleTypes: [m.ProductIdentification.Identification],
+  });
+
   angularFilterDefinition(m.Carrier, new FilterDefinition({ kind: 'And', operands: [{ kind: 'Like', roleType: m.Carrier.Name, parameter: 'name' }] }));
 
   angularFilterDefinition(
@@ -387,6 +404,61 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
           { kind: 'Contains', propertyType: m.Good.ProductCategoriesWhereProduct, parameter: 'category' },
           { kind: 'Contains', propertyType: m.Good.ProductIdentifications, parameter: 'identification' },
           { kind: 'Exists', propertyType: m.Good.SalesDiscontinuationDate, parameter: 'discontinued' },
+        ],
+      },
+      {
+        supplier: { search: () => Filters.allSuppliersFilter(m), display: (v: Organisation) => v && v.DisplayName },
+        manufacturer: { search: () => manufacturerSearch, display: (v: Organisation) => v && v.DisplayName },
+        brand: { search: () => brandSearch, display: (v: Brand) => v && v.Name },
+        model: { search: () => modelSearch, display: (v: Model) => v && v.Name },
+        kind: { search: () => kindSearch, display: (v: InventoryItemKind) => v && v.Name },
+        type: { search: () => typeSearch, display: (v: ProductType) => v && v.Name },
+        category: { search: () => categorySearch, display: (v: PartCategory) => v && v.Name },
+        identification: { search: () => productIdentificationSearch, display: (v: ProductIdentification) => v && v.Identification },
+        inStock: { search: () => facilitySearch, display: (v: Facility) => v && v.Name },
+        outOfStock: { search: () => facilitySearch, display: (v: Facility) => v && v.Name },
+      }
+    )
+  );
+
+  angularFilterDefinition(
+    m.NonUnifiedPart,
+    new FilterDefinition(
+      {
+        kind: 'And',
+        operands: [
+          {
+            kind: 'Or',
+            operands: [
+              { kind: 'Like', roleType: m.Part.Name, parameter: 'name' },
+              { kind: 'ContainedIn', propertyType: m.Part.LocalisedNames, extent: { kind: 'Filter', objectType: m.LocalisedText, predicate: { kind: 'Like', roleType: m.LocalisedText.Text, parameter: 'name' } } },
+            ],
+          },
+          { kind: 'Like', roleType: m.Part.Keywords, parameter: 'keyword' },
+          { kind: 'Like', roleType: m.Part.HsCode, parameter: 'hsCode' },
+          { kind: 'Contains', propertyType: m.Part.ProductIdentifications, parameter: 'identification' },
+          { kind: 'Contains', propertyType: m.Part.SuppliedBy, parameter: 'supplier' },
+          {
+            kind: 'ContainedIn',
+            propertyType: m.Part.SupplierOfferingsWherePart,
+            extent: { kind: 'Filter', objectType: m.SupplierOffering, predicate: { kind: 'Like', roleType: m.SupplierOffering.SupplierProductId, parameter: 'supplierReference' } },
+          },
+          { kind: 'Equals', propertyType: m.Part.ManufacturedBy, parameter: 'manufacturer' },
+          { kind: 'Equals', propertyType: m.Part.Brand, parameter: 'brand' },
+          { kind: 'Equals', propertyType: m.Part.Model, parameter: 'model' },
+          { kind: 'Equals', propertyType: m.Part.InventoryItemKind, parameter: 'kind' },
+          { kind: 'Equals', propertyType: m.Part.ProductType, parameter: 'type' },
+          { kind: 'Contains', propertyType: m.NonUnifiedPart.PartCategoriesWherePart, parameter: 'category' },
+          {
+            kind: 'ContainedIn',
+            propertyType: m.Part.InventoryItemsWherePart,
+            extent: { kind: 'Filter', objectType: m.NonSerialisedInventoryItem, predicate: { kind: 'Equals', propertyType: m.InventoryItem.Facility, parameter: 'inStock' } },
+          },
+          {
+            kind: 'ContainedIn',
+            propertyType: m.Part.InventoryItemsWherePart,
+            extent: { kind: 'Filter', objectType: m.NonSerialisedInventoryItem, predicate: { kind: 'Equals', propertyType: m.InventoryItem.Facility, parameter: 'outOfStock' } },
+          },
         ],
       },
       {
@@ -910,28 +982,31 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
     )
   );
 
-  angularFilterDefinition(m.WorkRequirement, new FilterDefinition(
-    {
-      kind: 'And',
-      operands: [
-        { kind: 'Equals', propertyType: m.WorkRequirement.RequirementState, parameter: 'state' },
-        { kind: 'Equals', propertyType: m.WorkRequirement.Priority, parameter: 'priority' },
-        { kind: 'Like', roleType: m.WorkRequirement.RequirementNumber, parameter: 'Number' },
-        { kind: 'Like', roleType: m.WorkRequirement.Location, parameter: 'Location' },
-        { kind: 'Equals', propertyType: m.WorkRequirement.FixedAsset, parameter: 'equipment' },
-        {
-          kind: 'ContainedIn',
-          propertyType: m.WorkRequirement.FixedAsset,
-          extent: { kind: 'Filter', objectType: m.SerialisedItem, predicate: { kind: 'Like', roleType: m.SerialisedItem.CustomerReferenceNumber, parameter: 'fleetcode' } },
-        },
-      ],
-    },
-    {
-      state: { search: () => requirementStateSearch, display: (v: RequirementState) => v && v.Name },
-      priority: { search: () => prioritySearch, display: (v: Priority) => v && v.Name },
-      equipment: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.DisplayName },
-    }
-  ));
+  angularFilterDefinition(
+    m.WorkRequirement,
+    new FilterDefinition(
+      {
+        kind: 'And',
+        operands: [
+          { kind: 'Equals', propertyType: m.WorkRequirement.RequirementState, parameter: 'state' },
+          { kind: 'Equals', propertyType: m.WorkRequirement.Priority, parameter: 'priority' },
+          { kind: 'Like', roleType: m.WorkRequirement.RequirementNumber, parameter: 'Number' },
+          { kind: 'Like', roleType: m.WorkRequirement.Location, parameter: 'Location' },
+          { kind: 'Equals', propertyType: m.WorkRequirement.FixedAsset, parameter: 'equipment' },
+          {
+            kind: 'ContainedIn',
+            propertyType: m.WorkRequirement.FixedAsset,
+            extent: { kind: 'Filter', objectType: m.SerialisedItem, predicate: { kind: 'Like', roleType: m.SerialisedItem.CustomerReferenceNumber, parameter: 'fleetcode' } },
+          },
+        ],
+      },
+      {
+        state: { search: () => requirementStateSearch, display: (v: RequirementState) => v && v.Name },
+        priority: { search: () => prioritySearch, display: (v: Priority) => v && v.Name },
+        equipment: { search: () => serialisedItemSearch, display: (v: SerialisedItem) => v && v.DisplayName },
+      }
+    )
+  );
 
   angularSorter(
     m.Carrier,
@@ -974,6 +1049,20 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   );
 
   angularSorter(
+    m.NonUnifiedPart,
+    new Sorter({
+      name: m.NonUnifiedPart.Name,
+      partNo: m.NonUnifiedPart.ProductNumber,
+      type: m.NonUnifiedPart.ProductTypeName,
+      categories: m.NonUnifiedPart.PartCategoriesDisplayName,
+      brand: m.NonUnifiedPart.BrandName,
+      model: m.NonUnifiedPart.ModelName,
+      kind: m.NonUnifiedPart.InventoryItemKindName,
+      lastModifiedDate: m.UnifiedProduct.LastModifiedDate,
+    })
+  );
+
+  angularSorter(
     m.Organisation,
     new Sorter({
       name: m.Organisation.Name,
@@ -984,7 +1073,14 @@ export function configure(m: M, internalOrganisationId: InternalOrganisationId) 
   angularSorter(
     m.Part,
     new Sorter({
-      name: m.NonUnifiedPart.Name,
+      name: m.Part.Name,
+      partNo: m.Part.ProductNumber,
+      type: m.Part.ProductTypeName,
+      categories: m.Part.PartCategoriesDisplayName,
+      brand: m.Part.BrandName,
+      model: m.Part.ModelName,
+      kind: m.Part.InventoryItemKindName,
+      lastModifiedDate: m.Part.LastModifiedDate,
     })
   );
 
