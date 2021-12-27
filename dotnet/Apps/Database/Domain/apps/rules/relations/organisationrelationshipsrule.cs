@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class OrganisationRule : Rule
+    public class OrganisationRelationshipsRule: Rule
     {
-        public OrganisationRule(MetaPopulation m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
+        public OrganisationRelationshipsRule(MetaPopulation m) : base(m, new Guid("0379B923-210D-46DD-9D18-9D7BF5ED6FEA")) =>
             this.Patterns = new Pattern[]
             {
                 m.Organisation.RolePattern(v => v.DerivationTrigger),
@@ -41,13 +41,18 @@ namespace Allors.Database.Domain
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var transaction = cycle.Transaction;
+            var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<Organisation>())
             {
                 transaction.Prefetch(@this.PrefetchPolicy);
-
-                @this.DeriveRelationships();
+                @this.DeriveOrganisationRelationships(validation);
             }
         }
+    }
+
+    public static class OrganisationrelationshipsRuleExtensions
+    {
+        public static void DeriveOrganisationRelationships(this Organisation @this, IValidation validation) => @this.DeriveRelationships();
     }
 }

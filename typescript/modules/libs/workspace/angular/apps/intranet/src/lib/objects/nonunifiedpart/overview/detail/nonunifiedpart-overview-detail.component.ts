@@ -200,6 +200,8 @@ export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy 
         if (this.selectedBrand) {
           this.brandSelected(this.selectedBrand);
         }
+
+        this.categorySelected(this.selectedCategories);
       });
   }
 
