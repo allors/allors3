@@ -31,6 +31,7 @@ import {
   SingletonId,
   FilterField,
   angularSorter,
+  angularFilterFromDefinition,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -128,6 +129,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
+
+    this.filter = angularFilterFromDefinition(m.NonUnifiedPart);
 
     this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
       .pipe(
