@@ -7,6 +7,7 @@ import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 import {
   Action,
+  AllorsListComponent,
   angularFilterFromDefinition,
   angularSorter,
   DeleteService,
@@ -37,7 +38,7 @@ interface Row extends TableRow {
   templateUrl: './organisation-list.component.html',
   providers: [ContextService],
 })
-export class OrganisationListComponent implements OnInit, OnDestroy {
+export class OrganisationListComponent extends AllorsListComponent implements OnInit, OnDestroy {
   public title = 'Organisations';
 
   table: Table<Row>;
@@ -49,21 +50,18 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   m: M;
 
   constructor(
-    @Self() public allors: ContextService,
-
+    @Self() allors: ContextService,
+    titleService: Title,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
     public methodService: MethodService,
     public navigation: NavigationService,
-    public mediaService: MediaService,
-    titleService: Title
+    public mediaService: MediaService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, titleService);
+    this.objectType = this.m.Organisation;
 
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {

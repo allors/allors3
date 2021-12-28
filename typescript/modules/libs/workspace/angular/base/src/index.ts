@@ -58,8 +58,15 @@ export * from './lib/navigation/navigation.service';
 export * from './lib/navigation/navigation.service.core';
 export * from './lib/navigation/navigation-activated-route';
 
+export * from './lib/page/list.component';
+export * from './lib/page/overview.component';
+
 export * from './lib/panel/panel.service';
 export * from './lib/panel/panel-manager.service';
+export * from './lib/panel/panel-association.component';
+export * from './lib/panel/panel-detail.component';
+export * from './lib/panel/panel-role.component';
+export * from './lib/panel/panel-summary.component';
 
 export * from './lib/refresh/refresh.service';
 export * from './lib/refresh/refresh.service.core';

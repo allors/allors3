@@ -5,7 +5,22 @@ import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Country } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  AllorsListComponent,
+  angularFilterFromDefinition,
+  angularSorter,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterField,
+  MediaService,
+  NavigationService,
+  OverviewService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -20,7 +35,7 @@ interface Row extends TableRow {
   templateUrl: './country-list.component.html',
   providers: [ContextService],
 })
-export class CountryListComponent implements OnInit, OnDestroy {
+export class CountryListComponent extends AllorsListComponent implements OnInit, OnDestroy {
   public title = 'Countries';
 
   table: Table<Row>;
@@ -33,19 +48,17 @@ export class CountryListComponent implements OnInit, OnDestroy {
   m: M;
 
   constructor(
-    @Self() public allors: ContextService,
+    @Self() allors: ContextService,
+    titleService: Title,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editService: EditService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
-    public mediaService: MediaService,
-    titleService: Title
+    public mediaService: MediaService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, titleService);
+    this.objectType = this.m.Country;
 
     this.edit = editService.edit();
     this.edit.result.subscribe(() => {

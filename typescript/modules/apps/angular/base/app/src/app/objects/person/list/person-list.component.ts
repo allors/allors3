@@ -3,9 +3,23 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
 import { Person } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  AllorsListComponent,
+  angularFilterFromDefinition,
+  angularSorter,
+  DeleteService,
+  Filter,
+  FilterField,
+  MediaService,
+  NavigationService,
+  ObjectService,
+  OverviewService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -19,33 +33,28 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './person-list.component.html',
-  providers: [{ provide: 'dependencies', useValue: 'person-list' }, ContextService],
+  providers: [ContextService],
 })
-export class PersonListComponent implements OnInit, OnDestroy {
-  public title = 'People';
-
+export class PersonListComponent extends AllorsListComponent implements OnInit, OnDestroy {
   table: Table<Row>;
+  filter: Filter;
 
   delete: Action;
 
   private subscription: Subscription;
-  filter: Filter;
-  m: M;
 
   constructor(
-    @Self() public allors: ContextService,
+    @Self() allors: ContextService,
+    titleService: Title,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
-    public mediaService: MediaService,
-    titleService: Title
+    public mediaService: MediaService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, titleService);
+    this.objectType = this.m.Person;
 
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {

@@ -22,7 +22,7 @@ interface Row extends TableRow {
 
 @Component({
   templateUrl: './person-list.component.html',
-  providers: [{ provide: 'dependencies', useValue: 'person-list' }, ContextService],
+  providers: [ContextService],
 })
 export class PersonListComponent implements OnInit, OnDestroy {
   public title = 'People';

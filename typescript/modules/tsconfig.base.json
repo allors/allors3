@@ -10,48 +10,126 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@allors/protocol/json/system": ["libs/protocol/json/system/src/index.ts"],
-      "@allors/workspace/adapters/json/system": ["libs/workspace/adapters/json/system/src/index.ts"],
-      "@allors/workspace/adapters/json/system-tests": ["libs/workspace/adapters/json/system-tests/src/index.ts"],
-      "@allors/workspace/adapters/system": ["libs/workspace/adapters/system/src/index.ts"],
-      "@allors/workspace/adapters/system-tests": ["libs/workspace/adapters/system-tests/src/index.ts"],
-      "@allors/workspace/angular/apps/extranet": ["libs/workspace/angular/apps/extranet/src/index.ts"],
-      "@allors/workspace/angular/apps/intranet": ["libs/workspace/angular/apps/intranet/src/index.ts"],
-      "@allors/workspace/angular/base": ["libs/workspace/angular/base/src/index.ts"],
-      "@allors/workspace/angular/core": ["libs/workspace/angular/core/src/index.ts"],
-      "@allors/workspace/derivations/apps/extranet": ["libs/workspace/derivations/apps/extranet/src/index.ts"],
-      "@allors/workspace/derivations/apps/extranet-custom": ["libs/workspace/derivations/apps/extranet-custom/src/index.ts"],
-      "@allors/workspace/derivations/apps/intranet": ["libs/workspace/derivations/apps/intranet/src/index.ts"],
-      "@allors/workspace/derivations/apps/intranet-custom": ["libs/workspace/derivations/apps/intranet-custom/src/index.ts"],
-      "@allors/workspace/derivations/apps/intranet-tests": ["libs/workspace/derivations/apps/intranet-tests/src/index.ts"],
-      "@allors/workspace/derivations/base": ["libs/workspace/derivations/base/src/index.ts"],
-      "@allors/workspace/derivations/base-custom": ["libs/workspace/derivations/base-custom/src/index.ts"],
-      "@allors/workspace/derivations/core": ["libs/workspace/derivations/core/src/index.ts"],
-      "@allors/workspace/derivations/core-custom": ["libs/workspace/derivations/core-custom/src/index.ts"],
-      "@allors/workspace/derivations/system": ["libs/workspace/derivations/system/src/index.ts"],
-      "@allors/workspace/domain/apps/extranet": ["libs/workspace/domain/apps/extranet/src/index.ts"],
-      "@allors/workspace/domain/apps/intranet": ["libs/workspace/domain/apps/intranet/src/index.ts"],
-      "@allors/workspace/domain/base": ["libs/workspace/domain/base/src/index.ts"],
-      "@allors/workspace/domain/core": ["libs/workspace/domain/core/src/index.ts"],
-      "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
-      "@allors/workspace/meta/apps/extranet": ["libs/workspace/meta/apps/extranet/src/index.ts"],
-      "@allors/workspace/meta/apps/intranet": ["libs/workspace/meta/apps/intranet/src/index.ts"],
-      "@allors/workspace/meta/base": ["libs/workspace/meta/base/src/index.ts"],
-      "@allors/workspace/meta/core": ["libs/workspace/meta/core/src/index.ts"],
-      "@allors/workspace/meta/json/apps/extranet": ["libs/workspace/meta/json/apps/extranet/src/index.ts"],
-      "@allors/workspace/meta/json/apps/intranet": ["libs/workspace/meta/json/apps/intranet/src/index.ts"],
-      "@allors/workspace/meta/json/base": ["libs/workspace/meta/json/base/src/index.ts"],
-      "@allors/workspace/meta/json/core": ["libs/workspace/meta/json/core/src/index.ts"],
-      "@allors/workspace/meta/json/system": ["libs/workspace/meta/json/system/src/index.ts"],
-      "@allors/workspace/meta/json/system-tests": ["libs/workspace/meta/json/system-tests/src/index.ts"],
-      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"],
-      "@allors/workspace/meta/system-tests": ["libs/workspace/meta/system-tests/src/index.ts"]
+      "@allors/protocol/json/system": [
+        "libs/protocol/json/system/src/index.ts"
+      ],
+      "@allors/workspace/adapters/json/system": [
+        "libs/workspace/adapters/json/system/src/index.ts"
+      ],
+      "@allors/workspace/adapters/json/system-tests": [
+        "libs/workspace/adapters/json/system-tests/src/index.ts"
+      ],
+      "@allors/workspace/adapters/system": [
+        "libs/workspace/adapters/system/src/index.ts"
+      ],
+      "@allors/workspace/adapters/system-tests": [
+        "libs/workspace/adapters/system-tests/src/index.ts"
+      ],
+      "@allors/workspace/angular/apps/extranet": [
+        "libs/workspace/angular/apps/extranet/src/index.ts"
+      ],
+      "@allors/workspace/angular/apps/intranet": [
+        "libs/workspace/angular/apps/intranet/src/index.ts"
+      ],
+      "@allors/workspace/angular/base": [
+        "libs/workspace/angular/base/src/index.ts"
+      ],
+      "@allors/workspace/angular/core": [
+        "libs/workspace/angular/core/src/index.ts"
+      ],
+      "@allors/workspace/derivations/apps/extranet": [
+        "libs/workspace/derivations/apps/extranet/src/index.ts"
+      ],
+      "@allors/workspace/derivations/apps/extranet-custom": [
+        "libs/workspace/derivations/apps/extranet-custom/src/index.ts"
+      ],
+      "@allors/workspace/derivations/apps/intranet": [
+        "libs/workspace/derivations/apps/intranet/src/index.ts"
+      ],
+      "@allors/workspace/derivations/apps/intranet-custom": [
+        "libs/workspace/derivations/apps/intranet-custom/src/index.ts"
+      ],
+      "@allors/workspace/derivations/apps/intranet-tests": [
+        "libs/workspace/derivations/apps/intranet-tests/src/index.ts"
+      ],
+      "@allors/workspace/derivations/base": [
+        "libs/workspace/derivations/base/src/index.ts"
+      ],
+      "@allors/workspace/derivations/base-custom": [
+        "libs/workspace/derivations/base-custom/src/index.ts"
+      ],
+      "@allors/workspace/derivations/core": [
+        "libs/workspace/derivations/core/src/index.ts"
+      ],
+      "@allors/workspace/derivations/core-custom": [
+        "libs/workspace/derivations/core-custom/src/index.ts"
+      ],
+      "@allors/workspace/derivations/system": [
+        "libs/workspace/derivations/system/src/index.ts"
+      ],
+      "@allors/workspace/domain/apps/extranet": [
+        "libs/workspace/domain/apps/extranet/src/index.ts"
+      ],
+      "@allors/workspace/domain/apps/intranet": [
+        "libs/workspace/domain/apps/intranet/src/index.ts"
+      ],
+      "@allors/workspace/domain/base": [
+        "libs/workspace/domain/base/src/index.ts"
+      ],
+      "@allors/workspace/domain/core": [
+        "libs/workspace/domain/core/src/index.ts"
+      ],
+      "@allors/workspace/domain/system": [
+        "libs/workspace/domain/system/src/index.ts"
+      ],
+      "@allors/workspace/meta/apps/extranet": [
+        "libs/workspace/meta/apps/extranet/src/index.ts"
+      ],
+      "@allors/workspace/meta/apps/intranet": [
+        "libs/workspace/meta/apps/intranet/src/index.ts"
+      ],
+      "@allors/workspace/meta/base": [
+        "libs/workspace/meta/base/src/index.ts"
+      ],
+      "@allors/workspace/meta/core": [
+        "libs/workspace/meta/core/src/index.ts"
+      ],
+      "@allors/workspace/meta/json/apps/extranet": [
+        "libs/workspace/meta/json/apps/extranet/src/index.ts"
+      ],
+      "@allors/workspace/meta/json/apps/intranet": [
+        "libs/workspace/meta/json/apps/intranet/src/index.ts"
+      ],
+      "@allors/workspace/meta/json/base": [
+        "libs/workspace/meta/json/base/src/index.ts"
+      ],
+      "@allors/workspace/meta/json/core": [
+        "libs/workspace/meta/json/core/src/index.ts"
+      ],
+      "@allors/workspace/meta/json/system": [
+        "libs/workspace/meta/json/system/src/index.ts"
+      ],
+      "@allors/workspace/meta/json/system-tests": [
+        "libs/workspace/meta/json/system-tests/src/index.ts"
+      ],
+      "@allors/workspace/meta/system": [
+        "libs/workspace/meta/system/src/index.ts"
+      ],
+      "@allors/workspace/meta/system-tests": [
+        "libs/workspace/meta/system-tests/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

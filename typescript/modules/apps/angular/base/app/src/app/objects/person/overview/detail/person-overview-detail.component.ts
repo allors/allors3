@@ -3,8 +3,19 @@ import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Enumeration, Gender, Locale, Person } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
+import {
+  Enumeration,
+  Gender,
+  Locale,
+  Person,
+} from '@allors/workspace/domain/default';
+import {
+  AllorsPanelDetailComponent,
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -12,40 +23,32 @@ import { ContextService } from '@allors/workspace/angular/core';
   templateUrl: './person-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
-  readonly m: M;
-
-  person: Person;
+export class PersonOverviewDetailComponent
+  extends AllorsPanelDetailComponent<Person>
+  implements OnInit, OnDestroy
+{
   emailAddresses: string[] = [];
-
   locales: Locale[];
   genders: Enumeration[];
   salutations: Enumeration[];
-  public confirmPassword: string;
+  confirmPassword: string;
 
   private subscription: Subscription;
 
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() allors: ContextService,
+    @Self() panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService,
-    private singletonId: SingletonId
+    private saveService: SaveService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Personal Data';
-    panel.icon = 'person';
-    panel.expandable = true;
+    super(allors, panel);
 
     // Minimized
     const pullName = `${this.panel.name}_${this.m.Person.tag}`;
 
     panel.onPull = (pulls) => {
-      this.person = undefined;
+      this.object = undefined;
 
       if (this.panel.isCollapsed) {
         const m = this.m;
@@ -68,24 +71,24 @@ export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.person = loaded.object<Person>(pullName);
+        this.object = loaded.object<Person>(pullName);
       }
     };
   }
 
   public ngOnInit(): void {
+    // Maximized
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    // Maximized
     this.subscription = this.panel.manager.on$
       .pipe(
         filter(() => {
           return this.panel.isExpanded;
         }),
         switchMap(() => {
-          this.person = undefined;
+          this.object = undefined;
           const id = this.panel.manager.id;
 
           const pulls = [
@@ -106,7 +109,7 @@ export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.person = loaded.object<Person>(m.Person);
+        this.object = loaded.object<Person>(m.Person);
         this.genders = loaded.collection<Gender>(m.Gender);
         this.locales = loaded.collection<Locale>(m.Locale) || [];
       });

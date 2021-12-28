@@ -10,6 +10,8 @@ import { Field } from './field';
 
 @Directive()
 export abstract class AssociationField extends Field implements AfterViewInit, OnDestroy {
+  dataAllorsKind = 'field-association';
+
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {
     return this.object?.id;

@@ -1,47 +1,49 @@
-import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import { Component, Self, AfterViewInit, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
-import { NavigationService, RefreshService, PanelManagerService, NavigationActivatedRoute } from '@allors/workspace/angular/base';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
+import {
+  NavigationService,
+  RefreshService,
+  PanelManagerService,
+  NavigationActivatedRoute,
+  AllorsOverviewComponent,
+} from '@allors/workspace/angular/base';
+import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './organisation-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class OrganisationOverviewComponent implements AfterViewInit, OnDestroy {
-  title = 'Organisation';
-
-  organisation: Organisation;
-
+export class OrganisationOverviewComponent
+  extends AllorsOverviewComponent<Organisation>
+  implements AfterViewInit, OnDestroy
+{
   subscription: Subscription;
-  m: M;
 
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
-    public workspaceService: WorkspaceService,
+    @Self() allors: ContextService,
+    @Self() panelManager: PanelManagerService,
+    titleService: Title,
     public refreshService: RefreshService,
     public navigation: NavigationService,
-    private route: ActivatedRoute,
-    public injector: Injector,
-    titleService: Title
+    private route: ActivatedRoute
   ) {
-    titleService.setTitle(this.title);
-
-    this.allors.context.name = this.constructor.name;
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    super(allors, panelManager, titleService);
   }
 
   public ngAfterViewInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.subscription = combineLatest([this.route.url, this.route.queryParams, this.refreshService.refresh$])
+    this.subscription = combineLatest([
+      this.route.url,
+      this.route.queryParams,
+      this.refreshService.refresh$,
+    ])
       .pipe(
         switchMap(([, ,]) => {
           const navRoute = new NavigationActivatedRoute(this.route);
@@ -66,7 +68,7 @@ export class OrganisationOverviewComponent implements AfterViewInit, OnDestroy {
         this.panelManager.context.reset();
         this.panelManager.onPulled(loaded);
 
-        this.organisation = loaded.object<Organisation>(m.Organisation);
+        this.object = loaded.object<Organisation>(m.Organisation);
       });
   }
 
