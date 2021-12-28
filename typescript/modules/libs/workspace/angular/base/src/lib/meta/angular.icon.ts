@@ -10,7 +10,7 @@ export function angularIcon(composite: Composite, icon?: string): string | void 
   if (composite == null) {
     return;
   }
-  
+
   if (icon == null) {
     return (composite._ as AngularIconExtension).icon;
   }

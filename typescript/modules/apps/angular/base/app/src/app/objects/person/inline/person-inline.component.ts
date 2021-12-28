@@ -5,7 +5,6 @@ import { Locale, Person } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-
   selector: 'person-inline',
   templateUrl: './person-inline.component.html',
 })

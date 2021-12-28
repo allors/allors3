@@ -19,6 +19,8 @@ namespace Allors.Database.Domain
             {
                 m.NotificationList.RolePattern(v=>v.Notifications),
                 m.Notification.RolePattern(v=>v.Confirmed, v=> v.NotificationListWhereNotification),
+                m.Notification.RolePattern(v=>v.Confirmed, v=> v.NotificationListWhereUnconfirmedNotification),
+                m.Notification.RolePattern(v=>v.Confirmed, v=> v.NotificationListWhereConfirmedNotification),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

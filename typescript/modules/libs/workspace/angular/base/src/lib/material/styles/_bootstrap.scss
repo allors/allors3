@@ -9,7 +9,7 @@ $grid-breakpoints: (
   //  tablet landscape (small, large)
   lg: 1280px,
   // laptops and desktops
-  xl: 1600px // large desktops,
+  xl: 1600px // large desktops,,
 );
 
 $container-max-widths: (
@@ -25,7 +25,6 @@ $link-hover-decoration: none;
 $label-margin-bottom: 0;
 
 @import '~bootstrap/scss/bootstrap-grid';
-
 
 * {
   &:active,

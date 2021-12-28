@@ -7,7 +7,6 @@ import { NavigationService, PanelService, RefreshService, SaveService } from '@a
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'requestforquote-overview-summary',
   templateUrl: './requestforquote-overview-summary.component.html',
   providers: [PanelService],

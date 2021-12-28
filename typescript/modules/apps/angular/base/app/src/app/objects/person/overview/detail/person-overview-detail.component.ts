@@ -8,7 +8,6 @@ import { NavigationService, PanelService, RefreshService, SaveService, Singleton
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-
   selector: 'person-overview-detail',
   templateUrl: './person-overview-detail.component.html',
   providers: [PanelService, ContextService],

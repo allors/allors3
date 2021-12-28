@@ -8,7 +8,6 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'notification-link',
   templateUrl: './notification-link.component.html',
   providers: [ContextService],

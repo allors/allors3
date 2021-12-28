@@ -1,0 +1,17 @@
+<mat-form-field class="d-flex flex-column align-items-stretch">
+  <textarea
+    aFocus
+    [aFocusTrigger]="roleType"
+    matInput
+    cdkTextareaAutosize
+    #autosize="cdkTextareaAutosize"
+    [(ngModel)]="model"
+    [name]="name"
+    [placeholder]="label"
+    [required]="required"
+    [disabled]="disabled"
+    [readonly]="readonly"
+    [maxlength]="maxlength"
+  ></textarea>
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+</mat-form-field>

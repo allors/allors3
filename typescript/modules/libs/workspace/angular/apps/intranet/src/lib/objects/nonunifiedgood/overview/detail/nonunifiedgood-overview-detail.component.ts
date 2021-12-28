@@ -10,7 +10,6 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'nonunifiedgood-overview-detail',
   templateUrl: './nonunifiedgood-overview-detail.component.html',
   providers: [PanelService, ContextService],

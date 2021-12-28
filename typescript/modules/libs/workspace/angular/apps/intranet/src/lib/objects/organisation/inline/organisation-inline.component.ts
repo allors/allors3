@@ -5,7 +5,6 @@ import { Organisation } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'organisation-inline',
   templateUrl: './organisation-inline.component.html',
 })

@@ -3,7 +3,6 @@ import { Procedure } from '@allors/workspace/domain/system';
 import { Fixture } from '../fixture';
 import '../matchers';
 
-
 let fixture: Fixture;
 
 beforeEach(async () => {

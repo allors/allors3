@@ -6,7 +6,6 @@ import { NonUnifiedGood } from '@allors/workspace/domain/default';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'nonunifiedgood-overview-summary',
   templateUrl: './nonunifiedgood-overview-summary.component.html',
   providers: [PanelService],

@@ -19,7 +19,7 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/tests/form");
+            await this.GotoAsync("/form");
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace Tests.Form
             data.Markdown = "*** Hello ***";
             this.Transaction.Commit();
 
-            await this.GotoAsync("/tests/form");
+            await this.GotoAsync("/form");
 
             var actual = await this.FormComponent.Markdown.GetAsync();
 

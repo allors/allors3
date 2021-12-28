@@ -16,7 +16,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'partyrate-overview-panel',
   templateUrl: './partyrate-overview-panel.component.html',
   providers: [PanelService],

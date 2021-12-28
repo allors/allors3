@@ -14,7 +14,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'orderadjustment-overview-panel',
   templateUrl: './orderadjustment-overview-panel.component.html',
   providers: [PanelService],

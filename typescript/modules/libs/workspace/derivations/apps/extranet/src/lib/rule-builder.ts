@@ -8,11 +8,5 @@ import { PartyDisplayPhoneRule } from './rules/party-display-phone.rule';
 import { PersonDisplayEmailRule } from './rules/person-display-email.rule';
 
 export function ruleBuilder(m: M): IRule<IObject>[] {
-  return [
-    new OrganisationDisplayAddressRule(m),
-    new OrganisationDisplayAddress2Rule(m),
-    new OrganisationDisplayAddress3Rule(m),
-    new PartyDisplayPhoneRule(m),
-    new PersonDisplayEmailRule(m),
-  ];
+  return [new OrganisationDisplayAddressRule(m), new OrganisationDisplayAddress2Rule(m), new OrganisationDisplayAddress3Rule(m), new PartyDisplayPhoneRule(m), new PersonDisplayEmailRule(m)];
 }

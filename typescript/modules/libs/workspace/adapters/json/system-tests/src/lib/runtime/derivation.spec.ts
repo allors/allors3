@@ -1,7 +1,7 @@
 import { Organisation, Person } from '@allors/workspace/domain/default';
 import { Pull } from '@allors/workspace/domain/system';
 import { OrganisationDisplayNameRule, PersonDisplayNameRule } from '@allors/workspace/derivations/core-custom';
-import "@allors/workspace/derivations/system"
+import '@allors/workspace/derivations/system';
 
 import { Fixture } from '../fixture';
 import '../matchers';

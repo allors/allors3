@@ -33,7 +33,7 @@ namespace Tests.Form
             this.Transaction.Commit();
 
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/tests/form");
+            await this.GotoAsync("/form");
         }
 
         [Test]

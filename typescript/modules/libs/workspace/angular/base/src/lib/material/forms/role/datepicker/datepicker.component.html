@@ -1,0 +1,22 @@
+<div class="row">
+  <mat-form-field class="col">
+    <input
+      aFocus
+      [aFocusTrigger]="roleType"
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="shadow"
+      [name]="name"
+      [placeholder]="label"
+      [required]="required"
+      [disabled]="disabled"
+      [readonly]="readonly"
+      (ngModelChange)="onModelChange($event)"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+  </mat-form-field>
+</div>
+
+<mat-datepicker #picker></mat-datepicker>

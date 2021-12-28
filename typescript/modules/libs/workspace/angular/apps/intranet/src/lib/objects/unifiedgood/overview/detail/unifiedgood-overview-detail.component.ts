@@ -27,7 +27,6 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'unifiedgood-overview-detail',
   templateUrl: './unifiedgood-overview-detail.component.html',
   providers: [PanelService, ContextService],

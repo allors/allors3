@@ -12,7 +12,6 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'requestforquote-overview-detail',
   templateUrl: './requestforquote-overview-detail.component.html',
   providers: [ContextService, PanelService],

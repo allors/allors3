@@ -16,7 +16,7 @@ namespace Tests.Info
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/tests/form");
+            await this.GotoAsync("/form");
         }
 
         [Test]

@@ -15,7 +15,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'productquote-overview-panel',
   templateUrl: './productquote-overview-panel.component.html',
   providers: [PanelService],

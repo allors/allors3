@@ -41,7 +41,7 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
 
     const rules = ruleBuilder(m);
     applyRules(m, rules);
-    
+
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
     workspaceService.workspace = workspace;

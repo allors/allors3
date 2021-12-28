@@ -1,4 +1,4 @@
-import { APP_BOOTSTRAP_LISTENER, APP_INITIALIZER, ComponentRef, ErrorHandler } from '@angular/core';
+import { APP_BOOTSTRAP_LISTENER, APP_INITIALIZER, ComponentRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { DialogInfoService, MenuInfoService, NavigationInfoService, RouteInfoService } from '@allors/workspace/angular/base';

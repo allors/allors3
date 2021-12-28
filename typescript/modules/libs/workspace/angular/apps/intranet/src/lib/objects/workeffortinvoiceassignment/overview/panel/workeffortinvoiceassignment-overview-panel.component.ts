@@ -12,7 +12,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'workeffortinvoiceitemeassignment-overview-panel',
   templateUrl: './workeffortinvoiceassignment-overview-panel.component.html',
   providers: [PanelService],

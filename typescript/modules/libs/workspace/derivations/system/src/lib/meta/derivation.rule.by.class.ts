@@ -8,7 +8,7 @@ export interface DerivationsRuleByClassExtension {
 export function derivationRuleByClass(roleType: RoleType): Map<Class, IRule<IObject>>;
 export function derivationRuleByClass(roleType: RoleType, ruleByClass?: Map<Class, IRule<IObject>>): void;
 export function derivationRuleByClass(roleType: RoleType, ruleByClass?: Map<Class, IRule<IObject>>): void | Map<Class, IRule<IObject>> {
-  if(roleType == null){
+  if (roleType == null) {
     return;
   }
 

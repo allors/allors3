@@ -20,7 +20,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'purchaseorder-overview-panel',
   templateUrl: './purchaseorder-overview-panel.component.html',
   providers: [ContextService, PanelService],

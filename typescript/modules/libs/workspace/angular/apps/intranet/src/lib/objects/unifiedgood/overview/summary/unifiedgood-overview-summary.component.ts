@@ -6,7 +6,6 @@ import { NavigationService, PanelService } from '@allors/workspace/angular/base'
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'unifiedgood-overview-summary',
   templateUrl: './unifiedgood-overview-summary.component.html',
   providers: [PanelService],

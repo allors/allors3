@@ -6,7 +6,6 @@ import { NavigationService, PanelService } from '@allors/workspace/angular/base'
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'organisation-overview-summary',
   templateUrl: './organisation-overview-summary.component.html',
   providers: [PanelService],

@@ -4,7 +4,6 @@ import { Party } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'party-party',
   templateUrl: './party-inline.component.html',
 })

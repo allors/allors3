@@ -8,7 +8,6 @@ import { PanelService, RefreshService, SaveService, SearchFactory, SingletonId }
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-
   selector: 'organisation-overview-detail',
   templateUrl: './organisation-overview-detail.component.html',
   providers: [ContextService, PanelService],
@@ -19,7 +18,7 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
   organisation: Organisation;
   countries: Country[];
   peopleFilter: SearchFactory;
-  
+
   private subscription: Subscription;
 
   constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId) {

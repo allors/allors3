@@ -11,7 +11,6 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'nonunifiedpart-overview-detail',
   templateUrl: './nonunifiedpart-overview-detail.component.html',
   providers: [PanelService, ContextService],
@@ -200,6 +199,8 @@ export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy 
         if (this.selectedBrand) {
           this.brandSelected(this.selectedBrand);
         }
+
+        this.categorySelected(this.selectedCategories);
       });
   }
 

@@ -79,7 +79,7 @@ export class WorkTaskCreateComponent implements OnInit, OnDestroy {
 
         if (this.user.CurrentOrganisationContactRelationships.length == 1) {
           const customer = this.user.CurrentOrganisationContactRelationships[0].Organisation;
-          this.updateCustomer(customer as Party);      
+          this.updateCustomer(customer as Party);
           this.workTask.Customer = customer;
         }
       });

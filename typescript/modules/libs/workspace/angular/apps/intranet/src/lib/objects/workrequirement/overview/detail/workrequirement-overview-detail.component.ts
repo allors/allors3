@@ -39,7 +39,7 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
     public refreshService: RefreshService,
     private saveService: SaveService,
     private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -147,7 +147,7 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public save(): void {
-    this.onSave()
+    this.onSave();
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
@@ -162,17 +162,17 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
     const pulls = [
       pull.SerialisedItem({
         predicate: {
-            kind: 'And',
-            operands: [
-              {
-                kind: 'Or',
-                operands: [
-                  { kind: 'Equals', propertyType: m.SerialisedItem.OwnedBy, object: party },
-                  { kind: 'Equals', propertyType: m.SerialisedItem.RentedBy, object: party },
-                ],
-              },
-            ],
-          },
+          kind: 'And',
+          operands: [
+            {
+              kind: 'Or',
+              operands: [
+                { kind: 'Equals', propertyType: m.SerialisedItem.OwnedBy, object: party },
+                { kind: 'Equals', propertyType: m.SerialisedItem.RentedBy, object: party },
+              ],
+            },
+          ],
+        },
       }),
     ];
 

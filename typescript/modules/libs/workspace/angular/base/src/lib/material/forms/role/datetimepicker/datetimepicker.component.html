@@ -1,0 +1,30 @@
+<div class="row">
+  <mat-form-field class="col-8">
+    <input
+      aFocus
+      [aFocusTrigger]="roleType"
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="shadow"
+      [name]="name"
+      [placeholder]="label"
+      [required]="required"
+      [disabled]="disabled"
+      [readonly]="readonly"
+      (ngModelChange)="onModelChange($event)"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+  </mat-form-field>
+
+  <mat-form-field class="col-2">
+    <input matInput type="number" min="0" max="23" [(ngModel)]="hour" [name]="name + '_hour'" placeholder="hour" [required]="required" [disabled]="disabled || !this.shadow" [readonly]="readonly" />
+  </mat-form-field>
+
+  <mat-form-field class="col-2">
+    <input matInput type="number" min="0" max="59" [(ngModel)]="minute" [name]="name + '_minute'" placeholder="minute" [required]="required" [disabled]="disabled || !this.shadow" [readonly]="readonly" />
+  </mat-form-field>
+</div>
+
+<mat-datepicker #picker></mat-datepicker>
