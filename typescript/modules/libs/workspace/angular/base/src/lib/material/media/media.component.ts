@@ -12,7 +12,6 @@ import { isImage } from './media';
 import { AllorsComponent } from '../../component';
 
 @Component({
-  
   selector: 'a-mat-media',
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss'],

@@ -14,7 +14,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'orderadjustment-overview-panel',
   templateUrl: './orderadjustment-overview-panel.component.html',
   providers: [PanelService],

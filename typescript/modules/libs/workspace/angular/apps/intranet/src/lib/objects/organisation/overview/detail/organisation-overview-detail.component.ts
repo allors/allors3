@@ -10,7 +10,6 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
-  
   selector: 'organisation-overview-detail',
   templateUrl: './organisation-overview-detail.component.html',
   providers: [ContextService, PanelService],

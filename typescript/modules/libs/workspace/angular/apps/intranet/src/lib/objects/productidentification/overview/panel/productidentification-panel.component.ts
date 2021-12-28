@@ -13,7 +13,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'productidentification-panel',
   templateUrl: './productIdentification-panel.component.html',
   providers: [PanelService],

@@ -27,7 +27,6 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  
   selector: 'unifiedgood-overview-detail',
   templateUrl: './unifiedgood-overview-detail.component.html',
   providers: [PanelService, ContextService],

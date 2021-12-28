@@ -14,7 +14,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'workeffortpurchaseorderitemassignment-overview-panel',
   templateUrl: './workeffortpoiassignment-overview-panel.component.html',
   providers: [PanelService],

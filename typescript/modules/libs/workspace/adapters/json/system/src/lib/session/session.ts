@@ -13,7 +13,6 @@ import { DatabaseOriginState } from './originstate/database-origin-state';
 import { Strategy } from './strategy';
 
 export class Session extends SystemSession {
-  
   database: DatabaseConnection;
 
   constructor(workspace: Workspace) {

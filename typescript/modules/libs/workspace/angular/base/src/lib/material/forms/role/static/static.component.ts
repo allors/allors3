@@ -3,7 +3,6 @@ import { NgForm } from '@angular/forms';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  
   selector: 'a-mat-static',
   templateUrl: './static.component.html',
 })

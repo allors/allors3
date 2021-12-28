@@ -15,7 +15,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'timeentry-overview-panel',
   templateUrl: './timeentry-overview-panel.component.html',
   providers: [PanelService, ContextService],

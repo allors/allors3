@@ -8,7 +8,6 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 import { M } from '@allors/workspace/meta/default';
 
 @Component({
-  
   selector: 'internalorganisation-select',
   templateUrl: './internalorganisation-select.component.html',
   providers: [ContextService],

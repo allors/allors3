@@ -8,7 +8,6 @@ import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'salesorder-overview-summary',
   templateUrl: './salesorder-overview-summary.component.html',
   providers: [PanelService],

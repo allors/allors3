@@ -9,7 +9,6 @@ import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 import { AssociationField } from '../../../../forms/association-field';
 
 @Component({
-  
   selector: 'a-mat-association-autocomplete',
   templateUrl: './autocomplete.component.html',
 })

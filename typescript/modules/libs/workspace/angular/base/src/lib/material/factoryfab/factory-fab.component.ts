@@ -13,7 +13,6 @@ import { ObjectService } from '../object/object.service';
 import { ObjectData } from '../object/object.data';
 
 @Component({
-  
   selector: 'a-mat-factory-fab',
   templateUrl: './factory-fab.component.html',
   styleUrls: ['./factory-fab.component.scss'],

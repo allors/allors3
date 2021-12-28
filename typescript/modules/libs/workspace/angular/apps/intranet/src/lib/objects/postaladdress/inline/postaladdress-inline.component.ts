@@ -5,7 +5,6 @@ import { PartyContactMechanism, PostalAddress, Country, ContactMechanismPurpose 
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'party-contactmechanism-postaladdress',
   templateUrl: './postaladdress-inline.component.html',
 })

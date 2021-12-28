@@ -8,7 +8,6 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
 import { SortDirection } from '@allors/workspace/domain/system';
 
 @Component({
-  
   selector: 'nonunifiedpart-overview-summary',
   templateUrl: './nonunifiedpart-overview-summary.component.html',
   providers: [PanelService],

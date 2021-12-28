@@ -9,7 +9,6 @@ import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'salesinvoice-overview-summary',
   templateUrl: './salesinvoice-overview-summary.component.html',
   providers: [PanelService],

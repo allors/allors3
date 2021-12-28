@@ -5,7 +5,6 @@ import { PartyContactMechanism, Enumeration, ContactMechanismPurpose, ContactMec
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'party-contactmechanism-telecommunicationsnumber',
   templateUrl: './telecommunicationsnumber-inline.component.html',
 })

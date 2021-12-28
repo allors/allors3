@@ -14,7 +14,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'payment-overview-panel',
   templateUrl: './payment-overview-panel.component.html',
   providers: [ContextService, PanelService],

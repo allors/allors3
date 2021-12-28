@@ -9,7 +9,6 @@ import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  
   selector: 'a-mat-chips',
   templateUrl: './chips.component.html',
 })

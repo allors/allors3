@@ -20,7 +20,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'purchaseorder-overview-panel',
   templateUrl: './purchaseorder-overview-panel.component.html',
   providers: [ContextService, PanelService],

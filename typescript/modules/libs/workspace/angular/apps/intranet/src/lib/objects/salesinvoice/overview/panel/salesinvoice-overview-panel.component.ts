@@ -16,7 +16,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'salesinvoice-overview-panel',
   templateUrl: './salesinvoice-overview-panel.component.html',
   providers: [PanelService],

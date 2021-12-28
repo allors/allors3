@@ -13,7 +13,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'contactmechanism-overview-panel',
   templateUrl: './contactmechanism-overview-panel.component.html',
   providers: [PanelService],

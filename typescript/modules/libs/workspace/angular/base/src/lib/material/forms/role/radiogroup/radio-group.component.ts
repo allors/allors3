@@ -11,7 +11,6 @@ export interface RadioGroupOption {
 }
 
 @Component({
-  
   selector: 'a-mat-radio-group',
   templateUrl: './radio-group.component.html',
 })

@@ -10,7 +10,6 @@ import { PrintService } from '../../../../actions/print/print.service';
 import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
-  
   selector: 'worktask-overview-summary',
   templateUrl: './worktask-overview-summary.component.html',
   providers: [PanelService],

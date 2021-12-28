@@ -5,7 +5,6 @@ import { PartyContactMechanism, ContactMechanismPurpose, WebAddress } from '@all
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'party-contactmechanism-webAddress',
   templateUrl: './webaddress-inline.component.html',
 })

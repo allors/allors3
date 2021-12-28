@@ -29,7 +29,6 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  
   selector: 'salesinvoice-overview-detail',
   templateUrl: './salesinvoice-overview-detail.component.html',
   providers: [ContextService, PanelService],

@@ -6,7 +6,6 @@ import { IObject } from '@allors/workspace/domain/system';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  
   selector: 'a-mat-select',
   templateUrl: './select.component.html',
 })

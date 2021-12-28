@@ -26,7 +26,6 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  
   selector: 'worktask-overview-detail',
   templateUrl: './worktask-overview-detail.component.html',
   providers: [PanelService, ContextService],

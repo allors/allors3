@@ -4,7 +4,6 @@ import { AllorsComponent } from '../../component';
 import { AllorsMaterialSideNavService } from '../sidenav/side-nav.service';
 
 @Component({
-  
   selector: 'a-mat-sidenavtoggle',
   templateUrl: './side-nav-toggle.component.html',
 })

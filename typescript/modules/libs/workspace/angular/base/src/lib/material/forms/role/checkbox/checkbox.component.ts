@@ -4,7 +4,6 @@ import { NgForm } from '@angular/forms';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  
   selector: 'a-mat-checkbox',
   templateUrl: './checkbox.component.html',
 })

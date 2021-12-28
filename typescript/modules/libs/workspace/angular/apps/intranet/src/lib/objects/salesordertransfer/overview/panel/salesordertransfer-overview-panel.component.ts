@@ -13,7 +13,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'salesordertransfer-overview-panel',
   templateUrl: './salesordertransfer-overview-panel.component.html',
   providers: [PanelService],

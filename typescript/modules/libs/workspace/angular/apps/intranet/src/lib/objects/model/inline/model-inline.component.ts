@@ -5,7 +5,6 @@ import { Model } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'model-inline',
   templateUrl: './model-inline.component.html',
 })

@@ -20,7 +20,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'quoteitem-overview-panel',
   templateUrl: './quoteitem-overview-panel.component.html',
   providers: [ContextService, PanelService],

@@ -29,7 +29,6 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  
   selector: 'purchaseorder-overview-detail',
   templateUrl: './purchaseorder-overview-detail.component.html',
   providers: [ContextService, PanelService],

@@ -5,7 +5,6 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { AllorsComponent } from '../../../component';
 
 @Component({
-  
   selector: 'a-mat-footer-save-cancel',
   templateUrl: './save-cancel.component.html',
 })

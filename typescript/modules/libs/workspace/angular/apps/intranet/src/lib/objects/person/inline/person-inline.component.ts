@@ -5,7 +5,6 @@ import { Locale, Person, Enumeration, Salutation, GenderType } from '@allors/wor
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'person-inline',
   templateUrl: './person-inline.component.html',
 })

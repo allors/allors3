@@ -15,7 +15,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'communicationevent-overview-panel',
   templateUrl: './communicationevent-overview-panel.component.html',
   providers: [PanelService],

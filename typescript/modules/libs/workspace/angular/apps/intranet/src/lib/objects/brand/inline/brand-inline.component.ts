@@ -5,7 +5,6 @@ import { Brand } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'brand-inline',
   templateUrl: './brand-inline.component.html',
 })

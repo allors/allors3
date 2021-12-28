@@ -17,7 +17,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'workeffortassignmentrate-overview-panel',
   templateUrl: './workeffortassignmentrate-overview-panel.component.html',
   providers: [PanelService],

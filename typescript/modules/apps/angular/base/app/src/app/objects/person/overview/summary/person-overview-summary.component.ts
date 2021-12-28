@@ -7,7 +7,6 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-
   selector: 'person-overview-summary',
   templateUrl: './person-overview-summary.component.html',
   providers: [PanelService],

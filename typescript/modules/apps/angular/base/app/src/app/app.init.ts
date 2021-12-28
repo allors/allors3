@@ -1,20 +1,20 @@
-import { HttpClient } from "@angular/common/http";
-import { WorkspaceService } from "@allors/workspace/angular/core";
+import { HttpClient } from '@angular/common/http';
+import { WorkspaceService } from '@allors/workspace/angular/core';
 
-import { AngularClient } from "../allors/angular-client";
+import { AngularClient } from '../allors/angular-client';
 import { configure } from './app.configure';
 import { BaseContext } from '../allors/base-context';
 import { Configuration } from '@allors/workspace/domain/system';
 import { applyRules } from '@allors/workspace/derivations/system';
-import { LazyMetaPopulation } from "@allors/workspace/meta/json/system";
-import { PrototypeObjectFactory } from "@allors/workspace/adapters/system";
-import { ruleBuilder } from "@allors/workspace/derivations/base-custom";
+import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { ruleBuilder } from '@allors/workspace/derivations/base-custom';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { M } from '@allors/workspace/meta/default';
 
 export function init(workspaceService: WorkspaceService, httpClient: HttpClient, baseUrl: string, authUrl: string) {
-  const angularClient = new AngularClient(httpClient,baseUrl, authUrl);
+  const angularClient = new AngularClient(httpClient, baseUrl, authUrl);
 
   const metaPopulation = new LazyMetaPopulation(data);
   const m = metaPopulation as unknown as M;

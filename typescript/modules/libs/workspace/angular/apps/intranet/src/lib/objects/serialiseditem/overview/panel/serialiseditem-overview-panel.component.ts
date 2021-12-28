@@ -16,7 +16,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'serialiseditem-overview-panel',
   templateUrl: './serialiseditem-overview-panel.component.html',
   providers: [PanelService],

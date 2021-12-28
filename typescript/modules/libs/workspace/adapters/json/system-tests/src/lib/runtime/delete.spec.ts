@@ -38,7 +38,6 @@ test('instantiate', async () => {
   expect(c1a_3).toBeNull();
 });
 
-
 test('roles', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
@@ -58,7 +57,6 @@ test('roles', async () => {
   expect(c1b.C1WhereC1C1One2Many).toBeNull();
   expect(c1b.C1sWhereC1C1Many2Many.length).toBe(0);
 });
-
 
 test('associations', async () => {
   const { workspace, m } = fixture;

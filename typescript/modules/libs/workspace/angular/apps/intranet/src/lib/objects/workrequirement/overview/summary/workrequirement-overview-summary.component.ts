@@ -18,14 +18,7 @@ export class WorkRequirementOverviewSummaryComponent {
   requirement: WorkRequirement;
   workEffort: WorkEffort;
 
-  constructor(
-    @Self() public panel: PanelService,
-    public workspaceService: WorkspaceService,
-    public navigation: NavigationService,
-    public refreshService: RefreshService,
-    private saveService: SaveService,
-    public snackBar: MatSnackBar
-  ) {
+  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService, public refreshService: RefreshService, private saveService: SaveService, public snackBar: MatSnackBar) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const m = this.m;
 
@@ -48,7 +41,7 @@ export class WorkRequirementOverviewSummaryComponent {
             },
             LastModifiedBy: x,
           },
-        }),
+        })
       );
     };
 
@@ -84,4 +77,5 @@ export class WorkRequirementOverviewSummaryComponent {
       this.refreshService.refresh();
       this.snackBar.open('Work order created.', 'close', { duration: 5000 });
     }, this.saveService.errorHandler);
-  }}
+  }
+}

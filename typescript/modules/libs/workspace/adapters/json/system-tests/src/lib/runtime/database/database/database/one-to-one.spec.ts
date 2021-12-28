@@ -16,7 +16,6 @@ function* contextFactories() {
   // yield () => new MultipleSessionContext(fixture, 'Multiple');
 }
 
-
 let fixture: Fixture;
 let singleSessionContext: SingleSessionContext;
 let multipleSessionContext: MultipleSessionContext;

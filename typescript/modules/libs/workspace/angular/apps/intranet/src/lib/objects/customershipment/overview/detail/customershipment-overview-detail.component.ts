@@ -13,7 +13,6 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 
 @Component({
-  
   selector: 'customershipment-overview-detail',
   templateUrl: './customershipment-overview-detail.component.html',
   providers: [PanelService, ContextService],

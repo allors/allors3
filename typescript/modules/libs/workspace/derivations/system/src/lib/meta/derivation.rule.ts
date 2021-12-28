@@ -8,7 +8,7 @@ export interface DerivationsRuleExtension {
 export function derivationRule(roleType: RoleType): IRule<IObject>;
 export function derivationRule(roleType: RoleType, rule: IRule<IObject>): void;
 export function derivationRule(roleType: RoleType, rule?: IRule<IObject>): void | IRule<IObject> {
-  if(roleType == null){
+  if (roleType == null) {
     return;
   }
 

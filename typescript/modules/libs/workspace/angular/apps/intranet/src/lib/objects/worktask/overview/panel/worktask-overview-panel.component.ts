@@ -17,7 +17,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'worktask-overview-panel',
   templateUrl: './worktask-overview-panel.component.html',
   providers: [PanelService],

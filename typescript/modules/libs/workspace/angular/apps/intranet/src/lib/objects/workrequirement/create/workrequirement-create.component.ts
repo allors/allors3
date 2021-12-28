@@ -15,7 +15,6 @@ import { FetcherService } from '../../../..';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  
   selector: 'workrequirement-create',
   templateUrl: './workrequirement-create.component.html',
   providers: [PanelService, ContextService],
@@ -87,7 +86,7 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
                 include: {
                   OwnedBy: x,
                   RentedBy: x,
-                }
+                },
               })
             );
           }
@@ -115,17 +114,16 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
 
           const serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
           if (serialisedItem !== undefined) {
-            if (serialisedItem.OwnedBy != null && !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation ) {
+            if (serialisedItem.OwnedBy != null && !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation) {
               this.requirement.Originator = serialisedItem.OwnedBy;
               this.updateOriginator(this.requirement.Originator);
-            } else if (serialisedItem.RentedBy != null && !(<Organisation>serialisedItem.RentedBy).IsInternalOrganisation ) {
+            } else if (serialisedItem.RentedBy != null && !(<Organisation>serialisedItem.RentedBy).IsInternalOrganisation) {
               this.requirement.Originator = serialisedItem.RentedBy;
               this.updateOriginator(this.requirement.Originator);
             }
 
             this.requirement.FixedAsset = serialisedItem;
-          } 
-
+          }
         } else {
           this.requirement = loaded.object<WorkRequirement>(m.WorkRequirement);
           this.originatorSelected(this.requirement.Originator);

@@ -7,7 +7,6 @@ import { RecordBasedOriginState } from './record-based-origin-state';
 import { IRange } from '../../collections/ranges/ranges';
 
 export abstract class DatabaseOriginState extends RecordBasedOriginState {
-
   protected cachedRoleByRelationType: Map<RelationType, IRange<IObject>>;
 
   private isPushed: boolean;

@@ -8,7 +8,6 @@ import { Action, NavigationService, PanelService, RefreshService, SaveService } 
 import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
-  
   selector: 'worktask-overview-summary',
   templateUrl: './worktask-overview-summary.component.html',
   providers: [PanelService],

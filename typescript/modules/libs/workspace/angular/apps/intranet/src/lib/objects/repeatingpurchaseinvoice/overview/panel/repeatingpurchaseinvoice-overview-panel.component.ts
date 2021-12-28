@@ -17,7 +17,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'repeatingpurchaseinvoice-overview-panel',
   templateUrl: './repeatingpurchaseinvoice-overview-panel.component.html',
   providers: [ContextService, PanelService],

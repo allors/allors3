@@ -8,7 +8,6 @@ import { NavigationService, ObjectService, RefreshService, UserId } from '@allor
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'taskassignment-link',
   templateUrl: './taskassignment-link.component.html',
   providers: [ContextService],

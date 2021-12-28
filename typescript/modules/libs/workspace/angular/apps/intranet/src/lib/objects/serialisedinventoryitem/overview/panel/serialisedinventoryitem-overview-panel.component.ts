@@ -14,7 +14,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'serialisedinventoryitem-overview-panel',
   templateUrl: './serialisedinventoryitem-overview-panel.component.html',
   providers: [PanelService],

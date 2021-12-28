@@ -11,7 +11,6 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  
   selector: 'nonunifiedpart-overview-detail',
   templateUrl: './nonunifiedpart-overview-detail.component.html',
   providers: [PanelService, ContextService],

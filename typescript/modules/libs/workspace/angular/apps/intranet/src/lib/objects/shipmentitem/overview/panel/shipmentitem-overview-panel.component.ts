@@ -16,7 +16,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'shipmentitem-overview-panel',
   templateUrl: './shipmentitem-overview-panel.component.html',
   providers: [ContextService, PanelService],

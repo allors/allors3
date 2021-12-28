@@ -106,7 +106,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
         const notifications = loaded.collection<Notification>(m.NotificationList.UnconfirmedNotifications);
-        this.table.total = notifications?.length ?? 0;;
+        this.table.total = notifications?.length ?? 0;
         this.table.data = notifications?.map((v) => {
           return {
             object: v,

@@ -5,16 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/workspace/meta/default';
-import {
-  Person,
-  Part,
-  ProductIdentificationType,
-  Facility,
-  NonUnifiedPart,
-  NonUnifiedPartBarcodePrint,
-  NonSerialisedInventoryItem,
-  InternalOrganisation,
-} from '@allors/workspace/domain/default';
+import { Person, Part, ProductIdentificationType, Facility, NonUnifiedPart, NonUnifiedPartBarcodePrint, NonSerialisedInventoryItem, InternalOrganisation } from '@allors/workspace/domain/default';
 import {
   Action,
   DeleteService,

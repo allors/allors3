@@ -4,7 +4,6 @@ import { PartyContactMechanism } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'party-contactmechanism',
   templateUrl: './contactmechanism-inline.component.html',
 })

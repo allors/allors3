@@ -16,7 +16,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'supplieroffering-overview-panel',
   templateUrl: './supplieroffering-overview-panel.component.html',
   providers: [PanelService],

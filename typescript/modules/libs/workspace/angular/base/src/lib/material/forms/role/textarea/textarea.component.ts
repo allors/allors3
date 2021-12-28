@@ -6,7 +6,6 @@ import { take } from 'rxjs/operators';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  
   selector: 'a-mat-textarea',
   templateUrl: './textarea.component.html',
 })

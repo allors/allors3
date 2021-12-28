@@ -7,8 +7,6 @@ import { FilterField } from '../../filter/filter-field';
 import { AllorsMaterialFilterFieldDialogComponent } from './field/dialog.component';
 
 @Component({
-  
-
   selector: 'a-mat-filter',
   templateUrl: './filter.component.html',
 })

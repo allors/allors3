@@ -7,7 +7,6 @@ import { Column } from './column';
 import { TableRow } from './table-row';
 
 @Component({
-  
   selector: 'a-mat-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],

@@ -10,7 +10,6 @@ import { FilterFieldDefinition } from '../../../filter/filter-field-definition';
 import { AllorsComponent } from '../../../component';
 
 @Component({
-  
   selector: 'a-mat-filter-field-search',
   templateUrl: './search.component.html',
 })

@@ -15,7 +15,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'workrequirement-overview-panel',
   templateUrl: './workrequirement-overview-panel.component.html',
   providers: [PanelService],

@@ -10,10 +10,10 @@ export class OrganisationDisplayNameRule implements IRule<Organisation> {
 
   constructor(m: M) {
     const { dependency: d } = m;
-    
+
     this.objectType = m.Organisation;
     this.roleType = m.Organisation.DisplayName;
-    
+
     this.dependencies = [d(m.Organisation, (v) => v.Owner)];
   }
 

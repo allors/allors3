@@ -21,7 +21,7 @@ interface Row extends TableRow {
 export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
   fixedAsset: FixedAsset;
-    @HostBinding('class.expanded-panel') get expandedPanelClass() {
+  @HostBinding('class.expanded-panel') get expandedPanelClass() {
     return this.panel.isExpanded;
   }
 
@@ -46,7 +46,7 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
     public refreshService: RefreshService,
     public navigation: NavigationService,
 
-    public deleteService: DeleteService,
+    public deleteService: DeleteService
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
@@ -96,18 +96,17 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
           select: {
             WorkRequirementsWhereFixedAsset: {
               WorkRequirementFulfillmentWhereFullfilledBy: x,
-            }
+            },
           },
         }),
         pull.WorkEffort({
           objectId: id,
           include: {
-            WorkEffortFixedAssetAssignmentsWhereAssignment:
-            {
+            WorkEffortFixedAssetAssignmentsWhereAssignment: {
               FixedAsset: x,
-            }
-          }
-        }),
+            },
+          },
+        })
       );
     };
 

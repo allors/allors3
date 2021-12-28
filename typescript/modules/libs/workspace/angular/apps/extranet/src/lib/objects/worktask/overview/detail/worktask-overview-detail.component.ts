@@ -8,7 +8,6 @@ import { NavigationService, PanelService, RefreshService, SaveService } from '@a
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'worktask-overview-detail',
   templateUrl: './worktask-overview-detail.component.html',
   providers: [PanelService, ContextService],

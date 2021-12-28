@@ -1,1 +1,1 @@
-import "@allors/workspace/derivations/system"
+import '@allors/workspace/derivations/system';

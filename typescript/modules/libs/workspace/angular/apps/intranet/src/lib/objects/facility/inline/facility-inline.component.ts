@@ -7,7 +7,6 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  
   selector: 'facility-inline',
   templateUrl: './facility-inline.component.html',
 })

@@ -57,6 +57,6 @@ export abstract class Context {
       }
     }
 
-    throw new Error("only for database objects");
+    throw new Error('only for database objects');
   }
 }

@@ -17,7 +17,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'workeffortfixedassetassignment-overview-panel',
   templateUrl: './workeffortfixedassetassignment-overview-panel.component.html',
   providers: [PanelService],

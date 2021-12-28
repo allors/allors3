@@ -6,7 +6,6 @@ import { NavigationService, PanelService } from '@allors/workspace/angular/base'
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  
   selector: 'organisation-overview-summary',
   templateUrl: './organisation-overview-summary.component.html',
   providers: [PanelService],

@@ -32,7 +32,7 @@ export function configure(m: M) {
     objectType: m.FixedAsset,
     roleTypes: [m.FixedAsset.SearchString],
   });
-  
+
   angularFilterDefinition(
     m.WorkEffort,
     new FilterDefinition(
@@ -56,7 +56,7 @@ export function configure(m: M) {
       }
     )
   );
-  
+
   angularSorter(
     m.WorkEffort,
     new Sorter({

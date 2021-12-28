@@ -11,7 +11,7 @@ export function angularSorter(composite: Composite, sorter?: Sorter): Sorter | v
   if (composite == null) {
     return;
   }
-  
+
   if (sorter == null) {
     return (composite._ as AngularSorterExtension).sorter;
   }

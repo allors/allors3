@@ -36,7 +36,6 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  
   selector: 'salesorder-overview-detail',
   templateUrl: './salesorder-overview-detail.component.html',
   providers: [ContextService, PanelService],

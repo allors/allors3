@@ -9,7 +9,6 @@ import { RoleField } from '../../../../forms/role-field';
 import { MediaService } from '../../../../media/media.service';
 
 @Component({
-  
   selector: 'a-mat-files',
   templateUrl: './files.component.html',
 })

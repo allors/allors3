@@ -119,15 +119,7 @@ import {
 } from '@allors/workspace/angular/base';
 
 // Angular Material Base
-import {
-  WorkEffortListComponent,
-  WorkTaskCreateComponent,
-  WorkTaskOverviewComponent,
-  WorkTaskOverviewDetailComponent,
-  WorkTaskOverviewSummaryComponent,
-  PrintService,
-  PrintConfig,
-} from '@allors/workspace/angular/apps/extranet';
+import { WorkEffortListComponent, WorkTaskCreateComponent, WorkTaskOverviewComponent, WorkTaskOverviewDetailComponent, WorkTaskOverviewSummaryComponent, PrintService, PrintConfig } from '@allors/workspace/angular/apps/extranet';
 
 import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';

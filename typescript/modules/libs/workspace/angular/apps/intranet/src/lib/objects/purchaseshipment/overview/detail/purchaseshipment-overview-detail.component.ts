@@ -13,7 +13,6 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  
   selector: 'purchaseshipment-overview-detail',
   templateUrl: './purchaseshipment-overview-detail.component.html',
   providers: [PanelService, ContextService],

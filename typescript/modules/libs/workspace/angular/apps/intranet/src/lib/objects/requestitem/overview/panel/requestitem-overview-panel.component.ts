@@ -16,7 +16,6 @@ interface Row extends TableRow {
 }
 
 @Component({
-  
   selector: 'requestitem-overview-panel',
   templateUrl: './requestitem-overview-panel.component.html',
   providers: [ContextService, PanelService],

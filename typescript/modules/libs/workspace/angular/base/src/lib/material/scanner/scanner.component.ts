@@ -4,7 +4,6 @@ import { AllorsBarcodeService } from '../../barcode/barcode.service';
 import { AllorsComponent } from '../../component';
 
 @Component({
-  
   selector: 'a-mat-scanner',
   templateUrl: './scanner.component.html',
 })
