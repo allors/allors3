@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.InventoryItemTransaction.RolePattern(v => v.Part),
-                m.Part.RolePattern(v => v.DisplayName, v => v.InventoryItemsWherePart),
+                m.Part.RolePattern(v => v.DisplayName, v => v.InventoryItemTransactionsWherePart),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
