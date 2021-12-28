@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("b00e2650-283f-4326-bdd3-46a2890e2037")]
     #endregion
-    public partial class InventoryItemTransaction : Commentable, Object
+    public partial class InventoryItemTransaction : Commentable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -39,6 +39,20 @@ namespace Allors.Repository
         public Part Part { get; set; }
 
         #region Allors
+        [Id("0b285a95-a479-4052-a75c-2b4a3e074188")]
+        #endregion
+        [Indexed]
+        [Workspace(Default)]
+        public string PartNumber { get; set; }
+
+        #region Allors
+        [Id("aedd91bd-b401-4261-aa27-32bb82197257")]
+        #endregion
+        [Indexed]
+        [Workspace(Default)]
+        public string PartDisplayName { get; set; }
+
+        #region Allors
         [Id("e422efc4-4d17-46d8-bba4-6e78e7761f93")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -56,6 +70,13 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
+
+        #region Allors
+        [Id("c5b12893-741e-4bcf-b027-1fb000ee370c")]
+        #endregion
+        [Indexed]
+        [Workspace(Default)]
+        public string SerialisedItemItemNumber { get; set; }
 
         #region Allors
         [Id("57bdf1d7-84b8-4c7c-a470-396f6facd3bd")]
@@ -122,6 +143,13 @@ namespace Allors.Repository
         [Workspace(Default)]
         public Facility Facility { get; set; }
 
+        #region Allors
+        [Id("627d4c37-3f17-49c3-8b8d-4d7019daebb0")]
+        #endregion
+        [Indexed]
+        [Workspace(Default)]
+        public string FacilityName { get; set; }
+
         /// <summary>
         /// Gets or Sets the Lot where this InventoryItemTransaction applies (if any).
         /// </summary>
@@ -168,6 +196,13 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public SerialisedInventoryItemState SerialisedInventoryItemState { get; set; }
+
+        #region Allors
+        [Id("69d9d589-a462-44a0-994b-3eed90f4924b")]
+        #endregion
+        [Indexed]
+        [Workspace(Default)]
+        public string InventoryItemStateName { get; set; }
 
         #region inherited methods
 
