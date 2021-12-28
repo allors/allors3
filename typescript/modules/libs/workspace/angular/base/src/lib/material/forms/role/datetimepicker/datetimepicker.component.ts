@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-datetimepicker',
   styleUrls: ['./datetimepicker.component.scss'],
   templateUrl: './datetimepicker.component.html',

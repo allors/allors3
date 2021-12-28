@@ -13,7 +13,7 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'purchaseshipment-overview-detail',
   templateUrl: './purchaseshipment-overview-detail.component.html',
   providers: [PanelService, ContextService],

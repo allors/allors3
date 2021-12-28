@@ -15,7 +15,7 @@ import { FetcherService } from '../../../..';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'workrequirement-create',
   templateUrl: './workrequirement-create.component.html',
   providers: [PanelService, ContextService],

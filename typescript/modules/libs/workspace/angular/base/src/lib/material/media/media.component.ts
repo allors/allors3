@@ -12,7 +12,7 @@ import { isImage } from './media';
 import { AllorsComponent } from '../../component';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-media',
   templateUrl: './media.component.html',
   styleUrls: ['./media.component.scss'],

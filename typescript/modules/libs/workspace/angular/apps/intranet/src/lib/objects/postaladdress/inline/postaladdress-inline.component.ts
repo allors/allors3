@@ -5,7 +5,7 @@ import { PartyContactMechanism, PostalAddress, Country, ContactMechanismPurpose 
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'party-contactmechanism-postaladdress',
   templateUrl: './postaladdress-inline.component.html',
 })

@@ -10,7 +10,7 @@ import * as EasyMDE from 'easymde';
   selector: 'a-mat-localised-markdown',
   template: `
     <h4>{{ localisedLabel }}</h4>
-    <textarea #easymde [attr.maxlength]="maxlength" [attr.data-allors-id]="dataAllorsId" [attr.data-allors-roletype]="dataAllorsRoleType"></textarea>
+    <textarea #easymde [attr.maxlength]="maxlength"  ></textarea>
   `,
   encapsulation: ViewEncapsulation.None,
 })

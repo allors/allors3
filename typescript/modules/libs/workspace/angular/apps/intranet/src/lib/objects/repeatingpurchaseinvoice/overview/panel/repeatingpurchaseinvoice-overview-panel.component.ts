@@ -17,7 +17,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'repeatingpurchaseinvoice-overview-panel',
   templateUrl: './repeatingpurchaseinvoice-overview-panel.component.html',
   providers: [ContextService, PanelService],

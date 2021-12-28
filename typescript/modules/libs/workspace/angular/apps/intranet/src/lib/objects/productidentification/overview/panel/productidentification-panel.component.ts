@@ -13,7 +13,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'productidentification-panel',
   templateUrl: './productIdentification-panel.component.html',
   providers: [PanelService],

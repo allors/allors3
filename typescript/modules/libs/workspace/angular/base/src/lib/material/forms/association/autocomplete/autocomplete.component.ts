@@ -9,7 +9,7 @@ import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
 import { AssociationField } from '../../../../forms/association-field';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-association-autocomplete',
   templateUrl: './autocomplete.component.html',
 })

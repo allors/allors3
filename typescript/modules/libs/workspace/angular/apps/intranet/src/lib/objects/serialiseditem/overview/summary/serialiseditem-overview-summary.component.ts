@@ -6,7 +6,7 @@ import { NavigationService, PanelService } from '@allors/workspace/angular/base'
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'serialiseditem-overview-summary',
   templateUrl: './serialiseditem-overview-summary.component.html',
   providers: [PanelService],

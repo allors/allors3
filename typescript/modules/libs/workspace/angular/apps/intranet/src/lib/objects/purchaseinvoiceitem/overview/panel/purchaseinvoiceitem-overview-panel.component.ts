@@ -17,7 +17,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'purchaseinvoiceitem-overview-panel',
   templateUrl: './purchaseinvoiceitem-overview-panel.component.html',
   providers: [ContextService, PanelService],

@@ -5,7 +5,7 @@ import { PartyContactMechanism, Enumeration, ContactMechanismPurpose, ContactMec
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'party-contactmechanism-telecommunicationsnumber',
   templateUrl: './telecommunicationsnumber-inline.component.html',
 })

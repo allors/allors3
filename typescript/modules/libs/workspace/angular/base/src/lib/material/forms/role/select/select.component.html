@@ -9,8 +9,8 @@
     [required]="required"
     [disabled]="disabled"
     (ngModelChange)="onModelChange($event)"
-    [attr.data-allors-id]="dataAllorsId"
-    [attr.data-allors-roletype]="dataAllorsRoleType"
+    
+    
   >
     <mat-option *ngIf="!required && roleType.isOne" [attr.data-allors-option-id]="0">None</mat-option>
     <mat-option *ngFor="let option of options" [value]="option" [attr.data-allors-option-id]="option.id">

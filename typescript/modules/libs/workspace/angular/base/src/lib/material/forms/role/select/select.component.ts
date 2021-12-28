@@ -6,7 +6,7 @@ import { IObject } from '@allors/workspace/domain/system';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-select',
   templateUrl: './select.component.html',
 })

@@ -1,6 +1,6 @@
 // tslint:disable: directive-selector
 // tslint:disable: directive-class-suffix
-import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive } from '@angular/core';
+import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive, HostBinding } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 
 import { AssociationType, RoleType, assert, humanize } from '@allors/workspace/meta/system';
@@ -10,6 +10,16 @@ import { Field } from './field';
 
 @Directive()
 export abstract class AssociationField extends Field implements AfterViewInit, OnDestroy {
+  @HostBinding('attr.data-allors-id')
+  get dataAllorsId() {
+    return this.object?.id;
+  }
+
+  @HostBinding('attr.data-allors-roletype')
+  get dataAllorsAssociationType() {
+    return this.associationType?.relationType.tag;
+  }
+
   @Input()
   object: IObject;
 
@@ -100,13 +110,5 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
         this.parentForm.removeControl(control);
       });
     }
-  }
-
-  get dataAllorsId(): number {
-    return this.object?.id;
-  }
-
-  get dataAllorsAssociationType(): string {
-    return this.associationType?.relationType.tag;
   }
 }

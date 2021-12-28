@@ -4,7 +4,7 @@ import { AllorsBarcodeService } from '../../barcode/barcode.service';
 import { AllorsComponent } from '../../component';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-scanner',
   templateUrl: './scanner.component.html',
 })

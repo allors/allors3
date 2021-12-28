@@ -5,7 +5,7 @@ import { Model } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'model-inline',
   templateUrl: './model-inline.component.html',
 })

@@ -15,7 +15,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'timeentry-overview-panel',
   templateUrl: './timeentry-overview-panel.component.html',
   providers: [PanelService, ContextService],

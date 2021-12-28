@@ -16,7 +16,7 @@ interface Row extends TableRow {
 }
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'serialiseditem-overview-panel',
   templateUrl: './serialiseditem-overview-panel.component.html',
   providers: [PanelService],

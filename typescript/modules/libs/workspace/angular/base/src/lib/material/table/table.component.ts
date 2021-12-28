@@ -7,7 +7,7 @@ import { Column } from './column';
 import { TableRow } from './table-row';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],

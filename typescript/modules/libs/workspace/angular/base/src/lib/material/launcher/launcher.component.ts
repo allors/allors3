@@ -4,7 +4,7 @@ import { AllorsComponent } from '../../component';
 import { PanelManagerService } from '../../panel/panel-manager.service';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-launcher',
   templateUrl: './launcher.component.html',
   styleUrls: ['./launcher.component.scss'],

@@ -6,7 +6,7 @@ import { take } from 'rxjs/operators';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-textarea',
   templateUrl: './textarea.component.html',
 })

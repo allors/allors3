@@ -10,7 +10,7 @@ import { FilterFieldDefinition } from '../../../filter/filter-field-definition';
 import { AllorsComponent } from '../../../component';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-filter-field-search',
   templateUrl: './search.component.html',
 })

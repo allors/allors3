@@ -1,6 +1,6 @@
 // tslint:disable: directive-selector
 // tslint:disable: directive-class-suffix
-import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive } from '@angular/core';
+import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive, HostBinding } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 
 import { RoleType, humanize, UnitTags } from '@allors/workspace/meta/system';
@@ -10,6 +10,16 @@ import { Field } from './field';
 
 @Directive()
 export abstract class RoleField extends Field implements AfterViewInit, OnDestroy {
+  @HostBinding('attr.data-allors-id')
+  get dataAllorsId() {
+    return this.object?.id;
+  }
+
+  @HostBinding('attr.data-allors-roletype')
+  get dataAllorsRoleType() {
+    return this.roleType?.relationType.tag;
+  }
+
   @Input()
   public object: IObject;
 
@@ -204,13 +214,5 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
         this.parentForm.removeControl(control);
       });
     }
-  }
-
-  get dataAllorsId(): number {
-    return this.object?.id;
-  }
-
-  get dataAllorsRoleType(): string {
-    return this.roleType?.relationType.tag;
   }
 }

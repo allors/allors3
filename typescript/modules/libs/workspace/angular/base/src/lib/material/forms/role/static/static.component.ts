@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { RoleField } from '../../../../forms/role-field';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-static',
   templateUrl: './static.component.html',
 })

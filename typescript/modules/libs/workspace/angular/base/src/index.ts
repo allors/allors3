@@ -32,7 +32,6 @@ export * from './lib/focus/focus.service.core';
 export * from './lib/forms/association-field';
 export * from './lib/forms/field';
 export * from './lib/forms/localised-role-field';
-export * from './lib/forms/model-field';
 export * from './lib/forms/role-field';
 
 export * from './lib/info/dialog-info.service';

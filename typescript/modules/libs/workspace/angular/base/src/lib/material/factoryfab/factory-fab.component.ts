@@ -13,7 +13,7 @@ import { ObjectService } from '../object/object.service';
 import { ObjectData } from '../object/object.data';
 
 @Component({
-  // eslint-disable-next-line @angular-eslint/component-selector
+  
   selector: 'a-mat-factory-fab',
   templateUrl: './factory-fab.component.html',
   styleUrls: ['./factory-fab.component.scss'],
