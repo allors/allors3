@@ -42,6 +42,13 @@ namespace Allors.Repository
         [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
+        #region Allors
+        [Id("10a794b1-c1e9-4498-9439-3f92598f142f")]
+        #endregion
+        [Indexed]
+        [Workspace(Default)]
+        public string WorkEffortNumber { get; set; }
+
         /// <summary>
         /// Gets or sets the Part which describes this WorkEffortInventoryAssignment.
         /// </summary>

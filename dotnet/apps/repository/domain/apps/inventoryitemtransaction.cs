@@ -46,6 +46,13 @@ namespace Allors.Repository
         public string PartNumber { get; set; }
 
         #region Allors
+        [Id("aedd91bd-b401-4261-aa27-32bb82197257")]
+        #endregion
+        [Indexed]
+        [Workspace(Default)]
+        public string PartDisplayName { get; set; }
+
+        #region Allors
         [Id("e422efc4-4d17-46d8-bba4-6e78e7761f93")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
