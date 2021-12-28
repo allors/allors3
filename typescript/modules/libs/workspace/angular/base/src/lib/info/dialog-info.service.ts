@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { OBJECT_CREATE_TOKEN, OBJECT_EDIT_TOKEN } from '../material/services/object/object.tokens';
+import { OBJECT_CREATE_TOKEN, OBJECT_EDIT_TOKEN } from '../material/object/object.tokens';
 
 export interface DialogInfo {
   create?: DialogObjectInfo[];

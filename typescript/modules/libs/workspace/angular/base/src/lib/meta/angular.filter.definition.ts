@@ -1,5 +1,5 @@
 import { Composite } from '@allors/workspace/meta/system';
-import { FilterDefinition } from '../components/filter/filter-definition';
+import { FilterDefinition } from '../filter/filter-definition';
 
 interface AngularFilterDefinitionExtension {
   filterDefinition?: FilterDefinition;
