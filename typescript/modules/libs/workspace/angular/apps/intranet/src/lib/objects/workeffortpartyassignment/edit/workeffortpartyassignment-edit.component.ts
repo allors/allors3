@@ -7,7 +7,6 @@ import { M } from '@allors/workspace/meta/default';
 import { Person, Party, WorkEffort, WorkEffortPartyAssignment, Employment } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -128,8 +127,9 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
 
         // TODO: Martien
         const employments = loaded.collection<Employment>(m.Organisation.EmploymentsWhereEmployer);
-        if (this.workEffort && this.workEffort.ScheduledStart) {
-          this.employees = employments?.filter((v) => v.FromDate <= this.workEffort.ScheduledStart && (v.ThroughDate == null || v.ThroughDate >= this.workEffort.ScheduledStart))?.map((v) => v.Employee);
+        if (this.workEffort) {
+          const now = new Date();
+          this.employees = employments?.filter((v) => v.FromDate <= now && (v.ThroughDate == null || v.ThroughDate >= now))?.map((v) => v.Employee);
         } else {
           this.employees = [this.person];
         }

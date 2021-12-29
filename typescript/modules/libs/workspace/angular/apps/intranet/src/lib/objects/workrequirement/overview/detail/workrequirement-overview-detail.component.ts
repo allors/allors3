@@ -12,6 +12,7 @@ import { IObject } from '@allors/workspace/domain/system';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 import { Filters } from '../../../../filters/filters';
+import { FixedAsset } from '../../../../../../../../../meta/extranet/src/lib/generated/m.g';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -94,9 +95,9 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
             pull.WorkRequirement({
               objectId: this.panel.manager.id,
               include: {
+                FixedAsset: x,
                 Originator: x,
                 Priority: x,
-                FixedAsset: x,
                 Pictures: x,
                 LastModifiedBy: x,
               },
