@@ -76,7 +76,9 @@ export class WorkRequirementFulfillmentCreateComponent implements OnInit, OnDest
           objectType: this.m.WorkRequirement,
           roleTypes: [this.m.WorkRequirement.Description],
           post: (predicate: And) => {
-            predicate.operands.push({ kind: 'Equals', propertyType: m.WorkRequirement.FixedAsset, object: this.fixedAsset }, { kind: 'Equals', propertyType: m.WorkRequirement.RequirementState, object: requirementCreated });
+            predicate.operands.push(
+              { kind: 'Equals', propertyType: m.WorkRequirement.FixedAsset, object: this.fixedAsset },
+              { kind: 'Equals', propertyType: m.WorkRequirement.RequirementState, object: requirementCreated });
           },
         });
       });

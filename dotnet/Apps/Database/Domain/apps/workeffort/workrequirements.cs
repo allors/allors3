@@ -22,13 +22,22 @@ namespace Allors.Database.Domain
             var cancelledState = new RequirementStates(this.Transaction).Cancelled;
             var closedState = new RequirementStates(this.Transaction).Finished;
 
+            var start = this.Meta.Start;
+            var close = this.Meta.Close;
             var cancel = this.Meta.Cancel;
             var reopen = this.Meta.Reopen;
             var createWorkTask = this.Meta.CreateWorkTask;
             var delete = this.Meta.Delete;
 
-            config.Deny(this.ObjectType, createdState, reopen);
-            config.Deny(this.ObjectType, inProgressState, Operations.Execute, Operations.Write);
+            config.Deny(this.ObjectType, createdState, reopen, close);
+
+            var inProgressExcept = new HashSet<IOperandType>
+            {
+                this.Meta.Reopen,
+                this.Meta.Close,
+            };
+
+            config.DenyExcept(this.ObjectType, inProgressState, inProgressExcept, Operations.Execute, Operations.Write);
 
             var cancelExcept = new HashSet<IOperandType>
             {
@@ -44,7 +53,6 @@ namespace Allors.Database.Domain
             };
 
             config.DenyExcept(this.ObjectType, closedState, closeExcept, Operations.Execute, Operations.Write);
-
 
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);

@@ -51,6 +51,12 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
+        public void AppsStart(WorkRequirementClose method)
+        {
+            this.RequirementState = new RequirementStates(this.Strategy.Transaction).InProgress;
+            method.StopPropagation = true;
+        }
+
         public void AppsClose(WorkRequirementClose method)
         {
             this.RequirementState = new RequirementStates(this.Strategy.Transaction).Finished;

@@ -222,6 +222,14 @@ namespace Allors.Repository
 
         #region Allors
 
+        [Id("d339e9d7-eccd-4fb4-96ee-fbe60be09f8e")]
+
+        #endregion
+        [Workspace(Default)]
+        void Start();
+
+        #region Allors
+
         [Id("b2c4db2c-b2c9-44a4-bb81-da353071735b")]
 
         #endregion

@@ -65,6 +65,13 @@ export class WorkRequirementOverviewSummaryComponent {
     }, this.saveService.errorHandler);
   }
 
+  public start(): void {
+    this.panel.manager.context.invoke(this.requirement.Start).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully started.', 'close', { duration: 5000 });
+    }, this.saveService.errorHandler);
+  }
+
   public close(): void {
     this.panel.manager.context.invoke(this.requirement.Close).subscribe(() => {
       this.refreshService.refresh();

@@ -161,6 +161,8 @@ namespace Allors.Repository
 
         public void Cancel() { }
 
+        public void Start() { }
+
         public void Close() { }
 
         public void Delete() { }
