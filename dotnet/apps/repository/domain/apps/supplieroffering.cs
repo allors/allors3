@@ -126,7 +126,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         [Workspace(Default)]
         public Party ObsoleteSupplier { get; set; }
 

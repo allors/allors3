@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Part>())
             {
-                @this.DerivePartModelName(validation);
+                @this.DerivePartProductTypeName(validation);
             }
         }
     }
