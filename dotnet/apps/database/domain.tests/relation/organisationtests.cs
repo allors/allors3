@@ -400,18 +400,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangeIsInternalOrganisationDeriveDeletePermission()
-        {
-            var organisation = new OrganisationBuilder(this.Transaction).Build();
-            this.Derive();
-
-            organisation.IsInternalOrganisation = true;
-            this.Derive();
-
-            Assert.Contains(this.deleteRevocation, organisation.Revocations);
-        }
-
-        [Fact]
         public void OnChangeExternalAccountingTransactionFromPartyDeriveDeletePermission()
         {
             var organisation = new OrganisationBuilder(this.Transaction).Build();

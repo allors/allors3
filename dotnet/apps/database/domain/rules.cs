@@ -481,6 +481,7 @@ namespace Allors.Database.Domain
                 new WorkEffortTotalSubContractedRevenueRule(m),
                 new WorkEffortTypeRule(m),
                 new WorkRequirementDeniedPermissionRule(m),
+                new WorkRequirementDisplayNameRule(m),
                 new WorkRequirementFixedAssetNameRule(m),
                 new WorkRequirementFulfillmentDeniedPermissionRule(m),
                 new WorkRequirementFulfillmentRule(m),

@@ -70,10 +70,13 @@ namespace Allors.Database.Domain
         {
             var now = @this.Transaction().Now();
 
+            var zz = new SupplierOfferings(@this.Strategy.Transaction).Extent().ToArray();
             @this.CurrentSupplierOfferings = new SupplierOfferings(@this.Strategy.Transaction).Extent()
                 .Where(v => v.FromDate <= now
                             && (!v.ExistThroughDate || v.ThroughDate >= now)
+                            && v.ExistPart
                             && v.Part.Equals(@this)
+                            && v.ExistSupplier
                             && v.Supplier.ExistInternalOrganisationsWhereActiveSupplier);
         }
     }
