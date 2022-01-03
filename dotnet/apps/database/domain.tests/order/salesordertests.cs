@@ -290,7 +290,9 @@ namespace Allors.Database.Domain.Tests
 
             var salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems.ElementAt(0).ShipmentItemBillingsWhereShipmentItem.ElementAt(0).InvoiceItem;
             var invoice1 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+
             invoice1.Send();
+            this.Transaction.Derive();
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(15)
@@ -343,7 +345,9 @@ namespace Allors.Database.Domain.Tests
 
             salesInvoiceitem = (SalesInvoiceItem)shipment.ShipmentItems.ElementAt(0).ShipmentItemBillingsWhereShipmentItem.ElementAt(0).InvoiceItem;
             var invoice2 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+
             invoice2.Send();
+            this.Transaction.Derive();
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(30)
@@ -402,7 +406,9 @@ namespace Allors.Database.Domain.Tests
             salesInvoiceitem =
                 (SalesInvoiceItem)shipment.ShipmentItems.ElementAt(0).ShipmentItemBillingsWhereShipmentItem.ElementAt(0).InvoiceItem;
             var invoice3 = salesInvoiceitem.SalesInvoiceWhereSalesInvoiceItem;
+
             invoice3.Send();
+            this.Transaction.Derive();
 
             new ReceiptBuilder(this.Transaction)
                 .WithAmount(75)

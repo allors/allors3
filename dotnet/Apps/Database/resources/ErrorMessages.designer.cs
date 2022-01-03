@@ -286,6 +286,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sales invoice with later date already exists. .
+        /// </summary>
+        public static string InvalidInvoiceDate {
+            get {
+                return ResourceManager.GetString("InvalidInvoiceDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Quantity is not valid.
         /// </summary>
         public static string InvalidQuantity {

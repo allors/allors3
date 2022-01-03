@@ -39,10 +39,6 @@
         <div class="row">
           <a-mat-select class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.FixedAsset" [options]="serialisedItems" display="DisplayName"></a-mat-select>
         </div>
-
-        <div class="row">
-          <a-mat-input class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.FleetCode" [disabled]="true"></a-mat-input>
-        </div>
     
         <div class="row">
           <a-mat-radio-group class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.Priority" [options]="priorityOptions"></a-mat-radio-group>

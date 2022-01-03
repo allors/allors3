@@ -324,6 +324,8 @@ namespace Allors.Database.Domain.Tests
 
             invoice1.Send();
 
+            this.Transaction.Derive();
+
             Assert.False(store.ExistSalesInvoiceNumberCounter);
             Assert.Equal(this.Transaction.Now().Year, store.FiscalYearsStoreSequenceNumbers.First().FiscalYear);
             Assert.Equal("1", invoice1.InvoiceNumber);
@@ -338,6 +340,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             invoice2.Send();
+
+            this.Transaction.Derive();
 
             Assert.False(store.ExistSalesInvoiceNumberCounter);
             Assert.Equal(this.Transaction.Now().Year, store.FiscalYearsStoreSequenceNumbers.First().FiscalYear);

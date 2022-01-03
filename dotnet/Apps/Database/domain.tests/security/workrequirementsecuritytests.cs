@@ -39,7 +39,8 @@ namespace Allors.Database.Domain.Tests
             Assert.True(acl.CanExecute(this.M.WorkRequirement.Delete));
             Assert.True(acl.CanExecute(this.M.WorkRequirement.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Reopen));
-            Assert.True(acl.CanExecute(this.M.WorkRequirement.Close));
+            Assert.True(acl.CanExecute(this.M.WorkRequirement.Start));
+            Assert.False(acl.CanExecute(this.M.WorkRequirement.Close));
             Assert.True(acl.CanExecute(this.M.WorkRequirement.CreateWorkTask));
         }
 
@@ -88,8 +89,10 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            workRequirement.Close();
+            workRequirement.Start();
+            this.Transaction.Derive();
 
+            workRequirement.Close();
             this.Transaction.Derive();
 
             Assert.Equal(new RequirementStates(this.Transaction).Finished, workRequirement.RequirementState);
@@ -132,7 +135,7 @@ namespace Allors.Database.Domain.Tests
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Delete));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Reopen));
-            Assert.False(acl.CanExecute(this.M.WorkRequirement.Close));
+            Assert.True(acl.CanExecute(this.M.WorkRequirement.Close));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.CreateWorkTask));
         }
     }

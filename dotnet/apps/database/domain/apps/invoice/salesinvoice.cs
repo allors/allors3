@@ -8,6 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Derivations;
+    using Resources;
 
     public partial class SalesInvoice
     {
@@ -106,159 +108,7 @@ namespace Allors.Database.Domain
 
         public void AppsSend(SalesInvoiceSend method)
         {
-            var singleton = this.Transaction().GetSingleton();
-            var year = this.InvoiceDate.Year;
-
-            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Transaction).SalesInvoice))
-            {
-                this.InvoiceNumber = this.Store.NextSalesInvoiceNumber(this.InvoiceDate.Year);
-
-                var fiscalYearStoreSequenceNumbers = this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                var prefix = this.BilledFrom.InvoiceSequence.IsEnforcedSequence ? this.Store.SalesInvoiceNumberPrefix : fiscalYearStoreSequenceNumbers.SalesInvoiceNumberPrefix;
-                this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
-            }
-
-            if (object.Equals(this.SalesInvoiceType, new SalesInvoiceTypes(this.Strategy.Transaction).CreditNote))
-            {
-                // After reopen/revise of a credit note, use the number that was issued on initial Send action
-                if (this.ExistFinalInvoiceNumber)
-                {
-                    this.InvoiceNumber = this.FinalInvoiceNumber;
-                }
-                else
-                {
-                    this.InvoiceNumber = this.Store.NextCreditNoteNumber(this.InvoiceDate.Year);
-
-                    var fiscalYearStoreSequenceNumbers = this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = this.BilledFrom.InvoiceSequence.IsEnforcedSequence ? this.Store.CreditNoteNumberPrefix : fiscalYearStoreSequenceNumbers.CreditNoteNumberPrefix;
-                    this.SortableInvoiceNumber = singleton.SortableNumber(prefix, this.InvoiceNumber, year.ToString());
-
-                    this.FinalInvoiceNumber = this.InvoiceNumber;
-                }
-            }
-
             this.SalesInvoiceState = new SalesInvoiceStates(this.Strategy.Transaction).NotPaid;
-
-            foreach (var salesInvoiceItem in this.SalesInvoiceItems)
-            {
-                salesInvoiceItem.SalesInvoiceItemState = new SalesInvoiceItemStates(this.Strategy.Transaction).NotPaid;
-                salesInvoiceItem.DerivationTrigger = Guid.NewGuid();
-
-                if (this.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Transaction()).SalesInvoice)
-                    && salesInvoiceItem.ExistSerialisedItem
-                    && (this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
-                    && this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Transaction()).SalesInvoiceSend))
-                {
-                    if (salesInvoiceItem.NextSerialisedItemAvailability?.Equals(new SerialisedItemAvailabilities(this.Transaction()).Sold) == true)
-                    {
-                        salesInvoiceItem.SerialisedItemVersionBeforeSale = salesInvoiceItem.SerialisedItem.CurrentVersion;
-
-                        salesInvoiceItem.SerialisedItem.Seller = this.BilledFrom;
-                        salesInvoiceItem.SerialisedItem.OwnedBy = this.BillToCustomer;
-                        salesInvoiceItem.SerialisedItem.Ownership = new Ownerships(this.Transaction()).ThirdParty;
-                        salesInvoiceItem.SerialisedItem.SerialisedItemAvailability = salesInvoiceItem.NextSerialisedItemAvailability;
-                        salesInvoiceItem.SerialisedItem.AvailableForSale = false;
-                    }
-
-                    if (salesInvoiceItem.NextSerialisedItemAvailability?.Equals(new SerialisedItemAvailabilities(this.Transaction()).InRent) == true)
-                    {
-                        salesInvoiceItem.SerialisedItem.RentedBy = this.BillToCustomer;
-                        salesInvoiceItem.SerialisedItem.SerialisedItemAvailability = salesInvoiceItem.NextSerialisedItemAvailability;
-                        salesInvoiceItem.SerialisedItem.AvailableForSale = false;
-                    }
-                }
-
-                if (this.SalesInvoiceType.Equals(new SalesInvoiceTypes(this.Transaction()).CreditNote)
-                    && salesInvoiceItem.ExistSerialisedItem
-                    && salesInvoiceItem.ExistSerialisedItemVersionBeforeSale
-                    && (this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
-                    && this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(this.Transaction()).SalesInvoiceSend))
-                {
-                    salesInvoiceItem.SerialisedItem.Seller = salesInvoiceItem.SerialisedItemVersionBeforeSale.Seller;
-                    salesInvoiceItem.SerialisedItem.OwnedBy = salesInvoiceItem.SerialisedItemVersionBeforeSale.OwnedBy;
-                    salesInvoiceItem.SerialisedItem.Ownership = salesInvoiceItem.SerialisedItemVersionBeforeSale.Ownership;
-                    salesInvoiceItem.SerialisedItem.SerialisedItemAvailability = salesInvoiceItem.SerialisedItemVersionBeforeSale.SerialisedItemAvailability;
-                    salesInvoiceItem.SerialisedItem.AvailableForSale = salesInvoiceItem.SerialisedItemVersionBeforeSale.AvailableForSale;
-                }
-            }
-
-            if (this.BillToCustomer is Organisation organisation && organisation.IsInternalOrganisation)
-            {
-                var purchaseInvoice = new PurchaseInvoiceBuilder(this.Strategy.Transaction)
-                    .WithBilledFrom((Organisation)this.BilledFrom)
-                    .WithBilledFromContactPerson(this.BilledFromContactPerson)
-                    .WithBilledTo((InternalOrganisation)this.BillToCustomer)
-                    .WithBilledToContactPerson(this.BillToContactPerson)
-                    .WithBillToEndCustomer(this.BillToEndCustomer)
-                    .WithAssignedBillToEndCustomerContactMechanism(this.DerivedBillToEndCustomerContactMechanism)
-                    .WithBillToEndCustomerContactPerson(this.BillToEndCustomerContactPerson)
-                    .WithAssignedBillToCustomerPaymentMethod(this.DerivedPaymentMethod)
-                    .WithShipToCustomer(this.ShipToCustomer)
-                    .WithAssignedShipToCustomerAddress(this.DerivedShipToAddress)
-                    .WithShipToCustomerContactPerson(this.ShipToContactPerson)
-                    .WithShipToEndCustomer(this.ShipToEndCustomer)
-                    .WithAssignedShipToEndCustomerAddress(this.DerivedShipToEndCustomerAddress)
-                    .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
-                    .WithDescription(this.Description)
-                    .WithInvoiceDate(this.Transaction().Now())
-                    .WithPurchaseInvoiceType(new PurchaseInvoiceTypes(this.Strategy.Transaction).PurchaseInvoice)
-                    .WithCustomerReference(this.CustomerReference)
-                    .WithComment(this.Comment)
-                    .WithInternalComment(this.InternalComment)
-                    .Build();
-
-                foreach (var orderAdjustment in this.OrderAdjustments)
-                {
-                    OrderAdjustment newAdjustment = null;
-                    if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
-                    {
-                        newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
-                    }
-
-                    if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
-                    {
-                        newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
-                    }
-
-                    if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
-                    {
-                        newAdjustment = new FeeBuilder(this.Transaction()).Build();
-                    }
-
-                    if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
-                    {
-                        newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
-                    }
-
-                    if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
-                    {
-                        newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
-                    }
-
-                    newAdjustment.Amount ??= orderAdjustment.Amount;
-                    newAdjustment.Percentage ??= orderAdjustment.Percentage;
-                    purchaseInvoice.AddOrderAdjustment(newAdjustment);
-                }
-
-                foreach (var salesInvoiceItem in this.SalesInvoiceItems)
-                {
-                    var invoiceItem = new PurchaseInvoiceItemBuilder(this.Strategy.Transaction)
-                        .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
-                        .WithAssignedUnitPrice(salesInvoiceItem.AssignedUnitPrice)
-                        .WithAssignedVatRegime(salesInvoiceItem.AssignedVatRegime)
-                        .WithAssignedIrpfRegime(salesInvoiceItem.AssignedIrpfRegime)
-                        .WithPart(salesInvoiceItem.Product as UnifiedGood)
-                        .WithSerialisedItem(salesInvoiceItem.SerialisedItem)
-                        .WithQuantity(salesInvoiceItem.Quantity)
-                        .WithDescription(salesInvoiceItem.Description)
-                        .WithComment(salesInvoiceItem.Comment)
-                        .WithInternalComment(salesInvoiceItem.InternalComment)
-                        .Build();
-
-                    purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
-                }
-            }
-
             method.StopPropagation = true;
         }
 
