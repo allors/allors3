@@ -4,7 +4,14 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Country } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory, SingletonId } from '@allors/workspace/angular/base';
+import {
+  AllorsPanelDetailComponent,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  SingletonId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -12,7 +19,10 @@ import { ContextService } from '@allors/workspace/angular/core';
   templateUrl: './organisation-overview-detail.component.html',
   providers: [ContextService, PanelService],
 })
-export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
+export class OrganisationOverviewDetailComponent
+  extends AllorsPanelDetailComponent<Organisation>
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   organisation: Organisation;
@@ -21,14 +31,14 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Organisation Details';
-    panel.icon = 'business';
-    panel.expandable = true;
+  constructor(
+    @Self() allors: ContextService,
+    @Self() panel: PanelService,
+    public saveService: SaveService,
+    public refreshService: RefreshService,
+    private singletonId: SingletonId
+  ) {
+    super(allors, panel);
 
     // Collapsed
     const pullName = `${this.panel.name}_${this.m.Organisation.tag}`;

@@ -8,10 +8,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DomainErrors.resx</DependentUpon>
     </Compile>
-    <Compile Update="ErrorMessages.Designer.cs">
+    <Compile Update="errormessages.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>ErrorMessages.resx</DependentUpon>
+      <DependentUpon>errormessages.resx</DependentUpon>
     </Compile>
     <Compile Update="WorkspaceResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -26,7 +26,7 @@
     </EmbeddedResource>
     <EmbeddedResource Update="ErrorMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
+      <LastGenOutput>errormessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>

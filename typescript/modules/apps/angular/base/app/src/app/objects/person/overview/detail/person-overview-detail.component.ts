@@ -2,7 +2,6 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
 import {
   Enumeration,
   Gender,
@@ -44,7 +43,7 @@ export class PersonOverviewDetailComponent
   ) {
     super(allors, panel);
 
-    // Minimized
+    // Collapsed
     const pullName = `${this.panel.name}_${this.m.Person.tag}`;
 
     panel.onPull = (pulls) => {

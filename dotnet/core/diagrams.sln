@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Diagrams", "Database\Domain.Diagrams\Domain.Diagrams.csproj", "{4917407C-54AA-4B64-A675-4A3EF58E7CD3}"
 EndProject
@@ -29,5 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4917407C-54AA-4B64-A675-4A3EF58E7CD3} = {96E9E2AE-90A9-4043-82FC-3EA59EEBF144}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8DBD660-66C0-4A70-811E-735675198AA5}
 	EndGlobalSection
 EndGlobal

@@ -2,7 +2,10 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
@@ -89,6 +92,8 @@ import {
   AllorsMaterialLocalisedMarkdownComponent,
   AllorsMaterialLocalisedTextComponent,
   AllorsMaterialMarkdownComponent,
+  AllorsMaterialPanelDetailCancelComponent,
+  AllorsMaterialPanelDetailSaveComponent,
   AllorsMaterialRadioGroupComponent,
   AllorsMaterialSelectComponent,
   AllorsMaterialSliderComponent,
@@ -148,6 +153,8 @@ import { PersonOverviewSummaryComponent } from './objects/person/overview/summar
     AllorsMaterialLocalisedMarkdownComponent,
     AllorsMaterialLocalisedTextComponent,
     AllorsMaterialMarkdownComponent,
+    AllorsMaterialPanelDetailCancelComponent,
+    AllorsMaterialPanelDetailSaveComponent,
     AllorsMaterialRadioGroupComponent,
     AllorsMaterialSelectComponent,
     AllorsMaterialSliderComponent,
@@ -241,10 +248,16 @@ import { PersonOverviewSummaryComponent } from './objects/person/overview/summar
       useValue: { autoActiveFirstOption: true },
     },
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
-    { provide: AllorsMaterialDialogService, useClass: AllorsMaterialDialogServiceCore },
+    {
+      provide: AllorsMaterialDialogService,
+      useClass: AllorsMaterialDialogServiceCore,
+    },
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
-    { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
+    {
+      provide: AllorsMaterialSideNavService,
+      useClass: AllorsMaterialSideNavServiceCore,
+    },
     { provide: OBJECT_CREATE_TOKEN, useValue: dialogs.create },
     { provide: OBJECT_EDIT_TOKEN, useValue: dialogs.edit },
     ...environment.providers,

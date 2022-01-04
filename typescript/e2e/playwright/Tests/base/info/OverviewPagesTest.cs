@@ -10,6 +10,7 @@ namespace Tests.ApplicationTests
     using Allors.Database;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Info;
+    using Allors.E2E.Angular.Material.Object;
     using NUnit.Framework;
 
     public class OverviewPagesTest : Test
@@ -38,17 +39,67 @@ namespace Tests.ApplicationTests
             Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
-        //[Test]
-        //public async void Detail()
-        //{
-        //    foreach (var page in this.OverviewPages())
-        //    {
-        //        var detailProperty = page.GetType().GetProperties().FirstOrDefault(v => v.Name.ToUpperInvariant().EndsWith("DETAIL"));
-        //        dynamic detail = detailProperty.GetGetMethod().Invoke(page, null);
-        //        detail.Click();
-        //        Cancel(detail);
-        //    }
-        //}
+        [Test]
+        public async Task Detail()
+        {
+            foreach (var component in this.Components.Where(v => v.Overview != null))
+            {
+                var objectType = component.Overview;
+
+                if (!objectType.Equals(M.Organisation))
+                {
+                    continue;
+                }
+
+                foreach (IObject @object in this.Transaction.Extent(objectType))
+                {
+                    var url = component.RouteInfo.FullPath.Replace(":id", $"{@object.Strategy.ObjectId}");
+                    await this.Page.GotoAsync(url);
+                    await this.Page.WaitForAngular();
+
+                    var detail = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail']");
+                    await detail.ClickAsync();
+                    await this.Page.WaitForAngular();
+
+                    var cancel = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail-save']");
+                    await cancel.ClickAsync();
+                    await this.Page.WaitForAngular();
+                }
+            }
+
+            Assert.IsEmpty(this.ConsoleErrorMessages);
+        }
+
+        [Test]
+        public async Task Create()
+        {
+            foreach (var component in this.Components.Where(v => v.Overview != null))
+            {
+                var objectType = component.Overview;
+
+                if (!objectType.Equals(M.Organisation))
+                {
+                    continue;
+                }
+
+                foreach (IObject @object in this.Transaction.Extent(objectType))
+                {
+                    var url = component.RouteInfo.FullPath.Replace(":id", $"{@object.Strategy.ObjectId}");
+                    await this.Page.GotoAsync(url);
+                    await this.Page.WaitForAngular();
+
+                    var detail = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail']");
+                    await detail.ClickAsync();
+                    await this.Page.WaitForAngular();
+
+                    var cancel = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail-save']");
+                    await cancel.ClickAsync();
+                    await this.Page.WaitForAngular();
+                }
+            }
+
+            Assert.IsEmpty(this.ConsoleErrorMessages);
+        }
 
         //[Test]
         //public async void PanelsCreate()

@@ -63,9 +63,9 @@ export * from './lib/page/overview.component';
 
 export * from './lib/panel/panel.service';
 export * from './lib/panel/panel-manager.service';
-export * from './lib/panel/panel-association.component';
 export * from './lib/panel/panel-detail.component';
-export * from './lib/panel/panel-role.component';
+export * from './lib/panel/panel-object.component';
+export * from './lib/panel/panel-relation.component';
 export * from './lib/panel/panel-summary.component';
 
 export * from './lib/refresh/refresh.service';
@@ -115,6 +115,9 @@ export * from './lib/material/object/object.data';
 export * from './lib/material/object/object.service';
 export * from './lib/material/object/object.service.core';
 export * from './lib/material/object/object.tokens';
+
+export * from './lib/material/panel/panel-detail-cancel.component';
+export * from './lib/material/panel/panel-detail-save.component';
 
 export * from './lib/material/save/save.service';
 export * from './lib/material/save/save.service.core';

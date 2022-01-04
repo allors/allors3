@@ -30,13 +30,13 @@ namespace Allors.Database.Configuration
 
             if (emailMesssage.ExistRecipientEmailAddress)
             {
-                var address = new MimeKit.MailboxAddress(emailMesssage.RecipientEmailAddress);
+                var address = new MimeKit.MailboxAddress(emailMesssage.RecipientEmailAddress, emailMesssage.RecipientEmailAddress);
                 message.To.Add(address);
             }
 
-            foreach (User recipient in emailMesssage.Recipients)
+            foreach (var recipient in emailMesssage.Recipients)
             {
-                var address = new MimeKit.MailboxAddress(recipient.UserEmail);
+                var address = new MimeKit.MailboxAddress(recipient.UserName, recipient.UserEmail);
                 message.To.Add(address);
             }
 

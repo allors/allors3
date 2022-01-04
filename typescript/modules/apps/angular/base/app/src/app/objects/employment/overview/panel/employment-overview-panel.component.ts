@@ -1,10 +1,23 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { Employment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import {
+  Employment,
+  Organisation,
+  Person,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+  AllorsPanelRelationComponent,
+} from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
   object: Employment;
@@ -19,12 +32,14 @@ interface Row extends TableRow {
   templateUrl: './employment-overview-panel.component.html',
   providers: [PanelService],
 })
-export class EmploymentOverviewPanelComponent implements OnInit {
-  @HostBinding('class.expanded-panel') get expandedPanelClass() {
+export class EmploymentOverviewPanelComponent
+  extends AllorsPanelRelationComponent<Organisation | Person>
+  implements OnInit
+{
+  @HostBinding('class.expanded-panel')
+  get expandedPanelClass() {
     return this.panel.isExpanded;
   }
-
-  m: M;
 
   collection = 'Current';
   table: Table<Row>;
@@ -36,22 +51,18 @@ export class EmploymentOverviewPanelComponent implements OnInit {
   inactive: Employment[];
 
   constructor(
-    @Self() public panel: PanelService,
-    public workspaceService: WorkspaceService,
+    @Self() panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
     public editService: EditService
   ) {
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    super(panel);
+
+    this.relationObjectType = this.m.Employment;
   }
 
   ngOnInit() {
-    this.panel.name = 'employement';
-    this.panel.title = 'Employments';
-    this.panel.icon = 'contacts';
-    this.panel.expandable = true;
-
     this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editService.edit();
 
@@ -100,6 +111,7 @@ export class EmploymentOverviewPanelComponent implements OnInit {
               ActiveEmployments: {},
               InactiveEmployments: {},
             },
+            Employee: {},
           },
         })
       );
@@ -107,10 +119,16 @@ export class EmploymentOverviewPanelComponent implements OnInit {
 
     this.panel.onPulled = (loaded) => {
       this.all = loaded.collection<Employment>(pullName) ?? [];
-      this.active = this.all.filter((v) => v.Employer?.ActiveEmployments.includes(v));
-      this.inactive = this.all.filter((v) => v.Employer?.InactiveEmployments.includes(v));
+      this.active = this.all.filter((v) =>
+        v.Employer?.ActiveEmployments.includes(v)
+      );
+      this.inactive = this.all.filter((v) =>
+        v.Employer?.InactiveEmployments.includes(v)
+      );
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.active?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.active?.length ??
+        0) as number;
       this.refreshTable();
     };
   }
@@ -122,7 +140,10 @@ export class EmploymentOverviewPanelComponent implements OnInit {
         type: v.strategy.cls.singularName,
         parties: v.Employer?.Name + ', ' + v.Employee.FirstName,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        through:
+          v.ThroughDate != null
+            ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+            : '',
       } as Row;
     });
   }

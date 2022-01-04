@@ -6,7 +6,14 @@
   <div class="container mb-3">
     <div class="row rounded" style="background-color: white">
       <div
-        class="col-3 col-md-2 p-3 rounded-left d-flex justify-content-center align-items-start"
+        class="
+          col-3 col-md-2
+          p-3
+          rounded-left
+          d-flex
+          justify-content-center
+          align-items-start
+        "
         style="background-color: lightseagreen"
       >
         <mat-icon style="color: white; zoom: 250%">{{ panel.icon }}</mat-icon>
@@ -19,12 +26,7 @@
   </div>
 </div>
 
-<form
-  *ngIf="panel.isExpanded && object"
-  #form="ngForm"
-  (submit)="save()"
-  novalidate
->
+<form *ngIf="panel.isExpanded && object" (submit)="save()" novalidate>
   <mat-card>
     <mat-card-header>
       <mat-card-title>{{ panel.title }}</mat-card-title>
@@ -74,16 +76,8 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button
-        mat-button
-        class="ml-2"
-        color="primary"
-        type="submit"
-        [disabled]="!form.form.valid || !allors.context.hasChanges"
-      >
-        SAVE
-      </button>
-      <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
+      <a-panel-detail-save></a-panel-detail-save>
+      <a-panel-detail-cancel></a-panel-detail-cancel>
     </mat-card-actions>
   </mat-card>
 </form>
