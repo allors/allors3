@@ -1,13 +1,32 @@
-import { InvokeRequest, PullRequest, PullResponse, PushRequest } from '@allors/protocol/json/system';
+import {
+  InvokeRequest,
+  PullRequest,
+  PullResponse,
+  PushRequest,
+} from '@allors/protocol/json/system';
 import { Session as SystemSession } from '@allors/workspace/adapters/system';
-import { IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, Method, Procedure, Pull, ResultError } from '@allors/workspace/domain/system';
+import {
+  IInvokeResult,
+  InvokeOptions,
+  IObject,
+  IPullResult,
+  IPushResult,
+  Method,
+  Procedure,
+  Pull,
+  ResultError,
+} from '@allors/workspace/domain/system';
 import { Class, Origin } from '@allors/workspace/meta/system';
 import { DatabaseConnection } from '../database/database-connection';
 import { DatabaseRecord } from '../database/database-record';
 import { InvokeResult } from '../database/invoke/invoke-result';
 import { PullResult } from '../database/pull/pull-result';
 import { PushResult } from '../database/push/push-result';
-import { dependenciesToJson, procedureToJson, pullToJson } from '../json/to-json';
+import {
+  dependenciesToJson,
+  procedureToJson,
+  pullToJson,
+} from '../json/to-json';
 import { Workspace } from '../workspace/workspace';
 import { DatabaseOriginState } from './originstate/database-origin-state';
 import { Strategy } from './strategy';
@@ -51,7 +70,9 @@ export class Session extends SystemSession {
   }
 
   instantiateDatabaseStrategy(id: number): void {
-    const databaseRecord = this.workspace.database.getRecord(id) as DatabaseRecord;
+    const databaseRecord = this.workspace.database.getRecord(
+      id
+    ) as DatabaseRecord;
     const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addObject(strategy.object);
   }
@@ -69,8 +90,13 @@ export class Session extends SystemSession {
     return strategy.object;
   }
 
-  async invoke(methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult> {
-    const methods = Array.isArray(methodOrMethods) ? methodOrMethods : [methodOrMethods];
+  async invoke(
+    methodOrMethods: Method | Method[],
+    options?: InvokeOptions
+  ): Promise<IInvokeResult> {
+    const methods = Array.isArray(methodOrMethods)
+      ? methodOrMethods
+      : [methodOrMethods];
     const invokeRequest: InvokeRequest = {
       x: this.context,
       l: methods.map((v) => {
@@ -90,7 +116,13 @@ export class Session extends SystemSession {
     };
 
     const invokeResponse = await this.database.client.invoke(invokeRequest);
-    return new InvokeResult(this, invokeResponse);
+    const result = new InvokeResult(this, invokeResponse);
+
+    if (result.hasErrors) {
+      throw new ResultError(result);
+    }
+
+    return result;
   }
 
   async call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult> {
@@ -113,7 +145,10 @@ export class Session extends SystemSession {
         throw new Error('Id is not in the database');
       }
 
-      if (pull.object != null && pull.object.strategy?.cls.origin != Origin.Database) {
+      if (
+        pull.object != null &&
+        pull.object.strategy?.cls.origin != Origin.Database
+      ) {
         throw new Error('Origin is not Database');
       }
     }
@@ -134,11 +169,17 @@ export class Session extends SystemSession {
     };
 
     if (this.pushToDatabaseTracker.created) {
-      pushRequest.n = [...this.pushToDatabaseTracker.created].map((v) => ((v.strategy as Strategy).DatabaseOriginState as DatabaseOriginState).pushNew());
+      pushRequest.n = [...this.pushToDatabaseTracker.created].map((v) =>
+        (
+          (v.strategy as Strategy).DatabaseOriginState as DatabaseOriginState
+        ).pushNew()
+      );
     }
 
     if (this.pushToDatabaseTracker.changed) {
-      pushRequest.o = [...this.pushToDatabaseTracker.changed].map((v) => (v as DatabaseOriginState).pushExisting());
+      pushRequest.o = [...this.pushToDatabaseTracker.changed].map((v) =>
+        (v as DatabaseOriginState).pushExisting()
+      );
     }
 
     const pushResponse = await this.database.client.push(pushRequest);
@@ -186,7 +227,9 @@ export class Session extends SystemSession {
         const accessResponse = await this.database.client.access(accessRequest);
         const permissionRequest = this.database.accessResponse(accessResponse);
         if (permissionRequest != null) {
-          const permissionResponse = await this.database.client.permission(permissionRequest);
+          const permissionResponse = await this.database.client.permission(
+            permissionRequest
+          );
           this.database.permissionResponse(permissionResponse);
         }
       }

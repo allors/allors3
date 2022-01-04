@@ -324,6 +324,7 @@ namespace Allors.Database.Domain
                 new SalesInvoiceCustomerRule(m),
                 new SalesInvoiceDeniedPermissionRule(m),
                 new SalesInvoiceDueDateRule(m),
+                new SalesInvoiceTemporaryInvoiceNumberRule(m),
                 new SalesInvoiceInvoiceNumberRule(m),
                 new SalesInvoiceIsRepeatingInvoiceRule(m),
                 new SalesInvoiceItemAssignedIrpfRegimeRule(m),

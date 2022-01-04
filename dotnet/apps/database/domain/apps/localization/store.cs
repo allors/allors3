@@ -30,6 +30,26 @@ namespace Allors.Database.Domain
             }
         }
 
+        public string LastSalesInvoiceNumber(int year)
+        {
+            if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Transaction).EnforcedSequence))
+            {
+                return string.Concat(this.SalesInvoiceNumberPrefix, this.SalesInvoiceNumberCounter.Value).Replace("{year}", year.ToString());
+            }
+
+            var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+            if (fiscalYearStoreSequenceNumbers != null)
+            {
+                return string.Concat(fiscalYearStoreSequenceNumbers.ExistSalesInvoiceNumberPrefix ?
+                    fiscalYearStoreSequenceNumbers.SalesInvoiceNumberPrefix.Replace("{year}", year.ToString())
+                    : string.Empty,
+                    fiscalYearStoreSequenceNumbers.SalesInvoiceNumberCounter.Value);
+            }
+
+            return null;
+        }
+
         public string NextCreditNoteNumber(int year)
         {
             if (this.InternalOrganisation.InvoiceSequence.Equals(new InvoiceSequences(this.Strategy.Transaction).EnforcedSequence))

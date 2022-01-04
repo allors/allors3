@@ -288,4 +288,7 @@
   <data name="SerialNumberRequired" xml:space="preserve">
     <value>The Serial Number is required for Inventory Item Transactions involving Serialised Inventory Items.</value>
   </data>
+  <data name="InvalidInvoiceDate" xml:space="preserve">
+    <value>Sales invoice with later date already exists. </value>
+  </data>
 </root>
