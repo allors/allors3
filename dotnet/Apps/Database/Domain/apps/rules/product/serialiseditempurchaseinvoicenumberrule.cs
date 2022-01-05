@@ -12,21 +12,27 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SerialisedItemRentedByPartyNameRule : Rule
+    public class SerialisedItemPurchaseInvoiceNumberRule : Rule
     {
-        public SerialisedItemRentedByPartyNameRule(MetaPopulation m) : base(m, new Guid("34d325e4-dc52-4e5f-a698-4a5f64d52dc2")) =>
+        public SerialisedItemPurchaseInvoiceNumberRule(MetaPopulation m) : base(m, new Guid("edd51dad-9c51-4856-b1fa-e3f1869d01fb")) =>
             this.Patterns = new Pattern[]
             {
-                m.SerialisedItem.RolePattern(v => v.RentedBy),
-                m.Party.RolePattern(v => v.DisplayName, v => v.SerialisedItemsWhereRentedBy.SerialisedItem),
+                m.SerialisedItem.RolePattern(v => v.PurchaseInvoice),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.RentedByPartyName = @this.RentedBy?.DisplayName;
+                @this.DeriveSerialisedItemPurchaseInvoiceNumber(validation);
             }
         }
+    }
+
+    public static class SerialisedItemPurchaseInvoiceNumberRuleExtensions
+    {
+        public static void DeriveSerialisedItemPurchaseInvoiceNumber(this SerialisedItem @this, IValidation validation) => @this.PurchaseInvoiceNumber = @this.PurchaseInvoice?.InvoiceNumber;
     }
 }

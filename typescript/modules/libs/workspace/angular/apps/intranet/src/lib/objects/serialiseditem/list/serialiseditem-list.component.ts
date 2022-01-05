@@ -105,14 +105,6 @@ export class SerialisedItemListComponent implements OnInit, OnDestroy {
             pull.SerialisedItem({
               predicate: this.filter.definition.predicate,
               sorting: sort ? angularSorter(m.SerialisedItem)?.create(sort) : null,
-              include: {
-                SerialisedItemState: x,
-                SerialisedItemAvailability: x,
-                Ownership: x,
-                SuppliedBy: x,
-                OwnedBy: x,
-                RentedBy: x,
-              },
               arguments: this.filter.parameters(filterFields),
               skip: pageEvent.pageIndex * pageEvent.pageSize,
               take: pageEvent.pageSize,
@@ -135,7 +127,7 @@ export class SerialisedItemListComponent implements OnInit, OnDestroy {
             name: v.Name,
             categories: v.ProductCategoriesDisplayName,
             availability: v.SerialisedItemAvailabilityName,
-            ownership: v.OwnershipByOwnershipName,
+            ownership: v.OwnershipName,
             suppliedBy: v.SuppliedByPartyName,
             ownedBy: v.OwnedByPartyName,
             rentedBy: v.RentedByPartyName,

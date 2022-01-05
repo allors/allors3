@@ -122,7 +122,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(newItem.Ownership.Name, newItem.OwnershipByOwnershipName);
+            Assert.Equal(newItem.Ownership.Name, newItem.OwnershipName);
         }
     }
 
@@ -269,7 +269,7 @@ namespace Allors.Database.Domain.Tests
             serialisedItem.Ownership = own;
             this.Derive();
 
-            Assert.Equal(own.Name, serialisedItem.OwnershipByOwnershipName);
+            Assert.Equal(own.Name, serialisedItem.OwnershipName);
         }
 
         [Fact]
@@ -797,6 +797,372 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.False(serialisedItem.ExistPurchaseOrder);
+        }
+    }
+
+    public class SerialisedItemBuyerNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemBuyerNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedBuyerDeriveBuyerName()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Derive();
+
+            serialisedItem.Buyer = this.InternalOrganisation;
+            this.Derive();
+
+            Assert.Equal(this.InternalOrganisation.DisplayName, serialisedItem.BuyerName);
+        }
+
+        [Fact]
+        public void ChangedBuyerDisplayNameDeriveBuyerName()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithBuyer(this.InternalOrganisation).Build();
+            this.Derive();
+
+            this.InternalOrganisation.Name = "changed";
+            this.Derive();
+
+            Assert.Equal("changed", serialisedItem.BuyerName);
+        }
+    }
+
+    public class SerialisedItemSellerNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemSellerNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSellerDeriveSellerName()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Derive();
+
+            serialisedItem.Seller = this.InternalOrganisation;
+            this.Derive();
+
+            Assert.Equal(this.InternalOrganisation.DisplayName, serialisedItem.SellerName);
+        }
+
+        [Fact]
+        public void ChangedSellerDisplayNameDeriveSellerName()
+        {
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithSeller(this.InternalOrganisation).Build();
+            this.Derive();
+
+            this.InternalOrganisation.Name = "changed";
+            this.Derive();
+
+            Assert.Equal("changed", serialisedItem.SellerName);
+        }
+    }
+
+    public class SerialisedItemPurchaseInvoiceNumberRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemPurchaseInvoiceNumberRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseInvoicePurchaseInvoiceStateDerivePurchaseInvoiceNumber()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Derive();
+
+            invoice.Confirm();
+            this.Derive();
+
+            invoice.Approve();
+            this.Derive();
+
+            Assert.Equal(invoice.InvoiceNumber, serialisedItem.PurchaseInvoiceNumber);
+        }
+
+        [Fact]
+        public void ChangedPurchaseInvoiceValidInvoiceItemsDerivePurchaseInvoiceNumber()
+        {
+            var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            invoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Derive();
+
+            invoice.Confirm();
+            this.Derive();
+
+            invoice.Approve();
+            this.Derive();
+
+            Assert.Equal(invoice, serialisedItem.PurchaseInvoice);
+
+            invoiceItem.CancelFromInvoice();
+            this.Derive();
+
+            Assert.False(serialisedItem.ExistPurchaseInvoiceNumber);
+        }
+    }
+
+    public class SerialisedItemPurchaseOrderNumberRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemPurchaseOrderNumberRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPurchaseOrderPurchaseOrderStateDerivePurchaseOrderNumber()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Derive();
+
+            order.Send();
+            this.Derive();
+
+            Assert.Equal(order.OrderNumber, serialisedItem.PurchaseOrderNumber);
+        }
+
+        [Fact]
+        public void ChangedPurchaseOrderValidOrderItemsDerivePurchaseOrderNumber()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).ProductItem)
+                .WithSerialisedItem(serialisedItem)
+                .Build();
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Derive();
+
+            order.Send();
+            this.Derive();
+
+            Assert.Equal(order, serialisedItem.PurchaseOrder);
+
+            orderItem.Cancel();
+            this.Derive();
+
+            Assert.False(serialisedItem.ExistPurchaseOrderNumber);
+        }
+    }
+
+    public class SerialisedItemProductTypeNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemProductTypeNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartSerialisedItemDeriveProductTypeName()
+        {
+            var productType = new ProductTypeBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithProductType(productType).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Derive();
+
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            Assert.Contains(productType.Name, serialisedItem.ProductTypeName);
+        }
+
+        [Fact]
+        public void ChangedPartProductTypeDeriveProductTypeName()
+        {
+            var productType = new ProductTypeBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithProductType(productType).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            part.ProductType = new ProductTypeBuilder(this.Transaction).WithName("changed").Build();
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.ProductTypeName);
+        }
+
+        [Fact]
+        public void ChangedProductTypeNameDeriveProductTypeName()
+        {
+            var productType = new ProductTypeBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithProductType(productType).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            productType.Name = "changed";
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.ProductTypeName);
+        }
+    }
+
+    public class SerialisedItemBrandNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemBrandNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartSerialisedItemDeriveBrandName()
+        {
+            var brand = new BrandBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithBrand(brand).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Derive();
+
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            Assert.Contains(brand.Name, serialisedItem.BrandName);
+        }
+
+        [Fact]
+        public void ChangedPartBrandDeriveBrandName()
+        {
+            var brand = new BrandBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithBrand(brand).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            part.Brand = new BrandBuilder(this.Transaction).WithName("changed").Build();
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.BrandName);
+        }
+
+        [Fact]
+        public void ChangedBrandNameDeriveBrandName()
+        {
+            var brand = new BrandBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithBrand(brand).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            brand.Name = "changed";
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.BrandName);
+        }
+    }
+
+    public class SerialisedItemModelNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemModelNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartSerialisedItemDeriveModelName()
+        {
+            var model = new ModelBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithModel(model).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Derive();
+
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            Assert.Contains(model.Name, serialisedItem.ModelName);
+        }
+
+        [Fact]
+        public void ChangedPartModelDeriveModelName()
+        {
+            var model = new ModelBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithModel(model).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            part.Model = new ModelBuilder(this.Transaction).WithName("changed").Build();
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.ModelName);
+        }
+
+        [Fact]
+        public void ChangedModelNameDeriveModelName()
+        {
+            var model = new ModelBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithModel(model).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            model.Name = "changed";
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.ModelName);
+        }
+    }
+
+    public class SerialisedItemManufacturedByNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemManufacturedByNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartSerialisedItemDeriveManufacturedByName()
+        {
+            var manufacturer = new OrganisationBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithManufacturedBy(manufacturer).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Derive();
+
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            Assert.Contains(manufacturer.Name, serialisedItem.ManufacturedByName);
+        }
+
+        [Fact]
+        public void ChangedPartManufacturedByDeriveManufacturedByName()
+        {
+            var manufacturer = new OrganisationBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithManufacturedBy(manufacturer).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            part.ManufacturedBy = new OrganisationBuilder(this.Transaction).WithName("changed").Build();
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.ManufacturedByName);
+        }
+
+        [Fact]
+        public void ChangedManufacturedByNameDeriveManufacturedByName()
+        {
+            var manufacturer = new OrganisationBuilder(this.Transaction).WithName("name").Build();
+            var part = new UnifiedGoodBuilder(this.Transaction).WithManufacturedBy(manufacturer).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            manufacturer.Name = "changed";
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.ManufacturedByName);
         }
     }
 

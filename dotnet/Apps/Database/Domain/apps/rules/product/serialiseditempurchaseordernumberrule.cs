@@ -12,20 +12,27 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SerialisedItemOwnershipByOwnershipNameRule : Rule
+    public class SerialisedItemPurchaseOrderNumberRule : Rule
     {
-        public SerialisedItemOwnershipByOwnershipNameRule(MetaPopulation m) : base(m, new Guid("457d5eb8-43c3-4b41-bd55-323ee83ffeeb")) =>
+        public SerialisedItemPurchaseOrderNumberRule(MetaPopulation m) : base(m, new Guid("fb0ed763-b05c-4959-befd-1cac701c74ae")) =>
             this.Patterns = new Pattern[]
             {
-                m.SerialisedItem.RolePattern(v => v.Ownership),
+                m.SerialisedItem.RolePattern(v => v.PurchaseOrder),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.OwnershipByOwnershipName = @this.ExistOwnership ? @this.Ownership.Name : string.Empty;
+                @this.DeriveSerialisedItemPurchaseOrderNumber(validation);
             }
         }
+    }
+
+    public static class SerialisedItemPurchaseOrderNumberRuleExtensions
+    {
+        public static void DeriveSerialisedItemPurchaseOrderNumber(this SerialisedItem @this, IValidation validation) => @this.PurchaseOrderNumber = @this.PurchaseOrder?.OrderNumber;
     }
 }

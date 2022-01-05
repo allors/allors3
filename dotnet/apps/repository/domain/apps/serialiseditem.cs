@@ -309,20 +309,20 @@ namespace Allors.Repository
         [Workspace(Default)]
         public DateTime ExpectedReturnDate { get; set; }
 
-        // TODO: Don't use WHERE in role name
+        #region Allors
+        [Id("2b8a24f3-ce26-4b53-94b2-d7d0cef3f6b1")]
+        #endregion
+        [Required]
+        public Guid DerivationTrigger { get; set; }
+
+        // TODO: Only used as roletype in client a-mat-autocomplete. Delete after autocomplete without roletype is available.
         #region Allors
         [Id("E927291E-21A1-4289-B5AF-4A2CA2996DA2")]
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        public Part PartWhereItem { get; set; }
-
-        #region Allors
-        [Id("2b8a24f3-ce26-4b53-94b2-d7d0cef3f6b1")]
-        #endregion
-        [Required]
-        public Guid DerivationTrigger { get; set; }
+        public Part PartAddItem { get; set; }
 
         #region Allors
         [Id("50db0036-a15c-418d-b354-ad3b5b1c4bd6")]
@@ -364,12 +364,76 @@ namespace Allors.Repository
         public string RentedByPartyName { get; set; }
 
         #region Allors
+        [Id("7b358056-fae2-4755-834f-05a20ce8a8d3")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string BuyerName { get; set; }
+
+        #region Allors
+        [Id("288c749a-3a30-4e9a-b839-5fb2508fb0d6")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string SellerName { get; set; }
+
+        #region Allors
+        [Id("8381f608-7acb-44e6-bcd9-19c751558d6d")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string PurchaseOrderNumber { get; set; }
+
+        #region Allors
+        [Id("ac26c321-482e-450c-9729-8f3287aeeea4")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string PurchaseInvoiceNumber { get; set; }
+
+        #region Allors
+        [Id("b887aaa4-3bab-4c7d-9265-99f85af47f1f")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string ProductTypeName { get; set; }
+
+        #region Allors
+        [Id("4adf5004-c8e9-4e4e-a8a5-3e94187f284c")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string BrandName { get; set; }
+
+        #region Allors
+        [Id("f1512966-89ff-4bfc-a3fa-a92fab4f2b85")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string ModelName { get; set; }
+
+        #region Allors
+        [Id("ac4c588b-d20a-443a-86c4-86d2b47d90ae")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string ManufacturedByName { get; set; }
+
+        #region Allors
         [Id("148487bd-4561-400a-8540-ae1e57fa2268")]
         #endregion
         [Indexed]
         [Derived]
         [Workspace(Default)]
-        public string OwnershipByOwnershipName { get; set; }
+        public string OwnershipName { get; set; }
 
         #region Allors
         [Id("80c6e34f-aadd-4ef6-b8cf-da532833ac03")]

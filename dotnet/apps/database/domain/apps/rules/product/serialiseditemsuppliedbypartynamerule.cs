@@ -18,15 +18,14 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.SerialisedItem.RolePattern(v => v.SuppliedBy),
-                m.Party.RolePattern(v => v.DisplayName, v => v.SerialisedItemsWhereSuppliedBy),
-                m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
+                m.Party.RolePattern(v => v.DisplayName, v => v.SerialisedItemsWhereSuppliedBy.SerialisedItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.SuppliedByPartyName = @this.ExistSuppliedBy ? @this.SuppliedBy.DisplayName : string.Empty;
+                @this.SuppliedByPartyName = @this.SuppliedBy?.DisplayName;
             }
         }
     }

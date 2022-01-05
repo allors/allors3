@@ -12,20 +12,20 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SerialisedItemRentedByPartyNameRule : Rule
+    public class SerialisedItemOwnershipNameRule : Rule
     {
-        public SerialisedItemRentedByPartyNameRule(MetaPopulation m) : base(m, new Guid("34d325e4-dc52-4e5f-a698-4a5f64d52dc2")) =>
+        public SerialisedItemOwnershipNameRule(MetaPopulation m) : base(m, new Guid("457d5eb8-43c3-4b41-bd55-323ee83ffeeb")) =>
             this.Patterns = new Pattern[]
             {
-                m.SerialisedItem.RolePattern(v => v.RentedBy),
-                m.Party.RolePattern(v => v.DisplayName, v => v.SerialisedItemsWhereRentedBy.SerialisedItem),
+                m.SerialisedItem.RolePattern(v => v.Ownership),
+                m.Ownership.RolePattern(v => v.Name, v => v.SerialisedItemsWhereOwnership.SerialisedItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.RentedByPartyName = @this.RentedBy?.DisplayName;
+                @this.OwnershipName = @this.Ownership?.Name;
             }
         }
     }
