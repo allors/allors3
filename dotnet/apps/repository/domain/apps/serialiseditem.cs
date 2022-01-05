@@ -396,6 +396,14 @@ namespace Allors.Repository
         public string PurchaseInvoiceNumber { get; set; }
 
         #region Allors
+        [Id("a8628e89-b369-407e-b948-e85115209235")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string PartName { get; set; }
+
+        #region Allors
         [Id("b887aaa4-3bab-4c7d-9265-99f85af47f1f")]
         #endregion
         [Indexed]

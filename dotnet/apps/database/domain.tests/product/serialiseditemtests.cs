@@ -970,6 +970,38 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class SerialisedItemPartNameRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SerialisedItemPartNameRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedPartSerialisedItemDerivePartName()
+        {
+            var part = new UnifiedGoodBuilder(this.Transaction).WithName("partname").Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            this.Derive();
+
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            Assert.Contains("partname", serialisedItem.PartName);
+        }
+
+        [Fact]
+        public void ChangedPartNameDerivePartName()
+        {
+            var part = new UnifiedGoodBuilder(this.Transaction).WithName("partname").Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
+            part.AddSerialisedItem(serialisedItem);
+            this.Derive();
+
+            part.Name = "changed";
+            this.Derive();
+
+            Assert.Contains("changed", serialisedItem.PartName);
+        }
+    }
+
     public class SerialisedItemProductTypeNameRuleTests : DomainTest, IClassFixture<Fixture>
     {
         public SerialisedItemProductTypeNameRuleTests(Fixture fixture) : base(fixture) { }

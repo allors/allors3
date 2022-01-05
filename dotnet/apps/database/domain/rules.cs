@@ -413,6 +413,7 @@ namespace Allors.Database.Domain
                 new SerialisedItemOwnedByPartyNameRule(m),
                 new SerialisedItemOwnerRule(m),
                 new SerialisedItemOwnershipNameRule(m),
+                new SerialisedItemPartNameRule(m),
                 new SerialisedItemPartWhereSerialisedItemRule(m),
                 new SerialisedItemProductCategoriesDisplayNameRule(m),
                 new SerialisedItemProductTypeNameRule(m),
