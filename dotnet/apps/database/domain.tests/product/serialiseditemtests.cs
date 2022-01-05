@@ -984,7 +984,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSerialisedItem(serialisedItem);
             this.Derive();
 
-            Assert.Contains("partname", serialisedItem.PartName);
+            Assert.Equal("partname", serialisedItem.PartName);
         }
 
         [Fact]
@@ -998,7 +998,7 @@ namespace Allors.Database.Domain.Tests
             part.Name = "changed";
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.PartName);
+            Assert.Equal("changed", serialisedItem.PartName);
         }
     }
 
@@ -1017,7 +1017,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSerialisedItem(serialisedItem);
             this.Derive();
 
-            Assert.Contains(productType.Name, serialisedItem.ProductTypeName);
+            Assert.Equal(productType.Name, serialisedItem.ProductTypeName);
         }
 
         [Fact]
@@ -1032,7 +1032,7 @@ namespace Allors.Database.Domain.Tests
             part.ProductType = new ProductTypeBuilder(this.Transaction).WithName("changed").Build();
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.ProductTypeName);
+            Assert.Equal("changed", serialisedItem.ProductTypeName);
         }
 
         [Fact]
@@ -1047,7 +1047,7 @@ namespace Allors.Database.Domain.Tests
             productType.Name = "changed";
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.ProductTypeName);
+            Assert.Equal("changed", serialisedItem.ProductTypeName);
         }
     }
 
@@ -1066,7 +1066,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSerialisedItem(serialisedItem);
             this.Derive();
 
-            Assert.Contains(brand.Name, serialisedItem.BrandName);
+            Assert.Equal(brand.Name, serialisedItem.BrandName);
         }
 
         [Fact]
@@ -1081,7 +1081,7 @@ namespace Allors.Database.Domain.Tests
             part.Brand = new BrandBuilder(this.Transaction).WithName("changed").Build();
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.BrandName);
+            Assert.Equal("changed", serialisedItem.BrandName);
         }
 
         [Fact]
@@ -1096,7 +1096,7 @@ namespace Allors.Database.Domain.Tests
             brand.Name = "changed";
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.BrandName);
+            Assert.Equal("changed", serialisedItem.BrandName);
         }
     }
 
@@ -1115,7 +1115,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSerialisedItem(serialisedItem);
             this.Derive();
 
-            Assert.Contains(model.Name, serialisedItem.ModelName);
+            Assert.Equal(model.Name, serialisedItem.ModelName);
         }
 
         [Fact]
@@ -1130,7 +1130,7 @@ namespace Allors.Database.Domain.Tests
             part.Model = new ModelBuilder(this.Transaction).WithName("changed").Build();
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.ModelName);
+            Assert.Equal("changed", serialisedItem.ModelName);
         }
 
         [Fact]
@@ -1145,7 +1145,7 @@ namespace Allors.Database.Domain.Tests
             model.Name = "changed";
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.ModelName);
+            Assert.Equal("changed", serialisedItem.ModelName);
         }
     }
 
@@ -1164,7 +1164,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSerialisedItem(serialisedItem);
             this.Derive();
 
-            Assert.Contains(manufacturer.Name, serialisedItem.ManufacturedByName);
+            Assert.Equal(manufacturer.Name, serialisedItem.ManufacturedByName);
         }
 
         [Fact]
@@ -1179,7 +1179,7 @@ namespace Allors.Database.Domain.Tests
             part.ManufacturedBy = new OrganisationBuilder(this.Transaction).WithName("changed").Build();
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.ManufacturedByName);
+            Assert.Equal("changed", serialisedItem.ManufacturedByName);
         }
 
         [Fact]
@@ -1194,7 +1194,7 @@ namespace Allors.Database.Domain.Tests
             manufacturer.Name = "changed";
             this.Derive();
 
-            Assert.Contains("changed", serialisedItem.ManufacturedByName);
+            Assert.Equal("changed", serialisedItem.ManufacturedByName);
         }
     }
 
