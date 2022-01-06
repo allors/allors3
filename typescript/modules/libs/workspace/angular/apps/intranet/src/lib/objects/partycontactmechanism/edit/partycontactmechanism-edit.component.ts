@@ -62,20 +62,16 @@ export class PartyContactmechanismEditComponent implements OnInit, OnDestroy {
               pull.PartyContactMechanism({
                 objectId: this.data.id,
                 include: {
-                  ContactMechanism: {
-                    PostalAddress_Country: x,
-                  },
+                  ContactMechanism: x,
                 },
               }),
               pull.PartyContactMechanism({
                 objectId: this.data.id,
                 select: {
                   PartyWherePartyContactMechanism: {
-                    PartyContactMechanisms: {
-                      include: {
-                        ContactMechanism: {
-                          PostalAddress_Country: x,
-                        },
+                    include: {
+                      CurrentPartyContactMechanisms: {
+                        ContactMechanism: x,
                       },
                     },
                   },
@@ -88,30 +84,16 @@ export class PartyContactmechanismEditComponent implements OnInit, OnDestroy {
             pulls.push(
               pull.Party({
                 objectId: this.data.associationId,
-                include: { PartyContactMechanisms: x },
+                include: {
+                  CurrentPartyContactMechanisms: {
+                    ContactMechanism: x,
+                  },
+                },
               }),
               pull.Person({
                 objectId: this.data.associationId,
                 select: {
-                  CurrentOrganisationContactMechanisms: {
-                    include: {
-                      PostalAddress_Country: x,
-                    },
-                  },
-                },
-              }),
-              pull.PartyContactMechanism({
-                objectId: this.data.id,
-                select: {
-                  PartyWherePartyContactMechanism: {
-                    PartyContactMechanisms: {
-                      include: {
-                        ContactMechanism: {
-                          PostalAddress_Country: x,
-                        },
-                      },
-                    },
-                  },
+                  CurrentOrganisationContactMechanisms: x,
                 },
               })
             );
@@ -127,10 +109,13 @@ export class PartyContactmechanismEditComponent implements OnInit, OnDestroy {
         this.ownContactMechanisms = [];
 
         this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+
+        this.party = loaded.object<Party>(m.Party) || loaded.object<Party>('PARTYWHEREPARTYCONTACTMECHANISM');
+
         this.organisationContactMechanisms = loaded.collection<ContactMechanism>(m.Person.CurrentOrganisationContactMechanisms);
 
-        const partyContactMechanisms = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-        partyContactMechanisms.forEach((v) => this.ownContactMechanisms.push(v.ContactMechanism));
+        this.party.CurrentPartyContactMechanisms.forEach((v) => this.ownContactMechanisms.push(v.ContactMechanism));
+        
 
         if (this.organisationContactMechanisms != null) {
           this.contactMechanisms = this.contactMechanisms.concat(this.organisationContactMechanisms);
@@ -147,7 +132,6 @@ export class PartyContactmechanismEditComponent implements OnInit, OnDestroy {
           this.partyContactMechanism.FromDate = new Date();
           this.partyContactMechanism.UseAsDefault = true;
 
-          this.party = loaded.object<Party>(m.Party);
           this.party.addPartyContactMechanism(this.partyContactMechanism);
         } else {
           this.partyContactMechanism = loaded.object<PartyContactMechanism>(m.PartyContactMechanism);

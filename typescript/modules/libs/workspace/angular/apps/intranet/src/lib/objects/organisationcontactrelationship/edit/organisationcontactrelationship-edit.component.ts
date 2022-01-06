@@ -7,7 +7,6 @@ import { M } from '@allors/workspace/meta/default';
 import { Person, Organisation, OrganisationContactRelationship, Party, OrganisationContactKind } from '@allors/workspace/domain/default';
 import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';
@@ -27,11 +26,11 @@ export class OrganisationContactRelationshipEditComponent implements OnInit, OnD
   party: Party;
   person: Person;
   organisation: Organisation;
-  organisations: Organisation[];
   contactKinds: OrganisationContactKind[];
   generalContact: OrganisationContactKind;
 
   peopleFilter: SearchFactory;
+  organisationsFilter: SearchFactory;
 
   constructor(
     @Self() public allors: ContextService,
@@ -58,7 +57,6 @@ export class OrganisationContactRelationshipEditComponent implements OnInit, OnD
           const isCreate = this.data.id == null;
 
           const pulls = [
-            pull.Organisation({}),
             pull.OrganisationContactKind({
               sorting: [{ roleType: this.m.OrganisationContactKind.Description }],
             }),
@@ -87,14 +85,13 @@ export class OrganisationContactRelationshipEditComponent implements OnInit, OnD
           }
 
           this.peopleFilter = Filters.peopleFilter(m);
+          this.organisationsFilter = Filters.organisationsFilter(m);
 
           return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
-
-        this.organisations = loaded.collection<Organisation>(m.Organisation);
 
         this.contactKinds = loaded.collection<OrganisationContactKind>(m.OrganisationContactKind);
         this.generalContact = this.contactKinds?.find((v) => v.UniqueId === 'eebe4d65-c452-49c9-a583-c0ffec385e98');

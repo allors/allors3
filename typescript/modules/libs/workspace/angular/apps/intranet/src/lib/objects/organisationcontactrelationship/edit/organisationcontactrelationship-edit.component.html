@@ -17,8 +17,8 @@
       <div class="row">
         <div class="col-md">
           <div class="row">
-            <a-mat-select *ngIf="!organisation" class="col" [object]="partyRelationship" [roleType]="m.OrganisationContactRelationship.Organisation" [options]="organisations" display="DisplayName"></a-mat-select>
-            <a-mat-static *ngIf="organisation" class="col-md" [object]="partyRelationship" [roleType]="m.OrganisationContactRelationship.Organisation" display="DisplayName"></a-mat-static>
+              <a-mat-autocomplete *ngIf="!organisation" class="col-md" [object]="partyRelationship" [roleType]="m.OrganisationContactRelationship.Organisation" [filter]="organisationsFilter.create(allors.context)" display="DisplayName"></a-mat-autocomplete>
+              <a-mat-static *ngIf="organisation" class="col-md" [object]="partyRelationship" [roleType]="m.OrganisationContactRelationship.Organisation" display="DisplayName"></a-mat-static>
           </div>
         </div>
       </div>
