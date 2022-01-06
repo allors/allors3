@@ -120,7 +120,8 @@ namespace Allors.Workspace.Adapters
                 strategies.UnionWith(associations);
             }
 
-            foreach (var strategy in strategies)
+            //TODO: Koen, fix strategy = null
+            foreach (var strategy in strategies.Where(v => v != null))
             {
                 strategy.Reset();
             }

@@ -24,10 +24,12 @@ namespace Allors.Database.Domain
                 m.SerialisedItem.RolePattern(v => v.SerialNumber),
                 m.SerialisedItem.RolePattern(v => v.PurchaseOrder),
                 m.SerialisedItem.RolePattern(v => v.SerialisedItemAvailability),
+                m.Part.RolePattern(v => v.SerialisedItemCharacteristics, v => v.SerialisedItems),
                 m.Part.RolePattern(v => v.ProductType, v => v.SerialisedItems),
                 m.ProductType.RolePattern(v => v.SerialisedItemCharacteristicTypes, v => v.PartsWhereProductType.Part.SerialisedItems),
                 m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
                 m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, v => v.SerialisedItems),
+                m.SerialisedItemCharacteristic.RolePattern(v => v.Value, v => v.PartWhereSerialisedItemCharacteristic.Part.SerialisedItems.SerialisedItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -55,13 +57,14 @@ namespace Allors.Database.Domain
                     foreach (var characteristicType in part.ProductType.SerialisedItemCharacteristicTypes)
                     {
                         var characteristic = @this.SerialisedItemCharacteristics.FirstOrDefault(v2 => Equals(v2.SerialisedItemCharacteristicType, characteristicType));
+                        var fromPart = part.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(characteristicType, v.SerialisedItemCharacteristicType));
+
                         if (characteristic == null)
                         {
                             var newCharacteristic = new SerialisedItemCharacteristicBuilder(@this.Strategy.Transaction)
                                 .WithSerialisedItemCharacteristicType(characteristicType).Build();
                             @this.AddSerialisedItemCharacteristic(newCharacteristic);
 
-                            var fromPart = part.SerialisedItemCharacteristics.FirstOrDefault(v => Equals(characteristicType, v.SerialisedItemCharacteristicType));
                             if (fromPart != null)
                             {
                                 newCharacteristic.Value = fromPart.Value;
@@ -69,6 +72,11 @@ namespace Allors.Database.Domain
                         }
                         else
                         {
+                            if (fromPart != null)
+                            {
+                                characteristic.Value = fromPart.Value;
+                            }
+
                             characteristicsToDelete.Remove(characteristic);
                         }
                     }
