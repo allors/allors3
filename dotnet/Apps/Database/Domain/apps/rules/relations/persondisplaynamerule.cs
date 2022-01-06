@@ -72,7 +72,7 @@ namespace Allors.Database.Domain
                 builder.Append($"[{@this.UserName}]");
             }
 
-            if (builder.Length == 0 && @this.ExistUserName)
+            if (builder.Length == 0 && !@this.ExistUserName)
             {
                 builder.Append("N/A");
             }
