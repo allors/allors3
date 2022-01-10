@@ -6,7 +6,7 @@
   <mat-dialog-content>
     <div class="container-fluid">
       <div class="row">
-        <a-mat-datetimepicker class="col-md" [object]="workEffortPartyAssignment" [roleType]="m.WorkEffortPartyAssignment.FromDate"></a-mat-datetimepicker>
+        <a-mat-datetimepicker class="col-md" [object]="workEffortPartyAssignment" [roleType]="m.WorkEffortPartyAssignment.FromDate" (selected)="fromDateSelected()"></a-mat-datetimepicker>
       </div>
 
       <div class="row">
