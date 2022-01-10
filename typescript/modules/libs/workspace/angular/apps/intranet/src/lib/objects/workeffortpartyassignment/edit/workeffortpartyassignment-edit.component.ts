@@ -28,6 +28,7 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
 
   private subscription: Subscription;
   employees: Person[];
+  employments: Employment[];
 
   constructor(
     @Self() public allors: ContextService,
@@ -125,16 +126,19 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
           }
         }
 
-        // TODO: Martien
-        const employments = loaded.collection<Employment>(m.Organisation.EmploymentsWhereEmployer);
-        if (this.workEffort) {
-          const now = new Date();
-          this.employees = employments?.filter((v) => v.FromDate <= now && (v.ThroughDate == null || v.ThroughDate >= now))?.map((v) => v.Employee);
-        } else {
-          this.employees = [this.person];
-        }
+        this.employments = loaded.collection<Employment>(m.Organisation.EmploymentsWhereEmployer);
+        this.fromDateSelected();
       });
   }
+
+  public fromDateSelected(): void {
+    if (this.workEffort) {
+      const fromDate = this.workEffortPartyAssignment.FromDate ?? new Date();
+      this.employees = this.employments?.filter((v) => v.FromDate <= fromDate && (v.ThroughDate == null || v.ThroughDate >= fromDate))?.map((v) => v.Employee);
+    } else {
+      this.employees = [this.person];
+    }
+}
 
   public ngOnDestroy(): void {
     if (this.subscription) {
