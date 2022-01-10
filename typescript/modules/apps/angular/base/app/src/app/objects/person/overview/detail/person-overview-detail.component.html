@@ -6,14 +6,7 @@
   <div class="container mb-3">
     <div class="row rounded" style="background-color: white">
       <div
-        class="
-          col-3 col-md-2
-          p-3
-          rounded-left
-          d-flex
-          justify-content-center
-          align-items-start
-        "
+        class="col-3 col-md-2 p-3 rounded-left d-flex justify-content-center align-items-start"
         style="background-color: lightseagreen"
       >
         <mat-icon style="color: white; zoom: 250%">{{ panel.icon }}</mat-icon>
@@ -76,8 +69,8 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <a-panel-detail-save></a-panel-detail-save>
-      <a-panel-detail-cancel></a-panel-detail-cancel>
+      <a-mat-cancel (cancel)="panel.toggle()"></a-mat-cancel>
+      <a-mat-save></a-mat-save>
     </mat-card-actions>
   </mat-card>
 </form>

@@ -6,12 +6,13 @@
 namespace Tests.ApplicationTests
 {
     using System.Linq;
-    using System.Threading.Tasks;
     using Allors.Database;
+    using Allors.Database.Domain;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Info;
-    using Allors.E2E.Angular.Material.Object;
+    using Allors.E2E.Angular.Material.Factory;
     using NUnit.Framework;
+    using Task = System.Threading.Tasks.Task;
 
     public class OverviewPagesTest : Test
     {
@@ -61,7 +62,7 @@ namespace Tests.ApplicationTests
                     await detail.ClickAsync();
                     await this.Page.WaitForAngular();
 
-                    var cancel = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail-save']");
+                    var cancel = this.AppRoot.Locator.Locator("[data-allors-kind='cancel']");
                     await cancel.ClickAsync();
                     await this.Page.WaitForAngular();
                 }
@@ -71,7 +72,7 @@ namespace Tests.ApplicationTests
         }
 
         [Test]
-        public async Task Create()
+        public async Task ObjectRelation()
         {
             foreach (var component in this.Components.Where(v => v.Overview != null))
             {
@@ -88,13 +89,30 @@ namespace Tests.ApplicationTests
                     await this.Page.GotoAsync(url);
                     await this.Page.WaitForAngular();
 
-                    var detail = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail']");
-                    await detail.ClickAsync();
-                    await this.Page.WaitForAngular();
+                    var objectRelations = this.AppRoot.Locator.Locator("[data-allors-kind='panel-object-relation']");
 
-                    var cancel = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail-save']");
-                    await cancel.ClickAsync();
-                    await this.Page.WaitForAngular();
+                    for (var i = 0; i < await objectRelations.CountAsync(); i++)
+                    {
+                        var objectRelation = objectRelations.Nth(i);
+
+                        await objectRelation.ClickAsync();
+                        await this.Page.WaitForAngular();
+
+                        var fab = new FactoryFabComponent(this.AppRoot);
+
+                        foreach (var @class in objectType.Classes)
+                        {
+                            await fab.Create(@class);
+
+                            var cancel = this.OverlayContainer.Locator.Locator("[data-allors-kind='cancel']");
+                            await cancel.ClickAsync();
+                            await this.Page.WaitForAngular();
+                        }
+
+                        var close = this.AppRoot.Locator.Locator("mat-icon:has-text('expand_less')");
+                        await close.ClickAsync();
+                        await this.Page.WaitForAngular();
+                    }
                 }
             }
 

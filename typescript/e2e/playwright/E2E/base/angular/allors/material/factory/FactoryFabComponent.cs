@@ -5,8 +5,6 @@
 
 namespace Allors.E2E.Angular.Material.Factory
 {
-    using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using Database.Meta;
     using Html;

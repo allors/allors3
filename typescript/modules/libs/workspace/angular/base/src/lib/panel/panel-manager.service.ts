@@ -11,7 +11,13 @@ import { Context, WorkspaceService } from '@allors/workspace/angular/core';
 export class PanelManagerService {
   context: Context;
 
-  id: number;
+  get id(): number {
+    return this._id;
+  }
+
+  set id(value: number) {
+    this._id = value;
+  }
 
   objectType: Composite;
 
@@ -21,11 +27,19 @@ export class PanelManagerService {
   on$: Observable<Date>;
   private onSubject$: BehaviorSubject<Date>;
 
+  private _id: number;
+
   get panelContainerClass() {
-    return this.expanded ? 'expanded-panel-container' : 'collapsed-panel-container';
+    return this.expanded
+      ? 'expanded-panel-container'
+      : 'collapsed-panel-container';
   }
 
-  constructor(workspaceService: WorkspaceService, public router: Router, public route: ActivatedRoute) {
+  constructor(
+    workspaceService: WorkspaceService,
+    public router: Router,
+    public route: ActivatedRoute
+  ) {
     this.context = workspaceService.contextBuilder();
     this.context.session.context = 'PanelManager';
     this.on$ = this.onSubject$ = new BehaviorSubject(new Date());
@@ -49,8 +63,15 @@ export class PanelManagerService {
       panel = name;
     }
 
-    const queryParams: Params = Object.assign({}, this.route.snapshot.queryParams);
+    const queryParams: Params = Object.assign(
+      {},
+      this.route.snapshot.queryParams
+    );
     queryParams.panel = panel;
-    this.router.navigate(['.'], { relativeTo: this.route, queryParams, queryParamsHandling: 'merge' });
+    this.router.navigate(['.'], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge',
+    });
   }
 }

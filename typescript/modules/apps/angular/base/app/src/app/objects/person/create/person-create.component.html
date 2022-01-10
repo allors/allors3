@@ -4,18 +4,33 @@
   <mat-dialog-content>
     <div class="container-fluid">
       <div class="row">
-        <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.FirstName"></a-mat-input>
-        <a-mat-input class="col-md" [object]="person" [roleType]="m.Person.LastName"></a-mat-input>
+        <a-mat-input
+          class="col-md"
+          [object]="person"
+          [roleType]="m.Person.FirstName"
+        ></a-mat-input>
+        <a-mat-input
+          class="col-md"
+          [object]="person"
+          [roleType]="m.Person.LastName"
+        ></a-mat-input>
       </div>
 
       <div class="row">
-        <a-mat-select class="col-md" [object]="person" [roleType]="m.Person.Locale" [options]="locales" display="Name"> </a-mat-select>
+        <a-mat-select
+          class="col-md"
+          [object]="person"
+          [roleType]="m.Person.Locale"
+          [options]="locales"
+          display="Name"
+        >
+        </a-mat-select>
       </div>
     </div>
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <a-mat-cancel (cancel)="dialogRef.close()"></a-mat-cancel>
+    <a-mat-save></a-mat-save>
   </div>
 </form>

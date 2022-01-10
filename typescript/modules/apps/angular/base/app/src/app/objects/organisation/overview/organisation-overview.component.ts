@@ -1,4 +1,10 @@
-import { Component, Self, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Self,
+  AfterViewInit,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
@@ -20,7 +26,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 })
 export class OrganisationOverviewComponent
   extends AllorsOverviewComponent<Organisation>
-  implements AfterViewInit, OnDestroy
+  implements OnInit, OnDestroy
 {
   subscription: Subscription;
 
@@ -35,7 +41,7 @@ export class OrganisationOverviewComponent
     super(allors, panelManager, titleService);
   }
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
 

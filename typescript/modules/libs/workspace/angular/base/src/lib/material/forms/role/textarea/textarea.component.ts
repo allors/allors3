@@ -18,6 +18,8 @@ export class AllorsMaterialTextareaComponent extends RoleField {
 
   triggerResize() {
     // Wait for changes to be applied, then trigger textarea resize.
-    this.ngZone.onStable.pipe(take(1)).subscribe(() => this.autosize.resizeToFitContent(true));
+    this.ngZone.onStable
+      .pipe(take(1))
+      .subscribe(() => this.autosize.resizeToFitContent(true));
   }
 }

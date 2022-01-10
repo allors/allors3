@@ -16,7 +16,7 @@ import {
   RefreshService,
   Table,
   TableRow,
-  AllorsPanelRelationComponent,
+  AllorsPanelObjectRelationComponent,
 } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
@@ -33,7 +33,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class EmploymentOverviewPanelComponent
-  extends AllorsPanelRelationComponent<Organisation | Person>
+  extends AllorsPanelObjectRelationComponent<Organisation | Person>
   implements OnInit
 {
   @HostBinding('class.expanded-panel')
@@ -59,7 +59,10 @@ export class EmploymentOverviewPanelComponent
   ) {
     super(panel);
 
-    this.relationObjectType = this.m.Employment;
+    const employment = this.m.Employment;
+    this.objectType = employment;
+    this.associationRoleType = employment.Employer;
+    this.roleRoleType = employment.Employee;
   }
 
   ngOnInit() {
@@ -96,12 +99,12 @@ export class EmploymentOverviewPanelComponent
             operands: [
               {
                 kind: 'Equals',
-                propertyType: m.Employment.Employer,
+                propertyType: this.associationRoleType,
                 value: id,
               },
               {
                 kind: 'Equals',
-                propertyType: m.Employment.Employee,
+                propertyType: this.roleRoleType,
                 value: id,
               },
             ],

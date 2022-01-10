@@ -3,13 +3,23 @@
 
   <mat-dialog-content>
     <div class="row">
-      <a-mat-input class="col-md" [object]="country" [roleType]="m.Country.IsoCode"></a-mat-input>
-      <a-mat-input class="col-md" [object]="country" [roleType]="m.Country.Name"></a-mat-input>
+      <a-mat-input
+        class="col-md"
+        [object]="country"
+        [roleType]="m.Country.IsoCode"
+      ></a-mat-input>
+      <a-mat-input
+        class="col-md"
+        [object]="country"
+        [roleType]="m.Country.Name"
+      ></a-mat-input>
     </div>
   </mat-dialog-content>
 
   <div mat-dialog-actions>
-    <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
+    <div mat-dialog-actions>
+      <a-mat-cancel (cancel)="dialogRef.close()"></a-mat-cancel>
+      <a-mat-save></a-mat-save>
+    </div>
   </div>
 </form>

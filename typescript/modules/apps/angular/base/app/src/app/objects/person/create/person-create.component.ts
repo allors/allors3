@@ -6,7 +6,12 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Person, Organisation } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({

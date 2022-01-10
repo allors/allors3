@@ -4,8 +4,17 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, Employment } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  Person,
+  Organisation,
+  Employment,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -30,7 +39,13 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<EmploymentEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
+  constructor(
+    @Self() public allors: ContextService,
+    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
+    public dialogRef: MatDialogRef<EmploymentEditComponent>,
+    public refreshService: RefreshService,
+    private saveService: SaveService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
@@ -82,7 +97,9 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -94,7 +111,9 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
         if (isCreate) {
           this.title = 'Add Employment';
 
-          this.employment = this.allors.context.create<Employment>(m.Employment);
+          this.employment = this.allors.context.create<Employment>(
+            m.Employment
+          );
           this.employment.FromDate = new Date();
           this.employment.Employer = this.organisation;
           this.employment.Employee = this.person;

@@ -48,15 +48,15 @@ namespace Allors.Database.Domain
                 .WithEmployee(jenny)
                 .Build();
 
-            for (var i = 0; i < 100; i++)
-            {
-                new OrganisationBuilder(this.transaction)
-                    .WithName($"Organisation-{i}")
-                    .WithOwner(john)
-                    .WithEmployee(jenny)
-                    .WithEmployee(jane)
-                    .Build();
-            }
+            //for (var i = 0; i < 100; i++)
+            //{
+            //    new OrganisationBuilder(this.transaction)
+            //        .WithName($"Organisation-{i}")
+            //        .WithOwner(john)
+            //        .WithEmployee(jenny)
+            //        .WithEmployee(jane)
+            //        .Build();
+            //}
 
             // Create cycles between Organisation and Person
             var cycleOrganisation1 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle One").Build();
