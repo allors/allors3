@@ -61,12 +61,14 @@ export * from './lib/navigation/navigation-activated-route';
 export * from './lib/page/list.component';
 export * from './lib/page/overview.component';
 
+export * from './lib/panel/object-detail-panel.component';
+export * from './lib/panel/object-panel.component';
+export * from './lib/panel/object-summary-panel.component';
 export * from './lib/panel/panel.service';
 export * from './lib/panel/panel-manager.service';
-export * from './lib/panel/panel-detail.component';
-export * from './lib/panel/panel-object.component';
-export * from './lib/panel/panel-object-relation.component';
-export * from './lib/panel/panel-summary.component';
+export * from './lib/panel/relation-object-panel.component';
+export * from './lib/panel/relation-object-association-panel.component';
+export * from './lib/panel/relation-object-role-panel.component';
 
 export * from './lib/refresh/refresh.service';
 export * from './lib/refresh/refresh.service.core';

@@ -5,7 +5,7 @@ import { PanelService } from './panel.service';
 import { IObject } from '@allors/workspace/domain/system';
 
 @Directive()
-export abstract class AllorsPanelObjectComponent<
+export abstract class AllorsObjectPanelComponent<
   T extends IObject
 > extends AllorsComponent {
   @HostBinding('attr.data-allors-id')

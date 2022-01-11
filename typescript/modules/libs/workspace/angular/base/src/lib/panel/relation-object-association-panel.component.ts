@@ -5,9 +5,11 @@ import { PanelService } from './panel.service';
 import { M } from '@allors/workspace/meta/default';
 
 @Directive()
-export abstract class AllorsPanelObjectRelationComponent<T extends IObject> {
+export abstract class AllorsRelationObjectAssociationPanelComponent<
+  T extends IObject
+> {
   @HostBinding('attr.data-allors-kind')
-  dataAllorsKind = 'panel-object-relation';
+  dataAllorsKind = 'panel-relation-object';
 
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {
@@ -19,13 +21,13 @@ export abstract class AllorsPanelObjectRelationComponent<T extends IObject> {
     return this.objectType?.tag;
   }
 
-  @HostBinding('attr.data-association-roletype')
-  get dataAssociationRoleType() {
+  @HostBinding('attr.data-allors-association-roletype')
+  get dataAllorsAssociationRoleType() {
     return this.associationRoleType.relationType.tag;
   }
 
-  @HostBinding('attr.data-role-roletype')
-  get dataRoleRoleType() {
+  @HostBinding('attr.data-allors-role-roletype')
+  get dataAllorsRoleRoleType() {
     return this.roleRoleType.relationType.tag;
   }
 

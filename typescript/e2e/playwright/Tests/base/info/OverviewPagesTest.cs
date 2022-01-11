@@ -89,7 +89,7 @@ namespace Tests.ApplicationTests
                     await this.Page.GotoAsync(url);
                     await this.Page.WaitForAngular();
 
-                    var objectRelations = this.AppRoot.Locator.Locator("[data-allors-kind='panel-object-relation']");
+                    var objectRelations = this.AppRoot.Locator.Locator("[data-allors-kind='panel-relation-object']");
 
                     for (var i = 0; i < await objectRelations.CountAsync(); i++)
                     {

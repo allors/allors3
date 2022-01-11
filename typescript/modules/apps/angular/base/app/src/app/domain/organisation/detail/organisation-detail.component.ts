@@ -5,7 +5,7 @@ import { switchMap, filter } from 'rxjs/operators';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Country } from '@allors/workspace/domain/default';
 import {
-  AllorsPanelDetailComponent,
+  AllorsObjectDetailPanelComponent,
   PanelService,
   RefreshService,
   SaveService,
@@ -20,7 +20,7 @@ import { ContextService } from '@allors/workspace/angular/core';
   providers: [ContextService, PanelService],
 })
 export class OrganisationDetailComponent
-  extends AllorsPanelDetailComponent<Organisation>
+  extends AllorsObjectDetailPanelComponent<Organisation>
   implements OnInit, OnDestroy
 {
   readonly m: M;

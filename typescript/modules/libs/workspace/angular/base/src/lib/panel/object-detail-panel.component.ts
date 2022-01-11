@@ -2,12 +2,12 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/workspace/domain/system';
 import { Directive } from '@angular/core';
 import { PanelService } from './panel.service';
-import { AllorsPanelObjectComponent } from './panel-object.component';
+import { AllorsObjectPanelComponent } from './object-panel.component';
 
 @Directive()
-export abstract class AllorsPanelDetailComponent<
+export abstract class AllorsObjectDetailPanelComponent<
   T extends IObject
-> extends AllorsPanelObjectComponent<T> {
+> extends AllorsObjectPanelComponent<T> {
   dataAllorsKind = 'panel-detail';
 
   constructor(public allors: ContextService, public panel: PanelService) {

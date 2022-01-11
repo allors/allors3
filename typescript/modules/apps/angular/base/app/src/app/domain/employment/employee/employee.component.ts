@@ -16,7 +16,7 @@ import {
   RefreshService,
   Table,
   TableRow,
-  AllorsPanelObjectRelationComponent,
+  AllorsRelationObjectAssociationPanelComponent,
 } from '@allors/workspace/angular/base';
 
 interface Row extends TableRow {
@@ -33,7 +33,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class EmployeeComponent
-  extends AllorsPanelObjectRelationComponent<Organisation | Person>
+  extends AllorsRelationObjectAssociationPanelComponent<Organisation | Person>
   implements OnInit
 {
   @HostBinding('class.expanded-panel')

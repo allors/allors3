@@ -9,7 +9,7 @@ import {
   Person,
 } from '@allors/workspace/domain/default';
 import {
-  AllorsPanelDetailComponent,
+  AllorsObjectDetailPanelComponent,
   NavigationService,
   PanelService,
   RefreshService,
@@ -23,7 +23,7 @@ import { ContextService } from '@allors/workspace/angular/core';
   providers: [PanelService, ContextService],
 })
 export class PersonDetailComponent
-  extends AllorsPanelDetailComponent<Person>
+  extends AllorsObjectDetailPanelComponent<Person>
   implements OnInit, OnDestroy
 {
   emailAddresses: string[] = [];
