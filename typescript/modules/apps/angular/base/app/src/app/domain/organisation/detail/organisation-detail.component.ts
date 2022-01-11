@@ -2,67 +2,57 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import {
-  Enumeration,
-  Gender,
-  Locale,
-  Person,
-} from '@allors/workspace/domain/default';
+import { M } from '@allors/workspace/meta/default';
+import { Organisation, Country } from '@allors/workspace/domain/default';
 import {
   AllorsPanelDetailComponent,
-  NavigationService,
   PanelService,
   RefreshService,
   SaveService,
+  SearchFactory,
+  SingletonId,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  selector: 'person-overview-detail',
-  templateUrl: './person-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  selector: 'organisation-detail',
+  templateUrl: './organisation-detail.component.html',
+  providers: [ContextService, PanelService],
 })
-export class PersonOverviewDetailComponent
-  extends AllorsPanelDetailComponent<Person>
+export class OrganisationDetailComponent
+  extends AllorsPanelDetailComponent<Organisation>
   implements OnInit, OnDestroy
 {
-  emailAddresses: string[] = [];
-  locales: Locale[];
-  genders: Enumeration[];
-  salutations: Enumeration[];
-  confirmPassword: string;
+  readonly m: M;
+
+  organisation: Organisation;
+  countries: Country[];
+  peopleFilter: SearchFactory;
 
   private subscription: Subscription;
 
   constructor(
     @Self() allors: ContextService,
     @Self() panel: PanelService,
+    public saveService: SaveService,
     public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private saveService: SaveService
+    private singletonId: SingletonId
   ) {
     super(allors, panel);
 
     // Collapsed
-    const pullName = `${this.panel.name}_${this.m.Person.tag}`;
+    const pullName = `${this.panel.name}_${this.m.Organisation.tag}`;
 
     panel.onPull = (pulls) => {
-      this.object = undefined;
-
       if (this.panel.isCollapsed) {
         const m = this.m;
         const { pullBuilder: pull } = m;
-        const x = {};
         const id = this.panel.manager.id;
 
         pulls.push(
-          pull.Person({
+          pull.Organisation({
             name: pullName,
             objectId: id,
-            include: {
-              Locale: x,
-              Gender: x,
-            },
           })
         );
       }
@@ -70,47 +60,51 @@ export class PersonOverviewDetailComponent
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.object = loaded.object<Person>(pullName);
+        this.organisation = loaded.object<Organisation>(pullName);
       }
     };
+
+    this.peopleFilter = new SearchFactory({
+      objectType: this.m.Person,
+      roleTypes: [this.m.Person.FirstName, this.m.Person.LastName],
+    });
   }
 
   public ngOnInit(): void {
-    // Maximized
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
+    // Expanded
     this.subscription = this.panel.manager.on$
       .pipe(
         filter(() => {
           return this.panel.isExpanded;
         }),
         switchMap(() => {
-          this.object = undefined;
+          this.organisation = undefined;
+
           const id = this.panel.manager.id;
 
           const pulls = [
-            pull.Person({
+            pull.Organisation({
               objectId: id,
               include: {
-                Gender: x,
-                Locale: x,
+                Country: x,
+                Owner: x,
               },
             }),
-            pull.Locale({}),
-            pull.Gender({}),
+            pull.Country({
+              sorting: [{ roleType: m.Country.Name }],
+            }),
           ];
 
           return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.allors.context.reset();
-
-        this.object = loaded.object<Person>(m.Person);
-        this.genders = loaded.collection<Gender>(m.Gender);
-        this.locales = loaded.collection<Locale>(m.Locale) || [];
+        this.organisation = loaded.object<Organisation>(m.Organisation);
+        this.countries = loaded.collection<Country>(m.Country);
       });
   }
 
@@ -123,7 +117,7 @@ export class PersonOverviewDetailComponent
   public save(): void {
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
-      this.panel.toggle();
+      window.history.back();
     }, this.saveService.errorHandler);
   }
 }

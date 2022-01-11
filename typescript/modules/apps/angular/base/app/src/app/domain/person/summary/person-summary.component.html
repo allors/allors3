@@ -1,5 +1,8 @@
 <mat-card *ngIf="object">
-  <mat-card-header (click)="panel.manager.toggle('detail')" style="cursor: pointer">
+  <mat-card-header
+    (click)="panel.manager.toggle('detail')"
+    style="cursor: pointer"
+  >
     <mat-card-title>{{ object.FirstName }}</mat-card-title>
     <mat-card-subtitle>
       <div>{{ object.LastName }}</div>
@@ -7,9 +10,15 @@
   </mat-card-header>
 
   <mat-card-content>
-    <div *ngIf="object.OrganisationsWhereOwner.length > 0" style="cursor: pointer">
+    <div
+      *ngIf="object.OrganisationsWhereOwner.length > 0"
+      style="cursor: pointer"
+    >
       <div style="color: grey">Organisation</div>
-      <div *ngFor="let organisation of object.OrganisationsWhereOwner" (click)="navigation.overview(organisation)">
+      <div
+        *ngFor="let organisation of object.OrganisationsWhereOwner"
+        (click)="navigation.overview(organisation)"
+      >
         {{ organisation.Name }}
       </div>
     </div>

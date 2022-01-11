@@ -38,7 +38,10 @@ interface Row extends TableRow {
   templateUrl: './organisation-list.component.html',
   providers: [ContextService],
 })
-export class OrganisationListComponent extends AllorsListComponent implements OnInit, OnDestroy {
+export class OrganisationListComponent
+  extends AllorsListComponent
+  implements OnInit, OnDestroy
+{
   public title = 'Organisations';
 
   table: Table<Row>;
@@ -84,40 +87,60 @@ export class OrganisationListComponent extends AllorsListComponent implements On
 
     this.filter = angularFilterFromDefinition(m.Organisation);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.Organisation({
+                predicate: this.filter.definition.predicate,
+                sorting: sort
+                  ? angularSorter(m.Organisation)?.create(sort)
+                  : null,
+                include: {
+                  Owner: {},
+                  Country: {},
+                },
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.Organisation({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.Organisation)?.create(sort) : null,
-              include: {
-                Owner: {},
-                Country: {},
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();

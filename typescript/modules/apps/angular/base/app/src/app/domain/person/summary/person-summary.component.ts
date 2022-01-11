@@ -11,11 +11,11 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'person-overview-summary',
-  templateUrl: './person-overview-summary.component.html',
+  selector: 'person-summary',
+  templateUrl: './person-summary.component.html',
   providers: [PanelService],
 })
-export class PersonOverviewSummaryComponent extends AllorsPanelSummaryComponent<Person> {
+export class PersonSummaryComponent extends AllorsPanelSummaryComponent<Person> {
   organisation: Organisation;
 
   constructor(

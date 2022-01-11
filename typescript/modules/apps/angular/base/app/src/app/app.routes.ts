@@ -7,11 +7,11 @@ import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FormComponent } from './form/form.component';
 
-import { CountryListComponent } from './objects/country/list/country-list.component';
-import { OrganisationListComponent } from './objects/organisation/list/organisation-list.component';
-import { OrganisationOverviewComponent } from './objects/organisation/overview/organisation-overview.component';
-import { PersonListComponent } from './objects/person/list/person-list.component';
-import { PersonOverviewComponent } from './objects/person/overview/person-overview.component';
+import { CountryListComponent } from './domain/country/list/country-list.component';
+import { OrganisationListComponent } from './domain/organisation/list/organisation-list.component';
+import { OrganisationOverviewComponent } from './domain/organisation/overview/organisation-overview.component';
+import { PersonListComponent } from './domain/person/list/person-list.component';
+import { PersonOverviewComponent } from './domain/person/overview/person-overview.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -31,7 +31,10 @@ export const routes: Routes = [
           { path: 'people', component: PersonListComponent },
           { path: 'person/:id', component: PersonOverviewComponent },
           { path: 'organisations', component: OrganisationListComponent },
-          { path: 'organisation/:id', component: OrganisationOverviewComponent },
+          {
+            path: 'organisation/:id',
+            component: OrganisationOverviewComponent,
+          },
           { path: 'countries', component: CountryListComponent },
         ],
       },
@@ -43,4 +46,14 @@ export const routes: Routes = [
   },
 ];
 
-export const components: any[] = [LoginComponent, MainComponent, DashboardComponent, FormComponent, CountryListComponent, OrganisationListComponent, OrganisationOverviewComponent, PersonListComponent, PersonOverviewComponent];
+export const components: any[] = [
+  LoginComponent,
+  MainComponent,
+  DashboardComponent,
+  FormComponent,
+  CountryListComponent,
+  OrganisationListComponent,
+  OrganisationOverviewComponent,
+  PersonListComponent,
+  PersonOverviewComponent,
+];

@@ -44,19 +44,14 @@ namespace Allors.Database.Domain
             var acme = new OrganisationBuilder(this.transaction)
                 .WithName("Acme")
                 .WithOwner(jane)
-                .WithEmployee(john)
+                 .WithEmployee(john)
                 .WithEmployee(jenny)
                 .Build();
 
-            //for (var i = 0; i < 100; i++)
-            //{
-            //    new OrganisationBuilder(this.transaction)
-            //        .WithName($"Organisation-{i}")
-            //        .WithOwner(john)
-            //        .WithEmployee(jenny)
-            //        .WithEmployee(jane)
-            //        .Build();
-            //}
+            acme.Owner = jenny;
+            acme.Manager = jane;
+            new EmploymentBuilder(this.transaction).WithEmployer(acme).WithEmployee(jane).Build();
+            new EmploymentBuilder(this.transaction).WithEmployer(acme).WithEmployee(john).Build();
 
             // Create cycles between Organisation and Person
             var cycleOrganisation1 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle One").Build();

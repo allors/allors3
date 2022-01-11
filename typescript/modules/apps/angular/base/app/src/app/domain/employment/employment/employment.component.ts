@@ -28,11 +28,11 @@ interface Row extends TableRow {
 }
 
 @Component({
-  selector: 'employment-overview-panel',
-  templateUrl: './employment-overview-panel.component.html',
+  selector: 'employment',
+  templateUrl: './employment.component.html',
   providers: [PanelService],
 })
-export class EmploymentOverviewPanelComponent
+export class EmploymentComponent
   extends AllorsPanelObjectRelationComponent<Organisation | Person>
   implements OnInit
 {

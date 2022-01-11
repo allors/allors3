@@ -6,7 +6,12 @@ import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Country } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SingletonId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -60,7 +65,9 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((loaded) => {
-        this.organisation = this.allors.context.create<Organisation>(m.Organisation);
+        this.organisation = this.allors.context.create<Organisation>(
+          m.Organisation
+        );
         this.countries = loaded.collection<Country>(m.Country);
       });
   }
