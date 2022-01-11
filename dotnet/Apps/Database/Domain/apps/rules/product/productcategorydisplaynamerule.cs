@@ -47,6 +47,10 @@ namespace Allors.Database.Domain
             {
                 @this.DisplayName = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
+            else
+            {
+                @this.RemoveDisplayName();
+            }
         }
     }
 }

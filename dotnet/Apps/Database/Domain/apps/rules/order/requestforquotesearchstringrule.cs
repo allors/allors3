@@ -94,6 +94,10 @@ namespace Allors.Database.Domain
             {
                 @this.SearchString = string.Join(" ", array.Where(s => !string.IsNullOrEmpty(s)));
             }
+            else
+            {
+                @this.RemoveSearchString();
+            }
         }
     }
 }

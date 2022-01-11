@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using System.Runtime.InteropServices;
     using Meta;
 
     public partial class Organisations
@@ -21,7 +22,9 @@ namespace Allors.Database.Domain
         public static Organisation CreateInternalOrganisation(
             ITransaction transaction,
             string name,
-            string address,
+            string address1,
+            [Optional] string address2,
+            [Optional] string address3,
             string postalCode,
             string locality,
             Country country,
@@ -83,7 +86,9 @@ namespace Allors.Database.Domain
             var m = transaction.Database.Services.Get<MetaPopulation>();
 
             var postalAddress1 = new PostalAddressBuilder(transaction)
-                    .WithAddress1(address)
+                    .WithAddress1(address1)
+                    .WithAddress2(address2)
+                    .WithAddress3(address3)
                     .WithPostalCode(postalCode)
                     .WithLocality(locality)
                     .WithCountry(country)
