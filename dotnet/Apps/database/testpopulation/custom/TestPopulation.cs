@@ -71,7 +71,7 @@ namespace Allors
             var internalOrganisation = Organisations.CreateInternalOrganisation(
                 transaction: this.Transaction,
                 name: "internalOrganisation",
-                address: "address",
+                address1: "address",
                 postalCode: "code",
                 locality: "city",
                 country: belgium,
