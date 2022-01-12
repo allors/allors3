@@ -116,12 +116,14 @@ import {
 import { routes, components as routesComponents } from './app.routes';
 import { dialogs, components as dialogsComponents } from './app.dialogs';
 
-import { EmploymentOverviewPanelComponent } from './objects/employment/overview/panel/employment-overview-panel.component';
-import { OrganisationOverviewDetailComponent } from './objects/organisation/overview/detail/organisation-overview-detail.component';
-import { OrganisationOverviewSummaryComponent } from './objects/organisation/overview/summary/organisation-overview-summary.component';
-import { PersonInlineComponent } from './objects/person/inline/person-inline.component';
-import { PersonOverviewDetailComponent } from './objects/person/overview/detail/person-overview-detail.component';
-import { PersonOverviewSummaryComponent } from './objects/person/overview/summary/person-overview-summary.component';
+import { EmployeeComponent } from './domain/employment/employee/employee.component';
+import { EmployerComponent } from './domain/employment/employer/employer.component';
+import { EmploymentComponent } from './domain/employment/employment/employment.component';
+import { OrganisationDetailComponent } from './domain/organisation/detail/organisation-detail.component';
+import { OrganisationSummaryComponent } from './domain/organisation/summary/organisation-summary.component';
+import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
+import { PersonDetailComponent } from './domain/person/detail/person-detail.component';
+import { PersonSummaryComponent } from './domain/person/summary/person-summary.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -170,12 +172,14 @@ import { PersonOverviewSummaryComponent } from './objects/person/overview/summar
     ...routesComponents,
     ...dialogsComponents,
     // Non routed and non dialog components
-    EmploymentOverviewPanelComponent,
+    EmployeeComponent,
+    EmployerComponent,
+    EmploymentComponent,
+    OrganisationDetailComponent,
+    OrganisationSummaryComponent,
     PersonInlineComponent,
-    OrganisationOverviewDetailComponent,
-    OrganisationOverviewSummaryComponent,
-    PersonOverviewDetailComponent,
-    PersonOverviewSummaryComponent,
+    PersonDetailComponent,
+    PersonSummaryComponent,
     // App
     AppComponent,
   ],

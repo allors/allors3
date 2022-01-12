@@ -1,9 +1,9 @@
 import { tags } from '@allors/workspace/meta/default';
 
-import { CountryEditComponent } from './objects/country/edit/country-edit.component';
-import { EmploymentEditComponent } from './objects/employment/edit/employment-edit.component';
-import { OrganisationCreateComponent } from './objects/organisation/create/organisation-create.component';
-import { PersonCreateComponent } from './objects/person/create/person-create.component';
+import { CountryEditComponent } from './domain/country/edit/country-edit.component';
+import { EmploymentEditComponent } from './domain/employment/edit/employment-edit.component';
+import { OrganisationCreateComponent } from './domain/organisation/create/organisation-create.component';
+import { PersonCreateComponent } from './domain/person/create/person-create.component';
 
 export const dialogs = {
   create: {
@@ -18,4 +18,9 @@ export const dialogs = {
   },
 };
 
-export const components: any[] = [CountryEditComponent, EmploymentEditComponent, OrganisationCreateComponent, PersonCreateComponent];
+export const components: any[] = [
+  CountryEditComponent,
+  EmploymentEditComponent,
+  OrganisationCreateComponent,
+  PersonCreateComponent,
+];

@@ -20,7 +20,7 @@ namespace Allors.E2E.Angular.Material.Role
         {
             this.Container = container;
             this.RoleType = roleType;
-            this.Locator = this.Container.Locator.Locator($"{elementName}:has([data-allors-roletype='{roleType.RelationType.Tag}'])");
+            this.Locator = this.Container.Locator.Locator($"{elementName}[data-allors-roletype='{roleType.RelationType.Tag}']");
         }
 
         public IComponent Container { get; }
