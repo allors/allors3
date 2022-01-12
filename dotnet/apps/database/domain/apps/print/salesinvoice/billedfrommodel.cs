@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
 
     public class BilledFromModel
     {
-        public BilledFromModel(Organisation billedFrom)
+        public BilledFromModel(Organisation billedFrom, Currency currency)
         {
             if (billedFrom != null)
             {
@@ -26,24 +26,28 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
 
                 if (billedFrom.GeneralCorrespondence is PostalAddress generalAddress)
                 {
-                    this.Address = generalAddress.Address1;
+                    var address = generalAddress.Address1;
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address2))
                     {
-                        this.Address = $"\n{generalAddress.Address2}";
+                        address += $"\n{generalAddress.Address2}";
                     }
 
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address3))
                     {
-                        this.Address = $"\n{generalAddress.Address3}";
+                        address += $"\n{generalAddress.Address3}";
                     }
 
+                    this.Address = address?.Split('\n');
                     this.City = generalAddress.Locality;
                     this.State = generalAddress.Region;
                     this.PostalCode = generalAddress.PostalCode;
                     this.Country = generalAddress.Country?.Name;
                 }
 
-                var bankAccount = billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban);
+                var bankAccount = billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban && v.Currency.Equals(currency))
+                    ?? billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban && v.Currency.Equals(billedFrom.PreferredCurrency))
+                    ?? billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban);
+
                 if (bankAccount != null)
                 {
                     this.IBAN = bankAccount.Iban;
@@ -57,7 +61,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
 
         public string Name { get; }
 
-        public string Address { get; }
+        public string[] Address { get; }
 
         public string City { get; }
 

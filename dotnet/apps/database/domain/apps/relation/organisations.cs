@@ -114,7 +114,7 @@ namespace Allors.Database.Domain
                 .WithIsInternalOrganisation(true)
                 .WithTaxNumber(taxNumber)
                 .WithName(name)
-                .WithPreferredCurrency(new Currencies(transaction).FindBy(m.Currency.IsoCode, "EUR"))
+                .WithPreferredCurrency(currency)
                 .WithInvoiceSequence(invoiceSequence)
                 .WithRequestSequence(requestSequence)
                 .WithQuoteSequence(quoteSequence)
