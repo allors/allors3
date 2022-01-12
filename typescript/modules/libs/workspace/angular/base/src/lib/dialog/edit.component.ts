@@ -66,7 +66,7 @@ export abstract class AllorsEditComponent<
     }
   }
 
-  public save(): void {
+  save(): void {
     this.allors.context.push().subscribe({
       complete: () => {
         this.dialogRef.close(this.object);
@@ -84,9 +84,9 @@ export abstract class AllorsEditComponent<
     } else {
       if (this.object) {
         if (this.canEdit) {
-          this.title = 'Edit Country';
+          this.title = `Edit ${name}`;
         } else {
-          this.title = 'View Country';
+          this.title = `View ${name}`;
         }
       }
     }
