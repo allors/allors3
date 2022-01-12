@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
 import { Country } from '@allors/workspace/domain/default';
 import {
+  AllorsEditComponent,
   ObjectData,
   RefreshService,
   SaveService,
@@ -13,42 +13,62 @@ import {
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
-  templateUrl: './country-edit.component.html',
+  template: `
+    <form *ngIf="object" #form="ngForm" (submit)="save()" novalidate>
+      <h3 mat-dialog-title>{{ title }}</h3>
+
+      <mat-dialog-content>
+        <div class="row">
+          <a-mat-input
+            class="col-md"
+            [object]="object"
+            [roleType]="m.Country.IsoCode"
+          ></a-mat-input>
+          <a-mat-input
+            class="col-md"
+            [object]="object"
+            [roleType]="m.Country.Name"
+          ></a-mat-input>
+        </div>
+      </mat-dialog-content>
+
+      <div mat-dialog-actions>
+        <div mat-dialog-actions>
+          <a-mat-cancel (cancel)="dialogRef.close()"></a-mat-cancel>
+          <a-mat-save></a-mat-save>
+        </div>
+      </div>
+    </form>
+  `,
   providers: [ContextService],
 })
-export class CountryEditComponent implements OnInit, OnDestroy {
-  public title: string;
-  public subTitle: string;
-
-  public m: M;
-
-  public country: Country;
-
-  private subscription: Subscription;
-
+export class CountryEditComponent
+  extends AllorsEditComponent<Country, CountryEditComponent>
+  implements OnInit, OnDestroy
+{
   constructor(
-    @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<CountryEditComponent>,
-    public refreshService: RefreshService,
-    private saveService: SaveService
+    @Self() allors: ContextService,
+    @Inject(MAT_DIALOG_DATA) data: ObjectData,
+    dialogRef: MatDialogRef<CountryEditComponent>,
+    refreshService: RefreshService,
+    saveService: SaveService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, data, dialogRef, refreshService, saveService);
+  }
+
+  get canEdit() {
+    return this.object?.canWriteName ?? true;
   }
 
   public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+    const { pullBuilder: pull } = this.m;
 
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id == null;
-
           const pulls = [];
 
-          if (!isCreate) {
+          if (!this.isCreate) {
             pulls.push(
               pull.Country({
                 objectId: this.data.id,
@@ -56,39 +76,18 @@ export class CountryEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls);
         })
       )
-      .subscribe(({ loaded, isCreate }) => {
+      .subscribe((loaded) => {
         this.allors.context.reset();
 
-        if (isCreate) {
-          this.title = 'Add Country';
-          this.country = this.allors.context.create<Country>(m.Country);
+        const { m } = this;
+        if (this.isCreate) {
+          this.object = this.allors.context.create<Country>(m.Country);
         } else {
-          this.country = loaded.object<Country>(m.Country);
-
-          if (this.country.canWriteName) {
-            this.title = 'Edit Country';
-          } else {
-            this.title = 'View Country';
-          }
+          this.object = loaded.object<Country>(m.Country);
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.country);
-      this.refreshService.refresh();
-    }, this.saveService.errorHandler);
   }
 }
