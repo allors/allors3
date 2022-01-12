@@ -14,7 +14,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
             var transaction = invoice.Strategy.Transaction;
 
             this.Invoice = new InvoiceModel(invoice);
-            this.BilledFrom = new BilledFromModel((Organisation)invoice.BilledFrom);
+            this.BilledFrom = new BilledFromModel((Organisation)invoice.BilledFrom, invoice.DerivedCurrency);
             this.BillTo = new BillToModel(invoice);
             this.ShipTo = new ShipToModel(invoice);
 

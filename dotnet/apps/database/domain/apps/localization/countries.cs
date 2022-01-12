@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
         public static Dictionary<string, IbanData> IbanDataByCountry = new Dictionary<string, IbanData>
             {
                 { "AD", new IbanData(24, @"\d{8}[a-zA-Z0-9]{12}") },
+                { "AE", new IbanData(23, @"\d{19}") },
                 { "AL", new IbanData(28, @"\d{8}[a-zA-Z0-9]{16}") },
                 { "AT", new IbanData(20, @"\d{16}") },
                 { "BA", new IbanData(20, @"\d{16}") },
