@@ -33,7 +33,7 @@ namespace Allors.Repository
 
         public Part Part { get; set; }
 
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
 
         public string PartDisplayName { get; set; }
 

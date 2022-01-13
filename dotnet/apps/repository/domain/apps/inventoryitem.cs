@@ -56,7 +56,7 @@ namespace Allors.Repository
         [Derived]
         [Size(256)]
         [Workspace(Default)]
-        string Name { get; set; }
+        string DisplayName { get; set; }
 
         #region Allors
         [Id("2678441b-342c-4b94-a5c7-d8c9e07de6b4")]

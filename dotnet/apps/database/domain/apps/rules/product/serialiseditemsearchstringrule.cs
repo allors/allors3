@@ -92,7 +92,7 @@ namespace Allors.Database.Domain
                     @this.ExistQuoteItemsWhereSerialisedItem ? string.Join(" ", @this.QuoteItemsWhereSerialisedItem?.Select(v => v.QuoteWhereQuoteItem?.QuoteNumber ?? string.Empty).ToArray()) : null,
                     @this.ExistRequestItemsWhereSerialisedItem ? string.Join(" ", @this.RequestItemsWhereSerialisedItem?.Select(v => v.RequestWhereRequestItem?.RequestNumber ?? string.Empty).ToArray()) : null,
                     @this.ExistSalesInvoiceItemsWhereSerialisedItem ? string.Join(" ", @this.SalesInvoiceItemsWhereSerialisedItem?.Select(v => v.SalesInvoiceWhereSalesInvoiceItem?.InvoiceNumber ?? string.Empty).ToArray()) : null,
-                    @this.ExistSerialisedInventoryItemsWhereSerialisedItem ? string.Join(" ", @this.SerialisedInventoryItemsWhereSerialisedItem?.Select(v => v.Name ?? string.Empty).ToArray()) : null,
+                    @this.ExistSerialisedInventoryItemsWhereSerialisedItem ? string.Join(" ", @this.SerialisedInventoryItemsWhereSerialisedItem?.Select(v => v.DisplayName ?? string.Empty).ToArray()) : null,
                     @this.ExistSerialisedInventoryItemsWhereSerialisedItem ? string.Join(" ", @this.SerialisedInventoryItemsWhereSerialisedItem?.Select(v => v.SerialisedInventoryItemState?.Name ?? string.Empty).ToArray()) : null,
                     @this.ExistShipmentItemsWhereSerialisedItem ? string.Join(" ", @this.ShipmentItemsWhereSerialisedItem?.Select(v => v.ShipmentWhereShipmentItem?.ShipmentNumber ?? string.Empty).ToArray()) : null,
                 };

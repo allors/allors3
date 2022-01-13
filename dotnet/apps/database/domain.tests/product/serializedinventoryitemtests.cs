@@ -195,12 +195,12 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class SerialisedInventoryItemRuleTests : DomainTest, IClassFixture<Fixture>
+    public class SerialisedInventoryItemRuleDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public SerialisedInventoryItemRuleTests(Fixture fixture) : base(fixture) { }
+        public SerialisedInventoryItemRuleDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedPartDeriveName()
+        public void ChangedPartDeriveDisplayName()
         {
             var inventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).Build();
             this.Derive();
@@ -208,11 +208,11 @@ namespace Allors.Database.Domain.Tests
             inventoryItem.Part = new UnifiedGoodBuilder(this.Transaction).WithName("partname").Build();
             this.Derive();
 
-            Assert.Equal("partname at facility with state In good order", inventoryItem.Name);
+            Assert.Equal("partname at facility with state In good order", inventoryItem.DisplayName);
         }
 
         [Fact]
-        public void ChangedFacilityDeriveName()
+        public void ChangedFacilityDeriveDisplayName()
         {
             var inventoryItem = new SerialisedInventoryItemBuilder(this.Transaction).Build();
             this.Derive();
@@ -220,7 +220,7 @@ namespace Allors.Database.Domain.Tests
             inventoryItem.Facility = new FacilityBuilder(this.Transaction).WithName("facilityname").Build();
             this.Derive();
 
-            Assert.Equal(" at facilityname with state In good order", inventoryItem.Name);
+            Assert.Equal(" at facilityname with state In good order", inventoryItem.DisplayName);
         }
     }
 
