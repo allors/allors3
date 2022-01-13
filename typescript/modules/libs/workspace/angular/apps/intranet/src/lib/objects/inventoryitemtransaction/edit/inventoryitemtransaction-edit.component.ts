@@ -121,7 +121,7 @@ export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy 
         this.inventoryTransactionReasons = loaded.collection(m.InventoryTransactionReason);
         this.nonSerialisedInventoryItemState = loaded.collection(m.NonSerialisedInventoryItemState);
         this.serialisedInventoryItemState = loaded.collection(m.SerialisedInventoryItemState);
-        this.part = loaded.object(m.Part) || loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
+        this.part = loaded.object(m.Part) || loaded.object<Part>(m.SerialisedItem.PartAddItem);
         this.parts = loaded.collection(m.Part);
         this.facilities = loaded.collection(m.Facility);
         this.lots = loaded.collection(m.Lot);
