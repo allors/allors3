@@ -145,7 +145,7 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
 
   get pattern(): string {
     if (this.roleType.objectType.tag == UnitTags.Decimal) {
-      return '^\\d*(\\.\\d+)?$';
+      return '^[\\-]?\\d*(\\.\\d+)?$';
     }
 
     return null;
