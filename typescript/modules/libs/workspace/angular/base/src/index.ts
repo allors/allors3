@@ -19,8 +19,6 @@ export * from './lib/date/date.service';
 export * from './lib/date/date.config';
 export * from './lib/date/date.service.core';
 
-export * from './lib/dialog/edit.component';
-
 export * from './lib/filter/filter';
 export * from './lib/filter/filter-definition';
 export * from './lib/filter/filter-field';
