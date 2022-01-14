@@ -1,14 +1,19 @@
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { ContextService } from '@allors/workspace/angular/core';
-import { RadioGroupOption, SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
-import { Data, Organisation, Person, Locale } from '@allors/workspace/domain/default';
+import {
+  Data,
+  Organisation,
+  Person,
+  Locale,
+} from '@allors/workspace/domain/default';
 import { IPullResult } from '@allors/workspace/domain/system';
+import { ContextService } from '@allors/workspace/angular/core';
+import { SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { RadioGroupOption } from '@allors/workspace/angular-material/base';
 
 @Component({
   templateUrl: './form.component.html',
@@ -46,7 +51,12 @@ export class FormComponent implements OnInit, OnDestroy {
   private refresh$: BehaviorSubject<Date>;
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, private titleService: Title, private route: ActivatedRoute, private saveService: SaveService) {
+  constructor(
+    @Self() public allors: ContextService,
+    private titleService: Title,
+    private route: ActivatedRoute,
+    private saveService: SaveService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.title = 'Form';
     this.titleService.setTitle(this.title);
@@ -59,7 +69,11 @@ export class FormComponent implements OnInit, OnDestroy {
     });
     this.peopleFilter = new SearchFactory({
       objectType: this.m.Person,
-      roleTypes: [this.m.Person.FirstName, this.m.Person.LastName, this.m.Person.UserName],
+      roleTypes: [
+        this.m.Person.FirstName,
+        this.m.Person.LastName,
+        this.m.Person.UserName,
+      ],
     });
 
     this.refresh$ = new BehaviorSubject<Date>(new Date());
@@ -67,7 +81,10 @@ export class FormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const route$: Observable<UrlSegment[]> = this.route.url;
-    const combined$: Observable<[UrlSegment[], Date]> = combineLatest([route$, this.refresh$]);
+    const combined$: Observable<[UrlSegment[], Date]> = combineLatest([
+      route$,
+      this.refresh$,
+    ]);
 
     const { pullBuilder: p } = this.m;
 
@@ -109,11 +126,15 @@ export class FormComponent implements OnInit, OnDestroy {
       .subscribe((loaded: IPullResult) => {
         this.allors.context.reset();
 
-        this.organisations = loaded.collection<Organisation>(this.m.Organisation);
+        this.organisations = loaded.collection<Organisation>(
+          this.m.Organisation
+        );
         this.people = loaded.collection<Person>(this.m.Person);
         const datas = loaded.collection<Data>(this.m.Data);
 
-        this.locale = loaded.collection<Locale>(this.m.Locale).find((v) => v.Name === 'nl-BE');
+        this.locale = loaded
+          .collection<Locale>(this.m.Locale)
+          .find((v) => v.Name === 'nl-BE');
         this.jane = this.people.find((v) => v.FirstName === 'Jane');
 
         if (datas && datas.length > 0) {

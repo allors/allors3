@@ -1,6 +1,5 @@
-import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
-
+import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import {
   Employment,
   Organisation,
@@ -8,16 +7,18 @@ import {
 } from '@allors/workspace/domain/default';
 import {
   Action,
-  DeleteService,
-  EditService,
   NavigationService,
-  ObjectData,
   PanelService,
   RefreshService,
+  AllorsRelationObjectPanelComponent,
+  ObjectData,
+} from '@allors/workspace/angular/base';
+import {
+  DeleteService,
+  EditService,
   Table,
   TableRow,
-  AllorsRelationObjectPanelComponent,
-} from '@allors/workspace/angular/base';
+} from '@allors/workspace/angular-material/base';
 
 interface Row extends TableRow {
   object: Employment;

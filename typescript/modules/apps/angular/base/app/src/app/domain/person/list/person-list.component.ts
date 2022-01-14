@@ -2,27 +2,28 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-
 import { Person } from '@allors/workspace/domain/default';
 import {
   Action,
   AllorsListComponent,
   angularFilterFromDefinition,
-  angularSorter,
-  DeleteService,
   Filter,
   FilterField,
   MediaService,
   NavigationService,
   ObjectService,
-  OverviewService,
   RefreshService,
-  Table,
-  TableRow,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
+import {
+  angularSorter,
+  DeleteService,
+  OverviewService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular-material/base';
 
 interface Row extends TableRow {
   object: Person;
@@ -35,7 +36,10 @@ interface Row extends TableRow {
   templateUrl: './person-list.component.html',
   providers: [ContextService],
 })
-export class PersonListComponent extends AllorsListComponent implements OnInit, OnDestroy {
+export class PersonListComponent
+  extends AllorsListComponent
+  implements OnInit, OnDestroy
+{
   table: Table<Row>;
   filter: Filter;
 
@@ -63,7 +67,11 @@ export class PersonListComponent extends AllorsListComponent implements OnInit, 
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'firstName', sort: true }, { name: 'lastName' }, { name: 'email' }],
+      columns: [
+        { name: 'firstName', sort: true },
+        { name: 'lastName' },
+        { name: 'email' },
+      ],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -77,39 +85,57 @@ export class PersonListComponent extends AllorsListComponent implements OnInit, 
 
     this.filter = angularFilterFromDefinition(m.Person);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.Person({
+                predicate: this.filter.definition.predicate,
+                sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
+                include: {
+                  Pictures: {},
+                },
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.Person({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
-              include: {
-                Pictures: {},
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();

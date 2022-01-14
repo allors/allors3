@@ -1,21 +1,20 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-
+import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { M } from '@allors/workspace/meta/default';
 import {
   Person,
   Organisation,
   Employment,
 } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   ObjectData,
   RefreshService,
   SaveService,
   SearchFactory,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './employment-edit.component.html',

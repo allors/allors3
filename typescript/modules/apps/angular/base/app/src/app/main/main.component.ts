@@ -1,13 +1,21 @@
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { Component, ViewChild, OnDestroy, OnInit, Self } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
-
-import { ContextService } from '@allors/workspace/angular/core';
-import { Organisation } from '@allors/workspace/domain/default';
-import { AllorsMaterialSideNavService, angularDisplayName, angularIcon, angularList, angularMenu, SideMenuItem } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
+import { Organisation } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
+import {
+  angularDisplayName,
+  angularIcon,
+  angularList,
+  angularMenu,
+} from '@allors/workspace/angular/base';
+import {
+  AllorsMaterialSideNavService,
+  SideMenuItem,
+} from '@allors/workspace/angular-material/base';
 
 @Component({
   styleUrls: ['main.component.scss'],
@@ -26,7 +34,11 @@ export class MainComponent implements OnInit, OnDestroy {
 
   @ViewChild('drawer', { static: true }) private sidenav: MatSidenav;
 
-  constructor(@Self() private allors: ContextService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {
+  constructor(
+    @Self() private allors: ContextService,
+    private router: Router,
+    private sideNavService: AllorsMaterialSideNavService
+  ) {
     this.allors.context.name = this.constructor.name;
   }
 
@@ -38,7 +50,10 @@ export class MainComponent implements OnInit, OnDestroy {
 
       const sideMenuItem: SideMenuItem = {
         icon: menuItem.icon ?? angularIcon(objectType),
-        title: menuItem.title ?? angularDisplayName(objectType) ?? objectType?.pluralName,
+        title:
+          menuItem.title ??
+          angularDisplayName(objectType) ??
+          objectType?.pluralName,
         link: menuItem.link ?? angularList(objectType),
         children:
           menuItem.children &&
@@ -46,7 +61,10 @@ export class MainComponent implements OnInit, OnDestroy {
             const childObjectType = childMenuItem.objectType;
             return {
               icon: childMenuItem.icon ?? angularIcon(childObjectType),
-              title: childMenuItem.title ?? angularDisplayName(childObjectType) ?? childObjectType?.pluralName,
+              title:
+                childMenuItem.title ??
+                angularDisplayName(childObjectType) ??
+                childObjectType?.pluralName,
               link: childMenuItem.link ?? angularList(childObjectType),
             };
           }),
@@ -56,11 +74,13 @@ export class MainComponent implements OnInit, OnDestroy {
     });
 
     this.router.onSameUrlNavigation = 'reload';
-    this.router.events.pipe(filter((v) => v instanceof NavigationEnd)).subscribe(() => {
-      if (this.sidenav) {
-        this.sidenav.close();
-      }
-    });
+    this.router.events
+      .pipe(filter((v) => v instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.sidenav) {
+          this.sidenav.close();
+        }
+      });
 
     this.toggleSubscription = this.sideNavService.toggle$.subscribe(() => {
       this.sidenav.toggle();

@@ -1,15 +1,8 @@
-import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
+import { Component, Self, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '@allors/workspace/domain/default';
 import {
   NavigationService,

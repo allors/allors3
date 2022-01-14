@@ -1,20 +1,19 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
+import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Country } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   AllorsEditComponent,
   ObjectData,
   RefreshService,
   SaveService,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   template: `
-    <form *ngIf="object" #form="ngForm" (submit)="save()" novalidate>
+    <a-form *ngIf="object" (submit)="save()">
       <h3 mat-dialog-title>{{ title }}</h3>
 
       <mat-dialog-content>
@@ -38,7 +37,7 @@ import { ContextService } from '@allors/workspace/angular/core';
           <a-mat-save></a-mat-save>
         </div>
       </div>
-    </form>
+    </a-form>
   `,
   providers: [ContextService],
 })

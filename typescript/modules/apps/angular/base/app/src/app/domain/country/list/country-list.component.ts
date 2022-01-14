@@ -1,29 +1,30 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
+import {
+  angularSorter,
+  DeleteService,
+  EditService,
+  OverviewService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular-material/base';
 import { M } from '@allors/workspace/meta/default';
 import { Country } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   Action,
   AllorsListComponent,
   angularFilterFromDefinition,
-  angularSorter,
-  DeleteService,
-  EditService,
   Filter,
   FilterField,
   MediaService,
   NavigationService,
-  OverviewService,
   RefreshService,
-  Table,
-  TableRow,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Country;
@@ -35,7 +36,10 @@ interface Row extends TableRow {
   templateUrl: './country-list.component.html',
   providers: [ContextService],
 })
-export class CountryListComponent extends AllorsListComponent implements OnInit, OnDestroy {
+export class CountryListComponent
+  extends AllorsListComponent
+  implements OnInit, OnDestroy
+{
   public title = 'Countries';
 
   table: Table<Row>;
@@ -90,39 +94,57 @@ export class CountryListComponent extends AllorsListComponent implements OnInit,
 
     this.filter = angularFilterFromDefinition(m.Country);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.Country({
+                predicate: this.filter.definition.predicate,
+                sorting: sort ? angularSorter(m.Country)?.create(sort) : null,
+                include: {
+                  LocalisedNames: x,
+                },
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.Country({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.Country)?.create(sort) : null,
-              include: {
-                LocalisedNames: x,
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();

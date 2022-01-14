@@ -1,0 +1,23 @@
+{
+  "root": "libs/workspace/angular-material/base",
+  "sourceRoot": "libs/workspace/angular-material/base/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/workspace/angular-material/base/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/workspace/angular-material/base"],
+      "options": {
+        "jestConfig": "libs/workspace/angular-material/base/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

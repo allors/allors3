@@ -1,9 +1,9 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
-
+import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Country } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   AllorsObjectDetailPanelComponent,
   PanelService,
@@ -12,7 +12,6 @@ import {
   SearchFactory,
   SingletonId,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   selector: 'organisation-detail',

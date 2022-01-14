@@ -1,18 +1,17 @@
+import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Person, Organisation } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   NavigationService,
   ObjectData,
   RefreshService,
   SaveService,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './person-create.component.html',

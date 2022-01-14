@@ -10,10 +10,7 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -32,6 +29,9 @@
       ],
       "@allors/workspace/adapters/system-tests": [
         "libs/workspace/adapters/system-tests/src/index.ts"
+      ],
+      "@allors/workspace/angular-material/base": [
+        "libs/workspace/angular-material/base/src/index.ts"
       ],
       "@allors/workspace/angular/apps/extranet": [
         "libs/workspace/angular/apps/extranet/src/index.ts"
@@ -96,12 +96,8 @@
       "@allors/workspace/meta/apps/intranet": [
         "libs/workspace/meta/apps/intranet/src/index.ts"
       ],
-      "@allors/workspace/meta/base": [
-        "libs/workspace/meta/base/src/index.ts"
-      ],
-      "@allors/workspace/meta/core": [
-        "libs/workspace/meta/core/src/index.ts"
-      ],
+      "@allors/workspace/meta/base": ["libs/workspace/meta/base/src/index.ts"],
+      "@allors/workspace/meta/core": ["libs/workspace/meta/core/src/index.ts"],
       "@allors/workspace/meta/json/apps/extranet": [
         "libs/workspace/meta/json/apps/extranet/src/index.ts"
       ],
@@ -128,8 +124,5 @@
       ]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

@@ -1,7 +1,13 @@
-import { angularFilterDefinition, angularList, angularMenu, angularOverview, angularSorter, FilterDefinition } from '@allors/workspace/angular/base';
 import { M } from '@allors/workspace/meta/default';
-import { Sorter } from '@allors/workspace/angular/base';
 import { Composite } from '@allors/workspace/meta/system';
+import {
+  angularFilterDefinition,
+  angularList,
+  angularMenu,
+  angularOverview,
+  FilterDefinition,
+} from '@allors/workspace/angular/base';
+import { angularSorter, Sorter } from '@allors/workspace/angular-material/base';
 
 function nav(composite: Composite, list: string, overview?: string) {
   angularList(composite, list);
@@ -15,7 +21,11 @@ export function configure(m: M) {
     {
       title: 'Contacts',
       icon: 'business',
-      children: [{ objectType: m.Person }, { objectType: m.Organisation }, { objectType: m.Country }],
+      children: [
+        { objectType: m.Person },
+        { objectType: m.Organisation },
+        { objectType: m.Country },
+      ],
     },
     { title: 'Form', icon: 'build', link: '/form' },
   ]);
@@ -92,5 +102,8 @@ export function configure(m: M) {
       ],
     })
   );
-  angularSorter(m.Country, new Sorter({ isoCode: m.Country.IsoCode, name: m.Country.Name }));
+  angularSorter(
+    m.Country,
+    new Sorter({ isoCode: m.Country.IsoCode, name: m.Country.Name })
+  );
 }

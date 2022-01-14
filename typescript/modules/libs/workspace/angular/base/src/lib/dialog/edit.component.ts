@@ -1,13 +1,13 @@
+import { Subscription } from 'rxjs';
 import { HostBinding, Directive } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { M } from '@allors/workspace/meta/default';
 import { ContextService } from '@allors/workspace/angular/core';
-import { AllorsComponent } from '../component';
 import { IObject } from '@allors/workspace/domain/system';
-import { ObjectData } from '../material/object/object.data';
-import { Subscription } from 'rxjs';
 import { RefreshService } from '../refresh/refresh.service';
-import { MatDialogRef } from '@angular/material/dialog';
-import { SaveService } from '../material/save/save.service';
+import { ObjectData } from '../object/object.data';
+import { SaveService } from '../save/save.service';
+import { AllorsComponent } from '../component';
 
 @Directive()
 export abstract class AllorsEditComponent<

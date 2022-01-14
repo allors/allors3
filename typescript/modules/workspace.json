@@ -14,6 +14,7 @@
     "workspace-angular-apps-intranet": "libs/workspace/angular/apps/intranet",
     "workspace-angular-base": "libs/workspace/angular/base",
     "workspace-angular-core": "libs/workspace/angular/core",
+    "workspace-angular-material-base": "libs/workspace/angular-material/base",
     "workspace-derivations-apps-extranet": "libs/workspace/derivations/apps/extranet",
     "workspace-derivations-apps-extranet-custom": "libs/workspace/derivations/apps/extranet-custom",
     "workspace-derivations-apps-intranet": "libs/workspace/derivations/apps/intranet",
