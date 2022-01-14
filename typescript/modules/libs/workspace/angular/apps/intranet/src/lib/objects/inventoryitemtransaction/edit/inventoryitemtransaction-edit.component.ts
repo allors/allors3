@@ -35,7 +35,6 @@ export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy 
   inventoryItemTransaction: InventoryItemTransaction;
   inventoryTransactionReasons: InventoryTransactionReason[];
   selectedPart: Part;
-  parts: Part[];
   selectedFacility: Facility;
   addFacility = false;
   facilities: Facility[];
@@ -73,7 +72,6 @@ export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy 
         switchMap(() => {
           const pulls = [
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
-            pull.Part({}),
             pull.InventoryTransactionReason({}),
             pull.NonSerialisedInventoryItemState({}),
             pull.SerialisedInventoryItemState({}),
@@ -89,12 +87,6 @@ export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy 
                   InventoryItemKind: x,
                   PartWeightedAverage: x,
                 },
-              },
-            }),
-            pull.Part({
-              objectId: this.data.associationId,
-              include: {
-                PartWeightedAverage: x,
               },
             }),
             pull.SerialisedItem({
@@ -122,7 +114,6 @@ export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy 
         this.nonSerialisedInventoryItemState = loaded.collection(m.NonSerialisedInventoryItemState);
         this.serialisedInventoryItemState = loaded.collection(m.SerialisedInventoryItemState);
         this.part = loaded.object(m.Part) || loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
-        this.parts = loaded.collection(m.Part);
         this.facilities = loaded.collection(m.Facility);
         this.lots = loaded.collection(m.Lot);
         this.serialisedItem = loaded.object(m.SerialisedItem);

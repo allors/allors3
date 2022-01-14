@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class SerialisedInventoryItemRule : Rule
+    public class SerialisedInventoryItemDisplayNameRule : Rule
     {
-        public SerialisedInventoryItemRule(MetaPopulation m) : base(m, new Guid("29B3C9B5-7BB2-4851-A424-F984E7AE348B")) =>
+        public SerialisedInventoryItemDisplayNameRule(MetaPopulation m) : base(m, new Guid("29B3C9B5-7BB2-4851-A424-F984E7AE348B")) =>
             this.Patterns = new Pattern[]
             {
                 m.SerialisedInventoryItem.RolePattern(v => v.Part),
@@ -23,13 +23,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<SerialisedInventoryItem>())
             {
-                if (!@this.ExistName)
-                {
-                    @this.Name = $"{@this.Part?.Name} at {@this.Facility?.Name} with state {@this.SerialisedInventoryItemState?.Name}";
-                }
+                @this.DeriveSerialisedInventoryItemDisplayNameRule(validation);
             }
         }
+    }
+
+    public static class SerialisedInventoryItemDisplayNameRuleExtensions
+    {
+        public static void DeriveSerialisedInventoryItemDisplayNameRule(this SerialisedInventoryItem @this, IValidation validation) => @this.DisplayName = $"{@this.Part?.Name} at {@this.Facility?.Name} with state {@this.SerialisedInventoryItemState?.Name}";
     }
 }

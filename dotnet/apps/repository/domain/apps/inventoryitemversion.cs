@@ -22,14 +22,6 @@ namespace Allors.Repository
         Part Part { get; set; }
 
         #region Allors
-        [Id("86010471-E2F6-4F60-AD2D-0665644CE1F6")]
-        #endregion
-        [Derived]
-        [Size(256)]
-        [Workspace(Default)]
-        string Name { get; set; }
-
-        #region Allors
         [Id("8885CCDE-B630-450C-9B01-3D18BCAA3795")]
         [Indexed]
         #endregion

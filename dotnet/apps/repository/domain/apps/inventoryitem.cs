@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("61af6d19-e8e4-4b5b-97e8-3610fbc82605")]
     #endregion
-    public partial interface InventoryItem : UniquelyIdentifiable, Transitional, Deletable, Versioned, Searchable
+    public partial interface InventoryItem : UniquelyIdentifiable, Transitional, Deletable, Versioned, Searchable, IDisplayName
     {
         /// <summary>
         /// Gets or sets the Part for which this InventoryItem tracks inventory information.
@@ -49,14 +49,6 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         UnitOfMeasure UnitOfMeasure { get; set; }
-
-        #region Allors
-        [Id("EB6EFE43-6584-4460-ACA8-63153FCAECFF")]
-        #endregion
-        [Derived]
-        [Size(256)]
-        [Workspace(Default)]
-        string Name { get; set; }
 
         #region Allors
         [Id("2678441b-342c-4b94-a5c7-d8c9e07de6b4")]

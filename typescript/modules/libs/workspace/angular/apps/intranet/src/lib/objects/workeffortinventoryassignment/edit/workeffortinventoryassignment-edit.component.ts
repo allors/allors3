@@ -65,7 +65,7 @@ export class WorkEffortInventoryAssignmentEditComponent implements OnInit, OnDes
 
           let pulls = [
             pull.InventoryItem({
-              sorting: [{ roleType: m.InventoryItem.Name }],
+              sorting: [{ roleType: m.InventoryItem.DisplayName }],
               include: {
                 Part: {
                   InventoryItemKind: x,

@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenInventoryItemForPart_WhenDerived_ThenNameIsPartName()
+        public void GivenInventoryItemForPart_WhenDerived_ThenDisplayNameIsPartName()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction)
                 .WithProductIdentification(new PartNumberBuilder(this.Transaction)
@@ -92,7 +92,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal("Part 1 at facility with state Good", part.InventoryItemsWherePart.Single().Name);
+            Assert.Equal("Part 1 at facility with state Good", part.InventoryItemsWherePart.Single().DisplayName);
         }
 
         [Fact]
@@ -534,12 +534,12 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
-    public class NonSerialisedInventoryItemRuleTests : DomainTest, IClassFixture<Fixture>
+    public class NonSerialisedInventoryItemDisplayNameRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public NonSerialisedInventoryItemRuleTests(Fixture fixture) : base(fixture) { }
+        public NonSerialisedInventoryItemDisplayNameRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedPartDeriveName()
+        public void ChangedPartDeriveDisplayName()
         {
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
             this.Derive();
@@ -547,11 +547,11 @@ namespace Allors.Database.Domain.Tests
             inventoryItem.Part = new UnifiedGoodBuilder(this.Transaction).WithName("partname").Build();
             this.Derive();
 
-            Assert.Equal("partname at facility with state Good", inventoryItem.Name);
+            Assert.Equal("partname at facility with state Good", inventoryItem.DisplayName);
         }
 
         [Fact]
-        public void ChangedFacilityDeriveName()
+        public void ChangedFacilityDeriveDisplayName()
         {
             var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction).Build();
             this.Derive();
@@ -559,7 +559,7 @@ namespace Allors.Database.Domain.Tests
             inventoryItem.Facility = new FacilityBuilder(this.Transaction).WithName("facilityname").Build();
             this.Derive();
 
-            Assert.Equal(" at facilityname with state Good", inventoryItem.Name);
+            Assert.Equal(" at facilityname with state Good", inventoryItem.DisplayName);
         }
     }
 
