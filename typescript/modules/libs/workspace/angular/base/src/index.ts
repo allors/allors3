@@ -19,6 +19,11 @@ export * from './lib/date/date.service';
 export * from './lib/date/date.config';
 export * from './lib/date/date.service.core';
 
+export * from './lib/fields/association-field';
+export * from './lib/fields/field';
+export * from './lib/fields/localised-role-field';
+export * from './lib/fields/role-field';
+
 export * from './lib/filter/filter';
 export * from './lib/filter/filter-definition';
 export * from './lib/filter/filter-field';
@@ -29,11 +34,7 @@ export * from './lib/focus/focus.service';
 export * from './lib/focus/focus.directive';
 export * from './lib/focus/focus.service.core';
 
-export * from './lib/forms/association-field';
-export * from './lib/forms/field';
 export * from './lib/forms/form.component';
-export * from './lib/forms/localised-role-field';
-export * from './lib/forms/role-field';
 
 export * from './lib/info/dialog-info.service';
 export * from './lib/info/menu-info.service';
