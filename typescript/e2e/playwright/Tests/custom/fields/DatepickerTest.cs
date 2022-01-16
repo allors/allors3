@@ -5,13 +5,14 @@
 
 namespace Tests.Form
 {
+    using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class RadioGroupTest : Test
+    public class DatepickerTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -19,15 +20,29 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
-        public async Task SetFirst()
+        public async Task Initial()
         {
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
+
+            var date = await this.FormComponent.Date.GetAsync();
+
+            Assert.IsNull(date);
+        }
+
+        [Test]
+        public async Task SetDate()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
+
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.RadioGroup.SelectAsync("one");
+            var now = this.Transaction.Now();
+
+            await this.FormComponent.Date.SetAsync(now);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -35,23 +50,10 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(before.Length + 1, after.Length);
             var data = after.Except(before).First();
-            Assert.AreEqual("one", data.RadioGroup);
-        }
-
-        [Test]
-        public async Task SetSecond()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
-
-            await this.FormComponent.RadioGroup.SelectAsync("two");
-
-            await this.FormComponent.SaveAsync();
-            this.Transaction.Rollback();
-
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(before.Length + 1, after.Length);
-            var data = after.Except(before).First();
-            Assert.AreEqual("two", data.RadioGroup);
+            Assert.True(data.Date != null);
+            Assert.AreEqual(now.Year, data.Date.Value.Year);
+            Assert.AreEqual(now.Month, data.Date.Value.Month);
+            Assert.AreEqual(now.Day, data.Date.Value.Day);
         }
     }
 }

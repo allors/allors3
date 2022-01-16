@@ -16,10 +16,10 @@ import { SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { RadioGroupOption } from '@allors/workspace/angular-material/base';
 
 @Component({
-  templateUrl: './form.component.html',
+  templateUrl: './fields.component.html',
   providers: [ContextService],
 })
-export class FormComponent implements OnInit, OnDestroy {
+export class FieldsComponent implements OnInit, OnDestroy {
   title: string;
   m: M;
 

@@ -11,7 +11,7 @@ namespace Tests.Form
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class InputTest : Test
+    public class LocalisedTextTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -19,15 +19,32 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
-        public async Task String()
+        public async Task Populated()
         {
+            var locale = new Locales(this.Transaction).DutchBelgium;
+            var localisedMarkdown = new LocalisedTextBuilder(this.Transaction).WithLocale(locale).WithText("*** Hello ***").Build();
+            var data = new DataBuilder(this.Transaction).Build();
+            data.AddLocalisedText(localisedMarkdown);
+            this.Transaction.Commit();
+
+            await this.GotoAsync("/fields");
+
+            var actual = await this.FormComponent.LocalisedText.GetAsync();
+
+            Assert.That(actual, Is.EqualTo("*** Hello ***"));
+        }
+
+        [Test]
+        public async Task Set()
+        {
+            var locale = new Locales(this.Transaction).DutchBelgium;
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.String.SetAsync("Hello");
+            await this.FormComponent.LocalisedText.SetAsync("*** Hello ***");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -35,23 +52,7 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual("Hello", data.String);
-        }
-
-        [Test]
-        public async Task Decimal()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
-
-            await this.FormComponent.Decimal.SetAsync(100.50m);
-
-            await this.FormComponent.SaveAsync();
-            this.Transaction.Rollback();
-
-            var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
-            var data = after.Except(before).First();
-            Assert.AreEqual(100.50m, data.Decimal);
+            Assert.AreEqual("*** Hello ***", data.LocalisedTexts.First(v => v.Locale.Equals(locale)).Text);
         }
     }
 }

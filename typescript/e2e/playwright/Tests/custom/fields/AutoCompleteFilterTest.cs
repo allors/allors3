@@ -19,7 +19,7 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]

@@ -27,7 +27,7 @@ export function configure(m: M) {
         { objectType: m.Country },
       ],
     },
-    { title: 'Form', icon: 'build', link: '/form' },
+    { title: 'Fields', icon: 'build', link: '/fields' },
   ]);
 
   // Navigation

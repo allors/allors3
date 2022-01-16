@@ -11,7 +11,7 @@ namespace Tests.Form
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class SlideToggleTest : Test
+    public class SelectTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -19,15 +19,16 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
-        public async Task SetTrue()
+        public async Task SelectObject()
         {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.SlideToggle.SetAsync(true);
+            await this.FormComponent.Select.SelectAsync(jane);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -35,7 +36,7 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.IsTrue(data.SlideToggle);
+            Assert.AreEqual(jane, data.Select);
         }
     }
 }

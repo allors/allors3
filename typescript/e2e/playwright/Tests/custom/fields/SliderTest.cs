@@ -5,12 +5,13 @@
 
 namespace Tests.Form
 {
+    using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class StaticTest : Test
+    public class SliderTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -18,21 +19,23 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
-        public async Task Populated()
+        public async Task Set()
         {
-            var data = new DataBuilder(this.Transaction).Build();
-            data.Static = "A Static String!";
-            this.Transaction.Commit();
+            var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.GotoAsync("/form");
+            await this.FormComponent.Slider.SetAsync(1, 20, 10);
 
-            var actual = await this.FormComponent.Static.GetAsync();
+            await this.FormComponent.SaveAsync();
+            this.Transaction.Rollback();
 
-            Assert.That(actual, Is.EqualTo("A Static String!"));
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
+            var data = after.Except(before).First();
+            Assert.AreEqual(10, data.Slider);
         }
     }
 }

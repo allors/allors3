@@ -5,14 +5,13 @@
 
 namespace Tests.Form
 {
-    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular.Material.Form;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class FileTest : Test
+    public class CheckboxTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -20,16 +19,25 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
-        public async Task Upload()
+        public async Task Indeterminate()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var file = new FileInfo("logo.png");
-            await this.FormComponent.File.UploadAsync(file);
+            var value = await this.FormComponent.Checkbox.GetAsync();
+
+            Assert.Null(value);
+        }
+
+        [Test]
+        public async Task SetTrue()
+        {
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            await this.FormComponent.Checkbox.SetAsync(true);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -37,30 +45,23 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.ExistFile);
+            Assert.True(data.Checkbox);
         }
 
         [Test]
-        public async Task Remove()
+        public async Task SetFalse()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var file = new FileInfo("logo.png");
-            await this.FormComponent.File.UploadAsync(file);
+            await this.FormComponent.Checkbox.SetAsync(false);
 
             await this.FormComponent.SaveAsync();
-
             this.Transaction.Rollback();
+
             var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-
-            var media = this.FormComponent.File.Media(data.File);
-            await media.RemoveAsync();
-
-            await this.FormComponent.SaveAsync();
-            this.Transaction.Rollback();
-
-            Assert.False(data.ExistFile);
+            Assert.False(data.Checkbox);
         }
     }
 }

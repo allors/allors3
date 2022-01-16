@@ -21,7 +21,7 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace Tests.Form
             data.DateTime = this.Transaction.Database.Services.Get<ITime>().Now();
             this.Transaction.Commit();
 
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
 
             var actual = await this.FormComponent.DateTime.GetAsync();
 

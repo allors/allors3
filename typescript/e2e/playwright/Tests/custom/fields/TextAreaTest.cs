@@ -1,4 +1,4 @@
-// <copyright file="AutoCompleteFilterTest.cs" company="Allors bvba">
+// <copyright file="InputTest.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,7 +11,7 @@ namespace Tests.Form
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class LocalisedMarkdownTest : Test
+    public class TextAreaTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -19,32 +19,29 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
         public async Task Populated()
         {
-            var locale = new Locales(this.Transaction).DutchBelgium;
-            var localisedMarkdown = new LocalisedTextBuilder(this.Transaction).WithLocale(locale).WithText("*** Hello ***").Build();
             var data = new DataBuilder(this.Transaction).Build();
-            data.AddLocalisedMarkdown(localisedMarkdown);
+            data.PlainText = "This is plain text.";
             this.Transaction.Commit();
 
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.LocalisedMarkdown.GetAsync();
+            var actual = await this.FormComponent.PlainText.GetAsync();
 
-            Assert.That(actual, Is.EqualTo("*** Hello ***"));
+            Assert.That(actual, Is.EqualTo("This is plain text."));
         }
 
         [Test]
         public async Task Set()
         {
-            var locale = new Locales(this.Transaction).DutchBelgium;
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.LocalisedMarkdown.SetAsync("*** Hello ***");
+            await this.FormComponent.PlainText.SetAsync("Hello");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -52,7 +49,7 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual("*** Hello ***", data.LocalisedMarkdowns.First(v => v.Locale.Equals(locale)).Text);
+            Assert.AreEqual("Hello", data.PlainText);
         }
     }
 }

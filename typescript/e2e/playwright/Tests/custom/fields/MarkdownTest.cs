@@ -11,7 +11,7 @@ namespace Tests.Form
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class SliderTest : Test
+    public class MarkdownTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -19,7 +19,21 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
+        }
+
+        [Test]
+        public async Task Populated()
+        {
+            var data = new DataBuilder(this.Transaction).Build();
+            data.Markdown = "*** Hello ***";
+            this.Transaction.Commit();
+
+            await this.GotoAsync("/fields");
+
+            var actual = await this.FormComponent.Markdown.GetAsync();
+
+            Assert.That(actual, Is.EqualTo("*** Hello ***"));
         }
 
         [Test]
@@ -27,7 +41,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Slider.SetAsync(1, 20, 10);
+            await this.FormComponent.Markdown.SetAsync("*** Hello ***");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -35,7 +49,7 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(10, data.Slider);
+            Assert.AreEqual("*** Hello ***", data.Markdown);
         }
     }
 }

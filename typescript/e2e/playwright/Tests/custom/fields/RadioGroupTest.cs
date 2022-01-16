@@ -11,7 +11,7 @@ namespace Tests.Form
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class CheckboxTest : Test
+    public class RadioGroupTest : Test
     {
         public FormComponent FormComponent => new FormComponent(this.AppRoot);
 
@@ -19,49 +19,39 @@ namespace Tests.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/form");
+            await this.GotoAsync("/fields");
         }
 
         [Test]
-        public async Task Indeterminate()
+        public async Task SetFirst()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var value = await this.FormComponent.Checkbox.GetAsync();
-
-            Assert.Null(value);
-        }
-
-        [Test]
-        public async Task SetTrue()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
-
-            await this.FormComponent.Checkbox.SetAsync(true);
+            await this.FormComponent.RadioGroup.SelectAsync("one");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            Assert.AreEqual(before.Length + 1, after.Length);
             var data = after.Except(before).First();
-            Assert.True(data.Checkbox);
+            Assert.AreEqual("one", data.RadioGroup);
         }
 
         [Test]
-        public async Task SetFalse()
+        public async Task SetSecond()
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Checkbox.SetAsync(false);
+            await this.FormComponent.RadioGroup.SelectAsync("two");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            Assert.AreEqual(before.Length + 1, after.Length);
             var data = after.Except(before).First();
-            Assert.False(data.Checkbox);
+            Assert.AreEqual("two", data.RadioGroup);
         }
     }
 }
