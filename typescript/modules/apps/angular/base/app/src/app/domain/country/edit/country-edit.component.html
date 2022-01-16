@@ -1,25 +1,14 @@
-<a-form *ngIf="object" (submit)="save()">
-  <h3 mat-dialog-title>{{ title }}</h3>
+<a-form-container>
+  <h3 mat-dialog-title>TODO</h3>
 
   <mat-dialog-content>
-    <div class="row">
-      <a-mat-input
-        class="col-md"
-        [object]="object"
-        [roleType]="m.Country.IsoCode"
-      ></a-mat-input>
-      <a-mat-input
-        class="col-md"
-        [object]="object"
-        [roleType]="m.Country.Name"
-      ></a-mat-input>
-    </div>
+    <country-form></country-form>
   </mat-dialog-content>
 
   <div mat-dialog-actions>
     <div mat-dialog-actions>
-      <a-mat-cancel (cancel)="dialogRef.close()"></a-mat-cancel>
+      <a-mat-cancel></a-mat-cancel>
       <a-mat-save></a-mat-save>
     </div>
   </div>
-</a-form>
+</a-form-container>

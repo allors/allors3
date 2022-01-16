@@ -69,7 +69,7 @@ import {
   AllorsBarcodeService,
   NavigationService,
   MediaService,
-  AllorsFormComponent,
+  AllorsFormContainerComponent,
 } from '@allors/workspace/angular/base';
 
 import {
@@ -128,13 +128,15 @@ import { PersonInlineComponent } from './domain/person/inline/person-inline.comp
 import { PersonDetailComponent } from './domain/person/detail/person-detail.component';
 import { PersonSummaryComponent } from './domain/person/summary/person-summary.component';
 
+import { CountryFormComponent } from './domain/country/forms/country-form.component';
+
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
     // Allors Angular Base
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    AllorsFormComponent,
+    AllorsFormContainerComponent,
     // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
@@ -184,6 +186,8 @@ import { PersonSummaryComponent } from './domain/person/summary/person-summary.c
     PersonInlineComponent,
     PersonDetailComponent,
     PersonSummaryComponent,
+    // Forms
+    CountryFormComponent,
     // App
     AppComponent,
   ],

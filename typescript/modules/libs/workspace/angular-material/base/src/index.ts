@@ -13,8 +13,6 @@ export * from './lib/dialog/dialog.service';
 export * from './lib/dialog/dialog.service.core';
 export * from './lib/dialog/dialog.component';
 
-export * from './lib/edit/edit.component';
-
 export * from './lib/factoryfab/factory-fab.component';
 
 export * from './lib/filter/field/dialog.component';
@@ -59,6 +57,7 @@ export * from './lib/table/table-row';
 export * from './lib/table/table.component';
 
 // Forms
+export * from './lib/forms/form.component';
 export * from './lib/forms/cancel.component';
 export * from './lib/forms/save.component';
 

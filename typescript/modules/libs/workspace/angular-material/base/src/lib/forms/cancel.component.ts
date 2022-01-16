@@ -1,15 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AllorsComponent } from '@allors/workspace/angular/base';
+import { Component } from '@angular/core';
+import { AllorsComponent, FormService } from '@allors/workspace/angular/base';
 
 @Component({
   selector: 'a-mat-cancel',
   template: `
-    <button
-      mat-button
-      (click)="cancel.emit()"
-      type="button"
-      [disabled]="!canCancel"
-    >
+    <button mat-button type="button" (click)="this.formService.cancel()">
       CANCEL
     </button>
   `,
@@ -17,11 +12,7 @@ import { AllorsComponent } from '@allors/workspace/angular/base';
 export class AllorsMaterialCancelComponent extends AllorsComponent {
   dataAllorsKind = 'cancel';
 
-  @Input() canCancel = true;
-
-  @Output() cancel = new EventEmitter();
-
-  constructor() {
+  constructor(public formService: FormService) {
     super();
   }
 }
