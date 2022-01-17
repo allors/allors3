@@ -111,6 +111,8 @@ import {
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
+  DynamicEditComponent,
+  DynamicFormHostDirective,
   AllorsMaterialDialogServiceCore,
   ObjectServiceCore,
   SaveServiceCore,
@@ -174,6 +176,8 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
+    DynamicEditComponent,
+    DynamicFormHostDirective,
     // Routed and dialog components
     ...routesComponents,
     ...dialogsComponents,

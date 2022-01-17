@@ -2,6 +2,10 @@ import { Class } from '@allors/workspace/meta/system';
 import { IObject } from '@allors/workspace/domain/system';
 import { EventEmitter } from '@angular/core';
 
+export interface AllorsFormConstructor {
+  new (): AllorsForm;
+}
+
 export interface AllorsForm {
   object: IObject;
 

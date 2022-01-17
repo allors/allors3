@@ -13,6 +13,9 @@ export * from './lib/dialog/dialog.service';
 export * from './lib/dialog/dialog.service.core';
 export * from './lib/dialog/dialog.component';
 
+export * from './lib/dynamic/edit/edit.component';
+export * from './lib/dynamic/form/form-host.directive';
+
 export * from './lib/factoryfab/factory-fab.component';
 
 export * from './lib/filter/field/dialog.component';

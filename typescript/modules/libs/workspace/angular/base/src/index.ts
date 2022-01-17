@@ -55,6 +55,7 @@ export * from './lib/menu/menu-item';
 export * from './lib/meta/angular.display.name';
 export * from './lib/meta/angular.filter';
 export * from './lib/meta/angular.filter.definition';
+export * from './lib/meta/angular.forms';
 export * from './lib/meta/angular.icon';
 export * from './lib/meta/angular.list';
 export * from './lib/meta/angular.menu';

@@ -4,7 +4,7 @@ import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
 @Component({
   selector: 'a-mat-cancel',
   template: `
-    <button mat-button type="button" (click)="this.form.cancel()">
+    <button *ngIf="form" mat-button type="button" (click)="this.form.cancel()">
       CANCEL
     </button>
   `,

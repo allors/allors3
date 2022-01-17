@@ -5,6 +5,7 @@ import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
   selector: 'a-mat-save',
   template: `
     <button
+      *ngIf="form"
       mat-button
       color="primary"
       type="button"
