@@ -2,13 +2,17 @@
   <h3 mat-dialog-title>TODO</h3>
 
   <mat-dialog-content>
-    <country-form></country-form>
+    <country-form
+      #form
+      (saved)="saved($event)"
+      (cancelled)="cancelled()"
+    ></country-form>
   </mat-dialog-content>
 
   <div mat-dialog-actions>
     <div mat-dialog-actions>
-      <a-mat-cancel></a-mat-cancel>
-      <a-mat-save></a-mat-save>
+      <a-mat-cancel [form]="form"></a-mat-cancel>
+      <a-mat-save [form]="form"></a-mat-save>
     </div>
   </div>
 </a-form-container>

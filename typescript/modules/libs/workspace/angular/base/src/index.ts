@@ -35,7 +35,7 @@ export * from './lib/focus/focus.directive';
 export * from './lib/focus/focus.service.core';
 
 export * from './lib/forms/form-container.component';
-export * from './lib/forms/form.service';
+export * from './lib/forms/form';
 
 export * from './lib/info/dialog-info.service';
 export * from './lib/info/menu-info.service';

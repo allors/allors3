@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { AllorsComponent, FormService } from '@allors/workspace/angular/base';
+import { Component, Input } from '@angular/core';
+import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
 
 @Component({
   selector: 'a-mat-save',
@@ -9,18 +8,16 @@ import { AllorsComponent, FormService } from '@allors/workspace/angular/base';
       mat-button
       color="primary"
       type="button"
-      [disabled]="!formService.canSave()"
-      (click)="this.formService.save()"
+      [disabled]="!form.canSave"
+      (click)="this.form.save()"
     >
       SAVE
     </button>
-    canSave: {{ formService.canSave }}
   `,
 })
 export class AllorsMaterialSaveComponent extends AllorsComponent {
   dataAllorsKind = 'save';
 
-  constructor(public form: NgForm, public formService: FormService) {
-    super();
-  }
+  @Input()
+  form: AllorsForm;
 }

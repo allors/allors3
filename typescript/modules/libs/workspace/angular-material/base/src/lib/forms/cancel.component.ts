@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { AllorsComponent, FormService } from '@allors/workspace/angular/base';
+import { Component, Input } from '@angular/core';
+import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
 
 @Component({
   selector: 'a-mat-cancel',
   template: `
-    <button mat-button type="button" (click)="this.formService.cancel()">
+    <button mat-button type="button" (click)="this.form.cancel()">
       CANCEL
     </button>
   `,
@@ -12,7 +12,6 @@ import { AllorsComponent, FormService } from '@allors/workspace/angular/base';
 export class AllorsMaterialCancelComponent extends AllorsComponent {
   dataAllorsKind = 'cancel';
 
-  constructor(public formService: FormService) {
-    super();
-  }
+  @Input()
+  form: AllorsForm;
 }
