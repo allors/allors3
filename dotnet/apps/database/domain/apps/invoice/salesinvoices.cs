@@ -42,6 +42,11 @@ namespace Allors.Database.Domain
 
             var except = new HashSet<IOperandType>
             {
+                this.Meta.InternalComment,
+                this.Meta.Comment,
+                this.Meta.Description,
+                this.Meta.Message,
+                this.Meta.DueDate,
                 this.Meta.ElectronicDocuments,
                 this.Meta.Print,
                 this.Meta.Credit,

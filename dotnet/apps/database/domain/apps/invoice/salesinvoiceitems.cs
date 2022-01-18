@@ -5,7 +5,9 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Collections.Generic;
     using Allors;
+    using Allors.Database.Meta;
 
     public partial class SalesInvoiceItems
     {
@@ -21,10 +23,18 @@ namespace Allors.Database.Domain
             var writtenOff = new SalesInvoiceItemStates(this.Transaction).WrittenOff;
             var cancelledByInvoice = new SalesInvoiceItemStates(this.Transaction).CancelledByInvoice;
 
-            config.Deny(this.ObjectType, notPaid, Operations.Write);
-            config.Deny(this.ObjectType, paid, Operations.Write);
-            config.Deny(this.ObjectType, writtenOff, Operations.Write);
-            config.Deny(this.ObjectType, cancelledByInvoice, Operations.Write);
+            var except = new HashSet<IOperandType>
+            {
+                this.Meta.InternalComment,
+                this.Meta.Comment,
+                this.Meta.Description,
+                this.Meta.Message,
+            };
+
+            config.DenyExcept(this.ObjectType, notPaid, except, Operations.Write);
+            config.DenyExcept(this.ObjectType, paid, except, Operations.Write);
+            config.DenyExcept(this.ObjectType, writtenOff, except, Operations.Write);
+            config.DenyExcept(this.ObjectType, cancelledByInvoice, except, Operations.Write);
 
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);

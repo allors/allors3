@@ -294,6 +294,7 @@ namespace Allors.Database.Domain
                 .WithCreditedFromInvoice(this)
                 .WithPurchaseInvoice(this.PurchaseInvoice)
                 .WithBilledFrom(this.BilledFrom)
+                .WithAssignedCurrency(this.DerivedCurrency)
                 .WithAssignedBilledFromContactMechanism(this.DerivedBilledFromContactMechanism)
                 .WithBilledFromContactPerson(this.BilledFromContactPerson)
                 .WithBillToCustomer(this.BillToCustomer)

@@ -37,7 +37,6 @@ export class SalesInvoiceOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   invoice: SalesInvoice;
-  goods: Good[] = [];
   internalOrganisation: InternalOrganisation;
   currencies: Currency[];
   vatRegimes: VatRegime[];
@@ -157,17 +156,12 @@ export class SalesInvoiceOverviewDetailComponent implements OnInit, OnDestroy {
               },
             },
           }),
-          pull.Good({
-            name: goodPullName,
-            sorting: [{ roleType: m.Good.Name }],
-          })
         );
       }
     };
 
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
-        this.goods = loaded.collection<Good>(this.m.Good);
         this.invoice = loaded.object<SalesInvoice>(this.m.SalesInvoice);
       }
     };

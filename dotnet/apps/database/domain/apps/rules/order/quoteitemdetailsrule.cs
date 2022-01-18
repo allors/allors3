@@ -30,7 +30,13 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<QuoteItem>())
             {
-                if (cycle.ChangeSet.Created.Contains(@this) && !@this.ExistDetails)
+                if (!@this.ExistDetails
+                    || (@this.ExistCurrentVersion
+                        && @this.CurrentVersion.ExistSerialisedItem
+                        && @this.SerialisedItem != @this.CurrentVersion.SerialisedItem)
+                    || (@this.ExistCurrentVersion
+                        && @this.CurrentVersion.ExistProduct
+                        && @this.Product != @this.CurrentVersion.Product))
                 {
                     if (@this.ExistSerialisedItem)
                     {
