@@ -1,18 +1,16 @@
+import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
 import { M } from '@allors/workspace/meta/default';
 import { Organisation, Country } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   ObjectData,
   RefreshService,
   SaveService,
-  SingletonId,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './organisation-create.component.html',
@@ -34,11 +32,9 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<OrganisationCreateComponent>,
-
     public refreshService: RefreshService,
     private saveService: SaveService,
-    private route: ActivatedRoute,
-    private singletonId: SingletonId
+    private route: ActivatedRoute
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;

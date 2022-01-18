@@ -6,7 +6,10 @@ interface AngularOverviewExtension {
 
 export function angularOverview(composite: Composite): string;
 export function angularOverview(composite: Composite, overview?: string): void;
-export function angularOverview(composite: Composite, overview?: string): string | void {
+export function angularOverview(
+  composite: Composite,
+  overview?: string
+): string | void {
   if (composite == null) {
     return;
   }

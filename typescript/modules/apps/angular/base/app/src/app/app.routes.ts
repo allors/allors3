@@ -5,7 +5,7 @@ import { AuthorizationService } from './auth/authorization.service';
 import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { FormComponent } from './form/form.component';
+import { FieldsComponent } from './fields/fields.component';
 
 import { CountryListComponent } from './domain/country/list/country-list.component';
 import { OrganisationListComponent } from './domain/organisation/list/organisation-list.component';
@@ -39,8 +39,8 @@ export const routes: Routes = [
         ],
       },
       {
-        path: 'form',
-        component: FormComponent,
+        path: 'fields',
+        component: FieldsComponent,
       },
     ],
   },
@@ -50,7 +50,7 @@ export const components: any[] = [
   LoginComponent,
   MainComponent,
   DashboardComponent,
-  FormComponent,
+  FieldsComponent,
   CountryListComponent,
   OrganisationListComponent,
   OrganisationOverviewComponent,

@@ -45,6 +45,10 @@ import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 
 import {
+  OBJECT_CREATE_TOKEN,
+  OBJECT_EDIT_TOKEN,
+  ObjectService,
+  SaveService,
   DateConfig,
   MediaConfig,
   AuthenticationConfig,
@@ -65,9 +69,11 @@ import {
   AllorsBarcodeService,
   NavigationService,
   MediaService,
+  AllorsFormContainerComponent,
+} from '@allors/workspace/angular/base';
+
+import {
   AllorsMaterialDialogService,
-  ObjectService,
-  SaveService,
   AllorsMaterialSideNavService,
   AllorsMaterialAssociationAutoCompleteComponent,
   AllorsMaterialDialogComponent,
@@ -105,14 +111,13 @@ import {
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
+  DynamicEditComponent,
+  DynamicFormHostDirective,
   AllorsMaterialDialogServiceCore,
   ObjectServiceCore,
   SaveServiceCore,
   AllorsMaterialSideNavServiceCore,
-  OBJECT_CREATE_TOKEN,
-  OBJECT_EDIT_TOKEN,
-} from '@allors/workspace/angular/base';
-
+} from '@allors/workspace/angular-material/base';
 import { routes, components as routesComponents } from './app.routes';
 import { dialogs, components as dialogsComponents } from './app.dialogs';
 
@@ -125,13 +130,16 @@ import { PersonInlineComponent } from './domain/person/inline/person-inline.comp
 import { PersonDetailComponent } from './domain/person/detail/person-detail.component';
 import { PersonSummaryComponent } from './domain/person/summary/person-summary.component';
 
+import { CountryFormComponent } from './domain/country/forms/country-form.component';
+
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
-    // Allors Angular Core
+    // Allors Angular Base
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    // Allors Angular Material Core
+    AllorsFormContainerComponent,
+    // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
     AllorsMaterialErrorDialogComponent,
@@ -168,6 +176,8 @@ import { PersonSummaryComponent } from './domain/person/summary/person-summary.c
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
+    DynamicEditComponent,
+    DynamicFormHostDirective,
     // Routed and dialog components
     ...routesComponents,
     ...dialogsComponents,
@@ -180,6 +190,8 @@ import { PersonSummaryComponent } from './domain/person/summary/person-summary.c
     PersonInlineComponent,
     PersonDetailComponent,
     PersonSummaryComponent,
+    // Forms
+    CountryFormComponent,
     // App
     AppComponent,
   ],

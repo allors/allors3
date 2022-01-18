@@ -5,6 +5,6 @@
     "declaration": true,
     "types": []
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../../angular-material/base/src/lib/edit/edit.component.ts"],
   "exclude": ["**/*.spec.ts"]
 }

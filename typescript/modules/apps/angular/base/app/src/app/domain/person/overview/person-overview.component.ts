@@ -1,9 +1,9 @@
-import { Component, Self, AfterViewInit, OnDestroy } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Component, Self, AfterViewInit, OnDestroy } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-
+import { Person } from '@allors/workspace/domain/default';
 import {
   AllorsOverviewComponent,
   NavigationActivatedRoute,
@@ -12,7 +12,6 @@ import {
   RefreshService,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { Person } from '@allors/workspace/domain/default';
 
 @Component({
   templateUrl: './person-overview.component.html',

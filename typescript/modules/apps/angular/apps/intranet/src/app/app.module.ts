@@ -2,11 +2,18 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpClientModule,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
@@ -72,9 +79,14 @@ import {
   AllorsBarcodeService,
   NavigationService,
   MediaService,
-  AllorsMaterialDialogService,
   ObjectService,
   SaveService,
+  OBJECT_CREATE_TOKEN,
+  OBJECT_EDIT_TOKEN,
+} from '@allors/workspace/angular/base';
+
+import {
+  AllorsMaterialDialogService,
   AllorsMaterialSideNavService,
   AllorsMaterialAssociationAutoCompleteComponent,
   AllorsMaterialDialogComponent,
@@ -114,9 +126,7 @@ import {
   ObjectServiceCore,
   SaveServiceCore,
   AllorsMaterialSideNavServiceCore,
-  OBJECT_CREATE_TOKEN,
-  OBJECT_EDIT_TOKEN,
-} from '@allors/workspace/angular/base';
+} from '@allors/workspace/angular-material/base';
 
 // Angular Material Base
 import {
@@ -347,9 +357,17 @@ import { AppsContext } from '../allors/apps-context';
 import { Configuration } from '@allors/workspace/domain/system';
 import { applyRules } from '@allors/workspace/derivations/system';
 
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient, internalOrganisationId: InternalOrganisationId) {
+export function appInitFactory(
+  workspaceService: WorkspaceService,
+  httpClient: HttpClient,
+  internalOrganisationId: InternalOrganisationId
+) {
   return async () => {
-    const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
+    const angularClient = new AngularClient(
+      httpClient,
+      environment.baseUrl,
+      environment.authUrl
+    );
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;
@@ -396,8 +414,14 @@ export const routes: Routes = [
           { path: 'people', component: PersonListComponent },
           { path: 'person/:id', component: PersonOverviewComponent },
           { path: 'organisations', component: OrganisationListComponent },
-          { path: 'organisation/:id', component: OrganisationOverviewComponent },
-          { path: 'communicationevents', component: CommunicationEventListComponent },
+          {
+            path: 'organisation/:id',
+            component: OrganisationOverviewComponent,
+          },
+          {
+            path: 'communicationevents',
+            component: CommunicationEventListComponent,
+          },
         ],
       },
 
@@ -405,13 +429,22 @@ export const routes: Routes = [
         path: 'sales',
         children: [
           { path: 'requestsforquote', component: RequestForQuoteListComponent },
-          { path: 'requestforquote/:id', component: RequestForQuoteOverviewComponent },
+          {
+            path: 'requestforquote/:id',
+            component: RequestForQuoteOverviewComponent,
+          },
           { path: 'productquotes', component: ProductQuoteListComponent },
-          { path: 'productquote/:id', component: ProductQuoteOverviewComponent },
+          {
+            path: 'productquote/:id',
+            component: ProductQuoteOverviewComponent,
+          },
           { path: 'salesorders', component: SalesOrderListComponent },
           { path: 'salesorder/:id', component: SalesOrderOverviewComponent },
           { path: 'salesinvoices', component: SalesInvoiceListComponent },
-          { path: 'salesinvoice/:id', component: SalesInvoiceOverviewComponent },
+          {
+            path: 'salesinvoice/:id',
+            component: SalesInvoiceOverviewComponent,
+          },
         ],
       },
 
@@ -419,15 +452,30 @@ export const routes: Routes = [
         path: 'products',
         children: [
           { path: 'goods', component: GoodListComponent },
-          { path: 'nonunifiedgood/:id', component: NonUnifiedGoodOverviewComponent },
+          {
+            path: 'nonunifiedgood/:id',
+            component: NonUnifiedGoodOverviewComponent,
+          },
           { path: 'parts', component: PartListComponent },
-          { path: 'nonunifiedpart/:id', component: NonUnifiedPartOverviewComponent },
+          {
+            path: 'nonunifiedpart/:id',
+            component: NonUnifiedPartOverviewComponent,
+          },
           { path: 'catalogues', component: CataloguesListComponent },
-          { path: 'productcategories', component: ProductCategoryListComponent },
-          { path: 'serialiseditemcharacteristics', component: SerialisedItemCharacteristicListComponent },
+          {
+            path: 'productcategories',
+            component: ProductCategoryListComponent,
+          },
+          {
+            path: 'serialiseditemcharacteristics',
+            component: SerialisedItemCharacteristicListComponent,
+          },
           { path: 'producttypes', component: ProductTypesOverviewComponent },
           { path: 'serialiseditems', component: SerialisedItemListComponent },
-          { path: 'serialisedItem/:id', component: SerialisedItemOverviewComponent },
+          {
+            path: 'serialisedItem/:id',
+            component: SerialisedItemOverviewComponent,
+          },
           { path: 'unifiedgoods', component: UnifiedGoodListComponent },
           { path: 'unifiedgood/:id', component: UnifiedGoodOverviewComponent },
         ],
@@ -437,9 +485,15 @@ export const routes: Routes = [
         path: 'purchasing',
         children: [
           { path: 'purchaseorders', component: PurchaseOrderListComponent },
-          { path: 'purchaseorder/:id', component: PurchaseOrderOverviewComponent },
+          {
+            path: 'purchaseorder/:id',
+            component: PurchaseOrderOverviewComponent,
+          },
           { path: 'purchaseinvoices', component: PurchaseInvoiceListComponent },
-          { path: 'purchaseinvoice/:id', component: PurchaseInvoiceOverviewComponent },
+          {
+            path: 'purchaseinvoice/:id',
+            component: PurchaseInvoiceOverviewComponent,
+          },
         ],
       },
 
@@ -447,8 +501,14 @@ export const routes: Routes = [
         path: 'shipment',
         children: [
           { path: 'shipments', component: ShipmentListComponent },
-          { path: 'customershipment/:id', component: CustomerShipmentOverviewComponent },
-          { path: 'purchaseshipment/:id', component: PurchaseShipmentOverviewComponent },
+          {
+            path: 'customershipment/:id',
+            component: CustomerShipmentOverviewComponent,
+          },
+          {
+            path: 'purchaseshipment/:id',
+            component: PurchaseShipmentOverviewComponent,
+          },
           { path: 'carriers', component: CarrierListComponent },
         ],
       },
@@ -457,7 +517,10 @@ export const routes: Routes = [
         path: 'workefforts',
         children: [
           { path: 'workrequirements', component: WorkRequirementListComponent },
-          { path: 'workrequirement/:id', component: WorkRequirementOverviewComponent },
+          {
+            path: 'workrequirement/:id',
+            component: WorkRequirementOverviewComponent,
+          },
           { path: 'workefforts', component: WorkEffortListComponent },
           { path: 'worktask/:id', component: WorkTaskOverviewComponent },
         ],
@@ -467,17 +530,24 @@ export const routes: Routes = [
         path: 'humanresource',
         children: [
           { path: 'positiontypes', component: PositionTypesOverviewComponent },
-          { path: 'positiontyperates', component: PositionTypeRatesOverviewComponent },
+          {
+            path: 'positiontyperates',
+            component: PositionTypeRatesOverviewComponent,
+          },
         ],
       },
 
       {
         path: 'workflow',
-        children: [{ path: 'taskassignments', component: TaskAssignmentListComponent }],
+        children: [
+          { path: 'taskassignments', component: TaskAssignmentListComponent },
+        ],
       },
       {
         path: 'accounting',
-        children: [{ path: 'exchangerates', component: ExchangeRateListComponent }],
+        children: [
+          { path: 'exchangerates', component: ExchangeRateListComponent },
+        ],
       },
     ],
   },
@@ -507,7 +577,8 @@ export const create = {
   [tags.MiscellaneousCharge]: OrderAdjustmentEditComponent,
   [tags.OrderTerm]: SalesTermEditComponent,
   [tags.Organisation]: OrganisationCreateComponent,
-  [tags.OrganisationContactRelationship]: OrganisationContactRelationshipEditComponent,
+  [tags.OrganisationContactRelationship]:
+    OrganisationContactRelationshipEditComponent,
   [tags.NonSerialisedInventoryItem]: NonSerialisedInventoryItemEditComponent,
   [tags.NonUnifiedGood]: NonUnifiedGoodCreateComponent,
   [tags.NonUnifiedPart]: NonUnifiedPartCreateComponent,
@@ -540,7 +611,8 @@ export const create = {
   [tags.SalesOrder]: SalesOrderCreateComponent,
   [tags.SalesOrderItem]: SalesOrderItemEditComponent,
   [tags.SerialisedItem]: SerialisedItemCreateComponent,
-  [tags.SerialisedItemCharacteristicType]: SerialisedItemCharacteristicEditComponent,
+  [tags.SerialisedItemCharacteristicType]:
+    SerialisedItemCharacteristicEditComponent,
   [tags.ShipmentItem]: ShipmentItemEditComponent,
   [tags.ShippingAndHandlingCharge]: OrderAdjustmentEditComponent,
   [tags.SkuIdentification]: ProductIdentificationEditComponent,
@@ -555,9 +627,12 @@ export const create = {
   [tags.UpceIdentification]: ProductIdentificationEditComponent,
   [tags.WebAddress]: WebAddressCreateComponent,
   [tags.WorkEffortAssignmentRate]: WorkEffortAssignmentRateEditComponent,
-  [tags.WorkEffortFixedAssetAssignment]: WorkEffortFixedAssetAssignmentEditComponent,
-  [tags.WorkEffortInventoryAssignment]: WorkEffortInventoryAssignmentEditComponent,
-  [tags.WorkEffortInvoiceItemAssignment]: WorkEffortInvoiceItemAssignmentEditComponent,
+  [tags.WorkEffortFixedAssetAssignment]:
+    WorkEffortFixedAssetAssignmentEditComponent,
+  [tags.WorkEffortInventoryAssignment]:
+    WorkEffortInventoryAssignmentEditComponent,
+  [tags.WorkEffortInvoiceItemAssignment]:
+    WorkEffortInvoiceItemAssignmentEditComponent,
   [tags.WorkEffortPartyAssignment]: WorkEffortPartyAssignmentEditComponent,
   [tags.WorkRequirement]: WorkRequirementCreateComponent,
   [tags.WorkRequirementFulfillment]: WorkRequirementFulfillmentCreateComponent,
@@ -588,7 +663,8 @@ export const edit = {
   [tags.MiscellaneousCharge]: OrderAdjustmentEditComponent,
   [tags.NonSerialisedInventoryItem]: NonSerialisedInventoryItemEditComponent,
   [tags.OrderTerm]: SalesTermEditComponent,
-  [tags.OrganisationContactRelationship]: OrganisationContactRelationshipEditComponent,
+  [tags.OrganisationContactRelationship]:
+    OrganisationContactRelationshipEditComponent,
   [tags.PartyContactMechanism]: PartyContactmechanismEditComponent,
   [tags.PartyRate]: PartyRateEditComponent,
   [tags.PhoneCommunication]: PhoneCommunicationEditComponent,
@@ -612,7 +688,8 @@ export const edit = {
   [tags.RequestItem]: RequestItemEditComponent,
   [tags.SalesInvoiceItem]: SalesInvoiceItemEditComponent,
   [tags.SalesOrderItem]: SalesOrderItemEditComponent,
-  [tags.SerialisedItemCharacteristicType]: SerialisedItemCharacteristicEditComponent,
+  [tags.SerialisedItemCharacteristicType]:
+    SerialisedItemCharacteristicEditComponent,
   [tags.ShipmentItem]: ShipmentItemEditComponent,
   [tags.ShippingAndHandlingCharge]: OrderAdjustmentEditComponent,
   [tags.SkuIdentification]: ProductIdentificationEditComponent,
@@ -627,9 +704,12 @@ export const edit = {
   [tags.UserProfile]: UserProfileEditComponent,
   [tags.WebAddress]: WebAddressEditComponent,
   [tags.WorkEffortAssignmentRate]: WorkEffortAssignmentRateEditComponent,
-  [tags.WorkEffortFixedAssetAssignment]: WorkEffortFixedAssetAssignmentEditComponent,
-  [tags.WorkEffortInventoryAssignment]: WorkEffortInventoryAssignmentEditComponent,
-  [tags.WorkEffortInvoiceItemAssignment]: WorkEffortInvoiceItemAssignmentEditComponent,
+  [tags.WorkEffortFixedAssetAssignment]:
+    WorkEffortFixedAssetAssignmentEditComponent,
+  [tags.WorkEffortInventoryAssignment]:
+    WorkEffortInventoryAssignmentEditComponent,
+  [tags.WorkEffortInvoiceItemAssignment]:
+    WorkEffortInvoiceItemAssignmentEditComponent,
   // [tags.WorkEffortPurchaseOrderItemAssignment]: WorkEffortPurchaseOrderItemAssignmentEditComponent,
   [tags.WorkEffortPartyAssignment]: WorkEffortPartyAssignmentEditComponent,
 };
@@ -970,10 +1050,16 @@ export const edit = {
       useValue: { autoActiveFirstOption: true },
     },
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
-    { provide: AllorsMaterialDialogService, useClass: AllorsMaterialDialogServiceCore },
+    {
+      provide: AllorsMaterialDialogService,
+      useClass: AllorsMaterialDialogServiceCore,
+    },
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
-    { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
+    {
+      provide: AllorsMaterialSideNavService,
+      useClass: AllorsMaterialSideNavServiceCore,
+    },
     PrintService,
     { provide: PrintConfig, useValue: { url: environment.baseUrl } },
     { provide: ObjectService, useClass: ObjectServiceCore },

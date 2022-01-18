@@ -1,13 +1,13 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
-
+import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import {
   Enumeration,
   Gender,
   Locale,
   Person,
 } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   AllorsObjectDetailPanelComponent,
   NavigationService,
@@ -15,7 +15,6 @@ import {
   RefreshService,
   SaveService,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   selector: 'person-detail',

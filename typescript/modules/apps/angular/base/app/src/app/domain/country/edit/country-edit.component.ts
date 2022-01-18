@@ -1,93 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
+import { Component, Inject, AfterViewInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { Country } from '@allors/workspace/domain/default';
-import {
-  AllorsEditComponent,
-  ObjectData,
-  RefreshService,
-  SaveService,
-} from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ObjectData } from '@allors/workspace/angular/base';
+import { CountryFormComponent } from '../forms/country-form.component';
+import { IObject } from '@allors/workspace/domain/system';
 
 @Component({
-  template: `
-    <form *ngIf="object" #form="ngForm" (submit)="save()" novalidate>
-      <h3 mat-dialog-title>{{ title }}</h3>
-
-      <mat-dialog-content>
-        <div class="row">
-          <a-mat-input
-            class="col-md"
-            [object]="object"
-            [roleType]="m.Country.IsoCode"
-          ></a-mat-input>
-          <a-mat-input
-            class="col-md"
-            [object]="object"
-            [roleType]="m.Country.Name"
-          ></a-mat-input>
-        </div>
-      </mat-dialog-content>
-
-      <div mat-dialog-actions>
-        <div mat-dialog-actions>
-          <a-mat-cancel (cancel)="dialogRef.close()"></a-mat-cancel>
-          <a-mat-save></a-mat-save>
-        </div>
-      </div>
-    </form>
-  `,
-  providers: [ContextService],
+  templateUrl: 'country-edit.component.html',
 })
-export class CountryEditComponent
-  extends AllorsEditComponent<Country, CountryEditComponent>
-  implements OnInit, OnDestroy
-{
+export class CountryEditComponent implements AfterViewInit {
+  @ViewChild(CountryFormComponent)
+  private country!: CountryFormComponent;
+
   constructor(
-    @Self() allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) data: ObjectData,
-    dialogRef: MatDialogRef<CountryEditComponent>,
-    refreshService: RefreshService,
-    saveService: SaveService
-  ) {
-    super(allors, data, dialogRef, refreshService, saveService);
+    @Inject(MAT_DIALOG_DATA) private data: ObjectData,
+    private dialogRef: MatDialogRef<CountryEditComponent>
+  ) {}
+
+  ngAfterViewInit(): void {
+    if (this.data.id) {
+      this.country.edit(this.data.id);
+    }
   }
 
-  get canEdit() {
-    return this.object?.canWriteName ?? true;
+  saved(object: IObject) {
+    this.dialogRef.close(object);
   }
 
-  public ngOnInit(): void {
-    const { pullBuilder: pull } = this.m;
-
-    this.subscription = combineLatest([this.refreshService.refresh$])
-      .pipe(
-        switchMap(() => {
-          const pulls = [];
-
-          if (!this.isCreate) {
-            pulls.push(
-              pull.Country({
-                objectId: this.data.id,
-              })
-            );
-          }
-
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-
-        const { m } = this;
-        if (this.isCreate) {
-          this.object = this.allors.context.create<Country>(m.Country);
-        } else {
-          this.object = loaded.object<Country>(m.Country);
-        }
-      });
+  cancelled() {
+    this.dialogRef.close();
   }
 }

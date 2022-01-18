@@ -1,31 +1,31 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
+import { ContextService } from '@allors/workspace/angular/core';
 import {
   Action,
   AllorsListComponent,
   angularFilterFromDefinition,
-  angularSorter,
-  DeleteService,
   Filter,
   FilterField,
   MediaService,
-  MethodService,
   NavigationService,
   ObjectService,
-  OverviewService,
   RefreshService,
+} from '@allors/workspace/angular/base';
+import {
+  angularSorter,
+  DeleteService,
+  MethodService,
+  OverviewService,
   Table,
   TableRow,
-} from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
-
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+} from '@allors/workspace/angular-material/base';
 
 interface Row extends TableRow {
   object: Organisation;

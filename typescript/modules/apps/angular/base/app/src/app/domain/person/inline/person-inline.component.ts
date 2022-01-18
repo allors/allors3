@@ -1,5 +1,10 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { M } from '@allors/workspace/meta/default';
 import { Locale, Person } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
