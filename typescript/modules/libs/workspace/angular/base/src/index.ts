@@ -11,6 +11,8 @@ export * from './lib/authentication/authentication.config';
 export * from './lib/authentication/authentication.interceptor';
 export * from './lib/authentication/authentication.service.base';
 
+export * from './lib/create/create.service';
+
 export * from './lib/barcode/barcode.service';
 export * from './lib/barcode/barcode.directive';
 export * from './lib/barcode/barcode.service.core';
@@ -18,6 +20,8 @@ export * from './lib/barcode/barcode.service.core';
 export * from './lib/date/date.service';
 export * from './lib/date/date.config';
 export * from './lib/date/date.service.core';
+
+export * from './lib/edit/edit.service';
 
 export * from './lib/fields/association-field';
 export * from './lib/fields/field';
@@ -37,14 +41,9 @@ export * from './lib/focus/focus.service.core';
 export * from './lib/forms/form-container.component';
 export * from './lib/forms/form';
 
-export * from './lib/info/dialog-info.service';
 export * from './lib/info/menu-info.service';
 export * from './lib/info/navigation-info.service';
 export * from './lib/info/route-info.service';
-
-export * from './lib/object/object.data';
-export * from './lib/object/object.service';
-export * from './lib/object/object.tokens';
 
 export * from './lib/media/media.service';
 export * from './lib/media/media.config';

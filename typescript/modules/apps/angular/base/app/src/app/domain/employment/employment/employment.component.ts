@@ -11,11 +11,10 @@ import {
   PanelService,
   RefreshService,
   AllorsRelationObjectPanelComponent,
-  ObjectData,
 } from '@allors/workspace/angular/base';
 import {
   DeleteService,
-  EditService,
+  EditRoleService,
   Table,
   TableRow,
 } from '@allors/workspace/angular-material/base';
@@ -56,7 +55,7 @@ export class EmploymentComponent
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
-    public editService: EditService
+    public editRoleService: EditRoleService
   ) {
     super(panel);
 
@@ -68,7 +67,7 @@ export class EmploymentComponent
 
   ngOnInit() {
     this.delete = this.deleteService.delete(this.panel.manager.context);
-    this.edit = this.editService.edit();
+    this.edit = this.editRoleService.edit();
 
     const sort = true;
     this.table = new Table({

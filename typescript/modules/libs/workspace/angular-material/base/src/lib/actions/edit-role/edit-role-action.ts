@@ -4,18 +4,18 @@ import { IObject } from '@allors/workspace/domain/system';
 import {
   Action,
   ActionTarget,
-  ObjectService,
+  EditService,
   RefreshService,
 } from '@allors/workspace/angular/base';
 
-export class EditAction implements Action {
+export class EditRoleAction implements Action {
   name = 'edit';
   result = new Subject<boolean>();
   displayName = () => 'Edit';
   description = () => 'Edit';
 
   constructor(
-    private objectService: ObjectService,
+    private editService: EditService,
     private refreshService: RefreshService,
     private roleType?: RoleType
   ) {}
@@ -32,12 +32,12 @@ export class EditAction implements Action {
 
   disabled(target: ActionTarget) {
     const editObject = this.resolve(target);
-    return !this.objectService.hasEditControl(editObject);
+    return !this.editService.canEdit(editObject);
   }
 
   execute(target: ActionTarget) {
     const editObject = this.resolve(target);
-    this.objectService.edit(editObject).subscribe(() => {
+    this.editService.edit(editObject).subscribe(() => {
       this.refreshService.refresh();
       this.result.next(true);
     });

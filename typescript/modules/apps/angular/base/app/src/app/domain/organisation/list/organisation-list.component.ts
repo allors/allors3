@@ -11,11 +11,11 @@ import {
   Action,
   AllorsListComponent,
   angularFilterFromDefinition,
+  CreateService,
   Filter,
   FilterField,
   MediaService,
   NavigationService,
-  ObjectService,
   RefreshService,
 } from '@allors/workspace/angular/base';
 import {
@@ -55,7 +55,7 @@ export class OrganisationListComponent
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
-    public factoryService: ObjectService,
+    public createService: CreateService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,

@@ -10,11 +10,14 @@ import {
 } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import {
-  ObjectData,
   RefreshService,
   SaveService,
   SearchFactory,
 } from '@allors/workspace/angular/base';
+import {
+  CreateDialogData,
+  EditDialogData,
+} from '@allors/workspace/angular-material/base';
 
 @Component({
   templateUrl: './employment-edit.component.html',
@@ -36,11 +39,14 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
   addEmployee = false;
   canSave: boolean;
 
+  createData: CreateDialogData;
+  editData: EditDialogData;
+
   private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
+    @Inject(MAT_DIALOG_DATA) data: CreateDialogData | EditDialogData,
     public dialogRef: MatDialogRef<EmploymentEditComponent>,
     public refreshService: RefreshService,
     private saveService: SaveService
@@ -59,6 +65,12 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
     });
 
     this.canSave = true;
+
+    if (data.kind === 'CreateDialogData') {
+      this.createData = data;
+    } else {
+      this.editData = data;
+    }
   }
 
   public ngOnInit(): void {
@@ -69,14 +81,12 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
     this.subscription = combineLatest([this.refreshService.refresh$])
       .pipe(
         switchMap(() => {
-          const isCreate = this.data.id == null;
-
           const pulls = [];
 
-          if (!isCreate) {
+          if (this.editData) {
             pulls.push(
               pull.Employment({
-                objectId: this.data.id,
+                objectId: this.editData.object.id,
                 include: {
                   Employee: x,
                   Employer: x,
@@ -85,37 +95,27 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Organisation({
-                objectId: this.data.associationId,
-              }),
-              pull.Person({
-                objectId: this.data.associationId,
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context.pull(pulls);
         })
       )
-      .subscribe(({ loaded, isCreate }) => {
+      .subscribe((loaded) => {
         this.allors.context.reset();
 
         this.organisation = loaded.object<Organisation>(m.Organisation);
         this.person = loaded.object<Person>(m.Person);
 
-        if (isCreate) {
+        if (this.createData) {
           this.title = 'Add Employment';
 
           this.employment = this.allors.context.create<Employment>(
             m.Employment
           );
           this.employment.FromDate = new Date();
+
           this.employment.Employer = this.organisation;
           this.employment.Employee = this.person;
+
+          this.createData.onCreate(this.employment);
         } else {
           this.employment = loaded.object<Employment>(m.Employment);
 

@@ -11,7 +11,7 @@ import {
   FilterField,
   MediaService,
   NavigationService,
-  ObjectService,
+  CreateService,
   RefreshService,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
@@ -50,7 +50,7 @@ export class PersonListComponent
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
-    public factoryService: ObjectService,
+    public createService: CreateService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,

@@ -29,40 +29,13 @@
       </div>
 
       <div class="row">
-        <div class="col-md">
-          <div class="row">
-            <a-mat-autocomplete
-              class="col"
-              [object]="employment"
-              [roleType]="m.Employment.Employee"
-              [filter]="peopleFilter.create(allors.context)"
-              display="FirstName"
-            ></a-mat-autocomplete>
-            <button
-              *ngIf="!person"
-              mat-mini-fab
-              color="accent"
-              type="button"
-              (click)="addEmployee = !addEmployee"
-            >
-              <mat-icon *ngIf="!addEmployee">add</mat-icon>
-              <mat-icon *ngIf="addEmployee">close</mat-icon>
-            </button>
-          </div>
-        </div>
-
-        <div class="col-md-12 pb-3" *ngIf="addEmployee">
-          <mat-card>
-            <mat-card-header>Add a new person</mat-card-header>
-            <mat-card-content>
-              <person-inline
-                (cancelled)="addEmployee = false"
-                (saved)="employeeAdded($event); addEmployee = false"
-              >
-              </person-inline>
-            </mat-card-content>
-          </mat-card>
-        </div>
+        <a-mat-autocomplete
+          class="col"
+          [object]="employment"
+          [roleType]="m.Employment.Employee"
+          [filter]="peopleFilter.create(allors.context)"
+          display="FirstName"
+        ></a-mat-autocomplete>
       </div>
     </div>
   </mat-dialog-content>

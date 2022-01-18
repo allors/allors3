@@ -1,18 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import {
-  ObjectType,
-  Composite,
-  Class,
-  humanize,
-} from '@allors/workspace/meta/system';
-import { IObject } from '@allors/workspace/domain/system';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { Composite, Class, humanize } from '@allors/workspace/meta/system';
+import { IObject, ISession } from '@allors/workspace/domain/system';
 import {
   AllorsComponent,
   angularDisplayName,
   angularIcon,
-  ObjectData,
-  ObjectService,
+  CreateService,
+  OnCreate,
 } from '@allors/workspace/angular/base';
 
 @Component({
@@ -21,18 +15,17 @@ import {
   styleUrls: ['./factory-fab.component.scss'],
 })
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
+  @Input() public session: ISession;
+
   @Input() public objectType: Composite;
 
-  @Input() public createData: ObjectData;
+  @Input() public onCreate?: OnCreate;
 
-  @Output() public created: EventEmitter<IObject> = new EventEmitter();
+  @Output() public created?: EventEmitter<IObject> = new EventEmitter();
 
   classes: Class[];
 
-  constructor(
-    public readonly factoryService: ObjectService,
-    private workspaceService: WorkspaceService
-  ) {
+  constructor(private readonly createService: CreateService) {
     super();
   }
 
@@ -43,22 +36,21 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
       this.classes = [this.objectType as Class];
     }
 
-    const session = this.workspaceService.workspace.createSession();
-    this.classes = this.classes.filter((v) =>
-      this.factoryService.hasCreateControl(v, this.createData, session)
-    );
+    this.classes = this.classes.filter((v) => this.createService.canCreate(v));
   }
 
   get dataAllorsActions(): string {
     return this.classes ? this.classes.map((v) => v.singularName).join() : '';
   }
 
-  create(objectType: ObjectType) {
-    this.factoryService.create(objectType, this.createData).subscribe((v) => {
-      if (v && this.created) {
-        this.created.next(v);
-      }
-    });
+  create(objectType: Class) {
+    this.createService
+      .create(this.session, objectType, this.onCreate)
+      .subscribe((v) => {
+        if (v && this.created) {
+          this.created.next(v);
+        }
+      });
   }
 
   icon(cls: Class): string {

@@ -1,12 +1,15 @@
 export * from './lib/actions/delete/delete.service';
 export * from './lib/actions/delete/delete-action';
-export * from './lib/actions/edit/edit.service';
-export * from './lib/actions/edit/edit-action';
+export * from './lib/actions/edit-role/edit-role.service';
+export * from './lib/actions/edit-role/edit-role-action';
 export * from './lib/actions/method/method.service';
 export * from './lib/actions/method/method-action';
 export * from './lib/actions/method/method-config';
 export * from './lib/actions/overview/overview.service';
 export * from './lib/actions/overview/overview-action';
+
+export * from './lib/create/create.dialog.data';
+export * from './lib/create/create.service';
 
 export * from './lib/dialog/dialog.config';
 export * from './lib/dialog/dialog.service';
@@ -15,6 +18,9 @@ export * from './lib/dialog/dialog.component';
 
 export * from './lib/dynamic/edit/edit.component';
 export * from './lib/dynamic/form/form-host.directive';
+
+export * from './lib/edit/edit.dialog.data';
+export * from './lib/edit/edit.service';
 
 export * from './lib/factoryfab/factory-fab.component';
 
@@ -34,8 +40,6 @@ export * from './lib/media/preview/media-preview.component';
 export * from './lib/media/media.component';
 
 export * from './lib/meta/angular.sorter';
-
-export * from './lib/object/object.service.core';
 
 export * from './lib/save/save.service.core';
 export * from './lib/save/error/error-dialog.component';

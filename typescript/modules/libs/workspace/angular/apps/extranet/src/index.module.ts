@@ -37,6 +37,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import {
   AllorsFocusDirective,
   AllorsBarcodeDirective,
+} from '@allors/workspace/angular/base';
+
+import {
   AllorsMaterialAssociationAutoCompleteComponent,
   AllorsMaterialDialogComponent,
   AllorsMaterialErrorDialogComponent,
@@ -71,10 +74,16 @@ import {
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
-} from '@allors/workspace/angular/base';
+} from '@allors/workspace/angular-material/base';
 
 // Extranet
-import { WorkEffortListComponent, WorkTaskCreateComponent, WorkTaskOverviewComponent, WorkTaskOverviewDetailComponent, WorkTaskOverviewSummaryComponent } from './index';
+import {
+  WorkEffortListComponent,
+  WorkTaskCreateComponent,
+  WorkTaskOverviewComponent,
+  WorkTaskOverviewDetailComponent,
+  WorkTaskOverviewSummaryComponent,
+} from './index';
 
 @NgModule({
   declarations: [

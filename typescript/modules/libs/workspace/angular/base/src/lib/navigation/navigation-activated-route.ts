@@ -17,7 +17,9 @@ export class NavigationActivatedRoute {
   queryParam(objectType: Composite): string | null {
     const queryParamMap = this.activatedRoute.snapshot.queryParamMap;
     // TODO: Optimize ...objectType.classes
-    const match = [...objectType.classes].find((v) => queryParamMap.has(v.singularName));
+    const match = [...objectType.classes].find((v) =>
+      queryParamMap.has(v.singularName)
+    );
     return match ? queryParamMap.get(match.singularName) : null;
   }
 }

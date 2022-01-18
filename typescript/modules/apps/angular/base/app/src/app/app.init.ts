@@ -13,7 +13,12 @@ import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { data } from '@allors/workspace/meta/json/default';
 import { M } from '@allors/workspace/meta/default';
 
-export function init(workspaceService: WorkspaceService, httpClient: HttpClient, baseUrl: string, authUrl: string) {
+export function init(
+  workspaceService: WorkspaceService,
+  httpClient: HttpClient,
+  baseUrl: string,
+  authUrl: string
+) {
   const angularClient = new AngularClient(httpClient, baseUrl, authUrl);
 
   const metaPopulation = new LazyMetaPopulation(data);

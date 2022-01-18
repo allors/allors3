@@ -7,7 +7,7 @@ import { PageEvent } from '@angular/material/paginator';
 import {
   angularSorter,
   DeleteService,
-  EditService,
+  EditRoleService,
   OverviewService,
   Table,
   TableRow,
@@ -56,7 +56,7 @@ export class CountryListComponent
     titleService: Title,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editService: EditService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService
@@ -64,7 +64,7 @@ export class CountryListComponent
     super(allors, titleService);
     this.objectType = this.m.Country;
 
-    this.edit = editService.edit();
+    this.edit = editRoleService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
