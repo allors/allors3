@@ -19,42 +19,44 @@ npm install easymde
 npm install jsnlog
 npm install luxon
 
-// Extranet
-npx nx g @nrwl/angular:application angular/apps/extranet --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular/apps/extranet
-npx nx g @nrwl/workspace:library workspace/derivations/apps/extranet
-npx nx g @nrwl/workspace:library workspace/derivations/apps/extranet-custom
-npx nx g @nrwl/workspace:library workspace/domain/apps/extranet
-npx nx g @nrwl/workspace:library workspace/meta/apps/extranet
-npx nx g @nrwl/workspace:library workspace/meta/json/apps/extranet
+// Apps Extranet
+npx nx g @nrwl/angular:application angular-material/extranet/apps --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library workspace/angular-material/extranet/apps
+npx nx g @nrwl/workspace:library workspace/derivations/extranet/apps
+npx nx g @nrwl/workspace:library workspace/derivations/extranet/apps-custom
+npx nx g @nrwl/workspace:library workspace/domain/extranet/apps
+npx nx g @nrwl/workspace:library workspace/meta/extranet/apps
+npx nx g @nrwl/workspace:library workspace/meta/json/extranet/apps
 
-// Intranet
-npx nx g @nrwl/angular:application angular/apps/intranet --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular/apps/intranet
-npx nx g @nrwl/workspace:library workspace/derivations/apps/intranet
-npx nx g @nrwl/workspace:library workspace/derivations/apps/intranet-custom
-npx nx g @nrwl/workspace:library workspace/derivations/apps/intranet-tests
-npx nx g @nrwl/workspace:library workspace/domain/apps/intranet
-npx nx g @nrwl/workspace:library workspace/meta/apps/intranet
-npx nx g @nrwl/workspace:library workspace/meta/json/apps/intranet
+// Apps Intranet
+npx nx g @nrwl/angular:application angular-material/intranet/apps --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library workspace/angular-material/intranet/apps
+npx nx g @nrwl/workspace:library workspace/derivations/intranet/apps
+npx nx g @nrwl/workspace:library workspace/derivations/intranet/apps-custom
+npx nx g @nrwl/workspace:library workspace/domain/intranet/apps
+npx nx g @nrwl/workspace:library workspace/meta/intranet/apps
+npx nx g @nrwl/workspace:library workspace/meta/json/intranet/apps
 
 // Base
-npx nx g @nrwl/angular:application angular/base/app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular/base
-npx nx g @nrwl/workspace:library workspace/angular-material/base
+npx nx g @nrwl/angular:application angular/foundation/base --routing=true --e2eTestRunner=none
+npx nx g @nrwl/angular:application angular/application/base --routing=true --e2eTestRunner=none
+npx nx g @nrwl/angular:application angular-material/foundation/base --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application angular-material/application/base --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library workspace/angular/foundation/base
+npx nx g @nrwl/workspace:library workspace/angular/application/base
+npx nx g @nrwl/workspace:library workspace/angular-material/foundation/base
+npx nx g @nrwl/workspace:library workspace/angular-material/application/base
 npx nx g @nrwl/workspace:library workspace/derivations/base
 npx nx g @nrwl/workspace:library workspace/derivations/base-custom
 npx nx g @nrwl/workspace:library workspace/domain/base
 npx nx g @nrwl/workspace:library workspace/meta/base
-npx nx g @nrwl/workspace:library workspace/meta/core
 npx nx g @nrwl/workspace:library workspace/meta/json/base
 
 // Core
-npx nx g @nrwl/angular:application angular/core/app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular/core
 npx nx g @nrwl/workspace:library workspace/derivations/core
 npx nx g @nrwl/workspace:library workspace/derivations/core-custom
 npx nx g @nrwl/workspace:library workspace/domain/core
+npx nx g @nrwl/workspace:library workspace/meta/core
 npx nx g @nrwl/workspace:library workspace/meta/json/core
 
 // System
