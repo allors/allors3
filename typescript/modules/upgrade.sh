@@ -20,7 +20,7 @@ npm install jsnlog
 npm install luxon
 
 // Apps Extranet
-npx nx g @nrwl/angular:application apps-extranet/workspace/angular-material --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application apps-extranet/workspace/angular-material-app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/workspace:library apps-extranet/workspace/angular-material
 npx nx g @nrwl/workspace:library apps-extranet/workspace/derivations
 npx nx g @nrwl/workspace:library apps-extranet/workspace/domain
@@ -28,7 +28,7 @@ npx nx g @nrwl/workspace:library apps-extranet/workspace/meta
 npx nx g @nrwl/workspace:library apps-extranet/workspace/meta-json
 
 // Apps Intranet
-npx nx g @nrwl/angular:application apps-intranet/workspace/angular-material --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application apps-intranet/workspace/angular-material-app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/workspace:library apps-intranet/workspace/angular-material
 npx nx g @nrwl/workspace:library apps-intranet/workspace/derivations
 npx nx g @nrwl/workspace:library apps-intranet/workspace/domain
@@ -36,10 +36,10 @@ npx nx g @nrwl/workspace:library apps-intranet/workspace/meta
 npx nx g @nrwl/workspace:library apps-intranet/workspace/meta-json
 
 // Base
-npx nx g @nrwl/angular:application base/workspace/angular/foundation --routing=true --e2eTestRunner=none
-npx nx g @nrwl/angular:application base/workspace/angular/application --routing=true --e2eTestRunner=none
-npx nx g @nrwl/angular:application base/workspace/angular-material/foundation --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/angular:application base/workspace/angular-material/application --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application base/workspace/angular/foundation-app --routing=true --e2eTestRunner=none
+npx nx g @nrwl/angular:application base/workspace/angular/application-app --routing=true --e2eTestRunner=none
+npx nx g @nrwl/angular:application base/workspace/angular-material/foundation-app --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application base/workspace/angular-material/application-app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/workspace:library base/workspace/angular/foundation
 npx nx g @nrwl/workspace:library base/workspace/angular/application
 npx nx g @nrwl/workspace:library base/workspace/angular-material/foundation
