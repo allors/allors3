@@ -20,57 +20,54 @@ npm install jsnlog
 npm install luxon
 
 // Apps Extranet
-npx nx g @nrwl/angular:application angular-material/extranet/apps --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular-material/extranet/apps
-npx nx g @nrwl/workspace:library workspace/derivations/extranet/apps
-npx nx g @nrwl/workspace:library workspace/derivations/extranet/apps-custom
-npx nx g @nrwl/workspace:library workspace/domain/extranet/apps
-npx nx g @nrwl/workspace:library workspace/meta/extranet/apps
-npx nx g @nrwl/workspace:library workspace/meta/json/extranet/apps
+npx nx g @nrwl/angular:application apps-extranet/workspace/angular-material --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library apps-extranet/workspace/angular-material
+npx nx g @nrwl/workspace:library apps-extranet/workspace/derivations
+npx nx g @nrwl/workspace:library apps-extranet/workspace/domain
+npx nx g @nrwl/workspace:library apps-extranet/workspace/meta
+npx nx g @nrwl/workspace:library apps-extranet/workspace/meta-json
 
 // Apps Intranet
-npx nx g @nrwl/angular:application angular-material/intranet/apps --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular-material/intranet/apps
-npx nx g @nrwl/workspace:library workspace/derivations/intranet/apps
-npx nx g @nrwl/workspace:library workspace/derivations/intranet/apps-custom
-npx nx g @nrwl/workspace:library workspace/domain/intranet/apps
-npx nx g @nrwl/workspace:library workspace/meta/intranet/apps
-npx nx g @nrwl/workspace:library workspace/meta/json/intranet/apps
+npx nx g @nrwl/angular:application apps-intranet/workspace/angular-material --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library apps-intranet/workspace/angular-material
+npx nx g @nrwl/workspace:library apps-intranet/workspace/derivations
+npx nx g @nrwl/workspace:library apps-intranet/workspace/domain
+npx nx g @nrwl/workspace:library apps-intranet/workspace/meta
+npx nx g @nrwl/workspace:library apps-intranet/workspace/meta-json
 
 // Base
-npx nx g @nrwl/angular:application angular/foundation/base --routing=true --e2eTestRunner=none
-npx nx g @nrwl/angular:application angular/application/base --routing=true --e2eTestRunner=none
-npx nx g @nrwl/angular:application angular-material/foundation/base --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/angular:application angular-material/application/base --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library workspace/angular/foundation/base
-npx nx g @nrwl/workspace:library workspace/angular/application/base
-npx nx g @nrwl/workspace:library workspace/angular-material/foundation/base
-npx nx g @nrwl/workspace:library workspace/angular-material/application/base
-npx nx g @nrwl/workspace:library workspace/derivations/base
-npx nx g @nrwl/workspace:library workspace/derivations/base-custom
-npx nx g @nrwl/workspace:library workspace/domain/base
-npx nx g @nrwl/workspace:library workspace/meta/base
-npx nx g @nrwl/workspace:library workspace/meta/json/base
+npx nx g @nrwl/angular:application base/workspace/angular/foundation --routing=true --e2eTestRunner=none
+npx nx g @nrwl/angular:application base/workspace/angular/application --routing=true --e2eTestRunner=none
+npx nx g @nrwl/angular:application base/workspace/angular-material/foundation --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/angular:application base/workspace/angular-material/application --routing=true --style=scss --e2eTestRunner=none
+npx nx g @nrwl/workspace:library base/workspace/angular/foundation
+npx nx g @nrwl/workspace:library base/workspace/angular/application
+npx nx g @nrwl/workspace:library base/workspace/angular-material/foundation
+npx nx g @nrwl/workspace:library base/workspace/angular-material/application
+npx nx g @nrwl/workspace:library base/workspace/derivations
+npx nx g @nrwl/workspace:library base/workspace/domain
+npx nx g @nrwl/workspace:library base/workspace/meta
+npx nx g @nrwl/workspace:library base/workspace/meta-json
 
 // Core
-npx nx g @nrwl/workspace:library workspace/derivations/core
-npx nx g @nrwl/workspace:library workspace/derivations/core-custom
-npx nx g @nrwl/workspace:library workspace/domain/core
-npx nx g @nrwl/workspace:library workspace/meta/core
-npx nx g @nrwl/workspace:library workspace/meta/json/core
+npx nx g @nrwl/workspace:library core/workspace/derivations
+npx nx g @nrwl/workspace:library core/workspace/derivations-custom
+npx nx g @nrwl/workspace:library core/workspace/domain
+npx nx g @nrwl/workspace:library core/workspace/meta
+npx nx g @nrwl/workspace:library core/workspace/meta-json
 
 // System
-npx nx g @nrwl/workspace:library protocol/json/system
+npx nx g @nrwl/workspace:library system/common/protocol-json
 
-npx nx g @nrwl/workspace:library workspace/adapters/json/system
-npx nx g @nrwl/workspace:library workspace/adapters/json/system-tests
-npx nx g @nrwl/workspace:library workspace/adapters/system
-npx nx g @nrwl/workspace:library workspace/adapters/system-tests
+npx nx g @nrwl/workspace:library system/workspace/adapters-json
+npx nx g @nrwl/workspace:library system/workspace/adapters-json-tests
+npx nx g @nrwl/workspace:library system/workspace/adapters
+npx nx g @nrwl/workspace:library system/workspace/adapters-tests
 
-npx nx g @nrwl/workspace:library workspace/derivations/system
-npx nx g @nrwl/workspace:library workspace/domain/system
+npx nx g @nrwl/workspace:library system/workspace/derivations
+npx nx g @nrwl/workspace:library system/workspace/domain
 
-npx nx g @nrwl/workspace:library workspace/meta/json/system
-npx nx g @nrwl/workspace:library workspace/meta/json/system-tests
-npx nx g @nrwl/workspace:library workspace/meta/system
-npx nx g @nrwl/workspace:library workspace/meta/system-tests
+npx nx g @nrwl/workspace:library system/workspace/meta-json
+npx nx g @nrwl/workspace:library system/workspace/meta-json-tests
+npx nx g @nrwl/workspace:library system/workspace/meta
+npx nx g @nrwl/workspace:library system/workspace/meta-tests
