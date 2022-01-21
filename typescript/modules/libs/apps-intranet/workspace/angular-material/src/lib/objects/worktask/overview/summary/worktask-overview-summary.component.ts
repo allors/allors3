@@ -8,7 +8,7 @@ import {
   SalesInvoice,
   FixedAsset,
   Printable,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   NavigationService,

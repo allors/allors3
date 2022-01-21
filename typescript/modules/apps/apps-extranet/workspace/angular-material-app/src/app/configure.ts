@@ -10,7 +10,7 @@ import {
 } from '@allors/workspace/angular/base';
 import { M } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
-import { FixedAsset, WorkEffortState } from '@allors/workspace/domain/default';
+import { FixedAsset, WorkEffortState } from '@allors/default/workspace/domain';
 
 function nav(composite: Composite, list: string, overview?: string) {
   angularList(composite, list);

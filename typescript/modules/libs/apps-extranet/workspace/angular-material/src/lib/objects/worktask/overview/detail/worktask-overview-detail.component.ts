@@ -10,7 +10,7 @@ import {
   PartyContactMechanism,
   WorkEffort,
   WorkTask,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationService,
   PanelService,

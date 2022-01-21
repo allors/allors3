@@ -1,4 +1,4 @@
-import { C1 } from '@allors/workspace/domain/default';
+import { C1 } from '@allors/default/workspace/domain';
 import { IUnitDiff, Pull } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';

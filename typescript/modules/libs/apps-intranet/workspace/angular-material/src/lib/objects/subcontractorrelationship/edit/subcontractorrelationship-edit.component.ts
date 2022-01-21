@@ -8,7 +8,7 @@ import {
   Organisation,
   InternalOrganisation,
   SubContractorRelationship,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

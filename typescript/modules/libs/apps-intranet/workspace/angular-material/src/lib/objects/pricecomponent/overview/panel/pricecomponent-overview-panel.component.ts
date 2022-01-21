@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { isBefore, isAfter, format, formatDistance } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { PriceComponent } from '@allors/workspace/domain/default';
+import { PriceComponent } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

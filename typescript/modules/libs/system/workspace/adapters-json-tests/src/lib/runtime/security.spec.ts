@@ -1,4 +1,4 @@
-import { C1, Denied } from '@allors/workspace/domain/default';
+import { C1, Denied } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import { Origin } from '@allors/system/workspace/meta';
 import { Fixture } from '../fixture';

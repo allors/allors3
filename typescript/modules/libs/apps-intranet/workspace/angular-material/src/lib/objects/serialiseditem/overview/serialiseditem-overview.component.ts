@@ -11,7 +11,7 @@ import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
 import { M } from '@allors/default/workspace/meta';
-import { Party, Part, SerialisedItem } from '@allors/workspace/domain/default';
+import { Party, Part, SerialisedItem } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,

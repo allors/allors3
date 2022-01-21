@@ -9,7 +9,7 @@ import {
   TimeFrequency,
   RateType,
   PartyRate,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

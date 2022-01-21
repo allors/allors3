@@ -9,7 +9,7 @@ import {
   InternalOrganisation,
   ProductCategory,
   Settings,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import { InternalOrganisationId } from '../state/internal-organisation-id';
 
 const x = {};

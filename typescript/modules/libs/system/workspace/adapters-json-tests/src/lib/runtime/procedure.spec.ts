@@ -1,4 +1,4 @@
-import { UnitSample } from '@allors/workspace/domain/default';
+import { UnitSample } from '@allors/default/workspace/domain';
 import { Procedure } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';

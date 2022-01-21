@@ -10,7 +10,7 @@ import {
   NonUnifiedGood,
   Part,
   PriceComponent,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

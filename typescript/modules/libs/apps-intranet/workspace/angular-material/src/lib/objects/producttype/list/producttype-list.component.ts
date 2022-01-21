@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
 import { M } from '@allors/default/workspace/meta';
-import { ProductType } from '@allors/workspace/domain/default';
+import { ProductType } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

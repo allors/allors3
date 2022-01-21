@@ -1,4 +1,4 @@
-import { Organisation } from '@allors/workspace/domain/default';
+import { Organisation } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';

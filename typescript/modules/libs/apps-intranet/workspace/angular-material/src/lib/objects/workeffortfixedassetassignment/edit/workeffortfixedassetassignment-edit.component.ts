@@ -12,7 +12,7 @@ import {
   WorkEffortFixedAssetAssignment,
   Enumeration,
   AssetAssignmentStatus,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

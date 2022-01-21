@@ -10,7 +10,7 @@ import {
   RefreshService,
   SaveService,
 } from '@allors/workspace/angular/base';
-import { PositionType } from '@allors/workspace/domain/default';
+import { PositionType } from '@allors/default/workspace/domain';
 
 @Component({
   templateUrl: './positiontype-edit.component.html',

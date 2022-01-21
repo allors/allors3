@@ -18,7 +18,7 @@ import {
   Table,
   TableRow,
 } from '@allors/workspace/angular/base';
-import { Carrier } from '@allors/workspace/domain/default';
+import { Carrier } from '@allors/default/workspace/domain';
 import {
   ContextService,
   WorkspaceService,

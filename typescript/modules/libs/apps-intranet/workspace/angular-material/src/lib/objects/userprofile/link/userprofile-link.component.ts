@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { Person } from '@allors/workspace/domain/default';
+import { Person } from '@allors/default/workspace/domain';
 import {
   Action,
   EditService,

@@ -22,7 +22,7 @@ import {
   Ownership,
   ProductNumber,
   Locale,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationService,
   ObjectData,

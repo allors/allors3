@@ -1,4 +1,4 @@
-import { Media } from '@allors/workspace/domain/default';
+import { Media } from '@allors/default/workspace/domain';
 
 export interface MediaDialogData {
   media: Media;

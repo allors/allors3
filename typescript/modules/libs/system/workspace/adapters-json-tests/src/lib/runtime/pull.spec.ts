@@ -1,4 +1,4 @@
-import { C1, I12 } from '@allors/workspace/domain/default';
+import { C1, I12 } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import {
   Fixture,

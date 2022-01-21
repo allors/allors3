@@ -1,7 +1,7 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
 import { M } from '@allors/default/workspace/meta';
-import { SerialisedItem } from '@allors/workspace/domain/default';
+import { SerialisedItem } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

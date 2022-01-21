@@ -9,7 +9,7 @@ import {
   Organisation,
   Person,
   Locale,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import { IPullResult } from '@allors/system/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import { SaveService, SearchFactory } from '@allors/workspace/angular/base';

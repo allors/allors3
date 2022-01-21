@@ -14,7 +14,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { IResult } from '@allors/system/workspace/domain';
 
 import { PrintService } from '../../../actions/print/print.service';
-import { PurchaseInvoiceApproval } from '@allors/workspace/domain/default';
+import { PurchaseInvoiceApproval } from '@allors/default/workspace/domain';
 
 @Component({
   templateUrl: './purchaseinvoiceapproval-edit.component.html',

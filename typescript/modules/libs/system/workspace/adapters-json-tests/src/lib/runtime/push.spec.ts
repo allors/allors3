@@ -1,5 +1,5 @@
 import { WorkspaceInitialVersion } from '@allors/system/workspace/adapters';
-import { C1, Person } from '@allors/workspace/domain/default';
+import { C1, Person } from '@allors/default/workspace/domain';
 import { IObject } from '@allors/system/workspace/domain';
 import { Fixture, name_c1A } from '../fixture';
 import '../matchers';

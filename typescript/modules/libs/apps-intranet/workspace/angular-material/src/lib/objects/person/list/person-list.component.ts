@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { Person } from '@allors/workspace/domain/default';
+import { Person } from '@allors/default/workspace/domain';
 import {
   Action,
   angularFilterFromDefinition,

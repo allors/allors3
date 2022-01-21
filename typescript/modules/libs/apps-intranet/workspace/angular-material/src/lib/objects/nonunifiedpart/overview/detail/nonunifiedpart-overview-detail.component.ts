@@ -19,7 +19,7 @@ import {
   Settings,
   PartCategory,
   Locale,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationService,
   PanelService,

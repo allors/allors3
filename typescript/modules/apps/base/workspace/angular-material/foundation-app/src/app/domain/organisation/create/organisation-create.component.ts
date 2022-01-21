@@ -4,7 +4,7 @@ import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { M } from '@allors/default/workspace/meta';
-import { Organisation, Country } from '@allors/workspace/domain/default';
+import { Organisation, Country } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import {
   ObjectData,

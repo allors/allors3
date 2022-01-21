@@ -5,7 +5,7 @@ import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 import { ContextService } from '@allors/workspace/angular/core';
-import { Organisation } from '@allors/workspace/domain/default';
+import { Organisation } from '@allors/default/workspace/domain';
 import {
   AllorsMaterialSideNavService,
   angularDisplayName,

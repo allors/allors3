@@ -13,7 +13,7 @@ import {
   PurchaseInvoice,
   Disbursement,
   InternalOrganisation,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

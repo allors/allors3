@@ -1,7 +1,7 @@
 import { Input, Directive } from '@angular/core';
 import { assert, humanize } from '@allors/system/workspace/meta';
 import { M } from '@allors/default/workspace/meta';
-import { Locale, LocalisedText } from '@allors/workspace/domain/default';
+import { Locale, LocalisedText } from '@allors/default/workspace/domain';
 
 import { RoleField } from './role-field';
 

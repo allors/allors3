@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { Notification, Person } from '@allors/workspace/domain/default';
+import { Notification, Person } from '@allors/default/workspace/domain';
 import {
   NavigationService,
   ObjectService,

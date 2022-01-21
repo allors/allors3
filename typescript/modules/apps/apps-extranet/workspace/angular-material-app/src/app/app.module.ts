@@ -18,9 +18,9 @@ import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
-import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
+import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
-import { data } from '@allors/workspace/meta/json/default';
+import { data } from '@allors/default/workspace/meta-json';
 import { M, tags } from '@allors/default/workspace/meta';
 import { ruleBuilder } from '@allors/workspace/derivations/default';
 

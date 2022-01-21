@@ -1,9 +1,9 @@
-import { Organisation, Person } from '@allors/workspace/domain/default';
+import { Organisation, Person } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import {
   OrganisationDisplayNameRule,
   PersonDisplayNameRule,
-} from '@allors/workspace/derivations/core-custom';
+} from '@allors/core/workspace/derivations-custom';
 import '@allors/system/workspace/derivations';
 
 import { Fixture } from '../fixture';

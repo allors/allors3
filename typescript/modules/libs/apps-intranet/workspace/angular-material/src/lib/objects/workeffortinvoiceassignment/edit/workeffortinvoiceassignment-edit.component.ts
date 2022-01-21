@@ -17,7 +17,7 @@ import {
   WorkEffortInvoiceItem,
   WorkEffort,
   WorkEffortInvoiceItemAssignment,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';

@@ -1,7 +1,7 @@
 import { Composite, Dependency, RoleType } from '@allors/system/workspace/meta';
 import { IRule } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import { SerialisedItem, UnifiedGood } from '@allors/workspace/domain/default';
+import { SerialisedItem, UnifiedGood } from '@allors/default/workspace/domain';
 
 export class SerialisedItemYearsToGoRule implements IRule<SerialisedItem> {
   objectType: Composite;

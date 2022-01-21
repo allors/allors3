@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { Person } from '@allors/workspace/domain/default';
+import { Person } from '@allors/default/workspace/domain';
 import {
   Action,
   AllorsListComponent,

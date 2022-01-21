@@ -8,7 +8,7 @@ import { M } from '@allors/default/workspace/meta';
 import {
   PositionTypeRate,
   PositionType,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   angularFilterFromDefinition,

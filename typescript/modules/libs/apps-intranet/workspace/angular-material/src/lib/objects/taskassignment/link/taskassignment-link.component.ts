@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/default/workspace/meta';
-import { Task } from '@allors/workspace/domain/default';
+import { Task } from '@allors/default/workspace/domain';
 import {
   NavigationService,
   ObjectService,

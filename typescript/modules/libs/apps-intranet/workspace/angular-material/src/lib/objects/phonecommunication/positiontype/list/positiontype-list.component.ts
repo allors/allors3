@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { PositionType } from '@allors/workspace/domain/default';
+import { PositionType } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';

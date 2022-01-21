@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/default/workspace/meta';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { WorkEffort, WorkRequirement } from '@allors/workspace/domain/default';
+import { WorkEffort, WorkRequirement } from '@allors/default/workspace/domain';
 import {
   NavigationService,
   PanelService,

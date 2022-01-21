@@ -17,7 +17,7 @@ import {
   SalesInvoice,
   BillingProcess,
   SerialisedInventoryItemState,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationService,
   RefreshService,

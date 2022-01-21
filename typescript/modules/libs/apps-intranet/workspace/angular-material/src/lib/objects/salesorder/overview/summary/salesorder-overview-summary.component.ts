@@ -10,7 +10,7 @@ import {
   SalesOrder,
   SalesInvoice,
   BillingProcess,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   NavigationService,

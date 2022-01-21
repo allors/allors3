@@ -1,7 +1,7 @@
 import { Composite, Dependency, RoleType } from '@allors/system/workspace/meta';
 import { IRule } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import { WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
+import { WorkEffortInventoryAssignment } from '@allors/default/workspace/domain';
 
 export class WorkEffortInventoryAssignmentTotalSellingPriceRule
   implements IRule<WorkEffortInventoryAssignment>

@@ -1,6 +1,6 @@
 import { Component, Self } from '@angular/core';
 
-import { Person, Organisation } from '@allors/workspace/domain/default';
+import { Person, Organisation } from '@allors/default/workspace/domain';
 import {
   AllorsPanelSummaryComponent,
   MediaService,

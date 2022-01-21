@@ -3,7 +3,7 @@ import { switchMap } from 'rxjs/operators';
 import { Component, Self, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { Organisation } from '@allors/workspace/domain/default';
+import { Organisation } from '@allors/default/workspace/domain';
 import {
   NavigationService,
   RefreshService,

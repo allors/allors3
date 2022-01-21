@@ -1,5 +1,9 @@
-import { SingleSessionContext, MultipleSessionContext, databaseModes } from '../../../context';
-import { C1 } from '@allors/workspace/domain/default';
+import {
+  SingleSessionContext,
+  MultipleSessionContext,
+  databaseModes,
+} from '../../../context';
+import { C1 } from '@allors/default/workspace/domain';
 import { Fixture } from '../../../../fixture';
 import '../../../../matchers';
 
@@ -24,7 +28,10 @@ beforeEach(async () => {
   fixture = new Fixture();
   await fixture.init();
   singleSessionContext = new SingleSessionContext(fixture, 'Single shared');
-  multipleSessionContext = new MultipleSessionContext(fixture, 'Multiple shared');
+  multipleSessionContext = new MultipleSessionContext(
+    fixture,
+    'Multiple shared'
+  );
 });
 
 test('databaseManyToOneSetRole', async () => {

@@ -4,7 +4,7 @@ import { M } from '@allors/default/workspace/meta';
 import {
   TelecommunicationsNumber,
   Party,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 
 export class PartyDisplayPhoneRule implements IRule<Party> {
   objectType: Composite;

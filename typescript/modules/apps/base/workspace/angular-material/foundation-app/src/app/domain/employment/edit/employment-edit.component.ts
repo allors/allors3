@@ -7,7 +7,7 @@ import {
   Person,
   Organisation,
   Employment,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import {
   RefreshService,

@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { UnifiedGood } from '@allors/workspace/domain/default';
+import { UnifiedGood } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

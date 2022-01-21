@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { ProductQuote, QuoteItem } from '@allors/workspace/domain/default';
+import { ProductQuote, QuoteItem } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

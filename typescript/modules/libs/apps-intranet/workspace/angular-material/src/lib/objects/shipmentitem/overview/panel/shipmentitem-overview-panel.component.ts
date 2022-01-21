@@ -2,7 +2,7 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/default/workspace/meta';
-import { Shipment, ShipmentItem } from '@allors/workspace/domain/default';
+import { Shipment, ShipmentItem } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

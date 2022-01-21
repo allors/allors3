@@ -5,12 +5,12 @@ import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
-import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
+import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
-import { data } from '@allors/workspace/meta/json/default';
+import { data } from '@allors/default/workspace/meta-json';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { M } from '@allors/default/workspace/meta';
-import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
+import { ruleBuilder } from '@allors/core/workspace/derivations-custom';
 
 import { AngularClient } from '../allors/angular-client';
 import { environment } from '../environments/environment';

@@ -29,7 +29,7 @@ import {
   RequestItem,
   UnifiedGood,
   Product,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

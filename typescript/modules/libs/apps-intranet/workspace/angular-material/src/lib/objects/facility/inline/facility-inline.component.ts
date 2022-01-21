@@ -11,7 +11,7 @@ import {
   Facility,
   InternalOrganisation,
   FacilityType,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';

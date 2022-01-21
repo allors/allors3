@@ -13,7 +13,7 @@ import {
   TableRow,
 } from '@allors/workspace/angular-material/base';
 import { M } from '@allors/default/workspace/meta';
-import { Country } from '@allors/workspace/domain/default';
+import { Country } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import {
   Action,

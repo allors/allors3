@@ -6,7 +6,7 @@ import { map, switchMap } from 'rxjs/operators';
 
 import { ContextService } from '@allors/workspace/angular/core';
 import { M } from '@allors/default/workspace/meta';
-import { Organisation, Singleton } from '@allors/workspace/domain/default';
+import { Organisation, Singleton } from '@allors/default/workspace/domain';
 import { IPullResult } from '@allors/system/workspace/domain';
 import {
   AuthenticationService,

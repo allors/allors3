@@ -2,7 +2,7 @@ import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { WorkEffort, TimeEntry } from '@allors/workspace/domain/default';
+import { WorkEffort, TimeEntry } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

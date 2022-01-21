@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 import { M } from '@allors/default/workspace/meta';
-import { Brand } from '@allors/workspace/domain/default';
+import { Brand } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({

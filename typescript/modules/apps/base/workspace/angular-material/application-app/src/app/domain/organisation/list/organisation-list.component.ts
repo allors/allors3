@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import { M } from '@allors/default/workspace/meta';
-import { Organisation } from '@allors/workspace/domain/default';
+import { Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import {
   Action,

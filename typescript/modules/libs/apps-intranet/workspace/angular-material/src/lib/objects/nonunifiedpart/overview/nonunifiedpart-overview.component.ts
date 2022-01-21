@@ -10,7 +10,7 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { Part, NonUnifiedPart } from '@allors/workspace/domain/default';
+import { Part, NonUnifiedPart } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,

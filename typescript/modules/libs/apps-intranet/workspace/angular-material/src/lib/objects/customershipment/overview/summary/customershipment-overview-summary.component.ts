@@ -2,7 +2,7 @@ import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/default/workspace/meta';
-import { CustomerShipment, SalesOrder } from '@allors/workspace/domain/default';
+import { CustomerShipment, SalesOrder } from '@allors/default/workspace/domain';
 import {
   NavigationService,
   PanelService,

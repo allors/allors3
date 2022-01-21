@@ -8,7 +8,7 @@ import {
   ContactMechanism,
   Enumeration,
   ElectronicAddress,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import { RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { IObject } from '@allors/system/workspace/domain';

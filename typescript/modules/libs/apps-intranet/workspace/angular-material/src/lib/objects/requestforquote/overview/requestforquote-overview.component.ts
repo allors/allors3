@@ -11,7 +11,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/default/workspace/meta';
-import { RequestForQuote, Quote } from '@allors/workspace/domain/default';
+import { RequestForQuote, Quote } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,

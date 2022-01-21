@@ -14,7 +14,7 @@
     "test:system-workspace-meta": "npx nx test system-workspace-meta-tests --skipNxCache",
     "test:system-workspace-meta-json": "npx nx test system-workspace-meta-json-tests --skipNxCache",
     "test:system-workspace-adapters": "npx nx test system-workspace-adapters-tests --skipNxCache",
-    "test:workspace-adapters-json-system": "npx nx test workspace-adapters-json-system-tests --skipNxCache",
+    "test:system-workspace-adapters-json": "npx nx test system-workspace-adapters-json-tests --skipNxCache",
     "test:all": "npm run test:workspace-meta-system && npm run test:workspace-meta-json-system && npm run test:workspace-adapters-system && npm run test:workspace-adapters-json-system"
   },
   "private": true,

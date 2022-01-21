@@ -4,7 +4,7 @@ import { Component, ViewChild, OnDestroy, OnInit, Self } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { M } from '@allors/default/workspace/meta';
-import { Organisation } from '@allors/workspace/domain/default';
+import { Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import {
   angularDisplayName,

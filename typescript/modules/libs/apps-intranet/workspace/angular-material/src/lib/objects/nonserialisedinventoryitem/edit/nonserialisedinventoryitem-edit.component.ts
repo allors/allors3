@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/default/workspace/meta';
-import { NonSerialisedInventoryItem } from '@allors/workspace/domain/default';
+import { NonSerialisedInventoryItem } from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

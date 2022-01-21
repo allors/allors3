@@ -4,7 +4,7 @@ import { Subscription, combineLatest, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { M } from '@allors/default/workspace/meta';
-import { ProductQuoteApproval } from '@allors/workspace/domain/default';
+import { ProductQuoteApproval } from '@allors/default/workspace/domain';
 import {
   Action,
   ObjectData,

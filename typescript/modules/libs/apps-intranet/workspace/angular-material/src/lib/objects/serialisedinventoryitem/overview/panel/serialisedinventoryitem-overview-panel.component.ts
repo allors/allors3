@@ -5,7 +5,7 @@ import {
   InventoryItem,
   SerialisedInventoryItem,
   SerialisedItem,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

@@ -14,7 +14,7 @@ import { M } from '@allors/default/workspace/meta';
 import {
   Organisation,
   SupplierOffering,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationService,
   RefreshService,

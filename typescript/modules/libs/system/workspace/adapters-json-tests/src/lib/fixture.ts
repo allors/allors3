@@ -1,8 +1,8 @@
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
-import { data } from '@allors/workspace/meta/json/default';
-import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
-import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
+import { data } from '@allors/default/workspace/meta-json';
+import { ruleBuilder } from '@allors/core/workspace/derivations-custom';
+import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { M } from '@allors/default/workspace/meta';
 
@@ -13,7 +13,7 @@ import {
   IWorkspace,
   Pull,
 } from '@allors/system/workspace/domain';
-import { C1, C2 } from '@allors/workspace/domain/default';
+import { C1, C2 } from '@allors/default/workspace/domain';
 import { applyRules } from '@allors/system/workspace/derivations';
 
 const BASE_URL = 'http://localhost:5000/allors/';

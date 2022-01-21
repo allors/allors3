@@ -19,7 +19,7 @@ import {
   ProductCategory,
   ProductNumber,
   UnifiedGood,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationService,
   PanelService,

@@ -12,7 +12,7 @@ import {
   WorkRequirement,
   SerialisedItem,
   InternalOrganisation,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   PanelService,

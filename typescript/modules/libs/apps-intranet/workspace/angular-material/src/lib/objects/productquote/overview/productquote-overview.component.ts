@@ -15,7 +15,7 @@ import {
   Good,
   ProductQuote,
   SalesOrder,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,

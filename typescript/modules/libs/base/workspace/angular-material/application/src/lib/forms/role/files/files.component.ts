@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { M } from '@allors/default/workspace/meta';
-import { Media } from '@allors/workspace/domain/default';
+import { Media } from '@allors/default/workspace/domain';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { MediaService, RoleField } from '@allors/workspace/angular/base';
 

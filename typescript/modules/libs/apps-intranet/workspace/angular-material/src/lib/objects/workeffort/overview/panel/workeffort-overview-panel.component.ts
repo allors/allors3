@@ -1,7 +1,7 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
 import { M } from '@allors/default/workspace/meta';
-import { WorkEffort } from '@allors/workspace/domain/default';
+import { WorkEffort } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

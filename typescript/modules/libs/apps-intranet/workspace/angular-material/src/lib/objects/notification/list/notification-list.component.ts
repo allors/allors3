@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { Notification } from '@allors/workspace/domain/default';
+import { Notification } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,

@@ -13,7 +13,7 @@ import {
   ContactMechanismPurpose,
   ContactMechanismType,
   TelecommunicationsNumber,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({

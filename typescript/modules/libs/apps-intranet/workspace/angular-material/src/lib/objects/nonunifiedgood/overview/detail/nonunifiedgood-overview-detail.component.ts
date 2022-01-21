@@ -23,7 +23,7 @@ import {
   ProductNumber,
   ProductType,
   Locale,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';

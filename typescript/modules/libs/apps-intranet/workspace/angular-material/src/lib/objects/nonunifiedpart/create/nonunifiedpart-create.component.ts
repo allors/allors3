@@ -28,7 +28,7 @@ import {
   PartCategory,
   NonUnifiedPart,
   Locale,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

@@ -16,7 +16,7 @@ import {
   CommunicationEventState,
   PartyContactMechanism,
   PostalAddress,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   NavigationService,
   ObjectData,

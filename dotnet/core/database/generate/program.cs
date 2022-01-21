@@ -31,7 +31,7 @@ namespace Allors.Meta.Generation
 
                 { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/core/workspace/meta/src/lib/generated" },
                 { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/core/workspace/meta-json/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/core/workspace/domain/core/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/core/workspace/domain/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

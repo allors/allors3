@@ -11,7 +11,7 @@ import {
   CustomOrganisationClassification,
   IndustryClassification,
   LegalForm,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   PanelService,
   RefreshService,

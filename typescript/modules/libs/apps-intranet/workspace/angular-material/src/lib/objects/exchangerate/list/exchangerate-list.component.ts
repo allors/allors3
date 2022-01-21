@@ -5,7 +5,7 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { ExchangeRate } from '@allors/workspace/domain/default';
+import { ExchangeRate } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

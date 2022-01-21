@@ -5,7 +5,7 @@ import {
   NavigationService,
   PanelService,
 } from '@allors/workspace/angular/base';
-import { NonUnifiedGood } from '@allors/workspace/domain/default';
+import { NonUnifiedGood } from '@allors/default/workspace/domain';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({

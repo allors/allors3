@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { PartyRelationship } from '@allors/workspace/domain/default';
+import { PartyRelationship } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

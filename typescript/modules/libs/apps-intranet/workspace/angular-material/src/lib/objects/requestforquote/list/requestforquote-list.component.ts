@@ -10,7 +10,7 @@ import {
   Person,
   Organisation,
   InternalOrganisation,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

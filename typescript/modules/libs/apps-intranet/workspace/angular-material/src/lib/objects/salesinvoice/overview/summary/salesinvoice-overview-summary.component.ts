@@ -7,7 +7,7 @@ import {
   SalesOrder,
   SalesInvoice,
   RepeatingSalesInvoice,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   NavigationService,

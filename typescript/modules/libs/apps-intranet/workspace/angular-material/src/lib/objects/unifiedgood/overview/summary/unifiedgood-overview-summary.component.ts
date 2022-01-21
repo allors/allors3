@@ -1,7 +1,7 @@
 import { Component, Self } from '@angular/core';
 
 import { M } from '@allors/default/workspace/meta';
-import { UnifiedGood } from '@allors/workspace/domain/default';
+import { UnifiedGood } from '@allors/default/workspace/domain';
 import {
   NavigationService,
   PanelService,

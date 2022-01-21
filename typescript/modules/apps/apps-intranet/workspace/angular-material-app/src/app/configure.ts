@@ -52,7 +52,7 @@ import {
   SerialisedItemState,
   ShipmentState,
   WorkEffortState,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 
 function nav(composite: Composite, list: string, overview?: string) {
   angularList(composite, list);

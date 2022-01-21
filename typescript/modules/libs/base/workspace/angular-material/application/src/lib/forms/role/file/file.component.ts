@@ -9,7 +9,7 @@ import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { M } from '@allors/default/workspace/meta';
 import { ISession } from '@allors/system/workspace/domain';
-import { Media } from '@allors/workspace/domain/default';
+import { Media } from '@allors/default/workspace/domain';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { MediaService, RoleField } from '@allors/workspace/angular/base';
 

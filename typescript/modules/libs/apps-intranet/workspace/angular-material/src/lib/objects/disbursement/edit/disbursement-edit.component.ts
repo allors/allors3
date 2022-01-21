@@ -8,7 +8,7 @@ import {
   Disbursement,
   Invoice,
   PaymentApplication,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,

@@ -19,7 +19,7 @@ import {
   IrpfRegime,
   VatClause,
   CustomerRelationship,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   PanelService,
   RefreshService,

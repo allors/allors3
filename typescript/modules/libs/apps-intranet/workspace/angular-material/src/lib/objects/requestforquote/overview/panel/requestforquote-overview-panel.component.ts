@@ -2,7 +2,7 @@ import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
 import { M } from '@allors/default/workspace/meta';
-import { RequestForQuote } from '@allors/workspace/domain/default';
+import { RequestForQuote } from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,

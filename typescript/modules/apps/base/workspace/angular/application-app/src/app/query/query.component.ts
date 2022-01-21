@@ -8,7 +8,7 @@ import {
 } from '@allors/workspace/angular/core';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import { Organisation } from '@allors/workspace/domain/default';
+import { Organisation } from '@allors/default/workspace/domain';
 
 @Component({
   templateUrl: './query.component.html',

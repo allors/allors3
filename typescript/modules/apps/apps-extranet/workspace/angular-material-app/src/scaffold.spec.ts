@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import { data } from '@allors/workspace/meta/json/default';
+import { data } from '@allors/default/workspace/meta-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { configure } from './app/configure';
 import { M } from '@allors/default/workspace/meta';

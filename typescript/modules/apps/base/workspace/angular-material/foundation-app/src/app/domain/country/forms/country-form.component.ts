@@ -1,5 +1,5 @@
 import { Component, Self } from '@angular/core';
-import { Country } from '@allors/workspace/domain/default';
+import { Country } from '@allors/default/workspace/domain';
 import { SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { AllorsFormComponent } from '@allors/workspace/angular-material/base';

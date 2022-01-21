@@ -20,7 +20,7 @@ import {
   TableRow,
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { CommunicationEvent } from '@allors/workspace/domain/default';
+import { CommunicationEvent } from '@allors/default/workspace/domain';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 

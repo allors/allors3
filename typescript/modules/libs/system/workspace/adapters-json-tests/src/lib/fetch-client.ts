@@ -13,7 +13,7 @@ import {
   PermissionRequest,
   PermissionResponse,
 } from '@allors/system/common/protocol-json';
-import { IDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
+import { IDatabaseJsonClient } from '@allors/system/workspace/adapters-json';
 
 interface AuthenticationTokenRequest {
   /** login */

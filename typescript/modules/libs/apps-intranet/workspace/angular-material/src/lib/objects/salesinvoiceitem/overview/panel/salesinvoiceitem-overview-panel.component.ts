@@ -5,7 +5,7 @@ import { M } from '@allors/default/workspace/meta';
 import {
   SalesInvoice,
   SalesInvoiceItem,
-} from '@allors/workspace/domain/default';
+} from '@allors/default/workspace/domain';
 import {
   Action,
   DeleteService,
