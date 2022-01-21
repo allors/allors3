@@ -3,11 +3,24 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Party, Priority, WorkRequirement, SerialisedItem, InternalOrganisation } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RadioGroupOption, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Party,
+  Priority,
+  WorkRequirement,
+  SerialisedItem,
+  InternalOrganisation,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+  RadioGroupOption,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -19,7 +32,9 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './workrequirement-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy {
+export class WorkRequirementOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
   public title: string;
 
@@ -102,19 +117,29 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
               },
             }),
             pull.Priority({
-              predicate: { kind: 'Equals', propertyType: m.Priority.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Priority.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Priority.DisplayOrder }],
             }),
           ];
 
-          this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded })));
         })
       )
       .subscribe(({ loaded }) => {
         this.allors.context.reset();
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.priorities = loaded.collection<Priority>(m.Priority);
         this.priorityOptions = this.priorities.map((v) => {
           return {
@@ -167,8 +192,16 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
             {
               kind: 'Or',
               operands: [
-                { kind: 'Equals', propertyType: m.SerialisedItem.OwnedBy, object: party },
-                { kind: 'Equals', propertyType: m.SerialisedItem.RentedBy, object: party },
+                {
+                  kind: 'Equals',
+                  propertyType: m.SerialisedItem.OwnedBy,
+                  object: party,
+                },
+                {
+                  kind: 'Equals',
+                  propertyType: m.SerialisedItem.RentedBy,
+                  object: party,
+                },
               ],
             },
           ],
@@ -177,7 +210,9 @@ export class WorkRequirementOverviewDetailComponent implements OnInit, OnDestroy
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
+      this.serialisedItems = loaded.collection<SerialisedItem>(
+        m.SerialisedItem
+      );
     });
   }
 

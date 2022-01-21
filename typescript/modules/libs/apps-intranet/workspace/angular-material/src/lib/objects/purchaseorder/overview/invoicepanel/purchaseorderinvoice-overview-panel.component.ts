@@ -1,9 +1,31 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, PurchaseOrder, PurchaseOrderItem, InvoiceItemType, PurchaseInvoice, OrderItemBilling, PurchaseInvoiceItem, InternalOrganisation } from '@allors/workspace/domain/default';
-import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, SaveService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  PurchaseOrder,
+  PurchaseOrderItem,
+  InvoiceItemType,
+  PurchaseInvoice,
+  OrderItemBilling,
+  PurchaseInvoiceItem,
+  InternalOrganisation,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  Table,
+  TableRow,
+  OverviewService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -129,7 +151,12 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
         { name: 'shipmentState', sort },
         { name: 'paymentState', sort },
       ],
-      actions: [this.overviewService.overview(), this.printService.print(), this.addToInvoice, this.removeFromInvoice],
+      actions: [
+        this.overviewService.overview(),
+        this.printService.print(),
+        this.addToInvoice,
+        this.removeFromInvoice,
+      ],
       defaultAction: this.overviewService.overview(),
       autoSort: true,
       autoFilter: true,
@@ -203,20 +230,36 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
     this.panel.onPulled = (loaded) => {
       this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
       this.purchaseInvoice = loaded.object<PurchaseInvoice>(invoicePullName);
-      this.orderItemBillings = loaded.collection<OrderItemBilling>(m.OrderItemBilling);
+      this.orderItemBillings = loaded.collection<OrderItemBilling>(
+        m.OrderItemBilling
+      );
 
-      const invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
-      this.partItem = invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b');
-      this.workItem = invoiceItemTypes?.find((v: InvoiceItemType) => v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e');
+      const invoiceItemTypes = loaded.collection<InvoiceItemType>(
+        m.InvoiceItemType
+      );
+      this.partItem = invoiceItemTypes?.find(
+        (v: InvoiceItemType) =>
+          v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
+      );
+      this.workItem = invoiceItemTypes?.find(
+        (v: InvoiceItemType) =>
+          v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e'
+      );
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
       this.objects = purchaseOrders?.filter(
         (v) =>
-          (v.canExecuteInvoice && (this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '102f4080-1d12-4090-9196-f42c094c38ca' || this.purchaseInvoice.PurchaseInvoiceState.UniqueId === '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||
+          (v.canExecuteInvoice &&
+            (this.purchaseInvoice.PurchaseInvoiceState.UniqueId ===
+              '102f4080-1d12-4090-9196-f42c094c38ca' ||
+              this.purchaseInvoice.PurchaseInvoiceState.UniqueId ===
+                '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||
           v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
       );
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.objects?.length ??
+        0) as number;
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,
@@ -233,38 +276,48 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
   }
 
   public addFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
-    const purchaseInvoice = this.allors.context.instantiate<PurchaseInvoice>(this.purchaseInvoice.id);
-    const purchaseOrder = this.allors.context.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
+    const purchaseInvoice = this.allors.context.instantiate<PurchaseInvoice>(
+      this.purchaseInvoice.id
+    );
+    const purchaseOrder = this.allors.context.instantiate<PurchaseOrder>(
+      panelPurchaseOrder.id
+    );
 
-    purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
-      if (purchaseOrderItem.CanInvoice) {
-        const invoiceItem = this.allors.context.create<PurchaseInvoiceItem>(this.m.PurchaseInvoiceItem);
-        invoiceItem.AssignedUnitPrice = purchaseOrderItem.UnitPrice;
-        invoiceItem.Part = purchaseOrderItem.Part;
-        invoiceItem.Quantity = purchaseOrderItem.QuantityOrdered;
-        invoiceItem.Description = purchaseOrderItem.Description;
-        invoiceItem.InternalComment = purchaseOrderItem.InternalComment;
-        invoiceItem.Message = purchaseOrderItem.Message;
+    purchaseOrder.ValidOrderItems.forEach(
+      (purchaseOrderItem: PurchaseOrderItem) => {
+        if (purchaseOrderItem.CanInvoice) {
+          const invoiceItem = this.allors.context.create<PurchaseInvoiceItem>(
+            this.m.PurchaseInvoiceItem
+          );
+          invoiceItem.AssignedUnitPrice = purchaseOrderItem.UnitPrice;
+          invoiceItem.Part = purchaseOrderItem.Part;
+          invoiceItem.Quantity = purchaseOrderItem.QuantityOrdered;
+          invoiceItem.Description = purchaseOrderItem.Description;
+          invoiceItem.InternalComment = purchaseOrderItem.InternalComment;
+          invoiceItem.Message = purchaseOrderItem.Message;
 
-        if (purchaseOrderItem.SerialisedItem) {
-          invoiceItem.SerialisedItem = purchaseOrderItem.SerialisedItem;
+          if (purchaseOrderItem.SerialisedItem) {
+            invoiceItem.SerialisedItem = purchaseOrderItem.SerialisedItem;
+          }
+
+          if (invoiceItem.Part) {
+            invoiceItem.InvoiceItemType = purchaseOrderItem.InvoiceItemType;
+          } else {
+            invoiceItem.InvoiceItemType = this.workItem;
+          }
+
+          purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
+
+          const orderItemBilling = this.allors.context.create<OrderItemBilling>(
+            this.m.OrderItemBilling
+          );
+          orderItemBilling.Quantity = purchaseOrderItem.QuantityOrdered;
+          orderItemBilling.Amount = purchaseOrderItem.TotalBasePrice;
+          orderItemBilling.OrderItem = purchaseOrderItem;
+          orderItemBilling.InvoiceItem = invoiceItem;
         }
-
-        if (invoiceItem.Part) {
-          invoiceItem.InvoiceItemType = purchaseOrderItem.InvoiceItemType;
-        } else {
-          invoiceItem.InvoiceItemType = this.workItem;
-        }
-
-        purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
-
-        const orderItemBilling = this.allors.context.create<OrderItemBilling>(this.m.OrderItemBilling);
-        orderItemBilling.Quantity = purchaseOrderItem.QuantityOrdered;
-        orderItemBilling.Amount = purchaseOrderItem.TotalBasePrice;
-        orderItemBilling.OrderItem = purchaseOrderItem;
-        orderItemBilling.InvoiceItem = invoiceItem;
       }
-    });
+    );
 
     this.allors.context.push().subscribe(() => {
       this.allors.context.reset();
@@ -276,18 +329,26 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
   public removeFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
     const { context } = this.allors;
 
-    const purchaseOrder = context.instantiate<PurchaseOrder>(panelPurchaseOrder.id);
+    const purchaseOrder = context.instantiate<PurchaseOrder>(
+      panelPurchaseOrder.id
+    );
 
-    purchaseOrder.ValidOrderItems.forEach((purchaseOrderItem: PurchaseOrderItem) => {
-      const orderItemBilling = this.orderItemBillings?.find((v) => v.OrderItem.id === purchaseOrderItem.id);
-      if (orderItemBilling) {
-        context.invoke(orderItemBilling.InvoiceItem.Delete).subscribe(() => {
-          context.reset();
-          this.refreshService.refresh();
-          this.snackBar.open('Successfully removed from invoice.', 'close', { duration: 5000 });
-        }, this.saveService.errorHandler);
+    purchaseOrder.ValidOrderItems.forEach(
+      (purchaseOrderItem: PurchaseOrderItem) => {
+        const orderItemBilling = this.orderItemBillings?.find(
+          (v) => v.OrderItem.id === purchaseOrderItem.id
+        );
+        if (orderItemBilling) {
+          context.invoke(orderItemBilling.InvoiceItem.Delete).subscribe(() => {
+            context.reset();
+            this.refreshService.refresh();
+            this.snackBar.open('Successfully removed from invoice.', 'close', {
+              duration: 5000,
+            });
+          }, this.saveService.errorHandler);
+        }
       }
-    });
+    );
   }
 
   public addFromPurchaseOrders(purchaseOrders: PurchaseOrder[]): void {

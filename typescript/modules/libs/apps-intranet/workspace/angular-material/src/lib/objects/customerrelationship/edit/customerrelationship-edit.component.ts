@@ -3,9 +3,17 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, CustomerRelationship, Party } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  InternalOrganisation,
+  CustomerRelationship,
+  Party,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -43,7 +51,10 @@ export class CustomerRelationshipEditComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -69,24 +80,33 @@ export class CustomerRelationshipEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.party = loaded.object<Party>(m.Party);
 
         if (isCreate) {
           this.title = 'Add Customer Relationship';
 
-          this.partyRelationship = this.allors.context.create<CustomerRelationship>(m.CustomerRelationship);
+          this.partyRelationship =
+            this.allors.context.create<CustomerRelationship>(
+              m.CustomerRelationship
+            );
           this.partyRelationship.FromDate = new Date();
           this.partyRelationship.Customer = this.party;
-          this.partyRelationship.InternalOrganisation = this.internalOrganisation;
+          this.partyRelationship.InternalOrganisation =
+            this.internalOrganisation;
         } else {
-          this.partyRelationship = loaded.object<CustomerRelationship>(m.CustomerRelationship);
+          this.partyRelationship = loaded.object<CustomerRelationship>(
+            m.CustomerRelationship
+          );
 
           if (this.partyRelationship.canWriteFromDate) {
             this.title = 'Edit Customer Relationship';

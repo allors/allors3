@@ -1,8 +1,21 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortPurchaseOrderItemAssignment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  WorkEffortPurchaseOrderItemAssignment,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -63,7 +76,12 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent implements OnInit {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'supplier' }, { name: 'orderNumber' }, { name: 'description' }, { name: 'quantity' }],
+      columns: [
+        { name: 'supplier' },
+        { name: 'orderNumber' },
+        { name: 'description' },
+        { name: 'quantity' },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -103,13 +121,18 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent implements OnInit {
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
-      this.objects = loaded.collection<WorkEffortPurchaseOrderItemAssignment>(pullName);
+      this.objects =
+        loaded.collection<WorkEffortPurchaseOrderItemAssignment>(pullName);
 
       this.table.total = this.objects?.length ?? 0;
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,
-          supplier: (v.PurchaseOrder.TakenViaSupplier && v.PurchaseOrder.TakenViaSupplier.DisplayName) || (v.PurchaseOrder.TakenViaSubcontractor && v.PurchaseOrder.TakenViaSubcontractor.DisplayName),
+          supplier:
+            (v.PurchaseOrder.TakenViaSupplier &&
+              v.PurchaseOrder.TakenViaSupplier.DisplayName) ||
+            (v.PurchaseOrder.TakenViaSubcontractor &&
+              v.PurchaseOrder.TakenViaSubcontractor.DisplayName),
           description: v.PurchaseOrderItem.Description,
           orderNumber: v.PurchaseOrder.OrderNumber,
           quantity: v.Quantity,

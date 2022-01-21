@@ -3,9 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Locale, Organisation, UserProfile, Singleton, User } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Locale,
+  Organisation,
+  UserProfile,
+  Singleton,
+  User,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SingletonId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -65,12 +76,18 @@ export class UserProfileEditComponent implements OnInit, OnDestroy {
               },
             }),
             pull.Organisation({
-              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Organisation.IsInternalOrganisation,
+                value: true,
+              },
               sorting: [{ roleType: m.Organisation.DisplayName }],
             }),
           ];
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded })));
         })
       )
       .subscribe(({ loaded }) => {
@@ -78,7 +95,9 @@ export class UserProfileEditComponent implements OnInit, OnDestroy {
 
         this.userProfile = loaded.object<UserProfile>(m.UserProfile);
         this.user = this.userProfile.UserWhereUserProfile;
-        this.internalOrganizations = loaded.collection<Organisation>(m.Organisation);
+        this.internalOrganizations = loaded.collection<Organisation>(
+          m.Organisation
+        );
 
         const singleton = loaded.object<Singleton>(m.Singleton);
         this.supportedLocales = singleton.Locales;

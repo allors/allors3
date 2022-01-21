@@ -2,7 +2,7 @@ import {
   Configuration,
   ISession,
   IWorkspace,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { Class, RelationType } from '@allors/system/workspace/meta';
 
 import { Ranges } from '../collections/ranges/ranges';

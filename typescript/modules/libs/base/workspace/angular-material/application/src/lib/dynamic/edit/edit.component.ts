@@ -1,6 +1,6 @@
 import { Component, Inject, AfterViewInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import {
   AllorsForm,
   angularForms,

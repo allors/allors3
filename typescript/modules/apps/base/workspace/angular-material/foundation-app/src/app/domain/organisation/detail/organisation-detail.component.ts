@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Organisation, Country } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import {

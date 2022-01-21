@@ -3,9 +3,15 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { Person } from '@allors/workspace/domain/default';
-import { Action, EditService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
+import {
+  Action,
+  EditService,
+  ObjectService,
+  RefreshService,
+  UserId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'userprofile-link',
@@ -19,7 +25,13 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
   user: Person;
   m: M;
 
-  constructor(@Self() public allors: ContextService, public factoryService: ObjectService, public refreshService: RefreshService, public editService: EditService, private userId: UserId) {
+  constructor(
+    @Self() public allors: ContextService,
+    public factoryService: ObjectService,
+    public refreshService: RefreshService,
+    public editService: EditService,
+    private userId: UserId
+  ) {
     this.edit = editService.edit();
 
     this.allors.context.name = this.constructor.name;

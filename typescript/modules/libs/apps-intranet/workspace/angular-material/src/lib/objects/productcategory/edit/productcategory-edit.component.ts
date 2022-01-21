@@ -3,11 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Locale, InternalOrganisation, ProductCategory, Scope } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Locale,
+  InternalOrganisation,
+  ProductCategory,
+  Scope,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -46,7 +55,10 @@ export class ProductCategoryEditComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -78,13 +90,16 @@ export class ProductCategoryEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.category = loaded.object(m.ProductCategory);
         this.categories = loaded.collection(m.ProductCategory);
         this.scopes = loaded.collection(m.Scope);
@@ -92,7 +107,9 @@ export class ProductCategoryEditComponent implements OnInit, OnDestroy {
 
         if (isCreate) {
           this.title = 'Add Category';
-          this.category = this.allors.context.create<ProductCategory>(m.ProductCategory);
+          this.category = this.allors.context.create<ProductCategory>(
+            m.ProductCategory
+          );
           this.category.InternalOrganisation = this.internalOrganisation;
         } else {
           if (this.category.canWriteCatScope) {

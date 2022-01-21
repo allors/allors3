@@ -1,7 +1,19 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { Locale, Person, Enumeration, Salutation, GenderType } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Locale,
+  Person,
+  Enumeration,
+  Salutation,
+  GenderType,
+} from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -36,11 +48,19 @@ export class PersonInlineComponent implements OnInit, OnDestroy {
         sorting: [{ roleType: this.m.Locale.Name }],
       }),
       pull.GenderType({
-        predicate: { kind: 'Equals', propertyType: this.m.GenderType.IsActive, value: true },
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.GenderType.IsActive,
+          value: true,
+        },
         sorting: [{ roleType: this.m.GenderType.Name }],
       }),
       pull.Salutation({
-        predicate: { kind: 'Equals', propertyType: this.m.Salutation.IsActive, value: true },
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.Salutation.IsActive,
+          value: true,
+        },
         sorting: [{ roleType: this.m.Salutation.Name }],
       }),
     ];

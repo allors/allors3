@@ -1,9 +1,19 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { isBefore, isAfter, format, formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { PriceComponent } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -70,7 +80,13 @@ export class PriceComponentOverviewPanelComponent implements OnInit {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'type' }, { name: 'price', sort }, { name: 'from', sort }, { name: 'through', sort }, { name: 'lastModifiedDate' }],
+      columns: [
+        { name: 'type' },
+        { name: 'price', sort },
+        { name: 'from', sort },
+        { name: 'through', sort },
+        { name: 'lastModifiedDate' },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -111,7 +127,9 @@ export class PriceComponentOverviewPanelComponent implements OnInit {
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PriceComponent>(pullName);
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.objects?.length ??
+        0) as number;
       this.refreshTable();
     };
   }
@@ -123,8 +141,14 @@ export class PriceComponentOverviewPanelComponent implements OnInit {
         type: v.strategy.cls.singularName,
         price: v.Currency.IsoCode + ' ' + v.Price,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
-        lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        through:
+          v.ThroughDate != null
+            ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+            : '',
+        lastModifiedDate: formatDistance(
+          new Date(v.LastModifiedDate),
+          new Date()
+        ),
       } as Row;
     });
   }
@@ -132,9 +156,17 @@ export class PriceComponentOverviewPanelComponent implements OnInit {
   get priceComponents(): PriceComponent[] {
     switch (this.priceComponentsCollection) {
       case 'Current':
-        return this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects?.filter(
+          (v) =>
+            isBefore(new Date(v.FromDate), new Date()) &&
+            (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
+        );
       case 'Inactive':
-        return this.objects?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects?.filter(
+          (v) =>
+            isAfter(new Date(v.FromDate), new Date()) ||
+            (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date()))
+        );
       case 'All':
       default:
         return this.objects;

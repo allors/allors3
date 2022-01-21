@@ -4,11 +4,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortPurchaseOrderItemAssignment, PurchaseOrder, PurchaseOrderItem } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  WorkEffortPurchaseOrderItemAssignment,
+  PurchaseOrder,
+  PurchaseOrderItem,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -16,7 +25,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './workeffortpoiassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortPurchaseOrderItemAssignmentEditComponent implements OnInit, OnDestroy {
+export class WorkEffortPurchaseOrderItemAssignmentEditComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   title: string;
@@ -46,7 +57,10 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent implements OnIni
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -86,7 +100,9 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent implements OnIni
             ];
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -96,24 +112,44 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent implements OnIni
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
           this.title = 'Add purchase order item assignment';
 
-          this.workEffortPurchaseOrderItemAssignment = this.allors.context.create<WorkEffortPurchaseOrderItemAssignment>(m.WorkEffortPurchaseOrderItemAssignment);
-          this.workEffortPurchaseOrderItemAssignment.Assignment = this.workEffort;
+          this.workEffortPurchaseOrderItemAssignment =
+            this.allors.context.create<WorkEffortPurchaseOrderItemAssignment>(
+              m.WorkEffortPurchaseOrderItemAssignment
+            );
+          this.workEffortPurchaseOrderItemAssignment.Assignment =
+            this.workEffort;
           this.workEffortPurchaseOrderItemAssignment.Quantity = 1;
         } else {
-          this.workEffortPurchaseOrderItemAssignment = loaded.object<WorkEffortPurchaseOrderItemAssignment>(m.WorkEffortPurchaseOrderItemAssignment);
-          this.selectedPurchaseOrder = this.workEffortPurchaseOrderItemAssignment.PurchaseOrder;
-          this.workEffort = this.workEffortPurchaseOrderItemAssignment.Assignment;
+          this.workEffortPurchaseOrderItemAssignment =
+            loaded.object<WorkEffortPurchaseOrderItemAssignment>(
+              m.WorkEffortPurchaseOrderItemAssignment
+            );
+          this.selectedPurchaseOrder =
+            this.workEffortPurchaseOrderItemAssignment.PurchaseOrder;
+          this.workEffort =
+            this.workEffortPurchaseOrderItemAssignment.Assignment;
 
-          if (this.workEffortPurchaseOrderItemAssignment.canWritePurchaseOrderItem) {
+          if (
+            this.workEffortPurchaseOrderItemAssignment.canWritePurchaseOrderItem
+          ) {
             this.title = 'Edit purchase order item assignment';
           } else {
             this.title = 'View purchase order item assignment';
           }
         }
 
-        const purchaseOrders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
+        const purchaseOrders = loaded.collection<PurchaseOrder>(
+          m.PurchaseOrder
+        );
         this.purchaseOrders = purchaseOrders?.filter((v) =>
-          v.PurchaseOrderItems?.find((i) => i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0 && !i.Part && i.PurchaseOrderWherePurchaseOrderItem.OrderedBy === this.workEffort.TakenBy)
+          v.PurchaseOrderItems?.find(
+            (i) =>
+              i.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem
+                .length === 0 &&
+              !i.Part &&
+              i.PurchaseOrderWherePurchaseOrderItem.OrderedBy ===
+                this.workEffort.TakenBy
+          )
         );
       });
   }
@@ -139,6 +175,10 @@ export class WorkEffortPurchaseOrderItemAssignmentEditComponent implements OnIni
   }
 
   public purchaseOrderSelected(purchaseOrder: PurchaseOrder): void {
-    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems?.filter((v) => v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem.length === 0);
+    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems?.filter(
+      (v) =>
+        v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem
+          .length === 0
+    );
   }
 }

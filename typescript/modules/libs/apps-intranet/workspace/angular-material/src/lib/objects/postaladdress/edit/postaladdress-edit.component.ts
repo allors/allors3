@@ -3,11 +3,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { PartyContactMechanism, Party, PostalAddress, Country } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PartyContactMechanism,
+  Party,
+  PostalAddress,
+  Country,
+} from '@allors/workspace/domain/default';
 import { RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -44,7 +49,10 @@ export class PostalAddressEditComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const pulls = [
@@ -66,7 +74,9 @@ export class PostalAddressEditComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.countries = loaded.collection<Country>(m.Country);
-        this.contactMechanism = loaded.object<PostalAddress>(m.ContactMechanism);
+        this.contactMechanism = loaded.object<PostalAddress>(
+          m.ContactMechanism
+        );
 
         if (this.contactMechanism.canWriteAddress1) {
           this.title = 'Edit Postal Address';

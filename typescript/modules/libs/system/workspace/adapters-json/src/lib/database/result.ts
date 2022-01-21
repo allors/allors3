@@ -1,14 +1,28 @@
-import { Response } from '@allors/protocol/json/system';
-import { IDatabaseDerivationError, IObject, IResult, ISession } from '@allors/workspace/domain/system';
+import { Response } from '@allors/system/common/protocol-json';
+import {
+  IDatabaseDerivationError,
+  IObject,
+  IResult,
+  ISession,
+} from '@allors/system/workspace/domain';
 import { DerivationError } from './derivation-error';
 
 export abstract class Result implements IResult {
   private _derivationErrors: IDatabaseDerivationError[];
 
-  constructor(public readonly session: ISession, public readonly response: Response) {}
+  constructor(
+    public readonly session: ISession,
+    public readonly response: Response
+  ) {}
 
   get hasErrors(): boolean {
-    return this.response._v?.length > 0 || this.response._a?.length > 0 || this.response._m?.length > 0 || this.response._d?.length > 0 || !!this.response._e;
+    return (
+      this.response._v?.length > 0 ||
+      this.response._a?.length > 0 ||
+      this.response._m?.length > 0 ||
+      this.response._d?.length > 0 ||
+      !!this.response._e
+    );
   }
 
   get errorMessage(): string {
@@ -32,7 +46,8 @@ export abstract class Result implements IResult {
       return this._derivationErrors;
     }
 
-    this._derivationErrors = this.response._d?.map((v) => new DerivationError(this.session, v)) ?? [];
+    this._derivationErrors =
+      this.response._d?.map((v) => new DerivationError(this.session, v)) ?? [];
 
     return this._derivationErrors;
   }

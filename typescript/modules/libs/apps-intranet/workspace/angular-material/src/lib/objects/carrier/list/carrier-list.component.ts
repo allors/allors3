@@ -3,10 +3,27 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  angularFilterFromDefinition,
+  angularSorter,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterField,
+  MediaService,
+  NavigationService,
+  OverviewService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { Carrier } from '@allors/workspace/domain/default';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
-import { M } from '@allors/workspace/meta/default';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
+import { M } from '@allors/default/workspace/meta';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -72,36 +89,54 @@ export class CarrierListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.Carrier);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.Carrier({
+                predicate: this.filter.definition.predicate,
+                sorting: sort ? angularSorter(m.Carrier)?.create(sort) : null,
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.Carrier({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.Carrier)?.create(sort) : null,
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();

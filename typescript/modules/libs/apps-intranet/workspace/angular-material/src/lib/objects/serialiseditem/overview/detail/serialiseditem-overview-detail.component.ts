@@ -3,9 +3,27 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Locale, Organisation, Part, Facility, InternalOrganisation, SerialisedInventoryItem, SerialisedItem, Enumeration, Ownership, SerialisedItemAvailability, SerialisedItemState } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Locale,
+  Organisation,
+  Part,
+  Facility,
+  InternalOrganisation,
+  SerialisedInventoryItem,
+  SerialisedItem,
+  Enumeration,
+  Ownership,
+  SerialisedItemAvailability,
+  SerialisedItemState,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -17,7 +35,9 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './serialiseditem-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class SerialisedItemOverviewDetailComponent implements OnInit, OnDestroy {
+export class SerialisedItemOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   serialisedItem: SerialisedItem;
@@ -164,20 +184,33 @@ export class SerialisedItemOverviewDetailComponent implements OnInit, OnDestroy 
               },
             }),
             pull.SerialisedItemState({
-              predicate: { kind: 'Equals', propertyType: m.SerialisedItemState.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.SerialisedItemState.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.SerialisedItemState.Name }],
             }),
             pull.SerialisedItemAvailability({
-              predicate: { kind: 'Equals', propertyType: m.SerialisedItemAvailability.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.SerialisedItemAvailability.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
             }),
             pull.Ownership({
-              predicate: { kind: 'Equals', propertyType: m.Ownership.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Ownership.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Ownership.Name }],
             }),
           ];
 
-          this.internalOrganisationsFilter = Filters.internalOrganisationsFilter(m);
+          this.internalOrganisationsFilter =
+            Filters.internalOrganisationsFilter(m);
           this.partiesFilter = Filters.partiesFilter(m);
 
           return this.allors.context.pull(pulls);
@@ -186,17 +219,31 @@ export class SerialisedItemOverviewDetailComponent implements OnInit, OnDestroy 
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.currentSuppliers = loaded.collection<Organisation>(m.InternalOrganisation.ObsoleteCurrentSuppliers);
+        this.currentSuppliers = loaded.collection<Organisation>(
+          m.InternalOrganisation.ObsoleteCurrentSuppliers
+        );
 
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.serialisedItemStates = loaded.collection<SerialisedItemState>(m.SerialisedItemState);
-        this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
+        this.serialisedItemStates = loaded.collection<SerialisedItemState>(
+          m.SerialisedItemState
+        );
+        this.serialisedItemAvailabilities =
+          loaded.collection<SerialisedItemAvailability>(
+            m.SerialisedItemAvailability
+          );
         this.ownerships = loaded.collection<Ownership>(m.Ownership);
-        this.part = loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
+        this.part = loaded.object<Part>(
+          m.SerialisedItem.PartWhereSerialisedItem
+        );
 
-        const serialisedInventoryItems = loaded.collection<SerialisedInventoryItem>(m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem);
-        const inventoryItem = serialisedInventoryItems?.find((v) => v.Quantity === 1);
+        const serialisedInventoryItems =
+          loaded.collection<SerialisedInventoryItem>(
+            m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem
+          );
+        const inventoryItem = serialisedInventoryItems?.find(
+          (v) => v.Quantity === 1
+        );
         if (inventoryItem) {
           this.currentFacility = inventoryItem.Facility;
         }

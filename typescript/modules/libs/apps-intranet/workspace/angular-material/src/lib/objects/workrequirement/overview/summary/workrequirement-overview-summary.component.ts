@@ -1,10 +1,15 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { WorkEffort, WorkRequirement } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -18,7 +23,14 @@ export class WorkRequirementOverviewSummaryComponent {
   requirement: WorkRequirement;
   workEffort: WorkEffort;
 
-  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService, public refreshService: RefreshService, private saveService: SaveService, public snackBar: MatSnackBar) {
+  constructor(
+    @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
+    public navigation: NavigationService,
+    public refreshService: RefreshService,
+    private saveService: SaveService,
+    public snackBar: MatSnackBar
+  ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const m = this.m;
 
@@ -47,14 +59,17 @@ export class WorkRequirementOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.requirement = loaded.object<WorkRequirement>(m.WorkRequirement);
-      this.workEffort = this.requirement.WorkRequirementFulfillmentWhereFullfilledBy?.FullfillmentOf;
+      this.workEffort =
+        this.requirement.WorkRequirementFulfillmentWhereFullfilledBy?.FullfillmentOf;
     };
   }
 
   public cancel(): void {
     this.panel.manager.context.invoke(this.requirement.Cancel).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully cancelled.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
@@ -80,9 +95,11 @@ export class WorkRequirementOverviewSummaryComponent {
   }
 
   public createWorkTask(): void {
-    this.panel.manager.context.invoke(this.requirement.CreateWorkTask).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Work order created.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    this.panel.manager.context
+      .invoke(this.requirement.CreateWorkTask)
+      .subscribe(() => {
+        this.refreshService.refresh();
+        this.snackBar.open('Work order created.', 'close', { duration: 5000 });
+      }, this.saveService.errorHandler);
   }
 }

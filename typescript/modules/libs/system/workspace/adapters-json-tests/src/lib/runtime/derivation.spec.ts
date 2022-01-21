@@ -1,11 +1,14 @@
 import { Organisation, Person } from '@allors/workspace/domain/default';
-import { Pull } from '@allors/workspace/domain/system';
-import { OrganisationDisplayNameRule, PersonDisplayNameRule } from '@allors/workspace/derivations/core-custom';
-import '@allors/workspace/derivations/system';
+import { Pull } from '@allors/system/workspace/domain';
+import {
+  OrganisationDisplayNameRule,
+  PersonDisplayNameRule,
+} from '@allors/workspace/derivations/core-custom';
+import '@allors/system/workspace/derivations';
 
 import { Fixture } from '../fixture';
 import '../matchers';
-import { derivationRules } from '@allors/workspace/derivations/system';
+import { derivationRules } from '@allors/system/workspace/derivations';
 
 let fixture: Fixture;
 
@@ -18,7 +21,9 @@ test('personDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const rules = derivationRules(m).filter((v) => v instanceof PersonDisplayNameRule);
+  const rules = derivationRules(m).filter(
+    (v) => v instanceof PersonDisplayNameRule
+  );
   session.activate(rules);
 
   const pull: Pull = {
@@ -64,7 +69,9 @@ test('personDisplayNameNotActivated', async () => {
 test('organisationDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
-  const rules = derivationRules(m).filter((v) => v instanceof OrganisationDisplayNameRule);
+  const rules = derivationRules(m).filter(
+    (v) => v instanceof OrganisationDisplayNameRule
+  );
   session.activate(rules);
 
   const pull: Pull = {

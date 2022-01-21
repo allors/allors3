@@ -1,5 +1,5 @@
-import { IInvokeResult, ISession } from '@allors/workspace/domain/system';
-import { InvokeResponse } from '@allors/protocol/json/system';
+import { IInvokeResult, ISession } from '@allors/system/workspace/domain';
+import { InvokeResponse } from '@allors/system/common/protocol-json';
 import { Result } from '../result';
 
 export class InvokeResult extends Result implements IInvokeResult {

@@ -7,7 +7,7 @@ import {
   PropertyType,
   RoleType,
 } from '@allors/system/workspace/meta';
-import { ObjectTypeData } from '@allors/protocol/json/system';
+import { ObjectTypeData } from '@allors/system/common/protocol-json';
 
 import { frozenEmptySet } from './utils/frozen-empty-set';
 import { Lookup } from './utils/lookup';

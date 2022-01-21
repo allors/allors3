@@ -1,9 +1,23 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { SerialisedInventoryItemState, Shipment, SalesOrderItem, ProductQuote, SalesOrder, SalesInvoice, BillingProcess } from '@allors/workspace/domain/default';
-import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SerialisedInventoryItemState,
+  Shipment,
+  SalesOrderItem,
+  ProductQuote,
+  SalesOrder,
+  SalesInvoice,
+  BillingProcess,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
@@ -127,7 +141,11 @@ export class SalesOrderOverviewSummaryComponent {
         }),
         pull.SerialisedInventoryItemState({
           name: serialisedInventoryItemStatePullName,
-          predicate: { kind: 'Equals', propertyType: m.SerialisedInventoryItemState.IsActive, value: true },
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.SerialisedInventoryItemState.IsActive,
+            value: true,
+          },
           sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
         })
       );
@@ -136,11 +154,20 @@ export class SalesOrderOverviewSummaryComponent {
     panel.onPulled = (loaded) => {
       this.order = loaded.object<SalesOrder>(salesOrderPullName);
       this.orderItems = loaded.collection<SalesOrderItem>(salesOrderPullName);
-      this.billingProcesses = loaded.collection<BillingProcess>(billingProcessPullName);
-      this.billingForOrderItems = this.billingProcesses?.find((v: BillingProcess) => v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2');
-      this.inventoryItemStates = loaded.collection<SerialisedInventoryItemState>(serialisedInventoryItemStatePullName);
+      this.billingProcesses = loaded.collection<BillingProcess>(
+        billingProcessPullName
+      );
+      this.billingForOrderItems = this.billingProcesses?.find(
+        (v: BillingProcess) =>
+          v.UniqueId === 'ab01ccc2-6480-4fc0-b20e-265afd41fae2'
+      );
+      this.inventoryItemStates =
+        loaded.collection<SerialisedInventoryItemState>(
+          serialisedInventoryItemStatePullName
+        );
 
-      this.salesInvoices = loaded.collection<SalesInvoice>(salesInvoicePullName);
+      this.salesInvoices =
+        loaded.collection<SalesInvoice>(salesInvoicePullName);
       this.shipments = loaded.collection<Shipment>(shipmentPullName);
     };
   }
@@ -153,10 +180,14 @@ export class SalesOrderOverviewSummaryComponent {
   }
 
   public setReadyForPosting() {
-    this.panel.manager.context.invoke(this.order.SetReadyForPosting).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Successfully set ready for posting.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    this.panel.manager.context
+      .invoke(this.order.SetReadyForPosting)
+      .subscribe(() => {
+        this.refreshService.refresh();
+        this.snackBar.open('Successfully set ready for posting.', 'close', {
+          duration: 5000,
+        });
+      }, this.saveService.errorHandler);
   }
 
   public reopen() {
@@ -190,7 +221,9 @@ export class SalesOrderOverviewSummaryComponent {
   public cancel(): void {
     this.panel.manager.context.invoke(this.order.Cancel).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully cancelled.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
@@ -204,14 +237,18 @@ export class SalesOrderOverviewSummaryComponent {
   public hold(): void {
     this.panel.manager.context.invoke(this.order.Hold).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully put on hold.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully put on hold.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
   public continue(): void {
     this.panel.manager.context.invoke(this.order.Continue).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully removed from hold.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully removed from hold.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
@@ -225,7 +262,9 @@ export class SalesOrderOverviewSummaryComponent {
   public ship(): void {
     this.panel.manager.context.invoke(this.order.Ship).subscribe(() => {
       this.panel.toggle();
-      this.snackBar.open('Customer shipment successfully created.', 'close', { duration: 5000 });
+      this.snackBar.open('Customer shipment successfully created.', 'close', {
+        duration: 5000,
+      });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }
@@ -233,7 +272,9 @@ export class SalesOrderOverviewSummaryComponent {
   public invoice(): void {
     this.panel.manager.context.invoke(this.order.Invoice).subscribe(() => {
       this.panel.toggle();
-      this.snackBar.open('Sales invoice successfully created.', 'close', { duration: 5000 });
+      this.snackBar.open('Sales invoice successfully created.', 'close', {
+        duration: 5000,
+      });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

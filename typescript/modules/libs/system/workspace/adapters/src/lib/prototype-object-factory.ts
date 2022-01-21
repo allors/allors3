@@ -2,7 +2,7 @@ import {
   IObject,
   IObjectFactory,
   IStrategy,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import {
   MetaPopulation,
   ObjectType,

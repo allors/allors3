@@ -1,9 +1,22 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { SerialisedItem, WorkRequirement } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SerialisedItem,
+  WorkRequirement,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -104,8 +117,12 @@ export class WorkRequirementOverviewPanelComponent implements OnInit {
 
     this.panel.onPulled = (loaded) => {
       this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-      const fromCustomer = loaded.collection<WorkRequirement>(m.Party.RequirementsWhereOriginator);
-      const fromAsset = loaded.collection<WorkRequirement>(m.FixedAsset.WorkRequirementsWhereFixedAsset);
+      const fromCustomer = loaded.collection<WorkRequirement>(
+        m.Party.RequirementsWhereOriginator
+      );
+      const fromAsset = loaded.collection<WorkRequirement>(
+        m.FixedAsset.WorkRequirementsWhereFixedAsset
+      );
 
       if (fromCustomer != null && fromCustomer.length > 0) {
         this.objects = fromCustomer;
@@ -122,7 +139,10 @@ export class WorkRequirementOverviewPanelComponent implements OnInit {
           number: v.RequirementNumber,
           customer: v.OriginatorName,
           state: v.RequirementStateName,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+          lastModifiedDate: formatDistance(
+            new Date(v.LastModifiedDate),
+            new Date()
+          ),
         } as Row;
       });
     };

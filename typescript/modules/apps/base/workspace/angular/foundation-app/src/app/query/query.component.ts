@@ -2,9 +2,12 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
-import { IPullResult, Pull } from '@allors/workspace/domain/system';
-import { M } from '@allors/workspace/meta/default';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/workspace/domain/default';
 
 @Component({
@@ -20,7 +23,11 @@ export class QueryComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title) {
+  constructor(
+    @Self() private allors: ContextService,
+    private workspaceService: WorkspaceService,
+    private title: Title
+  ) {
     this.allors.context.name = this.constructor.name;
   }
 

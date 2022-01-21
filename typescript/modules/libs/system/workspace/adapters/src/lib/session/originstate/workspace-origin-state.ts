@@ -1,4 +1,4 @@
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { RelationType, RoleType } from '@allors/system/workspace/meta';
 import { IRange } from '../../collections/ranges/ranges';
 import { IRecord } from '../../irecord';

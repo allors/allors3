@@ -29,9 +29,9 @@ namespace Allors.Meta.Generation
                 { "Workspace/Csharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/generated" },
                 { "Workspace/Csharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
 
-                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/workspace/meta/core/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/workspace/meta/json/core/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/workspace/domain/core/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/core/workspace/meta/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/core/workspace/meta-json/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/core/workspace/domain/core/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

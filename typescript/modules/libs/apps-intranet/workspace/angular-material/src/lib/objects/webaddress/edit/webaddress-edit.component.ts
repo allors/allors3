@@ -3,11 +3,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { ContactMechanism, Enumeration, ElectronicAddress } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  ContactMechanism,
+  Enumeration,
+  ElectronicAddress,
+} from '@allors/workspace/domain/default';
 import { RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -39,7 +43,10 @@ export class WebAddressEditComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const pulls = [
@@ -54,7 +61,9 @@ export class WebAddressEditComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.contactMechanism = loaded.object<ElectronicAddress>(m.ContactMechanism);
+        this.contactMechanism = loaded.object<ElectronicAddress>(
+          m.ContactMechanism
+        );
 
         if (this.contactMechanism.canWriteElectronicAddressString) {
           this.title = 'Edit Web Address';

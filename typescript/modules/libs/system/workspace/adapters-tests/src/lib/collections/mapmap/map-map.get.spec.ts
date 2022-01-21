@@ -1,4 +1,8 @@
-import { MapMap, IRange, DefaultNumberRanges } from '@allors/workspace/adapters/system';
+import {
+  MapMap,
+  IRange,
+  DefaultNumberRanges,
+} from '@allors/system/workspace/adapters';
 import { mm } from './mm';
 
 describe('MapMap', () => {
@@ -16,7 +20,9 @@ describe('MapMap', () => {
 
   describe('with key1 present', () => {
     const mapMap = new MapMap<string, string, IRange<number>>();
-    const mm = (mapMap as unknown as { mapMap: Map<string, Map<string, IRange<number>>> }).mapMap;
+    const mm = (
+      mapMap as unknown as { mapMap: Map<string, Map<string, IRange<number>>> }
+    ).mapMap;
     mm.set('a', new Map());
 
     describe('getting a value', () => {

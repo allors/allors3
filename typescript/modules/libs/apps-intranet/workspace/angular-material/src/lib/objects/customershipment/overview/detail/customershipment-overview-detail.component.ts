@@ -2,11 +2,30 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Carrier, Person, Organisation, PartyContactMechanism, OrganisationContactRelationship, Party, CustomerShipment, Currency, PostalAddress, Facility, ShipmentMethod, InternalOrganisation } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Carrier,
+  Person,
+  Organisation,
+  PartyContactMechanism,
+  OrganisationContactRelationship,
+  Party,
+  CustomerShipment,
+  Currency,
+  PostalAddress,
+  Facility,
+  ShipmentMethod,
+  InternalOrganisation,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { Filters } from '../../../../filters/filters';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -17,7 +36,9 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
   templateUrl: './customershipment-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestroy {
+export class CustomerShipmentOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   customerShipment: CustomerShipment;
@@ -45,7 +66,10 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
   customersFilter: SearchFactory;
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.customerShipment.ShipToParty || this.customerShipment.ShipToParty.strategy.cls === this.m.Person;
+    return (
+      !this.customerShipment.ShipToParty ||
+      this.customerShipment.ShipToParty.strategy.cls === this.m.Person
+    );
   }
 
   constructor(
@@ -90,7 +114,8 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.customerShipment = loaded.object<CustomerShipment>(pullName);
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
       }
     };
   }
@@ -113,10 +138,16 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
 
           const pulls = [
             this.fetcher.ownWarehouses,
-            pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
+            pull.ShipmentMethod({
+              sorting: [{ roleType: m.ShipmentMethod.Name }],
+            }),
             pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
             pull.Organisation({
-              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Organisation.IsInternalOrganisation,
+                value: true,
+              },
               sorting: [{ roleType: m.Organisation.DisplayName }],
             }),
             pull.CustomerShipment({
@@ -135,7 +166,10 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
             }),
           ];
 
-          this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -143,9 +177,13 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.customerShipment = loaded.object<CustomerShipment>(m.CustomerShipment);
+        this.customerShipment = loaded.object<CustomerShipment>(
+          m.CustomerShipment
+        );
         this.facilities = this.fetcher.getOwnWarehouses(loaded);
-        this.shipmentMethods = loaded.collection<ShipmentMethod>(m.ShipmentMethod);
+        this.shipmentMethods = loaded.collection<ShipmentMethod>(
+          m.ShipmentMethod
+        );
         this.carriers = loaded.collection<Carrier>(m.Carrier);
 
         if (this.customerShipment.ShipToParty) {
@@ -174,26 +212,42 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.customerShipment.ShipToParty as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.customerShipment
+      .ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
     this.customerShipment.ShipToContactPerson = person;
   }
 
-  public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.customerShipment.ShipToParty.addPartyContactMechanism(partyContactMechanism);
+  public shipToAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.customerShipment.ShipToParty.addPartyContactMechanism(
+      partyContactMechanism
+    );
 
-    const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+    const postalAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
     this.customerShipment.ShipToAddress = postalAddress;
   }
 
-  public shipFromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.shipFromAddresses.push(partyContactMechanism.ContactMechanism as PostalAddress);
-    this.customerShipment.ShipFromParty.addPartyContactMechanism(partyContactMechanism);
-    this.customerShipment.ShipFromAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+  public shipFromAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.shipFromAddresses.push(
+      partyContactMechanism.ContactMechanism as PostalAddress
+    );
+    this.customerShipment.ShipFromParty.addPartyContactMechanism(
+      partyContactMechanism
+    );
+    this.customerShipment.ShipFromAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
   public customerSelected(customer: IObject) {
@@ -233,8 +287,18 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
         this.previousShipToparty = this.customerShipment.ShipToParty;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.shipToAddresses = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map(
+          (v: PartyContactMechanism) => v.ContactMechanism
+        ) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }
@@ -266,8 +330,18 @@ export class CustomerShipmentOverviewDetailComponent implements OnInit, OnDestro
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipFromAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.shipFromAddresses = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map(
+          (v: PartyContactMechanism) => v.ContactMechanism
+        ) as PostalAddress[];
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }

@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
 import { SingletonId } from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { M, PullBuilder } from '@allors/workspace/meta/default';
-import { IPullResult, Pull } from '@allors/workspace/domain/system';
-import { Facility, Locale, InternalOrganisation, ProductCategory, Settings } from '@allors/workspace/domain/default';
+import { M, PullBuilder } from '@allors/default/workspace/meta';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import {
+  Facility,
+  Locale,
+  InternalOrganisation,
+  ProductCategory,
+  Settings,
+} from '@allors/workspace/domain/default';
 import { InternalOrganisationId } from '../state/internal-organisation-id';
 
 const x = {};
@@ -15,7 +21,11 @@ export class FetcherService {
   m: M;
   pull: PullBuilder;
 
-  constructor(private singletonId: SingletonId, private internalOrganisationId: InternalOrganisationId, private workspaceService: WorkspaceService) {
+  constructor(
+    private singletonId: SingletonId,
+    private internalOrganisationId: InternalOrganisationId,
+    private workspaceService: WorkspaceService
+  ) {
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
     this.pull = this.m.pullBuilder;
   }

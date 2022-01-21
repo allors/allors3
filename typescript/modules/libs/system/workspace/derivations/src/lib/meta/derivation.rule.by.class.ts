@@ -1,4 +1,4 @@
-import { IObject, IRule } from '@allors/workspace/domain/system';
+import { IObject, IRule } from '@allors/system/workspace/domain';
 import { Class, RoleType } from '@allors/system/workspace/meta';
 
 export interface DerivationsRuleByClassExtension {

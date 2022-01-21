@@ -4,8 +4,8 @@ import {
   ISession,
   IWorkspace,
   IUnit,
-} from '@allors/workspace/domain/system';
-import { PullResponse } from '@allors/protocol/json/system';
+} from '@allors/system/workspace/domain';
+import { PullResponse } from '@allors/system/common/protocol-json';
 import { Result } from '../result';
 import {
   AssociationType,
@@ -13,7 +13,7 @@ import {
   Interface,
   RoleType,
 } from '@allors/system/workspace/meta';
-import { frozenEmptyMap } from '@allors/workspace/adapters/system';
+import { frozenEmptyMap } from '@allors/system/workspace/adapters';
 
 export class PullResult extends Result implements IPullResult {
   mergeErrors: IObject[];

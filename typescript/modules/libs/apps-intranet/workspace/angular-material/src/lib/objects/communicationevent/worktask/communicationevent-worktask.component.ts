@@ -4,8 +4,17 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, WorkTask, Person, CommunicationEvent, WorkEffortState, Priority, WorkEffortPurpose, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  InternalOrganisation,
+  WorkTask,
+  Person,
+  CommunicationEvent,
+  WorkEffortState,
+  Priority,
+  WorkEffortPurpose,
+  WorkEffortPartyAssignment,
+} from '@allors/workspace/domain/default';
 import { RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -32,7 +41,14 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, private saveService: SaveService, private route: ActivatedRoute, public refreshService: RefreshService, private internalOrganisationId: InternalOrganisationId, titleService: Title) {
+  constructor(
+    @Self() public allors: ContextService,
+    private saveService: SaveService,
+    private route: ActivatedRoute,
+    public refreshService: RefreshService,
+    private internalOrganisationId: InternalOrganisationId,
+    titleService: Title
+  ) {
     titleService.setTitle(this.title);
 
     this.allors.context.name = this.constructor.name;
@@ -44,7 +60,11 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest([this.route.url, this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.route.url,
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(([urlSegments, date, internalOrganisationId]) => {
           const id: string = this.route.snapshot.paramMap.get('id');
@@ -69,11 +89,19 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
               sorting: [{ roleType: m.WorkEffortState.Name }],
             }),
             pull.Priority({
-              predicate: { kind: 'Equals', propertyType: m.Priority.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Priority.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Priority.Name }],
             }),
             pull.WorkEffortPurpose({
-              predicate: { kind: 'Equals', propertyType: m.WorkEffortPurpose.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.WorkEffortPurpose.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.WorkEffortPurpose.Name }],
             }),
             pull.WorkEffortPartyAssignment({}),
@@ -85,7 +113,8 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.subTitle = 'edit work task';
         this.workTask = loaded.object<WorkTask>(m.WorkTask);
-        const communicationEvent: CommunicationEvent = loaded.object<CommunicationEvent>(m.CommunicationEvent);
+        const communicationEvent: CommunicationEvent =
+          loaded.object<CommunicationEvent>(m.CommunicationEvent);
 
         if (!this.workTask) {
           this.subTitle = 'add a new work task';
@@ -93,10 +122,16 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
           communicationEvent.addWorkEffort(this.workTask);
         }
 
-        this.workEffortStates = loaded.collection<WorkEffortState>(m.WorkEffortState);
+        this.workEffortStates = loaded.collection<WorkEffortState>(
+          m.WorkEffortState
+        );
         this.priorities = loaded.collection<Priority>(m.Priority);
-        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(m.WorkEffortPurpose);
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(
+          m.WorkEffortPurpose
+        );
+        const internalOrganisation = loaded.object<InternalOrganisation>(
+          m.InternalOrganisation
+        );
         this.employees = internalOrganisation.ActiveEmployees;
       });
   }
@@ -109,7 +144,10 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
   public save(): void {
     this.assignees.forEach((assignee: Person) => {
-      const workEffortPartyAssignment: WorkEffortPartyAssignment = this.allors.context.create<WorkEffortPartyAssignment>(this.m.WorkEffortPartyAssignment);
+      const workEffortPartyAssignment: WorkEffortPartyAssignment =
+        this.allors.context.create<WorkEffortPartyAssignment>(
+          this.m.WorkEffortPartyAssignment
+        );
       workEffortPartyAssignment.Assignment = this.workTask;
       workEffortPartyAssignment.Party = assignee;
     });

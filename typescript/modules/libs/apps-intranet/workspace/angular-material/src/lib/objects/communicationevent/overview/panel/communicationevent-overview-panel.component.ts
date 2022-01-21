@@ -1,8 +1,19 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { CommunicationEvent } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -105,7 +116,9 @@ export class CommunicationEventOverviewPanelComponent implements OnInit {
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<CommunicationEvent>(pullName);
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.objects?.length ??
+        0) as number;
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,

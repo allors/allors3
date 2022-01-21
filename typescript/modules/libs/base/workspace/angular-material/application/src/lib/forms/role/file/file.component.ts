@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { M } from '@allors/workspace/meta/default';
-import { ISession } from '@allors/workspace/domain/system';
+import { M } from '@allors/default/workspace/meta';
+import { ISession } from '@allors/system/workspace/domain';
 import { Media } from '@allors/workspace/domain/default';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { MediaService, RoleField } from '@allors/workspace/angular/base';

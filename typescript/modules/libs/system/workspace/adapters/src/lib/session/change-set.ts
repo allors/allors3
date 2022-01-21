@@ -1,4 +1,4 @@
-import { IChangeSet, IObject } from '@allors/workspace/domain/system';
+import { IChangeSet, IObject } from '@allors/system/workspace/domain';
 import {
   AssociationType,
   PropertyType,

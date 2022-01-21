@@ -1,8 +1,25 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { InventoryItem, SerialisedInventoryItem, SerialisedItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  InventoryItem,
+  SerialisedInventoryItem,
+  SerialisedItem,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+  ActionTarget,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -146,21 +163,31 @@ export class SerialisedInventoryItemComponent implements OnInit {
 
       this.panel.onPulled = (loaded) => {
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        const inventoryObjects = loaded.collection<SerialisedInventoryItem>(inventoryPullName) ?? [];
+        const inventoryObjects =
+          loaded.collection<SerialisedInventoryItem>(inventoryPullName) ?? [];
 
-        const serialisedItemobjects = loaded.collection<SerialisedInventoryItem>(serialiseditemPullName) ?? [];
-        const serialisedItemobjectsforPart = serialisedItemobjects?.filter((v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem);
+        const serialisedItemobjects =
+          loaded.collection<SerialisedInventoryItem>(serialiseditemPullName) ??
+          [];
+        const serialisedItemobjectsforPart = serialisedItemobjects?.filter(
+          (v) => v.Part === this.serialisedItem?.PartWhereSerialisedItem
+        );
 
         this.objects = inventoryObjects.concat(serialisedItemobjectsforPart);
 
-        this.table.total = (loaded.value(`${this.objects?.length ?? 0}_total`) as number) ?? this.objects?.length ?? 0;
+        this.table.total =
+          (loaded.value(`${this.objects?.length ?? 0}_total`) as number) ??
+          this.objects?.length ??
+          0;
         this.table.data = this.objects?.map((v) => {
           return {
             object: v,
             facility: v.Facility.Name,
             item: v.SerialisedItem.DisplayName,
             quantity: v.Quantity,
-            state: v.SerialisedInventoryItemState ? v.SerialisedInventoryItemState.Name : '',
+            state: v.SerialisedInventoryItemState
+              ? v.SerialisedInventoryItemState.Name
+              : '',
           } as Row;
         });
       };

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IWorkspace } from '@allors/workspace/domain/system';
+import { IWorkspace } from '@allors/system/workspace/domain';
 import { Context } from '../context/context';
 
 @Injectable({

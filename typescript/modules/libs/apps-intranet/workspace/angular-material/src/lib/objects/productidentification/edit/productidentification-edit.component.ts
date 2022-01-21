@@ -3,11 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { ProductIdentificationType, ProductIdentification, Part, Good } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  ProductIdentificationType,
+  ProductIdentification,
+  Part,
+  Good,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './productidentification-edit.component.html',
@@ -49,7 +58,11 @@ export class ProductIdentificationEditComponent implements OnInit, OnDestroy {
 
           const pulls = [
             pull.ProductIdentificationType({
-              predicate: { kind: 'Equals', propertyType: m.ProductIdentificationType.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.ProductIdentificationType.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.ProductIdentificationType.Name }],
             }),
           ];
@@ -66,23 +79,42 @@ export class ProductIdentificationEditComponent implements OnInit, OnDestroy {
           }
 
           if (isCreate && this.data.associationId) {
-            pulls.push(pull.Good({ objectId: this.data.associationId }), pull.Part({ objectId: this.data.associationId }));
+            pulls.push(
+              pull.Good({ objectId: this.data.associationId }),
+              pull.Part({ objectId: this.data.associationId })
+            );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
+          return this.allors.context.pull(pulls).pipe(
+            map((loaded) => ({
+              loaded,
+              create: isCreate,
+              cls,
+              associationRoleType,
+            }))
+          );
         })
       )
       .subscribe(({ loaded, create, cls, associationRoleType }) => {
         this.allors.context.reset();
 
-        this.container = loaded.object<Good>(m.Good) || loaded.object<Part>(m.Part);
-        this.object = loaded.object<ProductIdentification>(m.ProductIdentification);
-        this.productIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.container =
+          loaded.object<Good>(m.Good) || loaded.object<Part>(m.Part);
+        this.object = loaded.object<ProductIdentification>(
+          m.ProductIdentification
+        );
+        this.productIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
 
         if (create) {
           this.title = 'Add Identification';
           this.object = this.allors.context.create<ProductIdentification>(cls);
-          this.container.strategy.addCompositesRole(associationRoleType, this.object);
+          this.container.strategy.addCompositesRole(
+            associationRoleType,
+            this.object
+          );
         }
       });
   }

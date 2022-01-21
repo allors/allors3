@@ -2,10 +2,29 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { Brand, Model, NonUnifiedGood, Organisation, Ownership, ProductCategory, ProductDimension, ProductFeatureApplicability, ProductIdentificationType, ProductNumber, ProductType, Locale } from '@allors/workspace/domain/default';
-import { M } from '@allors/workspace/meta/default';
+import {
+  Brand,
+  Model,
+  NonUnifiedGood,
+  Organisation,
+  Ownership,
+  ProductCategory,
+  ProductDimension,
+  ProductFeatureApplicability,
+  ProductIdentificationType,
+  ProductNumber,
+  ProductType,
+  Locale,
+} from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
@@ -14,7 +33,9 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './nonunifiedgood-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class NonUnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
+export class NonUnifiedGoodOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   good: NonUnifiedGood;
@@ -86,7 +107,9 @@ export class NonUnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy 
               },
             },
           }),
-          pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })
+          pull.ProductCategory({
+            sorting: [{ roleType: m.ProductCategory.Name }],
+          })
         );
       }
     };
@@ -179,18 +202,33 @@ export class NonUnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy 
         this.allors.context.reset();
 
         this.good = loaded.object<NonUnifiedGood>(m.NonUnifiedGood);
-        this.originalCategories = loaded.collection<ProductCategory>('OriginalCategories');
+        this.originalCategories =
+          loaded.collection<ProductCategory>('OriginalCategories');
         this.selectedCategories = this.originalCategories;
 
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.goodIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
         this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.productFeatureApplicabilities = loaded.collection<ProductFeatureApplicability>(m.NonUnifiedGood.ProductFeatureApplicabilitiesWhereAvailableFor);
-        this.productDimensions = this.productFeatureApplicabilities?.map((v) => v.ProductFeature).filter((v) => v.strategy.cls === this.m.ProductDimension) as ProductDimension[];
+        this.productFeatureApplicabilities =
+          loaded.collection<ProductFeatureApplicability>(
+            m.NonUnifiedGood.ProductFeatureApplicabilitiesWhereAvailableFor
+          );
+        this.productDimensions = this.productFeatureApplicabilities
+          ?.map((v) => v.ProductFeature)
+          .filter(
+            (v) => v.strategy.cls === this.m.ProductDimension
+          ) as ProductDimension[];
 
-        const goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
+        const goodNumberType = this.goodIdentificationTypes?.find(
+          (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
+        );
 
-        this.productNumber = this.good.ProductIdentifications?.find((v) => v.ProductIdentificationType === goodNumberType);
+        this.productNumber = this.good.ProductIdentifications?.find(
+          (v) => v.ProductIdentificationType === goodNumberType
+        );
       });
   }
 

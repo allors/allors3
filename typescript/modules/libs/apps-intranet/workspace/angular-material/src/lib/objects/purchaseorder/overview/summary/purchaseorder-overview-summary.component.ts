@@ -1,9 +1,19 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { PurchaseOrder, Shipment, PurchaseInvoice } from '@allors/workspace/domain/default';
-import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PurchaseOrder,
+  Shipment,
+  PurchaseInvoice,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
@@ -87,7 +97,9 @@ export class PurchaseOrderOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.order = loaded.object<PurchaseOrder>(puchaseOrderPullName);
-      this.purchaseInvoices = loaded.collection<PurchaseInvoice>(purchaseInvoicePullName);
+      this.purchaseInvoices = loaded.collection<PurchaseInvoice>(
+        purchaseInvoicePullName
+      );
       this.shipments = loaded.collection<Shipment>(shipmentPullName);
     };
   }
@@ -102,7 +114,9 @@ export class PurchaseOrderOverviewSummaryComponent {
   public cancel(): void {
     this.panel.manager.context.invoke(this.order.Cancel).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully cancelled.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
@@ -116,22 +130,30 @@ export class PurchaseOrderOverviewSummaryComponent {
   public hold(): void {
     this.panel.manager.context.invoke(this.order.Hold).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully put on hold.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully put on hold.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
   public continue(): void {
     this.panel.manager.context.invoke(this.order.Continue).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully removed from hold.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully removed from hold.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
   public setReadyForProcessing(): void {
-    this.panel.manager.context.invoke(this.order.SetReadyForProcessing).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Successfully set ready for processing.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    this.panel.manager.context
+      .invoke(this.order.SetReadyForProcessing)
+      .subscribe(() => {
+        this.refreshService.refresh();
+        this.snackBar.open('Successfully set ready for processing.', 'close', {
+          duration: 5000,
+        });
+      }, this.saveService.errorHandler);
   }
 
   public reopen(): void {
@@ -158,14 +180,18 @@ export class PurchaseOrderOverviewSummaryComponent {
   public invoice(): void {
     this.panel.manager.context.invoke(this.order.Invoice).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully created purchase invoice', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully created purchase invoice', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
   public quickReceive(): void {
     this.panel.manager.context.invoke(this.order.QuickReceive).subscribe(() => {
       this.panel.toggle();
-      this.snackBar.open('inventory created for appropriate items', 'close', { duration: 5000 });
+      this.snackBar.open('inventory created for appropriate items', 'close', {
+        duration: 5000,
+      });
       this.refreshService.refresh();
     }, this.saveService.errorHandler);
   }

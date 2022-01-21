@@ -1,5 +1,5 @@
 import { IdGenerator } from './database/database-connection';
-declare module '@allors/workspace/domain/system' {
+declare module '@allors/system/workspace/domain' {
   interface Configuration {
     idGenerator: IdGenerator;
   }

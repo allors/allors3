@@ -5,10 +5,22 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import { Notification } from '@allors/workspace/domain/default';
-import { Action, Filter, FilterDefinition, MediaService, MethodService, NavigationService, ObjectService, RefreshService, Table, TableRow, UserId } from '@allors/workspace/angular/base';
+import {
+  Action,
+  Filter,
+  FilterDefinition,
+  MediaService,
+  MethodService,
+  NavigationService,
+  ObjectService,
+  RefreshService,
+  Table,
+  TableRow,
+  UserId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { M } from '@allors/workspace/meta/default';
-import { And } from '@allors/workspace/domain/system';
+import { M } from '@allors/default/workspace/meta';
+import { And } from '@allors/system/workspace/domain';
 
 interface Row extends TableRow {
   object: Notification;
@@ -50,7 +62,11 @@ export class NotificationListComponent implements OnInit, OnDestroy {
 
     titleService.setTitle(this.title);
 
-    this.confirm = methodService.create(allors.context, m.Notification.Confirm, { name: 'Confirm' });
+    this.confirm = methodService.create(
+      allors.context,
+      m.Notification.Confirm,
+      { name: 'Confirm' }
+    );
 
     this.table = new Table({
       selection: true,
@@ -66,12 +82,25 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    const predicate: And = { kind: 'And', operands: [{ kind: 'Like', roleType: m.Notification.Confirmed, parameter: 'confirmed' }] };
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        {
+          kind: 'Like',
+          roleType: m.Notification.Confirmed,
+          parameter: 'confirmed',
+        },
+      ],
+    };
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.table.sort$, this.table.pager$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.table.sort$,
+      this.table.pager$
+    )
       .pipe(
         scan(([previousRefresh], [refresh, sort, pageEvent]) => {
           pageEvent =
@@ -105,7 +134,9 @@ export class NotificationListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        const notifications = loaded.collection<Notification>(m.NotificationList.UnconfirmedNotifications);
+        const notifications = loaded.collection<Notification>(
+          m.NotificationList.UnconfirmedNotifications
+        );
         this.table.total = notifications?.length ?? 0;
         this.table.data = notifications?.map((v) => {
           return {

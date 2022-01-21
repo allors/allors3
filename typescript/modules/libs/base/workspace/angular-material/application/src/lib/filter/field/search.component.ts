@@ -7,7 +7,7 @@ import {
   distinctUntilChanged,
   switchMap,
 } from 'rxjs/operators';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import {
   AllorsComponent,

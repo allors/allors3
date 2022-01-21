@@ -1,5 +1,5 @@
 import { Composite } from '@allors/system/workspace/meta';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 export interface EditDialogData {
   readonly kind: 'EditDialogData';

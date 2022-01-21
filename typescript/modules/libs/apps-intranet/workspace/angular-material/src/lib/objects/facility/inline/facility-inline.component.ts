@@ -1,7 +1,17 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { Facility, InternalOrganisation, FacilityType } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Facility,
+  InternalOrganisation,
+  FacilityType,
+} from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -48,7 +58,9 @@ export class FacilityInlineComponent implements OnInit, OnDestroy {
       this.facilities = loaded.collection<Facility>(m.Facility);
 
       this.facilityTypes = loaded.collection<FacilityType>(m.FacilityType);
-      const storageLocation = this.facilityTypes?.find((v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd');
+      const storageLocation = this.facilityTypes?.find(
+        (v) => v.UniqueId === 'ff66c1ad-3048-48fd-a7d9-fbf97a090edd'
+      );
 
       this.facility = this.allors.context.create<Facility>(m.Facility);
       this.facility.Owner = this.internalOrganisation;

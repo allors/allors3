@@ -3,9 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Brand, Model, Locale } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -65,7 +69,9 @@ export class BrandEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -85,13 +91,17 @@ export class BrandEditComponent implements OnInit, OnDestroy {
           }
         }
 
-        this.models = this.brand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+        this.models = this.brand.Models.sort((a, b) =>
+          a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
+        );
       });
   }
 
   public modelAdded(model: Model): void {
     this.brand.addModel(model);
-    this.models = this.brand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+    this.models = this.brand.Models.sort((a, b) =>
+      a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
+    );
   }
 
   public ngOnDestroy(): void {

@@ -1,13 +1,30 @@
-import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import {
+  Component,
+  Self,
+  AfterViewInit,
+  OnDestroy,
+  Injector,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, SupplierOffering } from '@allors/workspace/domain/default';
-import { NavigationService, RefreshService, PanelManagerService, NavigationActivatedRoute } from '@allors/workspace/angular/base';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  SupplierOffering,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  RefreshService,
+  PanelManagerService,
+  NavigationActivatedRoute,
+} from '@allors/workspace/angular/base';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -46,7 +63,12 @@ export class OrganisationOverviewComponent implements AfterViewInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.route.url,
+      this.route.queryParams,
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(([, ,]) => {
           const navRoute = new NavigationActivatedRoute(this.route);
@@ -78,7 +100,9 @@ export class OrganisationOverviewComponent implements AfterViewInit, OnDestroy {
         this.panelManager.onPulled(loaded);
 
         this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.supplierOfferings = loaded.collection<SupplierOffering>(m.Organisation.SupplierOfferingsWhereSupplier);
+        this.supplierOfferings = loaded.collection<SupplierOffering>(
+          m.Organisation.SupplierOfferingsWhereSupplier
+        );
       });
   }
 

@@ -2,9 +2,25 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { RequestForQuote, RequestItem, Request } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  RequestForQuote,
+  RequestItem,
+  Request,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -67,9 +83,19 @@ export class RequestItemOverviewPanelComponent {
 
     this.delete = deleteService.delete(panel.manager.context);
     this.edit = this.editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.RequestItem.Cancel, { name: 'Cancel' });
-    this.hold = methodService.create(allors.context, this.m.RequestItem.Hold, { name: 'Hold' });
-    this.submit = methodService.create(allors.context, this.m.RequestItem.Submit, { name: 'Submit' });
+    this.cancel = methodService.create(
+      allors.context,
+      this.m.RequestItem.Cancel,
+      { name: 'Cancel' }
+    );
+    this.hold = methodService.create(allors.context, this.m.RequestItem.Hold, {
+      name: 'Hold',
+    });
+    this.submit = methodService.create(
+      allors.context,
+      this.m.RequestItem.Submit,
+      { name: 'Submit' }
+    );
 
     const sort = true;
     this.table = new Table({
@@ -119,14 +145,23 @@ export class RequestItemOverviewPanelComponent {
     panel.onPulled = (loaded) => {
       this.requestItems = loaded.collection<RequestItem>(pullName);
       this.request = loaded.object<RequestForQuote>(this.m.Request);
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.requestItems?.length ?? 0;
+      this.table.total =
+        (loaded.value(`${pullName}_total`) as number) ??
+        this.requestItems?.length ??
+        0;
       this.table.data = this.requestItems?.map((v) => {
         return {
           object: v,
-          item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',
+          item:
+            (v.Product && v.Product.Name) ||
+            (v.SerialisedItem && v.SerialisedItem.Name) ||
+            '',
           state: v.RequestItemState ? v.RequestItemState.Name : '',
           quantity: v.Quantity,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+          lastModifiedDate: formatDistance(
+            new Date(v.LastModifiedDate),
+            new Date()
+          ),
         } as Row;
       });
     };

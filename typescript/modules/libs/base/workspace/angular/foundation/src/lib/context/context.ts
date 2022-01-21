@@ -10,7 +10,7 @@ import {
   IWorkspace,
   Method,
   Pull,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { Class, Composite } from '@allors/system/workspace/meta';
 import { Observable } from 'rxjs';
 import { WorkspaceService } from '../workspace/workspace-service';

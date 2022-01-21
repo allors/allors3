@@ -1,4 +1,4 @@
-import { IObject, IUnit } from '@allors/workspace/domain/system';
+import { IObject, IUnit } from '@allors/system/workspace/domain';
 import { PropertyType, RoleType } from '@allors/system/workspace/meta';
 
 import { IRange, Ranges } from '../../collections/ranges/ranges';

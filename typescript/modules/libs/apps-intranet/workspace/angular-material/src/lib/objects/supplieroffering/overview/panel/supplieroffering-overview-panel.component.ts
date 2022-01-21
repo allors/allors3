@@ -1,9 +1,19 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format, isBefore, isAfter } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { SupplierOffering } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -107,9 +117,16 @@ export class SupplierOfferingOverviewPanelComponent implements OnInit {
 
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<SupplierOffering>(pullName);
-      this.currentObjects = this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+      this.currentObjects = this.objects?.filter(
+        (v) =>
+          isBefore(new Date(v.FromDate), new Date()) &&
+          (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
+      );
 
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects?.length ?? 0;
+      this.table.total =
+        (loaded.value(`${pullName}_total`) as number) ??
+        this.objects?.length ??
+        0;
       this.refreshTable();
     };
   }
@@ -122,7 +139,10 @@ export class SupplierOfferingOverviewPanelComponent implements OnInit {
         price: v.Currency.IsoCode + ' ' + v.Price,
         uom: v.UnitOfMeasure.Abbreviation || v.UnitOfMeasure.Name,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        through:
+          v.ThroughDate != null
+            ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+            : '',
       } as Row;
     });
   }
@@ -130,9 +150,17 @@ export class SupplierOfferingOverviewPanelComponent implements OnInit {
   get suplierOfferings(): SupplierOffering[] {
     switch (this.collection) {
       case 'Current':
-        return this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return this.objects?.filter(
+          (v) =>
+            isBefore(new Date(v.FromDate), new Date()) &&
+            (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
+        );
       case 'Inactive':
-        return this.objects?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return this.objects?.filter(
+          (v) =>
+            isAfter(new Date(v.FromDate), new Date()) ||
+            (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date()))
+        );
       case 'All':
       default:
         return this.objects;

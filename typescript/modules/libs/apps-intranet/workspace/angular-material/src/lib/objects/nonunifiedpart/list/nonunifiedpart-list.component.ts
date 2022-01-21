@@ -4,8 +4,17 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Part, ProductIdentificationType, Facility, NonUnifiedPart, NonUnifiedPartBarcodePrint, NonSerialisedInventoryItem, InternalOrganisation } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Part,
+  ProductIdentificationType,
+  Facility,
+  NonUnifiedPart,
+  NonUnifiedPartBarcodePrint,
+  NonSerialisedInventoryItem,
+  InternalOrganisation,
+} from '@allors/workspace/domain/default';
 import {
   Action,
   DeleteService,
@@ -123,101 +132,153 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.NonUnifiedPart);
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
-
-          return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
-        }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.InternalOrganisation({
-              objectId: internalOrganisationId,
-              include: { FacilitiesWhereOwner: x },
-            }),
-            pull.NonUnifiedPart({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.NonUnifiedPart)?.create(sort) : null,
-              include: {
-                PrimaryPhoto: x,
-                InventoryItemsWherePart: {
-                  Facility: x,
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent,
+            number
+          ]) => {
+            const pulls = [
+              this.fetcher.internalOrganisation,
+              pull.InternalOrganisation({
+                objectId: internalOrganisationId,
+                include: { FacilitiesWhereOwner: x },
+              }),
+              pull.NonUnifiedPart({
+                predicate: this.filter.definition.predicate,
+                sorting: sort
+                  ? angularSorter(m.NonUnifiedPart)?.create(sort)
+                  : null,
+                include: {
+                  PrimaryPhoto: x,
+                  InventoryItemsWherePart: {
+                    Facility: x,
+                  },
+                  ProductIdentifications: {
+                    ProductIdentificationType: x,
+                  },
                 },
-                ProductIdentifications: {
-                  ProductIdentificationType: x,
-                },
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-            pull.Singleton({
-              objectId: this.singletonId.value,
-              select: {
-                NonUnifiedPartBarcodePrint: {
-                  include: {
-                    PrintDocument: {
-                      Media: x,
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+              pull.Singleton({
+                objectId: this.singletonId.value,
+                select: {
+                  NonUnifiedPartBarcodePrint: {
+                    include: {
+                      PrintDocument: {
+                        Media: x,
+                      },
                     },
                   },
                 },
-              },
-            }),
-            pull.ProductIdentificationType({}),
-            pull.BasePrice({}),
-            pull.Person({
-              objectId: this.userId.value,
-              include: { Locale: x },
-            }),
-          ];
+              }),
+              pull.ProductIdentificationType({}),
+              pull.BasePrice({}),
+              pull.Person({
+                objectId: this.userId.value,
+                include: { Locale: x },
+              }),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
 
         this.user = loaded.object<Person>(m.Person);
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.facilities = loaded.collection<Facility>(m.Facility);
-        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.Singleton.NonUnifiedPartBarcodePrint);
+        this.nonUnifiedPartBarcodePrint =
+          loaded.object<NonUnifiedPartBarcodePrint>(
+            m.Singleton.NonUnifiedPartBarcodePrint
+          );
 
         this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
 
-        const inStockSearch = this.filter.fields?.find((v) => v.definition.name === 'In Stock');
+        const inStockSearch = this.filter.fields?.find(
+          (v) => v.definition.name === 'In Stock'
+        );
         let facilitySearchId = inStockSearch?.value;
         if (inStockSearch != null) {
           this.parts = this.parts?.filter((v) => {
-            return v.InventoryItemsWherePart?.filter((i: NonSerialisedInventoryItem) => i.Facility.id === inStockSearch.value && Number(i.QuantityOnHand) > 0).length > 0;
+            return (
+              v.InventoryItemsWherePart?.filter(
+                (i: NonSerialisedInventoryItem) =>
+                  i.Facility.id === inStockSearch.value &&
+                  Number(i.QuantityOnHand) > 0
+              ).length > 0
+            );
           });
         }
 
-        const outOStockSearch = this.filter.fields?.find((v) => v.definition.name === 'Out Of Stock');
+        const outOStockSearch = this.filter.fields?.find(
+          (v) => v.definition.name === 'Out Of Stock'
+        );
         if (facilitySearchId == null) {
           facilitySearchId = outOStockSearch?.value;
         }
 
         if (outOStockSearch != null) {
           this.parts = this.parts?.filter((v) => {
-            return v.InventoryItemsWherePart?.filter((i: NonSerialisedInventoryItem) => i.Facility.id === outOStockSearch.value && Number(i.QuantityOnHand) === 0).length > 0;
+            return (
+              v.InventoryItemsWherePart?.filter(
+                (i: NonSerialisedInventoryItem) =>
+                  i.Facility.id === outOStockSearch.value &&
+                  Number(i.QuantityOnHand) === 0
+              ).length > 0
+            );
           });
         }
 
-        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.goodIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
 
-        this.table.total = (loaded.value('NonUnifiedParts_total') ?? 0) as number;
+        this.table.total = (loaded.value('NonUnifiedParts_total') ??
+          0) as number;
 
         this.table.data = this.parts?.map((v) => {
           return {
@@ -225,12 +286,19 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
             name: v.Name,
             partNo: v.ProductNumber,
             qoh: v.QuantityOnHand,
-            localQoh: facilitySearchId && (v.InventoryItemsWherePart as NonSerialisedInventoryItem[])?.find((i) => i.Facility.id === facilitySearchId).QuantityOnHand,
+            localQoh:
+              facilitySearchId &&
+              (v.InventoryItemsWherePart as NonSerialisedInventoryItem[])?.find(
+                (i) => i.Facility.id === facilitySearchId
+              ).QuantityOnHand,
             categories: v.PartCategoriesDisplayName,
             brand: v.BrandName,
             model: v.ModelName,
             kind: v.InventoryItemKindName,
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });
@@ -244,7 +312,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
   public printBarcode(parts: any): void {
     this.nonUnifiedPartBarcodePrint.Parts = parts;
-    this.nonUnifiedPartBarcodePrint.Facility = this.internalOrganisation.FacilitiesWhereOwner[0];
+    this.nonUnifiedPartBarcodePrint.Facility =
+      this.internalOrganisation.FacilitiesWhereOwner[0];
     this.nonUnifiedPartBarcodePrint.Locale = this.user.Locale;
 
     this.allors.context.push().subscribe(() => {
@@ -270,7 +339,10 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
       this.allors.context.pull(pulls).subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.nonUnifiedPartBarcodePrint = loaded.object<NonUnifiedPartBarcodePrint>(m.Singleton.NonUnifiedPartBarcodePrint);
+        this.nonUnifiedPartBarcodePrint =
+          loaded.object<NonUnifiedPartBarcodePrint>(
+            m.Singleton.NonUnifiedPartBarcodePrint
+          );
 
         this.print.execute(this.nonUnifiedPartBarcodePrint);
         this.refreshService.refresh();

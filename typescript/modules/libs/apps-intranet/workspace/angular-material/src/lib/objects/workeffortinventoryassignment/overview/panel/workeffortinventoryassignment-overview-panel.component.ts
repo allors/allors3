@@ -1,8 +1,21 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortInventoryAssignment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  WorkEffortInventoryAssignment,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -18,7 +31,9 @@ interface Row extends TableRow {
   templateUrl: './workeffortinventoryassignment-overview-panel.component.html',
   providers: [PanelService],
 })
-export class WorkEffortInventoryAssignmentOverviewPanelComponent implements OnInit {
+export class WorkEffortInventoryAssignmentOverviewPanelComponent
+  implements OnInit
+{
   workEffort: WorkEffort;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -63,7 +78,12 @@ export class WorkEffortInventoryAssignmentOverviewPanelComponent implements OnIn
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'part' }, { name: 'facility' }, { name: 'quantity' }, { name: 'uom' }],
+      columns: [
+        { name: 'part' },
+        { name: 'facility' },
+        { name: 'quantity' },
+        { name: 'uom' },
+      ],
       actions: [this.edit],
       defaultAction: this.edit,
       autoSort: true,

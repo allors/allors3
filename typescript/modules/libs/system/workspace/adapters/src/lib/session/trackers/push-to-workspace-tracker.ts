@@ -1,4 +1,4 @@
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { WorkspaceOriginState } from '../originstate/workspace-origin-state';
 
 export class PushToWorkspaceTracker {

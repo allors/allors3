@@ -1,4 +1,4 @@
-import { IObject, IRule } from '@allors/workspace/domain/system';
+import { IObject, IRule } from '@allors/system/workspace/domain';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { derivationRule } from './meta/derivation.rule';
 import { derivationRuleByClass } from './meta/derivation.rule.by.class';

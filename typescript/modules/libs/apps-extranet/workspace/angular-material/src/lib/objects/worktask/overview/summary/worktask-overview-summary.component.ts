@@ -1,10 +1,21 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { WorkTask, SalesInvoice, FixedAsset, Printable } from '@allors/workspace/domain/default';
-import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  WorkTask,
+  SalesInvoice,
+  FixedAsset,
+  Printable,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { PrintService } from '../../../../actions/print/print.service';
 
 @Component({
@@ -112,8 +123,10 @@ export class WorkTaskOverviewSummaryComponent {
 
       this.assets = loaded.collection<FixedAsset>(fixedAssetPullName);
 
-      const salesInvoices1 = loaded.collection<SalesInvoice>(workEffortBillingPullName) ?? [];
-      const salesInvoices2 = loaded.collection<SalesInvoice>(serviceEntryPullName) ?? [];
+      const salesInvoices1 =
+        loaded.collection<SalesInvoice>(workEffortBillingPullName) ?? [];
+      const salesInvoices2 =
+        loaded.collection<SalesInvoice>(serviceEntryPullName) ?? [];
       this.salesInvoices = new Set([...salesInvoices1, ...salesInvoices2]);
     };
   }

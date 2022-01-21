@@ -3,11 +3,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Locale, PartCategory } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -44,7 +48,10 @@ export class PartCategoryEditComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -74,7 +81,9 @@ export class PartCategoryEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -86,7 +95,9 @@ export class PartCategoryEditComponent implements OnInit, OnDestroy {
 
         if (isCreate) {
           this.title = 'Add Part Category';
-          this.category = this.allors.context.create<PartCategory>(m.PartCategory);
+          this.category = this.allors.context.create<PartCategory>(
+            m.PartCategory
+          );
         } else {
           if (this.category.canWriteName) {
             this.title = 'Edit Part Category';

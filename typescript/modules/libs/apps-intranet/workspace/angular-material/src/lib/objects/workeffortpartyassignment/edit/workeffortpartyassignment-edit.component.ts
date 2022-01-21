@@ -3,9 +3,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Party, WorkEffort, WorkEffortPartyAssignment, Employment } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Party,
+  WorkEffort,
+  WorkEffortPartyAssignment,
+  Employment,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -14,7 +24,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './workeffortpartyassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy {
+export class WorkEffortPartyAssignmentEditComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   workEffortPartyAssignment: WorkEffortPartyAssignment;
@@ -47,7 +59,10 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(([, internalOrganisationId]) => {
           const isCreate = this.data.id == null;
@@ -90,7 +105,9 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
             ];
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -99,7 +116,10 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
         if (isCreate) {
           this.title = 'Add Party Assignment';
 
-          this.workEffortPartyAssignment = this.allors.context.create<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+          this.workEffortPartyAssignment =
+            this.allors.context.create<WorkEffortPartyAssignment>(
+              m.WorkEffortPartyAssignment
+            );
           this.party = loaded.object<Party>(m.Party);
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
@@ -108,12 +128,18 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
             this.workEffortPartyAssignment.Party = this.person;
           }
 
-          if (this.workEffort != null && this.workEffort.strategy.cls === m.WorkTask) {
+          if (
+            this.workEffort != null &&
+            this.workEffort.strategy.cls === m.WorkTask
+          ) {
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortPartyAssignment.Assignment = this.assignment;
           }
         } else {
-          this.workEffortPartyAssignment = loaded.object<WorkEffortPartyAssignment>(m.WorkEffortPartyAssignment);
+          this.workEffortPartyAssignment =
+            loaded.object<WorkEffortPartyAssignment>(
+              m.WorkEffortPartyAssignment
+            );
           this.party = this.workEffortPartyAssignment.Party;
           this.workEffort = this.workEffortPartyAssignment.Assignment;
           this.person = this.workEffortPartyAssignment.Party as Person;
@@ -126,7 +152,9 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
           }
         }
 
-        this.employments = loaded.collection<Employment>(m.Organisation.EmploymentsWhereEmployer);
+        this.employments = loaded.collection<Employment>(
+          m.Organisation.EmploymentsWhereEmployer
+        );
         this.fromDateSelected();
       });
   }
@@ -134,11 +162,17 @@ export class WorkEffortPartyAssignmentEditComponent implements OnInit, OnDestroy
   public fromDateSelected(): void {
     if (this.workEffort) {
       const fromDate = this.workEffortPartyAssignment.FromDate ?? new Date();
-      this.employees = this.employments?.filter((v) => v.FromDate <= fromDate && (v.ThroughDate == null || v.ThroughDate >= fromDate))?.map((v) => v.Employee);
+      this.employees = this.employments
+        ?.filter(
+          (v) =>
+            v.FromDate <= fromDate &&
+            (v.ThroughDate == null || v.ThroughDate >= fromDate)
+        )
+        ?.map((v) => v.Employee);
     } else {
       this.employees = [this.person];
     }
-}
+  }
 
   public ngOnDestroy(): void {
     if (this.subscription) {

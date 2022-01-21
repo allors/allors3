@@ -3,10 +3,13 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
-import { IPullResult, Pull } from '@allors/workspace/domain/system';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { Organisation } from '@allors/workspace/domain/default';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './fetch.component.html',
@@ -18,7 +21,12 @@ export class FetchComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() private allors: ContextService, private workspaceService: WorkspaceService, private title: Title, private route: ActivatedRoute) {
+  constructor(
+    @Self() private allors: ContextService,
+    private workspaceService: WorkspaceService,
+    private title: Title,
+    private route: ActivatedRoute
+  ) {
     this.allors.context.name = this.constructor.name;
   }
 
@@ -61,7 +69,9 @@ export class FetchComponent implements OnInit, OnDestroy {
     this.subscription = context.pull(pulls).subscribe(
       (result: IPullResult) => {
         this.organisation = result.object<Organisation>(m.Organisation);
-        this.organisations = result.collection<Organisation>(m.Person.OrganisationsWhereOwner);
+        this.organisations = result.collection<Organisation>(
+          m.Person.OrganisationsWhereOwner
+        );
       },
       (error) => {
         alert(error);

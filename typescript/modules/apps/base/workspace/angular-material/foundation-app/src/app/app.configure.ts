@@ -1,4 +1,4 @@
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
 import {
   angularFilterDefinition,

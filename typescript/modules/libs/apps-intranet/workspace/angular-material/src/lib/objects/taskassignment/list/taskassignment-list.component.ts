@@ -4,11 +4,27 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { TaskAssignment } from '@allors/workspace/domain/default';
-import { Action, EditService, Filter, FilterDefinition, FilterField, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, UserId } from '@allors/workspace/angular/base';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
-import { And } from '@allors/workspace/domain/system';
+import {
+  Action,
+  EditService,
+  Filter,
+  FilterDefinition,
+  FilterField,
+  MediaService,
+  NavigationService,
+  ObjectService,
+  RefreshService,
+  Table,
+  TableRow,
+  UserId,
+} from '@allors/workspace/angular/base';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
+import { And } from '@allors/system/workspace/domain';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -72,60 +88,100 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
     const predicate: And = {
       kind: 'And',
       operands: [
-        { kind: 'Equals', propertyType: m.TaskAssignment.User, value: this.userId.value },
-        { kind: 'ContainedIn', propertyType: m.TaskAssignment.Task, extent: { kind: 'Filter', objectType: m.Task, predicate: { kind: 'Like', roleType: m.Task.Title, parameter: 'title' } } },
+        {
+          kind: 'Equals',
+          propertyType: m.TaskAssignment.User,
+          value: this.userId.value,
+        },
+        {
+          kind: 'ContainedIn',
+          propertyType: m.TaskAssignment.Task,
+          extent: {
+            kind: 'Filter',
+            objectType: m.Task,
+            predicate: {
+              kind: 'Like',
+              roleType: m.Task.Title,
+              parameter: 'title',
+            },
+          },
+        },
       ],
     };
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
-
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, , pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.TaskAssignment({
-              predicate,
-              // sorting: sorter.create(sort),
-              include: {
-                Task: {
-                  WorkItem: x,
+        ),
+        switchMap(
+          ([, filterFields, , pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.TaskAssignment({
+                predicate,
+                // sorting: sorter.create(sort),
+                include: {
+                  Task: {
+                    WorkItem: x,
+                  },
+                  User: x,
                 },
-                User: x,
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        const taskAssignments = loaded.collection<TaskAssignment>(m.TaskAssignment);
-        this.table.total = (loaded.value('TaskAssignments_total') ?? 0) as number;
+        const taskAssignments = loaded.collection<TaskAssignment>(
+          m.TaskAssignment
+        );
+        this.table.total = (loaded.value('TaskAssignments_total') ??
+          0) as number;
         this.table.data = taskAssignments?.map((v) => {
           return {
             object: v,
             title: v.Task.Title,
-            dateCreated: formatDistance(new Date(v.Task.DateCreated), new Date()),
+            dateCreated: formatDistance(
+              new Date(v.Task.DateCreated),
+              new Date()
+            ),
           } as Row;
         });
       });

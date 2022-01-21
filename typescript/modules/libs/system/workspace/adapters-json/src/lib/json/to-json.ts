@@ -18,7 +18,7 @@ import {
   Select as DataSelect,
   Node as DataNode,
   IObject,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import {
   Extent,
   ExtentKind,
@@ -31,7 +31,7 @@ import {
   Node,
   PredicateKind,
   PullDependency,
-} from '@allors/protocol/json/system';
+} from '@allors/system/common/protocol-json';
 
 export function unitToJson(from: unknown): IUnit {
   if (from == null) {

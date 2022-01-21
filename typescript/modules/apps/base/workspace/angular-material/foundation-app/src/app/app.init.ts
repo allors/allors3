@@ -4,14 +4,14 @@ import { WorkspaceService } from '@allors/workspace/angular/core';
 import { AngularClient } from '../allors/angular-client';
 import { configure } from './app.configure';
 import { BaseContext } from '../allors/base-context';
-import { Configuration } from '@allors/workspace/domain/system';
-import { applyRules } from '@allors/workspace/derivations/system';
+import { Configuration } from '@allors/system/workspace/domain';
+import { applyRules } from '@allors/system/workspace/derivations';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
-import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { ruleBuilder } from '@allors/workspace/derivations/base-custom';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { data } from '@allors/workspace/meta/json/default';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 export function init(
   workspaceService: WorkspaceService,

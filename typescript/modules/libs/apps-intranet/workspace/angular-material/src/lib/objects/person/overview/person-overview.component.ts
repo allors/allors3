@@ -1,15 +1,26 @@
-import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import {
+  Component,
+  Self,
+  AfterViewInit,
+  OnDestroy,
+  Injector,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
+import {
+  NavigationActivatedRoute,
+  NavigationService,
+  PanelManagerService,
+  RefreshService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Person, Employment } from '@allors/workspace/domain/default';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './person-overview.component.html',
@@ -44,7 +55,12 @@ export class PersonOverviewComponent implements AfterViewInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.route.url,
+      this.route.queryParams,
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(([, ,]) => {
           const navRoute = new NavigationActivatedRoute(this.route);
@@ -76,7 +92,9 @@ export class PersonOverviewComponent implements AfterViewInit, OnDestroy {
         this.panelManager.onPulled(loaded);
 
         this.person = loaded.object<Person>(m.Person);
-        const employments = loaded.collection<Employment>(m.Person.EmploymentsWhereEmployee);
+        const employments = loaded.collection<Employment>(
+          m.Person.EmploymentsWhereEmployee
+        );
         this.employee = employments?.length > 0;
       });
   }

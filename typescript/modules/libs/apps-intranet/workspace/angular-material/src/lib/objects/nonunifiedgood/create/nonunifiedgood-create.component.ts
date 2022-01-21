@@ -1,11 +1,35 @@
-import { Component, OnDestroy, OnInit, Self, Optional, Inject } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  Self,
+  Optional,
+  Inject,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { NonUnifiedGood, Organisation, ProductIdentificationType, ProductType, Settings, Good, ProductCategory, Ownership, ProductNumber, Locale } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  NonUnifiedGood,
+  Organisation,
+  ProductIdentificationType,
+  ProductType,
+  Settings,
+  Good,
+  ProductCategory,
+  Ownership,
+  ProductNumber,
+  Locale,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -58,7 +82,14 @@ export class NonUnifiedGoodCreateComponent implements OnInit, OnDestroy {
     this.subscription = combineLatest(this.refreshService.refresh$)
       .pipe(
         switchMap(() => {
-          const pulls = [this.fetcher.locales, this.fetcher.Settings, pull.ProductIdentificationType({}), pull.ProductCategory({ sorting: [{ roleType: m.ProductCategory.Name }] })];
+          const pulls = [
+            this.fetcher.locales,
+            this.fetcher.Settings,
+            pull.ProductIdentificationType({}),
+            pull.ProductCategory({
+              sorting: [{ roleType: m.ProductCategory.Name }],
+            }),
+          ];
 
           this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
 
@@ -69,16 +100,25 @@ export class NonUnifiedGoodCreateComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.goodIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
         this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.settings = this.fetcher.getSettings(loaded);
 
-        this.goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
+        this.goodNumberType = this.goodIdentificationTypes?.find(
+          (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
+        );
 
-        this.good = this.allors.context.create<NonUnifiedGood>(m.NonUnifiedGood);
+        this.good = this.allors.context.create<NonUnifiedGood>(
+          m.NonUnifiedGood
+        );
 
         if (!this.settings.UseProductNumberCounter) {
-          this.productNumber = this.allors.context.create<ProductNumber>(m.ProductNumber);
+          this.productNumber = this.allors.context.create<ProductNumber>(
+            m.ProductNumber
+          );
           this.productNumber.ProductIdentificationType = this.goodNumberType;
 
           this.good.addProductIdentification(this.productNumber);

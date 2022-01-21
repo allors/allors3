@@ -1,4 +1,4 @@
-import { RelationTypeData } from '@allors/protocol/json/system';
+import { RelationTypeData } from '@allors/system/common/protocol-json';
 import {
   Origin,
   pluralize,

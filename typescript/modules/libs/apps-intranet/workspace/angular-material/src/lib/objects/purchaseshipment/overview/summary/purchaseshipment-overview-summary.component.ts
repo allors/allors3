@@ -1,9 +1,18 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { PurchaseOrder, ShipmentItem, PurchaseShipment } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PurchaseOrder,
+  ShipmentItem,
+  PurchaseShipment,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
@@ -80,7 +89,9 @@ export class PurchaseShipmentOverviewSummaryComponent {
     panel.onPulled = (loaded) => {
       this.shipment = loaded.object<PurchaseShipment>(shipmentPullName);
       this.shipmentItems = loaded.collection<ShipmentItem>(shipmentPullName);
-      this.purchaseOrders = loaded.collection<PurchaseOrder>(this.m.OrderItem.OrderWhereValidOrderItem);
+      this.purchaseOrders = loaded.collection<PurchaseOrder>(
+        this.m.OrderItem.OrderWhereValidOrderItem
+      );
     };
   }
 

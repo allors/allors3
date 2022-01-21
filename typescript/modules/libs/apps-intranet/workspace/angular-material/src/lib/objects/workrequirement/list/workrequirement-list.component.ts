@@ -6,7 +6,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { WorkRequirement } from '@allors/workspace/domain/default';
 import {
   Action,
@@ -26,7 +26,7 @@ import {
 } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
-import { And, Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/system/workspace/domain';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
@@ -104,41 +104,78 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.WorkRequirement);
 
-    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.WorkRequirement.ServicedBy };
-    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
+    const internalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.WorkRequirement.ServicedBy,
+    };
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        internalOrganisationPredicate,
+        this.filter.definition.predicate,
+      ],
+    };
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent,
+            number
+          ]) => {
+            internalOrganisationPredicate.value = internalOrganisationId;
 
-          return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
-        }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
-          internalOrganisationPredicate.value = internalOrganisationId;
+            const pulls = [
+              pull.WorkRequirement({
+                predicate,
+                sorting: sort
+                  ? angularSorter(m.WorkRequirement)?.create(sort)
+                  : null,
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          const pulls = [
-            pull.WorkRequirement({
-              predicate,
-              sorting: sort ? angularSorter(m.WorkRequirement)?.create(sort) : null,
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
@@ -153,7 +190,10 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
             originator: v.OriginatorName,
             equipment: v.FixedAssetName,
             location: v.Location,
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

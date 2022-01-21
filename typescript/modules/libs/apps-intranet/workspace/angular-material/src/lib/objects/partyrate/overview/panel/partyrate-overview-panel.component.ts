@@ -1,9 +1,19 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format, isBefore, isAfter } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { PartyRate } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -68,7 +78,13 @@ export class PartyRateOverviewPanelComponent implements OnInit {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'rateType' }, { name: 'from', sort }, { name: 'through', sort }, { name: 'rate', sort }, { name: 'frequency' }],
+      columns: [
+        { name: 'rateType' },
+        { name: 'from', sort },
+        { name: 'through', sort },
+        { name: 'rate', sort },
+        { name: 'frequency' },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -102,7 +118,9 @@ export class PartyRateOverviewPanelComponent implements OnInit {
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PartyRate>(pullName);
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.objects?.length ??
+        0) as number;
       this.refreshTable();
     };
   }
@@ -113,7 +131,10 @@ export class PartyRateOverviewPanelComponent implements OnInit {
         object: v,
         rateType: v.RateType.Name,
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        through:
+          v.ThroughDate != null
+            ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+            : '',
         rate: v.Rate,
         frequency: v.Frequency.Name,
       } as Row;
@@ -123,9 +144,23 @@ export class PartyRateOverviewPanelComponent implements OnInit {
   get partyRates(): any {
     switch (this.collection) {
       case 'Current':
-        return this.objects && this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return (
+          this.objects &&
+          this.objects?.filter(
+            (v) =>
+              isBefore(new Date(v.FromDate), new Date()) &&
+              (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
+          )
+        );
       case 'Inactive':
-        return this.objects && this.objects?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return (
+          this.objects &&
+          this.objects?.filter(
+            (v) =>
+              isAfter(new Date(v.FromDate), new Date()) ||
+              (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date()))
+          )
+        );
       case 'All':
       default:
         return this.objects;

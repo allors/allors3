@@ -1,8 +1,8 @@
 import { Directive, HostBinding } from '@angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { ObjectType, RoleType } from '@allors/system/workspace/meta';
 import { PanelService } from './panel.service';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 @Directive()
 export abstract class AllorsRelationObjectAssociationPanelComponent<

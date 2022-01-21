@@ -2,7 +2,7 @@ import {
   IObject,
   IPullResult,
   Operations,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import {
   MethodType,
   RelationType,

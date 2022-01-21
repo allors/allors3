@@ -2,11 +2,28 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, Currency, RequestForQuote, Quote, CustomerRelationship } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  InternalOrganisation,
+  ContactMechanism,
+  PartyContactMechanism,
+  Currency,
+  RequestForQuote,
+  Quote,
+  CustomerRelationship,
+} from '@allors/workspace/domain/default';
+import {
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 import { Filters } from '../../../../filters/filters';
@@ -16,7 +33,9 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './requestforquote-overview-detail.component.html',
   providers: [ContextService, PanelService],
 })
-export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy {
+export class RequestForQuoteOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   request: RequestForQuote;
@@ -131,7 +150,10 @@ export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy
             }),
           ];
 
-          this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -139,7 +161,8 @@ export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.request = loaded.object<RequestForQuote>(this.m.RequestForQuote);
         this.currencies = loaded.collection<Currency>(this.m.Currency);
 
@@ -164,7 +187,10 @@ export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   get originatorIsPerson(): boolean {
-    return !this.request.Originator || this.request.Originator.strategy.cls === this.m.Person;
+    return (
+      !this.request.Originator ||
+      this.request.Originator.strategy.cls === this.m.Person
+    );
   }
 
   public originatorSelected(party: IObject) {
@@ -173,15 +199,22 @@ export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy
     }
   }
 
-  public partyContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
+  public partyContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.request.Originator.addPartyContactMechanism(partyContactMechanism);
-    this.request.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
+    this.request.FullfillContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.request.Originator as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.request
+      .Originator as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.contacts.push(person);
@@ -189,7 +222,10 @@ export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public originatorAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -230,8 +266,13 @@ export class RequestForQuoteOverviewDetailComponent implements OnInit, OnDestroy
         this.previousOriginator = this.request.Originator;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.contactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.contactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }

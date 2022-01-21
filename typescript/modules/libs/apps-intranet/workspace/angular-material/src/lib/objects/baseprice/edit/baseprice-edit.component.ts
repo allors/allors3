@@ -3,9 +3,19 @@ import { switchMap, map } from 'rxjs/operators';
 import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { M } from '@allors/workspace/meta/default';
-import { Good, InternalOrganisation, NonUnifiedGood, Part, PriceComponent } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Good,
+  InternalOrganisation,
+  NonUnifiedGood,
+  Part,
+  PriceComponent,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -45,7 +55,10 @@ export class BasepriceEditComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -76,20 +89,27 @@ export class BasepriceEditComponent implements OnInit, OnDestroy {
             ];
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
-        this.nonUnifiedGood = loaded.object<NonUnifiedGood>(this.m.NonUnifiedGood);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
+        this.nonUnifiedGood = loaded.object<NonUnifiedGood>(
+          this.m.NonUnifiedGood
+        );
         this.part = loaded.object<Part>(this.m.Part);
 
         if (isCreate) {
           this.title = 'Add base price';
 
-          this.priceComponent = this.allors.context.create<PriceComponent>(this.m.BasePrice);
+          this.priceComponent = this.allors.context.create<PriceComponent>(
+            this.m.BasePrice
+          );
           this.priceComponent.FromDate = new Date();
           this.priceComponent.PricedBy = this.internalOrganisation;
 
@@ -101,7 +121,9 @@ export class BasepriceEditComponent implements OnInit, OnDestroy {
             this.priceComponent.Part = this.part;
           }
         } else {
-          this.priceComponent = loaded.object<PriceComponent>(this.m.PriceComponent);
+          this.priceComponent = loaded.object<PriceComponent>(
+            this.m.PriceComponent
+          );
 
           if (this.priceComponent.canWritePrice) {
             this.title = 'Edit base price';

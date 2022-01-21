@@ -1,4 +1,8 @@
-import { MapMap, IRange, DefaultNumberRanges } from '@allors/workspace/adapters/system';
+import {
+  MapMap,
+  IRange,
+  DefaultNumberRanges,
+} from '@allors/system/workspace/adapters';
 import { mm } from './mm';
 
 describe('MapMap', () => {

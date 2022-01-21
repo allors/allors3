@@ -2,7 +2,7 @@ import {
   Configuration,
   IWorkspace,
   Operations,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { Class, OperandType } from '@allors/system/workspace/meta';
 
 import { DefaultNumberRanges } from '../collections/ranges/default-number-ranges';

@@ -6,7 +6,7 @@ import {
   IObject,
   IUnit,
   IUnitDiff,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 
 import { IRecord } from '../../irecord';
 import { Workspace } from '../../workspace/workspace';

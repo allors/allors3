@@ -6,7 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { RoleField } from '@allors/workspace/angular/base';
 
 @Component({

@@ -1,9 +1,19 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { PartyContactMechanism } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -129,20 +139,28 @@ export class PartyContactMechanismOverviewPanelComponent implements OnInit {
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PartyContactMechanism>(pullName);
 
-      this.currentPartyContactMechanisms = loaded.collection<PartyContactMechanism>(active);
-      this.inactivePartyContactMechanisms = loaded.collection<PartyContactMechanism>(inactive);
+      this.currentPartyContactMechanisms =
+        loaded.collection<PartyContactMechanism>(active);
+      this.inactivePartyContactMechanisms =
+        loaded.collection<PartyContactMechanism>(inactive);
 
       this.allPartyContactMechanisms = [];
 
       if (this.currentPartyContactMechanisms != null) {
-        this.allPartyContactMechanisms = this.allPartyContactMechanisms.concat(this.currentPartyContactMechanisms);
+        this.allPartyContactMechanisms = this.allPartyContactMechanisms.concat(
+          this.currentPartyContactMechanisms
+        );
       }
 
       if (this.inactivePartyContactMechanisms != null) {
-        this.allPartyContactMechanisms = this.allPartyContactMechanisms.concat(this.inactivePartyContactMechanisms);
+        this.allPartyContactMechanisms = this.allPartyContactMechanisms.concat(
+          this.inactivePartyContactMechanisms
+        );
       }
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.objects?.length ??
+        0) as number;
       this.refreshTable();
     };
   }
@@ -153,7 +171,10 @@ export class PartyContactMechanismOverviewPanelComponent implements OnInit {
         object: v,
         purpose: v.ContactPurposes?.map((w) => w.Name).join(', '),
         contact: v.ContactMechanism.DisplayName,
-        lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+        lastModifiedDate: formatDistance(
+          new Date(v.LastModifiedDate),
+          new Date()
+        ),
       } as Row;
     });
   }

@@ -1,8 +1,20 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { SerialisedItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+  ActionTarget,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -62,7 +74,14 @@ export class SerialisedItemOverviewPanelComponent implements OnInit {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'number' }, { name: 'name' }, { name: 'availability' }, { name: 'onWebsite' }, { name: 'ownership' }, { name: 'ownedBy' }],
+      columns: [
+        { name: 'number' },
+        { name: 'name' },
+        { name: 'availability' },
+        { name: 'onWebsite' },
+        { name: 'ownership' },
+        { name: 'ownedBy' },
+      ],
       actions: [
         {
           name: 'changeinventory',
@@ -143,9 +162,15 @@ export class SerialisedItemOverviewPanelComponent implements OnInit {
       );
 
       this.panel.onPulled = (loaded) => {
-        const partSerialisedItems = loaded.collection<SerialisedItem>(partSerialisedItemsName);
-        const ownedSerialisedItems = loaded.collection<SerialisedItem>(ownedSerialisedItemsName);
-        const rentedSerialisedItems = loaded.collection<SerialisedItem>(rentedSerialisedItemsName);
+        const partSerialisedItems = loaded.collection<SerialisedItem>(
+          partSerialisedItemsName
+        );
+        const ownedSerialisedItems = loaded.collection<SerialisedItem>(
+          ownedSerialisedItemsName
+        );
+        const rentedSerialisedItems = loaded.collection<SerialisedItem>(
+          rentedSerialisedItemsName
+        );
 
         this.objects = [];
 
@@ -167,7 +192,9 @@ export class SerialisedItemOverviewPanelComponent implements OnInit {
             object: v,
             number: v.ItemNumber,
             name: v.DisplayName,
-            availability: v.SerialisedItemAvailability ? v.SerialisedItemAvailability.Name : '',
+            availability: v.SerialisedItemAvailability
+              ? v.SerialisedItemAvailability.Name
+              : '',
             onWebsite: v.AvailableForSale ? 'Yes' : 'No',
             ownership: v.Ownership ? v.Ownership.Name : '',
             ownedBy: v.OwnedBy ? v.OwnedBy.DisplayName : '',

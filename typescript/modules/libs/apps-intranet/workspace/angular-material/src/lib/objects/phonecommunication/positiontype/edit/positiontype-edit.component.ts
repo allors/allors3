@@ -3,9 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { ContextService } from '@allors/workspace/angular/core';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { PositionType } from '@allors/workspace/domain/default';
 
 @Component({
@@ -53,7 +57,9 @@ export class PositionTypeEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -61,7 +67,9 @@ export class PositionTypeEditComponent implements OnInit, OnDestroy {
 
         if (isCreate) {
           this.title = 'Add Position Type';
-          this.positionType = this.allors.context.create<PositionType>(m.PositionType);
+          this.positionType = this.allors.context.create<PositionType>(
+            m.PositionType
+          );
         } else {
           this.positionType = loaded.object<PositionType>(m.PositionType);
 

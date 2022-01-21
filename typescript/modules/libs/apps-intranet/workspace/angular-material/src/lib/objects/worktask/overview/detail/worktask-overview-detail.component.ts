@@ -2,7 +2,7 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Person,
   Organisation,
@@ -17,9 +17,15 @@ import {
   Priority,
   WorkEffortPurpose,
 } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -151,17 +157,31 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
               sorting: [{ roleType: m.WorkEffortState.Name }],
             }),
             pull.Priority({
-              predicate: { kind: 'Equals', propertyType: m.Priority.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Priority.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Priority.Name }],
             }),
             pull.WorkEffortPurpose({
-              predicate: { kind: 'Equals', propertyType: this.m.WorkEffortPurpose.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: this.m.WorkEffortPurpose.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.WorkEffortPurpose.Name }],
             }),
           ];
 
-          this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
-          this.subContractorsFilter = Filters.subContractorsFilter(m, this.internalOrganisationId.value);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
+          this.subContractorsFilter = Filters.subContractorsFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -169,13 +189,19 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const internalOrganisation = loaded.object<InternalOrganisation>(
+          m.InternalOrganisation
+        );
         this.employees = internalOrganisation.ActiveEmployees;
 
         this.workTask = loaded.object<WorkTask>(m.WorkTask);
-        this.workEffortStates = loaded.collection<WorkEffortState>(m.WorkEffortState);
+        this.workEffortStates = loaded.collection<WorkEffortState>(
+          m.WorkEffortState
+        );
         this.priorities = loaded.collection<Priority>(m.Priority);
-        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(m.WorkEffortPurpose);
+        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(
+          m.WorkEffortPurpose
+        );
 
         this.updateCustomer(this.workTask.Customer);
       });
@@ -188,18 +214,25 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
   }
 
   public contactPersonAdded(contact: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.workTask.Customer as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.workTask
+      .Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 
     this.contacts.push(contact);
     this.workTask.ContactPerson = contact;
   }
 
-  public contactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
+  public contactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.workTask.Customer.addPartyContactMechanism(partyContactMechanism);
-    this.workTask.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
+    this.workTask.FullfillContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
   public customerSelected(customer: IObject) {
@@ -244,15 +277,22 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.workEfforts = loaded.collection<WorkEffort>(m.Party.WorkEffortsWhereCustomer);
+      this.workEfforts = loaded.collection<WorkEffort>(
+        m.Party.WorkEffortsWhereCustomer
+      );
       const indexMyself = this.workEfforts.indexOf(this.workTask, 0);
       if (indexMyself > -1) {
         this.workEfforts.splice(indexMyself, 1);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
 
-      this.contactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.contactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
 
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });

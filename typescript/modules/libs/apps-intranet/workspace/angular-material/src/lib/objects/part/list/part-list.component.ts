@@ -4,9 +4,26 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { ProductIdentificationType, Part } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  ProductIdentificationType,
+  Part,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  angularFilterFromDefinition,
+  angularSorter,
+  DeleteService,
+  Filter,
+  FilterField,
+  MediaService,
+  NavigationService,
+  ObjectService,
+  OverviewService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -85,62 +102,88 @@ export class PartListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.Part);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
-
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.Part({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.Part)?.create(sort) : null,
-              include: {
-                Brand: x,
-                Model: x,
-                ProductType: x,
-                PrimaryPhoto: x,
-                InventoryItemKind: x,
-                ProductIdentifications: {
-                  ProductIdentificationType: x,
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.Part({
+                predicate: this.filter.definition.predicate,
+                sorting: sort ? angularSorter(m.Part)?.create(sort) : null,
+                include: {
+                  Brand: x,
+                  Model: x,
+                  ProductType: x,
+                  PrimaryPhoto: x,
+                  InventoryItemKind: x,
+                  ProductIdentifications: {
+                    ProductIdentificationType: x,
+                  },
                 },
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-            pull.ProductIdentificationType({}),
-            pull.BasePrice({}),
-          ];
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+              pull.ProductIdentificationType({}),
+              pull.BasePrice({}),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
 
         const parts = loaded.collection<Part>(m.Part);
-        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        const partNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
+        this.goodIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
+        const partNumberType = this.goodIdentificationTypes?.find(
+          (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
+        );
 
         const partNumberByPart = parts?.reduce((map, object) => {
-          map[object.id] = object.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType)?.map((w) => w.Identification);
+          map[object.id] = object.ProductIdentifications?.filter(
+            (v) => v.ProductIdentificationType === partNumberType
+          )?.map((w) => w.Identification);
           return map;
         }, {});
 
-        this.table.total = (loaded.value('NonUnifiedParts_total') ?? 0) as number;
+        this.table.total = (loaded.value('NonUnifiedParts_total') ??
+          0) as number;
 
         this.table.data = parts?.map((v) => {
           return {
@@ -152,7 +195,10 @@ export class PartListComponent implements OnInit, OnDestroy {
             brand: v.Brand ? v.Brand.Name : '',
             model: v.Model ? v.Model.Name : '',
             kind: v.InventoryItemKind.Name,
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

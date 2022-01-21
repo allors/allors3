@@ -1,4 +1,4 @@
-import { DefaultNumberRanges } from '@allors/workspace/adapters/system';
+import { DefaultNumberRanges } from '@allors/system/workspace/adapters';
 
 describe('Range', () => {
   describe('initialize with undefined', () => {

@@ -3,7 +3,7 @@ import {
   IObject,
   IStrategy,
   IUnit,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import {
   AssociationType,
   Class,

@@ -2,7 +2,7 @@ import { Sort as MaterialSort } from '@angular/material/sort';
 import {
   Sort as AllorsSort,
   SortDirection,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { RoleType } from '@allors/system/workspace/meta';
 
 export class Sorter {

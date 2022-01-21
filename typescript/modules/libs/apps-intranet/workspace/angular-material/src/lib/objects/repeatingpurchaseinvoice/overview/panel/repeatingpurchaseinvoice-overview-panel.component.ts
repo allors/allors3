@@ -2,9 +2,25 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { format } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, InternalOrganisation, RepeatingPurchaseInvoice } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  InternalOrganisation,
+  RepeatingPurchaseInvoice,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -67,7 +83,14 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'internalOrganisation' }, { name: 'frequency', sort }, { name: 'dayOfWeek', sort }, { name: 'previousExecutionDate', sort }, { name: 'nextExecutionDate', sort }, { name: 'finalExecutionDate', sort }],
+      columns: [
+        { name: 'internalOrganisation' },
+        { name: 'frequency', sort },
+        { name: 'dayOfWeek', sort },
+        { name: 'previousExecutionDate', sort },
+        { name: 'nextExecutionDate', sort },
+        { name: 'finalExecutionDate', sort },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -109,9 +132,15 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent {
           internalOrganisation: v.InternalOrganisation.DisplayName,
           frequency: v.Frequency.Name,
           dayOfWeek: v.DayOfWeek && v.DayOfWeek.Name,
-          previousExecutionDate: v.PreviousExecutionDate && format(new Date(v.PreviousExecutionDate), 'dd-MM-yyyy'),
-          nextExecutionDate: v.NextExecutionDate && format(new Date(v.NextExecutionDate), 'dd-MM-yyyy'),
-          finalExecutionDate: v.FinalExecutionDate && format(new Date(v.FinalExecutionDate), 'dd-MM-yyyy'),
+          previousExecutionDate:
+            v.PreviousExecutionDate &&
+            format(new Date(v.PreviousExecutionDate), 'dd-MM-yyyy'),
+          nextExecutionDate:
+            v.NextExecutionDate &&
+            format(new Date(v.NextExecutionDate), 'dd-MM-yyyy'),
+          finalExecutionDate:
+            v.FinalExecutionDate &&
+            format(new Date(v.FinalExecutionDate), 'dd-MM-yyyy'),
         } as Row;
       });
     };

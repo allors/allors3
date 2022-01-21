@@ -3,11 +3,24 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, Party, SerialisedItem, WorkEffort, WorkEffortFixedAssetAssignment, Enumeration, AssetAssignmentStatus } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  Party,
+  SerialisedItem,
+  WorkEffort,
+  WorkEffortFixedAssetAssignment,
+  Enumeration,
+  AssetAssignmentStatus,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';
@@ -16,7 +29,9 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './workeffortfixedassetassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortFixedAssetAssignmentEditComponent implements OnInit, OnDestroy {
+export class WorkEffortFixedAssetAssignmentEditComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   workEffortFixedAssetAssignment: WorkEffortFixedAssetAssignment;
@@ -50,7 +65,10 @@ export class WorkEffortFixedAssetAssignmentEditComponent implements OnInit, OnDe
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -64,7 +82,11 @@ export class WorkEffortFixedAssetAssignmentEditComponent implements OnInit, OnDe
               sorting: [{ roleType: m.SerialisedItem.Name }],
             }),
             pull.AssetAssignmentStatus({
-              predicate: { kind: 'Equals', propertyType: m.AssetAssignmentStatus.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.AssetAssignmentStatus.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.AssetAssignmentStatus.Name }],
             }),
           ];
@@ -93,7 +115,9 @@ export class WorkEffortFixedAssetAssignmentEditComponent implements OnInit, OnDe
 
           this.serialisedItemsFilter = Filters.serialisedItemsFilter(m);
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -102,11 +126,14 @@ export class WorkEffortFixedAssetAssignmentEditComponent implements OnInit, OnDe
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
         this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
         this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        this.assetAssignmentStatuses = loaded.collection<AssetAssignmentStatus>(m.AssetAssignmentStatus);
+        this.assetAssignmentStatuses = loaded.collection<AssetAssignmentStatus>(
+          m.AssetAssignmentStatus
+        );
 
         if (this.serialisedItem == null) {
           const b2bCustomer = this.workEffort.Customer as Organisation;
-          this.externalCustomer = b2bCustomer == null || !b2bCustomer.IsInternalOrganisation;
+          this.externalCustomer =
+            b2bCustomer == null || !b2bCustomer.IsInternalOrganisation;
 
           if (this.externalCustomer) {
             this.updateSerialisedItems(this.workEffort.Customer);
@@ -116,18 +143,28 @@ export class WorkEffortFixedAssetAssignmentEditComponent implements OnInit, OnDe
         if (isCreate) {
           this.title = 'Add Asset Assignment';
 
-          this.workEffortFixedAssetAssignment = this.allors.context.create<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
+          this.workEffortFixedAssetAssignment =
+            this.allors.context.create<WorkEffortFixedAssetAssignment>(
+              m.WorkEffortFixedAssetAssignment
+            );
 
           if (this.serialisedItem != null) {
-            this.workEffortFixedAssetAssignment.FixedAsset = this.serialisedItem;
+            this.workEffortFixedAssetAssignment.FixedAsset =
+              this.serialisedItem;
           }
 
-          if (this.workEffort != null && this.workEffort.strategy.cls === m.WorkTask) {
+          if (
+            this.workEffort != null &&
+            this.workEffort.strategy.cls === m.WorkTask
+          ) {
             this.assignment = this.workEffort as WorkEffort;
             this.workEffortFixedAssetAssignment.Assignment = this.assignment;
           }
         } else {
-          this.workEffortFixedAssetAssignment = loaded.object<WorkEffortFixedAssetAssignment>(m.WorkEffortFixedAssetAssignment);
+          this.workEffortFixedAssetAssignment =
+            loaded.object<WorkEffortFixedAssetAssignment>(
+              m.WorkEffortFixedAssetAssignment
+            );
 
           if (this.workEffortFixedAssetAssignment.canWriteFromDate) {
             this.title = 'Edit Asset Assignment';
@@ -166,7 +203,9 @@ export class WorkEffortFixedAssetAssignmentEditComponent implements OnInit, OnDe
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.serialisedItems = loaded.collection<SerialisedItem>(m.Party.SerialisedItemsWhereOwnedBy);
+      this.serialisedItems = loaded.collection<SerialisedItem>(
+        m.Party.SerialisedItemsWhereOwnedBy
+      );
     });
   }
 }

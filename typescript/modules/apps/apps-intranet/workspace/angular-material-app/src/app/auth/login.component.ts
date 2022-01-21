@@ -5,10 +5,13 @@ import { of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { ContextService } from '@allors/workspace/angular/core';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Organisation, Singleton } from '@allors/workspace/domain/default';
-import { IPullResult } from '@allors/workspace/domain/system';
-import { AuthenticationService, SingletonId } from '@allors/workspace/angular/base';
+import { IPullResult } from '@allors/system/workspace/domain';
+import {
+  AuthenticationService,
+  SingletonId,
+} from '@allors/workspace/angular/base';
 import { InternalOrganisationId } from '@allors/workspace/angular/apps/intranet';
 
 @Component({
@@ -56,7 +59,11 @@ export class LoginComponent implements OnDestroy {
             const pulls = [
               pull.Singleton({}),
               pull.Organisation({
-                predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
+                predicate: {
+                  kind: 'Equals',
+                  propertyType: m.Organisation.IsInternalOrganisation,
+                  value: true,
+                },
               }),
               pull.Person({
                 objectId: result.u,
@@ -70,23 +77,32 @@ export class LoginComponent implements OnDestroy {
 
             return this.allors.context.pull(pulls).pipe(
               map((loaded: IPullResult) => {
-                const internalOrganisations = loaded.collection<Organisation>(m.Organisation);
-                const defaultInternalOrganization = loaded.object<Organisation>(m.UserProfile.DefaultInternalOrganization);
+                const internalOrganisations = loaded.collection<Organisation>(
+                  m.Organisation
+                );
+                const defaultInternalOrganization = loaded.object<Organisation>(
+                  m.UserProfile.DefaultInternalOrganization
+                );
 
                 try {
                   if (internalOrganisations.length > 0) {
-                    const organisation = internalOrganisations.find((v) => v.id === this.internalOrganisationId.value);
+                    const organisation = internalOrganisations.find(
+                      (v) => v.id === this.internalOrganisationId.value
+                    );
 
                     if (!organisation) {
                       if (defaultInternalOrganization) {
-                        this.internalOrganisationId.value = defaultInternalOrganization.id;
+                        this.internalOrganisationId.value =
+                          defaultInternalOrganization.id;
                       } else {
-                        this.internalOrganisationId.value = internalOrganisations[0].id;
+                        this.internalOrganisationId.value =
+                          internalOrganisations[0].id;
                       }
                     }
                   }
                 } catch {
-                  this.internalOrganisationId.value = internalOrganisations[0].id;
+                  this.internalOrganisationId.value =
+                    internalOrganisations[0].id;
                 }
 
                 const singletons = loaded.collection<Singleton>(m.Singleton);

@@ -4,12 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/workspace/meta/json/default';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 
 import { AngularClient } from '../allors/angular-client';
@@ -20,8 +20,8 @@ import { HomeComponent } from './home/home.component';
 import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
-import { Configuration } from '@allors/workspace/domain/system';
-import { applyRules } from '@allors/workspace/derivations/system';
+import { Configuration } from '@allors/system/workspace/domain';
+import { applyRules } from '@allors/system/workspace/derivations';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,

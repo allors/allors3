@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 expect.extend({
   toEqualObjects(objects: IObject[], names: string[]) {
@@ -8,7 +8,10 @@ expect.extend({
     const sortedNames = names?.slice().sort();
 
     if (sortedObjectNames == null) {
-      return { pass: false, message: () => `Expected objects to equal ${sortedNames}` };
+      return {
+        pass: false,
+        message: () => `Expected objects to equal ${sortedNames}`,
+      };
     }
 
     const pass =
@@ -18,10 +21,17 @@ expect.extend({
       });
 
     if (pass) {
-      return { pass, message: () => `Expected ${sortedObjectNames} not to equal ${sortedNames}` };
+      return {
+        pass,
+        message: () =>
+          `Expected ${sortedObjectNames} not to equal ${sortedNames}`,
+      };
     }
 
-    return { pass, message: () => `Expected ${sortedObjectNames} to equal ${sortedNames}` };
+    return {
+      pass,
+      message: () => `Expected ${sortedObjectNames} to equal ${sortedNames}`,
+    };
   },
 });
 

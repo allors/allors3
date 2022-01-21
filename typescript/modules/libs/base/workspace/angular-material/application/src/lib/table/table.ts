@@ -3,7 +3,7 @@ import { Sort, MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject } from 'rxjs';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { Action } from '@allors/workspace/angular/base';
 import { BaseTable } from './base-table';
 import { TableConfig } from './table-config';

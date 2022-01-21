@@ -1,4 +1,4 @@
-import { IUnit } from '@allors/workspace/domain/system';
+import { IUnit } from '@allors/system/workspace/domain';
 
 export interface Procedure {
   /** Name */

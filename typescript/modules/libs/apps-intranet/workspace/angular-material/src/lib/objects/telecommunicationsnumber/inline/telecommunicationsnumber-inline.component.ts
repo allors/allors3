@@ -1,14 +1,28 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { PartyContactMechanism, Enumeration, ContactMechanismPurpose, ContactMechanismType, TelecommunicationsNumber } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PartyContactMechanism,
+  Enumeration,
+  ContactMechanismPurpose,
+  ContactMechanismType,
+  TelecommunicationsNumber,
+} from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   selector: 'party-contactmechanism-telecommunicationsnumber',
   templateUrl: './telecommunicationsnumber-inline.component.html',
 })
-export class PartyContactMechanismTelecommunicationsNumberInlineComponent implements OnInit, OnDestroy {
+export class PartyContactMechanismTelecommunicationsNumberInlineComponent
+  implements OnInit, OnDestroy
+{
   @Output()
   public saved: EventEmitter<PartyContactMechanism> = new EventEmitter<PartyContactMechanism>();
 
@@ -33,22 +47,40 @@ export class PartyContactMechanismTelecommunicationsNumberInlineComponent implem
 
     const pulls = [
       pull.ContactMechanismPurpose({
-        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.ContactMechanismPurpose.IsActive,
+          value: true,
+        },
         sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
       }),
       pull.ContactMechanismType({
-        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismType.IsActive, value: true },
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.ContactMechanismType.IsActive,
+          value: true,
+        },
         sorting: [{ roleType: this.m.ContactMechanismType.Name }],
       }),
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
-      this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
+      this.contactMechanismPurposes =
+        loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+      this.contactMechanismTypes = loaded.collection<ContactMechanismType>(
+        m.ContactMechanismType
+      );
 
-      this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
-      this.telecommunicationsNumber = this.allors.context.create<TelecommunicationsNumber>(m.TelecommunicationsNumber);
-      this.partyContactMechanism.ContactMechanism = this.telecommunicationsNumber;
+      this.partyContactMechanism =
+        this.allors.context.create<PartyContactMechanism>(
+          m.PartyContactMechanism
+        );
+      this.telecommunicationsNumber =
+        this.allors.context.create<TelecommunicationsNumber>(
+          m.TelecommunicationsNumber
+        );
+      this.partyContactMechanism.ContactMechanism =
+        this.telecommunicationsNumber;
     });
   }
 

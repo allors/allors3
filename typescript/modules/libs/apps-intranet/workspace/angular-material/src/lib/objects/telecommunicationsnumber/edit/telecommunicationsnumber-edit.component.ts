@@ -3,11 +3,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { ContactMechanism, ContactMechanismType, Enumeration, TelecommunicationsNumber } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  ContactMechanism,
+  ContactMechanismType,
+  Enumeration,
+  TelecommunicationsNumber,
+} from '@allors/workspace/domain/default';
 import { RefreshService, SaveService } from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -15,7 +20,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './telecommunicationsnumber-edit.component.html',
   providers: [ContextService],
 })
-export class TelecommunicationsNumberEditComponent implements OnInit, OnDestroy {
+export class TelecommunicationsNumberEditComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   contactMechanism: TelecommunicationsNumber;
@@ -40,7 +47,10 @@ export class TelecommunicationsNumberEditComponent implements OnInit, OnDestroy 
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const pulls = [
@@ -48,7 +58,11 @@ export class TelecommunicationsNumberEditComponent implements OnInit, OnDestroy 
               objectId: this.data.id,
             }),
             pull.ContactMechanismType({
-              predicate: { kind: 'Equals', propertyType: m.ContactMechanismType.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.ContactMechanismType.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: this.m.ContactMechanismType.Name }],
             }),
           ];
@@ -59,8 +73,12 @@ export class TelecommunicationsNumberEditComponent implements OnInit, OnDestroy 
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.contactMechanismTypes = loaded.collection<ContactMechanismType>(m.ContactMechanismType);
-        this.contactMechanism = loaded.object<TelecommunicationsNumber>(m.ContactMechanism);
+        this.contactMechanismTypes = loaded.collection<ContactMechanismType>(
+          m.ContactMechanismType
+        );
+        this.contactMechanism = loaded.object<TelecommunicationsNumber>(
+          m.ContactMechanism
+        );
 
         if (this.contactMechanism.canWriteAreaCode) {
           this.title = 'Edit Phone Number';

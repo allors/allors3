@@ -3,9 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { PositionType } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -22,7 +26,13 @@ export class PositionTypeEditComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<PositionTypeEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
+  constructor(
+    @Self() public allors: ContextService,
+    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
+    public dialogRef: MatDialogRef<PositionTypeEditComponent>,
+    public refreshService: RefreshService,
+    private saveService: SaveService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
@@ -46,7 +56,9 @@ export class PositionTypeEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -54,7 +66,9 @@ export class PositionTypeEditComponent implements OnInit, OnDestroy {
 
         if (isCreate) {
           this.title = 'Add Position Type';
-          this.positionType = this.allors.context.create<PositionType>(m.PositionType);
+          this.positionType = this.allors.context.create<PositionType>(
+            m.PositionType
+          );
         } else {
           this.positionType = loaded.object<PositionType>(m.PositionType);
 

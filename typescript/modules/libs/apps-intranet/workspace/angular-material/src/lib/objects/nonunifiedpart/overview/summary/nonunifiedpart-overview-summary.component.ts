@@ -1,11 +1,20 @@
 import { Component, Self } from '@angular/core';
 import { isBefore, isAfter } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { Part, BasePrice, PriceComponent, SupplierOffering, ProductIdentificationType } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Part,
+  BasePrice,
+  PriceComponent,
+  SupplierOffering,
+  ProductIdentificationType,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { SortDirection } from '@allors/workspace/domain/system';
+import { SortDirection } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'nonunifiedpart-overview-summary',
@@ -27,7 +36,11 @@ export class NonUnifiedPartOverviewSummaryComponent {
   inactiveSupplierOfferings: SupplierOffering[];
   partnumber: string[];
 
-  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
+  constructor(
+    @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
+    public navigation: NavigationService
+  ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     panel.name = 'summary';
@@ -46,12 +59,21 @@ export class NonUnifiedPartOverviewSummaryComponent {
       pulls.push(
         pull.PriceComponent({
           name: priceComponentPullName,
-          predicate: { kind: 'Equals', propertyType: m.PriceComponent.Part, value: id },
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.PriceComponent.Part,
+            value: id,
+          },
           include: {
             Part: x,
             Currency: x,
           },
-          sorting: [{ roleType: m.PriceComponent.FromDate, sortDirection: SortDirection.Descending }],
+          sorting: [
+            {
+              roleType: m.PriceComponent.FromDate,
+              sortDirection: SortDirection.Descending,
+            },
+          ],
         }),
         pull.Part({
           name: partPullName,
@@ -90,22 +112,57 @@ export class NonUnifiedPartOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.part = loaded.object<Part>(partPullName);
-      this.serialised = this.part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+      this.serialised =
+        this.part.InventoryItemKind.UniqueId ===
+        '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
-      this.allPricecomponents = loaded.collection<PriceComponent>(priceComponentPullName);
-      this.currentPricecomponents = this.allPricecomponents?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
-      this.inactivePricecomponents = this.allPricecomponents?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate != null && isBefore(new Date(v.ThroughDate), new Date())));
+      this.allPricecomponents = loaded.collection<PriceComponent>(
+        priceComponentPullName
+      );
+      this.currentPricecomponents = this.allPricecomponents?.filter(
+        (v) =>
+          isBefore(new Date(v.FromDate), new Date()) &&
+          (v.ThroughDate == null ||
+            isAfter(new Date(v.ThroughDate), new Date()))
+      );
+      this.inactivePricecomponents = this.allPricecomponents?.filter(
+        (v) =>
+          isAfter(new Date(v.FromDate), new Date()) ||
+          (v.ThroughDate != null &&
+            isBefore(new Date(v.ThroughDate), new Date()))
+      );
 
-      this.allSupplierOfferings = loaded.collection<SupplierOffering>(supplierOfferingsPullName);
-      this.currentSupplierOfferings = this.allSupplierOfferings?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (v.ThroughDate == null || isAfter(new Date(v.ThroughDate), new Date())));
-      this.inactiveSupplierOfferings = this.allSupplierOfferings?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate != null && isBefore(new Date(v.ThroughDate), new Date())));
+      this.allSupplierOfferings = loaded.collection<SupplierOffering>(
+        supplierOfferingsPullName
+      );
+      this.currentSupplierOfferings = this.allSupplierOfferings?.filter(
+        (v) =>
+          isBefore(new Date(v.FromDate), new Date()) &&
+          (v.ThroughDate == null ||
+            isAfter(new Date(v.ThroughDate), new Date()))
+      );
+      this.inactiveSupplierOfferings = this.allSupplierOfferings?.filter(
+        (v) =>
+          isAfter(new Date(v.FromDate), new Date()) ||
+          (v.ThroughDate != null &&
+            isBefore(new Date(v.ThroughDate), new Date()))
+      );
 
-      const goodIdentificationTypes = loaded.collection<ProductIdentificationType>(this.m.ProductIdentificationType);
-      const partNumberType = goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
-      this.partnumber = this.part.ProductIdentifications?.filter((v) => v.ProductIdentificationType === partNumberType)?.map((w) => w.Identification);
+      const goodIdentificationTypes =
+        loaded.collection<ProductIdentificationType>(
+          this.m.ProductIdentificationType
+        );
+      const partNumberType = goodIdentificationTypes?.find(
+        (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
+      );
+      this.partnumber = this.part.ProductIdentifications?.filter(
+        (v) => v.ProductIdentificationType === partNumberType
+      )?.map((w) => w.Identification);
 
       if (this.part.SuppliedBy.length > 0) {
-        this.suppliers = this.part.SuppliedBy?.map((v) => v.DisplayName)?.reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.part.SuppliedBy?.map(
+          (v) => v.DisplayName
+        )?.reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

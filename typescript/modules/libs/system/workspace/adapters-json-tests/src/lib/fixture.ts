@@ -3,8 +3,8 @@ import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/workspace/meta/json/default';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
-import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
-import { M } from '@allors/workspace/meta/default';
+import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
+import { M } from '@allors/default/workspace/meta';
 
 import { FetchClient } from './fetch-client';
 import {
@@ -12,9 +12,9 @@ import {
   ISession,
   IWorkspace,
   Pull,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { C1, C2 } from '@allors/workspace/domain/default';
-import { applyRules } from '@allors/workspace/derivations/system';
+import { applyRules } from '@allors/system/workspace/derivations';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';

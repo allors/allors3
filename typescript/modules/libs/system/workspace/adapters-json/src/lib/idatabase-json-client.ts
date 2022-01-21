@@ -1,4 +1,17 @@
-import { InvokeRequest, InvokeResponse, PullRequest, PullResponse, PushRequest, PushResponse, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
+import {
+  InvokeRequest,
+  InvokeResponse,
+  PullRequest,
+  PullResponse,
+  PushRequest,
+  PushResponse,
+  SyncRequest,
+  SyncResponse,
+  AccessRequest,
+  AccessResponse,
+  PermissionRequest,
+  PermissionResponse,
+} from '@allors/system/common/protocol-json';
 
 export interface IDatabaseJsonClient {
   pull(pullRequest: PullRequest): Promise<PullResponse>;

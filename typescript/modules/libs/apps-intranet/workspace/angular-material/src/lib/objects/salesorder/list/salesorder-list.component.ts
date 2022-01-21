@@ -4,8 +4,13 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, SalesOrder } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Organisation,
+  InternalOrganisation,
+  SalesOrder,
+} from '@allors/workspace/domain/default';
 import {
   Action,
   DeleteService,
@@ -27,7 +32,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { And, Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/system/workspace/domain';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -89,13 +94,32 @@ export class SalesOrderListComponent implements OnInit, OnDestroy {
     });
 
     this.print = printService.print();
-    this.ship = methodService.create(allors.context, this.m.SalesOrder.Ship, { name: 'Ship' });
-    this.invoice = methodService.create(allors.context, this.m.SalesOrder.Invoice, { name: 'Invoice' });
+    this.ship = methodService.create(allors.context, this.m.SalesOrder.Ship, {
+      name: 'Ship',
+    });
+    this.invoice = methodService.create(
+      allors.context,
+      this.m.SalesOrder.Invoice,
+      { name: 'Invoice' }
+    );
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'number', sort: true }, { name: 'shipToCustomer' }, { name: 'state' }, { name: 'invoice' }, { name: 'customerReference', sort: true }, { name: 'lastModifiedDate', sort: true }],
-      actions: [overviewService.overview(), this.print, this.delete, this.ship, this.invoice],
+      columns: [
+        { name: 'number', sort: true },
+        { name: 'shipToCustomer' },
+        { name: 'state' },
+        { name: 'invoice' },
+        { name: 'customerReference', sort: true },
+        { name: 'lastModifiedDate', sort: true },
+      ],
+      actions: [
+        overviewService.overview(),
+        this.print,
+        this.delete,
+        this.ship,
+        this.invoice,
+      ],
       defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
@@ -110,58 +134,96 @@ export class SalesOrderListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.SalesOrder);
 
-    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesOrder.TakenBy };
-    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
+    const internalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.SalesOrder.TakenBy,
+    };
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        internalOrganisationPredicate,
+        this.filter.definition.predicate,
+      ],
+    };
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent,
+            number
+          ]) => {
+            internalOrganisationPredicate.value = internalOrganisationId;
 
-          return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
-        }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
-          internalOrganisationPredicate.value = internalOrganisationId;
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Person({
-              objectId: this.userId.value,
-            }),
-            pull.SalesOrder({
-              predicate,
-              sorting: sort ? angularSorter(m.SalesOrder)?.create(sort) : null,
-              include: {
-                PrintDocument: {
-                  Media: x,
+            const pulls = [
+              this.fetcher.internalOrganisation,
+              pull.Person({
+                objectId: this.userId.value,
+              }),
+              pull.SalesOrder({
+                predicate,
+                sorting: sort
+                  ? angularSorter(m.SalesOrder)?.create(sort)
+                  : null,
+                include: {
+                  PrintDocument: {
+                    Media: x,
+                  },
+                  ShipToCustomer: x,
+                  SalesOrderState: x,
+                  SalesInvoicesWhereSalesOrder: x,
                 },
-                ShipToCustomer: x,
-                SalesOrderState: x,
-                SalesInvoicesWhereSalesOrder: x,
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.canExecuteCreateSalesOrder;
@@ -176,9 +238,14 @@ export class SalesOrderListComponent implements OnInit, OnDestroy {
               number: `${v.OrderNumber}`,
               shipToCustomer: v.ShipToCustomer && v.ShipToCustomer.DisplayName,
               state: `${v.SalesOrderState && v.SalesOrderState.Name}`,
-              invoice: v.SalesInvoicesWhereSalesOrder?.map((w) => w.InvoiceNumber).join(', '),
+              invoice: v.SalesInvoicesWhereSalesOrder?.map(
+                (w) => w.InvoiceNumber
+              ).join(', '),
               customerReference: `${v.Description || ''}`,
-              lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+              lastModifiedDate: formatDistance(
+                new Date(v.LastModifiedDate),
+                new Date()
+              ),
             } as Row;
           });
       });

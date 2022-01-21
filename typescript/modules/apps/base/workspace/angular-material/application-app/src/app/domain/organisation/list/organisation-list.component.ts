@@ -4,7 +4,7 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 import {

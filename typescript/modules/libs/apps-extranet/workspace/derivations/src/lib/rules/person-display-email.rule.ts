@@ -1,6 +1,6 @@
 import { Composite, Dependency, RoleType } from '@allors/system/workspace/meta';
-import { IRule } from '@allors/workspace/domain/system';
-import { M } from '@allors/workspace/meta/default';
+import { IRule } from '@allors/system/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 import { EmailAddress, Person } from '@allors/workspace/domain/default';
 
 export class PersonDisplayEmailRule implements IRule<Person> {

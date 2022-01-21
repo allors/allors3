@@ -1,7 +1,17 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { PartyContactMechanism, ContactMechanismPurpose, WebAddress } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PartyContactMechanism,
+  ContactMechanismPurpose,
+  WebAddress,
+} from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -9,7 +19,8 @@ import { ContextService } from '@allors/workspace/angular/core';
   templateUrl: './webaddress-inline.component.html',
 })
 export class InlineWebAddressComponent implements OnInit, OnDestroy {
-  @Output() public saved: EventEmitter<PartyContactMechanism> = new EventEmitter<PartyContactMechanism>();
+  @Output() public saved: EventEmitter<PartyContactMechanism> =
+    new EventEmitter<PartyContactMechanism>();
 
   @Output() public cancelled: EventEmitter<any> = new EventEmitter();
 
@@ -31,15 +42,23 @@ export class InlineWebAddressComponent implements OnInit, OnDestroy {
 
     const pulls = [
       pull.ContactMechanismPurpose({
-        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.ContactMechanismPurpose.IsActive,
+          value: true,
+        },
         sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
       }),
     ];
 
     this.allors.context.pull(pulls).subscribe(
       (loaded) => {
-        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
-        this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.contactMechanismPurposes =
+          loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+        this.partyContactMechanism =
+          this.allors.context.create<PartyContactMechanism>(
+            m.PartyContactMechanism
+          );
         this.webAddress = this.allors.context.create<WebAddress>(m.WebAddress);
         this.partyContactMechanism.ContactMechanism = this.webAddress;
       },

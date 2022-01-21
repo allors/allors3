@@ -17,11 +17,11 @@ import {
 import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
+import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/workspace/meta/json/default';
-import { M, tags } from '@allors/workspace/meta/default';
+import { M, tags } from '@allors/default/workspace/meta';
 import { ruleBuilder } from '@allors/workspace/derivations/default';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -354,8 +354,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ErrorComponent } from './error/error.component';
 import { configure } from './configure';
 import { AppsContext } from '../allors/apps-context';
-import { Configuration } from '@allors/workspace/domain/system';
-import { applyRules } from '@allors/workspace/derivations/system';
+import { Configuration } from '@allors/system/workspace/domain';
+import { applyRules } from '@allors/system/workspace/derivations';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,

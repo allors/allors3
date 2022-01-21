@@ -1,8 +1,22 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortInvoiceItemAssignment, WorkEffortInvoiceItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  WorkEffortInvoiceItemAssignment,
+  WorkEffortInvoiceItem,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -16,7 +30,9 @@ interface Row extends TableRow {
   templateUrl: './workeffortinvoiceassignment-overview-panel.component.html',
   providers: [PanelService],
 })
-export class WorkEffortInvoiceItemAssignmentOverviewPanelComponent implements OnInit {
+export class WorkEffortInvoiceItemAssignmentOverviewPanelComponent
+  implements OnInit
+{
   workEffort: WorkEffort;
 
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -100,13 +116,19 @@ export class WorkEffortInvoiceItemAssignmentOverviewPanelComponent implements On
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
-      this.objects = loaded.collection<WorkEffortInvoiceItemAssignment>(pullName);
+      this.objects =
+        loaded.collection<WorkEffortInvoiceItemAssignment>(pullName);
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.objects?.length ??
+        0) as number;
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,
-          type: `${v.WorkEffortInvoiceItem.InvoiceItemType && v.WorkEffortInvoiceItem.InvoiceItemType.Name}`,
+          type: `${
+            v.WorkEffortInvoiceItem.InvoiceItemType &&
+            v.WorkEffortInvoiceItem.InvoiceItemType.Name
+          }`,
           amount: v.WorkEffortInvoiceItem.Amount,
         } as Row;
       });

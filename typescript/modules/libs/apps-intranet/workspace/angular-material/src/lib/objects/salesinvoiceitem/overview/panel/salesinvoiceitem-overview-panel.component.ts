@@ -1,9 +1,23 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { SalesInvoice, SalesInvoiceItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SalesInvoice,
+  SalesInvoiceItem,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -67,7 +81,14 @@ export class SalesInvoiceItemOverviewPanelComponent {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'item', sort }, { name: 'itemId' }, { name: 'type', sort }, { name: 'state', sort }, { name: 'quantity', sort }, { name: 'totalExVat', sort }],
+      columns: [
+        { name: 'item', sort },
+        { name: 'itemId' },
+        { name: 'type', sort },
+        { name: 'state', sort },
+        { name: 'quantity', sort },
+        { name: 'totalExVat', sort },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -108,11 +129,16 @@ export class SalesInvoiceItemOverviewPanelComponent {
     panel.onPulled = (loaded) => {
       this.salesInvoiceItems = loaded.collection<SalesInvoiceItem>(pullName);
       this.invoice = loaded.object<SalesInvoice>(invoicePullName);
-      this.table.total = ((loaded.value(`${pullName}_total`) as number) ?? this.salesInvoiceItems?.length ?? 0) as number;
+      this.table.total = ((loaded.value(`${pullName}_total`) as number) ??
+        this.salesInvoiceItems?.length ??
+        0) as number;
       this.table.data = this.salesInvoiceItems?.map((v) => {
         return {
           object: v,
-          item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',
+          item:
+            (v.Product && v.Product.Name) ||
+            (v.SerialisedItem && v.SerialisedItem.Name) ||
+            '',
           itemId: `${v.SerialisedItem && v.SerialisedItem.ItemNumber}`,
           type: `${v.InvoiceItemType && v.InvoiceItemType.Name}`,
           state: `${v.SalesInvoiceItemState && v.SalesInvoiceItemState.Name}`,

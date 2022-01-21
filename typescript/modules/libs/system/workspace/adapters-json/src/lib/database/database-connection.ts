@@ -6,18 +6,18 @@ import {
   AccessResponse,
   PermissionRequest,
   PermissionResponse,
-} from '@allors/protocol/json/system';
+} from '@allors/system/common/protocol-json';
 import {
   Grant,
   DatabaseConnection as SystemDatabaseConnection,
   MapMap,
   Revocation,
-} from '@allors/workspace/adapters/system';
+} from '@allors/system/workspace/adapters';
 import {
   Configuration,
   IWorkspace,
   Operations,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import {
   Class,
   MethodType,

@@ -1,9 +1,23 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { PurchaseInvoice, PurchaseInvoiceItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PurchaseInvoice,
+  PurchaseInvoiceItem,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -69,7 +83,14 @@ export class PurchaseInvoiceItemOverviewPanelComponent {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'item', sort }, { name: 'itemId' }, { name: 'type', sort }, { name: 'state', sort }, { name: 'quantity', sort }, { name: 'totalExVat', sort }],
+      columns: [
+        { name: 'item', sort },
+        { name: 'itemId' },
+        { name: 'type', sort },
+        { name: 'state', sort },
+        { name: 'quantity', sort },
+        { name: 'totalExVat', sort },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -111,7 +132,9 @@ export class PurchaseInvoiceItemOverviewPanelComponent {
           item: (v.Part && v.Part.Name) || '',
           itemId: v.SerialisedItem && v.SerialisedItem.ItemNumber,
           type: `${v.InvoiceItemType && v.InvoiceItemType.Name}`,
-          state: `${v.PurchaseInvoiceItemState && v.PurchaseInvoiceItemState.Name}`,
+          state: `${
+            v.PurchaseInvoiceItemState && v.PurchaseInvoiceItemState.Name
+          }`,
           quantity: v.Quantity,
           totalExVat: v.TotalExVat,
         } as Row;

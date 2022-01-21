@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IPullResult, Pull } from '@allors/workspace/domain/system';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { PanelManagerService } from './panel-manager.service';
 
 @Injectable()

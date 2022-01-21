@@ -4,9 +4,26 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { format } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { PositionTypeRate, PositionType } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, EditService, Filter, FilterField, MediaService, NavigationService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PositionTypeRate,
+  PositionType,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  angularFilterFromDefinition,
+  angularSorter,
+  DeleteService,
+  EditService,
+  Filter,
+  FilterField,
+  MediaService,
+  NavigationService,
+  OverviewService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -66,7 +83,14 @@ export class PositionTypeRatesOverviewComponent implements OnInit, OnDestroy {
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'positionType' }, { name: 'rateType' }, { name: 'from', sort }, { name: 'through', sort }, { name: 'rate', sort }, { name: 'frequency' }],
+      columns: [
+        { name: 'positionType' },
+        { name: 'rateType' },
+        { name: 'from', sort },
+        { name: 'through', sort },
+        { name: 'rate', sort },
+        { name: 'frequency' },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
@@ -80,45 +104,65 @@ export class PositionTypeRatesOverviewComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.PositionTypeRate);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.PositionTypeRate({
+                predicate: this.filter.definition.predicate,
+                sorting: sort
+                  ? angularSorter(m.PositionTypeRate)?.create(sort)
+                  : null,
+                include: {
+                  Frequency: x,
+                  RateType: x,
+                },
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+              pull.PositionType({
+                include: {
+                  PositionTypeRate: x,
+                },
+              }),
+            ];
 
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.PositionTypeRate({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.PositionTypeRate)?.create(sort) : null,
-              include: {
-                Frequency: x,
-                RateType: x,
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-            pull.PositionType({
-              include: {
-                PositionTypeRate: x,
-              },
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
@@ -126,7 +170,8 @@ export class PositionTypeRatesOverviewComponent implements OnInit, OnDestroy {
         this.positionTypes = loaded.collection<PositionType>(m.PositionType);
         const objects = loaded.collection<PositionTypeRate>(m.PositionTypeRate);
 
-        this.table.total = (loaded.value('PositionTypeRates_total') ?? 0) as number;
+        this.table.total = (loaded.value('PositionTypeRates_total') ??
+          0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,
@@ -136,7 +181,10 @@ export class PositionTypeRatesOverviewComponent implements OnInit, OnDestroy {
               .join(', '),
             rateType: v.RateType.Name,
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-            through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+            through:
+              v.ThroughDate != null
+                ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+                : '',
             rate: v.Rate,
             frequency: v.Frequency.Name,
           } as Row;

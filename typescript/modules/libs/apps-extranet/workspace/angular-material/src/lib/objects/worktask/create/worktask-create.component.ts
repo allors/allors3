@@ -4,9 +4,22 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Party, InternalOrganisation, ContactMechanism, PartyContactMechanism, WorkTask } from '@allors/workspace/domain/default';
-import { NavigationService, RefreshService, SaveService, SearchFactory, UserId } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Party,
+  InternalOrganisation,
+  ContactMechanism,
+  PartyContactMechanism,
+  WorkTask,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+  UserId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -78,7 +91,8 @@ export class WorkTaskCreateComponent implements OnInit, OnDestroy {
         this.workTask = this.allors.context.create<WorkTask>(m.WorkTask);
 
         if (this.user.CurrentOrganisationContactRelationships.length == 1) {
-          const customer = this.user.CurrentOrganisationContactRelationships[0].Organisation;
+          const customer =
+            this.user.CurrentOrganisationContactRelationships[0].Organisation;
           this.updateCustomer(customer as Party);
           this.workTask.Customer = customer;
         }
@@ -113,8 +127,13 @@ export class WorkTaskCreateComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.contactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.contactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
 
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });

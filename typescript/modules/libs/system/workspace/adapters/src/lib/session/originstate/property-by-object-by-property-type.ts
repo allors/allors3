@@ -1,4 +1,4 @@
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { PropertyType } from '@allors/system/workspace/meta';
 import { MapMap } from '../../collections/map-map';
 import { IRange, Ranges } from '../../collections/ranges/ranges';

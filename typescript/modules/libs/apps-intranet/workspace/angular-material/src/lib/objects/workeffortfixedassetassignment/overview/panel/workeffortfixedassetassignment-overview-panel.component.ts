@@ -1,9 +1,22 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortFixedAssetAssignment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  WorkEffortFixedAssetAssignment,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -116,7 +129,8 @@ export class WorkEffortFAAssignmentOverviewPanelComponent implements OnInit {
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
-      this.objects = loaded.collection<WorkEffortFixedAssetAssignment>(workeffortpullName);
+      this.objects =
+        loaded.collection<WorkEffortFixedAssetAssignment>(workeffortpullName);
 
       this.table.total = this.objects?.length ?? 0;
       this.table.data = this.objects?.map((v) => {
@@ -124,10 +138,15 @@ export class WorkEffortFAAssignmentOverviewPanelComponent implements OnInit {
           object: v,
           number: v.Assignment.WorkEffortNumber,
           name: v.Assignment.Name,
-          status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
+          status: v.Assignment.WorkEffortState
+            ? v.Assignment.WorkEffortState.Name
+            : '',
           asset: v.FixedAsset.Name,
           from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-          through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+          through:
+            v.ThroughDate != null
+              ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+              : '',
         } as Row;
       });
     };

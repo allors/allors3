@@ -3,11 +3,24 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, InternalOrganisation, CommunicationEventPurpose, CommunicationEventState, FaceToFaceCommunication } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  InternalOrganisation,
+  CommunicationEventPurpose,
+  CommunicationEventState,
+  FaceToFaceCommunication,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -51,7 +64,10 @@ export class FaceToFaceCommunicationEditComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -69,7 +85,11 @@ export class FaceToFaceCommunicationEditComponent implements OnInit, OnDestroy {
               },
             }),
             pull.CommunicationEventPurpose({
-              predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.CommunicationEventPurpose.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
             }),
             pull.CommunicationEventState({
@@ -143,27 +163,44 @@ export class FaceToFaceCommunicationEditComponent implements OnInit, OnDestroy {
             ];
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
-        this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
-        this.parties = loaded.collection<Party>(m.CommunicationEvent.InvolvedParties);
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        this.purposes = loaded.collection<CommunicationEventPurpose>(
+          m.CommunicationEventPurpose
+        );
+        this.eventStates = loaded.collection<CommunicationEventState>(
+          m.CommunicationEventState
+        );
+        this.parties = loaded.collection<Party>(
+          m.CommunicationEvent.InvolvedParties
+        );
+        const internalOrganisation = loaded.object<InternalOrganisation>(
+          m.InternalOrganisation
+        );
 
         this.person = loaded.object<Person>(m.Person);
-        this.organisation = loaded.object<Organisation>(m.OrganisationContactRelationship.Organisation);
+        this.organisation = loaded.object<Organisation>(
+          m.OrganisationContactRelationship.Organisation
+        );
 
         if (isCreate) {
           this.title = 'Add Meeting';
-          this.communicationEvent = this.allors.context.create<FaceToFaceCommunication>(m.FaceToFaceCommunication);
+          this.communicationEvent =
+            this.allors.context.create<FaceToFaceCommunication>(
+              m.FaceToFaceCommunication
+            );
 
           this.party = this.organisation || this.person;
         } else {
-          this.communicationEvent = loaded.object<FaceToFaceCommunication>(m.FaceToFaceCommunication);
+          this.communicationEvent = loaded.object<FaceToFaceCommunication>(
+            m.FaceToFaceCommunication
+          );
 
           if (this.communicationEvent.canWriteActualEnd) {
             this.title = 'Edit Meeting';
@@ -179,11 +216,17 @@ export class FaceToFaceCommunicationEditComponent implements OnInit, OnDestroy {
         }
 
         if (internalOrganisation.ActiveEmployees != null) {
-          internalOrganisation.ActiveEmployees?.reduce((c, e) => c.add(e), contacts);
+          internalOrganisation.ActiveEmployees?.reduce(
+            (c, e) => c.add(e),
+            contacts
+          );
         }
 
         if (this.organisation && this.organisation.CurrentContacts != null) {
-          this.organisation.CurrentContacts?.reduce((c, e) => c.add(e), contacts);
+          this.organisation.CurrentContacts?.reduce(
+            (c, e) => c.add(e),
+            contacts
+          );
         }
 
         if (this.person) {
@@ -220,7 +263,9 @@ export class FaceToFaceCommunicationEditComponent implements OnInit, OnDestroy {
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0));
+    this.contacts.sort((a, b) =>
+      a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0
+    );
   }
 
   public save(): void {
@@ -232,7 +277,10 @@ export class FaceToFaceCommunicationEditComponent implements OnInit, OnDestroy {
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+      const relationShip: OrganisationContactRelationship =
+        this.allors.context.create<OrganisationContactRelationship>(
+          this.m.OrganisationContactRelationship
+        );
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }

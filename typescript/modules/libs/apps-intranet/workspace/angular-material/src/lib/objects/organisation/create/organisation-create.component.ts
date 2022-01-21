@@ -4,9 +4,25 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Locale, Organisation, Currency, CustomOrganisationClassification, IndustryClassification, LegalForm, CustomerRelationship, SupplierRelationship, OrganisationRole } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  InternalOrganisation,
+  Locale,
+  Organisation,
+  Currency,
+  CustomOrganisationClassification,
+  IndustryClassification,
+  LegalForm,
+  CustomerRelationship,
+  SupplierRelationship,
+  OrganisationRole,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SingletonId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -65,7 +81,11 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.route.url, this.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.route.url,
+      this.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(([, , internalOrganisationId]) => {
           const id: string = this.route.snapshot.paramMap.get('id');
@@ -85,7 +105,11 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
             }),
             pull.OrganisationRole({}),
             pull.Currency({
-              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Currency.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.CustomOrganisationClassification({
@@ -103,23 +127,41 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
 
-        this.organisation = this.allors.context.create<Organisation>(m.Organisation);
+        this.organisation = this.allors.context.create<Organisation>(
+          m.Organisation
+        );
         this.organisation.IsManufacturer = false;
         this.organisation.IsInternalOrganisation = false;
         this.organisation.CollectiveWorkEffortInvoice = false;
-        this.organisation.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
+        this.organisation.PreferredCurrency =
+          this.internalOrganisation.PreferredCurrency;
 
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.classifications = loaded.collection<CustomOrganisationClassification>(m.CustomOrganisationClassification);
-        this.industries = loaded.collection<IndustryClassification>(m.IndustryClassification);
+        this.classifications =
+          loaded.collection<CustomOrganisationClassification>(
+            m.CustomOrganisationClassification
+          );
+        this.industries = loaded.collection<IndustryClassification>(
+          m.IndustryClassification
+        );
         this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
         this.roles = loaded.collection<OrganisationRole>(m.OrganisationRole);
-        this.customerRole = this.roles?.find((v: OrganisationRole) => v.UniqueId === '8b5e0cee-4c98-42f1-8f18-3638fba943a0');
-        this.supplierRole = this.roles?.find((v: OrganisationRole) => v.UniqueId === '8c6d629b-1e27-4520-aa8c-e8adf93a5095');
-        this.manufacturerRole = this.roles?.find((v: OrganisationRole) => v.UniqueId === '32e74bef-2d79-4427-8902-b093afa81661');
+        this.customerRole = this.roles?.find(
+          (v: OrganisationRole) =>
+            v.UniqueId === '8b5e0cee-4c98-42f1-8f18-3638fba943a0'
+        );
+        this.supplierRole = this.roles?.find(
+          (v: OrganisationRole) =>
+            v.UniqueId === '8c6d629b-1e27-4520-aa8c-e8adf93a5095'
+        );
+        this.manufacturerRole = this.roles?.find(
+          (v: OrganisationRole) =>
+            v.UniqueId === '32e74bef-2d79-4427-8902-b093afa81661'
+        );
         this.selectableRoles.push(this.customerRole);
         this.selectableRoles.push(this.supplierRole);
       });
@@ -133,13 +175,19 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
 
   public save(): void {
     if (this.activeRoles.indexOf(this.customerRole) > -1) {
-      const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+      const customerRelationship =
+        this.allors.context.create<CustomerRelationship>(
+          this.m.CustomerRelationship
+        );
       customerRelationship.Customer = this.organisation;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
 
     if (this.activeRoles.indexOf(this.supplierRole) > -1) {
-      const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
+      const supplierRelationship =
+        this.allors.context.create<SupplierRelationship>(
+          this.m.SupplierRelationship
+        );
       supplierRelationship.Supplier = this.organisation;
       supplierRelationship.InternalOrganisation = this.internalOrganisation;
     }

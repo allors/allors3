@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Part,
   SupplierOffering,
@@ -32,9 +32,14 @@ import {
   Product,
   UnifiedGood,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { And, IObject } from '@allors/workspace/domain/system';
+import { And, IObject } from '@allors/system/workspace/domain';
 import { Filters } from '../../../filters/filters';
 
 @Component({
@@ -137,7 +142,11 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
           const pulls = [
             pull.SerialisedItemAvailability({}),
             pull.SerialisedInventoryItemState({
-              predicate: { kind: 'Equals', propertyType: m.SerialisedInventoryItemState.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.SerialisedInventoryItemState.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
             }),
             pull.RequestItemState({}),
@@ -232,86 +241,236 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
 
           this.goodsFilter = Filters.goodsFilter(m);
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
         this.shipmentItem = loaded.object<ShipmentItem>(m.ShipmentItem);
-        this.shipment = loaded.object<Shipment>(m.Shipment) || this.shipmentItem.SyncedShipment;
-        this.isCustomerShipment = this.shipment.strategy.cls === this.m.CustomerShipment;
-        this.isPurchaseShipment = this.shipment.strategy.cls === this.m.PurchaseShipment;
+        this.shipment =
+          loaded.object<Shipment>(m.Shipment) ||
+          this.shipmentItem.SyncedShipment;
+        this.isCustomerShipment =
+          this.shipment.strategy.cls === this.m.CustomerShipment;
+        this.isPurchaseShipment =
+          this.shipment.strategy.cls === this.m.PurchaseShipment;
 
         this.facilities = loaded.collection<Facility>(m.Facility);
-        this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
-        this.sold = this.serialisedItemAvailabilities?.find((v: SerialisedItemAvailability) => v.UniqueId === '9bdc0a55-4e3c-4604-b054-2441a551aa1c');
+        this.serialisedItemAvailabilities =
+          loaded.collection<SerialisedItemAvailability>(
+            m.SerialisedItemAvailability
+          );
+        this.sold = this.serialisedItemAvailabilities?.find(
+          (v: SerialisedItemAvailability) =>
+            v.UniqueId === '9bdc0a55-4e3c-4604-b054-2441a551aa1c'
+        );
 
-        const salesOrderStates = loaded.collection<SalesOrderState>(m.SalesOrderState);
-        const inProcess = salesOrderStates?.find((v) => v.UniqueId === 'ddbb678e-9a66-4842-87fd-4e628cff0a75');
+        const salesOrderStates = loaded.collection<SalesOrderState>(
+          m.SalesOrderState
+        );
+        const inProcess = salesOrderStates?.find(
+          (v) => v.UniqueId === 'ddbb678e-9a66-4842-87fd-4e628cff0a75'
+        );
 
-        this.provisionalOrder = salesOrderStates?.find((v: SalesOrderState) => v.UniqueId === '29abc67d-4be1-4af3-b993-64e9e36c3e6b');
-        this.readyForPostingOrder = salesOrderStates?.find((v: SalesOrderState) => v.UniqueId === 'e8e7c70b-e920-4f70-96d4-a689518f602c');
-        this.requestsApprovalOrder = salesOrderStates?.find((v: SalesOrderState) => v.UniqueId === '6b6f6e25-4da1-455d-9c9f-21f2d4316d66');
-        this.awaitingAcceptanceOrder = salesOrderStates?.find((v: SalesOrderState) => v.UniqueId === '37d344e7-5962-425c-86a9-24bf1e098448');
-        this.inProcessOrder = salesOrderStates?.find((v: SalesOrderState) => v.UniqueId === 'ddbb678e-9a66-4842-87fd-4e628cff0a75');
-        this.onHoldOrder = salesOrderStates?.find((v: SalesOrderState) => v.UniqueId === 'f625fb7e-893e-4f68-ab7b-2bc29a644e5b');
+        this.provisionalOrder = salesOrderStates?.find(
+          (v: SalesOrderState) =>
+            v.UniqueId === '29abc67d-4be1-4af3-b993-64e9e36c3e6b'
+        );
+        this.readyForPostingOrder = salesOrderStates?.find(
+          (v: SalesOrderState) =>
+            v.UniqueId === 'e8e7c70b-e920-4f70-96d4-a689518f602c'
+        );
+        this.requestsApprovalOrder = salesOrderStates?.find(
+          (v: SalesOrderState) =>
+            v.UniqueId === '6b6f6e25-4da1-455d-9c9f-21f2d4316d66'
+        );
+        this.awaitingAcceptanceOrder = salesOrderStates?.find(
+          (v: SalesOrderState) =>
+            v.UniqueId === '37d344e7-5962-425c-86a9-24bf1e098448'
+        );
+        this.inProcessOrder = salesOrderStates?.find(
+          (v: SalesOrderState) =>
+            v.UniqueId === 'ddbb678e-9a66-4842-87fd-4e628cff0a75'
+        );
+        this.onHoldOrder = salesOrderStates?.find(
+          (v: SalesOrderState) =>
+            v.UniqueId === 'f625fb7e-893e-4f68-ab7b-2bc29a644e5b'
+        );
 
-        const salesOrderItemStates = loaded.collection<SalesOrderItemState>(m.SalesOrderItemState);
-        this.provisionalOrderItem = salesOrderItemStates?.find((v: SalesOrderItemState) => v.UniqueId === '5b0993b5-5784-4e8d-b1ad-93affac9a913');
-        this.readyForPostingOrderItem = salesOrderItemStates?.find((v: SalesOrderItemState) => v.UniqueId === '6e4f9535-a7ce-483f-9fbd-c9fd331d355e');
-        this.requestsApprovalOrderItem = salesOrderItemStates?.find((v: SalesOrderItemState) => v.UniqueId === '8d3a4a0a-ed27-4478-baff-ece591068712');
-        this.awaitingAcceptanceOrderItem = salesOrderItemStates?.find((v: SalesOrderItemState) => v.UniqueId === 'd3965e9b-764d-4787-87b4-82cb2acb0878');
-        this.inProcessOrderItem = salesOrderItemStates?.find((v: SalesOrderItemState) => v.UniqueId === 'e08401f7-1deb-4b27-b0c5-8f034bffedb5');
-        this.onHoldOrderItem = salesOrderItemStates?.find((v: SalesOrderItemState) => v.UniqueId === '3b185d51-af4a-441e-be0d-f91cfcbdb5d8');
+        const salesOrderItemStates = loaded.collection<SalesOrderItemState>(
+          m.SalesOrderItemState
+        );
+        this.provisionalOrderItem = salesOrderItemStates?.find(
+          (v: SalesOrderItemState) =>
+            v.UniqueId === '5b0993b5-5784-4e8d-b1ad-93affac9a913'
+        );
+        this.readyForPostingOrderItem = salesOrderItemStates?.find(
+          (v: SalesOrderItemState) =>
+            v.UniqueId === '6e4f9535-a7ce-483f-9fbd-c9fd331d355e'
+        );
+        this.requestsApprovalOrderItem = salesOrderItemStates?.find(
+          (v: SalesOrderItemState) =>
+            v.UniqueId === '8d3a4a0a-ed27-4478-baff-ece591068712'
+        );
+        this.awaitingAcceptanceOrderItem = salesOrderItemStates?.find(
+          (v: SalesOrderItemState) =>
+            v.UniqueId === 'd3965e9b-764d-4787-87b4-82cb2acb0878'
+        );
+        this.inProcessOrderItem = salesOrderItemStates?.find(
+          (v: SalesOrderItemState) =>
+            v.UniqueId === 'e08401f7-1deb-4b27-b0c5-8f034bffedb5'
+        );
+        this.onHoldOrderItem = salesOrderItemStates?.find(
+          (v: SalesOrderItemState) =>
+            v.UniqueId === '3b185d51-af4a-441e-be0d-f91cfcbdb5d8'
+        );
 
-        const requestItemStates = loaded.collection<RequestItemState>(m.RequestItemState);
-        this.draftRequestItem = requestItemStates?.find((v: RequestItemState) => v.UniqueId === 'b173dfbe-9421-4697-8ffb-e46afc724490');
-        this.submittedRequestItem = requestItemStates?.find((v: RequestItemState) => v.UniqueId === 'b118c185-de34-4131-be1f-e6162c1dea4b');
+        const requestItemStates = loaded.collection<RequestItemState>(
+          m.RequestItemState
+        );
+        this.draftRequestItem = requestItemStates?.find(
+          (v: RequestItemState) =>
+            v.UniqueId === 'b173dfbe-9421-4697-8ffb-e46afc724490'
+        );
+        this.submittedRequestItem = requestItemStates?.find(
+          (v: RequestItemState) =>
+            v.UniqueId === 'b118c185-de34-4131-be1f-e6162c1dea4b'
+        );
 
         const requestStates = loaded.collection<RequestState>(m.RequestState);
-        this.anonymousRequest = requestStates?.find((v: RequestState) => v.UniqueId === '2f054949-e30c-4954-9a3c-191559de8315');
-        this.submittedRequest = requestStates?.find((v: RequestState) => v.UniqueId === 'db03407d-bcb1-433a-b4e9-26cea9a71bfd');
-        this.pendingCustomerRequest = requestStates?.find((v: RequestState) => v.UniqueId === '671fda2f-5aa6-4ea5-b5d6-c914f0911690');
+        this.anonymousRequest = requestStates?.find(
+          (v: RequestState) =>
+            v.UniqueId === '2f054949-e30c-4954-9a3c-191559de8315'
+        );
+        this.submittedRequest = requestStates?.find(
+          (v: RequestState) =>
+            v.UniqueId === 'db03407d-bcb1-433a-b4e9-26cea9a71bfd'
+        );
+        this.pendingCustomerRequest = requestStates?.find(
+          (v: RequestState) =>
+            v.UniqueId === '671fda2f-5aa6-4ea5-b5d6-c914f0911690'
+        );
 
-        const quoteItemStates = loaded.collection<QuoteItemState>(m.QuoteItemState);
-        this.draftQuoteItem = quoteItemStates?.find((v: QuoteItemState) => v.UniqueId === '84ad17a3-10f7-4fdb-b76a-41bdb1edb0e6');
-        this.submittedQuoteItem = quoteItemStates?.find((v: QuoteItemState) => v.UniqueId === 'e511ea2d-6eb9-428d-a982-b097938a8ff8');
-        this.approvedQuoteItem = quoteItemStates?.find((v: QuoteItemState) => v.UniqueId === '3335810c-9e26-4604-b272-d18b831e79e0');
-        this.awaitingApprovalQuoteItem = quoteItemStates?.find((v: QuoteItemState) => v.UniqueId === '76155bb7-53a3-4175-b026-74274a337820');
-        this.awaitingAcceptanceQuoteItem = quoteItemStates?.find((v: QuoteItemState) => v.UniqueId === 'e0982b61-deb1-47cb-851b-c182f03326a1');
-        this.acceptedQuoteItem = quoteItemStates?.find((v: QuoteItemState) => v.UniqueId === '6e56c9f1-7bea-4ced-a724-67e4221a5993');
+        const quoteItemStates = loaded.collection<QuoteItemState>(
+          m.QuoteItemState
+        );
+        this.draftQuoteItem = quoteItemStates?.find(
+          (v: QuoteItemState) =>
+            v.UniqueId === '84ad17a3-10f7-4fdb-b76a-41bdb1edb0e6'
+        );
+        this.submittedQuoteItem = quoteItemStates?.find(
+          (v: QuoteItemState) =>
+            v.UniqueId === 'e511ea2d-6eb9-428d-a982-b097938a8ff8'
+        );
+        this.approvedQuoteItem = quoteItemStates?.find(
+          (v: QuoteItemState) =>
+            v.UniqueId === '3335810c-9e26-4604-b272-d18b831e79e0'
+        );
+        this.awaitingApprovalQuoteItem = quoteItemStates?.find(
+          (v: QuoteItemState) =>
+            v.UniqueId === '76155bb7-53a3-4175-b026-74274a337820'
+        );
+        this.awaitingAcceptanceQuoteItem = quoteItemStates?.find(
+          (v: QuoteItemState) =>
+            v.UniqueId === 'e0982b61-deb1-47cb-851b-c182f03326a1'
+        );
+        this.acceptedQuoteItem = quoteItemStates?.find(
+          (v: QuoteItemState) =>
+            v.UniqueId === '6e56c9f1-7bea-4ced-a724-67e4221a5993'
+        );
 
         const quoteStates = loaded.collection<QuoteState>(m.QuoteState);
-        this.createdQuote = quoteStates?.find((v: QuoteState) => v.UniqueId === 'b1565cd4-d01a-4623-bf19-8c816df96aa6');
-        this.approvedQuote = quoteStates?.find((v: QuoteState) => v.UniqueId === '675d6899-1ebb-4fdb-9dc9-b8aef0a135d2');
-        this.awaitingAcceptanceQuote = quoteStates?.find((v: QuoteState) => v.UniqueId === '324beb70-937f-4c4d-a7e9-2e3063c88a62');
-        this.acceptedQuote = quoteStates?.find((v: QuoteState) => v.UniqueId === '3943f87c-f098-49c8-89ba-12047c826777');
+        this.createdQuote = quoteStates?.find(
+          (v: QuoteState) =>
+            v.UniqueId === 'b1565cd4-d01a-4623-bf19-8c816df96aa6'
+        );
+        this.approvedQuote = quoteStates?.find(
+          (v: QuoteState) =>
+            v.UniqueId === '675d6899-1ebb-4fdb-9dc9-b8aef0a135d2'
+        );
+        this.awaitingAcceptanceQuote = quoteStates?.find(
+          (v: QuoteState) =>
+            v.UniqueId === '324beb70-937f-4c4d-a7e9-2e3063c88a62'
+        );
+        this.acceptedQuote = quoteStates?.find(
+          (v: QuoteState) =>
+            v.UniqueId === '3943f87c-f098-49c8-89ba-12047c826777'
+        );
 
-        const shipmentItemStates = loaded.collection<ShipmentItemState>(m.ShipmentItemState);
-        this.createdShipmentItem = shipmentItemStates?.find((v: ShipmentItemState) => v.UniqueId === 'e05818b1-2660-4879-b5a8-8ca96f324f7b');
-        this.pickingShipmentItem = shipmentItemStates?.find((v: ShipmentItemState) => v.UniqueId === 'f9043add-e106-4646-8b02-6b10efbb2e87');
-        this.pickedShipmentItem = shipmentItemStates?.find((v: ShipmentItemState) => v.UniqueId === 'a8e2014f-c4cb-4a6f-8ccf-0875e439d1f3');
-        this.packedShipmentItem = shipmentItemStates?.find((v: ShipmentItemState) => v.UniqueId === '91853258-c875-4f85-bd84-ef1ebd2e5930');
+        const shipmentItemStates = loaded.collection<ShipmentItemState>(
+          m.ShipmentItemState
+        );
+        this.createdShipmentItem = shipmentItemStates?.find(
+          (v: ShipmentItemState) =>
+            v.UniqueId === 'e05818b1-2660-4879-b5a8-8ca96f324f7b'
+        );
+        this.pickingShipmentItem = shipmentItemStates?.find(
+          (v: ShipmentItemState) =>
+            v.UniqueId === 'f9043add-e106-4646-8b02-6b10efbb2e87'
+        );
+        this.pickedShipmentItem = shipmentItemStates?.find(
+          (v: ShipmentItemState) =>
+            v.UniqueId === 'a8e2014f-c4cb-4a6f-8ccf-0875e439d1f3'
+        );
+        this.packedShipmentItem = shipmentItemStates?.find(
+          (v: ShipmentItemState) =>
+            v.UniqueId === '91853258-c875-4f85-bd84-ef1ebd2e5930'
+        );
 
-        const shipmentStates = loaded.collection<ShipmentState>(m.ShipmentState);
-        this.createdShipment = shipmentStates?.find((v: ShipmentState) => v.UniqueId === '854ad6a0-b2d1-4b92-8c3d-e9e72dd19afd');
-        this.pickingShipment = shipmentStates?.find((v: ShipmentState) => v.UniqueId === '1d76de65-4de4-494d-8677-653b4d62aa42');
-        this.pickedShipment = shipmentStates?.find((v: ShipmentState) => v.UniqueId === 'c63c5d25-f139-490f-86d1-2e9e51f5c0a5');
-        this.packedShipment = shipmentStates?.find((v: ShipmentState) => v.UniqueId === 'dcabe845-a6f2-49d9-bbae-06fb47012a21');
-        this.onholdShipment = shipmentStates?.find((v: ShipmentState) => v.UniqueId === '268cb9a7-6965-47e8-af89-8f915242c23d');
+        const shipmentStates = loaded.collection<ShipmentState>(
+          m.ShipmentState
+        );
+        this.createdShipment = shipmentStates?.find(
+          (v: ShipmentState) =>
+            v.UniqueId === '854ad6a0-b2d1-4b92-8c3d-e9e72dd19afd'
+        );
+        this.pickingShipment = shipmentStates?.find(
+          (v: ShipmentState) =>
+            v.UniqueId === '1d76de65-4de4-494d-8677-653b4d62aa42'
+        );
+        this.pickedShipment = shipmentStates?.find(
+          (v: ShipmentState) =>
+            v.UniqueId === 'c63c5d25-f139-490f-86d1-2e9e51f5c0a5'
+        );
+        this.packedShipment = shipmentStates?.find(
+          (v: ShipmentState) =>
+            v.UniqueId === 'dcabe845-a6f2-49d9-bbae-06fb47012a21'
+        );
+        this.onholdShipment = shipmentStates?.find(
+          (v: ShipmentState) =>
+            v.UniqueId === '268cb9a7-6965-47e8-af89-8f915242c23d'
+        );
 
-        const purchaseOrderStates = loaded.collection<PurchaseOrderState>(m.PurchaseOrderState);
-        const purchaseOrderinProcess = purchaseOrderStates?.find((v) => v.UniqueId === '7752f5c5-b19b-4339-a937-0bad768142a8');
+        const purchaseOrderStates = loaded.collection<PurchaseOrderState>(
+          m.PurchaseOrderState
+        );
+        const purchaseOrderinProcess = purchaseOrderStates?.find(
+          (v) => v.UniqueId === '7752f5c5-b19b-4339-a937-0bad768142a8'
+        );
 
-        const salesOrderItems = loaded.collection<SalesOrderItem>(m.SalesOrderItem);
+        const salesOrderItems = loaded.collection<SalesOrderItem>(
+          m.SalesOrderItem
+        );
         if (salesOrderItems) {
-          this.salesOrderItems = salesOrderItems?.filter((v) => v.SalesOrderWhereSalesOrderItem.SalesOrderState === inProcess && parseFloat(v.QuantityRequestsShipping) > 0);
+          this.salesOrderItems = salesOrderItems?.filter(
+            (v) =>
+              v.SalesOrderWhereSalesOrderItem.SalesOrderState === inProcess &&
+              parseFloat(v.QuantityRequestsShipping) > 0
+          );
         }
 
-        const purchaseOrderItems = loaded.collection<PurchaseOrderItem>(m.PurchaseOrderItem);
+        const purchaseOrderItems = loaded.collection<PurchaseOrderItem>(
+          m.PurchaseOrderItem
+        );
         if (purchaseOrderItems) {
-          this.purchaseOrderItems = purchaseOrderItems?.filter((v) => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState === purchaseOrderinProcess);
+          this.purchaseOrderItems = purchaseOrderItems?.filter(
+            (v) =>
+              v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState ===
+              purchaseOrderinProcess
+          );
         }
 
         if (this.isPurchaseShipment) {
@@ -325,7 +484,11 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
                 extent: {
                   kind: 'Filter',
                   objectType: this.m.SupplierOffering,
-                  predicate: { kind: 'Equals', propertyType: m.SupplierOffering.Supplier, object: this.shipment.ShipFromParty },
+                  predicate: {
+                    kind: 'Equals',
+                    propertyType: m.SupplierOffering.Supplier,
+                    object: this.shipment.ShipFromParty,
+                  },
                 },
               });
             },
@@ -334,23 +497,29 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
 
         if (isCreate) {
           this.title = 'Add Shipment Item';
-          this.shipmentItem = this.allors.context.create<ShipmentItem>(m.ShipmentItem);
+          this.shipmentItem = this.allors.context.create<ShipmentItem>(
+            m.ShipmentItem
+          );
           this.selectedFacility = this.shipment.ShipToFacility;
 
           this.shipment.addShipmentItem(this.shipmentItem);
         } else {
           // This UI does not allow shipmentitem to be combination from multiple order items
-          const orderShipments = loaded.collection<OrderShipment>(m.ShipmentItem.OrderShipmentsWhereShipmentItem);
+          const orderShipments = loaded.collection<OrderShipment>(
+            m.ShipmentItem.OrderShipmentsWhereShipmentItem
+          );
           if (orderShipments && orderShipments.length > 0) {
             this.orderShipment = orderShipments[0];
             if (this.orderShipment.OrderItem) {
               if (this.isCustomerShipment) {
-                this.selectedSalesOrderItem = this.orderShipment.OrderItem as SalesOrderItem;
+                this.selectedSalesOrderItem = this.orderShipment
+                  .OrderItem as SalesOrderItem;
                 this.salesOrderItems.push(this.selectedSalesOrderItem);
               }
 
               if (this.isPurchaseShipment) {
-                this.selectedPurchaseOrderItem = this.orderShipment.OrderItem as PurchaseOrderItem;
+                this.selectedPurchaseOrderItem = this.orderShipment
+                  .OrderItem as PurchaseOrderItem;
                 this.purchaseOrderItems.push(this.selectedPurchaseOrderItem);
               }
             }
@@ -436,11 +605,17 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
   public serialisedItemSelected(obj: IObject): void {
     if (obj) {
       const serialisedItem = obj as SerialisedItem;
-      const onRequestItem = serialisedItem.RequestItemsWhereSerialisedItem?.find(
-        (v) =>
-          (v.RequestItemState === this.draftRequestItem || v.RequestItemState === this.submittedRequestItem) &&
-          (v.RequestWhereRequestItem.RequestState === this.anonymousRequest || v.RequestWhereRequestItem.RequestState === this.submittedRequest || v.RequestWhereRequestItem.RequestState === this.pendingCustomerRequest)
-      );
+      const onRequestItem =
+        serialisedItem.RequestItemsWhereSerialisedItem?.find(
+          (v) =>
+            (v.RequestItemState === this.draftRequestItem ||
+              v.RequestItemState === this.submittedRequestItem) &&
+            (v.RequestWhereRequestItem.RequestState === this.anonymousRequest ||
+              v.RequestWhereRequestItem.RequestState ===
+                this.submittedRequest ||
+              v.RequestWhereRequestItem.RequestState ===
+                this.pendingCustomerRequest)
+        );
 
       const onQuoteItem = serialisedItem.QuoteItemsWhereSerialisedItem?.find(
         (v) =>
@@ -456,46 +631,74 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
             v.QuoteWhereQuoteItem.QuoteState === this.acceptedQuote)
       );
 
-      const onOrderItem = serialisedItem.SalesOrderItemsWhereSerialisedItem?.find(
-        (v) =>
-          (v.SalesOrderItemState === this.provisionalOrderItem ||
-            v.SalesOrderItemState === this.readyForPostingOrderItem ||
-            v.SalesOrderItemState === this.requestsApprovalOrderItem ||
-            v.SalesOrderItemState === this.awaitingAcceptanceOrderItem ||
-            v.SalesOrderItemState === this.onHoldOrderItem ||
-            v.SalesOrderItemState === this.inProcessOrderItem) &&
-          (v.SalesOrderWhereSalesOrderItem.SalesOrderState === this.provisionalOrder ||
-            v.SalesOrderWhereSalesOrderItem.SalesOrderState === this.readyForPostingOrder ||
-            v.SalesOrderWhereSalesOrderItem.SalesOrderState === this.requestsApprovalOrder ||
-            v.SalesOrderWhereSalesOrderItem.SalesOrderState === this.awaitingAcceptanceOrder ||
-            v.SalesOrderWhereSalesOrderItem.SalesOrderState === this.onHoldOrder ||
-            v.SalesOrderWhereSalesOrderItem.SalesOrderState === this.inProcessOrder)
-      );
+      const onOrderItem =
+        serialisedItem.SalesOrderItemsWhereSerialisedItem?.find(
+          (v) =>
+            (v.SalesOrderItemState === this.provisionalOrderItem ||
+              v.SalesOrderItemState === this.readyForPostingOrderItem ||
+              v.SalesOrderItemState === this.requestsApprovalOrderItem ||
+              v.SalesOrderItemState === this.awaitingAcceptanceOrderItem ||
+              v.SalesOrderItemState === this.onHoldOrderItem ||
+              v.SalesOrderItemState === this.inProcessOrderItem) &&
+            (v.SalesOrderWhereSalesOrderItem.SalesOrderState ===
+              this.provisionalOrder ||
+              v.SalesOrderWhereSalesOrderItem.SalesOrderState ===
+                this.readyForPostingOrder ||
+              v.SalesOrderWhereSalesOrderItem.SalesOrderState ===
+                this.requestsApprovalOrder ||
+              v.SalesOrderWhereSalesOrderItem.SalesOrderState ===
+                this.awaitingAcceptanceOrder ||
+              v.SalesOrderWhereSalesOrderItem.SalesOrderState ===
+                this.onHoldOrder ||
+              v.SalesOrderWhereSalesOrderItem.SalesOrderState ===
+                this.inProcessOrder)
+        );
 
-      const onOtherShipmentItem = serialisedItem.ShipmentItemsWhereSerialisedItem?.find(
-        (v) =>
-          (v.ShipmentItemState === this.createdShipmentItem || v.ShipmentItemState === this.pickingShipmentItem || v.ShipmentItemState === this.pickedShipmentItem || v.ShipmentItemState === this.packedShipmentItem) &&
-          (v.ShipmentWhereShipmentItem?.ShipmentState === this.createdShipment ||
-            v.ShipmentWhereShipmentItem?.ShipmentState === this.pickingShipment ||
-            v.ShipmentWhereShipmentItem?.ShipmentState === this.pickingShipment ||
-            v.ShipmentWhereShipmentItem?.ShipmentState === this.packedShipment ||
-            v.ShipmentWhereShipmentItem?.ShipmentState === this.onholdShipment)
-      );
+      const onOtherShipmentItem =
+        serialisedItem.ShipmentItemsWhereSerialisedItem?.find(
+          (v) =>
+            (v.ShipmentItemState === this.createdShipmentItem ||
+              v.ShipmentItemState === this.pickingShipmentItem ||
+              v.ShipmentItemState === this.pickedShipmentItem ||
+              v.ShipmentItemState === this.packedShipmentItem) &&
+            (v.ShipmentWhereShipmentItem?.ShipmentState ===
+              this.createdShipment ||
+              v.ShipmentWhereShipmentItem?.ShipmentState ===
+                this.pickingShipment ||
+              v.ShipmentWhereShipmentItem?.ShipmentState ===
+                this.pickingShipment ||
+              v.ShipmentWhereShipmentItem?.ShipmentState ===
+                this.packedShipment ||
+              v.ShipmentWhereShipmentItem?.ShipmentState ===
+                this.onholdShipment)
+        );
 
       if (onRequestItem) {
-        this.snackBar.open(`Item already requested with ${onRequestItem.RequestWhereRequestItem.RequestNumber}`, 'close');
+        this.snackBar.open(
+          `Item already requested with ${onRequestItem.RequestWhereRequestItem.RequestNumber}`,
+          'close'
+        );
       }
 
       if (onQuoteItem) {
-        this.snackBar.open(`Item already quoted with ${onQuoteItem.QuoteWhereQuoteItem.QuoteNumber}`, 'close');
+        this.snackBar.open(
+          `Item already quoted with ${onQuoteItem.QuoteWhereQuoteItem.QuoteNumber}`,
+          'close'
+        );
       }
 
       if (onOrderItem) {
-        this.snackBar.open(`Item already ordered with ${onOrderItem.SalesOrderWhereSalesOrderItem.OrderNumber}`, 'close');
+        this.snackBar.open(
+          `Item already ordered with ${onOrderItem.SalesOrderWhereSalesOrderItem.OrderNumber}`,
+          'close'
+        );
       }
 
       if (onOtherShipmentItem) {
-        this.snackBar.open(`Item already shipped with ${onOtherShipmentItem.ShipmentWhereShipmentItem.ShipmentNumber}`, 'close');
+        this.snackBar.open(
+          `Item already shipped with ${onOtherShipmentItem.ShipmentWhereShipmentItem.ShipmentNumber}`,
+          'close'
+        );
       }
 
       this.shipmentItem.Quantity = '1';
@@ -585,14 +788,22 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const part = loaded.object<UnifiedGood>(m.UnifiedGood) || loaded.object<Part>(m.Part);
+      const part =
+        loaded.object<UnifiedGood>(m.UnifiedGood) ||
+        loaded.object<Part>(m.Part);
 
-      this.isSerialized = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+      this.isSerialized =
+        part.InventoryItemKind.UniqueId ===
+        '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
       if (this.isCustomerShipment) {
-        this.serialisedItems = part.SerialisedItems.filter((v) => v.AvailableForSale === true);
+        this.serialisedItems = part.SerialisedItems.filter(
+          (v) => v.AvailableForSale === true
+        );
       } else {
-        this.serialisedItems = part.SerialisedItems.filter((v) => v.SerialisedInventoryItemsWhereSerialisedItem.length === 0);
+        this.serialisedItems = part.SerialisedItems.filter(
+          (v) => v.SerialisedInventoryItemsWhereSerialisedItem.length === 0
+        );
       }
 
       if (this.shipmentItem.Good !== this.previousGood) {
@@ -627,7 +838,9 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.isSerialized = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+      this.isSerialized =
+        part.InventoryItemKind.UniqueId ===
+        '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
       this.inventoryItems = loaded.collection<InventoryItem>(m.InventoryItem);
 
       if (this.shipmentItem.Part !== this.previousPart) {
@@ -640,7 +853,9 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
   private onSave() {
     if (this.selectedSalesOrderItem) {
       if (this.orderShipment == null) {
-        this.orderShipment = this.allors.context.create<OrderShipment>(this.m.OrderShipment);
+        this.orderShipment = this.allors.context.create<OrderShipment>(
+          this.m.OrderShipment
+        );
       }
 
       this.orderShipment.OrderItem = this.selectedSalesOrderItem;

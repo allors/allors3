@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Part,
   Facility,
@@ -17,7 +17,11 @@ import {
   NonSerialisedInventoryItemState,
   SerialisedInventoryItemState,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -26,7 +30,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './inventoryitemtransaction-edit.component.html',
   providers: [ContextService],
 })
-export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy {
+export class InventoryItemTransactionEditComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   title = 'Add Inventory Item Transaction';
@@ -104,16 +110,26 @@ export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy 
             }),
           ];
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded })));
         })
       )
       .subscribe(({ loaded }) => {
         this.allors.context.reset();
 
-        this.inventoryTransactionReasons = loaded.collection(m.InventoryTransactionReason);
-        this.nonSerialisedInventoryItemState = loaded.collection(m.NonSerialisedInventoryItemState);
-        this.serialisedInventoryItemState = loaded.collection(m.SerialisedInventoryItemState);
-        this.part = loaded.object(m.Part) || loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
+        this.inventoryTransactionReasons = loaded.collection(
+          m.InventoryTransactionReason
+        );
+        this.nonSerialisedInventoryItemState = loaded.collection(
+          m.NonSerialisedInventoryItemState
+        );
+        this.serialisedInventoryItemState = loaded.collection(
+          m.SerialisedInventoryItemState
+        );
+        this.part =
+          loaded.object(m.Part) ||
+          loaded.object<Part>(m.SerialisedItem.PartWhereSerialisedItem);
         this.facilities = loaded.collection(m.Facility);
         this.lots = loaded.collection(m.Lot);
         this.serialisedItem = loaded.object(m.SerialisedItem);
@@ -128,24 +144,34 @@ export class InventoryItemTransactionEditComponent implements OnInit, OnDestroy 
           this.nonSerialisedInventoryItem = loaded.object(m.InventoryItem);
           this.part = this.inventoryItem.Part;
           this.selectedFacility = this.inventoryItem.Facility;
-          this.serialised = this.inventoryItem.Part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+          this.serialised =
+            this.inventoryItem.Part.InventoryItemKind.UniqueId ===
+            '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
         }
 
-        this.inventoryItemTransaction = this.allors.context.create<InventoryItemTransaction>(m.InventoryItemTransaction);
+        this.inventoryItemTransaction =
+          this.allors.context.create<InventoryItemTransaction>(
+            m.InventoryItemTransaction
+          );
         this.inventoryItemTransaction.TransactionDate = new Date();
         this.inventoryItemTransaction.Part = this.part;
-        this.inventoryItemTransaction.Cost = this.part.PartWeightedAverage?.AverageCost;
+        this.inventoryItemTransaction.Cost =
+          this.part.PartWeightedAverage?.AverageCost;
 
         if (this.inventoryItem) {
           this.inventoryItemTransaction.Facility = this.inventoryItem.Facility;
-          this.inventoryItemTransaction.UnitOfMeasure = this.inventoryItem.UnitOfMeasure;
+          this.inventoryItemTransaction.UnitOfMeasure =
+            this.inventoryItem.UnitOfMeasure;
           this.inventoryItemTransaction.Lot = this.inventoryItem.Lot;
 
           if (this.serialised) {
-            this.inventoryItemTransaction.SerialisedItem = this.serialisedInventoryItem.SerialisedItem;
-            this.inventoryItemTransaction.SerialisedInventoryItemState = this.serialisedInventoryItem.SerialisedInventoryItemState;
+            this.inventoryItemTransaction.SerialisedItem =
+              this.serialisedInventoryItem.SerialisedItem;
+            this.inventoryItemTransaction.SerialisedInventoryItemState =
+              this.serialisedInventoryItem.SerialisedInventoryItemState;
           } else {
-            this.inventoryItemTransaction.NonSerialisedInventoryItemState = this.nonSerialisedInventoryItem.NonSerialisedInventoryItemState;
+            this.inventoryItemTransaction.NonSerialisedInventoryItemState =
+              this.nonSerialisedInventoryItem.NonSerialisedInventoryItemState;
           }
         }
 

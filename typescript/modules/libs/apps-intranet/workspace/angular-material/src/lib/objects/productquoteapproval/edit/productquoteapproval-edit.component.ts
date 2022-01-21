@@ -3,11 +3,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { ProductQuoteApproval } from '@allors/workspace/domain/default';
-import { Action, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  Action,
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IResult } from '@allors/workspace/domain/system';
+import { IResult } from '@allors/system/workspace/domain';
 
 import { PrintService } from '../../../actions/print/print.service';
 
@@ -65,7 +70,9 @@ export class ProductQuoteApprovalEditComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        this.productQuoteApproval = loaded.object<ProductQuoteApproval>(m.ProductQuoteApproval);
+        this.productQuoteApproval = loaded.object<ProductQuoteApproval>(
+          m.ProductQuoteApproval
+        );
 
         this.title = this.productQuoteApproval.Title;
       });
@@ -78,11 +85,15 @@ export class ProductQuoteApprovalEditComponent implements OnInit, OnDestroy {
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.productQuoteApproval.Approve));
+    this.saveAndInvoke(() =>
+      this.allors.context.invoke(this.productQuoteApproval.Approve)
+    );
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.productQuoteApproval.Reject));
+    this.saveAndInvoke(() =>
+      this.allors.context.invoke(this.productQuoteApproval.Reject)
+    );
   }
 
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
@@ -93,7 +104,9 @@ export class ProductQuoteApprovalEditComponent implements OnInit, OnDestroy {
       .push()
       .pipe(
         switchMap(() => {
-          return this.allors.context.pull([pull.ProductQuoteApproval({ objectId: this.data.id })]);
+          return this.allors.context.pull([
+            pull.ProductQuoteApproval({ objectId: this.data.id }),
+          ]);
         }),
         switchMap(() => {
           this.allors.context.reset();

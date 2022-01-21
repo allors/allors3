@@ -1,9 +1,24 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { SalesOrder, SalesInvoice, SalesTerm } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SalesOrder,
+  SalesInvoice,
+  SalesTerm,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -129,9 +144,18 @@ export class SalesTermOverviewPanelComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.container = loaded.object<SalesOrder>(salesOrderPullName) || loaded.object<SalesInvoice>(salesInvoicePullName);
-      this.objects = loaded.collection<SalesTerm>(salesOrderTermsPullName) || loaded.collection<SalesTerm>(salesInvoiceTermsPullName) || [];
-      this.table.total = (loaded.value(`${salesOrderTermsPullName}_total`) as number) ?? (loaded.value(`${salesInvoiceTermsPullName}_total`) as number) ?? this.objects?.length ?? 0;
+      this.container =
+        loaded.object<SalesOrder>(salesOrderPullName) ||
+        loaded.object<SalesInvoice>(salesInvoicePullName);
+      this.objects =
+        loaded.collection<SalesTerm>(salesOrderTermsPullName) ||
+        loaded.collection<SalesTerm>(salesInvoiceTermsPullName) ||
+        [];
+      this.table.total =
+        (loaded.value(`${salesOrderTermsPullName}_total`) as number) ??
+        (loaded.value(`${salesInvoiceTermsPullName}_total`) as number) ??
+        this.objects?.length ??
+        0;
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,

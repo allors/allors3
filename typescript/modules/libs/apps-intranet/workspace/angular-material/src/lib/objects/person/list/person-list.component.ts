@@ -4,9 +4,23 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Person } from '@allors/workspace/domain/default';
-import { Action, angularFilterFromDefinition, angularSorter, DeleteService, Filter, FilterField, MediaService, NavigationService, ObjectService, OverviewService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  angularFilterFromDefinition,
+  angularSorter,
+  DeleteService,
+  Filter,
+  FilterField,
+  MediaService,
+  NavigationService,
+  ObjectService,
+  OverviewService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -57,7 +71,13 @@ export class PersonListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }, { name: 'email' }, { name: 'phone' }, 'isCustomer', { name: 'lastModifiedDate', sort: true }],
+      columns: [
+        { name: 'name', sort: true },
+        { name: 'email' },
+        { name: 'phone' },
+        'isCustomer',
+        { name: 'lastModifiedDate', sort: true },
+      ],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -72,45 +92,63 @@ export class PersonListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.Person);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
-
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.Person({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
-              include: {
-                Salutation: x,
-                Picture: x,
-                PartyContactMechanisms: {
-                  ContactMechanism: {
-                    PostalAddress_Country: x,
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.Person({
+                predicate: this.filter.definition.predicate,
+                sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
+                include: {
+                  Salutation: x,
+                  Picture: x,
+                  PartyContactMechanisms: {
+                    ContactMechanism: {
+                      PostalAddress_Country: x,
+                    },
                   },
                 },
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
@@ -123,8 +161,12 @@ export class PersonListComponent implements OnInit, OnDestroy {
             name: v.DisplayName,
             email: v.DisplayEmail,
             phone: v.DisplayPhone,
-            isCustomer: v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+            isCustomer:
+              v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

@@ -2,8 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { AllorsMaterialSideNavService, angularList, angularMenu, angularOverview, MenuItem } from '@allors/workspace/angular/base';
-import { M } from '@allors/workspace/meta/default';
+import {
+  AllorsMaterialSideNavService,
+  angularList,
+  angularMenu,
+  angularOverview,
+  MenuItem,
+} from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
 import { create, edit } from '../app/app.module';
 
 interface AllorsInfo {
@@ -41,12 +47,17 @@ interface DialogInfo {
     <div>Info: {{ allors != null }}</div>`,
 })
 export class AllorsComponent implements OnInit {
-  constructor(private workspaceService: WorkspaceService, private router: Router, private sideNavService: AllorsMaterialSideNavService) {}
+  constructor(
+    private workspaceService: WorkspaceService,
+    private router: Router,
+    private sideNavService: AllorsMaterialSideNavService
+  ) {}
 
   allors: AllorsInfo;
 
   public ngOnInit(): void {
-    const metaPopulation = this.workspaceService.workspace.configuration.metaPopulation;
+    const metaPopulation =
+      this.workspaceService.workspace.configuration.metaPopulation;
     const m = metaPopulation as M;
 
     const meta: MetaInfo[] = [...metaPopulation.composites].map((v) => {
@@ -70,7 +81,10 @@ export class AllorsComponent implements OnInit {
     const menu: MenuInfo[] = angularMenu(m).map(menuMapper);
 
     const dialog: DialogInfo = {
-      create: Object.keys(create).map((v) => ({ tag: v, component: create[v].name })),
+      create: Object.keys(create).map((v) => ({
+        tag: v,
+        component: create[v].name,
+      })),
       edit: Object.keys(edit).map((v) => ({ tag: v, component: edit[v].name })),
     };
 

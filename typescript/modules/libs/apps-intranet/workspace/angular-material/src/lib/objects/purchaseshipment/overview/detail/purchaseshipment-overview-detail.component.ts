@@ -2,11 +2,30 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, OrganisationContactRelationship, Party, Facility, InternalOrganisation, PartyContactMechanism, PostalAddress, Currency, PurchaseShipment, ShipmentMethod, Carrier } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  Facility,
+  InternalOrganisation,
+  PartyContactMechanism,
+  PostalAddress,
+  Currency,
+  PurchaseShipment,
+  ShipmentMethod,
+  Carrier,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -17,7 +36,9 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './purchaseshipment-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestroy {
+export class PurchaseShipmentOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   purchaseShipment: PurchaseShipment;
@@ -44,7 +65,10 @@ export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestro
   suppliersFilter: SearchFactory;
 
   get shipFromCustomerIsPerson(): boolean {
-    return !this.purchaseShipment.ShipFromParty || this.purchaseShipment.ShipFromParty.strategy.cls === this.m.Person;
+    return (
+      !this.purchaseShipment.ShipFromParty ||
+      this.purchaseShipment.ShipFromParty.strategy.cls === this.m.Person
+    );
   }
 
   constructor(
@@ -89,7 +113,8 @@ export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestro
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.purchaseShipment = loaded.object<PurchaseShipment>(pullName);
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
       }
     };
   }
@@ -131,10 +156,16 @@ export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestro
                 CurrentContacts: x,
               },
             }),
-            pull.ShipmentMethod({ sorting: [{ roleType: m.ShipmentMethod.Name }] }),
+            pull.ShipmentMethod({
+              sorting: [{ roleType: m.ShipmentMethod.Name }],
+            }),
             pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
             pull.Organisation({
-              predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Organisation.IsInternalOrganisation,
+                value: true,
+              },
               sorting: [{ roleType: m.Organisation.DisplayName }],
             }),
             pull.PurchaseShipment({
@@ -156,7 +187,10 @@ export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestro
             }),
           ];
 
-          this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
+          this.suppliersFilter = Filters.suppliersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -164,15 +198,31 @@ export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestro
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-        this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism) as PostalAddress[];
-        this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+        const partyContactMechanisms: PartyContactMechanism[] =
+          loaded.collection<PartyContactMechanism>(
+            m.Party.CurrentPartyContactMechanisms
+          );
+        this.shipToAddresses = partyContactMechanisms
+          ?.filter(
+            (v: PartyContactMechanism) =>
+              v.ContactMechanism.strategy.cls === m.PostalAddress
+          )
+          ?.map(
+            (v: PartyContactMechanism) => v.ContactMechanism
+          ) as PostalAddress[];
+        this.shipToContacts = loaded.collection<Person>(
+          m.Party.CurrentContacts
+        );
 
-        this.purchaseShipment = loaded.object<PurchaseShipment>(m.PurchaseShipment);
+        this.purchaseShipment = loaded.object<PurchaseShipment>(
+          m.PurchaseShipment
+        );
         this.selectedFacility = this.purchaseShipment.ShipToFacility;
 
         this.facilities = loaded.collection<Facility>(m.Facility);
-        this.shipmentMethods = loaded.collection<ShipmentMethod>(m.ShipmentMethod);
+        this.shipmentMethods = loaded.collection<ShipmentMethod>(
+          m.ShipmentMethod
+        );
         this.carriers = loaded.collection<Carrier>(m.Carrier);
 
         if (this.purchaseShipment.ShipFromParty) {
@@ -204,18 +254,27 @@ export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestro
   }
 
   public shipFromContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.purchaseShipment.ShipFromParty as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.purchaseShipment
+      .ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipFromContacts.push(person);
     this.purchaseShipment.ShipFromContactPerson = person;
   }
 
-  public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.purchaseShipment.ShipToParty.addPartyContactMechanism(partyContactMechanism);
+  public shipToAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.purchaseShipment.ShipToParty.addPartyContactMechanism(
+      partyContactMechanism
+    );
 
-    const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+    const postalAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
     this.purchaseShipment.ShipToAddress = postalAddress;
   }
@@ -239,7 +298,9 @@ export class PurchaseShipmentOverviewDetailComponent implements OnInit, OnDestro
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.shipFromContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      this.shipFromContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
     });
   }
 }

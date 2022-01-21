@@ -1,5 +1,5 @@
 import { Composite } from '@allors/system/workspace/meta';
-import { ISession } from '@allors/workspace/domain/system';
+import { ISession } from '@allors/system/workspace/domain';
 import { OnCreate } from '@allors/workspace/angular/base';
 
 export interface CreateDialogData {

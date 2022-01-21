@@ -1,13 +1,30 @@
-import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import {
+  Component,
+  Self,
+  AfterViewInit,
+  OnDestroy,
+  Injector,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
-import { M } from '@allors/workspace/meta/default';
-import { SalesInvoice, RepeatingSalesInvoice } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SalesInvoice,
+  RepeatingSalesInvoice,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationActivatedRoute,
+  NavigationService,
+  PanelManagerService,
+  RefreshService,
+} from '@allors/workspace/angular/base';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -47,7 +64,12 @@ export class SalesInvoiceOverviewComponent implements AfterViewInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.route.url,
+      this.route.queryParams,
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const navRoute = new NavigationActivatedRoute(this.route);
@@ -94,7 +116,11 @@ export class SalesInvoiceOverviewComponent implements AfterViewInit, OnDestroy {
               },
             }),
             pull.RepeatingSalesInvoice({
-              predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, value: id },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.RepeatingSalesInvoice.Source,
+                value: id,
+              },
               include: {
                 Frequency: x,
                 DayOfWeek: x,
@@ -113,7 +139,9 @@ export class SalesInvoiceOverviewComponent implements AfterViewInit, OnDestroy {
         this.panelManager.onPulled(loaded);
 
         this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
-        this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
+        this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(
+          m.RepeatingSalesInvoice
+        );
         if (this.repeatingInvoices?.length > 0) {
           this.repeatingInvoice = this.repeatingInvoices[0];
         } else {

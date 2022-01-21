@@ -1,8 +1,21 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { FixedAsset, WorkEffort, WorkRequirementFulfillment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  FixedAsset,
+  WorkEffort,
+  WorkRequirementFulfillment,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -18,7 +31,9 @@ interface Row extends TableRow {
   templateUrl: './workrequirementfulfillment-overview-panel.component.html',
   providers: [PanelService],
 })
-export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit {
+export class WorkRequirementFulfillmentOverviewPanelComponent
+  implements OnInit
+{
   workEffort: WorkEffort;
   fixedAsset: FixedAsset;
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -112,10 +127,13 @@ export class WorkRequirementFulfillmentOverviewPanelComponent implements OnInit 
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
-      this.fixedAsset = this.workEffort.WorkEffortFixedAssetAssignmentsWhereAssignment[0]?.FixedAsset;
+      this.fixedAsset =
+        this.workEffort.WorkEffortFixedAssetAssignmentsWhereAssignment[0]?.FixedAsset;
 
-      const fromWorkEffort = loaded.collection<WorkRequirementFulfillment>(workEffortPullName);
-      const fromFixedAsset = loaded.collection<WorkRequirementFulfillment>(fixedAssetPullName);
+      const fromWorkEffort =
+        loaded.collection<WorkRequirementFulfillment>(workEffortPullName);
+      const fromFixedAsset =
+        loaded.collection<WorkRequirementFulfillment>(fixedAssetPullName);
 
       if (fromWorkEffort != null && fromWorkEffort.length > 0) {
         this.objects = fromWorkEffort;

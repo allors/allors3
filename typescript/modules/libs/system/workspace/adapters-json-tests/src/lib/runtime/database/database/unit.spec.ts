@@ -1,5 +1,5 @@
 import { Fixture, name_c1C } from '../../../fixture';
-import { Pull } from '@allors/workspace/domain/system';
+import { Pull } from '@allors/system/workspace/domain';
 import '../../../matchers';
 
 let fixture: Fixture;

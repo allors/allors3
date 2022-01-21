@@ -1,9 +1,20 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, SalesOrder, SalesInvoice, RepeatingSalesInvoice } from '@allors/workspace/domain/default';
-import { Action, NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  SalesOrder,
+  SalesInvoice,
+  RepeatingSalesInvoice,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
@@ -119,7 +130,11 @@ export class SalesInvoiceOverviewSummaryComponent {
         }),
         pull.RepeatingSalesInvoice({
           name: repeatingSalesInvoicePullName,
-          predicate: { kind: 'Equals', propertyType: m.RepeatingSalesInvoice.Source, value: id },
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.RepeatingSalesInvoice.Source,
+            value: id,
+          },
           include: {
             Frequency: x,
             DayOfWeek: x,
@@ -132,7 +147,9 @@ export class SalesInvoiceOverviewSummaryComponent {
       this.orders = loaded.collection<SalesOrder>(salesOrderPullName);
       this.workEfforts = loaded.collection<WorkEffort>(workEffortPullName);
       this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
-      this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(m.RepeatingSalesInvoice);
+      this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(
+        m.RepeatingSalesInvoice
+      );
       this.hasIrpf = Number(this.invoice.TotalIrpf) !== 0;
       this.creditNote = loaded.object<SalesInvoice>(creditNotePullName);
 
@@ -152,16 +169,22 @@ export class SalesInvoiceOverviewSummaryComponent {
   }
 
   public cancel(): void {
-    this.panel.manager.context.invoke(this.invoice.CancelInvoice).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    this.panel.manager.context
+      .invoke(this.invoice.CancelInvoice)
+      .subscribe(() => {
+        this.refreshService.refresh();
+        this.snackBar.open('Successfully cancelled.', 'close', {
+          duration: 5000,
+        });
+      }, this.saveService.errorHandler);
   }
 
   public writeOff(): void {
     this.panel.manager.context.invoke(this.invoice.WriteOff).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully written off.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully written off.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 

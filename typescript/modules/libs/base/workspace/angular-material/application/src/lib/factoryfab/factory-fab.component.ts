@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Composite, Class, humanize } from '@allors/system/workspace/meta';
-import { IObject, ISession } from '@allors/workspace/domain/system';
+import { IObject, ISession } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   angularDisplayName,

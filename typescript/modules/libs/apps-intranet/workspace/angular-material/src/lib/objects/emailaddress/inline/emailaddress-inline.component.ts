@@ -1,15 +1,29 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy, Input } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  Input,
+} from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { PartyContactMechanism, ContactMechanismPurpose, EmailAddress } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PartyContactMechanism,
+  ContactMechanismPurpose,
+  EmailAddress,
+} from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
   selector: 'party-contactmechanism-emailAddress',
   templateUrl: './emailaddress-inline.component.html',
 })
-export class PartyContactMechanismEmailAddressInlineComponent implements OnInit, OnDestroy {
-  @Output() public saved: EventEmitter<PartyContactMechanism> = new EventEmitter<PartyContactMechanism>();
+export class PartyContactMechanismEmailAddressInlineComponent
+  implements OnInit, OnDestroy
+{
+  @Output() public saved: EventEmitter<PartyContactMechanism> =
+    new EventEmitter<PartyContactMechanism>();
 
   @Output() public cancelled: EventEmitter<any> = new EventEmitter();
 
@@ -33,17 +47,27 @@ export class PartyContactMechanismEmailAddressInlineComponent implements OnInit,
 
     const pulls = [
       pull.ContactMechanismPurpose({
-        predicate: { kind: 'Equals', propertyType: this.m.ContactMechanismPurpose.IsActive, value: true },
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.ContactMechanismPurpose.IsActive,
+          value: true,
+        },
         sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
       }),
     ];
 
     this.allors.context.pull(pulls).subscribe(
       (loaded) => {
-        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+        this.contactMechanismPurposes =
+          loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
 
-        this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
-        this.emailAddress = this.allors.context.create<EmailAddress>(m.EmailAddress);
+        this.partyContactMechanism =
+          this.allors.context.create<PartyContactMechanism>(
+            m.PartyContactMechanism
+          );
+        this.emailAddress = this.allors.context.create<EmailAddress>(
+          m.EmailAddress
+        );
         this.partyContactMechanism.ContactMechanism = this.emailAddress;
       },
       (error: any) => {

@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Locale,
   Organisation,
@@ -20,7 +20,13 @@ import {
   ProductNumber,
   UnifiedGood,
 } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -205,22 +211,32 @@ export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.good = loaded.object<UnifiedGood>(m.UnifiedGood);
-        this.originalCategories = loaded.collection<ProductCategory>('OriginalCategories') ?? [];
+        this.originalCategories =
+          loaded.collection<ProductCategory>('OriginalCategories') ?? [];
         this.selectedCategories = this.originalCategories;
 
-        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
+        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(
+          m.InventoryItemKind
+        );
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
         this.settings = this.fetcher.getSettings(loaded);
-        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
+        this.goodIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
         this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
 
-        const goodNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f');
+        const goodNumberType = this.goodIdentificationTypes?.find(
+          (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
+        );
 
-        this.productNumber = this.good.ProductIdentifications?.find((v) => v.ProductIdentificationType === goodNumberType);
+        this.productNumber = this.good.ProductIdentifications?.find(
+          (v) => v.ProductIdentificationType === goodNumberType
+        );
 
         this.suppliers = this.good.SuppliedBy as Organisation[];
 
@@ -248,7 +264,9 @@ export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
 
   public modelAdded(model: Model): void {
     this.selectedBrand.addModel(model);
-    this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+    this.models = this.selectedBrand.Models.sort((a, b) =>
+      a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
+    );
     this.selectedModel = model;
   }
 
@@ -267,7 +285,9 @@ export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe(() => {
-      this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+      this.models = this.selectedBrand.Models.sort((a, b) =>
+        a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
+      );
     });
   }
 

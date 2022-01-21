@@ -1,6 +1,12 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
@@ -24,7 +30,9 @@ export class OrganisationInlineComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.organisation = this.allors.context.create<Organisation>(this.m.Organisation);
+    this.organisation = this.allors.context.create<Organisation>(
+      this.m.Organisation
+    );
   }
 
   public ngOnDestroy(): void {

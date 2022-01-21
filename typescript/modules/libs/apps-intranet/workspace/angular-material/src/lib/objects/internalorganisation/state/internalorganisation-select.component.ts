@@ -5,7 +5,7 @@ import { Organisation } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'internalorganisation-select',
@@ -15,7 +15,9 @@ import { M } from '@allors/workspace/meta/default';
 export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
   m: any;
   public get internalOrganisation() {
-    const internalOrganisation = this.internalOrganisations?.find((v) => v.strategy.id === this.internalOrganisationId.value);
+    const internalOrganisation = this.internalOrganisations?.find(
+      (v) => v.strategy.id === this.internalOrganisationId.value
+    );
     return internalOrganisation;
   }
 
@@ -27,7 +29,10 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, private internalOrganisationId: InternalOrganisationId) {
+  constructor(
+    @Self() public allors: ContextService,
+    private internalOrganisationId: InternalOrganisationId
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
@@ -38,13 +43,19 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
 
     const pulls = [
       pull.Organisation({
-        predicate: { kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true },
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        },
         sorting: [{ roleType: m.Organisation.DisplayName }],
       }),
     ];
 
     this.subscription = this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.internalOrganisations = loaded.collection<Organisation>(m.Organisation);
+      this.internalOrganisations = loaded.collection<Organisation>(
+        m.Organisation
+      );
     });
   }
 

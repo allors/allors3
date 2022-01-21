@@ -4,11 +4,25 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, Party, Priority, WorkRequirement, SerialisedItem, InternalOrganisation } from '@allors/workspace/domain/default';
-import { ObjectData, PanelService, RadioGroupOption, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  Party,
+  Priority,
+  WorkRequirement,
+  SerialisedItem,
+  InternalOrganisation,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  PanelService,
+  RadioGroupOption,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../..';
@@ -52,7 +66,10 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
           const isCreate = this.data.id == null;
@@ -60,7 +77,11 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Priority({
-              predicate: { kind: 'Equals', propertyType: m.Priority.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Priority.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Priority.DisplayOrder }],
             }),
           ];
@@ -91,14 +112,20 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
             );
           }
 
-          this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            internalOrganisationId
+          );
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.priorities = loaded.collection<Priority>(m.Priority);
         this.priorityOptions = this.priorities.map((v) => {
           return {
@@ -109,15 +136,26 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
 
         if (isCreate) {
           this.title = 'Add Work Requirement';
-          this.requirement = this.allors.context.create<WorkRequirement>(m.WorkRequirement);
-          this.requirement.ServicedBy = this.internalOrganisation as Organisation;
+          this.requirement = this.allors.context.create<WorkRequirement>(
+            m.WorkRequirement
+          );
+          this.requirement.ServicedBy = this
+            .internalOrganisation as Organisation;
 
-          const serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
+          const serialisedItem = loaded.object<SerialisedItem>(
+            m.SerialisedItem
+          );
           if (serialisedItem !== undefined) {
-            if (serialisedItem.OwnedBy != null && !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation) {
+            if (
+              serialisedItem.OwnedBy != null &&
+              !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation
+            ) {
               this.requirement.Originator = serialisedItem.OwnedBy;
               this.updateOriginator(this.requirement.Originator);
-            } else if (serialisedItem.RentedBy != null && !(<Organisation>serialisedItem.RentedBy).IsInternalOrganisation) {
+            } else if (
+              serialisedItem.RentedBy != null &&
+              !(<Organisation>serialisedItem.RentedBy).IsInternalOrganisation
+            ) {
               this.requirement.Originator = serialisedItem.RentedBy;
               this.updateOriginator(this.requirement.Originator);
             }
@@ -170,8 +208,16 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
             {
               kind: 'Or',
               operands: [
-                { kind: 'Equals', propertyType: m.SerialisedItem.OwnedBy, object: party },
-                { kind: 'Equals', propertyType: m.SerialisedItem.RentedBy, object: party },
+                {
+                  kind: 'Equals',
+                  propertyType: m.SerialisedItem.OwnedBy,
+                  object: party,
+                },
+                {
+                  kind: 'Equals',
+                  propertyType: m.SerialisedItem.RentedBy,
+                  object: party,
+                },
               ],
             },
           ],
@@ -180,7 +226,9 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.serialisedItems = loaded.collection<SerialisedItem>(m.SerialisedItem);
+      this.serialisedItems = loaded.collection<SerialisedItem>(
+        m.SerialisedItem
+      );
     });
   }
 

@@ -10,7 +10,7 @@ import {
   IPullResult,
   Like,
   Pull,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { Context } from '@allors/workspace/angular/core';
 
 import { SearchOptions } from './search-options';

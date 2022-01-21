@@ -1,5 +1,5 @@
 import { C1 } from '@allors/workspace/domain/default';
-import { Pull } from '@allors/workspace/domain/system';
+import { Pull } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';
 

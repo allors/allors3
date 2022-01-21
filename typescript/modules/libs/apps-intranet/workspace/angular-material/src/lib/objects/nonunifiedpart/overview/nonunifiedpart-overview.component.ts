@@ -1,20 +1,36 @@
-import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import {
+  Component,
+  Self,
+  AfterViewInit,
+  OnDestroy,
+  Injector,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { Part, NonUnifiedPart } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
+import {
+  NavigationActivatedRoute,
+  NavigationService,
+  PanelManagerService,
+  RefreshService,
+} from '@allors/workspace/angular/base';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './nonunifiedpart-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class NonUnifiedPartOverviewComponent implements AfterViewInit, OnDestroy {
+export class NonUnifiedPartOverviewComponent
+  implements AfterViewInit, OnDestroy
+{
   title = 'Part';
 
   part: Part;
@@ -45,7 +61,12 @@ export class NonUnifiedPartOverviewComponent implements AfterViewInit, OnDestroy
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.route.url,
+      this.route.queryParams,
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const navRoute = new NavigationActivatedRoute(this.route);
@@ -74,7 +95,9 @@ export class NonUnifiedPartOverviewComponent implements AfterViewInit, OnDestroy
         this.panelManager.onPulled(loaded);
 
         const part = loaded.object<NonUnifiedPart>(m.NonUnifiedPart);
-        this.serialised = part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+        this.serialised =
+          part.InventoryItemKind.UniqueId ===
+          '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
       });
   }
 

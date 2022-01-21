@@ -1,6 +1,6 @@
 import { Component, OnInit, Self, HostBinding, Input } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { ProductIdentification } from '@allors/workspace/domain/default';
 import {
   Action,

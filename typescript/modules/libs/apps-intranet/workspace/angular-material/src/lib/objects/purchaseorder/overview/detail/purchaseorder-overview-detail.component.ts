@@ -2,7 +2,7 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Person,
   Organisation,
@@ -20,9 +20,14 @@ import {
   IrpfRegime,
   VatRate,
 } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -155,12 +160,19 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
             pull.IrpfRegime({}),
             pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
             pull.Currency({
-              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Currency.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Currency.IsoCode }],
             }),
           ];
 
-          this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
+          this.suppliersFilter = Filters.suppliersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -169,7 +181,8 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -208,7 +221,10 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
   }
 
   public supplierAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
+    const supplierRelationship =
+      this.allors.context.create<SupplierRelationship>(
+        this.m.SupplierRelationship
+      );
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -217,48 +233,69 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
   }
 
   public takenViaContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.takenVia as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this
+      .takenVia as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.takenViaContacts.push(person);
     this.order.TakenViaContactPerson = person;
   }
 
-  public takenViaContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
+  public takenViaContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.takenViaContactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.takenVia.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedTakenViaContactMechanism = partyContactMechanism.ContactMechanism;
+    this.order.AssignedTakenViaContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.order
+      .OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToContacts.push(person);
     this.order.BillToContactPerson = person;
   }
 
-  public billToContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
+  public billToContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedBillToContactMechanism = partyContactMechanism.ContactMechanism;
+    this.order.AssignedBillToContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.order.OrderedBy as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.order
+      .OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
     this.order.ShipToContactPerson = person;
   }
 
-  public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
+  public shipToAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
     this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipToAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+    this.order.AssignedShipToAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
   public supplierSelected(supplier: IObject) {
@@ -299,9 +336,16 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
         this.previousSupplier = this.order.TakenViaSupplier;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.takenViaContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.takenViaContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.takenViaContactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
+      this.takenViaContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
     });
   }
 
@@ -333,9 +377,19 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.billToContactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
+      this.shipToAddresses = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
       this.shipToContacts = this.billToContacts;
     });

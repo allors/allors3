@@ -2,9 +2,26 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { format } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { SalesInvoice, PurchaseInvoice, Payment, Invoice } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SalesInvoice,
+  PurchaseInvoice,
+  Payment,
+  Invoice,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -82,7 +99,11 @@ export class PaymentOverviewPanelComponent {
       pulls.push(
         pull.PaymentApplication({
           name: pullName,
-          predicate: { kind: 'Equals', propertyType: m.PaymentApplication.Invoice, value: id },
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.PaymentApplication.Invoice,
+            value: id,
+          },
           select: {
             PaymentWherePaymentApplication: {
               include: {
@@ -107,21 +128,28 @@ export class PaymentOverviewPanelComponent {
 
       if (invoice.strategy.cls === this.m.SalesInvoice) {
         const salesInvoice = invoice as SalesInvoice;
-        this.receive = salesInvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32';
+        this.receive =
+          salesInvoice.SalesInvoiceType.UniqueId ===
+          '92411bf1-835e-41f8-80af-6611efce5b32';
       }
 
       if (invoice.strategy.cls === this.m.PurchaseInvoice) {
         const salesInvoice = invoice as PurchaseInvoice;
-        this.receive = salesInvoice.PurchaseInvoiceType.UniqueId === '0187d927-81f5-4d6a-9847-58b674ad3e6a';
+        this.receive =
+          salesInvoice.PurchaseInvoiceType.UniqueId ===
+          '0187d927-81f5-4d6a-9847-58b674ad3e6a';
       }
 
       this.payments = loaded.collection<Payment>(pullName);
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.payments?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.payments?.length ??
+        0) as number;
       this.table.data = this.payments?.map((v) => {
         return {
           object: v,
-          date: v.EffectiveDate && format(new Date(v.EffectiveDate), 'dd-MM-yyyy'),
+          date:
+            v.EffectiveDate && format(new Date(v.EffectiveDate), 'dd-MM-yyyy'),
           amount: v.Amount,
         } as Row;
       });

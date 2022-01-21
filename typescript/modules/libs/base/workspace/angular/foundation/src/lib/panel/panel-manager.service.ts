@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Params, Router, ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Composite } from '@allors/system/workspace/meta';
-import { IPullResult, Pull } from '@allors/workspace/domain/system';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 import { PanelService } from './panel.service';
 import { Context, WorkspaceService } from '@allors/workspace/angular/core';

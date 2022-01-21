@@ -2,7 +2,7 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Person,
   Organisation,
@@ -19,9 +19,14 @@ import {
   IrpfRegime,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -56,7 +61,10 @@ export class ProductQuoteOverviewDetailComponent implements OnInit, OnDestroy {
   showIrpf: boolean;
 
   get receiverIsPerson(): boolean {
-    return !this.productQuote.Receiver || this.productQuote.Receiver.strategy.cls === this.m.Person;
+    return (
+      !this.productQuote.Receiver ||
+      this.productQuote.Receiver.strategy.cls === this.m.Person
+    );
   }
 
   constructor(
@@ -119,7 +127,9 @@ export class ProductQuoteOverviewDetailComponent implements OnInit, OnDestroy {
     panel.onPulled = (loaded) => {
       if (this.panel.isCollapsed) {
         this.productQuote = loaded.object<ProductQuote>(this.m.ProductQuote);
-        this.salesOrder = loaded.object<SalesOrder>(this.m.ProductQuote.SalesOrderWhereQuote);
+        this.salesOrder = loaded.object<SalesOrder>(
+          this.m.ProductQuote.SalesOrderWhereQuote
+        );
       }
     };
   }
@@ -160,7 +170,10 @@ export class ProductQuoteOverviewDetailComponent implements OnInit, OnDestroy {
             }),
           ];
 
-          this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -168,7 +181,8 @@ export class ProductQuoteOverviewDetailComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -196,18 +210,25 @@ export class ProductQuoteOverviewDetailComponent implements OnInit, OnDestroy {
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.productQuote.Receiver as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.productQuote
+      .Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.contacts.push(person);
     this.productQuote.ContactPerson = person;
   }
 
-  public partyContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
+  public partyContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.productQuote.Receiver.addPartyContactMechanism(partyContactMechanism);
-    this.productQuote.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
+    this.productQuote.FullfillContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
   public receiverSelected(party: IObject): void {
@@ -217,7 +238,10 @@ export class ProductQuoteOverviewDetailComponent implements OnInit, OnDestroy {
   }
 
   public receiverAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -259,8 +283,13 @@ export class ProductQuoteOverviewDetailComponent implements OnInit, OnDestroy {
         this.previousReceiver = this.productQuote.Receiver;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.contactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.contactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
   }

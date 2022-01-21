@@ -1,13 +1,33 @@
-import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import {
+  Component,
+  Self,
+  AfterViewInit,
+  OnDestroy,
+  Injector,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { SerialisedInventoryItemState, ShipmentItem, SalesInvoice, BillingProcess, PurchaseShipment } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SerialisedInventoryItemState,
+  ShipmentItem,
+  SalesInvoice,
+  BillingProcess,
+  PurchaseShipment,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationActivatedRoute,
+  NavigationService,
+  PanelManagerService,
+  RefreshService,
+} from '@allors/workspace/angular/base';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -15,7 +35,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './purchaseshipment-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class PurchaseShipmentOverviewComponent implements AfterViewInit, OnDestroy {
+export class PurchaseShipmentOverviewComponent
+  implements AfterViewInit, OnDestroy
+{
   title = 'Shipment';
 
   public shipment: PurchaseShipment;
@@ -51,7 +73,12 @@ export class PurchaseShipmentOverviewComponent implements AfterViewInit, OnDestr
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.route.url, this.route.queryParams, this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.route.url,
+      this.route.queryParams,
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const navRoute = new NavigationActivatedRoute(this.route);

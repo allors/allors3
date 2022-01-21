@@ -2,9 +2,21 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Party, ContactMechanism, PartyContactMechanism, WorkEffort, WorkTask } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Party,
+  ContactMechanism,
+  PartyContactMechanism,
+  WorkEffort,
+  WorkTask,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -23,7 +35,13 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   workEfforts: WorkEffort[];
 
-  constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public refreshService: RefreshService, public navigationService: NavigationService, private saveService: SaveService) {
+  constructor(
+    @Self() public allors: ContextService,
+    @Self() public panel: PanelService,
+    public refreshService: RefreshService,
+    public navigationService: NavigationService,
+    private saveService: SaveService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
@@ -157,15 +175,22 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.workEfforts = loaded.collection<WorkEffort>(m.Party.WorkEffortsWhereCustomer);
+      this.workEfforts = loaded.collection<WorkEffort>(
+        m.Party.WorkEffortsWhereCustomer
+      );
       const indexMyself = this.workEfforts.indexOf(this.workTask, 0);
       if (indexMyself > -1) {
         this.workEfforts.splice(indexMyself, 1);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
 
-      this.contactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.contactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
 
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });

@@ -1,4 +1,4 @@
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 export interface TableRow {
   object: IObject;

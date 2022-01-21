@@ -2,9 +2,22 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Locale, Organisation, Currency, CustomOrganisationClassification, IndustryClassification, LegalForm } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SingletonId } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  InternalOrganisation,
+  Locale,
+  Organisation,
+  Currency,
+  CustomOrganisationClassification,
+  IndustryClassification,
+  LegalForm,
+} from '@allors/workspace/domain/default';
+import {
+  PanelService,
+  RefreshService,
+  SaveService,
+  SingletonId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
@@ -27,7 +40,14 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
   legalForms: LegalForm[];
   currencies: Currency[];
 
-  constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public saveService: SaveService, public refreshService: RefreshService, private singletonId: SingletonId, private fetcher: FetcherService) {
+  constructor(
+    @Self() public allors: ContextService,
+    @Self() public panel: PanelService,
+    public saveService: SaveService,
+    public refreshService: RefreshService,
+    private singletonId: SingletonId,
+    private fetcher: FetcherService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
@@ -101,7 +121,11 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
               },
             }),
             pull.Currency({
-              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Currency.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Currency.Name }],
             }),
             pull.CustomOrganisationClassification({
@@ -120,11 +144,17 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
         this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.classifications = loaded.collection<CustomOrganisationClassification>(m.CustomOrganisationClassification);
-        this.industries = loaded.collection<IndustryClassification>(m.IndustryClassification);
+        this.classifications =
+          loaded.collection<CustomOrganisationClassification>(
+            m.CustomOrganisationClassification
+          );
+        this.industries = loaded.collection<IndustryClassification>(
+          m.IndustryClassification
+        );
         this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
       });
   }

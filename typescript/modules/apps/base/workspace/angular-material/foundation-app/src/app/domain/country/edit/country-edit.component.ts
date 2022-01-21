@@ -5,7 +5,7 @@ import {
   EditDialogData,
 } from '@allors/workspace/angular-material/base';
 import { CountryFormComponent } from '../forms/country-form.component';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: 'country-edit.component.html',

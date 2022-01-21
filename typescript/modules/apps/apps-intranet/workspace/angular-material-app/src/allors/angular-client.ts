@@ -1,9 +1,26 @@
-import { AccessRequest, AccessResponse, InvokeRequest, PermissionRequest, PermissionResponse, PullRequest, PullResponse, PushRequest, PushResponse, Response, SyncRequest, SyncResponse } from '@allors/protocol/json/system';
+import {
+  AccessRequest,
+  AccessResponse,
+  InvokeRequest,
+  PermissionRequest,
+  PermissionResponse,
+  PullRequest,
+  PullResponse,
+  PushRequest,
+  PushResponse,
+  Response,
+  SyncRequest,
+  SyncResponse,
+} from '@allors/system/common/protocol-json';
 import { IDatabaseJsonClient } from '@allors/workspace/adapters/json/system';
 import { HttpClient } from '@angular/common/http';
 
 export class AngularClient implements IDatabaseJsonClient {
-  constructor(public httpClient: HttpClient, public baseUrl: string, public authUrl: string) {}
+  constructor(
+    public httpClient: HttpClient,
+    public baseUrl: string,
+    public authUrl: string
+  ) {}
 
   async pull(pullRequest: PullRequest): Promise<PullResponse> {
     return await this.post('pull', pullRequest);
@@ -25,15 +42,21 @@ export class AngularClient implements IDatabaseJsonClient {
     return await this.post('access', accessRequest);
   }
 
-  async permission(permissionRequest: PermissionRequest): Promise<PermissionResponse> {
+  async permission(
+    permissionRequest: PermissionRequest
+  ): Promise<PermissionResponse> {
     return await this.post('permission', permissionRequest);
   }
 
   async post<T>(relativeUrl: string, data: any): Promise<T> {
-    return this.httpClient.post<T>(`${this.baseUrl}${relativeUrl}`, data).toPromise();
+    return this.httpClient
+      .post<T>(`${this.baseUrl}${relativeUrl}`, data)
+      .toPromise();
   }
 
   async setup(population = 'full') {
-    await this.httpClient.get(`${this.baseUrl}Test/Setup?population=${population}`).toPromise();
+    await this.httpClient
+      .get(`${this.baseUrl}Test/Setup?population=${population}`)
+      .toPromise();
   }
 }

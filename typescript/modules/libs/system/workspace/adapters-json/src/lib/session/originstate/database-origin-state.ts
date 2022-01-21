@@ -1,7 +1,16 @@
-import { PushRequestNewObject, PushRequestObject, PushRequestRole } from '@allors/protocol/json/system';
-import { DatabaseOriginState as SystemDatabaseOriginState, DatabaseRecord, Strategy, IRange } from '@allors/workspace/adapters/system';
+import {
+  PushRequestNewObject,
+  PushRequestObject,
+  PushRequestRole,
+} from '@allors/system/common/protocol-json';
+import {
+  DatabaseOriginState as SystemDatabaseOriginState,
+  DatabaseRecord,
+  Strategy,
+  IRange,
+} from '@allors/system/workspace/adapters';
 import { unitToJson } from '../../json/to-json';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 export class DatabaseOriginState extends SystemDatabaseOriginState {
   constructor(public object: IObject, record: DatabaseRecord) {
@@ -43,12 +52,18 @@ export class DatabaseOriginState extends SystemDatabaseOriginState {
           if (!this.existRecord) {
             pushRequestRole.a = ranges.save(roleIds);
           } else {
-            const databaseRole = this.databaseRecord.getRole(relationType.roleType) as IRange<number>;
+            const databaseRole = this.databaseRecord.getRole(
+              relationType.roleType
+            ) as IRange<number>;
             if (databaseRole == null) {
               pushRequestRole.a = ranges.save(roleIds);
             } else {
-              pushRequestRole.a = ranges.save(ranges.difference(roleIds, databaseRole));
-              pushRequestRole.r = ranges.save(ranges.difference(databaseRole, roleIds));
+              pushRequestRole.a = ranges.save(
+                ranges.difference(roleIds, databaseRole)
+              );
+              pushRequestRole.r = ranges.save(
+                ranges.difference(databaseRole, roleIds)
+              );
             }
           }
         }

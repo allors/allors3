@@ -4,7 +4,7 @@ import {
   FlatPull,
   Pull,
   Result,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { LazySelectBuilder } from './lazy-select-builder';
 import { LazyTreeBuilder } from './lazy-tree-builder';
 import { LazyResultBuilder } from './lazy-result-builder';

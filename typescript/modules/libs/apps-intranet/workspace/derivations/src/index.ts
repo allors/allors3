@@ -11,4 +11,4 @@ export { SerialisedItemYearsToGoRule } from './lib/rules/serialised-item-years-t
 export { WorkEffortInventoryAssignmentTotalSellingPriceRule } from './lib/rules/work-effort-inventory-assignment-total-selling-price.rule';
 
 export * from './lib/rule-builder';
-import '@allors/workspace/derivations/system';
+import '@allors/system/workspace/derivations';

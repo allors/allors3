@@ -7,7 +7,7 @@ import {
   angularFilterDefinition,
   angularSorter,
 } from '@allors/workspace/angular/base';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Sorter } from '@allors/workspace/angular/base';
 import { Composite } from '@allors/system/workspace/meta';
 import {

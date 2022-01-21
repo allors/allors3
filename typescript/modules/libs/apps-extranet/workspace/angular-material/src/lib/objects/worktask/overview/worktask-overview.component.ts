@@ -1,13 +1,27 @@
-import { Component, Self, AfterViewInit, OnDestroy, Injector } from '@angular/core';
+import {
+  Component,
+  Self,
+  AfterViewInit,
+  OnDestroy,
+  Injector,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { WorkTask } from '@allors/workspace/domain/default';
-import { NavigationActivatedRoute, NavigationService, PanelManagerService, RefreshService } from '@allors/workspace/angular/base';
-import { ContextService, WorkspaceService } from '@allors/workspace/angular/core';
+import {
+  NavigationActivatedRoute,
+  NavigationService,
+  PanelManagerService,
+  RefreshService,
+} from '@allors/workspace/angular/base';
+import {
+  ContextService,
+  WorkspaceService,
+} from '@allors/workspace/angular/core';
 
 @Component({
   templateUrl: './worktask-overview.component.html',
@@ -41,7 +55,11 @@ export class WorkTaskOverviewComponent implements AfterViewInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.subscription = combineLatest([this.route.url, this.route.queryParams, this.refreshService.refresh$])
+    this.subscription = combineLatest([
+      this.route.url,
+      this.route.queryParams,
+      this.refreshService.refresh$,
+    ])
       .pipe(
         switchMap(([, ,]) => {
           const navRoute = new NavigationActivatedRoute(this.route);

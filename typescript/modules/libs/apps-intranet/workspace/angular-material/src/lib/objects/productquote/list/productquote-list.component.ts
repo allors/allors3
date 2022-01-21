@@ -4,15 +4,34 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, Organisation, InternalOrganisation, Quote } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, RefreshService, Table, TableRow, UserId, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  Organisation,
+  InternalOrganisation,
+  Quote,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  Filter,
+  MediaService,
+  NavigationService,
+  RefreshService,
+  Table,
+  TableRow,
+  UserId,
+  OverviewService,
+  angularFilterFromDefinition,
+  angularSorter,
+  FilterField,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { And, Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/system/workspace/domain';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 
@@ -73,7 +92,14 @@ export class ProductQuoteListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'number', sort: true }, { name: 'to' }, { name: 'state' }, { name: 'description', sort: true }, { name: 'responseRequired', sort: true }, { name: 'lastModifiedDate', sort: true }],
+      columns: [
+        { name: 'number', sort: true },
+        { name: 'to' },
+        { name: 'state' },
+        { name: 'description', sort: true },
+        { name: 'responseRequired', sort: true },
+        { name: 'lastModifiedDate', sort: true },
+      ],
       actions: [overviewService.overview(), this.print, this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -89,57 +115,95 @@ export class ProductQuoteListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.ProductQuote);
 
-    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Quote.Issuer };
-    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
+    const internalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.Quote.Issuer,
+    };
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        internalOrganisationPredicate,
+        this.filter.definition.predicate,
+      ],
+    };
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent,
+            number
+          ]) => {
+            internalOrganisationPredicate.value = internalOrganisationId;
 
-          return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
-        }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
-          internalOrganisationPredicate.value = internalOrganisationId;
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Person({
-              objectId: this.userId.value,
-            }),
-            pull.Quote({
-              predicate,
-              sorting: sort ? angularSorter(m.ProductQuote)?.create(sort) : null,
-              include: {
-                PrintDocument: {
-                  Media: x,
+            const pulls = [
+              this.fetcher.internalOrganisation,
+              pull.Person({
+                objectId: this.userId.value,
+              }),
+              pull.Quote({
+                predicate,
+                sorting: sort
+                  ? angularSorter(m.ProductQuote)?.create(sort)
+                  : null,
+                include: {
+                  PrintDocument: {
+                    Media: x,
+                  },
+                  Receiver: x,
+                  QuoteState: x,
                 },
-                Receiver: x,
-                QuoteState: x,
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.canExecuteCreateQuote;
@@ -155,8 +219,13 @@ export class ProductQuoteListComponent implements OnInit, OnDestroy {
               to: v.Receiver && v.Receiver.DisplayName,
               state: `${v.QuoteState && v.QuoteState.Name}`,
               description: `${v.Description || ''}`,
-              responseRequired: v.RequiredResponseDate && format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),
-              lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+              responseRequired:
+                v.RequiredResponseDate &&
+                format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),
+              lastModifiedDate: formatDistance(
+                new Date(v.LastModifiedDate),
+                new Date()
+              ),
             } as Row;
           });
       });

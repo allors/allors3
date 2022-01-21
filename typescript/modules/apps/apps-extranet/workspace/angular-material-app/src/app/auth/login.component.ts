@@ -5,10 +5,13 @@ import { of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { ContextService } from '@allors/workspace/angular/core';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Singleton } from '@allors/workspace/domain/default';
-import { IPullResult } from '@allors/workspace/domain/system';
-import { AuthenticationService, SingletonId } from '@allors/workspace/angular/base';
+import { IPullResult } from '@allors/system/workspace/domain';
+import {
+  AuthenticationService,
+  SingletonId,
+} from '@allors/workspace/angular/base';
 
 @Component({
   templateUrl: './login.component.html',
@@ -23,7 +26,13 @@ export class LoginComponent implements OnDestroy {
   subscription: Subscription;
   m: M;
 
-  constructor(@Self() private allors: ContextService, private authService: AuthenticationService, private singletonId: SingletonId, private router: Router, public formBuilder: FormBuilder) {
+  constructor(
+    @Self() private allors: ContextService,
+    private authService: AuthenticationService,
+    private singletonId: SingletonId,
+    private router: Router,
+    public formBuilder: FormBuilder
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

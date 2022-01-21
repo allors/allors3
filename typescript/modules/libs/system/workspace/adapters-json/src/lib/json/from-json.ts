@@ -1,4 +1,4 @@
-import { IUnit } from '@allors/workspace/domain/system';
+import { IUnit } from '@allors/system/workspace/domain';
 import { UnitTags } from '@allors/system/workspace/meta';
 
 export function unitFromJson(tag: string, value: unknown): IUnit {

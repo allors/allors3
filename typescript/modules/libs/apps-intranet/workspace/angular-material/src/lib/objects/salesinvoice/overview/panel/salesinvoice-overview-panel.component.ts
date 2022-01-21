@@ -1,9 +1,19 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { SalesInvoice } from '@allors/workspace/domain/default';
-import { Action, DeleteService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -134,7 +144,10 @@ export class SalesInvoiceOverviewPanelComponent implements OnInit {
           customer: v.BillToCustomer.DisplayName,
           totalExVat: v.TotalExVat,
           state: v.SalesInvoiceState ? v.SalesInvoiceState.Name : '',
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+          lastModifiedDate: formatDistance(
+            new Date(v.LastModifiedDate),
+            new Date()
+          ),
         } as Row;
       });
     };

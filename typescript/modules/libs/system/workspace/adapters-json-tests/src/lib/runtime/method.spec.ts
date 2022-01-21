@@ -1,5 +1,5 @@
 import { Organisation } from '@allors/workspace/domain/default';
-import { Pull } from '@allors/workspace/domain/system';
+import { Pull } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';
 
@@ -53,7 +53,10 @@ test('callMultiple', async () => {
 
   expect(organisation1.JustDidIt).toBeFalsy();
 
-  const invokeResult = await session.invoke([organisation1.JustDoIt, organisation2.JustDoIt]);
+  const invokeResult = await session.invoke([
+    organisation1.JustDoIt,
+    organisation2.JustDoIt,
+  ]);
 
   expect(invokeResult.hasErrors).toBeFalsy();
 
@@ -83,7 +86,10 @@ test('callMultipleIsolated', async () => {
 
   expect(organisation1.JustDidIt).toBeFalsy();
 
-  const invokeResult = await session.invoke([organisation1.JustDoIt, organisation2.JustDoIt], { isolated: true });
+  const invokeResult = await session.invoke(
+    [organisation1.JustDoIt, organisation2.JustDoIt],
+    { isolated: true }
+  );
 
   expect(invokeResult.hasErrors).toBeFalsy();
 

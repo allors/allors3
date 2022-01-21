@@ -3,9 +3,14 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { Notification, Person } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  ObjectService,
+  RefreshService,
+  UserId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'notification-link',
@@ -33,7 +38,13 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
     return '?';
   }
 
-  constructor(@Self() public allors: ContextService, public factoryService: ObjectService, public refreshService: RefreshService, public navigation: NavigationService, private userId: UserId) {
+  constructor(
+    @Self() public allors: ContextService,
+    public factoryService: ObjectService,
+    public refreshService: RefreshService,
+    public navigation: NavigationService,
+    private userId: UserId
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

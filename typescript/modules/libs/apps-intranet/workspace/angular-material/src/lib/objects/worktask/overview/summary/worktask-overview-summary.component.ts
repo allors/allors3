@@ -1,13 +1,25 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { WorkspaceService } from '@allors/workspace/angular/core';
-import { WorkTask, SalesInvoice, FixedAsset, Printable } from '@allors/workspace/domain/default';
-import { Action, NavigationService, PanelService, RefreshService, SaveService, ActionTarget } from '@allors/workspace/angular/base';
+import {
+  WorkTask,
+  SalesInvoice,
+  FixedAsset,
+  Printable,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  ActionTarget,
+} from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'worktask-overview-summary',
@@ -136,8 +148,10 @@ export class WorkTaskOverviewSummaryComponent {
 
       this.assets = loaded.collection<FixedAsset>(fixedAssetPullName);
 
-      const salesInvoices1 = loaded.collection<SalesInvoice>(workEffortBillingPullName) ?? [];
-      const salesInvoices2 = loaded.collection<SalesInvoice>(serviceEntryPullName) ?? [];
+      const salesInvoices1 =
+        loaded.collection<SalesInvoice>(workEffortBillingPullName) ?? [];
+      const salesInvoices2 =
+        loaded.collection<SalesInvoice>(serviceEntryPullName) ?? [];
       this.salesInvoices = new Set([...salesInvoices1, ...salesInvoices2]);
     };
   }
@@ -145,7 +159,9 @@ export class WorkTaskOverviewSummaryComponent {
   public cancel(): void {
     this.panel.manager.context.invoke(this.workTask.Cancel).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully cancelled.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
@@ -159,14 +175,18 @@ export class WorkTaskOverviewSummaryComponent {
   public revise(): void {
     this.panel.manager.context.invoke(this.workTask.Revise).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Revise successfully executed.', 'close', { duration: 5000 });
+      this.snackBar.open('Revise successfully executed.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
   public complete(): void {
     this.panel.manager.context.invoke(this.workTask.Complete).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully completed.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully completed.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 

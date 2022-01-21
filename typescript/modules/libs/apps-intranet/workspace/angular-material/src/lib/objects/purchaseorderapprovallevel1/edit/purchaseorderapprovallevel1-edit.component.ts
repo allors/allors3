@@ -3,11 +3,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { PurchaseOrderApprovalLevel1 } from '@allors/workspace/domain/default';
-import { Action, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  Action,
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject, IResult } from '@allors/workspace/domain/system';
+import { IObject, IResult } from '@allors/system/workspace/domain';
 
 import { PrintService } from '../../../actions/print/print.service';
 
@@ -15,7 +20,9 @@ import { PrintService } from '../../../actions/print/print.service';
   templateUrl: './purchaseorderapprovallevel1-edit.component.html',
   providers: [ContextService],
 })
-export class PurchaseOrderApprovalLevel1EditComponent implements OnInit, OnDestroy {
+export class PurchaseOrderApprovalLevel1EditComponent
+  implements OnInit, OnDestroy
+{
   title: string;
   subTitle: string;
 
@@ -39,7 +46,9 @@ export class PurchaseOrderApprovalLevel1EditComponent implements OnInit, OnDestr
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.print = printService.print(this.m.PurchaseOrderApprovalLevel1.PurchaseOrder);
+    this.print = printService.print(
+      this.m.PurchaseOrderApprovalLevel1.PurchaseOrder
+    );
   }
 
   public ngOnInit(): void {
@@ -66,7 +75,9 @@ export class PurchaseOrderApprovalLevel1EditComponent implements OnInit, OnDestr
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        this.purchaseOrderApproval = loaded.object<PurchaseOrderApprovalLevel1>(m.PurchaseOrderApprovalLevel1);
+        this.purchaseOrderApproval = loaded.object<PurchaseOrderApprovalLevel1>(
+          m.PurchaseOrderApprovalLevel1
+        );
 
         this.title = this.purchaseOrderApproval.Title;
       });
@@ -79,11 +90,15 @@ export class PurchaseOrderApprovalLevel1EditComponent implements OnInit, OnDestr
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseOrderApproval.Approve));
+    this.saveAndInvoke(() =>
+      this.allors.context.invoke(this.purchaseOrderApproval.Approve)
+    );
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseOrderApproval.Reject));
+    this.saveAndInvoke(() =>
+      this.allors.context.invoke(this.purchaseOrderApproval.Reject)
+    );
   }
 
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
@@ -94,7 +109,9 @@ export class PurchaseOrderApprovalLevel1EditComponent implements OnInit, OnDestr
       .push()
       .pipe(
         switchMap(() => {
-          return this.allors.context.pull([pull.PurchaseOrderApprovalLevel1({ objectId: this.data.id })]);
+          return this.allors.context.pull([
+            pull.PurchaseOrderApprovalLevel1({ objectId: this.data.id }),
+          ]);
         }),
         switchMap(() => {
           this.allors.context.reset();

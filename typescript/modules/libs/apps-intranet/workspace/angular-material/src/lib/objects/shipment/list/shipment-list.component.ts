@@ -4,7 +4,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Shipment } from '@allors/workspace/domain/default';
 import {
   Action,
@@ -26,7 +26,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
-import { And, Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/system/workspace/domain';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -105,49 +105,93 @@ export class ShipmentListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.Shipment);
 
-    const fromInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipFromParty };
-    const toInternalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.Shipment.ShipToParty };
+    const fromInternalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.Shipment.ShipFromParty,
+    };
+    const toInternalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.Shipment.ShipToParty,
+    };
 
-    const predicate: And = { kind: 'And', operands: [{ kind: 'Or', operands: [fromInternalOrganisationPredicate, toInternalOrganisationPredicate] }, this.filter.definition.predicate] };
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        {
+          kind: 'Or',
+          operands: [
+            fromInternalOrganisationPredicate,
+            toInternalOrganisationPredicate,
+          ],
+        },
+        this.filter.definition.predicate,
+      ],
+    };
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent,
+            number
+          ]) => {
+            fromInternalOrganisationPredicate.value = internalOrganisationId;
+            toInternalOrganisationPredicate.value = internalOrganisationId;
 
-          return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
-        }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
-          fromInternalOrganisationPredicate.value = internalOrganisationId;
-          toInternalOrganisationPredicate.value = internalOrganisationId;
+            const pulls = [
+              pull.Shipment({
+                predicate,
+                sorting: sort ? angularSorter(m.Shipment)?.create(sort) : null,
+                include: {
+                  ShipToParty: x,
+                  ShipFromParty: x,
+                  ShipmentState: x,
+                },
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          const pulls = [
-            pull.Shipment({
-              predicate,
-              sorting: sort ? angularSorter(m.Shipment)?.create(sort) : null,
-              include: {
-                ShipToParty: x,
-                ShipFromParty: x,
-                ShipmentState: x,
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
@@ -160,7 +204,10 @@ export class ShipmentListComponent implements OnInit, OnDestroy {
             from: v.ShipFromParty.DisplayName,
             to: v.ShipToParty.DisplayName,
             state: `${v.ShipmentState && v.ShipmentState.Name}`,
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

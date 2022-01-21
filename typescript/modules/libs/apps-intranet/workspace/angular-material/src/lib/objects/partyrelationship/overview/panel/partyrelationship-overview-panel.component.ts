@@ -1,9 +1,19 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { PartyRelationship } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -129,23 +139,35 @@ export class PartyRelationshipOverviewPanelComponent implements OnInit {
     this.panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PartyRelationship>(pullName);
 
-      this.currentPartyRelationships = loaded.collection<PartyRelationship>(active);
-      this.currentPartyRelationships = this.currentPartyRelationships?.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
+      this.currentPartyRelationships =
+        loaded.collection<PartyRelationship>(active);
+      this.currentPartyRelationships = this.currentPartyRelationships?.filter(
+        (v) => v.strategy.cls !== this.m.PartyFinancialRelationship
+      );
 
-      this.inactivePartyRelationships = loaded.collection<PartyRelationship>(inactive);
-      this.inactivePartyRelationships = this.inactivePartyRelationships?.filter((v) => v.strategy.cls !== this.m.PartyFinancialRelationship);
+      this.inactivePartyRelationships =
+        loaded.collection<PartyRelationship>(inactive);
+      this.inactivePartyRelationships = this.inactivePartyRelationships?.filter(
+        (v) => v.strategy.cls !== this.m.PartyFinancialRelationship
+      );
 
       this.allPartyRelationships = [];
 
       if (this.currentPartyRelationships != null) {
-        this.allPartyRelationships = this.allPartyRelationships.concat(this.currentPartyRelationships);
+        this.allPartyRelationships = this.allPartyRelationships.concat(
+          this.currentPartyRelationships
+        );
       }
 
       if (this.inactivePartyRelationships != null) {
-        this.allPartyRelationships = this.allPartyRelationships.concat(this.inactivePartyRelationships);
+        this.allPartyRelationships = this.allPartyRelationships.concat(
+          this.inactivePartyRelationships
+        );
       }
 
-      this.table.total = (loaded.value(`${pullName}_total`) ?? this.currentPartyRelationships?.length ?? 0) as number;
+      this.table.total = (loaded.value(`${pullName}_total`) ??
+        this.currentPartyRelationships?.length ??
+        0) as number;
       this.refreshTable();
     };
   }
@@ -157,7 +179,10 @@ export class PartyRelationshipOverviewPanelComponent implements OnInit {
         type: v.strategy.cls.singularName,
         parties: v.Parties?.map((w) => w.DisplayName).join(', '),
         from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+        through:
+          v.ThroughDate != null
+            ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+            : '',
       } as Row;
     });
   }

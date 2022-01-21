@@ -5,7 +5,7 @@ import {
   OnInit,
   OnDestroy,
 } from '@angular/core';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Locale, Person } from '@allors/workspace/domain/default';
 import { ContextService } from '@allors/workspace/angular/core';
 

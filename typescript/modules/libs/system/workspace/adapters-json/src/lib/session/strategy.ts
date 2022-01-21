@@ -1,7 +1,7 @@
 import {
   Session,
   Strategy as SystemStrategy,
-} from '@allors/workspace/adapters/system';
+} from '@allors/system/workspace/adapters';
 import { Class, Origin } from '@allors/system/workspace/meta';
 import { DatabaseOriginState } from './originstate/database-origin-state';
 import { DatabaseRecord } from '../database/database-record';

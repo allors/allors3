@@ -2,9 +2,21 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { SalesOrderItem, SalesOrder } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -72,9 +84,21 @@ export class SalesOrderItemOverviewPanelComponent {
 
     this.delete = deleteService.delete(panel.manager.context);
     this.edit = editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.SalesOrderItem.Cancel, { name: 'Cancel' });
-    this.reject = methodService.create(allors.context, this.m.SalesOrderItem.Reject, { name: 'Reject' });
-    this.reopen = methodService.create(allors.context, this.m.SalesOrderItem.Reopen, { name: 'Reopen' });
+    this.cancel = methodService.create(
+      allors.context,
+      this.m.SalesOrderItem.Cancel,
+      { name: 'Cancel' }
+    );
+    this.reject = methodService.create(
+      allors.context,
+      this.m.SalesOrderItem.Reject,
+      { name: 'Reject' }
+    );
+    this.reopen = methodService.create(
+      allors.context,
+      this.m.SalesOrderItem.Reopen,
+      { name: 'Reopen' }
+    );
 
     const sort = true;
     this.table = new Table({
@@ -132,11 +156,17 @@ export class SalesOrderItemOverviewPanelComponent {
     panel.onPulled = (loaded) => {
       this.salesOrderItems = loaded.collection<SalesOrderItem>(pullName);
       this.order = loaded.object<SalesOrder>(orderPullName);
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.salesOrderItems?.length ?? 0;
+      this.table.total =
+        (loaded.value(`${pullName}_total`) as number) ??
+        this.salesOrderItems?.length ??
+        0;
       this.table.data = this.salesOrderItems?.map((v) => {
         return {
           object: v,
-          item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',
+          item:
+            (v.Product && v.Product.Name) ||
+            (v.SerialisedItem && v.SerialisedItem.Name) ||
+            '',
           itemId: `${v.SerialisedItem && v.SerialisedItem.ItemNumber}`,
           type: `${v.InvoiceItemType && v.InvoiceItemType.Name}`,
           state: `${v.SalesOrderItemState && v.SalesOrderItemState.Name}`,
@@ -145,7 +175,10 @@ export class SalesOrderItemOverviewPanelComponent {
           reserved: v.QuantityReserved,
           short: v.QuantityShortFalled,
           returned: v.QuantityReturned,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+          lastModifiedDate: formatDistance(
+            new Date(v.LastModifiedDate),
+            new Date()
+          ),
         } as Row;
       });
     };

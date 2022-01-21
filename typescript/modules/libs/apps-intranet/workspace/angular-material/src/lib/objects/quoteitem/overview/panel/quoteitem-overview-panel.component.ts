@@ -2,9 +2,21 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { ProductQuote, QuoteItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -71,14 +83,35 @@ export class QuoteItemOverviewPanelComponent {
 
     this.delete = deleteService.delete(panel.manager.context);
     this.edit = this.editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.QuoteItem.Cancel, { name: 'Cancel' });
-    this.reject = methodService.create(allors.context, this.m.QuoteItem.Reject, { name: 'Reject' });
-    this.submit = methodService.create(allors.context, this.m.QuoteItem.Submit, { name: 'Submit' });
+    this.cancel = methodService.create(
+      allors.context,
+      this.m.QuoteItem.Cancel,
+      { name: 'Cancel' }
+    );
+    this.reject = methodService.create(
+      allors.context,
+      this.m.QuoteItem.Reject,
+      { name: 'Reject' }
+    );
+    this.submit = methodService.create(
+      allors.context,
+      this.m.QuoteItem.Submit,
+      { name: 'Submit' }
+    );
 
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'itemType' }, { name: 'item' }, { name: 'itemId' }, { name: 'state' }, { name: 'quantity' }, { name: 'price' }, { name: 'totalAmount' }, { name: 'lastModifiedDate', sort }],
+      columns: [
+        { name: 'itemType' },
+        { name: 'item' },
+        { name: 'itemId' },
+        { name: 'state' },
+        { name: 'quantity' },
+        { name: 'price' },
+        { name: 'totalAmount' },
+        { name: 'lastModifiedDate', sort },
+      ],
       actions: [this.edit, this.delete, this.cancel, this.reject, this.submit],
       defaultAction: this.edit,
       autoSort: true,
@@ -119,18 +152,27 @@ export class QuoteItemOverviewPanelComponent {
     panel.onPulled = (loaded) => {
       this.quoteItems = loaded.collection<QuoteItem>(pullName);
       this.quote = loaded.object<ProductQuote>(quotePullName);
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.quoteItems?.length ?? 0;
+      this.table.total =
+        (loaded.value(`${pullName}_total`) as number) ??
+        this.quoteItems?.length ??
+        0;
       this.table.data = this.quoteItems?.map((v) => {
         return {
           object: v,
           itemType: v.InvoiceItemType.Name,
-          item: (v.Product && v.Product.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || '',
+          item:
+            (v.Product && v.Product.Name) ||
+            (v.SerialisedItem && v.SerialisedItem.Name) ||
+            '',
           itemId: `${v.SerialisedItem && v.SerialisedItem.ItemNumber}`,
           state: `${v.QuoteItemState && v.QuoteItemState.Name}`,
           quantity: v.Quantity,
           price: v.UnitPrice,
           totalAmount: v.TotalExVat,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+          lastModifiedDate: formatDistance(
+            new Date(v.LastModifiedDate),
+            new Date()
+          ),
         } as Row;
       });
     };

@@ -1,4 +1,4 @@
-import { ObjectTypeData } from '@allors/protocol/json/system';
+import { ObjectTypeData } from '@allors/system/common/protocol-json';
 
 import { Lookup } from './utils/lookup';
 import { InternalClass } from './internal/internal-class';
@@ -17,7 +17,11 @@ export class LazyInterface extends LazyComposite implements InternalInterface {
   subtypes: Set<InternalComposite>;
   classes: Set<InternalClass>;
 
-  constructor(metaPopulation: InternalMetaPopulation, data: ObjectTypeData, lookup: Lookup) {
+  constructor(
+    metaPopulation: InternalMetaPopulation,
+    data: ObjectTypeData,
+    lookup: Lookup
+  ) {
     super(metaPopulation, data, lookup);
     this.subtypes = new Set();
     this.classes = new Set();
@@ -42,16 +46,25 @@ export class LazyInterface extends LazyComposite implements InternalInterface {
     }
 
     for (const associationType of this.associationTypes) {
-      this.propertyTypeByPropertyName.set(associationType.name, associationType);
+      this.propertyTypeByPropertyName.set(
+        associationType.name,
+        associationType
+      );
     }
 
     for (const subtype of this.subtypes) {
       for (const roleType of subtype.roleTypes) {
-        this.propertyTypeByPropertyName.set(subtype.singularName + '_' + roleType.name, roleType);
+        this.propertyTypeByPropertyName.set(
+          subtype.singularName + '_' + roleType.name,
+          roleType
+        );
       }
 
       for (const associationType of subtype.associationTypes) {
-        this.propertyTypeByPropertyName.set(subtype.singularName + '_' + associationType.name, associationType);
+        this.propertyTypeByPropertyName.set(
+          subtype.singularName + '_' + associationType.name,
+          associationType
+        );
       }
     }
   }

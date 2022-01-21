@@ -1,6 +1,6 @@
 import { SearchFactory } from '@allors/workspace/angular/base';
-import { And } from '@allors/workspace/domain/system';
-import { M, TreeBuilder } from '@allors/workspace/meta/default';
+import { And } from '@allors/system/workspace/domain';
+import { M, TreeBuilder } from '@allors/default/workspace/meta';
 
 export class Filters {
   static goodsFilter(m: M) {
@@ -21,7 +21,11 @@ export class Filters {
           extent: {
             kind: 'Filter',
             objectType: m.InventoryItemKind,
-            predicate: { kind: 'Equals', propertyType: m.InventoryItemKind.UniqueId, value: '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae' },
+            predicate: {
+              kind: 'Equals',
+              propertyType: m.InventoryItemKind.UniqueId,
+              value: '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae',
+            },
           },
         });
       },
@@ -46,7 +50,10 @@ export class Filters {
     return new SearchFactory({
       objectType: m.UnifiedGood,
       roleTypes: [m.UnifiedGood.Name, m.UnifiedGood.SearchString],
-      include: treeFactory.UnifiedGood({ SerialisedItems: {}, PartWeightedAverage: {} }),
+      include: treeFactory.UnifiedGood({
+        SerialisedItems: {},
+        PartWeightedAverage: {},
+      }),
     });
   }
 
@@ -71,13 +78,31 @@ export class Filters {
             predicate: {
               kind: 'And',
               operands: [
-                { kind: 'Equals', propertyType: m.CustomerRelationship.InternalOrganisation, value: internalOrganisationId },
-                { kind: 'LessThan', roleType: m.CustomerRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'Equals',
+                  propertyType: m.CustomerRelationship.InternalOrganisation,
+                  value: internalOrganisationId,
+                },
+                {
+                  kind: 'LessThan',
+                  roleType: m.CustomerRelationship.FromDate,
+                  value: new Date(),
+                },
                 {
                   kind: 'Or',
                   operands: [
-                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.CustomerRelationship.ThroughDate } },
-                    { kind: 'GreaterThan', roleType: m.CustomerRelationship.ThroughDate, value: new Date() },
+                    {
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: m.CustomerRelationship.ThroughDate,
+                      },
+                    },
+                    {
+                      kind: 'GreaterThan',
+                      roleType: m.CustomerRelationship.ThroughDate,
+                      value: new Date(),
+                    },
                   ],
                 },
               ],
@@ -102,13 +127,31 @@ export class Filters {
             predicate: {
               kind: 'And',
               operands: [
-                { kind: 'Equals', propertyType: m.SupplierRelationship.InternalOrganisation, value: internalOrganisationId },
-                { kind: 'LessThan', roleType: m.SupplierRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'Equals',
+                  propertyType: m.SupplierRelationship.InternalOrganisation,
+                  value: internalOrganisationId,
+                },
+                {
+                  kind: 'LessThan',
+                  roleType: m.SupplierRelationship.FromDate,
+                  value: new Date(),
+                },
                 {
                   kind: 'Or',
                   operands: [
-                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.SupplierRelationship.ThroughDate } },
-                    { kind: 'GreaterThan', roleType: m.SupplierRelationship.ThroughDate, value: new Date() },
+                    {
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: m.SupplierRelationship.ThroughDate,
+                      },
+                    },
+                    {
+                      kind: 'GreaterThan',
+                      roleType: m.SupplierRelationship.ThroughDate,
+                      value: new Date(),
+                    },
                   ],
                 },
               ],
@@ -133,12 +176,26 @@ export class Filters {
             predicate: {
               kind: 'And',
               operands: [
-                { kind: 'LessThan', roleType: m.SupplierRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'LessThan',
+                  roleType: m.SupplierRelationship.FromDate,
+                  value: new Date(),
+                },
                 {
                   kind: 'Or',
                   operands: [
-                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.SupplierRelationship.ThroughDate } },
-                    { kind: 'GreaterThan', roleType: m.SupplierRelationship.ThroughDate, value: new Date() },
+                    {
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: m.SupplierRelationship.ThroughDate,
+                      },
+                    },
+                    {
+                      kind: 'GreaterThan',
+                      roleType: m.SupplierRelationship.ThroughDate,
+                      value: new Date(),
+                    },
                   ],
                 },
               ],
@@ -156,20 +213,39 @@ export class Filters {
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
-          propertyType: m.Organisation.SubContractorRelationshipsWhereSubContractor,
+          propertyType:
+            m.Organisation.SubContractorRelationshipsWhereSubContractor,
           extent: {
             kind: 'Filter',
             objectType: m.SubContractorRelationship,
             predicate: {
               kind: 'And',
               operands: [
-                { kind: 'Equals', propertyType: m.SubContractorRelationship.Contractor, value: internalOrganisationId },
-                { kind: 'LessThan', roleType: m.SubContractorRelationship.FromDate, value: new Date() },
+                {
+                  kind: 'Equals',
+                  propertyType: m.SubContractorRelationship.Contractor,
+                  value: internalOrganisationId,
+                },
+                {
+                  kind: 'LessThan',
+                  roleType: m.SubContractorRelationship.FromDate,
+                  value: new Date(),
+                },
                 {
                   kind: 'Or',
                   operands: [
-                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.SubContractorRelationship.ThroughDate } },
-                    { kind: 'GreaterThan', roleType: m.SubContractorRelationship.ThroughDate, value: new Date() },
+                    {
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: m.SubContractorRelationship.ThroughDate,
+                      },
+                    },
+                    {
+                      kind: 'GreaterThan',
+                      roleType: m.SubContractorRelationship.ThroughDate,
+                      value: new Date(),
+                    },
                   ],
                 },
               ],
@@ -194,13 +270,31 @@ export class Filters {
             predicate: {
               kind: 'And',
               operands: [
-                { kind: 'Equals', propertyType: m.Employment.Employer, value: internalOrganisationId },
-                { kind: 'LessThan', roleType: m.Employment.FromDate, value: new Date() },
+                {
+                  kind: 'Equals',
+                  propertyType: m.Employment.Employer,
+                  value: internalOrganisationId,
+                },
+                {
+                  kind: 'LessThan',
+                  roleType: m.Employment.FromDate,
+                  value: new Date(),
+                },
                 {
                   kind: 'Or',
                   operands: [
-                    { kind: 'Not', operand: { kind: 'Exists', propertyType: m.Employment.ThroughDate } },
-                    { kind: 'GreaterThan', roleType: m.Employment.ThroughDate, value: new Date() },
+                    {
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: m.Employment.ThroughDate,
+                      },
+                    },
+                    {
+                      kind: 'GreaterThan',
+                      roleType: m.Employment.ThroughDate,
+                      value: new Date(),
+                    },
                   ],
                 },
               ],
@@ -223,7 +317,11 @@ export class Filters {
       objectType: m.Organisation,
       roleTypes: [m.Organisation.DisplayName],
       post: (predicate: And) => {
-        predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsInternalOrganisation, value: true });
+        predicate.operands.push({
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        });
       },
     });
   }
@@ -233,7 +331,11 @@ export class Filters {
       objectType: m.Organisation,
       roleTypes: [m.Organisation.DisplayName],
       post: (predicate: And) => {
-        predicate.operands.push({ kind: 'Equals', propertyType: m.Organisation.IsManufacturer, value: true });
+        predicate.operands.push({
+          kind: 'Equals',
+          propertyType: m.Organisation.IsManufacturer,
+          value: true,
+        });
       },
     });
   }

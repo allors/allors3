@@ -3,10 +3,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest, Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Action, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Action,
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IResult } from '@allors/workspace/domain/system';
+import { IResult } from '@allors/system/workspace/domain';
 
 import { PrintService } from '../../../actions/print/print.service';
 import { PurchaseInvoiceApproval } from '@allors/workspace/domain/default';
@@ -38,7 +43,9 @@ export class PurchaseInvoiceApprovalEditComponent implements OnInit, OnDestroy {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.print = printService.print(this.m.PurchaseInvoiceApproval.PurchaseInvoice);
+    this.print = printService.print(
+      this.m.PurchaseInvoiceApproval.PurchaseInvoice
+    );
   }
 
   public ngOnInit(): void {
@@ -65,7 +72,9 @@ export class PurchaseInvoiceApprovalEditComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        this.purchaseInvoiceApproval = loaded.object<PurchaseInvoiceApproval>(m.PurchaseInvoiceApproval);
+        this.purchaseInvoiceApproval = loaded.object<PurchaseInvoiceApproval>(
+          m.PurchaseInvoiceApproval
+        );
 
         this.title = this.purchaseInvoiceApproval.Title;
       });
@@ -78,11 +87,15 @@ export class PurchaseInvoiceApprovalEditComponent implements OnInit, OnDestroy {
   }
 
   approve(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseInvoiceApproval.Approve));
+    this.saveAndInvoke(() =>
+      this.allors.context.invoke(this.purchaseInvoiceApproval.Approve)
+    );
   }
 
   reject(): void {
-    this.saveAndInvoke(() => this.allors.context.invoke(this.purchaseInvoiceApproval.Reject));
+    this.saveAndInvoke(() =>
+      this.allors.context.invoke(this.purchaseInvoiceApproval.Reject)
+    );
   }
 
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
@@ -93,7 +106,9 @@ export class PurchaseInvoiceApprovalEditComponent implements OnInit, OnDestroy {
       .push()
       .pipe(
         switchMap(() => {
-          return this.allors.context.pull([pull.PurchaseInvoiceApproval({ objectId: this.data.id })]);
+          return this.allors.context.pull([
+            pull.PurchaseInvoiceApproval({ objectId: this.data.id }),
+          ]);
         }),
         switchMap(() => {
           this.allors.context.reset();

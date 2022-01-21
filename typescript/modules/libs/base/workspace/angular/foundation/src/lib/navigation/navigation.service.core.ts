@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { Composite } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 

@@ -16,8 +16,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@allors/workspace/meta/default": ["libs/workspace/meta/core/src/index.ts"],
-      "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"]
+      "@allors/default/workspace/meta": ["libs/core/workspace/meta/src/index.ts"],
+      "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"]
     }
   }
 }

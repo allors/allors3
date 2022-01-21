@@ -1,5 +1,5 @@
 import { Directive } from '@angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { PanelService } from './panel.service';
 import { AllorsObjectPanelComponent } from './object-panel.component';
 

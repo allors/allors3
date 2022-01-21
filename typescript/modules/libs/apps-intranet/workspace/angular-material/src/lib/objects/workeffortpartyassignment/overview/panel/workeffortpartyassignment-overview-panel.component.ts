@@ -1,9 +1,22 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { format } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortPartyAssignment } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  WorkEffortPartyAssignment,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -45,7 +58,14 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent implements OnInit {
     };
   }
 
-  constructor(@Self() public allors: ContextService, @Self() public panel: PanelService, public refreshService: RefreshService, public navigation: NavigationService, public deleteService: DeleteService, public editService: EditService) {
+  constructor(
+    @Self() public allors: ContextService,
+    @Self() public panel: PanelService,
+    public refreshService: RefreshService,
+    public navigation: NavigationService,
+    public deleteService: DeleteService,
+    public editService: EditService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
@@ -130,8 +150,10 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent implements OnInit {
 
     this.panel.onPulled = (loaded) => {
       this.workEffort = loaded.object<WorkEffort>(this.m.WorkEffort);
-      this.fromParty = loaded.collection<WorkEffortPartyAssignment>(partypullName);
-      this.fromWorkEffort = loaded.collection<WorkEffortPartyAssignment>(workeffortpullName);
+      this.fromParty =
+        loaded.collection<WorkEffortPartyAssignment>(partypullName);
+      this.fromWorkEffort =
+        loaded.collection<WorkEffortPartyAssignment>(workeffortpullName);
 
       if (this.fromParty != null && this.fromParty.length > 0) {
         this.objects = this.fromParty;
@@ -150,9 +172,14 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent implements OnInit {
           number: v.Assignment.WorkEffortNumber,
           name: v.Assignment.Name,
           party: v.Party.DisplayName,
-          status: v.Assignment.WorkEffortState ? v.Assignment.WorkEffortState.Name : '',
+          status: v.Assignment.WorkEffortState
+            ? v.Assignment.WorkEffortState.Name
+            : '',
           from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-          through: v.ThroughDate != null ? format(new Date(v.ThroughDate), 'dd-MM-yyyy') : '',
+          through:
+            v.ThroughDate != null
+              ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+              : '',
         } as Row;
       });
     };

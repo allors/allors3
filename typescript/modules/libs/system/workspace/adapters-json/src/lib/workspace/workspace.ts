@@ -1,5 +1,5 @@
-import { Workspace as SystemWorkspace } from '@allors/workspace/adapters/system';
-import { ISession } from '@allors/workspace/domain/system';
+import { Workspace as SystemWorkspace } from '@allors/system/workspace/adapters';
+import { ISession } from '@allors/system/workspace/domain';
 import { DatabaseConnection } from '../database/database-connection';
 import { Session } from '../session/session';
 

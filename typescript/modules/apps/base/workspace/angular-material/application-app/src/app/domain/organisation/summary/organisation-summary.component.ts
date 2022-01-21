@@ -1,5 +1,5 @@
 import { Component, Self } from '@angular/core';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/workspace/domain/default';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import {

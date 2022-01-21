@@ -4,8 +4,11 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { InternalOrganisation, Organisation } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  InternalOrganisation,
+  Organisation,
+} from '@allors/workspace/domain/default';
 import {
   Action,
   angularFilterFromDefinition,
@@ -81,7 +84,16 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }, 'street', 'locality', 'country', 'phone', 'isCustomer', 'isSupplier', { name: 'lastModifiedDate', sort: true }],
+      columns: [
+        { name: 'name', sort: true },
+        'street',
+        'locality',
+        'country',
+        'phone',
+        'isCustomer',
+        'isSupplier',
+        { name: 'lastModifiedDate', sort: true },
+      ],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -95,51 +107,72 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.Organisation);
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
-
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Organisation({
-              predicate: this.filter.definition.predicate,
-              sorting: sort ? angularSorter(m.Organisation)?.create(sort) : null,
-              include: {
-                CustomerRelationshipsWhereCustomer: x,
-                SupplierRelationshipsWhereSupplier: x,
-                PartyContactMechanisms: {
-                  ContactMechanism: {
-                    PostalAddress_Country: x,
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              this.fetcher.internalOrganisation,
+              pull.Organisation({
+                predicate: this.filter.definition.predicate,
+                sorting: sort
+                  ? angularSorter(m.Organisation)?.create(sort)
+                  : null,
+                include: {
+                  CustomerRelationshipsWhereCustomer: x,
+                  SupplierRelationshipsWhereSupplier: x,
+                  PartyContactMechanisms: {
+                    ContactMechanism: {
+                      PostalAddress_Country: x,
+                    },
                   },
                 },
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         const organisations = loaded.collection<Organisation>(m.Organisation);
 
         this.table.total = (loaded.value('Organisations_total') ?? 0) as number;
@@ -151,9 +184,14 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
             locality: v.DisplayAddress2,
             country: v.DisplayAddress3,
             phone: v.DisplayPhone,
-            isCustomer: v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
-            isSupplier: v.SupplierRelationshipsWhereSupplier.length > 0 ? 'Yes' : 'No',
-            lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+            isCustomer:
+              v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
+            isSupplier:
+              v.SupplierRelationshipsWhereSupplier.length > 0 ? 'Yes' : 'No',
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

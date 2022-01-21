@@ -1,9 +1,22 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 import { isBefore, isAfter } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { WorkEffort, WorkEffortAssignmentRate } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  WorkEffort,
+  WorkEffortAssignmentRate,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -123,7 +136,10 @@ export class WorkEffortAssignmentRateOverviewPanelComponent implements OnInit {
       this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
       this.objects = loaded.collection<WorkEffortAssignmentRate>(pullName);
 
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects?.length ?? 0;
+      this.table.total =
+        (loaded.value(`${pullName}_total`) as number) ??
+        this.objects?.length ??
+        0;
       this.refreshTable();
     };
   }
@@ -145,9 +161,23 @@ export class WorkEffortAssignmentRateOverviewPanelComponent implements OnInit {
   get workEffortAssignmentRates(): any {
     switch (this.collection) {
       case 'Current':
-        return this.objects && this.objects?.filter((v) => isBefore(new Date(v.FromDate), new Date()) && (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date())));
+        return (
+          this.objects &&
+          this.objects?.filter(
+            (v) =>
+              isBefore(new Date(v.FromDate), new Date()) &&
+              (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
+          )
+        );
       case 'Inactive':
-        return this.objects && this.objects?.filter((v) => isAfter(new Date(v.FromDate), new Date()) || (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date())));
+        return (
+          this.objects &&
+          this.objects?.filter(
+            (v) =>
+              isAfter(new Date(v.FromDate), new Date()) ||
+              (v.ThroughDate && isBefore(new Date(v.ThroughDate), new Date()))
+          )
+        );
       case 'All':
       default:
         return this.objects;

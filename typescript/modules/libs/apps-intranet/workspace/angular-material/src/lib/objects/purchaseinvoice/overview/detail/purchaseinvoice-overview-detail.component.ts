@@ -2,7 +2,7 @@ import { Component, OnInit, Self, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Person,
   Organisation,
@@ -20,9 +20,14 @@ import {
   PurchaseInvoiceType,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 import { Filters } from '../../../../filters/filters';
@@ -32,7 +37,9 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './purchaseinvoice-overview-detail.component.html',
   providers: [ContextService, PanelService],
 })
-export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy {
+export class PurchaseInvoiceOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   invoice: PurchaseInvoice;
@@ -81,15 +88,24 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   showIrpf: boolean;
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToCustomer || this.invoice.ShipToCustomer.strategy.cls === this.m.Person;
+    return (
+      !this.invoice.ShipToCustomer ||
+      this.invoice.ShipToCustomer.strategy.cls === this.m.Person
+    );
   }
 
   get billToEndCustomerIsPerson(): boolean {
-    return !this.invoice.BillToEndCustomer || this.invoice.BillToEndCustomer.strategy.cls === this.m.Person;
+    return (
+      !this.invoice.BillToEndCustomer ||
+      this.invoice.BillToEndCustomer.strategy.cls === this.m.Person
+    );
   }
 
   get shipToEndCustomerIsPerson(): boolean {
-    return !this.invoice.ShipToEndCustomer || this.invoice.ShipToEndCustomer.strategy.cls === this.m.Person;
+    return (
+      !this.invoice.ShipToEndCustomer ||
+      this.invoice.ShipToEndCustomer.strategy.cls === this.m.Person
+    );
   }
 
   constructor(
@@ -198,18 +214,35 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
             }),
             pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.Currency({
-              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Currency.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Currency.IsoCode }],
             }),
             pull.PurchaseInvoiceType({
-              predicate: { kind: 'Equals', propertyType: m.PurchaseInvoiceType.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.PurchaseInvoiceType.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.PurchaseInvoiceType.Name }],
             }),
           ];
 
-          this.customersFilter = Filters.customersFilter(m, this.internalOrganisationId.value);
-          this.employeeFilter = Filters.employeeFilter(m, this.internalOrganisationId.value);
-          this.suppliersFilter = Filters.suppliersFilter(m, this.internalOrganisationId.value);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
+          this.employeeFilter = Filters.employeeFilter(
+            m,
+            this.internalOrganisationId.value
+          );
+          this.suppliersFilter = Filters.suppliersFilter(
+            m,
+            this.internalOrganisationId.value
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -217,12 +250,15 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
         this.currencies = loaded.collection<Currency>(m.Currency);
-        this.purchaseInvoiceTypes = loaded.collection<PurchaseInvoiceType>(m.PurchaseInvoiceType);
+        this.purchaseInvoiceTypes = loaded.collection<PurchaseInvoiceType>(
+          m.PurchaseInvoiceType
+        );
 
         this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
 
@@ -263,7 +299,10 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public billedFromAdded(organisation: Organisation): void {
-    const supplierRelationship = this.allors.context.create<SupplierRelationship>(this.m.SupplierRelationship);
+    const supplierRelationship =
+      this.allors.context.create<SupplierRelationship>(
+        this.m.SupplierRelationship
+      );
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -271,7 +310,10 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -279,7 +321,10 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -287,7 +332,10 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -295,8 +343,12 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public billedFromContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.invoice.BilledFrom as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.invoice
+      .BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billedFromContacts.push(person);
@@ -304,8 +356,12 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public shipToCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.invoice.BilledFrom as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.invoice
+      .BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToCustomerContacts.push(person);
@@ -313,8 +369,12 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.invoice
+      .ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToEndCustomerContacts.push(person);
@@ -322,36 +382,62 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.invoice.ShipToEndCustomer as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.invoice
+      .ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToEndCustomerContacts.push(person);
     this.invoice.ShipToEndCustomerContactPerson = person;
   }
 
-  public billedFromContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.billedFromContactMechanisms.push(partyContactMechanism.ContactMechanism);
+  public billedFromContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.billedFromContactMechanisms.push(
+      partyContactMechanism.ContactMechanism
+    );
     this.invoice.BilledFrom.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedBilledFromContactMechanism = partyContactMechanism.ContactMechanism;
+    this.invoice.AssignedBilledFromContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
-  public shipToCustomerAddressAdded(partyContactMechanism: PartyContactMechanism): void {
+  public shipToCustomerAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.shipToCustomerAddresses.push(partyContactMechanism.ContactMechanism);
     this.invoice.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedShipToCustomerAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+    this.invoice.AssignedShipToCustomerAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public billToEndCustomerContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.billToEndCustomerContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.invoice.BillToEndCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedBillToEndCustomerContactMechanism = partyContactMechanism.ContactMechanism;
+  public billToEndCustomerContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.billToEndCustomerContactMechanisms.push(
+      partyContactMechanism.ContactMechanism
+    );
+    this.invoice.BillToEndCustomer.addPartyContactMechanism(
+      partyContactMechanism
+    );
+    this.invoice.AssignedBillToEndCustomerContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
-  public shipToEndCustomerAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.shipToEndCustomerAddresses.push(partyContactMechanism.ContactMechanism);
-    this.invoice.ShipToEndCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedShipToEndCustomerAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+  public shipToEndCustomerAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.shipToEndCustomerAddresses.push(
+      partyContactMechanism.ContactMechanism
+    );
+    this.invoice.ShipToEndCustomer.addPartyContactMechanism(
+      partyContactMechanism
+    );
+    this.invoice.AssignedShipToEndCustomerAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
   public billedFromSelected(organisation: IObject) {
@@ -404,7 +490,11 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
         },
       }),
       pull.PurchaseOrder({
-        predicate: { kind: 'Equals', propertyType: m.PurchaseOrder.TakenViaSupplier, object: party },
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.PurchaseOrder.TakenViaSupplier,
+          object: party,
+        },
         sorting: [{ roleType: m.PurchaseOrder.OrderNumber }],
       }),
     ];
@@ -416,9 +506,19 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
         this.previousBilledFrom = this.invoice.BilledFrom;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billedFromContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billedFromContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.billedFromContactMechanisms = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billedFromContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
     });
   }
 
@@ -462,9 +562,16 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
         this.previousShipToCustomer = this.invoice.ShipToCustomer;
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToCustomerAddresses = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.shipToCustomerAddresses = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
+      this.shipToCustomerContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
     });
   }
 
@@ -502,14 +609,27 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
         this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
       }
 
-      if (this.invoice.BillToEndCustomer != null && this.invoice.ShipToEndCustomer == null) {
+      if (
+        this.invoice.BillToEndCustomer != null &&
+        this.invoice.ShipToEndCustomer == null
+      ) {
         this.invoice.ShipToEndCustomer = this.invoice.BillToEndCustomer;
         this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.billToEndCustomerContactMechanisms = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.billToEndCustomerContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
     });
   }
 
@@ -547,14 +667,27 @@ export class PurchaseInvoiceOverviewDetailComponent implements OnInit, OnDestroy
         this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
       }
 
-      if (this.invoice.ShipToEndCustomer != null && this.invoice.BillToEndCustomer == null) {
+      if (
+        this.invoice.ShipToEndCustomer != null &&
+        this.invoice.BillToEndCustomer == null
+      ) {
         this.invoice.BillToEndCustomer = this.invoice.ShipToEndCustomer;
         this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.shipToEndCustomerAddresses = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
     });
   }
 }

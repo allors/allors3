@@ -3,11 +3,19 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Receipt, Invoice, PaymentApplication } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Receipt,
+  Invoice,
+  PaymentApplication,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './receipt-edit.component.html',
@@ -24,7 +32,13 @@ export class ReceiptEditComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   paymentApplication: PaymentApplication;
 
-  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<ReceiptEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
+  constructor(
+    @Self() public allors: ContextService,
+    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
+    public dialogRef: MatDialogRef<ReceiptEditComponent>,
+    public refreshService: RefreshService,
+    private saveService: SaveService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
@@ -60,7 +74,9 @@ export class ReceiptEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -70,7 +86,10 @@ export class ReceiptEditComponent implements OnInit, OnDestroy {
 
         if (isCreate) {
           this.title = 'Add Receipt';
-          this.paymentApplication = this.allors.context.create<PaymentApplication>(m.PaymentApplication);
+          this.paymentApplication =
+            this.allors.context.create<PaymentApplication>(
+              m.PaymentApplication
+            );
           this.paymentApplication.Invoice = this.invoice;
 
           this.receipt = this.allors.context.create<Receipt>(m.Receipt);

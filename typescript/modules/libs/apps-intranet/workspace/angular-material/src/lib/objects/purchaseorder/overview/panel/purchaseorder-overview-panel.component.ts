@@ -1,8 +1,24 @@
 import { Component, Self, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, InternalOrganisation, PurchaseOrder } from '@allors/workspace/domain/default';
-import { Action, DeleteService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, OverviewService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  InternalOrganisation,
+  PurchaseOrder,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -72,7 +88,11 @@ export class PurchaseOrderOverviewPanelComponent {
     this.panel.expandable = true;
 
     this.delete = this.deleteService.delete(this.panel.manager.context);
-    this.invoice = methodService.create(allors.context, this.m.PurchaseOrder.Invoice, { name: 'Invoice' });
+    this.invoice = methodService.create(
+      allors.context,
+      this.m.PurchaseOrder.Invoice,
+      { name: 'Invoice' }
+    );
 
     const sort = true;
     this.table = new Table({
@@ -86,7 +106,11 @@ export class PurchaseOrderOverviewPanelComponent {
         { name: 'shipmentState', sort },
         { name: 'paymentState', sort },
       ],
-      actions: [this.overviewService.overview(), this.printService.print(), this.invoice],
+      actions: [
+        this.overviewService.overview(),
+        this.printService.print(),
+        this.invoice,
+      ],
       defaultAction: this.overviewService.overview(),
       autoSort: true,
       autoFilter: true,
@@ -126,10 +150,21 @@ export class PurchaseOrderOverviewPanelComponent {
       this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
 
       const purchaseOrders = loaded.collection<PurchaseOrder>(pullName);
-      this.objects = purchaseOrders?.filter((v) => v.OrderedBy === this.internalOrganisation);
-      this.objects.sort((a, b) => (a.OrderNumber > b.OrderNumber ? 1 : b.OrderNumber > a.OrderNumber ? -1 : 0));
+      this.objects = purchaseOrders?.filter(
+        (v) => v.OrderedBy === this.internalOrganisation
+      );
+      this.objects.sort((a, b) =>
+        a.OrderNumber > b.OrderNumber
+          ? 1
+          : b.OrderNumber > a.OrderNumber
+          ? -1
+          : 0
+      );
 
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects?.length ?? 0;
+      this.table.total =
+        (loaded.value(`${pullName}_total`) as number) ??
+        this.objects?.length ??
+        0;
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,

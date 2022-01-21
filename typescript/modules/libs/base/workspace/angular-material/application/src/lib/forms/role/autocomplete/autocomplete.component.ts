@@ -21,7 +21,7 @@ import {
   MatAutocompleteTrigger,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { IObject, TypeForParameter } from '@allors/workspace/domain/system';
+import { IObject, TypeForParameter } from '@allors/system/workspace/domain';
 import { RoleField } from '@allors/workspace/angular/base';
 
 @Component({

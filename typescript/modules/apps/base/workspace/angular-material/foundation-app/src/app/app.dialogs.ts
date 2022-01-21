@@ -1,5 +1,5 @@
 import { DynamicEditComponent } from '@allors/workspace/angular-material/base';
-import { tags } from '@allors/workspace/meta/default';
+import { tags } from '@allors/default/workspace/meta';
 
 import { CountryEditComponent } from './domain/country/edit/country-edit.component';
 import { EmploymentEditComponent } from './domain/employment/edit/employment-edit.component';

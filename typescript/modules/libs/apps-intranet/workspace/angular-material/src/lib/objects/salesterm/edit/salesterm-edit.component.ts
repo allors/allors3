@@ -3,11 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { SalesInvoice, SalesOrder, SalesTerm, TermType } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  SalesInvoice,
+  SalesOrder,
+  SalesTerm,
+  TermType,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './salesterm-edit.component.html',
@@ -24,7 +33,13 @@ export class SalesTermEditComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(@Self() public allors: ContextService, @Inject(MAT_DIALOG_DATA) public data: ObjectData, public dialogRef: MatDialogRef<SalesTermEditComponent>, public refreshService: RefreshService, private saveService: SaveService) {
+  constructor(
+    @Self() public allors: ContextService,
+    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
+    public dialogRef: MatDialogRef<SalesTermEditComponent>,
+    public refreshService: RefreshService,
+    private saveService: SaveService
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }
@@ -43,7 +58,11 @@ export class SalesTermEditComponent implements OnInit, OnDestroy {
 
           const pulls = [
             pull.TermType({
-              predicate: { kind: 'Equals', propertyType: m.TermType.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.TermType.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.TermType.Name }],
             }),
           ];
@@ -60,24 +79,41 @@ export class SalesTermEditComponent implements OnInit, OnDestroy {
           }
 
           if (isCreate && this.data.associationId) {
-            pulls.push(pull.SalesInvoice({ objectId: this.data.associationId }), pull.SalesOrder({ objectId: this.data.associationId }));
+            pulls.push(
+              pull.SalesInvoice({ objectId: this.data.associationId }),
+              pull.SalesOrder({ objectId: this.data.associationId })
+            );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, create: isCreate, cls, associationRoleType })));
+          return this.allors.context.pull(pulls).pipe(
+            map((loaded) => ({
+              loaded,
+              create: isCreate,
+              cls,
+              associationRoleType,
+            }))
+          );
         })
       )
       .subscribe(({ loaded, create, cls, associationRoleType }) => {
         this.allors.context.reset();
 
-        this.container = loaded.object<SalesInvoice>(m.SalesInvoice) || loaded.object<SalesOrder>(m.SalesOrder);
+        this.container =
+          loaded.object<SalesInvoice>(m.SalesInvoice) ||
+          loaded.object<SalesOrder>(m.SalesOrder);
         this.object = loaded.object<SalesTerm>(m.SalesTerm);
         this.termTypes = loaded.collection<TermType>(m.TermType);
-        this.termTypes = this.termTypes?.filter((v) => v.strategy.cls.singularName === `${cls.singularName}Type`);
+        this.termTypes = this.termTypes?.filter(
+          (v) => v.strategy.cls.singularName === `${cls.singularName}Type`
+        );
 
         if (create) {
           this.title = 'Add Sales Term';
           this.object = this.allors.context.create<SalesTerm>(cls);
-          this.container.strategy.addCompositesRole(associationRoleType, this.object);
+          this.container.strategy.addCompositesRole(
+            associationRoleType,
+            this.object
+          );
         }
       });
   }

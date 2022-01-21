@@ -4,10 +4,20 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { InternalOrganisation, InvoiceItemType, WorkEffortInvoiceItem, WorkEffort, WorkEffortInvoiceItemAssignment } from '@allors/workspace/domain/default';
+import {
+  InternalOrganisation,
+  InvoiceItemType,
+  WorkEffortInvoiceItem,
+  WorkEffort,
+  WorkEffortInvoiceItemAssignment,
+} from '@allors/workspace/domain/default';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -16,7 +26,9 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './workeffortinvoiceassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortInvoiceItemAssignmentEditComponent implements OnInit, OnDestroy {
+export class WorkEffortInvoiceItemAssignmentEditComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   title: string;
@@ -47,7 +59,10 @@ export class WorkEffortInvoiceItemAssignmentEditComponent implements OnInit, OnD
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id === undefined;
@@ -55,7 +70,11 @@ export class WorkEffortInvoiceItemAssignmentEditComponent implements OnInit, OnD
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.InvoiceItemType({
-              predicate: { kind: 'Equals', propertyType: m.InvoiceItemType.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.InvoiceItemType.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.InvoiceItemType.Name }],
             }),
           ];
@@ -79,29 +98,47 @@ export class WorkEffortInvoiceItemAssignmentEditComponent implements OnInit, OnD
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-        this.invoiceItemTypes = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
+        this.invoiceItemTypes = loaded.collection<InvoiceItemType>(
+          m.InvoiceItemType
+        );
 
         if (isCreate) {
           this.title = 'Add work effort invoice item';
 
-          this.workEffortInvoiceItemAssignment = this.allors.context.create<WorkEffortInvoiceItemAssignment>(m.WorkEffortInvoiceItemAssignment);
+          this.workEffortInvoiceItemAssignment =
+            this.allors.context.create<WorkEffortInvoiceItemAssignment>(
+              m.WorkEffortInvoiceItemAssignment
+            );
           this.workEffortInvoiceItemAssignment.Assignment = this.workEffort;
 
-          this.workEffortInvoiceItem = this.allors.context.create<WorkEffortInvoiceItem>(m.WorkEffortInvoiceItem);
-          this.workEffortInvoiceItemAssignment.WorkEffortInvoiceItem = this.workEffortInvoiceItem;
+          this.workEffortInvoiceItem =
+            this.allors.context.create<WorkEffortInvoiceItem>(
+              m.WorkEffortInvoiceItem
+            );
+          this.workEffortInvoiceItemAssignment.WorkEffortInvoiceItem =
+            this.workEffortInvoiceItem;
         } else {
-          this.workEffortInvoiceItemAssignment = loaded.object<WorkEffortInvoiceItemAssignment>(m.WorkEffortInvoiceItemAssignment);
-          this.workEffortInvoiceItem = this.workEffortInvoiceItemAssignment.WorkEffortInvoiceItem;
+          this.workEffortInvoiceItemAssignment =
+            loaded.object<WorkEffortInvoiceItemAssignment>(
+              m.WorkEffortInvoiceItemAssignment
+            );
+          this.workEffortInvoiceItem =
+            this.workEffortInvoiceItemAssignment.WorkEffortInvoiceItem;
 
-          if (this.workEffortInvoiceItemAssignment.canWriteWorkEffortInvoiceItem) {
+          if (
+            this.workEffortInvoiceItemAssignment.canWriteWorkEffortInvoiceItem
+          ) {
             this.title = 'Edit invoice item';
           } else {
             this.title = 'View invoice item';

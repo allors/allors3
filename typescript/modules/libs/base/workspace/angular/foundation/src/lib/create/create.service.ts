@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { Composite } from '@allors/system/workspace/meta';
-import { IObject, ISession } from '@allors/workspace/domain/system';
+import { IObject, ISession } from '@allors/system/workspace/domain';
 import { Injectable } from '@angular/core';
 
 export type OnCreate = (object: IObject) => void;

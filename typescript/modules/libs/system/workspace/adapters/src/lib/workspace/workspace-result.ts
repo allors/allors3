@@ -1,7 +1,11 @@
-import { IObject, IWorkspaceResult } from '@allors/workspace/domain/system';
+import { IObject, IWorkspaceResult } from '@allors/system/workspace/domain';
 export class WorkspaceResult implements IWorkspaceResult {
   get hasErrors(): boolean {
-    return this.versionErrors?.length > 0 || this.missingErrors?.length > 0 || this.mergeErrors?.length > 0;
+    return (
+      this.versionErrors?.length > 0 ||
+      this.missingErrors?.length > 0 ||
+      this.mergeErrors?.length > 0
+    );
   }
 
   versionErrors: IObject[];

@@ -3,18 +3,31 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { FixedAsset, RequirementState, WorkEffort, WorkRequirement, WorkRequirementFulfillment } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  FixedAsset,
+  RequirementState,
+  WorkEffort,
+  WorkRequirement,
+  WorkRequirementFulfillment,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
-import { And } from '@allors/workspace/domain/system';
+import { And } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './workrequirementfulfillment-create.component.html',
   providers: [ContextService],
 })
-export class WorkRequirementFulfillmentCreateComponent implements OnInit, OnDestroy {
+export class WorkRequirementFulfillmentCreateComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   public title = 'Add Work Requirement Fulfillment';
@@ -57,19 +70,29 @@ export class WorkRequirementFulfillmentCreateComponent implements OnInit, OnDest
             pull.RequirementState({}),
           ];
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded })));
         })
       )
       .subscribe(({ loaded }) => {
         this.allors.context.reset();
 
-        const requirementStates = loaded.collection<RequirementState>(m.RequirementState);
-        const requirementCreated = requirementStates?.find((v) => v.UniqueId === '7435eaa5-4739-4e48-8c6a-3e5645b69d9c');
+        const requirementStates = loaded.collection<RequirementState>(
+          m.RequirementState
+        );
+        const requirementCreated = requirementStates?.find(
+          (v) => v.UniqueId === '7435eaa5-4739-4e48-8c6a-3e5645b69d9c'
+        );
 
         this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-        this.fixedAsset = this.workEffort.WorkEffortFixedAssetAssignmentsWhereAssignment[0]?.FixedAsset;
+        this.fixedAsset =
+          this.workEffort.WorkEffortFixedAssetAssignmentsWhereAssignment[0]?.FixedAsset;
 
-        this.workRequirementFulfillment = this.allors.context.create<WorkRequirementFulfillment>(m.WorkRequirementFulfillment);
+        this.workRequirementFulfillment =
+          this.allors.context.create<WorkRequirementFulfillment>(
+            m.WorkRequirementFulfillment
+          );
         this.workRequirementFulfillment.FullfillmentOf = this.workEffort;
 
         this.workRequirementsFilter = new SearchFactory({
@@ -77,8 +100,17 @@ export class WorkRequirementFulfillmentCreateComponent implements OnInit, OnDest
           roleTypes: [this.m.WorkRequirement.Description],
           post: (predicate: And) => {
             predicate.operands.push(
-              { kind: 'Equals', propertyType: m.WorkRequirement.FixedAsset, object: this.fixedAsset },
-              { kind: 'Equals', propertyType: m.WorkRequirement.RequirementState, object: requirementCreated });
+              {
+                kind: 'Equals',
+                propertyType: m.WorkRequirement.FixedAsset,
+                object: this.fixedAsset,
+              },
+              {
+                kind: 'Equals',
+                propertyType: m.WorkRequirement.RequirementState,
+                object: requirementCreated,
+              }
+            );
           },
         });
       });

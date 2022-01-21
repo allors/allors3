@@ -1,9 +1,16 @@
-import { Predicate, Extent, ParameterizablePredicate } from '@allors/workspace/domain/system';
+import {
+  Predicate,
+  Extent,
+  ParameterizablePredicate,
+} from '@allors/system/workspace/domain';
 
 import { FilterOptions } from './filter-options';
 import { FilterFieldDefinition } from './filter-field-definition';
 
-function parametrize(predicate: Predicate | Extent, results: ParameterizablePredicate[] = []): ParameterizablePredicate[] {
+function parametrize(
+  predicate: Predicate | Extent,
+  results: ParameterizablePredicate[] = []
+): ParameterizablePredicate[] {
   switch (predicate.kind) {
     case 'Filter':
       // case 'Union':
@@ -44,13 +51,19 @@ function parametrize(predicate: Predicate | Extent, results: ParameterizablePred
 export class FilterDefinition {
   fieldDefinitions: FilterFieldDefinition[];
 
-  constructor(public predicate: Predicate, options?: { [parameter: string]: Partial<FilterOptions> }) {
+  constructor(
+    public predicate: Predicate,
+    options?: { [parameter: string]: Partial<FilterOptions> }
+  ) {
     const predicates = parametrize(predicate);
     this.fieldDefinitions = predicates.map(
       (v) =>
         new FilterFieldDefinition({
           predicate: v,
-          options: options && v.parameter ? new FilterOptions(options[v.parameter]) : undefined,
+          options:
+            options && v.parameter
+              ? new FilterOptions(options[v.parameter])
+              : undefined,
         })
     );
   }

@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Part,
   Facility,
@@ -17,16 +17,22 @@ import {
   WorkEffort,
   WorkEffortInventoryAssignment,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './workeffortinventoryassignment-edit.component.html',
   providers: [ContextService],
 })
-export class WorkEffortInventoryAssignmentEditComponent implements OnInit, OnDestroy {
+export class WorkEffortInventoryAssignmentEditComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   title: string;
@@ -58,7 +64,10 @@ export class WorkEffortInventoryAssignmentEditComponent implements OnInit, OnDes
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -109,28 +118,44 @@ export class WorkEffortInventoryAssignmentEditComponent implements OnInit, OnDes
             ];
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const internalOrganisation = loaded.object<InternalOrganisation>(
+          m.InternalOrganisation
+        );
 
-        const inventoryItems = loaded.collection<InventoryItem>(m.InventoryItem);
-        this.inventoryItems = inventoryItems?.filter((v) => internalOrganisation.FacilitiesWhereOwner.includes(v.Facility));
+        const inventoryItems = loaded.collection<InventoryItem>(
+          m.InventoryItem
+        );
+        this.inventoryItems = inventoryItems?.filter((v) =>
+          internalOrganisation.FacilitiesWhereOwner.includes(v.Facility)
+        );
 
         if (isCreate) {
           this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
 
           this.title = 'Add inventory assignment';
 
-          this.workEffortInventoryAssignment = this.allors.context.create<WorkEffortInventoryAssignment>(m.WorkEffortInventoryAssignment);
+          this.workEffortInventoryAssignment =
+            this.allors.context.create<WorkEffortInventoryAssignment>(
+              m.WorkEffortInventoryAssignment
+            );
           this.workEffortInventoryAssignment.Assignment = this.workEffort;
         } else {
-          this.workEffortInventoryAssignment = loaded.object<WorkEffortInventoryAssignment>(m.WorkEffortInventoryAssignment);
+          this.workEffortInventoryAssignment =
+            loaded.object<WorkEffortInventoryAssignment>(
+              m.WorkEffortInventoryAssignment
+            );
           this.workEffort = this.workEffortInventoryAssignment.Assignment;
-          this.inventoryItemSelected(this.workEffortInventoryAssignment.InventoryItem);
+          this.inventoryItemSelected(
+            this.workEffortInventoryAssignment.InventoryItem
+          );
 
           if (this.workEffortInventoryAssignment.canWriteInventoryItem) {
             this.title = 'Edit inventory assignment';
@@ -162,7 +187,9 @@ export class WorkEffortInventoryAssignmentEditComponent implements OnInit, OnDes
   }
 
   public inventoryItemSelected(inventoryItem: IObject): void {
-    this.serialised = (inventoryItem as InventoryItem).Part.InventoryItemKind.UniqueId === '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+    this.serialised =
+      (inventoryItem as InventoryItem).Part.InventoryItemKind.UniqueId ===
+      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
     if (inventoryItem.strategy.cls === this.m.NonSerialisedInventoryItem) {
       const item = inventoryItem as NonSerialisedInventoryItem;

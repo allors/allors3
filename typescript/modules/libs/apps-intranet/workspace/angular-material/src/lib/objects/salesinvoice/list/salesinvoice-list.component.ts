@@ -5,8 +5,15 @@ import { switchMap, scan } from 'rxjs/operators';
 import { format, formatDistance } from 'date-fns';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { Person, InternalOrganisation, SalesInvoice, Disbursement, Receipt, PaymentApplication } from '@allors/workspace/domain/default';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Person,
+  InternalOrganisation,
+  SalesInvoice,
+  Disbursement,
+  Receipt,
+  PaymentApplication,
+} from '@allors/workspace/domain/default';
 import {
   Action,
   DeleteService,
@@ -30,7 +37,7 @@ import { ContextService } from '@allors/workspace/angular/core';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { And, Equals } from '@allors/workspace/domain/system';
+import { And, Equals } from '@allors/system/workspace/domain';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 
@@ -99,12 +106,32 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
     const m = this.m;
 
     this.print = printService.print();
-    this.send = methodService.create(allors.context, this.m.SalesInvoice.Send, { name: 'Send' });
-    this.cancel = methodService.create(allors.context, this.m.SalesInvoice.CancelInvoice, { name: 'Cancel' });
-    this.writeOff = methodService.create(allors.context, this.m.SalesInvoice.WriteOff, { name: 'WriteOff' });
-    this.copy = methodService.create(allors.context, this.m.SalesInvoice.Copy, { name: 'Copy' });
-    this.credit = methodService.create(allors.context, this.m.SalesInvoice.Credit, { name: 'Credit' });
-    this.reopen = methodService.create(allors.context, this.m.SalesInvoice.Reopen, { name: 'Reopen' });
+    this.send = methodService.create(allors.context, this.m.SalesInvoice.Send, {
+      name: 'Send',
+    });
+    this.cancel = methodService.create(
+      allors.context,
+      this.m.SalesInvoice.CancelInvoice,
+      { name: 'Cancel' }
+    );
+    this.writeOff = methodService.create(
+      allors.context,
+      this.m.SalesInvoice.WriteOff,
+      { name: 'WriteOff' }
+    );
+    this.copy = methodService.create(allors.context, this.m.SalesInvoice.Copy, {
+      name: 'Copy',
+    });
+    this.credit = methodService.create(
+      allors.context,
+      this.m.SalesInvoice.Credit,
+      { name: 'Credit' }
+    );
+    this.reopen = methodService.create(
+      allors.context,
+      this.m.SalesInvoice.Reopen,
+      { name: 'Reopen' }
+    );
 
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
@@ -117,55 +144,88 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
       description: () => '',
       disabled: (target: ActionTarget) => {
         if (Array.isArray(target)) {
-          const anyDisabled = (target as SalesInvoice[]).filter((v) => !v.canExecuteSetPaid);
+          const anyDisabled = (target as SalesInvoice[]).filter(
+            (v) => !v.canExecuteSetPaid
+          );
           return target.length > 0 ? anyDisabled.length > 0 : true;
         } else {
           return !(target as SalesInvoice).canExecuteSetPaid;
         }
       },
       execute: (target: SalesInvoice) => {
-        const invoices = Array.isArray(target) ? (target as SalesInvoice[]) : [target as SalesInvoice];
+        const invoices = Array.isArray(target)
+          ? (target as SalesInvoice[])
+          : [target as SalesInvoice];
         const targets = invoices.filter((v) => v.canExecuteSetPaid);
 
         if (targets.length > 0) {
-          dialogService.prompt({ title: `Set Payment Date`, placeholder: `Payment date`, promptType: `date` }).subscribe((paymentDateString: string) => {
-            if (paymentDateString) {
-              // TODO: Martien
-              const paymentDate = new Date(paymentDateString);
-              targets.forEach((salesinvoice) => {
-                const amountToPay = parseFloat(salesinvoice.TotalIncVat) - parseFloat(salesinvoice.AmountPaid);
+          dialogService
+            .prompt({
+              title: `Set Payment Date`,
+              placeholder: `Payment date`,
+              promptType: `date`,
+            })
+            .subscribe((paymentDateString: string) => {
+              if (paymentDateString) {
+                // TODO: Martien
+                const paymentDate = new Date(paymentDateString);
+                targets.forEach((salesinvoice) => {
+                  const amountToPay =
+                    parseFloat(salesinvoice.TotalIncVat) -
+                    parseFloat(salesinvoice.AmountPaid);
 
-                if (salesinvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32' || salesinvoice.SalesInvoiceType.UniqueId === 'ef5b7c52-e782-416d-b46f-89c8c7a5c24d') {
-                  const paymentApplication = this.allors.context.create<PaymentApplication>(m.PaymentApplication);
-                  paymentApplication.Invoice = salesinvoice;
-                  paymentApplication.AmountApplied = amountToPay.toString();
+                  if (
+                    salesinvoice.SalesInvoiceType.UniqueId ===
+                      '92411bf1-835e-41f8-80af-6611efce5b32' ||
+                    salesinvoice.SalesInvoiceType.UniqueId ===
+                      'ef5b7c52-e782-416d-b46f-89c8c7a5c24d'
+                  ) {
+                    const paymentApplication =
+                      this.allors.context.create<PaymentApplication>(
+                        m.PaymentApplication
+                      );
+                    paymentApplication.Invoice = salesinvoice;
+                    paymentApplication.AmountApplied = amountToPay.toString();
 
-                  // sales invoice
-                  if (salesinvoice.SalesInvoiceType.UniqueId === '92411bf1-835e-41f8-80af-6611efce5b32') {
-                    const receipt = this.allors.context.create<Receipt>(m.Receipt);
-                    receipt.Amount = amountToPay.toString();
-                    receipt.EffectiveDate = paymentDate;
-                    receipt.Sender = salesinvoice.BilledFrom;
-                    receipt.addPaymentApplication(paymentApplication);
+                    // sales invoice
+                    if (
+                      salesinvoice.SalesInvoiceType.UniqueId ===
+                      '92411bf1-835e-41f8-80af-6611efce5b32'
+                    ) {
+                      const receipt = this.allors.context.create<Receipt>(
+                        m.Receipt
+                      );
+                      receipt.Amount = amountToPay.toString();
+                      receipt.EffectiveDate = paymentDate;
+                      receipt.Sender = salesinvoice.BilledFrom;
+                      receipt.addPaymentApplication(paymentApplication);
+                    }
+
+                    // credit note
+                    if (
+                      salesinvoice.SalesInvoiceType.UniqueId ===
+                      'ef5b7c52-e782-416d-b46f-89c8c7a5c24d'
+                    ) {
+                      const disbursement =
+                        this.allors.context.create<Disbursement>(
+                          m.Disbursement
+                        );
+                      disbursement.Amount = amountToPay.toString();
+                      disbursement.EffectiveDate = paymentDate;
+                      disbursement.Sender = salesinvoice.BilledFrom;
+                      disbursement.addPaymentApplication(paymentApplication);
+                    }
                   }
+                });
 
-                  // credit note
-                  if (salesinvoice.SalesInvoiceType.UniqueId === 'ef5b7c52-e782-416d-b46f-89c8c7a5c24d') {
-                    const disbursement = this.allors.context.create<Disbursement>(m.Disbursement);
-                    disbursement.Amount = amountToPay.toString();
-                    disbursement.EffectiveDate = paymentDate;
-                    disbursement.Sender = salesinvoice.BilledFrom;
-                    disbursement.addPaymentApplication(paymentApplication);
-                  }
-                }
-              });
-
-              this.allors.context.push().subscribe(() => {
-                snackBar.open('Successfully set to fully paid.', 'close', { duration: 5000 });
-                refreshService.refresh();
-              });
-            }
-          });
+                this.allors.context.push().subscribe(() => {
+                  snackBar.open('Successfully set to fully paid.', 'close', {
+                    duration: 5000,
+                  });
+                  refreshService.refresh();
+                });
+              }
+            });
         }
       },
       result: null,
@@ -186,7 +246,17 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
         { name: 'grandTotal', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [overviewService.overview(), this.delete, this.print, this.cancel, this.writeOff, this.copy, this.credit, this.reopen, this.setPaid],
+      actions: [
+        overviewService.overview(),
+        this.delete,
+        this.print,
+        this.cancel,
+        this.writeOff,
+        this.copy,
+        this.credit,
+        this.reopen,
+        this.setPaid,
+      ],
       defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
@@ -200,59 +270,97 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.SalesInvoice);
 
-    const internalOrganisationPredicate: Equals = { kind: 'Equals', propertyType: m.SalesInvoice.BilledFrom };
-    const predicate: And = { kind: 'And', operands: [internalOrganisationPredicate, this.filter.definition.predicate] };
+    const internalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.SalesInvoice.BilledFrom,
+    };
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        internalOrganisationPredicate,
+        this.filter.definition.predicate,
+      ],
+    };
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent, internalOrganisationId]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent,
+            number
+          ]) => {
+            internalOrganisationPredicate.value = internalOrganisationId;
 
-          return [refresh, filterFields, sort, pageEvent, internalOrganisationId];
-        }),
-        switchMap(([, filterFields, sort, pageEvent, internalOrganisationId]: [Date, FilterField[], Sort, PageEvent, number]) => {
-          internalOrganisationPredicate.value = internalOrganisationId;
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Person({
-              objectId: this.userId.value,
-            }),
-            pull.SalesInvoice({
-              predicate,
-              sorting: sort ? angularSorter(m.SalesInvoice)?.create(sort) : null,
-              include: {
-                PrintDocument: {
-                  Media: x,
+            const pulls = [
+              this.fetcher.internalOrganisation,
+              pull.Person({
+                objectId: this.userId.value,
+              }),
+              pull.SalesInvoice({
+                predicate,
+                sorting: sort
+                  ? angularSorter(m.SalesInvoice)?.create(sort)
+                  : null,
+                include: {
+                  PrintDocument: {
+                    Media: x,
+                  },
+                  BillToCustomer: x,
+                  SalesInvoiceState: x,
+                  SalesInvoiceType: x,
+                  DerivedCurrency: x,
                 },
-                BillToCustomer: x,
-                SalesInvoiceState: x,
-                SalesInvoiceType: x,
-                DerivedCurrency: x,
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.user = loaded.object<Person>(m.Person);
 
         this.canCreate = this.internalOrganisation.canExecuteCreateSalesInvoice;
@@ -269,12 +377,17 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
               billedTo: v.BillToCustomer && v.BillToCustomer.DisplayName,
               state: `${v.SalesInvoiceState && v.SalesInvoiceState.Name}`,
               invoiceDate: format(new Date(v.InvoiceDate), 'dd-MM-yyyy'),
-              dueDate: `${v.DueDate && format(new Date(v.DueDate), 'dd-MM-yyyy')}`,
+              dueDate: `${
+                v.DueDate && format(new Date(v.DueDate), 'dd-MM-yyyy')
+              }`,
               description: v.Description,
               currency: `${v.DerivedCurrency && v.DerivedCurrency.IsoCode}`,
               totalExVat: v.TotalExVat,
               grandTotal: v.GrandTotal,
-              lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+              lastModifiedDate: formatDistance(
+                new Date(v.LastModifiedDate),
+                new Date()
+              ),
             } as Row;
           });
       });

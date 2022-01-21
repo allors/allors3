@@ -1,9 +1,21 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Shipment, ShipmentItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -114,7 +126,9 @@ export class ShipmentItemOverviewPanelComponent {
     panel.onPulled = (loaded) => {
       this.shipmentItems = loaded.collection<ShipmentItem>(pullName);
       this.shipment = loaded.object<Shipment>(shipmentPullName);
-      this.table.total = ((loaded.value(`${pullName}_total`) as number) ?? this.shipmentItems?.length ?? 0) as number;
+      this.table.total = ((loaded.value(`${pullName}_total`) as number) ??
+        this.shipmentItems?.length ??
+        0) as number;
       this.table.data = this.shipmentItems?.map((v) => {
         return {
           object: v,

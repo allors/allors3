@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { ObjectType } from '@allors/system/workspace/meta';
 
 @Injectable()

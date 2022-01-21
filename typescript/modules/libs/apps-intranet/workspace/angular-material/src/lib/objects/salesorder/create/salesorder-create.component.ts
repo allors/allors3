@@ -1,9 +1,16 @@
-import { Component, OnDestroy, OnInit, Self, Optional, Inject } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  Self,
+  Optional,
+  Inject,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Person,
   Organisation,
@@ -20,9 +27,14 @@ import {
   Store,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -88,19 +100,31 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   showIrpf: boolean;
 
   get billToCustomerIsPerson(): boolean {
-    return !this.order.BillToCustomer || this.order.BillToCustomer.strategy.cls === this.m.Person;
+    return (
+      !this.order.BillToCustomer ||
+      this.order.BillToCustomer.strategy.cls === this.m.Person
+    );
   }
 
   get shipToCustomerIsPerson(): boolean {
-    return !this.order.ShipToCustomer || this.order.ShipToCustomer.strategy.cls === this.m.Person;
+    return (
+      !this.order.ShipToCustomer ||
+      this.order.ShipToCustomer.strategy.cls === this.m.Person
+    );
   }
 
   get billToEndCustomerIsPerson(): boolean {
-    return !this.order.BillToEndCustomer || this.order.BillToEndCustomer.strategy.cls === this.m.Person;
+    return (
+      !this.order.BillToEndCustomer ||
+      this.order.BillToEndCustomer.strategy.cls === this.m.Person
+    );
   }
 
   get shipToEndCustomerIsPerson(): boolean {
-    return !this.order.ShipToEndCustomer || this.order.ShipToEndCustomer.strategy.cls === this.m.Person;
+    return (
+      !this.order.ShipToEndCustomer ||
+      this.order.ShipToEndCustomer.strategy.cls === this.m.Person
+    );
   }
 
   constructor(
@@ -121,18 +145,29 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Currency({
-              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Currency.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Currency.IsoCode }],
             }),
             pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
             pull.Store({
-              predicate: { kind: 'Equals', propertyType: m.Store.InternalOrganisation, value: internalOrganisationId },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Store.InternalOrganisation,
+                value: internalOrganisationId,
+              },
               include: { BillingProcess: x },
               sorting: [{ roleType: m.Store.Name }],
             }),
@@ -150,13 +185,17 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
             }),
           ];
 
-          this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            internalOrganisationId
+          );
 
           return this.allors.context.pull(pulls);
         })
       )
       .subscribe((loaded) => {
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.stores = loaded.collection<Store>(m.Store);
@@ -166,8 +205,16 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
         this.order = this.allors.context.create<SalesOrder>(m.SalesOrder);
         this.order.TakenBy = this.internalOrganisation;
 
-        const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-        this.shipFromAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
+        const partyContactMechanisms: PartyContactMechanism[] =
+          loaded.collection<PartyContactMechanism>(
+            m.Party.CurrentPartyContactMechanisms
+          );
+        this.shipFromAddresses = partyContactMechanisms
+          ?.filter(
+            (v: PartyContactMechanism) =>
+              v.ContactMechanism.strategy.cls === m.PostalAddress
+          )
+          ?.map((v: PartyContactMechanism) => v.ContactMechanism);
 
         if (this.stores.length === 1) {
           this.order.Store = this.stores[0];
@@ -210,7 +257,10 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public shipToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -218,7 +268,10 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public billToCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -226,7 +279,10 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public shipToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -234,7 +290,10 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public billToEndCustomerAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -242,8 +301,12 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public billToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.order.BillToCustomer as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.order
+      .BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToContacts.push(person);
@@ -251,8 +314,12 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.order.BillToEndCustomer as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.order
+      .BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToEndCustomerContacts.push(person);
@@ -260,8 +327,12 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public shipToContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.order.ShipToCustomer as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.order
+      .ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
@@ -269,42 +340,69 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.order.ShipToEndCustomer as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.order
+      .ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToEndCustomerContacts.push(person);
     this.order.ShipToEndCustomerContactPerson = person;
   }
 
-  public billToContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
+  public billToContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.order.BillToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedBillToContactMechanism = partyContactMechanism.ContactMechanism;
+    this.order.AssignedBillToContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
-  public billToEndCustomerContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.billToEndCustomerContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.order.BillToEndCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedBillToEndCustomerContactMechanism = partyContactMechanism.ContactMechanism;
+  public billToEndCustomerContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.billToEndCustomerContactMechanisms.push(
+      partyContactMechanism.ContactMechanism
+    );
+    this.order.BillToEndCustomer.addPartyContactMechanism(
+      partyContactMechanism
+    );
+    this.order.AssignedBillToEndCustomerContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
-  public shipToAddressAdded(partyContactMechanism: PartyContactMechanism): void {
+  public shipToAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
     this.order.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipToAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+    this.order.AssignedShipToAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public shipToEndCustomerAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.shipToEndCustomerAddresses.push(partyContactMechanism.ContactMechanism);
-    this.order.ShipToEndCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipToEndCustomerAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+  public shipToEndCustomerAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
+    this.shipToEndCustomerAddresses.push(
+      partyContactMechanism.ContactMechanism
+    );
+    this.order.ShipToEndCustomer.addPartyContactMechanism(
+      partyContactMechanism
+    );
+    this.order.AssignedShipToEndCustomerAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
-  public shipFromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
+  public shipFromAddressAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.shipFromAddresses.push(partyContactMechanism.ContactMechanism);
     this.order.TakenBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipFromAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+    this.order.AssignedShipFromAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
   public shipToCustomerSelected(party: IObject) {
@@ -368,18 +466,32 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.previousShipToCustomer && this.order.ShipToCustomer !== this.previousShipToCustomer) {
+      if (
+        this.previousShipToCustomer &&
+        this.order.ShipToCustomer !== this.previousShipToCustomer
+      ) {
         this.order.ShipToContactPerson = null;
       }
       this.previousShipToCustomer = this.order.ShipToCustomer;
 
-      if (this.order.ShipToCustomer != null && this.order.BillToCustomer == null) {
+      if (
+        this.order.ShipToCustomer != null &&
+        this.order.BillToCustomer == null
+      ) {
         this.order.BillToCustomer = this.order.ShipToCustomer;
         this.updateBillToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.shipToAddresses = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map((v: PartyContactMechanism) => v.ContactMechanism);
       this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -429,18 +541,29 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.previousBillToCustomer && this.order.BillToCustomer !== this.previousBillToCustomer) {
+      if (
+        this.previousBillToCustomer &&
+        this.order.BillToCustomer !== this.previousBillToCustomer
+      ) {
         this.order.BillToContactPerson = null;
       }
       this.previousBillToCustomer = this.order.BillToCustomer;
 
-      if (this.order.BillToCustomer != null && this.order.ShipToCustomer == null) {
+      if (
+        this.order.BillToCustomer != null &&
+        this.order.ShipToCustomer == null
+      ) {
         this.order.ShipToCustomer = this.order.BillToCustomer;
         this.updateShipToCustomer(this.order.ShipToCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.billToContactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
       this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       this.setDerivedInitialRoles();
@@ -490,19 +613,32 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.previousBillToEndCustomer && this.order.BillToEndCustomer !== this.previousBillToEndCustomer) {
+      if (
+        this.previousBillToEndCustomer &&
+        this.order.BillToEndCustomer !== this.previousBillToEndCustomer
+      ) {
         this.order.BillToEndCustomerContactPerson = null;
       }
       this.previousBillToEndCustomer = this.order.BillToEndCustomer;
 
-      if (this.order.BillToEndCustomer != null && this.order.ShipToEndCustomer == null) {
+      if (
+        this.order.BillToEndCustomer != null &&
+        this.order.ShipToEndCustomer == null
+      ) {
         this.order.ShipToEndCustomer = this.order.BillToEndCustomer;
         this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.billToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.billToEndCustomerContactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
+      this.billToEndCustomerContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
 
       this.setDerivedInitialRoles();
     });
@@ -551,31 +687,61 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.previousShipToEndCustomer && this.order.ShipToEndCustomer !== this.previousShipToEndCustomer) {
+      if (
+        this.previousShipToEndCustomer &&
+        this.order.ShipToEndCustomer !== this.previousShipToEndCustomer
+      ) {
         this.order.ShipToEndCustomerContactPerson = null;
       }
 
       this.previousShipToEndCustomer = this.order.ShipToEndCustomer;
 
-      if (this.order.ShipToEndCustomer != null && this.order.BillToEndCustomer == null) {
+      if (
+        this.order.ShipToEndCustomer != null &&
+        this.order.BillToEndCustomer == null
+      ) {
         this.order.BillToEndCustomer = this.order.ShipToEndCustomer;
         this.updateBillToEndCustomer(this.order.BillToEndCustomer);
       }
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.shipToEndCustomerAddresses = partyContactMechanisms?.filter((v: PartyContactMechanism) => v.ContactMechanism.strategy.cls === m.PostalAddress)?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.shipToEndCustomerAddresses = partyContactMechanisms
+        ?.filter(
+          (v: PartyContactMechanism) =>
+            v.ContactMechanism.strategy.cls === m.PostalAddress
+        )
+        ?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      this.shipToEndCustomerContacts = loaded.collection<Person>(
+        m.Party.CurrentContacts
+      );
 
       this.setDerivedInitialRoles();
     });
   }
 
   private setDerivedInitialRoles() {
-    this.currencyInitialRole = this.order.BillToCustomer?.PreferredCurrency ?? this.order.BillToCustomer?.Locale?.Country?.Currency ?? this.order.TakenBy?.PreferredCurrency;
-    this.takenByContactMechanismInitialRole = this.order.TakenBy?.OrderAddress ?? this.order.TakenBy?.BillingAddress ?? this.order.TakenBy?.GeneralCorrespondence;
-    this.billToContactMechanismInitialRole = this.order.BillToCustomer?.BillingAddress ?? this.order.BillToCustomer?.ShippingAddress ?? this.order.BillToCustomer?.GeneralCorrespondence;
-    this.billToEndCustomerContactMechanismInitialRole = this.order.BillToEndCustomer?.BillingAddress ?? this.order.BillToEndCustomer?.ShippingAddress ?? this.order.BillToEndCustomer?.GeneralCorrespondence;
-    this.shipToEndCustomerAddressInitialRole = this.order.ShipToEndCustomer?.ShippingAddress ?? this.order.ShipToEndCustomer?.GeneralCorrespondence;
+    this.currencyInitialRole =
+      this.order.BillToCustomer?.PreferredCurrency ??
+      this.order.BillToCustomer?.Locale?.Country?.Currency ??
+      this.order.TakenBy?.PreferredCurrency;
+    this.takenByContactMechanismInitialRole =
+      this.order.TakenBy?.OrderAddress ??
+      this.order.TakenBy?.BillingAddress ??
+      this.order.TakenBy?.GeneralCorrespondence;
+    this.billToContactMechanismInitialRole =
+      this.order.BillToCustomer?.BillingAddress ??
+      this.order.BillToCustomer?.ShippingAddress ??
+      this.order.BillToCustomer?.GeneralCorrespondence;
+    this.billToEndCustomerContactMechanismInitialRole =
+      this.order.BillToEndCustomer?.BillingAddress ??
+      this.order.BillToEndCustomer?.ShippingAddress ??
+      this.order.BillToEndCustomer?.GeneralCorrespondence;
+    this.shipToEndCustomerAddressInitialRole =
+      this.order.ShipToEndCustomer?.ShippingAddress ??
+      this.order.ShipToEndCustomer?.GeneralCorrespondence;
     this.shipFromAddressInitialRole = this.order.TakenBy?.ShippingAddress;
     this.shipToAddressInitialRole = this.order.ShipToCustomer?.ShippingAddress;
   }

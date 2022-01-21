@@ -1,9 +1,16 @@
-import { Component, OnDestroy, OnInit, Self, Inject, Optional } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  Self,
+  Inject,
+  Optional,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Person,
   Organisation,
@@ -19,9 +26,14 @@ import {
   IrpfRegime,
   CustomerRelationship,
 } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -73,12 +85,22 @@ export class ProductQuoteCreateComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
-          const pulls = [this.fetcher.internalOrganisation, pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }), pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] })];
+          const pulls = [
+            this.fetcher.internalOrganisation,
+            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
+            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
+          ];
 
-          this.customersFilter = Filters.customersFilter(m, internalOrganisationId);
+          this.customersFilter = Filters.customersFilter(
+            m,
+            internalOrganisationId
+          );
 
           return this.allors.context.pull(pulls);
         })
@@ -86,7 +108,8 @@ export class ProductQuoteCreateComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
         this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
         this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
@@ -100,7 +123,9 @@ export class ProductQuoteCreateComponent implements OnInit, OnDestroy {
   }
 
   get receiverIsPerson(): boolean {
-    return !this.quote.Receiver || this.quote.Receiver.strategy.cls === this.m.Person;
+    return (
+      !this.quote.Receiver || this.quote.Receiver.strategy.cls === this.m.Person
+    );
   }
 
   public receiverSelected(party: IObject): void {
@@ -110,7 +135,10 @@ export class ProductQuoteCreateComponent implements OnInit, OnDestroy {
   }
 
   public receiverAdded(party: Party): void {
-    const customerRelationship = this.allors.context.create<CustomerRelationship>(this.m.CustomerRelationship);
+    const customerRelationship =
+      this.allors.context.create<CustomerRelationship>(
+        this.m.CustomerRelationship
+      );
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
@@ -118,18 +146,25 @@ export class ProductQuoteCreateComponent implements OnInit, OnDestroy {
   }
 
   public personAdded(person: Person): void {
-    const organisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
-    organisationContactRelationship.Organisation = this.quote.Receiver as Organisation;
+    const organisationContactRelationship =
+      this.allors.context.create<OrganisationContactRelationship>(
+        this.m.OrganisationContactRelationship
+      );
+    organisationContactRelationship.Organisation = this.quote
+      .Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.contacts.push(person);
     this.quote.ContactPerson = person;
   }
 
-  public partyContactMechanismAdded(partyContactMechanism: PartyContactMechanism): void {
+  public partyContactMechanismAdded(
+    partyContactMechanism: PartyContactMechanism
+  ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.quote.Receiver.addPartyContactMechanism(partyContactMechanism);
-    this.quote.FullfillContactMechanism = partyContactMechanism.ContactMechanism;
+    this.quote.FullfillContactMechanism =
+      partyContactMechanism.ContactMechanism;
   }
 
   public ngOnDestroy(): void {
@@ -181,19 +216,28 @@ export class ProductQuoteCreateComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.previousReceiver && this.quote.Receiver !== this.previousReceiver) {
+      if (
+        this.previousReceiver &&
+        this.quote.Receiver !== this.previousReceiver
+      ) {
         this.quote.ContactPerson = null;
         this.quote.FullfillContactMechanism = null;
       }
 
       this.previousReceiver = this.quote.Receiver;
 
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.CurrentPartyContactMechanisms);
-      this.contactMechanisms = partyContactMechanisms?.map((v: PartyContactMechanism) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.CurrentPartyContactMechanisms
+        );
+      this.contactMechanisms = partyContactMechanisms?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      );
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
 
       const selectedParty = loaded.object<Party>('selectedParty');
-      this.currencyInitialRole = selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;
+      this.currencyInitialRole =
+        selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;
     });
   }
 }

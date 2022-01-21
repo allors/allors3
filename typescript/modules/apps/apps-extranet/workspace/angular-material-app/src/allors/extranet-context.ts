@@ -13,9 +13,9 @@ import {
   IWorkspace,
   Method,
   Pull,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import { Class, Composite } from '@allors/system/workspace/meta';
-import { derivationRules } from '@allors/workspace/derivations/system';
+import { derivationRules } from '@allors/system/workspace/derivations';
 
 export class ExtranetContext implements Context {
   constructor(public workspaceService: WorkspaceService) {

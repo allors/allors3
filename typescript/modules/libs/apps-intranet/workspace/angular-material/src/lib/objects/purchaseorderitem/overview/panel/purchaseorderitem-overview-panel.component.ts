@@ -2,9 +2,24 @@ import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
-import { PurchaseOrder, PurchaseOrderItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, MethodService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PurchaseOrder,
+  PurchaseOrderItem,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  MethodService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -71,16 +86,47 @@ export class PurchaseOrderItemOverviewPanelComponent {
 
     this.delete = deleteService.delete(panel.manager.context);
     this.edit = editService.edit();
-    this.cancel = methodService.create(allors.context, this.m.PurchaseOrderItem.Cancel, { name: 'Cancel' });
-    this.reject = methodService.create(allors.context, this.m.PurchaseOrderItem.Reject, { name: 'Reject' });
-    this.reopen = methodService.create(allors.context, this.m.PurchaseOrderItem.Reopen, { name: 'Reopen' });
-    this.quickReceive = methodService.create(allors.context, this.m.PurchaseOrderItem.QuickReceive, { name: 'QuickReceive' });
+    this.cancel = methodService.create(
+      allors.context,
+      this.m.PurchaseOrderItem.Cancel,
+      { name: 'Cancel' }
+    );
+    this.reject = methodService.create(
+      allors.context,
+      this.m.PurchaseOrderItem.Reject,
+      { name: 'Reject' }
+    );
+    this.reopen = methodService.create(
+      allors.context,
+      this.m.PurchaseOrderItem.Reopen,
+      { name: 'Reopen' }
+    );
+    this.quickReceive = methodService.create(
+      allors.context,
+      this.m.PurchaseOrderItem.QuickReceive,
+      { name: 'QuickReceive' }
+    );
 
     const sort = true;
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'item', sort }, { name: 'itemId' }, { name: 'type', sort }, { name: 'state', sort }, { name: 'ordered', sort }, { name: 'received', sort }, { name: 'lastModifiedDate', sort }],
-      actions: [this.edit, this.delete, this.cancel, this.reject, this.reopen, this.quickReceive],
+      columns: [
+        { name: 'item', sort },
+        { name: 'itemId' },
+        { name: 'type', sort },
+        { name: 'state', sort },
+        { name: 'ordered', sort },
+        { name: 'received', sort },
+        { name: 'lastModifiedDate', sort },
+      ],
+      actions: [
+        this.edit,
+        this.delete,
+        this.cancel,
+        this.reject,
+        this.reopen,
+        this.quickReceive,
+      ],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
@@ -121,17 +167,26 @@ export class PurchaseOrderItemOverviewPanelComponent {
     panel.onPulled = (loaded) => {
       this.objects = loaded.collection<PurchaseOrderItem>(pullName);
       this.order = loaded.object<PurchaseOrder>(orderPullName);
-      this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects?.length ?? 0;
+      this.table.total =
+        (loaded.value(`${pullName}_total`) as number) ??
+        this.objects?.length ??
+        0;
       this.table.data = this.objects?.map((v) => {
         return {
           object: v,
-          item: (v.Part && v.Part.Name) || (v.SerialisedItem && v.SerialisedItem.Name) || v.Description,
+          item:
+            (v.Part && v.Part.Name) ||
+            (v.SerialisedItem && v.SerialisedItem.Name) ||
+            v.Description,
           itemId: v.SerialisedItem && v.SerialisedItem.ItemNumber,
           type: `${v.InvoiceItemType && v.InvoiceItemType.Name}`,
           state: `${v.PurchaseOrderItemState && v.PurchaseOrderItemState.Name}`,
           ordered: v.QuantityOrdered,
           received: v.QuantityReceived,
-          lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+          lastModifiedDate: formatDistance(
+            new Date(v.LastModifiedDate),
+            new Date()
+          ),
         } as Row;
       });
     };

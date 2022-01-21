@@ -1,5 +1,5 @@
 import { C1, SC1 } from '@allors/workspace/domain/default';
-import { Pull } from '@allors/workspace/domain/system';
+import { Pull } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';
 let fixture: Fixture;
@@ -257,10 +257,19 @@ test('changeSetOne2One', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(1);
+  expect(
+    changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size
+  ).toBe(1);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1x);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2One.associationType)
+      .values()
+      .next().value
+  ).toBe(c1x);
 
   c1a.C1C1One2One = c1y;
 
@@ -271,11 +280,23 @@ test('changeSetOne2One', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(2);
+  expect(
+    changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size
+  ).toBe(2);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values()).toContain(c1x);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values()).toContain(c1y);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2One.associationType)
+      .values()
+  ).toContain(c1x);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2One.associationType)
+      .values()
+  ).toContain(c1y);
 });
 
 test('changeSetAfterPushOne2One', async () => {
@@ -310,11 +331,20 @@ test('changeSetAfterPushOne2One', async () => {
 
   expect(changeSet.created.size).toBe(1);
   expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).size).toBe(1);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size).toBe(1);
+  expect(
+    changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).size
+  ).toBe(1);
 
   expect(changeSet.created.values().next().value).toBe(c1x);
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1x);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2One.associationType)
+      .values()
+      .next().value
+  ).toBe(c1x);
 
   await session.push();
   changeSet = session.checkpoint();
@@ -357,8 +387,12 @@ test('changeSetIncludeAfterPushOne2One', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   const created = [...changeSet.created];
-  const associations = [...changeSet.associationsByRoleType.get(m.C1.C1C1One2One)];
-  const roles = [...changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType)];
+  const associations = [
+    ...changeSet.associationsByRoleType.get(m.C1.C1C1One2One),
+  ];
+  const roles = [
+    ...changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType),
+  ];
 
   expect(associations.length).toBe(1);
   expect(roles.length).toBe(2);
@@ -417,8 +451,14 @@ test('changeSetAfterPushOne2OneWithPreviousIncluded', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   const created = [...changeSet.created.values()];
-  const associationsC1C1One2One = [...changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values()];
-  const rolesC1C1One2One = [...changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values()];
+  const associationsC1C1One2One = [
+    ...changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values(),
+  ];
+  const rolesC1C1One2One = [
+    ...changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2One.associationType)
+      .values(),
+  ];
 
   expect(created).toEqual([c1b]);
   expect(associationsC1C1One2One).toEqual([c1a]);
@@ -467,8 +507,15 @@ test('changeSetAfterPushOne2OneRemove', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2One.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1One2One).values().next().value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2One.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 });
 
 test('changeSetAfterPushMany2One', async () => {
@@ -502,8 +549,16 @@ test('changeSetAfterPushMany2One', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   expect(changeSet.created.values().next().value).toBe(c1b);
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2One).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2One.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1Many2One).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1Many2One.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 
   await session.push();
   changeSet = session.checkpoint();
@@ -548,8 +603,16 @@ test('changeSetAfterPushMany2OneRemove', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2One).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2One.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1Many2One).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1Many2One.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 });
 
 test('changeSetAfterPushOne2Many', async () => {
@@ -583,8 +646,16 @@ test('changeSetAfterPushOne2Many', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   expect(changeSet.created.values().next().value).toBe(c1b);
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2Manies).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2Manies.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1One2Manies).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2Manies.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 
   await session.push();
   changeSet = session.checkpoint();
@@ -629,8 +700,16 @@ test('changeSetAfterPushOne2ManyRemove', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1One2Manies).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1One2Manies.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1One2Manies).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1One2Manies.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 });
 
 test('changeSetMany2Many', async () => {
@@ -663,8 +742,16 @@ test('changeSetMany2Many', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2Manies.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1Many2Manies.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 
   c1a.removeC1C1Many2Many(c1b);
 
@@ -674,8 +761,16 @@ test('changeSetMany2Many', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2Manies.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1Many2Manies.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 });
 
 test('changeSetAfterPushMany2Many', async () => {
@@ -709,8 +804,16 @@ test('changeSetAfterPushMany2Many', async () => {
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
   expect(changeSet.created.values().next().value).toBe(c1b);
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2Manies.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1Many2Manies.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 
   await session.push();
   changeSet = session.checkpoint();
@@ -755,8 +858,16 @@ test('changeSetAfterPushMany2ManyRemove', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(1);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next().value).toBe(c1a);
-  expect(changeSet.rolesByAssociationType.get(m.C1.C1C1Many2Manies.associationType).values().next().value).toBe(c1b);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1C1Many2Manies).values().next()
+      .value
+  ).toBe(c1a);
+  expect(
+    changeSet.rolesByAssociationType
+      .get(m.C1.C1C1Many2Manies.associationType)
+      .values()
+      .next().value
+  ).toBe(c1b);
 });
 
 test('changeSetAfterPullInNewSessionButNoPush', async () => {
@@ -788,7 +899,12 @@ test('changeSetBeforeAndAfterResetWithSessionObject', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
-  expect(changeSet.associationsByRoleType.get(m.SC1.SessionAllorsString).values().next().value).toBe(sc1a);
+  expect(
+    changeSet.associationsByRoleType
+      .get(m.SC1.SessionAllorsString)
+      .values()
+      .next().value
+  ).toBe(sc1a);
 
   sc1a.strategy.reset();
 
@@ -866,5 +982,8 @@ test('changeSetAfterDoubleReset', async () => {
   expect(changeSet.associationsByRoleType.size).toBe(1);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
 
-  expect(changeSet.associationsByRoleType.get(m.C1.C1AllorsString).values().next().value).toBe(c1a_2);
+  expect(
+    changeSet.associationsByRoleType.get(m.C1.C1AllorsString).values().next()
+      .value
+  ).toBe(c1a_2);
 });

@@ -8,7 +8,7 @@ import {
   Sorter,
   SearchFactory,
 } from '@allors/workspace/angular/base';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
 import { FixedAsset, WorkEffortState } from '@allors/workspace/domain/default';
 

@@ -1,4 +1,4 @@
-import { MetaData } from '@allors/protocol/json/system';
+import { MetaData } from '@allors/system/common/protocol-json';
 
 import { Lookup } from './utils/lookup';
 import { InternalMetaPopulation } from './internal/internal-meta-population';

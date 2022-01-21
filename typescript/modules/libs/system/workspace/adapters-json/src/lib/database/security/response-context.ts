@@ -1,4 +1,4 @@
-import { IRange } from '@allors/workspace/adapters/system';
+import { IRange } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '../database-connection';
 
 export class ResponseContext {

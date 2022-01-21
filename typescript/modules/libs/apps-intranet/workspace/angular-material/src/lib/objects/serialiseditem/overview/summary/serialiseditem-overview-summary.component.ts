@@ -1,8 +1,19 @@
 import { Component, Self } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { Part, SerialisedItem, RequestForQuote, ProductQuote, SalesOrder, CustomerShipment, SalesInvoice } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Part,
+  SerialisedItem,
+  RequestForQuote,
+  ProductQuote,
+  SalesOrder,
+  CustomerShipment,
+  SalesInvoice,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -21,7 +32,11 @@ export class SerialisedItemOverviewSummaryComponent {
   shipment: CustomerShipment;
   invoice: SalesInvoice;
 
-  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
+  constructor(
+    @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
+    public navigation: NavigationService
+  ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const m = this.m;
     const { pullBuilder: pull } = m;
@@ -96,38 +111,53 @@ export class SerialisedItemOverviewSummaryComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.serialisedItem = loaded.object<SerialisedItem>(serialisedItemPullName);
+      this.serialisedItem = loaded.object<SerialisedItem>(
+        serialisedItemPullName
+      );
       this.part = loaded.object<Part>(partPullName);
 
-      const requests = loaded.collection<RequestForQuote>(m.RequestItem.RequestWhereRequestItem) || [];
+      const requests =
+        loaded.collection<RequestForQuote>(
+          m.RequestItem.RequestWhereRequestItem
+        ) || [];
       if (requests.length > 0) {
         this.request = requests?.reduce(function (a, b) {
           return a.RequestDate > b.RequestDate ? a : b;
         });
       }
 
-      const quotes = loaded.collection<ProductQuote>(m.QuoteItem.QuoteWhereQuoteItem) || [];
+      const quotes =
+        loaded.collection<ProductQuote>(m.QuoteItem.QuoteWhereQuoteItem) || [];
       if (quotes.length > 0) {
         this.quote = quotes?.reduce(function (a, b) {
           return a.IssueDate > b.IssueDate ? a : b;
         });
       }
 
-      const orders = loaded.collection<SalesOrder>(m.SalesOrderItem.SalesOrderWhereSalesOrderItem) || [];
+      const orders =
+        loaded.collection<SalesOrder>(
+          m.SalesOrderItem.SalesOrderWhereSalesOrderItem
+        ) || [];
       if (orders.length > 0) {
         this.order = orders?.reduce(function (a, b) {
           return a.OrderDate > b.OrderDate ? a : b;
         });
       }
 
-      const shipments = loaded.collection<CustomerShipment>(m.ShipmentItem.ShipmentWhereShipmentItem) || [];
+      const shipments =
+        loaded.collection<CustomerShipment>(
+          m.ShipmentItem.ShipmentWhereShipmentItem
+        ) || [];
       if (shipments.length > 0) {
         this.shipment = shipments?.reduce(function (a, b) {
           return a.EstimatedShipDate > b.EstimatedShipDate ? a : b;
         });
       }
 
-      const invoices = loaded.collection<SalesInvoice>(m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem) || [];
+      const invoices =
+        loaded.collection<SalesInvoice>(
+          m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem
+        ) || [];
       if (invoices.length > 0) {
         this.invoice = invoices?.reduce(function (a, b) {
           return a.InvoiceDate > b.InvoiceDate ? a : b;

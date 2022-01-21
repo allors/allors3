@@ -1,5 +1,5 @@
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { Directive } from '@angular/core';
 import { PanelService } from './panel.service';
 import { AllorsObjectPanelComponent } from './object-panel.component';

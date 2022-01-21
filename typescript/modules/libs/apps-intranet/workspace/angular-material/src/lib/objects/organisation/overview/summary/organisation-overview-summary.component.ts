@@ -1,8 +1,11 @@
 import { Component, Self } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  PanelService,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -16,7 +19,11 @@ export class OrganisationOverviewSummaryComponent {
   organisation: Organisation;
   contactKindsText: string;
 
-  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
+  constructor(
+    @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
+    public navigation: NavigationService
+  ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const m = this.m;
     const { pullBuilder: pull } = m;

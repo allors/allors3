@@ -2,9 +2,14 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { Task } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectService, RefreshService, UserId } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  ObjectService,
+  RefreshService,
+  UserId,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -33,7 +38,13 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
     return '?';
   }
 
-  constructor(@Self() public allors: ContextService, public factoryService: ObjectService, public refreshService: RefreshService, public navigation: NavigationService, private userId: UserId) {
+  constructor(
+    @Self() public allors: ContextService,
+    public factoryService: ObjectService,
+    public refreshService: RefreshService,
+    public navigation: NavigationService,
+    private userId: UserId
+  ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
   }

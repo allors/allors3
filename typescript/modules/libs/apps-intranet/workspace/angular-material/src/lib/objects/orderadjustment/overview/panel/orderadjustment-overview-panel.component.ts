@@ -1,9 +1,25 @@
 import { Component, Self, HostBinding } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
-import { Invoice, Order, OrderAdjustment, Quote } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Invoice,
+  Order,
+  OrderAdjustment,
+  Quote,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -42,11 +58,18 @@ export class OrderAdjustmentOverviewPanelComponent {
   }
 
   get containerRoleType(): any {
-    if (this.container.strategy.cls === this.m.ProductQuote || this.container.strategy.cls === this.m.Proposal || this.container.strategy.cls === this.m.StatementOfWork) {
+    if (
+      this.container.strategy.cls === this.m.ProductQuote ||
+      this.container.strategy.cls === this.m.Proposal ||
+      this.container.strategy.cls === this.m.StatementOfWork
+    ) {
       return this.m.Quote.OrderAdjustments;
     } else if (this.container.strategy.cls === this.m.SalesOrder) {
       return this.m.SalesOrder.OrderAdjustments;
-    } else if (this.container.strategy.cls === this.m.SalesInvoice || this.container.strategy.cls === this.m.PurchaseInvoice) {
+    } else if (
+      this.container.strategy.cls === this.m.SalesInvoice ||
+      this.container.strategy.cls === this.m.PurchaseInvoice
+    ) {
       return this.m.Invoice.OrderAdjustments;
     }
   }
@@ -73,7 +96,11 @@ export class OrderAdjustmentOverviewPanelComponent {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'adjustment' }, { name: 'amount' }, { name: 'percentage' }],
+      columns: [
+        { name: 'adjustment' },
+        { name: 'amount' },
+        { name: 'percentage' },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -132,9 +159,16 @@ export class OrderAdjustmentOverviewPanelComponent {
     };
 
     panel.onPulled = (loaded) => {
-      this.container = loaded.object<Quote>(quotePullName) || loaded.object<Order>(orderPullName) || loaded.object<Invoice>(invoicePullName);
+      this.container =
+        loaded.object<Quote>(quotePullName) ||
+        loaded.object<Order>(orderPullName) ||
+        loaded.object<Invoice>(invoicePullName);
 
-      this.objects = loaded.collection<OrderAdjustment>(quoteOrderAdjustmentsPullName) || loaded.collection<OrderAdjustment>(orderOrderAdjustmentsPullName) || loaded.collection<OrderAdjustment>(invoiceOrderAdjustmentsPullName) || [];
+      this.objects =
+        loaded.collection<OrderAdjustment>(quoteOrderAdjustmentsPullName) ||
+        loaded.collection<OrderAdjustment>(orderOrderAdjustmentsPullName) ||
+        loaded.collection<OrderAdjustment>(invoiceOrderAdjustmentsPullName) ||
+        [];
 
       this.table.total =
         (loaded.value(`${quoteOrderAdjustmentsPullName}_total`) as number) ??

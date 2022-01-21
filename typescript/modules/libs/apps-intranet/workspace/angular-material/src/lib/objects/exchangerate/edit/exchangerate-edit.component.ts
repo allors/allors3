@@ -3,11 +3,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, InternalOrganisation, ExchangeRate, Currency } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  InternalOrganisation,
+  ExchangeRate,
+  Currency,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -46,7 +55,10 @@ export class ExchangeRateEditComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(([, internalOrganisationId]) => {
           const isCreate = this.data.id == null;
@@ -54,7 +66,11 @@ export class ExchangeRateEditComponent implements OnInit, OnDestroy {
           const pulls = [
             this.fetcher.internalOrganisation,
             pull.Currency({
-              predicate: { kind: 'Equals', propertyType: m.Currency.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.Currency.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.Currency.Name }],
             }),
           ];
@@ -67,18 +83,24 @@ export class ExchangeRateEditComponent implements OnInit, OnDestroy {
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
-        this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         this.currencies = loaded.collection<Currency>(m.Currency);
 
         if (isCreate) {
           this.title = 'Add Position Type';
-          this.exchangeRate = this.allors.context.create<ExchangeRate>(m.ExchangeRate);
-          this.exchangeRate.ToCurrency = this.internalOrganisation.PreferredCurrency;
+          this.exchangeRate = this.allors.context.create<ExchangeRate>(
+            m.ExchangeRate
+          );
+          this.exchangeRate.ToCurrency =
+            this.internalOrganisation.PreferredCurrency;
         } else {
           this.exchangeRate = loaded.object<ExchangeRate>(m.ExchangeRate);
 

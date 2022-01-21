@@ -1,8 +1,11 @@
 import { Component, Self } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { UnifiedGood } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  PanelService,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 @Component({
@@ -16,7 +19,11 @@ export class UnifiedGoodOverviewSummaryComponent {
   good: UnifiedGood;
   suppliers: string;
 
-  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public navigation: NavigationService) {
+  constructor(
+    @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
+    public navigation: NavigationService
+  ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const m = this.m;
     const { pullBuilder: pull } = m;
@@ -48,7 +55,9 @@ export class UnifiedGoodOverviewSummaryComponent {
       this.good = loaded.object<UnifiedGood>(pullName);
 
       if (this.good.SuppliedBy.length > 0) {
-        this.suppliers = this.good.SuppliedBy?.map((v) => v.DisplayName)?.reduce((acc: string, cur: string) => acc + ', ' + cur);
+        this.suppliers = this.good.SuppliedBy?.map(
+          (v) => v.DisplayName
+        )?.reduce((acc: string, cur: string) => acc + ', ' + cur);
       }
     };
   }

@@ -1,5 +1,5 @@
 import { C1 } from '@allors/workspace/domain/default';
-import { IUnitDiff, Pull } from '@allors/workspace/domain/system';
+import { IUnitDiff, Pull } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';
 
@@ -154,12 +154,16 @@ test('databaseMultipleUnitDiff', async () => {
 
   expect(diffs.length).toBe(2);
 
-  const stringDiff = diffs.find((v) => v.relationType.roleType === m.C1.C1AllorsString);
+  const stringDiff = diffs.find(
+    (v) => v.relationType.roleType === m.C1.C1AllorsString
+  );
 
   expect(stringDiff.originalRole).toBe('X');
   expect(stringDiff.changedRole).toBe('Y');
 
-  const intDiff = diffs.find((v) => v.relationType.roleType === m.C1.C1AllorsInteger);
+  const intDiff = diffs.find(
+    (v) => v.relationType.roleType === m.C1.C1AllorsInteger
+  );
 
   expect(intDiff.originalRole).toBe(1);
   expect(intDiff.changedRole).toBe(2);

@@ -1,6 +1,16 @@
 import { C1, I12 } from '@allors/workspace/domain/default';
-import { Pull } from '@allors/workspace/domain/system';
-import { Fixture, name_c1A, name_c1B, name_c1C, name_c1D, name_c2A, name_c2B, name_c2C, name_c2D } from '../fixture';
+import { Pull } from '@allors/system/workspace/domain';
+import {
+  Fixture,
+  name_c1A,
+  name_c1B,
+  name_c1C,
+  name_c1D,
+  name_c2A,
+  name_c2B,
+  name_c2C,
+  name_c2D,
+} from '../fixture';
 import '../matchers';
 
 let fixture: Fixture;
@@ -719,7 +729,16 @@ test('extentInterface', async () => {
 
   const i12s = result.collection(m.I12);
 
-  expect(i12s).toEqualObjects([name_c1A, name_c1B, name_c1C, name_c1D, name_c2A, name_c2B, name_c2C, name_c2D]);
+  expect(i12s).toEqualObjects([
+    name_c1A,
+    name_c1B,
+    name_c1C,
+    name_c1D,
+    name_c2A,
+    name_c2B,
+    name_c2C,
+    name_c2D,
+  ]);
 });
 
 test('instanceof', async () => {
@@ -992,7 +1011,10 @@ test('roleDateTimeBetweenValue', async () => {
       predicate: {
         kind: 'Between',
         roleType: m.C1.C1AllorsDateTime,
-        values: [new Date('Sat Jan 01 2000 00:00:04 GMT+0000'), new Date('Sat Jan 01 2000 00:00:06 GMT+0000')],
+        values: [
+          new Date('Sat Jan 01 2000 00:00:04 GMT+0000'),
+          new Date('Sat Jan 01 2000 00:00:06 GMT+0000'),
+        ],
       },
     },
   };

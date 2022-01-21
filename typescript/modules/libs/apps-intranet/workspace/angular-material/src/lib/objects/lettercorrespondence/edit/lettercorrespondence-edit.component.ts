@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Person,
   Organisation,
@@ -17,9 +17,14 @@ import {
   PartyContactMechanism,
   PostalAddress,
 } from '@allors/workspace/domain/default';
-import { NavigationService, ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -68,7 +73,10 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -88,7 +96,11 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
               },
             }),
             pull.CommunicationEventPurpose({
-              predicate: { kind: 'Equals', propertyType: m.CommunicationEventPurpose.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.CommunicationEventPurpose.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
             }),
             pull.CommunicationEventState({
@@ -171,28 +183,45 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
             ];
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.purposes = loaded.collection<CommunicationEventPurpose>(m.CommunicationEventPurpose);
-        this.eventStates = loaded.collection<CommunicationEventState>(m.CommunicationEventState);
-        this.parties = loaded.collection<Party>(m.CommunicationEvent.InvolvedParties);
+        this.purposes = loaded.collection<CommunicationEventPurpose>(
+          m.CommunicationEventPurpose
+        );
+        this.eventStates = loaded.collection<CommunicationEventState>(
+          m.CommunicationEventState
+        );
+        this.parties = loaded.collection<Party>(
+          m.CommunicationEvent.InvolvedParties
+        );
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(m.InternalOrganisation);
+        const internalOrganisation = loaded.object<InternalOrganisation>(
+          m.InternalOrganisation
+        );
 
         this.person = loaded.object<Person>(m.Person);
-        this.organisation = loaded.object<Organisation>(m.OrganisationContactRelationship.Organisation);
+        this.organisation = loaded.object<Organisation>(
+          m.OrganisationContactRelationship.Organisation
+        );
 
         if (isCreate) {
           this.title = 'Add Letter';
-          this.communicationEvent = this.allors.context.create<LetterCorrespondence>(m.LetterCorrespondence);
+          this.communicationEvent =
+            this.allors.context.create<LetterCorrespondence>(
+              m.LetterCorrespondence
+            );
 
           this.party = this.organisation || this.person;
         } else {
-          this.communicationEvent = loaded.object<LetterCorrespondence>(m.LetterCorrespondence);
+          this.communicationEvent = loaded.object<LetterCorrespondence>(
+            m.LetterCorrespondence
+          );
 
           this.updateFromParty(this.communicationEvent.FromParty);
           this.updateToParty(this.communicationEvent.ToParty);
@@ -211,11 +240,17 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
         }
 
         if (internalOrganisation.ActiveEmployees != null) {
-          internalOrganisation.ActiveEmployees?.reduce((c, e) => c.add(e), contacts);
+          internalOrganisation.ActiveEmployees?.reduce(
+            (c, e) => c.add(e),
+            contacts
+          );
         }
 
         if (this.organisation && this.organisation.CurrentContacts != null) {
-          this.organisation.CurrentContacts?.reduce((c, e) => c.add(e), contacts);
+          this.organisation.CurrentContacts?.reduce(
+            (c, e) => c.add(e),
+            contacts
+          );
         }
 
         if (this.person) {
@@ -239,7 +274,9 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
 
   public fromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.communicationEvent.FromParty) {
-      this.communicationEvent.FromParty.addPartyContactMechanism(partyContactMechanism);
+      this.communicationEvent.FromParty.addPartyContactMechanism(
+        partyContactMechanism
+      );
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
@@ -250,7 +287,9 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
 
   public toAddressAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.communicationEvent.ToParty) {
-      this.communicationEvent.ToParty.addPartyContactMechanism(partyContactMechanism);
+      this.communicationEvent.ToParty.addPartyContactMechanism(
+        partyContactMechanism
+      );
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
@@ -275,7 +314,10 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
 
   private addContactRelationship(party: Person): void {
     if (this.organisation) {
-      const relationShip: OrganisationContactRelationship = this.allors.context.create<OrganisationContactRelationship>(this.m.OrganisationContactRelationship);
+      const relationShip: OrganisationContactRelationship =
+        this.allors.context.create<OrganisationContactRelationship>(
+          this.m.OrganisationContactRelationship
+        );
       relationShip.Contact = party;
       relationShip.Organisation = this.organisation;
     }
@@ -288,7 +330,9 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
   }
 
   private sortContacts(): void {
-    this.contacts.sort((a, b) => (a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0));
+    this.contacts.sort((a, b) =>
+      a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0
+    );
   }
 
   private updateFromParty(party: Party): void {
@@ -313,8 +357,15 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.fromPostalAddresses = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress)?.map((v) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.PartyContactMechanisms
+        );
+      this.fromPostalAddresses = partyContactMechanisms
+        ?.filter(
+          (v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress
+        )
+        ?.map((v) => v.ContactMechanism);
     });
   }
 
@@ -345,14 +396,22 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      const partyContactMechanisms: PartyContactMechanism[] = loaded.collection<PartyContactMechanism>(m.Party.PartyContactMechanisms);
-      this.toPostalAddresses = partyContactMechanisms?.filter((v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress)?.map((v) => v.ContactMechanism);
+      const partyContactMechanisms: PartyContactMechanism[] =
+        loaded.collection<PartyContactMechanism>(
+          m.Party.PartyContactMechanisms
+        );
+      this.toPostalAddresses = partyContactMechanisms
+        ?.filter(
+          (v) => v.ContactMechanism.strategy.cls === this.m.PostalAddress
+        )
+        ?.map((v) => v.ContactMechanism);
     });
   }
   public addressAdded(partyContactMechanism: PartyContactMechanism): void {
     this.party.addPartyContactMechanism(partyContactMechanism);
 
-    const postalAddress = partyContactMechanism.ContactMechanism as PostalAddress;
+    const postalAddress =
+      partyContactMechanism.ContactMechanism as PostalAddress;
     this.fromPostalAddresses.push(postalAddress);
     this.communicationEvent.PostalAddress = postalAddress;
   }

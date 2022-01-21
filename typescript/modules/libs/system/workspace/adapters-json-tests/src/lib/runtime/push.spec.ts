@@ -1,6 +1,6 @@
-import { WorkspaceInitialVersion } from '@allors/workspace/adapters/system';
+import { WorkspaceInitialVersion } from '@allors/system/workspace/adapters';
 import { C1, Person } from '@allors/workspace/domain/default';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 import { Fixture, name_c1A } from '../fixture';
 import '../matchers';
 
@@ -28,10 +28,12 @@ test('pushNewObject', async () => {
 
   for (const associationType of m.C1.associationTypes) {
     if (associationType.isOne) {
-      const association = newObject.strategy.getCompositeAssociation<IObject>(associationType);
+      const association =
+        newObject.strategy.getCompositeAssociation<IObject>(associationType);
       expect(association).toBeNull();
     } else {
-      const association = newObject.strategy.getCompositesAssociation<IObject>(associationType);
+      const association =
+        newObject.strategy.getCompositesAssociation<IObject>(associationType);
       expect(association.length).toBe(0);
     }
   }
@@ -61,10 +63,12 @@ test('pushAndPullNewObject', async () => {
 
   for (const associationType of m.C1.associationTypes) {
     if (associationType.isOne) {
-      const association = newObject.strategy.getCompositeAssociation<IObject>(associationType);
+      const association =
+        newObject.strategy.getCompositeAssociation<IObject>(associationType);
       expect(association).toBeNull();
     } else {
-      const association = newObject.strategy.getCompositesAssociation<IObject>(associationType);
+      const association =
+        newObject.strategy.getCompositesAssociation<IObject>(associationType);
       expect(association.length).toBe(0);
     }
   }

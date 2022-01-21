@@ -1,4 +1,4 @@
-import { ObjectTypeData } from '@allors/protocol/json/system';
+import { ObjectTypeData } from '@allors/system/common/protocol-json';
 import { RelationType, RoleType } from '@allors/system/workspace/meta';
 
 import { Lookup } from './utils/lookup';

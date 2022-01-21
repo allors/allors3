@@ -3,11 +3,22 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Locale, UnitOfMeasure, TimeFrequency, Singleton, SerialisedItemCharacteristicType, IUnitOfMeasure } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Locale,
+  UnitOfMeasure,
+  TimeFrequency,
+  Singleton,
+  SerialisedItemCharacteristicType,
+  IUnitOfMeasure,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -16,7 +27,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './serialiseditemcharacteristic-edit.component.html',
   providers: [ContextService],
 })
-export class SerialisedItemCharacteristicEditComponent implements OnInit, OnDestroy {
+export class SerialisedItemCharacteristicEditComponent
+  implements OnInit, OnDestroy
+{
   public title: string;
   public subTitle: string;
 
@@ -50,7 +63,10 @@ export class SerialisedItemCharacteristicEditComponent implements OnInit, OnDest
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -65,11 +81,19 @@ export class SerialisedItemCharacteristicEditComponent implements OnInit, OnDest
               },
             }),
             pull.UnitOfMeasure({
-              predicate: { kind: 'Equals', propertyType: m.UnitOfMeasure.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.UnitOfMeasure.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.UnitOfMeasure.Name }],
             }),
             pull.TimeFrequency({
-              predicate: { kind: 'Equals', propertyType: m.TimeFrequency.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.TimeFrequency.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.TimeFrequency.Name }],
             }),
           ];
@@ -87,7 +111,9 @@ export class SerialisedItemCharacteristicEditComponent implements OnInit, OnDest
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
@@ -95,17 +121,27 @@ export class SerialisedItemCharacteristicEditComponent implements OnInit, OnDest
 
         this.singleton = loaded.collection<Singleton>(m.Singleton)[0];
         this.uoms = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        this.timeFrequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
-        this.allUoms = this.uoms.concat(this.timeFrequencies).sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+        this.timeFrequencies = loaded.collection<TimeFrequency>(
+          m.TimeFrequency
+        );
+        this.allUoms = this.uoms
+          .concat(this.timeFrequencies)
+          .sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
         this.locales = this.fetcher.getAdditionalLocales(loaded);
 
         if (isCreate) {
           this.title = 'Add Product Characteristic';
 
-          this.productCharacteristic = this.allors.context.create<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
+          this.productCharacteristic =
+            this.allors.context.create<SerialisedItemCharacteristicType>(
+              m.SerialisedItemCharacteristicType
+            );
           this.productCharacteristic.IsActive = true;
         } else {
-          this.productCharacteristic = loaded.object<SerialisedItemCharacteristicType>(m.SerialisedItemCharacteristicType);
+          this.productCharacteristic =
+            loaded.object<SerialisedItemCharacteristicType>(
+              m.SerialisedItemCharacteristicType
+            );
 
           if (this.productCharacteristic.canWriteName) {
             this.title = 'Edit Product Characteristic';

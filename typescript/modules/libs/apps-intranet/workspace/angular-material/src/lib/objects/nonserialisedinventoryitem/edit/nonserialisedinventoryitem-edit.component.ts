@@ -3,9 +3,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { NonSerialisedInventoryItem } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -15,7 +19,9 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './nonserialisedinventoryitem-edit.component.html',
   providers: [ContextService],
 })
-export class NonSerialisedInventoryItemEditComponent implements OnInit, OnDestroy {
+export class NonSerialisedInventoryItemEditComponent
+  implements OnInit, OnDestroy
+{
   public m: M;
   public title: string;
 
@@ -42,7 +48,10 @@ export class NonSerialisedInventoryItemEditComponent implements OnInit, OnDestro
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const isCreate = this.data.id == null;
@@ -57,13 +66,18 @@ export class NonSerialisedInventoryItemEditComponent implements OnInit, OnDestro
             );
           }
 
-          return this.allors.context.pull(pulls).pipe(map((loaded) => ({ loaded, isCreate })));
+          return this.allors.context
+            .pull(pulls)
+            .pipe(map((loaded) => ({ loaded, isCreate })));
         })
       )
       .subscribe(({ loaded, isCreate }) => {
         this.allors.context.reset();
 
-        this.nonSerialisedInventoryItem = loaded.object<NonSerialisedInventoryItem>(m.NonSerialisedInventoryItem);
+        this.nonSerialisedInventoryItem =
+          loaded.object<NonSerialisedInventoryItem>(
+            m.NonSerialisedInventoryItem
+          );
 
         if (this.nonSerialisedInventoryItem.canWritePartLocation) {
           this.title = 'Edit Inventory Item';

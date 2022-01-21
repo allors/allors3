@@ -1,13 +1,36 @@
-import { Component, OnDestroy, OnInit, Self, Optional, Inject } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  Self,
+  Optional,
+  Inject,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Locale, Organisation, Party, Part, InternalOrganisation, Ownership, SerialisedItem, Enumeration, SerialisedItemState, SerialisedItemAvailability } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Locale,
+  Organisation,
+  Party,
+  Part,
+  InternalOrganisation,
+  Ownership,
+  SerialisedItem,
+  Enumeration,
+  SerialisedItemState,
+  SerialisedItemAvailability,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -56,7 +79,10 @@ export class SerialisedItemCreateComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.internalOrganisationId.observable$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$,
+    ])
       .pipe(
         switchMap(() => {
           const pulls = [
@@ -72,11 +98,19 @@ export class SerialisedItemCreateComponent implements OnInit, OnDestroy {
               },
             }),
             pull.SerialisedItemState({
-              predicate: { kind: 'Equals', propertyType: m.SerialisedItemState.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.SerialisedItemState.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
             }),
             pull.SerialisedItemAvailability({
-              predicate: { kind: 'Equals', propertyType: m.SerialisedItemAvailability.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.SerialisedItemAvailability.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
             }),
           ];
@@ -90,18 +124,26 @@ export class SerialisedItemCreateComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+        const internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
         const externalOwner = loaded.object<Party>(m.Party);
         this.owner = externalOwner || internalOrganisation;
 
         this.part = loaded.object<Part>('forPart');
 
-        this.serialisedItemStates = loaded.collection<SerialisedItemState>(m.SerialisedItemState);
-        this.serialisedItemAvailabilities = loaded.collection<SerialisedItemAvailability>(m.SerialisedItemAvailability);
+        this.serialisedItemStates = loaded.collection<SerialisedItemState>(
+          m.SerialisedItemState
+        );
+        this.serialisedItemAvailabilities =
+          loaded.collection<SerialisedItemAvailability>(
+            m.SerialisedItemAvailability
+          );
         this.ownerships = loaded.collection<Ownership>(m.Ownership);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
 
-        this.serialisedItem = this.allors.context.create<SerialisedItem>(m.SerialisedItem);
+        this.serialisedItem = this.allors.context.create<SerialisedItem>(
+          m.SerialisedItem
+        );
         this.serialisedItem.AvailableForSale = false;
         this.serialisedItem.OwnedBy = this.owner;
 

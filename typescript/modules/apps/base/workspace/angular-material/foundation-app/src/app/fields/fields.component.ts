@@ -3,14 +3,14 @@ import { switchMap } from 'rxjs/operators';
 import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import {
   Data,
   Organisation,
   Person,
   Locale,
 } from '@allors/workspace/domain/default';
-import { IPullResult } from '@allors/workspace/domain/system';
+import { IPullResult } from '@allors/system/workspace/domain';
 import { ContextService } from '@allors/workspace/angular/core';
 import { SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { RadioGroupOption } from '@allors/workspace/angular-material/base';

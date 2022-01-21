@@ -3,9 +3,30 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, filter } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { Organisation, Part, PriceComponent, ProductIdentificationType, Facility, InventoryItemKind, ProductType, Brand, Model, PartNumber, UnitOfMeasure, Settings, PartCategory, Locale } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService, SearchFactory } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Organisation,
+  Part,
+  PriceComponent,
+  ProductIdentificationType,
+  Facility,
+  InventoryItemKind,
+  ProductType,
+  Brand,
+  Model,
+  PartNumber,
+  UnitOfMeasure,
+  Settings,
+  PartCategory,
+  Locale,
+} from '@allors/workspace/domain/default';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+  SearchFactory,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
@@ -15,7 +36,9 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './nonunifiedpart-overview-detail.component.html',
   providers: [PanelService, ContextService],
 })
-export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy {
+export class NonUnifiedPartOverviewDetailComponent
+  implements OnInit, OnDestroy
+{
   readonly m: M;
 
   part: Part;
@@ -94,7 +117,10 @@ export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy 
     const x = {};
 
     // Maximized
-    this.subscription = combineLatest(this.refreshService.refresh$, this.panel.manager.on$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.panel.manager.on$
+    )
       .pipe(
         filter(() => {
           return this.panel.isExpanded;
@@ -176,10 +202,13 @@ export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy 
         this.allors.context.reset();
 
         this.part = loaded.object<Part>(m.Part);
-        this.originalCategories = loaded.collection<PartCategory>('OriginalCategories') ?? [];
+        this.originalCategories =
+          loaded.collection<PartCategory>('OriginalCategories') ?? [];
         this.selectedCategories = this.originalCategories;
 
-        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(m.InventoryItemKind);
+        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(
+          m.InventoryItemKind
+        );
         this.productTypes = loaded.collection<ProductType>(m.ProductType);
         this.brands = loaded.collection<Brand>(m.Brand);
         this.locales = this.fetcher.getAdditionalLocales(loaded);
@@ -188,10 +217,17 @@ export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy 
         this.categories = loaded.collection<PartCategory>(m.PartCategory);
         this.settings = this.fetcher.getSettings(loaded);
 
-        this.goodIdentificationTypes = loaded.collection<ProductIdentificationType>(m.ProductIdentificationType);
-        const partNumberType = this.goodIdentificationTypes?.find((v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6');
+        this.goodIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
+        const partNumberType = this.goodIdentificationTypes?.find(
+          (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
+        );
 
-        this.partNumber = this.part.ProductIdentifications?.find((v) => v.ProductIdentificationType === partNumberType);
+        this.partNumber = this.part.ProductIdentifications?.find(
+          (v) => v.ProductIdentificationType === partNumberType
+        );
 
         this.selectedBrand = this.part.Brand;
         this.selectedModel = this.part.Model;
@@ -219,7 +255,9 @@ export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy 
 
   public modelAdded(model: Model): void {
     this.selectedBrand.addModel(model);
-    this.models = this.selectedBrand.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+    this.models = this.selectedBrand.Models.sort((a, b) =>
+      a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
+    );
     this.selectedModel = model;
   }
 
@@ -238,7 +276,9 @@ export class NonUnifiedPartOverviewDetailComponent implements OnInit, OnDestroy 
     ];
 
     this.allors.context.pull(pulls).subscribe(() => {
-      this.models = this.selectedBrand?.Models.sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+      this.models = this.selectedBrand?.Models.sort((a, b) =>
+        a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
+      );
     });
   }
 

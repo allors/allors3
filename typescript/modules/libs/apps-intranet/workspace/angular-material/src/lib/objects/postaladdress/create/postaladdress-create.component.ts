@@ -3,11 +3,22 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { M } from '@allors/workspace/meta/default';
-import { PartyContactMechanism, Party, PostalAddress, Country, Enumeration, ContactMechanismPurpose } from '@allors/workspace/domain/default';
-import { ObjectData, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  PartyContactMechanism,
+  Party,
+  PostalAddress,
+  Country,
+  Enumeration,
+  ContactMechanismPurpose,
+} from '@allors/workspace/domain/default';
+import {
+  ObjectData,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
-import { IObject } from '@allors/workspace/domain/system';
+import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
@@ -46,7 +57,10 @@ export class PostalAddressCreateComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.subscription = combineLatest(this.refreshService.refresh$, this.internalOrganisationId.observable$)
+    this.subscription = combineLatest(
+      this.refreshService.refresh$,
+      this.internalOrganisationId.observable$
+    )
       .pipe(
         switchMap(() => {
           const pulls = [
@@ -58,7 +72,11 @@ export class PostalAddressCreateComponent implements OnInit, OnDestroy {
               sorting: [{ roleType: m.Country.Name }],
             }),
             pull.ContactMechanismPurpose({
-              predicate: { kind: 'Equals', propertyType: m.ContactMechanismPurpose.IsActive, value: true },
+              predicate: {
+                kind: 'Equals',
+                propertyType: m.ContactMechanismPurpose.IsActive,
+                value: true,
+              },
               sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
             }),
           ];
@@ -70,12 +88,18 @@ export class PostalAddressCreateComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         this.countries = loaded.collection<Country>(m.Country);
-        this.contactMechanismPurposes = loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+        this.contactMechanismPurposes =
+          loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
         this.party = loaded.object<Party>(m.Party);
 
-        this.contactMechanism = this.allors.context.create<PostalAddress>(m.PostalAddress);
+        this.contactMechanism = this.allors.context.create<PostalAddress>(
+          m.PostalAddress
+        );
 
-        this.partyContactMechanism = this.allors.context.create<PartyContactMechanism>(m.PartyContactMechanism);
+        this.partyContactMechanism =
+          this.allors.context.create<PartyContactMechanism>(
+            m.PartyContactMechanism
+          );
         this.partyContactMechanism.UseAsDefault = true;
         this.partyContactMechanism.ContactMechanism = this.contactMechanism;
 

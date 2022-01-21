@@ -1,8 +1,24 @@
 import { Component, OnInit, Self, HostBinding } from '@angular/core';
 
-import { M } from '@allors/workspace/meta/default';
-import { NonSerialisedInventoryItem, InventoryItem } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, NavigationService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow, OverviewService, ActionTarget } from '@allors/workspace/angular/base';
+import { M } from '@allors/default/workspace/meta';
+import {
+  NonSerialisedInventoryItem,
+  InventoryItem,
+} from '@allors/workspace/domain/default';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  NavigationService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+  ActionTarget,
+} from '@allors/workspace/angular/base';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -85,7 +101,15 @@ export class NonSerialisedInventoryItemComponent implements OnInit {
 
     this.table = new Table({
       selection: false,
-      columns: [{ name: 'facility' }, { name: 'part' }, { name: 'uom' }, { name: 'location' }, 'qoh', 'atp', 'committedOut'],
+      columns: [
+        { name: 'facility' },
+        { name: 'part' },
+        { name: 'uom' },
+        { name: 'location' },
+        'qoh',
+        'atp',
+        'committedOut',
+      ],
       actions: [this.edit, this.changeInventory],
       defaultAction: this.edit,
       autoSort: true,
@@ -119,7 +143,9 @@ export class NonSerialisedInventoryItemComponent implements OnInit {
       this.panel.onPulled = (loaded) => {
         this.objects = loaded.collection<NonSerialisedInventoryItem>(pullName);
 
-        this.table.total = (loaded.value(`${pullName}_total`) ?? this.objects?.length ?? 0) as number;
+        this.table.total = (loaded.value(`${pullName}_total`) ??
+          this.objects?.length ??
+          0) as number;
         this.table.data = this.objects?.map((v) => {
           return {
             object: v,

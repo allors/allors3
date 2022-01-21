@@ -2,7 +2,7 @@ import { humanize, ObjectType, UnitTags } from '@allors/system/workspace/meta';
 import {
   ParameterizablePredicate,
   parameterizablePredicateObjectType,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 
 import { FilterOptions } from './filter-options';
 

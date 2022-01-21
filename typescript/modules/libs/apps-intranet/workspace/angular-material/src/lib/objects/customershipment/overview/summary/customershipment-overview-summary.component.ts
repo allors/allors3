@@ -1,9 +1,14 @@
 import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { CustomerShipment, SalesOrder } from '@allors/workspace/domain/default';
-import { NavigationService, PanelService, RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  NavigationService,
+  PanelService,
+  RefreshService,
+  SaveService,
+} from '@allors/workspace/angular/base';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/workspace/angular/core';
@@ -77,7 +82,9 @@ export class CustomerShipmentOverviewSummaryComponent {
 
     panel.onPulled = (loaded) => {
       this.shipment = loaded.object<CustomerShipment>(shipmentPullName);
-      this.salesOrders = loaded.collection<SalesOrder>(this.m.OrderItem.OrderWhereValidOrderItem);
+      this.salesOrders = loaded.collection<SalesOrder>(
+        this.m.OrderItem.OrderWhereValidOrderItem
+      );
     };
   }
 
@@ -91,21 +98,27 @@ export class CustomerShipmentOverviewSummaryComponent {
   public cancel(): void {
     this.panel.manager.context.invoke(this.shipment.Cancel).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully cancelled.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully cancelled.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
   public hold(): void {
     this.panel.manager.context.invoke(this.shipment.Hold).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully put on hold.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully put on hold.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 
   public continue(): void {
     this.panel.manager.context.invoke(this.shipment.Continue).subscribe(() => {
       this.refreshService.refresh();
-      this.snackBar.open('Successfully removed from hold.', 'close', { duration: 5000 });
+      this.snackBar.open('Successfully removed from hold.', 'close', {
+        duration: 5000,
+      });
     }, this.saveService.errorHandler);
   }
 

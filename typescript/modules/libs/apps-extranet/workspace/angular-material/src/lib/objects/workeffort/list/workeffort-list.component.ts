@@ -6,12 +6,26 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/workspace/meta/default';
+import { M } from '@allors/default/workspace/meta';
 import { WorkEffort } from '@allors/workspace/domain/default';
-import { Action, DeleteService, Filter, MediaService, NavigationService, ObjectService, RefreshService, Table, TableRow, OverviewService, angularFilterFromDefinition, angularSorter, FilterField } from '@allors/workspace/angular/base';
+import {
+  Action,
+  DeleteService,
+  Filter,
+  MediaService,
+  NavigationService,
+  ObjectService,
+  RefreshService,
+  Table,
+  TableRow,
+  OverviewService,
+  angularFilterFromDefinition,
+  angularSorter,
+  FilterField,
+} from '@allors/workspace/angular/base';
 import { ContextService } from '@allors/workspace/angular/core';
 
-import { And } from '@allors/workspace/domain/system';
+import { And } from '@allors/system/workspace/domain';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -61,7 +75,14 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'number', sort: true }, { name: 'name', sort: true }, { name: 'state' }, { name: 'executedBy' }, { name: 'equipment' }, { name: 'lastModifiedDate', sort: true }],
+      columns: [
+        { name: 'number', sort: true },
+        { name: 'name', sort: true },
+        { name: 'state' },
+        { name: 'executedBy' },
+        { name: 'equipment' },
+        { name: 'lastModifiedDate', sort: true },
+      ],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
@@ -77,53 +98,76 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
 
     this.filter = angularFilterFromDefinition(m.WorkEffort);
 
-    const predicate: And = { kind: 'And', operands: [this.filter.definition.predicate] };
+    const predicate: And = {
+      kind: 'And',
+      operands: [this.filter.definition.predicate],
+    };
 
-    this.subscription = combineLatest([this.refreshService.refresh$, this.filter.fields$, this.table.sort$, this.table.pager$])
+    this.subscription = combineLatest([
+      this.refreshService.refresh$,
+      this.filter.fields$,
+      this.table.sort$,
+      this.table.pager$,
+    ])
       .pipe(
-        scan(([previousRefresh, previousFilterFields], [refresh, filterFields, sort, pageEvent]) => {
-          pageEvent =
-            previousRefresh !== refresh || filterFields !== previousFilterFields
-              ? {
-                  ...pageEvent,
-                  pageIndex: 0,
-                }
-              : pageEvent;
+        scan(
+          (
+            [previousRefresh, previousFilterFields],
+            [refresh, filterFields, sort, pageEvent]
+          ) => {
+            pageEvent =
+              previousRefresh !== refresh ||
+              filterFields !== previousFilterFields
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
 
-          if (pageEvent.pageIndex === 0) {
-            this.table.pageIndex = 0;
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
+        ),
+        switchMap(
+          ([, filterFields, sort, pageEvent]: [
+            Date,
+            FilterField[],
+            Sort,
+            PageEvent
+          ]) => {
+            const pulls = [
+              pull.WorkEffort({
+                predicate,
+                sorting: sort
+                  ? angularSorter(m.WorkEffort)?.create(sort)
+                  : null,
+                include: {
+                  Customer: x,
+                  ExecutedBy: x,
+                  PrintDocument: {
+                    Media: x,
+                  },
+                  WorkEffortState: x,
+                  WorkEffortPurposes: x,
+                  WorkEffortFixedAssetAssignmentsWhereAssignment: {
+                    FixedAsset: x,
+                  },
+                  WorkEffortPartyAssignmentsWhereAssignment: {
+                    Party: x,
+                  },
+                },
+                arguments: this.filter.parameters(filterFields),
+                skip: pageEvent.pageIndex * pageEvent.pageSize,
+                take: pageEvent.pageSize,
+              }),
+            ];
 
-          return [refresh, filterFields, sort, pageEvent];
-        }),
-        switchMap(([, filterFields, sort, pageEvent]: [Date, FilterField[], Sort, PageEvent]) => {
-          const pulls = [
-            pull.WorkEffort({
-              predicate,
-              sorting: sort ? angularSorter(m.WorkEffort)?.create(sort) : null,
-              include: {
-                Customer: x,
-                ExecutedBy: x,
-                PrintDocument: {
-                  Media: x,
-                },
-                WorkEffortState: x,
-                WorkEffortPurposes: x,
-                WorkEffortFixedAssetAssignmentsWhereAssignment: {
-                  FixedAsset: x,
-                },
-                WorkEffortPartyAssignmentsWhereAssignment: {
-                  Party: x,
-                },
-              },
-              arguments: this.filter.parameters(filterFields),
-              skip: pageEvent.pageIndex * pageEvent.pageSize,
-              take: pageEvent.pageSize,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
+            return this.allors.context.pull(pulls);
+          }
+        )
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
@@ -138,8 +182,15 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
               name: v.Name,
               state: v.WorkEffortState ? v.WorkEffortState.Name : '',
               executedBy: v.ExecutedBy ? v.ExecutedBy.DisplayName : '',
-              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment ? v.WorkEffortFixedAssetAssignmentsWhereAssignment?.map((w) => w.FixedAsset.DisplayName).join(', ') : '',
-              lastModifiedDate: formatDistance(new Date(v.LastModifiedDate), new Date()),
+              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment
+                ? v.WorkEffortFixedAssetAssignmentsWhereAssignment?.map(
+                    (w) => w.FixedAsset.DisplayName
+                  ).join(', ')
+                : '',
+              lastModifiedDate: formatDistance(
+                new Date(v.LastModifiedDate),
+                new Date()
+              ),
             } as Row;
           });
       });

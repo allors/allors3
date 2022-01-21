@@ -17,9 +17,9 @@
     "noFallthroughCasesInSwitch": true
   },
   "paths": {
-    "@allors/workspace/domain/default": ["libs/workspace/domain/apps/intranet/src/index.ts"],
-    "@allors/workspace/domain/system": ["libs/workspace/domain/system/src/index.ts"],
-    "@allors/workspace/meta/default": ["libs/workspace/meta/apps/intranet/src/index.ts"],
-    "@allors/workspace/meta/system": ["libs/workspace/meta/system/src/index.ts"]
+    "@allors/default/workspace/domain": ["libs/workspace/domain/apps/intranet/src/index.ts"],
+    "@allors/system/workspace/domain": ["libs/system/workspace/domain/src/index.ts"],
+    "@allors/default/workspace/meta": ["libs/workspace/meta/apps/intranet/src/index.ts"],
+    "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"]
   }
 }

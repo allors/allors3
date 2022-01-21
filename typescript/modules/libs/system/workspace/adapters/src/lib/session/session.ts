@@ -11,7 +11,7 @@ import {
   Method,
   Procedure,
   Pull,
-} from '@allors/workspace/domain/system';
+} from '@allors/system/workspace/domain';
 import {
   AssociationType,
   Class,
@@ -36,7 +36,7 @@ import { ChangeSet } from './change-set';
 import {
   derivationRule,
   derivationRuleByClass,
-} from '@allors/workspace/derivations/system';
+} from '@allors/system/workspace/derivations';
 
 export function isNewId(id: number): boolean {
   return id < 0;

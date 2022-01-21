@@ -1,5 +1,5 @@
 import { SaveService } from '@allors/workspace/angular/base';
-import { ResultError } from '@allors/workspace/domain/system';
+import { ResultError } from '@allors/system/workspace/domain';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AllorsMaterialErrorDialogComponent } from './error/error-dialog.component';
