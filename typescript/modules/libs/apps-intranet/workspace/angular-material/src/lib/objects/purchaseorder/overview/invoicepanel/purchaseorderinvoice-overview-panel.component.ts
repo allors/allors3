@@ -25,7 +25,7 @@ import {
   Table,
   TableRow,
   OverviewService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';

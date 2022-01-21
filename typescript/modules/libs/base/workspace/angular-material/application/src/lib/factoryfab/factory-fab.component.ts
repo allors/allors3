@@ -7,7 +7,7 @@ import {
   angularIcon,
   CreateService,
   OnCreate,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-factory-fab',

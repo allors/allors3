@@ -11,7 +11,7 @@ import {
   MenuInfoService,
   NavigationInfoService,
   RouteInfoService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { dialogs } from '../app/app.dialogs';
 import { init } from '../app/app.init';
 
@@ -82,8 +82,8 @@ export const environment = {
  * This import should be commented out in production mode because it will have a negative impact
  * on performance if an error is thrown.
  */
-import 'zone.js/plugins/zone-error'; // Included with Angular CLI.import { AllorsMaterialCreateService } from '@allors/workspace/angular-material/base';
+import 'zone.js/plugins/zone-error'; // Included with Angular CLI.import { AllorsMaterialCreateService } from '@allors/base/workspace/angular-material/application';
 import {
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';

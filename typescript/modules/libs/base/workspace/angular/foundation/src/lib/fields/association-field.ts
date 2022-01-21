@@ -26,7 +26,7 @@ export abstract class AssociationField
   extends Field
   implements AfterViewInit, OnDestroy
 {
-  dataAllorsKind = 'field-association';
+  override dataAllorsKind = 'field-association';
 
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {

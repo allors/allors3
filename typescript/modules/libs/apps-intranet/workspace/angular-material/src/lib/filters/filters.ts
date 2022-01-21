@@ -1,4 +1,4 @@
-import { SearchFactory } from '@allors/workspace/angular/base';
+import { SearchFactory } from '@allors/base/workspace/angular/foundation';
 import { And } from '@allors/system/workspace/domain';
 import { M, TreeBuilder } from '@allors/default/workspace/meta';
 

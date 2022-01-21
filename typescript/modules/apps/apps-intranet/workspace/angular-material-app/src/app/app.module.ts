@@ -83,7 +83,7 @@ import {
   SaveService,
   OBJECT_CREATE_TOKEN,
   OBJECT_EDIT_TOKEN,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 import {
   AllorsMaterialDialogService,
@@ -126,7 +126,7 @@ import {
   ObjectServiceCore,
   SaveServiceCore,
   AllorsMaterialSideNavServiceCore,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 
 // Angular Material Base
 import {

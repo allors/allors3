@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
+import {
+  AllorsComponent,
+  AllorsForm,
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-save',
@@ -17,7 +20,7 @@ import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
   `,
 })
 export class AllorsMaterialSaveComponent extends AllorsComponent {
-  dataAllorsKind = 'save';
+  override dataAllorsKind = 'save';
 
   @Input()
   form: AllorsForm;

@@ -13,7 +13,7 @@ import {
   angularList,
   angularMenu,
   SideMenuItem,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
 
 @Component({

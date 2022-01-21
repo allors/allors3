@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AllorsComponent } from '@allors/workspace/angular/base';
+import { AllorsComponent } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-header',

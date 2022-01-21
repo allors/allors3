@@ -10,7 +10,7 @@ import { LazyComposite } from './lazy-composite';
 
 export class LazyInterface extends LazyComposite implements InternalInterface {
   readonly kind = 'Interface';
-  readonly _ = {};
+  override readonly _ = {};
   isInterface = true;
   isClass = false;
 

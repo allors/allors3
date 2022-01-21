@@ -7,7 +7,11 @@ import { DatabaseOriginState } from './originstate/database-origin-state';
 import { DatabaseRecord } from '../database/database-record';
 
 export class Strategy extends SystemStrategy {
-  constructor(public session: Session, public cls: Class, public id: number) {
+  constructor(
+    public override session: Session,
+    public override cls: Class,
+    public override id: number
+  ) {
     super(session, cls, id);
 
     if (this.cls.origin === Origin.Database) {

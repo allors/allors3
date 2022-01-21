@@ -6,9 +6,9 @@ import {
   SearchFactory,
   angularFilterDefinition,
   angularSorter,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { Sorter } from '@allors/workspace/angular/base';
+import { Sorter } from '@allors/base/workspace/angular/foundation';
 import { Composite } from '@allors/system/workspace/meta';
 import {
   Filters,

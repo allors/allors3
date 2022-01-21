@@ -3,7 +3,7 @@ import {
   Action,
   ActionTarget,
   NavigationService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 function objectTypeName(target: ActionTarget) {
   return Array.isArray(target)

@@ -7,7 +7,7 @@ import { AllorsComponent } from '../component';
 
 @Directive()
 export abstract class AllorsListComponent extends AllorsComponent {
-  dataAllorsKind = 'list';
+  override dataAllorsKind = 'list';
 
   @HostBinding('attr.data-allors-objecttype')
   get dataAllorsObjectType() {

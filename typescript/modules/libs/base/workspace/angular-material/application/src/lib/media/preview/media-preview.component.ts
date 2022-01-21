@@ -1,7 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Media } from '@allors/default/workspace/domain';
-import { AllorsComponent, MediaService } from '@allors/workspace/angular/base';
+import {
+  AllorsComponent,
+  MediaService,
+} from '@allors/base/workspace/angular/foundation';
 import { isImage } from '../media';
 import { MediaDialogData } from './dialog.data';
 

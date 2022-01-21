@@ -20,7 +20,7 @@ import {
   NavigationService,
   PanelManagerService,
   RefreshService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import {
   ContextService,
   WorkspaceService,

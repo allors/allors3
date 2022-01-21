@@ -22,7 +22,7 @@ export class DatabaseRecord extends SystemDatabaseRecord {
     public readonly database: DatabaseConnection,
     cls: Class,
     id: number,
-    public version: number
+    public override version: number
   ) {
     super(cls, id, version);
   }

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {
   AllorsBarcodeService,
   AllorsComponent,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-scanner',

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AllorsComponent } from '@allors/workspace/angular/base';
+import { AllorsComponent } from '@allors/base/workspace/angular/foundation';
 import { AllorsMaterialSideNavService } from '../sidenav/side-nav.service';
 
 @Component({

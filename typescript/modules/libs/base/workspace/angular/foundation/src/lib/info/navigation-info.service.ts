@@ -1,8 +1,8 @@
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { Injectable } from '@angular/core';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { angularList } from '../meta/angular.list';
 import { angularOverview } from '../meta/angular.overview';
+import { WorkspaceService } from '../workspace/workspace-service';
 
 export interface NavigationInfo {
   tag: string;
@@ -20,7 +20,7 @@ export class NavigationInfoService {
   }
 
   write(allors: { [key: string]: unknown }) {
-    allors.navigation = this.navigation;
+    allors['navigation'] = this.navigation;
   }
 
   private get navigation(): string {

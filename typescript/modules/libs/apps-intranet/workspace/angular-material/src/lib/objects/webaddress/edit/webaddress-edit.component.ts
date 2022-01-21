@@ -9,7 +9,10 @@ import {
   Enumeration,
   ElectronicAddress,
 } from '@allors/default/workspace/domain';
-import { RefreshService, SaveService } from '@allors/workspace/angular/base';
+import {
+  RefreshService,
+  SaveService,
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
 

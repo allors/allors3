@@ -13,11 +13,11 @@ import {
   RefreshService,
   SaveService,
   SearchFactory,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import {
   CreateDialogData,
   EditDialogData,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 
 @Component({
   templateUrl: './employment-edit.component.html',

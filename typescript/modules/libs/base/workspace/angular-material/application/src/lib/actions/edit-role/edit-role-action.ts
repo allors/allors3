@@ -6,7 +6,7 @@ import {
   ActionTarget,
   EditService,
   RefreshService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 export class EditRoleAction implements Action {
   name = 'edit';

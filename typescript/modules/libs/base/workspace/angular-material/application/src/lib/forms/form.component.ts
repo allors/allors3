@@ -11,14 +11,14 @@ import {
   AllorsComponent,
   AllorsForm,
   SaveService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Directive()
 export abstract class AllorsFormComponent<T extends IObject>
   extends AllorsComponent
   implements AllorsForm
 {
-  dataAllorsKind = 'form';
+  override dataAllorsKind = 'form';
 
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {

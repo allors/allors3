@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action } from '@allors/workspace/angular/base';
+import { Action } from '@allors/base/workspace/angular/foundation';
 import { RoleType } from '@allors/system/workspace/meta';
 import { PrintAction } from './print-action';
 export class PrintConfig {

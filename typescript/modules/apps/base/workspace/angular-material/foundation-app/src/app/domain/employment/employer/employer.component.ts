@@ -11,13 +11,13 @@ import {
   PanelService,
   RefreshService,
   AllorsRelationObjectAssociationPanelComponent,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import {
   DeleteService,
   EditRoleService,
   Table,
   TableRow,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {
   object: Employment;

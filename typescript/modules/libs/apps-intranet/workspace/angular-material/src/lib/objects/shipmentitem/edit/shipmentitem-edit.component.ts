@@ -37,7 +37,7 @@ import {
   RefreshService,
   SaveService,
   SearchFactory,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { And, IObject } from '@allors/system/workspace/domain';
 import { Filters } from '../../../filters/filters';

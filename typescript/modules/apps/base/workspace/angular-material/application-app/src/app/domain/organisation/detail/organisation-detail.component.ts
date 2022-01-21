@@ -11,7 +11,7 @@ import {
   SaveService,
   SearchFactory,
   SingletonId,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'organisation-detail',
@@ -22,7 +22,7 @@ export class OrganisationDetailComponent
   extends AllorsObjectDetailPanelComponent<Organisation>
   implements OnInit, OnDestroy
 {
-  readonly m: M;
+  override readonly m: M;
 
   organisation: Organisation;
   countries: Country[];

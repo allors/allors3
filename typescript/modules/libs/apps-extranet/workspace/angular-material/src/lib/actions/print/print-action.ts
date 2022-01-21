@@ -1,7 +1,10 @@
 import { Subject } from 'rxjs';
 
 import { PrintConfig } from './print.service';
-import { Action, ActionTarget } from '@allors/workspace/angular/base';
+import {
+  Action,
+  ActionTarget,
+} from '@allors/base/workspace/angular/foundation';
 import { RoleType } from '@allors/system/workspace/meta';
 import { Printable } from '@allors/default/workspace/domain';
 

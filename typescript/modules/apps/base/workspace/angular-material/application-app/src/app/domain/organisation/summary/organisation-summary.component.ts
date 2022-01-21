@@ -5,7 +5,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
   PanelService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'organisation-summary',

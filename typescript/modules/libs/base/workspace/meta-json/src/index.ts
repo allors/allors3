@@ -1,1 +1,1 @@
-export * from './lib/generated';
+export { data } from './lib/generated';

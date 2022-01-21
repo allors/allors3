@@ -5,7 +5,7 @@ import {
   AllorsForm,
   angularForms,
   ObjectData,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { DynamicFormHostDirective } from '../form/form-host.directive';
 
 @Component({

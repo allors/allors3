@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SingletonId } from '@allors/workspace/angular/base';
+import { SingletonId } from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { M, PullBuilder } from '@allors/default/workspace/meta';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';

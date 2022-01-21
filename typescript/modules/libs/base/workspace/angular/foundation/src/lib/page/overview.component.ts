@@ -10,7 +10,7 @@ import { PanelManagerService } from '../panel/panel-manager.service';
 export abstract class AllorsOverviewComponent<
   T extends IObject
 > extends AllorsComponent {
-  dataAllorsKind = 'overview';
+  override dataAllorsKind = 'overview';
 
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {

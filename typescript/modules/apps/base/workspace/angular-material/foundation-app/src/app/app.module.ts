@@ -69,7 +69,7 @@ import {
   AllorsFormContainerComponent,
   CreateService,
   EditService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 import {
   AllorsMaterialDialogService,
@@ -117,7 +117,7 @@ import {
   AllorsMaterialSideNavServiceCore,
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 import { routes, components as routesComponents } from './app.routes';
 import { components as dialogsComponents } from './app.dialogs';
 

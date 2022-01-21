@@ -19,7 +19,7 @@ import {
   SaveService,
   SearchFactory,
   UserId,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({

@@ -7,7 +7,7 @@ import {
   angularSorter,
   Sorter,
   SearchFactory,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
 import { FixedAsset, WorkEffortState } from '@allors/default/workspace/domain';

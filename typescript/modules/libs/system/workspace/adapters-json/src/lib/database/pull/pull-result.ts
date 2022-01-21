@@ -32,7 +32,7 @@ export class PullResult extends Result implements IPullResult {
     this.workspace = session.workspace;
   }
 
-  get hasErrors(): boolean {
+  override get hasErrors(): boolean {
     return super.hasErrors || this.mergeErrors?.length > 0;
   }
 

@@ -11,7 +11,10 @@ import { M } from '@allors/default/workspace/meta';
 import { ISession } from '@allors/system/workspace/domain';
 import { Media } from '@allors/default/workspace/domain';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { MediaService, RoleField } from '@allors/workspace/angular/base';
+import {
+  MediaService,
+  RoleField,
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-file',

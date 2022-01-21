@@ -3,24 +3,28 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { AuthenticationService } from '@allors/workspace/angular/base';
+import { AuthenticationService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnDestroy {
   public loginForm = this.formBuilder.group({
-    password: ['', Validators.required],
     userName: ['', Validators.required],
+    password: ['', Validators.required],
   });
 
   private subscription: Subscription;
 
-  constructor(private authService: AuthenticationService, private router: Router, public formBuilder: FormBuilder) {}
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router,
+    public formBuilder: FormBuilder
+  ) {}
 
   public login() {
-    const userName = this.loginForm.controls.userName.value;
-    const password = this.loginForm.controls.password.value;
+    const userName = this.loginForm.controls['userName'].value;
+    const password = this.loginForm.controls['password'].value;
 
     if (this.subscription) {
       this.subscription.unsubscribe();

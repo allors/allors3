@@ -1,4 +1,4 @@
-import { SessionState } from '@allors/workspace/angular/base';
+import { SessionState } from '@allors/base/workspace/angular/foundation';
 import { Injectable } from '@angular/core';
 
 @Injectable({

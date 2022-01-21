@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild, OnInit } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { AllorsComponent } from '@allors/workspace/angular/base';
+import { AllorsComponent } from '@allors/base/workspace/angular/foundation';
 import { BaseTable } from './base-table';
 import { Column } from './column';
 import { TableRow } from './table-row';

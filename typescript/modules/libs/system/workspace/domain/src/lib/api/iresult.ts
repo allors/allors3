@@ -2,7 +2,7 @@ import { IObject } from '../iobject';
 import { IDatabaseDerivationError } from './derivation/idatabase-derivation-error';
 
 export interface IResult {
-  hasErrors: boolean;
+  get hasErrors(): boolean;
 
   errorMessage: string;
 

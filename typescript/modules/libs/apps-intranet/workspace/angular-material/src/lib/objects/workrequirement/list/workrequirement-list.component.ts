@@ -23,7 +23,7 @@ import {
   EditService,
   angularFilterFromDefinition,
   OverviewService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { And, Equals } from '@allors/system/workspace/domain';

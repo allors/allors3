@@ -8,7 +8,6 @@ import { Configuration } from '@allors/system/workspace/domain';
 import { applyRules } from '@allors/system/workspace/derivations';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
-import { ruleBuilder } from '@allors/workspace/derivations/base-custom';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { M } from '@allors/default/workspace/meta';
@@ -33,7 +32,7 @@ export function init(
     idGenerator: () => nextId--,
   };
 
-  const rules = ruleBuilder(m);
+  const rules = [];
   applyRules(m, rules);
 
   const database = new DatabaseConnection(configuration, angularClient);

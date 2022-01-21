@@ -18,7 +18,7 @@ import {
   ObjectData,
   RefreshService,
   SaveService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
 

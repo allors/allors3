@@ -15,7 +15,7 @@ import {
   NavigationService,
   PanelManagerService,
   RefreshService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { Person, Employment } from '@allors/default/workspace/domain';
 

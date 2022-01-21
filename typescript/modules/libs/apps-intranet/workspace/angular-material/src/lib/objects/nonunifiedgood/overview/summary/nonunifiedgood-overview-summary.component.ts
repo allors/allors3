@@ -4,7 +4,7 @@ import { M } from '@allors/default/workspace/meta';
 import {
   NavigationService,
   PanelService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { NonUnifiedGood } from '@allors/default/workspace/domain';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 

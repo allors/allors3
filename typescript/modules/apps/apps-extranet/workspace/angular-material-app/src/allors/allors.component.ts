@@ -8,7 +8,7 @@ import {
   angularMenu,
   angularOverview,
   MenuItem,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
 import { create, edit } from '../app/app.module';
 

@@ -11,11 +11,11 @@ import {
   angularIcon,
   angularList,
   angularMenu,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import {
   AllorsMaterialSideNavService,
   SideMenuItem,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 
 @Component({
   styleUrls: ['main.component.scss'],

@@ -18,16 +18,12 @@ export class QueryComponent implements OnInit, OnDestroy {
   public organisations: Organisation[];
 
   public organisationCount: number;
-  public skip = 5;
-  public take = 5;
+  public skip = 1;
+  public take = 2;
 
   private subscription: Subscription;
 
-  constructor(
-    @Self() private allors: ContextService,
-    private workspaceService: WorkspaceService,
-    private title: Title
-  ) {
+  constructor(@Self() private allors: ContextService, private title: Title) {
     this.allors.context.name = this.constructor.name;
   }
 
@@ -47,11 +43,6 @@ export class QueryComponent implements OnInit, OnDestroy {
 
     const pulls: Pull[] = [
       p.Organisation({
-        predicate: {
-          kind: 'Like',
-          roleType: m.Organisation.Name,
-          value: 'Org%',
-        },
         sorting: [{ roleType: m.Organisation.Name }],
         select: {
           include: {

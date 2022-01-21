@@ -3,7 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
 import { IObject, ISession } from '@allors/system/workspace/domain';
 import { Composite } from '@allors/system/workspace/meta';
-import { CreateService, OnCreate } from '@allors/workspace/angular/base';
+import {
+  CreateService,
+  OnCreate,
+} from '@allors/base/workspace/angular/foundation';
 import { CreateDialogData } from './create.dialog.data';
 
 @Injectable()
@@ -24,6 +27,7 @@ export class AllorsMaterialCreateService extends CreateService {
     onCreate: OnCreate
   ): Observable<IObject> {
     const data: CreateDialogData = {
+      kind: 'CreateDialogData',
       session,
       objectType,
       onCreate,

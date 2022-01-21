@@ -8,7 +8,7 @@ import {
   PanelService,
   RefreshService,
   SaveService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';

@@ -12,7 +12,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsComponent,
   FilterFieldDefinition,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-filter-field-search',

@@ -7,9 +7,9 @@ import { AllorsObjectPanelComponent } from './object-panel.component';
 export abstract class AllorsPanelSummaryComponent<
   T extends IObject
 > extends AllorsObjectPanelComponent<T> {
-  dataAllorsKind = 'panel-summary';
+  override dataAllorsKind = 'panel-summary';
 
-  constructor(public panel: PanelService) {
+  constructor(public override panel: PanelService) {
     super(panel);
 
     panel.name = 'summary';

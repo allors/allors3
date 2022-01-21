@@ -8,7 +8,7 @@ import {
   RefreshService,
   SaveService,
   SearchFactory,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   Brand,

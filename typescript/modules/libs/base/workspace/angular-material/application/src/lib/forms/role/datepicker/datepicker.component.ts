@@ -1,7 +1,7 @@
 import { Component, Optional, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { DateTime } from 'luxon';
-import { RoleField } from '@allors/workspace/angular/base';
+import { RoleField } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-datepicker',

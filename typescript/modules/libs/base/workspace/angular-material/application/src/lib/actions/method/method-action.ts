@@ -8,7 +8,7 @@ import {
   ActionTarget,
   RefreshService,
   SaveService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { MethodConfig } from './method-config';
 
 export class MethodAction implements Action {

@@ -21,7 +21,7 @@ export abstract class RoleField
   extends Field
   implements AfterViewInit, OnDestroy
 {
-  dataAllorsKind = 'field-role';
+  override dataAllorsKind = 'field-role';
 
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {

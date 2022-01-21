@@ -14,7 +14,7 @@ import {
   TableRow,
   OverviewService,
   ActionTarget,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 interface Row extends TableRow {

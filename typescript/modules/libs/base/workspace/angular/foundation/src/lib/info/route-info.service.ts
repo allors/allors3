@@ -14,7 +14,7 @@ export class RouteInfoService {
   constructor(private router: Router) {}
 
   write(allors: { [key: string]: unknown }) {
-    allors.route = this.route;
+    allors['route'] = this.route;
   }
 
   private get route(): string {

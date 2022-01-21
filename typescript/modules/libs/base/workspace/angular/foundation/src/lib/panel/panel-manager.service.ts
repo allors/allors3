@@ -70,7 +70,7 @@ export class PanelManagerService {
       {},
       this.route.snapshot.queryParams
     );
-    queryParams.panel = panel;
+    queryParams['panel'] = panel;
     this.router.navigate(['.'], {
       relativeTo: this.route,
       queryParams,

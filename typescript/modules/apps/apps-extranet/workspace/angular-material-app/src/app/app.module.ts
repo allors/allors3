@@ -123,7 +123,7 @@ import {
   AllorsMaterialSideNavServiceCore,
   OBJECT_CREATE_TOKEN,
   OBJECT_EDIT_TOKEN,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 // Angular Material Base
 import {

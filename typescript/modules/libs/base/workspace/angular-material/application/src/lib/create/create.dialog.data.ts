@@ -1,6 +1,6 @@
 import { Composite } from '@allors/system/workspace/meta';
 import { ISession } from '@allors/system/workspace/domain';
-import { OnCreate } from '@allors/workspace/angular/base';
+import { OnCreate } from '@allors/base/workspace/angular/foundation';
 
 export interface CreateDialogData {
   readonly kind: 'CreateDialogData';

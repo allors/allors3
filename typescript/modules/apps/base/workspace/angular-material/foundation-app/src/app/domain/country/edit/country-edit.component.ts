@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   CreateDialogData,
   EditDialogData,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 import { CountryFormComponent } from '../forms/country-form.component';
 import { IObject } from '@allors/system/workspace/domain';
 

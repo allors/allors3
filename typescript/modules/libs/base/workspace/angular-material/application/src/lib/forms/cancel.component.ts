@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
+import {
+  AllorsComponent,
+  AllorsForm,
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-cancel',
@@ -10,7 +13,7 @@ import { AllorsComponent, AllorsForm } from '@allors/workspace/angular/base';
   `,
 })
 export class AllorsMaterialCancelComponent extends AllorsComponent {
-  dataAllorsKind = 'cancel';
+  override dataAllorsKind = 'cancel';
 
   @Input()
   form: AllorsForm;

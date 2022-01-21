@@ -32,7 +32,7 @@
       // Base
       "@allors/base/workspace/derivations": ["libs/core/workspace/derivations/src/index.ts"],
       "@allors/base/workspace/derivations-custom": ["libs/core/workspace/derivations-custom/src/index.ts"],
-      "@allors/base/workspace/angular/foundation": ["libs/core/workspace/angular/foundation/src/index.ts"],
+      "@allors/base/workspace/angular/foundation": ["libs/base/workspace/angular/foundation/src/index.ts"],
       "@allors/base/workspace/angular/application": ["libs/core/workspace/angular/application/src/index.ts"],
       "@allors/base/workspace/angular-material/foundation": ["libs/core/workspace/angular-material/foundation/src/index.ts"],
       "@allors/base/workspace/angular-material/application": ["libs/core/workspace/angular-material/application/src/index.ts"],

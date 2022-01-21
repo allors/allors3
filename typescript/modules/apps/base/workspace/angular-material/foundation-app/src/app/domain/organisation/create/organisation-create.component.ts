@@ -10,7 +10,7 @@ import {
   ObjectData,
   RefreshService,
   SaveService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   templateUrl: './organisation-create.component.html',

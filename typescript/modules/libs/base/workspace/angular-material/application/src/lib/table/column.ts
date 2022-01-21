@@ -1,5 +1,5 @@
 import { humanize } from '@allors/system/workspace/meta';
-import { Action } from '@allors/workspace/angular/base';
+import { Action } from '@allors/base/workspace/angular/foundation';
 
 export class Column {
   name: string;

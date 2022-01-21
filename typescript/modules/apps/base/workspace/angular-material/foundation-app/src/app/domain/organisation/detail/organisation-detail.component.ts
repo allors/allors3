@@ -11,7 +11,7 @@ import {
   SaveService,
   SearchFactory,
   SingletonId,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'organisation-detail',

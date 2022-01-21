@@ -23,7 +23,7 @@ import {
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
 import { IObject, TypeForParameter } from '@allors/system/workspace/domain';
-import { RoleField } from '@allors/workspace/angular/base';
+import { RoleField } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-chips',

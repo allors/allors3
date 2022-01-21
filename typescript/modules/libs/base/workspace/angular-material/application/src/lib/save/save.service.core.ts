@@ -1,4 +1,4 @@
-import { SaveService } from '@allors/workspace/angular/base';
+import { SaveService } from '@allors/base/workspace/angular/foundation';
 import { ResultError } from '@allors/system/workspace/domain';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';

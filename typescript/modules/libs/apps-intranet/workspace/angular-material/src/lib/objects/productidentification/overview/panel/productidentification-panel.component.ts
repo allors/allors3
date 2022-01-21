@@ -12,7 +12,7 @@ import {
   RefreshService,
   Table,
   TableRow,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { RoleType } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 

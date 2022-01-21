@@ -7,8 +7,11 @@ import {
   angularMenu,
   angularOverview,
   FilterDefinition,
-} from '@allors/workspace/angular/base';
-import { angularSorter, Sorter } from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular/foundation';
+import {
+  angularSorter,
+  Sorter,
+} from '@allors/base/workspace/angular-material/application';
 import { CountryFormComponent } from './domain/country/forms/country-form.component';
 
 function nav(composite: Composite, list: string, overview?: string) {

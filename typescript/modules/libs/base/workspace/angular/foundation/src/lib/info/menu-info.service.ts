@@ -1,8 +1,8 @@
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { Injectable } from '@angular/core';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { angularMenu } from '../meta/angular.menu';
 import { MenuItem } from '../menu/menu-item';
+import { WorkspaceService } from '../workspace/workspace-service';
 
 export interface MenuInfo {
   tag?: string;
@@ -22,7 +22,7 @@ export class MenuInfoService {
   }
 
   write(allors: { [key: string]: unknown }) {
-    allors.menu = this.menu;
+    allors['menu'] = this.menu;
   }
 
   private get menu(): string {

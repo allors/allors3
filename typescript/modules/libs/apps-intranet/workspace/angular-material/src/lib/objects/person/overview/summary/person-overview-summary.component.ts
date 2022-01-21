@@ -15,7 +15,7 @@ import {
   PanelService,
   RefreshService,
   SaveService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 

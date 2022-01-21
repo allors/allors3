@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { LocalisedRoleField } from '@allors/workspace/angular/base';
+import { LocalisedRoleField } from '@allors/base/workspace/angular/foundation';
 import * as EasyMDE from 'easymde';
 
 @Component({
@@ -32,7 +32,7 @@ export class AllorsMaterialLocalisedMarkdownComponent
     super(parentForm);
   }
 
-  ngAfterViewInit() {
+  override ngAfterViewInit() {
     this.easyMDE = new EasyMDE({
       element: this.elementRef.nativeElement,
     });

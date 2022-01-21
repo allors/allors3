@@ -17,7 +17,7 @@ import {
   MediaService,
   NavigationService,
   RefreshService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import {
   angularSorter,
   DeleteService,
@@ -25,7 +25,7 @@ import {
   OverviewService,
   Table,
   TableRow,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {
   object: Organisation;

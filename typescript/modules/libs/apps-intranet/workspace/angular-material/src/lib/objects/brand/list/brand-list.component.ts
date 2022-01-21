@@ -19,7 +19,7 @@ import {
   Sorter,
   Table,
   TableRow,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { And } from '@allors/system/workspace/domain';
 import { Sort } from '@angular/material/sort';

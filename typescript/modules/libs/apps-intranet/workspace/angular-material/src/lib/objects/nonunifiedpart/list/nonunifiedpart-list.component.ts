@@ -32,7 +32,7 @@ import {
   FilterField,
   angularSorter,
   angularFilterFromDefinition,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';

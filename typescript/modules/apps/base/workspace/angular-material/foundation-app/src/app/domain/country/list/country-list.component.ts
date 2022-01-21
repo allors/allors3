@@ -11,7 +11,7 @@ import {
   OverviewService,
   Table,
   TableRow,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 import { Country } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -24,7 +24,7 @@ import {
   MediaService,
   NavigationService,
   RefreshService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 interface Row extends TableRow {
   object: Country;

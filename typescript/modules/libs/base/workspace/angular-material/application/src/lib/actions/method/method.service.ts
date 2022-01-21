@@ -6,7 +6,7 @@ import {
   Action,
   RefreshService,
   SaveService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { MethodAction } from './method-action';
 import { MethodConfig } from './method-config';
 

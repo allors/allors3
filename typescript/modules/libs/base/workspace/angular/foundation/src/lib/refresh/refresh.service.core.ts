@@ -4,7 +4,7 @@ import { RefreshService } from './refresh.service';
 
 @Injectable()
 export class RefreshServiceCore extends RefreshService {
-  refresh$: Observable<Date>;
+  override refresh$: Observable<Date>;
   private refreshSubject$: BehaviorSubject<Date>;
 
   constructor() {

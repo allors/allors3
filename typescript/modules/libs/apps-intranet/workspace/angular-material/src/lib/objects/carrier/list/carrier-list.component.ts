@@ -17,7 +17,7 @@ import {
   RefreshService,
   Table,
   TableRow,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { Carrier } from '@allors/default/workspace/domain';
 import {
   ContextService,

@@ -19,7 +19,8 @@
           "apps/base/workspace/angular-material/application-app/src/assets"
         ],
         "styles": ["apps/base/workspace/angular-material/application-app/src/styles.scss"],
-        "scripts": []
+        "scripts": [],
+        "allowedCommonJsDependencies": ["easymde"]
       },
       "configurations": {
         "production": {

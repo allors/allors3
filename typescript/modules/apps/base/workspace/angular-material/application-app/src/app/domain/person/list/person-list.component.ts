@@ -13,7 +13,7 @@ import {
   NavigationService,
   CreateService,
   RefreshService,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
@@ -23,7 +23,7 @@ import {
   OverviewService,
   Table,
   TableRow,
-} from '@allors/workspace/angular-material/base';
+} from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {
   object: Person;

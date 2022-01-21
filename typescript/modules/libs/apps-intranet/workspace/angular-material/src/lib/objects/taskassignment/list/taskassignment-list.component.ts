@@ -19,7 +19,7 @@ import {
   Table,
   TableRow,
   UserId,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import {
   ContextService,
   WorkspaceService,

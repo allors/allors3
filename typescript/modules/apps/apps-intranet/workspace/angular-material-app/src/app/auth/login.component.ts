@@ -11,7 +11,7 @@ import { IPullResult } from '@allors/system/workspace/domain';
 import {
   AuthenticationService,
   SingletonId,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '@allors/workspace/angular/apps/intranet';
 
 @Component({

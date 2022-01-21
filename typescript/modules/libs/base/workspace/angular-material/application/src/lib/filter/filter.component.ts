@@ -4,7 +4,7 @@ import {
   AllorsComponent,
   Filter,
   FilterField,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 import { AllorsMaterialFilterFieldDialogComponent } from './field/dialog.component';
 
 @Component({

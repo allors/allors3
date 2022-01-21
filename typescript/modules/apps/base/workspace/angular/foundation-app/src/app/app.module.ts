@@ -10,7 +10,6 @@ import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { M } from '@allors/default/workspace/meta';
-import { ruleBuilder } from '@allors/core/workspace/derivations-custom';
 
 import { AngularClient } from '../allors/angular-client';
 import { environment } from '../environments/environment';
@@ -46,7 +45,7 @@ export function appInitFactory(
       idGenerator: () => nextId--,
     };
 
-    const rules = ruleBuilder(m);
+    const rules = [];
     applyRules(m, rules);
 
     const database = new DatabaseConnection(configuration, angularClient);

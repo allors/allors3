@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Action, NavigationService } from '@allors/workspace/angular/base';
+import {
+  Action,
+  NavigationService,
+} from '@allors/base/workspace/angular/foundation';
 import { OverviewAction } from './overview-action';
 
 @Injectable({

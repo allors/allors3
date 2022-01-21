@@ -16,7 +16,7 @@ import {
   RefreshService,
   SaveService,
   ActionTarget,
-} from '@allors/workspace/angular/base';
+} from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { IObject } from '@allors/system/workspace/domain';
