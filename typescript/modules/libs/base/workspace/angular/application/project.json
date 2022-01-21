@@ -1,0 +1,23 @@
+{
+  "root": "libs/base/workspace/angular/application",
+  "sourceRoot": "libs/base/workspace/angular/application/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/base/workspace/angular/application/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/base/workspace/angular/application"],
+      "options": {
+        "jestConfig": "libs/base/workspace/angular/application/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

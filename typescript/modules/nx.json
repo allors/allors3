@@ -37,7 +37,6 @@
       "e2eTestRunner": "none"
     },
     "@nrwl/angular:library": {
-      "style": "scss",
       "linter": "eslint",
       "unitTestRunner": "jest"
     },
@@ -45,5 +44,5 @@
       "style": "scss"
     }
   },
-  "defaultProject": "angular-apps-extranet"
+  "defaultProject": "apps-extranet-workspace-angular-material-app"
 }

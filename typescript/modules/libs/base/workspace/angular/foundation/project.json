@@ -1,0 +1,23 @@
+{
+  "root": "libs/base/workspace/angular/foundation",
+  "sourceRoot": "libs/base/workspace/angular/foundation/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/base/workspace/angular/foundation/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/base/workspace/angular/foundation"],
+      "options": {
+        "jestConfig": "libs/base/workspace/angular/foundation/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

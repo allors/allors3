@@ -1,0 +1,30 @@
+<form *ngIf="organisation" class="a-edit" #form="ngForm" (submit)="save()">
+  <h3 mat-dialog-title>{{ title }}</h3>
+
+  <mat-dialog-content>
+    <div class="container-fluid">
+      <div class="row">
+        <a-mat-input
+          class="col-md"
+          [object]="organisation"
+          [roleType]="m.Organisation.Name"
+        ></a-mat-input>
+      </div>
+
+      <div class="row">
+        <a-mat-select
+          class="col-md"
+          [object]="organisation"
+          [roleType]="m.Organisation.Country"
+          [options]="countries"
+          display="Name"
+        ></a-mat-select>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <div mat-dialog-actions>
+    <a-mat-cancel (cancel)="dialogRef.close()"></a-mat-cancel>
+    <a-mat-save></a-mat-save>
+  </div>
+</form>

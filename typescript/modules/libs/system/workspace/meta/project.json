@@ -1,0 +1,23 @@
+{
+  "root": "libs/system/workspace/meta",
+  "sourceRoot": "libs/system/workspace/meta/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/system/workspace/meta/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/system/workspace/meta"],
+      "options": {
+        "jestConfig": "libs/system/workspace/meta/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
