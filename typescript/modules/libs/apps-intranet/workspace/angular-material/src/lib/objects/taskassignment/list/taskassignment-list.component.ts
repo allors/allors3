@@ -23,7 +23,7 @@ import {
 import {
   ContextService,
   WorkspaceService,
-} from '@allors/workspace/angular/core';
+} from '@allors/base/workspace/angular/foundation';
 import { And } from '@allors/system/workspace/domain';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';

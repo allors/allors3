@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 import { AngularClient } from '../allors/angular-client';
 import { configure } from './app.configure';

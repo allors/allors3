@@ -14,7 +14,7 @@ import {
   TableRow,
 } from '@allors/workspace/angular/base';
 import { RoleType } from '@allors/system/workspace/meta';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 interface Row extends TableRow {
   object: ProductIdentification;

@@ -21,7 +21,7 @@ import {
 import {
   ContextService,
   WorkspaceService,
-} from '@allors/workspace/angular/core';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   templateUrl: './worktask-overview.component.html',

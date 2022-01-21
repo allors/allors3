@@ -13,7 +13,7 @@ import {
   Country,
   ContactMechanismPurpose,
 } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'party-contactmechanism-postaladdress',

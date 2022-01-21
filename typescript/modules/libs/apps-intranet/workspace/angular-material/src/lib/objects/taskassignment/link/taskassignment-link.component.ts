@@ -10,7 +10,7 @@ import {
   RefreshService,
   UserId,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'taskassignment-link',

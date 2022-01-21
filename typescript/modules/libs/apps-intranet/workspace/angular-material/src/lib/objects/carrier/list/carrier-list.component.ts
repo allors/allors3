@@ -22,7 +22,7 @@ import { Carrier } from '@allors/default/workspace/domain';
 import {
   ContextService,
   WorkspaceService,
-} from '@allors/workspace/angular/core';
+} from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';

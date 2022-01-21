@@ -18,7 +18,7 @@ import {
   Table,
   TableRow,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { PositionType } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import { Sort } from '@angular/material/sort';

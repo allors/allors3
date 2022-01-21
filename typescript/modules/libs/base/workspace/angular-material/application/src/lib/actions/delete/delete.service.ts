@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Context } from '@allors/workspace/angular/core';
+import { Context } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   RefreshService,

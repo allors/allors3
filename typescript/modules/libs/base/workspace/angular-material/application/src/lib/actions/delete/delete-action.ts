@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Deletable } from '@allors/default/workspace/domain';
-import { Context } from '@allors/workspace/angular/core';
+import { Context } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   ActionTarget,

@@ -16,13 +16,13 @@ import {
 } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { M, tags } from '@allors/default/workspace/meta';
-import { ruleBuilder } from '@allors/workspace/derivations/default';
+import { ruleBuilder } from '@allors/default/workspace/derivations';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';

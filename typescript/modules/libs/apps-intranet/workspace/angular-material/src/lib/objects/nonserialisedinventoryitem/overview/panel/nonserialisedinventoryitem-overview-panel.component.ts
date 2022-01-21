@@ -19,7 +19,7 @@ import {
   OverviewService,
   ActionTarget,
 } from '@allors/workspace/angular/base';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 interface Row extends TableRow {
   object: InventoryItem;

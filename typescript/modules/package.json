@@ -9,13 +9,15 @@
     "postinstall": "ngcc --properties es2015 browser module main",
     "angular-apps-extranet:serve": "npx nx serve angular-apps-extranet",
     "angular-apps-intranet:serve": "npx nx serve angular-apps-intranet",
-    "angular-base:serve": "npx nx serve angular-base-app",
-    "angular-core:serve": "npx nx serve angular-core-app",
-    "test:system-workspace-meta": "npx nx test system-workspace-meta-tests --skipNxCache",
-    "test:system-workspace-meta-json": "npx nx test system-workspace-meta-json-tests --skipNxCache",
-    "test:system-workspace-adapters": "npx nx test system-workspace-adapters-tests --skipNxCache",
-    "test:system-workspace-adapters-json": "npx nx test system-workspace-adapters-json-tests --skipNxCache",
-    "test:all": "npm run test:workspace-meta-system && npm run test:workspace-meta-json-system && npm run test:workspace-adapters-system && npm run test:workspace-adapters-json-system"
+    "base-workspace-angular-foundation:serve": "npx nx serve base-workspace-angular-foundation-app",
+    "base-workspace-angular-application:serve": "npx nx serve base-workspace-angular-application-app",
+    "base-workspace-angular-material-foundation:serve": "npx nx serve base-workspace-angular-material-foundation-app",
+    "base-workspace-angular-material-application:serve": "npx nx serve base-workspace-angular-material-application-app",
+    "system-workspace-meta:test": "npx nx test system-workspace-meta-tests --skipNxCache",
+    "system-workspace-meta-json:test": "npx nx test system-workspace-meta-json-tests --skipNxCache",
+    "system-workspace-adapters:test": "npx nx test system-workspace-adapters-tests --skipNxCache",
+    "system-workspace-adapters-json:test": "npx nx test system-workspace-adapters-json-tests --skipNxCache",
+    "test:all": "npm run system-workspace-meta:test && npm run system-workspace-meta-json:test && npm run system-workspace-adapters:test && npm run system-workspace-adapters-json:test"
   },
   "private": true,
   "devDependencies": {
@@ -45,7 +47,8 @@
     "jest-trx-results-processor": "^2.2.0",
     "prettier": "^2.3.1",
     "ts-jest": "27.0.5",
-    "typescript": "~4.4.3"
+    "typescript": "~4.4.3",
+    "webpack": "^5.66.0"
   },
   "dependencies": {
     "@angular/animations": "~13.1.0",

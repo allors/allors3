@@ -6,7 +6,7 @@ import {
   NavigationService,
   PanelService,
 } from '@allors/workspace/angular/base';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'unifiedgood-overview-summary',

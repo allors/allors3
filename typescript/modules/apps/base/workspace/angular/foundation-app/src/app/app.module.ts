@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';

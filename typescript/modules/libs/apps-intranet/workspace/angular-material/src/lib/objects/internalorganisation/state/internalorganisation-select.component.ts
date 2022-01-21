@@ -2,7 +2,7 @@ import { Component, Self, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { Organisation } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { M } from '@allors/default/workspace/meta';

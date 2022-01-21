@@ -20,7 +20,7 @@ import {
 import {
   ContextService,
   WorkspaceService,
-} from '@allors/workspace/angular/core';
+} from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { M } from '@allors/default/workspace/meta';
 

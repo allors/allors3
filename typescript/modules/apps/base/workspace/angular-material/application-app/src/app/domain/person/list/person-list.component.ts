@@ -14,7 +14,7 @@ import {
   CreateService,
   RefreshService,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import {

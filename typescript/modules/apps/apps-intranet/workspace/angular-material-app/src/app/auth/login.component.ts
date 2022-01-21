@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
 import { Organisation, Singleton } from '@allors/default/workspace/domain';
 import { IPullResult } from '@allors/system/workspace/domain';

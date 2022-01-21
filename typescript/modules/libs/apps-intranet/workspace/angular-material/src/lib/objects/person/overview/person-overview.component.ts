@@ -16,7 +16,7 @@ import {
   PanelManagerService,
   RefreshService,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { Person, Employment } from '@allors/default/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';

@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import {
   ContextService,
   WorkspaceService,
-} from '@allors/workspace/angular/core';
+} from '@allors/base/workspace/angular/foundation';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { Organisation } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';

@@ -2,7 +2,7 @@ import { Component, Self } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { M } from '@allors/default/workspace/meta';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { WorkEffort, WorkRequirement } from '@allors/default/workspace/domain';
 import {
   NavigationService,

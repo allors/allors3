@@ -4,7 +4,7 @@ import {
   ComponentRef,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import {
   CreateService,
   EditService,

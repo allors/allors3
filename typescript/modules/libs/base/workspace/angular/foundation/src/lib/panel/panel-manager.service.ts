@@ -5,7 +5,10 @@ import { Composite } from '@allors/system/workspace/meta';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 import { PanelService } from './panel.service';
-import { Context, WorkspaceService } from '@allors/workspace/angular/core';
+import {
+  Context,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 
 @Injectable()
 export class PanelManagerService {

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { IObject } from '@allors/system/workspace/domain';
 import { Composite } from '@allors/system/workspace/meta';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 import { angularList } from '../meta/angular.list';
 import { angularOverview } from '../meta/angular.overview';

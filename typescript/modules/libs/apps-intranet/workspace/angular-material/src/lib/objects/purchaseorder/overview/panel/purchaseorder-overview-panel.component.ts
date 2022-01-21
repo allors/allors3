@@ -19,7 +19,7 @@ import {
   TableRow,
   OverviewService,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';

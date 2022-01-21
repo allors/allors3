@@ -1,4 +1,4 @@
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { Injectable } from '@angular/core';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { angularList } from '../meta/angular.list';

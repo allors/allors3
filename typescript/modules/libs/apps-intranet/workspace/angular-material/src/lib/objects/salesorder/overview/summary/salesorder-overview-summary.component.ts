@@ -19,7 +19,7 @@ import {
   SaveService,
 } from '@allors/workspace/angular/base';
 import { PrintService } from '../../../../actions/print/print.service';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'salesorder-overview-summary',

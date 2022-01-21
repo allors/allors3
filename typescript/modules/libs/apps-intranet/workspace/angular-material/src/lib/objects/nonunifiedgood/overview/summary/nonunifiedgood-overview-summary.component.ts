@@ -6,7 +6,7 @@ import {
   PanelService,
 } from '@allors/workspace/angular/base';
 import { NonUnifiedGood } from '@allors/default/workspace/domain';
-import { WorkspaceService } from '@allors/workspace/angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'nonunifiedgood-overview-summary',

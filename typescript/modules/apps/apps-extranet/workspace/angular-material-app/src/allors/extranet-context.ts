@@ -1,6 +1,9 @@
 import { from, Observable } from 'rxjs';
 
-import { Context, WorkspaceService } from '@allors/workspace/angular/core';
+import {
+  Context,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   Configuration,
   IInvokeResult,

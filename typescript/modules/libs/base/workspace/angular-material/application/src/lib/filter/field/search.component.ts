@@ -8,7 +8,7 @@ import {
   switchMap,
 } from 'rxjs/operators';
 import { IObject } from '@allors/system/workspace/domain';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsComponent,
   FilterFieldDefinition,

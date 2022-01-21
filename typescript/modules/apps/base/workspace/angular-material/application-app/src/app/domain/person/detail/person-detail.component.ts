@@ -7,7 +7,7 @@ import {
   Locale,
   Person,
 } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsObjectDetailPanelComponent,
   NavigationService,

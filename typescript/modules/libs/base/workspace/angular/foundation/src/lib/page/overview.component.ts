@@ -1,7 +1,7 @@
 import { HostBinding, Directive } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { M } from '@allors/default/workspace/meta';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { AllorsComponent } from '../component';
 import { IObject } from '@allors/system/workspace/domain';
 import { PanelManagerService } from '../panel/panel-manager.service';

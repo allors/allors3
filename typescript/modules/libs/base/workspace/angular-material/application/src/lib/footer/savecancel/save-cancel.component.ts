@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { NgForm } from '@angular/forms';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { AllorsComponent } from '@allors/workspace/angular/base';
 
 @Component({

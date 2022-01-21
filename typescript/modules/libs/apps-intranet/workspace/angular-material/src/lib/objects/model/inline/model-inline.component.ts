@@ -8,7 +8,7 @@ import {
 
 import { M } from '@allors/default/workspace/meta';
 import { Model } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'model-inline',

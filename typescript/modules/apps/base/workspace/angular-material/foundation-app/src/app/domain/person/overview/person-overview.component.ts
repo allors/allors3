@@ -11,7 +11,7 @@ import {
   PanelManagerService,
   RefreshService,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   templateUrl: './person-overview.component.html',

@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MethodType } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
-import { Context } from '@allors/workspace/angular/core';
+import { Context } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   ActionTarget,

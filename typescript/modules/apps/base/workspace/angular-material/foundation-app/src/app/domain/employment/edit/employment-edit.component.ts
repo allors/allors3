@@ -8,7 +8,7 @@ import {
   Organisation,
   Employment,
 } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
   SaveService,

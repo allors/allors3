@@ -20,14 +20,14 @@
       "@allors/system/workspace/adapters-json": ["libs/system/workspace/adapters-json/src/index.ts"],
       "@allors/system/workspace/adapters": ["libs/system/workspace/adapters/src/index.ts"],
       "@allors/workspace/angular/base": ["libs/workspace/angular/base/src/index.ts"],
-      "@allors/workspace/angular/core": ["libs/workspace/angular/core/src/index.ts"],
+      "@allors/core/workspace/angular/foundation": ["libs/core/workspace/angular/foundation/src/index.ts"],
       "@allors/workspace/angular-material/base": ["libs/workspace/angular-material/base/src/index.ts"],
       "@allors/system/workspace/domain": ["libs/system/workspace/domain/src/index.ts"],
       "@allors/system/workspace/meta-json": ["libs/system/workspace/meta-json/src/index.ts"],
       "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"],
       // Default
       "@allors/default/workspace/domain": ["libs/workspace/domain/apps/intranet/src/index.ts"],
-      "@allors/workspace/derivations/default": ["libs/workspace/derivations/apps/intranet/src/index.ts"],
+      "@allors/default/workspace/derivations": ["libs/workspace/derivations/apps/intranet/src/index.ts"],
       "@allors/default/workspace/meta": ["libs/workspace/meta/apps/intranet/src/index.ts"],
       "@allors/default/workspace/meta-json": ["libs/workspace/meta/json/apps/intranet/src/index.ts"]
     }

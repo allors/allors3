@@ -17,7 +17,7 @@ import {
   SaveService,
   SearchFactory,
 } from '@allors/workspace/angular/base';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';

@@ -11,7 +11,7 @@ import {
   Locale,
 } from '@allors/default/workspace/domain';
 import { IPullResult } from '@allors/system/workspace/domain';
-import { ContextService } from '@allors/workspace/angular/core';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { SaveService, SearchFactory } from '@allors/workspace/angular/base';
 import { RadioGroupOption } from '@allors/workspace/angular-material/base';
 
