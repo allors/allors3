@@ -1,5 +1,18 @@
-import { IDiff, IObject, IStrategy, IUnit } from '@allors/workspace/domain/system';
-import { AssociationType, Class, Composite, MethodType, Origin, RoleType, UnitTags } from '@allors/workspace/meta/system';
+import {
+  IDiff,
+  IObject,
+  IStrategy,
+  IUnit,
+} from '@allors/workspace/domain/system';
+import {
+  AssociationType,
+  Class,
+  Composite,
+  MethodType,
+  Origin,
+  RoleType,
+  UnitTags,
+} from '@allors/system/workspace/meta';
 
 import { DatabaseOriginState } from './originstate/database-origin-state';
 import { WorkspaceOriginState } from './originstate/workspace-origin-state';
@@ -16,7 +29,10 @@ export abstract class Strategy implements IStrategy {
 
   constructor(public session: Session, public cls: Class, public id: number) {
     if (this.cls.origin !== Origin.Session) {
-      this.WorkspaceOriginState = new WorkspaceOriginState(this.object, this.session.workspace.getRecord(this.id));
+      this.WorkspaceOriginState = new WorkspaceOriginState(
+        this.object,
+        this.session.workspace.getRecord(this.id)
+      );
     }
 
     this.rangeId = id;
@@ -44,7 +60,8 @@ export abstract class Strategy implements IStrategy {
   }
 
   get object(): IObject {
-    return (this._object ??= this.session.workspace.database.configuration.objectFactory.create(this));
+    return (this._object ??=
+      this.session.workspace.database.configuration.objectFactory.create(this));
   }
 
   delete(): void {
@@ -74,9 +91,13 @@ export abstract class Strategy implements IStrategy {
       } else {
         const association = this.getCompositesAssociation(associationType);
         if (roleType.isOne) {
-          association?.forEach((v) => v.strategy.setCompositeRole(roleType, null));
+          association?.forEach((v) =>
+            v.strategy.setCompositeRole(roleType, null)
+          );
         } else {
-          association?.forEach((v) => v.strategy.removeCompositesRole(roleType, this.object));
+          association?.forEach((v) =>
+            v.strategy.removeCompositesRole(roleType, this.object)
+          );
         }
       }
     }
@@ -99,7 +120,10 @@ export abstract class Strategy implements IStrategy {
   }
 
   get hasChanges(): boolean {
-    return this.WorkspaceOriginState?.hasChanges || this.DatabaseOriginState?.hasChanges;
+    return (
+      this.WorkspaceOriginState?.hasChanges ||
+      this.DatabaseOriginState?.hasChanges
+    );
   }
 
   hasChanged(roleType: RoleType): boolean {
@@ -109,7 +133,9 @@ export abstract class Strategy implements IStrategy {
       case Origin.Workspace:
         return this.WorkspaceOriginState?.hasChanged(roleType) ?? false;
       case Origin.Database:
-        return this.canRead(roleType) ? this.DatabaseOriginState?.hasChanged(roleType) ?? false : false;
+        return this.canRead(roleType)
+          ? this.DatabaseOriginState?.hasChanged(roleType) ?? false
+          : false;
       default:
         throw new Error('Unknown origin');
     }
@@ -122,7 +148,9 @@ export abstract class Strategy implements IStrategy {
       case Origin.Workspace:
         return this.WorkspaceOriginState?.restoreRole(roleType);
       case Origin.Database:
-        return this.canRead(roleType) ? this.DatabaseOriginState?.restoreRole(roleType) : false;
+        return this.canRead(roleType)
+          ? this.DatabaseOriginState?.restoreRole(roleType)
+          : false;
       default:
         throw new Error('Unknown origin');
     }
@@ -166,17 +194,27 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.sessionOriginState.getUnitRole(this.object, roleType) ?? null;
+        return (
+          this.session.sessionOriginState.getUnitRole(this.object, roleType) ??
+          null
+        );
       case Origin.Workspace:
         return this.WorkspaceOriginState?.getUnitRole(roleType) ?? null;
       case Origin.Database:
-        return (this.canRead(roleType) ? this.DatabaseOriginState?.getUnitRole(roleType) : null) ?? null;
+        return (
+          (this.canRead(roleType)
+            ? this.DatabaseOriginState?.getUnitRole(roleType)
+            : null) ?? null
+        );
       default:
         throw new Error('Unknown origin');
     }
   }
 
-  getCompositeRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T {
+  getCompositeRole<T extends IObject>(
+    roleType: RoleType,
+    skipMissing?: boolean
+  ): T {
     if (roleType.relationType.isDerived) {
       const rule = this.session.resolve(this, roleType);
       if (rule != null) {
@@ -186,17 +224,35 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        return (this.session.sessionOriginState.getCompositeRole(this.object, roleType) as T) ?? null;
+        return (
+          (this.session.sessionOriginState.getCompositeRole(
+            this.object,
+            roleType
+          ) as T) ?? null
+        );
       case Origin.Workspace:
-        return (this.WorkspaceOriginState?.getCompositeRole(roleType, skipMissing) as T) ?? null;
+        return (
+          (this.WorkspaceOriginState?.getCompositeRole(
+            roleType,
+            skipMissing
+          ) as T) ?? null
+        );
       case Origin.Database:
-        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositeRole(roleType, skipMissing) as T) ?? null : null;
+        return this.canRead(roleType)
+          ? (this.DatabaseOriginState?.getCompositeRole(
+              roleType,
+              skipMissing
+            ) as T) ?? null
+          : null;
       default:
         throw new Error('Unknown origin');
     }
   }
 
-  getCompositesRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T[] {
+  getCompositesRole<T extends IObject>(
+    roleType: RoleType,
+    skipMissing?: boolean
+  ): T[] {
     if (roleType.relationType.isDerived) {
       const rule = this.session.resolve(this, roleType);
       if (rule != null) {
@@ -206,11 +262,26 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        return (this.session.sessionOriginState.getCompositesRole(this.object, roleType) as T[]) ?? (frozenEmptyArray as T[]);
+        return (
+          (this.session.sessionOriginState.getCompositesRole(
+            this.object,
+            roleType
+          ) as T[]) ?? (frozenEmptyArray as T[])
+        );
       case Origin.Workspace:
-        return (this.WorkspaceOriginState?.getCompositesRole(roleType, skipMissing) as T[]) ?? (frozenEmptyArray as T[]);
+        return (
+          (this.WorkspaceOriginState?.getCompositesRole(
+            roleType,
+            skipMissing
+          ) as T[]) ?? (frozenEmptyArray as T[])
+        );
       case Origin.Database:
-        return this.canRead(roleType) ? (this.DatabaseOriginState?.getCompositesRole(roleType, skipMissing) as T[]) ?? (frozenEmptyArray as T[]) : (frozenEmptyArray as T[]);
+        return this.canRead(roleType)
+          ? (this.DatabaseOriginState?.getCompositesRole(
+              roleType,
+              skipMissing
+            ) as T[]) ?? (frozenEmptyArray as T[])
+          : (frozenEmptyArray as T[]);
       default:
         throw new Error('Unknown origin');
     }
@@ -231,7 +302,11 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.setUnitRole(this.object, roleType, value);
+        this.session.sessionOriginState.setUnitRole(
+          this.object,
+          roleType,
+          value
+        );
         break;
       case Origin.Workspace:
         this.WorkspaceOriginState?.setUnitRole(roleType, value);
@@ -261,7 +336,11 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.setCompositeRole(this.object, roleType, value);
+        this.session.sessionOriginState.setCompositeRole(
+          this.object,
+          roleType,
+          value
+        );
         break;
       case Origin.Workspace:
         this.WorkspaceOriginState?.setCompositeRole(roleType, value);
@@ -282,17 +361,27 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.setCompositesRole(this.object, roleType, this.session.ranges.importFrom(role));
+        this.session.sessionOriginState.setCompositesRole(
+          this.object,
+          roleType,
+          this.session.ranges.importFrom(role)
+        );
         break;
 
       case Origin.Workspace:
-        this.WorkspaceOriginState?.setCompositesRole(roleType, this.session.ranges.importFrom(role));
+        this.WorkspaceOriginState?.setCompositesRole(
+          roleType,
+          this.session.ranges.importFrom(role)
+        );
 
         break;
 
       case Origin.Database:
         if (this.canWrite(roleType)) {
-          this.DatabaseOriginState?.setCompositesRole(roleType, this.session.ranges.importFrom(role));
+          this.DatabaseOriginState?.setCompositesRole(
+            roleType,
+            this.session.ranges.importFrom(role)
+          );
         }
 
         break;
@@ -316,7 +405,11 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.addCompositesRole(this.object, roleType, value);
+        this.session.sessionOriginState.addCompositesRole(
+          this.object,
+          roleType,
+          value
+        );
         break;
       case Origin.Workspace:
         this.WorkspaceOriginState.addCompositesRole(roleType, value);
@@ -341,7 +434,11 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.addCompositesRole(this.object, roleType, value);
+        this.session.sessionOriginState.addCompositesRole(
+          this.object,
+          roleType,
+          value
+        );
         break;
       case Origin.Workspace:
         this.WorkspaceOriginState.removeCompositesRole(roleType, value);
@@ -367,57 +464,109 @@ export abstract class Strategy implements IStrategy {
     }
   }
 
-  getCompositeAssociation<T extends IObject>(associationType: AssociationType): T {
+  getCompositeAssociation<T extends IObject>(
+    associationType: AssociationType
+  ): T {
     if (associationType.origin != Origin.Session) {
-      return (this.session.getCompositeAssociation(this.object, associationType) as T) ?? null;
+      return (
+        (this.session.getCompositeAssociation(
+          this.object,
+          associationType
+        ) as T) ?? null
+      );
     }
 
-    return (this.session.sessionOriginState.getCompositeRole(this.object, associationType) as T) ?? null;
+    return (
+      (this.session.sessionOriginState.getCompositeRole(
+        this.object,
+        associationType
+      ) as T) ?? null
+    );
   }
 
-  getCompositesAssociation<T extends IObject>(associationType: AssociationType): T[] {
+  getCompositesAssociation<T extends IObject>(
+    associationType: AssociationType
+  ): T[] {
     if (associationType.origin != Origin.Session) {
-      return this.session.getCompositesAssociation(this.object, associationType) as T[];
+      return this.session.getCompositesAssociation(
+        this.object,
+        associationType
+      ) as T[];
     }
 
-    return (this.session.sessionOriginState.getCompositesRole(this.object, associationType) as T[]) ?? (frozenEmptyArray as T[]);
+    return (
+      (this.session.sessionOriginState.getCompositesRole(
+        this.object,
+        associationType
+      ) as T[]) ?? (frozenEmptyArray as T[])
+    );
   }
 
   canRead(roleType: RoleType): boolean {
-    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.canRead(roleType) ?? true : true;
+    return roleType.origin === Origin.Database
+      ? this.DatabaseOriginState?.canRead(roleType) ?? true
+      : true;
   }
 
   canWrite(roleType: RoleType): boolean {
-    return roleType.origin === Origin.Database ? this.DatabaseOriginState?.canWrite(roleType) ?? true : true;
+    return roleType.origin === Origin.Database
+      ? this.DatabaseOriginState?.canWrite(roleType) ?? true
+      : true;
   }
 
   canExecute(methodType: MethodType): boolean {
-    return methodType.origin === Origin.Database ? this.DatabaseOriginState?.canExecute(methodType) ?? false : false;
+    return methodType.origin === Origin.Database
+      ? this.DatabaseOriginState?.canExecute(methodType) ?? false
+      : false;
   }
 
   isCompositeAssociationForRole(roleType: RoleType, forRole: IObject): boolean {
-    const role = this.session.sessionOriginState.getCompositeRole(this.object, roleType);
+    const role = this.session.sessionOriginState.getCompositeRole(
+      this.object,
+      roleType
+    );
 
     switch (roleType.origin) {
       case Origin.Session:
         return role === forRole;
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.isAssociationForRole(roleType, forRole) ?? false;
+        return (
+          this.WorkspaceOriginState?.isAssociationForRole(roleType, forRole) ??
+          false
+        );
       case Origin.Database:
-        return this.DatabaseOriginState?.isAssociationForRole(roleType, forRole) ?? false;
+        return (
+          this.DatabaseOriginState?.isAssociationForRole(roleType, forRole) ??
+          false
+        );
       default:
         throw new Error('Unsupported Origin');
     }
   }
 
-  isCompositesAssociationForRole(roleType: RoleType, forRole: IObject): boolean {
+  isCompositesAssociationForRole(
+    roleType: RoleType,
+    forRole: IObject
+  ): boolean {
     switch (roleType.origin) {
       case Origin.Session:
-        return this.session.ranges.has(this.session.sessionOriginState.getCompositesRole(this.object, roleType), forRole);
+        return this.session.ranges.has(
+          this.session.sessionOriginState.getCompositesRole(
+            this.object,
+            roleType
+          ),
+          forRole
+        );
       case Origin.Workspace:
-        return this.WorkspaceOriginState?.isAssociationForRole(roleType, forRole) ?? false;
+        return (
+          this.WorkspaceOriginState?.isAssociationForRole(roleType, forRole) ??
+          false
+        );
       case Origin.Database:
-        return this.DatabaseOriginState?.isAssociationForRole(roleType, forRole) ?? false;
+        return (
+          this.DatabaseOriginState?.isAssociationForRole(roleType, forRole) ??
+          false
+        );
       default:
         throw new Error('Unsupported Origin');
     }
@@ -434,7 +583,9 @@ export abstract class Strategy implements IStrategy {
   assertSameType(roleType: RoleType, value: IObject) {
     const composite = roleType.objectType as Composite;
     if (!composite.isAssignableFrom(value.strategy.cls)) {
-      throw new Error(`Types do not match: ${composite} and ${value.strategy.cls}`);
+      throw new Error(
+        `Types do not match: ${composite} and ${value.strategy.cls}`
+      );
     }
   }
 

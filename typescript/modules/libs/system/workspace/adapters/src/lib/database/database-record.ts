@@ -1,4 +1,4 @@
-import { Class, RoleType } from '@allors/workspace/meta/system';
+import { Class, RoleType } from '@allors/system/workspace/meta';
 import { IRecord } from '../irecord';
 
 export abstract class DatabaseRecord implements IRecord {
@@ -6,5 +6,9 @@ export abstract class DatabaseRecord implements IRecord {
 
   abstract isPermitted(permission: number): boolean;
 
-  constructor(public readonly cls: Class, public readonly id: number, public readonly version: number) {}
+  constructor(
+    public readonly cls: Class,
+    public readonly id: number,
+    public readonly version: number
+  ) {}
 }

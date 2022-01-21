@@ -1,8 +1,16 @@
 ﻿import { Observable, EMPTY } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { RoleType } from '@allors/workspace/meta/system';
-import { IObject, And, Or, TypeForParameter, IPullResult, Like, Pull } from '@allors/workspace/domain/system';
+import { RoleType } from '@allors/system/workspace/meta';
+import {
+  IObject,
+  And,
+  Or,
+  TypeForParameter,
+  IPullResult,
+  Like,
+  Pull,
+} from '@allors/workspace/domain/system';
 import { Context } from '@allors/workspace/angular/core';
 
 import { SearchOptions } from './search-options';
@@ -10,8 +18,16 @@ import { SearchOptions } from './search-options';
 export class SearchFactory {
   constructor(private options: SearchOptions) {}
 
-  public create(context: Context): (search: string, parameters?: { [id: string]: TypeForParameter }) => Observable<IObject[]> {
-    return (search: string, parameters?: { [id: string]: TypeForParameter }) => {
+  public create(
+    context: Context
+  ): (
+    search: string,
+    parameters?: { [id: string]: TypeForParameter }
+  ) => Observable<IObject[]> {
+    return (
+      search: string,
+      parameters?: { [id: string]: TypeForParameter }
+    ) => {
       if (search == null || !search.trim) {
         return EMPTY;
       }
@@ -34,7 +50,11 @@ export class SearchFactory {
         const or: Or = { kind: 'Or', operands: [] };
         and.operands.push(or);
         this.options.roleTypes.forEach((roleType: RoleType) => {
-          const like: Like = { kind: 'Like', roleType, value: '%' + term + '%' };
+          const like: Like = {
+            kind: 'Like',
+            roleType,
+            value: '%' + term + '%',
+          };
           or.operands.push(like);
         });
       });

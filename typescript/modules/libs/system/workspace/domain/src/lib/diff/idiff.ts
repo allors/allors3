@@ -1,4 +1,4 @@
-import { RelationType } from '@allors/workspace/meta/system';
+import { RelationType } from '@allors/system/workspace/meta';
 import { IObject } from '../iobject';
 
 export interface IDiff {

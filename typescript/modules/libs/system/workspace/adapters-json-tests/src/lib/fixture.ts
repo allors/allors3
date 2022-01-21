@@ -1,5 +1,5 @@
-import { MetaPopulation } from '@allors/workspace/meta/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/workspace/meta/json/default';
 import { ruleBuilder } from '@allors/workspace/derivations/core-custom';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
@@ -7,7 +7,12 @@ import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { M } from '@allors/workspace/meta/default';
 
 import { FetchClient } from './fetch-client';
-import { Configuration, ISession, IWorkspace, Pull } from '@allors/workspace/domain/system';
+import {
+  Configuration,
+  ISession,
+  IWorkspace,
+  Pull,
+} from '@allors/workspace/domain/system';
 import { C1, C2 } from '@allors/workspace/domain/default';
 import { applyRules } from '@allors/workspace/derivations/system';
 

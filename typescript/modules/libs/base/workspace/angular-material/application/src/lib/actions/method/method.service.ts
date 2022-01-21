@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Context } from '@allors/workspace/angular/core';
-import { MethodType } from '@allors/workspace/meta/system';
+import { MethodType } from '@allors/system/workspace/meta';
 import {
   Action,
   RefreshService,

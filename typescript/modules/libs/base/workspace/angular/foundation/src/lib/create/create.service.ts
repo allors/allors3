@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { IObject, ISession } from '@allors/workspace/domain/system';
 import { Injectable } from '@angular/core';
 

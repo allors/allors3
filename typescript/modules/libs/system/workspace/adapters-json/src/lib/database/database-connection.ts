@@ -1,7 +1,29 @@
-import { PullResponse, SyncRequest, SyncResponse, AccessRequest, AccessResponse, PermissionRequest, PermissionResponse } from '@allors/protocol/json/system';
-import { Grant, DatabaseConnection as SystemDatabaseConnection, MapMap, Revocation } from '@allors/workspace/adapters/system';
-import { Configuration, IWorkspace, Operations } from '@allors/workspace/domain/system';
-import { Class, MethodType, OperandType, RelationType } from '@allors/workspace/meta/system';
+import {
+  PullResponse,
+  SyncRequest,
+  SyncResponse,
+  AccessRequest,
+  AccessResponse,
+  PermissionRequest,
+  PermissionResponse,
+} from '@allors/protocol/json/system';
+import {
+  Grant,
+  DatabaseConnection as SystemDatabaseConnection,
+  MapMap,
+  Revocation,
+} from '@allors/workspace/adapters/system';
+import {
+  Configuration,
+  IWorkspace,
+  Operations,
+} from '@allors/workspace/domain/system';
+import {
+  Class,
+  MethodType,
+  OperandType,
+  RelationType,
+} from '@allors/system/workspace/meta';
 import { DatabaseRecord } from './database-record';
 import { ResponseContext } from './security/response-context';
 import { Workspace } from '../workspace/workspace';
@@ -18,7 +40,10 @@ export class DatabaseConnection extends SystemDatabaseConnection {
   writePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
   executePermissionByOperandTypeByClass: MapMap<Class, OperandType, number>;
 
-  constructor(configuration: Configuration, public client: IDatabaseJsonClient) {
+  constructor(
+    configuration: Configuration,
+    public client: IDatabaseJsonClient
+  ) {
     super(configuration);
 
     this.recordsById = new Map();
@@ -69,7 +94,11 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     const ctx = new ResponseContext(this);
 
     for (const syncResponseObject of syncResponse.o) {
-      const databaseObjects = DatabaseRecord.fromResponse(this, ctx, syncResponseObject);
+      const databaseObjects = DatabaseRecord.fromResponse(
+        this,
+        ctx,
+        syncResponseObject
+      );
       this.recordsById.set(databaseObjects.id, databaseObjects);
     }
 
@@ -83,7 +112,9 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     return null;
   }
 
-  accessResponse(accessResponse: AccessResponse): PermissionRequest | undefined {
+  accessResponse(
+    accessResponse: AccessResponse
+  ): PermissionRequest | undefined {
     let missingPermissionIds: Set<number> | undefined = undefined;
 
     if (accessResponse.g != null) {
@@ -139,9 +170,15 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     if (permissionResponse.p != null) {
       for (const syncResponsePermission of permissionResponse.p) {
         const id = syncResponsePermission.i;
-        const cls = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission.c) as Class;
-        const metaObject = this.configuration.metaPopulation.metaObjectByTag.get(syncResponsePermission.t);
-        const operandType: OperandType = (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
+        const cls = this.configuration.metaPopulation.metaObjectByTag.get(
+          syncResponsePermission.c
+        ) as Class;
+        const metaObject =
+          this.configuration.metaPopulation.metaObjectByTag.get(
+            syncResponsePermission.t
+          );
+        const operandType: OperandType =
+          (metaObject as RelationType)?.roleType ?? (metaObject as MethodType);
         const operation = syncResponsePermission.o;
 
         this.permissions.add(id);
@@ -154,7 +191,11 @@ export class DatabaseConnection extends SystemDatabaseConnection {
             this.writePermissionByOperandTypeByClass.set(cls, operandType, id);
             break;
           case Operations.Execute:
-            this.executePermissionByOperandTypeByClass.set(cls, operandType, id);
+            this.executePermissionByOperandTypeByClass.set(
+              cls,
+              operandType,
+              id
+            );
             break;
           case Operations.Create:
             throw new Error('Create is not supported');
@@ -165,7 +206,11 @@ export class DatabaseConnection extends SystemDatabaseConnection {
     }
   }
 
-  getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined {
+  getPermission(
+    cls: Class,
+    operandType: OperandType,
+    operation: Operations
+  ): number | undefined {
     switch (operation) {
       case Operations.Read:
         return this.readPermissionByOperandTypeByClass.get(cls, operandType);

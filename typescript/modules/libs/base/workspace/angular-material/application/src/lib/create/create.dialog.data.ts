@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { ISession } from '@allors/workspace/domain/system';
 import { OnCreate } from '@allors/workspace/angular/base';
 

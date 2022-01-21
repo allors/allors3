@@ -1,4 +1,4 @@
-import { RoleType } from '@allors/workspace/meta/system';
+import { RoleType } from '@allors/system/workspace/meta';
 import { IUnit } from '../types';
 import { ParameterizablePredicateBase } from './parameterizable-predicate';
 

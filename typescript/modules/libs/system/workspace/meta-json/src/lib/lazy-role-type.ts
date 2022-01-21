@@ -1,5 +1,14 @@
 import { RelationTypeData } from '@allors/protocol/json/system';
-import { Origin, pluralize, Multiplicity, RoleType, AssociationType, RelationType, ObjectType, Unit } from '@allors/workspace/meta/system';
+import {
+  Origin,
+  pluralize,
+  Multiplicity,
+  RoleType,
+  AssociationType,
+  RelationType,
+  ObjectType,
+  Unit,
+} from '@allors/system/workspace/meta';
 
 import { Lookup } from './utils/lookup';
 import { InternalComposite } from './internal/internal-composite';
@@ -31,7 +40,14 @@ export class LazyRoleType implements RoleType {
 
   private _pluralName?: string;
 
-  constructor(public relationType: RelationType, associationObjectType: InternalComposite, roleObjectType: ObjectType, multiplicity: Multiplicity, data: RelationTypeData, lookup: Lookup) {
+  constructor(
+    public relationType: RelationType,
+    associationObjectType: InternalComposite,
+    roleObjectType: ObjectType,
+    multiplicity: Multiplicity,
+    data: RelationTypeData,
+    lookup: Lookup
+  ) {
     this.isOne = (multiplicity & 1) == 0;
     this.isMany = !this.isOne;
     this.origin = relationType.origin;
@@ -44,7 +60,9 @@ export class LazyRoleType implements RoleType {
 
     const [, , v0, v1, v2, v3] = data;
 
-    this.singularName = (!Number.isInteger(v0) ? (v0 as string) : undefined) ?? this.objectType.singularName;
+    this.singularName =
+      (!Number.isInteger(v0) ? (v0 as string) : undefined) ??
+      this.objectType.singularName;
     this._pluralName = !Number.isInteger(v1) ? (v1 as string) : undefined;
 
     if (this.objectType.isUnit) {
@@ -76,7 +94,11 @@ export class LazyRoleType implements RoleType {
 
     this.name = this.isOne ? this.singularName : this.pluralName;
 
-    this.associationType = new LazyAssociationType(this, associationObjectType, multiplicity);
+    this.associationType = new LazyAssociationType(
+      this,
+      associationObjectType,
+      multiplicity
+    );
   }
 
   get pluralName() {

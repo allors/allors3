@@ -1,5 +1,5 @@
-import { Origin, Class } from '@allors/workspace/meta/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { Origin, Class } from '@allors/system/workspace/meta';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 
 describe('Class in MetaPopulation', () => {
   describe('with minimal class metadata', () => {

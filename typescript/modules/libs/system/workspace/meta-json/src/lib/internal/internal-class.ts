@@ -1,4 +1,4 @@
-import { Class } from '@allors/workspace/meta/system';
+import { Class } from '@allors/system/workspace/meta';
 
 import { Lookup } from '../utils/lookup';
 import { InternalComposite } from './internal-composite';

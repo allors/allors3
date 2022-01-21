@@ -1,5 +1,5 @@
 import { IObject, ISession, IWorkspace } from '@allors/workspace/domain/system';
-import { Class, Origin } from '@allors/workspace/meta/system';
+import { Class, Origin } from '@allors/system/workspace/meta';
 import { Fixture } from '../../fixture';
 import { DatabaseMode } from './modes/database-mode';
 
@@ -8,7 +8,8 @@ export abstract class Context {
     this.sharedDatabaseWorkspace = this.fixture.createWorkspace();
     this.sharedDatabaseSession = this.sharedDatabaseWorkspace.createSession();
     this.exclusiveDatabaseWorkspace = this.fixture.createExclusiveWorkspace();
-    this.exclusiveDatabaseSession = this.exclusiveDatabaseWorkspace.createSession();
+    this.exclusiveDatabaseSession =
+      this.exclusiveDatabaseWorkspace.createSession();
   }
 
   session1: ISession;
@@ -23,7 +24,11 @@ export abstract class Context {
 
   exclusiveDatabaseSession: ISession;
 
-  async create<T extends IObject>(session: ISession, cls: Class, mode: DatabaseMode): Promise<T> {
+  async create<T extends IObject>(
+    session: ISession,
+    cls: Class,
+    mode: DatabaseMode
+  ): Promise<T> {
     if (cls.origin === Origin.Database) {
       switch (mode as DatabaseMode) {
         case DatabaseMode.NoPush:

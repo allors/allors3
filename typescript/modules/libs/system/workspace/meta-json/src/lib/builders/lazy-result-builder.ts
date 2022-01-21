@@ -1,5 +1,5 @@
 import { Result } from '@allors/workspace/domain/system';
-import { MetaPopulation } from '@allors/workspace/meta/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
 import { LazySelectBuilder } from './lazy-select-builder';
 import { LazyTreeBuilder } from './lazy-tree-builder';
 
@@ -15,13 +15,17 @@ export class LazyResultBuilder {
         };
 
         if (object.select) {
-          const selectBuilder = metaPopulation['selectBuilder'] as LazySelectBuilder;
+          const selectBuilder = metaPopulation[
+            'selectBuilder'
+          ] as LazySelectBuilder;
           result.select = selectBuilder[composite.singularName](object.select);
         }
 
         if (object.include) {
           if (object.select) {
-            throw new Error('Can not add include when result already has a select.');
+            throw new Error(
+              'Can not add include when result already has a select.'
+            );
           }
 
           const treeBuilder = metaPopulation['treeBuilder'] as LazyTreeBuilder;

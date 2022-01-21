@@ -1,4 +1,4 @@
-import { MethodType } from '@allors/workspace/meta/system';
+import { MethodType } from '@allors/system/workspace/meta';
 import { IObject } from './iobject';
 
 export interface Method {

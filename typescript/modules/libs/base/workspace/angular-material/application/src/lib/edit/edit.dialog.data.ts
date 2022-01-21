@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/workspace/domain/system';
 
 export interface EditDialogData {

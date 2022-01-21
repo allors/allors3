@@ -1,8 +1,20 @@
 import { from, Observable } from 'rxjs';
 
 import { Context, WorkspaceService } from '@allors/workspace/angular/core';
-import { Configuration, IInvokeResult, InvokeOptions, IObject, IPullResult, IResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
-import { Class, Composite } from '@allors/workspace/meta/system';
+import {
+  Configuration,
+  IInvokeResult,
+  InvokeOptions,
+  IObject,
+  IPullResult,
+  IResult,
+  IRule,
+  ISession,
+  IWorkspace,
+  Method,
+  Pull,
+} from '@allors/workspace/domain/system';
+import { Class, Composite } from '@allors/system/workspace/meta';
 import { derivationRules } from '@allors/workspace/derivations/system';
 
 export class BaseContext implements Context {
@@ -62,7 +74,10 @@ export class BaseContext implements Context {
     return from(this.session.push());
   }
 
-  invoke(methods: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult> {
+  invoke(
+    methods: Method | Method[],
+    options?: InvokeOptions
+  ): Observable<IInvokeResult> {
     return from(this.session.invoke(methods, options));
   }
 }

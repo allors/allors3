@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 
 export class NavigationActivatedRoute {
   constructor(private activatedRoute: ActivatedRoute) {}

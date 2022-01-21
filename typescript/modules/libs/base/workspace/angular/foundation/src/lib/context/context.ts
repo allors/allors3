@@ -1,5 +1,17 @@
-import { Configuration, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, IRule, ISession, IWorkspace, Method, Pull } from '@allors/workspace/domain/system';
-import { Class, Composite } from '@allors/workspace/meta/system';
+import {
+  Configuration,
+  IInvokeResult,
+  InvokeOptions,
+  IObject,
+  IPullResult,
+  IPushResult,
+  IRule,
+  ISession,
+  IWorkspace,
+  Method,
+  Pull,
+} from '@allors/workspace/domain/system';
+import { Class, Composite } from '@allors/system/workspace/meta';
 import { Observable } from 'rxjs';
 import { WorkspaceService } from '../workspace/workspace-service';
 
@@ -27,7 +39,10 @@ export interface Context {
 
   push(): Observable<IPushResult>;
 
-  invoke(methods: Method | Method[], options?: InvokeOptions): Observable<IInvokeResult>;
+  invoke(
+    methods: Method | Method[],
+    options?: InvokeOptions
+  ): Observable<IInvokeResult>;
 
   reset(): void;
 

@@ -1,5 +1,10 @@
-import { MetaPopulation } from '@allors/workspace/meta/system';
-import { Filter, FlatPull, Pull, Result } from '@allors/workspace/domain/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
+import {
+  Filter,
+  FlatPull,
+  Pull,
+  Result,
+} from '@allors/workspace/domain/system';
 import { LazySelectBuilder } from './lazy-select-builder';
 import { LazyTreeBuilder } from './lazy-tree-builder';
 import { LazyResultBuilder } from './lazy-result-builder';
@@ -56,14 +61,23 @@ export class LazyPullBuilder {
 
         if (flat.results) {
           results = [];
-          const resultBuilder = metaPopulation['resultBuilder'] as LazyResultBuilder;
+          const resultBuilder = metaPopulation[
+            'resultBuilder'
+          ] as LazyResultBuilder;
           for (const flatResult of flat.results) {
             const result = resultBuilder[composite.singularName](flatResult);
             results.push(result);
           }
         }
 
-        if (flat.selectRef || flat.select || flat.include || flat.name || flat.skip || flat.take) {
+        if (
+          flat.selectRef ||
+          flat.select ||
+          flat.include ||
+          flat.name ||
+          flat.skip ||
+          flat.take
+        ) {
           const result: Result = {
             selectRef: flat.selectRef,
             name: flat.name,
@@ -72,16 +86,22 @@ export class LazyPullBuilder {
           };
 
           if (flat.select) {
-            const selectBuilder = metaPopulation['selectBuilder'] as LazySelectBuilder;
+            const selectBuilder = metaPopulation[
+              'selectBuilder'
+            ] as LazySelectBuilder;
             result.select = selectBuilder[composite.singularName](flat.select);
           }
 
           if (flat.include) {
             if (flat.select) {
-              throw new Error('Can not add include when result already has a select.');
+              throw new Error(
+                'Can not add include when result already has a select.'
+              );
             }
 
-            const treeBuilder = metaPopulation['treeBuilder'] as LazyTreeBuilder;
+            const treeBuilder = metaPopulation[
+              'treeBuilder'
+            ] as LazyTreeBuilder;
             result.include = treeBuilder[composite.singularName](flat.include);
           }
 

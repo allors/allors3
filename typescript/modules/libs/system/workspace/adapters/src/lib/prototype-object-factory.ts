@@ -1,5 +1,13 @@
-import { IObject, IObjectFactory, IStrategy } from '@allors/workspace/domain/system';
-import { MetaPopulation, ObjectType, Origin } from '@allors/workspace/meta/system';
+import {
+  IObject,
+  IObjectFactory,
+  IStrategy,
+} from '@allors/workspace/domain/system';
+import {
+  MetaPopulation,
+  ObjectType,
+  Origin,
+} from '@allors/system/workspace/meta';
 
 import { ObjectBase } from './object-base';
 
@@ -67,11 +75,17 @@ export class PrototypeObjectFactory implements IObjectFactory {
           });
 
           if (roleType.isMany) {
-            prototype['add' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
+            prototype['add' + roleType.singularName] = function (
+              this: ObjectBase,
+              value: ObjectBase
+            ) {
               return this.strategy.addCompositesRole(roleType, value);
             };
 
-            prototype['remove' + roleType.singularName] = function (this: ObjectBase, value: ObjectBase) {
+            prototype['remove' + roleType.singularName] = function (
+              this: ObjectBase,
+              value: ObjectBase
+            ) {
               return this.strategy.removeCompositesRole(roleType, value);
             };
           }
@@ -113,7 +127,9 @@ export class PrototypeObjectFactory implements IObjectFactory {
   create(strategy: IStrategy): IObject {
     const constructor = this.constructorByObjectType.get(strategy.cls);
     if (!constructor) {
-      throw new Error(`Could not get constructor for ${strategy.cls.singularName}`);
+      throw new Error(
+        `Could not get constructor for ${strategy.cls.singularName}`
+      );
     }
 
     const newObject: ObjectBase = new constructor();

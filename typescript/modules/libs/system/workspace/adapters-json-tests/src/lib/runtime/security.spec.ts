@@ -1,6 +1,6 @@
 import { C1, Denied } from '@allors/workspace/domain/default';
 import { Pull } from '@allors/workspace/domain/system';
-import { Origin } from '@allors/workspace/meta/system';
+import { Origin } from '@allors/system/workspace/meta';
 import { Fixture } from '../fixture';
 import '../matchers';
 

@@ -1,4 +1,4 @@
-import { humanize } from '@allors/workspace/meta/system';
+import { humanize } from '@allors/system/workspace/meta';
 import { Action } from '@allors/workspace/angular/base';
 
 export class Column {

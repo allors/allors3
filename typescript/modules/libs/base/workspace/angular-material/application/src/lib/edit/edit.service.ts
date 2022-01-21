@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
 import { IObject } from '@allors/workspace/domain/system';
 import { EditService } from '@allors/workspace/angular/base';
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { EditDialogData } from './edit.dialog.data';
 
 @Injectable()

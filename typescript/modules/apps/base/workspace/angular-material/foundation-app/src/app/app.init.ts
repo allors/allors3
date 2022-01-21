@@ -6,7 +6,7 @@ import { configure } from './app.configure';
 import { BaseContext } from '../allors/base-context';
 import { Configuration } from '@allors/workspace/domain/system';
 import { applyRules } from '@allors/workspace/derivations/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { ruleBuilder } from '@allors/workspace/derivations/base-custom';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';

@@ -1,5 +1,25 @@
-import { IChangeSet, IInvokeResult, InvokeOptions, IObject, IPullResult, IPushResult, IRule, ISession, IWorkspaceResult, Method, Procedure, Pull } from '@allors/workspace/domain/system';
-import { AssociationType, Class, Composite, Dependency, Origin, RoleType } from '@allors/workspace/meta/system';
+import {
+  IChangeSet,
+  IInvokeResult,
+  InvokeOptions,
+  IObject,
+  IPullResult,
+  IPushResult,
+  IRule,
+  ISession,
+  IWorkspaceResult,
+  Method,
+  Procedure,
+  Pull,
+} from '@allors/workspace/domain/system';
+import {
+  AssociationType,
+  Class,
+  Composite,
+  Dependency,
+  Origin,
+  RoleType,
+} from '@allors/system/workspace/meta';
 
 import { Workspace } from '../workspace/workspace';
 import { WorkspaceResult } from '../workspace/workspace-result';
@@ -13,7 +33,10 @@ import { ChangeSetTracker } from './trackers/change-set-tracker';
 import { PushToDatabaseTracker } from './trackers/push-to-database-tracker';
 import { PushToWorkspaceTracker } from './trackers/push-to-workspace-tracker';
 import { ChangeSet } from './change-set';
-import { derivationRule, derivationRuleByClass } from '@allors/workspace/derivations/system';
+import {
+  derivationRule,
+  derivationRuleByClass,
+} from '@allors/workspace/derivations/system';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -174,13 +197,15 @@ export abstract class Session implements ISession {
   checkpoint(): IChangeSet {
     const changeSet = new ChangeSet(this, this.changeSetTracker.created);
     if (this.changeSetTracker.databaseOriginStates != null) {
-      for (const databaseOriginState of this.changeSetTracker.databaseOriginStates) {
+      for (const databaseOriginState of this.changeSetTracker
+        .databaseOriginStates) {
         databaseOriginState.checkpoint(changeSet);
       }
     }
 
     if (this.changeSetTracker.workspaceOriginStates != null) {
-      for (const workspaceOriginState of this.changeSetTracker.workspaceOriginStates) {
+      for (const workspaceOriginState of this.changeSetTracker
+        .workspaceOriginStates) {
         workspaceOriginState.checkpoint(changeSet);
       }
     }
@@ -208,7 +233,9 @@ export abstract class Session implements ISession {
     }
 
     if (Array.isArray(args)) {
-      return args.map((v) => this.getObject(v)).filter((v) => v != null) as unknown as T[];
+      return args
+        .map((v) => this.getObject(v))
+        .filter((v) => v != null) as unknown as T[];
     }
 
     if (args && args['classes']) {
@@ -267,7 +294,10 @@ export abstract class Session implements ISession {
     return isNewId(id) ? this.instantiateWorkspaceStrategy(id) : null;
   }
 
-  public getCompositeAssociation(role: IObject, associationType: AssociationType): IObject {
+  public getCompositeAssociation(
+    role: IObject,
+    associationType: AssociationType
+  ): IObject {
     const roleType = associationType.roleType;
 
     for (const cls of (associationType.objectType as Composite).classes) {
@@ -278,7 +308,12 @@ export abstract class Session implements ISession {
             continue;
           }
 
-          if ((association.strategy as Strategy).isCompositeAssociationForRole(roleType, role)) {
+          if (
+            (association.strategy as Strategy).isCompositeAssociationForRole(
+              roleType,
+              role
+            )
+          ) {
             return association;
           }
         }
@@ -288,7 +323,10 @@ export abstract class Session implements ISession {
     return null;
   }
 
-  public getCompositesAssociation(role: IObject, associationType: AssociationType): IObject[] {
+  public getCompositesAssociation(
+    role: IObject,
+    associationType: AssociationType
+  ): IObject[] {
     const roleType = associationType.roleType;
 
     const results: IObject[] = [];
@@ -301,7 +339,12 @@ export abstract class Session implements ISession {
             continue;
           }
 
-          if ((association.strategy as Strategy).isCompositesAssociationForRole(roleType, role)) {
+          if (
+            (association.strategy as Strategy).isCompositesAssociationForRole(
+              roleType,
+              role
+            )
+          ) {
             results.push(association);
           }
         }
@@ -346,7 +389,10 @@ export abstract class Session implements ISession {
     (object.strategy as Strategy).onDatabasePushed();
   }
 
-  abstract invoke(methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
+  abstract invoke(
+    methodOrMethods: Method | Method[],
+    options?: InvokeOptions
+  ): Promise<IInvokeResult>;
 
   abstract call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 

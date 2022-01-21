@@ -14,7 +14,16 @@ import { LazyResultBuilder } from './builders/lazy-result-builder';
 import { LazyUnit } from './lazy-unit';
 import { LazyInterface } from './lazy-interface';
 import { LazyClass } from './lazy-class';
-import { Composite, Dependency, MetaObject, MethodType, ObjectType, PropertyType, RelationType, Unit } from '@allors/workspace/meta/system';
+import {
+  Composite,
+  Dependency,
+  MetaObject,
+  MethodType,
+  ObjectType,
+  PropertyType,
+  RelationType,
+  Unit,
+} from '@allors/system/workspace/meta';
 
 export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly kind = 'MetaPopulation';
@@ -27,14 +36,32 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
   relationTypes: Set<RelationType>;
   methodTypes: Set<MethodType>;
 
-  dependency: <T extends Composite>(objectType: T, propertyType: (objectType: T) => PropertyType) => Dependency;
+  dependency: <T extends Composite>(
+    objectType: T,
+    propertyType: (objectType: T) => PropertyType
+  ) => Dependency;
 
   constructor(data: MetaData) {
     const lookup = new Lookup(data);
 
-    this.units = new Set(['Binary', 'Boolean', 'DateTime', 'Decimal', 'Float', 'Integer', 'String', 'Unique'].map((name, i) => new LazyUnit(this, (i + 1).toString(), name)));
-    this.interfaces = new Set(data.i?.map((v) => new LazyInterface(this, v, lookup)) ?? []);
-    this.classes = new Set(data.c?.map((v) => new LazyClass(this, v, lookup)) ?? []);
+    this.units = new Set(
+      [
+        'Binary',
+        'Boolean',
+        'DateTime',
+        'Decimal',
+        'Float',
+        'Integer',
+        'String',
+        'Unique',
+      ].map((name, i) => new LazyUnit(this, (i + 1).toString(), name))
+    );
+    this.interfaces = new Set(
+      data.i?.map((v) => new LazyInterface(this, v, lookup)) ?? []
+    );
+    this.classes = new Set(
+      data.c?.map((v) => new LazyClass(this, v, lookup)) ?? []
+    );
     this.relationTypes = new Set();
     this.methodTypes = new Set();
 

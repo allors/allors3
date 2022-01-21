@@ -1,4 +1,4 @@
-import { Class, Composite } from '@allors/workspace/meta/system';
+import { Class, Composite } from '@allors/system/workspace/meta';
 
 import { IObject } from './iobject';
 import { IWorkspace } from './iworkspace';
@@ -37,7 +37,10 @@ export interface ISession {
   instantiate<T extends IObject>(obj: T): T;
   instantiate<T extends IObject>(objectType: Composite): T[];
 
-  invoke(methodOrMethods: Method | Method[], options?: InvokeOptions): Promise<IInvokeResult>;
+  invoke(
+    methodOrMethods: Method | Method[],
+    options?: InvokeOptions
+  ): Promise<IInvokeResult>;
 
   call(procedure: Procedure, ...pulls: Pull[]): Promise<IPullResult>;
 

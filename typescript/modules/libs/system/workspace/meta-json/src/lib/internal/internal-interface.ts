@@ -1,4 +1,9 @@
-import { AssociationType, Interface, MethodType, RoleType } from '@allors/workspace/meta/system';
+import {
+  AssociationType,
+  Interface,
+  MethodType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import { InternalComposite } from './internal-composite';
 
 export interface InternalInterface extends InternalComposite, Interface {

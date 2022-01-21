@@ -1,5 +1,5 @@
 import { MetaData } from '@allors/protocol/json/system';
-import { Multiplicity, Origin } from '@allors/workspace/meta/system';
+import { Multiplicity, Origin } from '@allors/system/workspace/meta';
 
 export class Lookup {
   o: Map<string, Origin>;
@@ -12,7 +12,12 @@ export class Lookup {
   constructor(data: MetaData) {
     this.m = new Map();
     data.m?.forEach((v, i) => {
-      const multiplicity = i == 0 ? Multiplicity.OneToOne : i == 1 ? Multiplicity.OneToMany : Multiplicity.ManyToMany;
+      const multiplicity =
+        i == 0
+          ? Multiplicity.OneToOne
+          : i == 1
+          ? Multiplicity.OneToMany
+          : Multiplicity.ManyToMany;
       v.forEach((w) => this.m.set(w, multiplicity));
     });
 

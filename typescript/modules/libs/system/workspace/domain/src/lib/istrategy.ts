@@ -1,4 +1,9 @@
-import { AssociationType, Class, MethodType, RoleType } from '@allors/workspace/meta/system';
+import {
+  AssociationType,
+  Class,
+  MethodType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import { IDiff } from './diff/idiff';
 import { IObject } from './iobject';
 import { ISession } from './isession';
@@ -43,9 +48,15 @@ export interface IStrategy {
 
   getUnitRole(roleType: RoleType): IUnit;
 
-  getCompositeRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): T;
+  getCompositeRole<T extends IObject>(
+    roleType: RoleType,
+    skipMissing?: boolean
+  ): T;
 
-  getCompositesRole<T extends IObject>(roleType: RoleType, skipMissing?: boolean): ReadonlyArray<T>;
+  getCompositesRole<T extends IObject>(
+    roleType: RoleType,
+    skipMissing?: boolean
+  ): ReadonlyArray<T>;
 
   setRole(roleType: RoleType, value: unknown): void;
 
@@ -53,7 +64,10 @@ export interface IStrategy {
 
   setCompositeRole<T extends IObject>(roleType: RoleType, value: T): void;
 
-  setCompositesRole<T extends IObject>(roleType: RoleType, value: ReadonlyArray<T>): void;
+  setCompositesRole<T extends IObject>(
+    roleType: RoleType,
+    value: ReadonlyArray<T>
+  ): void;
 
   addCompositesRole<T extends IObject>(roleType: RoleType, value: T): void;
 
@@ -61,7 +75,11 @@ export interface IStrategy {
 
   removeRole(roleType: RoleType): void;
 
-  getCompositeAssociation<T extends IObject>(associationType: AssociationType): T;
+  getCompositeAssociation<T extends IObject>(
+    associationType: AssociationType
+  ): T;
 
-  getCompositesAssociation<T extends IObject>(associationType: AssociationType): ReadonlyArray<T>;
+  getCompositesAssociation<T extends IObject>(
+    associationType: AssociationType
+  ): ReadonlyArray<T>;
 }

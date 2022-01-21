@@ -2,8 +2,18 @@ import { Component, OnInit, Self, HostBinding, Input } from '@angular/core';
 
 import { M } from '@allors/workspace/meta/default';
 import { ProductIdentification } from '@allors/workspace/domain/default';
-import { Action, DeleteService, EditService, ObjectData, ObjectService, PanelService, RefreshService, Table, TableRow } from '@allors/workspace/angular/base';
-import { RoleType } from '@allors/workspace/meta/system';
+import {
+  Action,
+  DeleteService,
+  EditService,
+  ObjectData,
+  ObjectService,
+  PanelService,
+  RefreshService,
+  Table,
+  TableRow,
+} from '@allors/workspace/angular/base';
+import { RoleType } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 interface Row extends TableRow {
@@ -39,7 +49,14 @@ export class ProductIdentificationsPanelComponent implements OnInit {
       associationRoleType: this.roleType,
     };
   }
-  constructor(@Self() public panel: PanelService, public workspaceService: WorkspaceService, public objectService: ObjectService, public refreshService: RefreshService, public editService: EditService, public deleteService: DeleteService) {
+  constructor(
+    @Self() public panel: PanelService,
+    public workspaceService: WorkspaceService,
+    public objectService: ObjectService,
+    public refreshService: RefreshService,
+    public editService: EditService,
+    public deleteService: DeleteService
+  ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
@@ -92,11 +109,15 @@ export class ProductIdentificationsPanelComponent implements OnInit {
 
       this.panel.onPulled = (loaded) => {
         this.objects = loaded.collection<ProductIdentification>(pullName);
-        this.table.total = (loaded.value(`${pullName}_total`) as number) ?? this.objects?.length ?? 0;
+        this.table.total =
+          (loaded.value(`${pullName}_total`) as number) ??
+          this.objects?.length ??
+          0;
         this.table.data = this.objects?.map((v) => {
           return {
             object: v,
-            type: v.ProductIdentificationType && v.ProductIdentificationType.Name,
+            type:
+              v.ProductIdentificationType && v.ProductIdentificationType.Name,
             identification: v.Identification,
           } as Row;
         });

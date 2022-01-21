@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 
 interface AngularIconExtension {
   icon?: string;
@@ -6,7 +6,10 @@ interface AngularIconExtension {
 
 export function angularIcon(composite: Composite): string;
 export function angularIcon(composite: Composite, icon: string): void;
-export function angularIcon(composite: Composite, icon?: string): string | void {
+export function angularIcon(
+  composite: Composite,
+  icon?: string
+): string | void {
   if (composite == null) {
     return;
   }

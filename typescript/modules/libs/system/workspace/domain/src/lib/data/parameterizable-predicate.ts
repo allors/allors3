@@ -1,4 +1,4 @@
-import { ObjectType } from '@allors/workspace/meta/system';
+import { ObjectType } from '@allors/system/workspace/meta';
 import { Between } from './between';
 import { ContainedIn } from './contained-in';
 import { Contains } from './contains';
@@ -10,7 +10,16 @@ import { LessThan } from './less-than';
 import { Like } from './like';
 import { PredicateBase } from './predicate';
 
-export type ParameterizablePredicate = Between | ContainedIn | Contains | Equals | Exists | GreaterThan | Instanceof | LessThan | Like;
+export type ParameterizablePredicate =
+  | Between
+  | ContainedIn
+  | Contains
+  | Equals
+  | Exists
+  | GreaterThan
+  | Instanceof
+  | LessThan
+  | Like;
 
 export type ParameterizablePredicateKind = ParameterizablePredicate['kind'];
 
@@ -18,7 +27,9 @@ export interface ParameterizablePredicateBase extends PredicateBase {
   parameter?: string;
 }
 
-export function parameterizablePredicateObjectType(predicate: ParameterizablePredicate): ObjectType {
+export function parameterizablePredicateObjectType(
+  predicate: ParameterizablePredicate
+): ObjectType {
   if (predicate == null) {
     return null;
   }

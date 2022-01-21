@@ -1,7 +1,18 @@
-import { IObject, IPullResult, ISession, IWorkspace, IUnit } from '@allors/workspace/domain/system';
+import {
+  IObject,
+  IPullResult,
+  ISession,
+  IWorkspace,
+  IUnit,
+} from '@allors/workspace/domain/system';
 import { PullResponse } from '@allors/protocol/json/system';
 import { Result } from '../result';
-import { AssociationType, Class, Interface, RoleType } from '@allors/workspace/meta/system';
+import {
+  AssociationType,
+  Class,
+  Interface,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import { frozenEmptyMap } from '@allors/workspace/adapters/system';
 
 export class PullResult extends Result implements IPullResult {
@@ -26,18 +37,41 @@ export class PullResult extends Result implements IPullResult {
   }
 
   get collections(): Map<string, IObject[]> {
-    return (this._collections ??= this.pullResponse.c ? new Map(Object.keys(this.pullResponse.c).map((v) => [v.toUpperCase(), this.pullResponse.c[v].map((w) => this.session.instantiate(w))])) : (frozenEmptyMap as Map<string, IObject[]>));
+    return (this._collections ??= this.pullResponse.c
+      ? new Map(
+          Object.keys(this.pullResponse.c).map((v) => [
+            v.toUpperCase(),
+            this.pullResponse.c[v].map((w) => this.session.instantiate(w)),
+          ])
+        )
+      : (frozenEmptyMap as Map<string, IObject[]>));
   }
 
   get objects(): Map<string, IObject> {
-    return (this._objects ??= this.pullResponse.o ? new Map(Object.keys(this.pullResponse.o).map((v) => [v.toUpperCase(), this.session.instantiate(this.pullResponse.o[v])])) : (frozenEmptyMap as Map<string, IObject>));
+    return (this._objects ??= this.pullResponse.o
+      ? new Map(
+          Object.keys(this.pullResponse.o).map((v) => [
+            v.toUpperCase(),
+            this.session.instantiate(this.pullResponse.o[v]),
+          ])
+        )
+      : (frozenEmptyMap as Map<string, IObject>));
   }
 
   get values(): Map<string, IUnit> {
-    return this._values ?? this.pullResponse.v ? new Map(Object.keys(this.pullResponse.v).map((v) => [v.toUpperCase(), this.pullResponse.v[v]])) : (frozenEmptyMap as Map<string, IUnit>);
+    return this._values ?? this.pullResponse.v
+      ? new Map(
+          Object.keys(this.pullResponse.v).map((v) => [
+            v.toUpperCase(),
+            this.pullResponse.v[v],
+          ])
+        )
+      : (frozenEmptyMap as Map<string, IUnit>);
   }
 
-  collection<T extends IObject>(nameOrType: string | Class | Interface | AssociationType | RoleType): T[] {
+  collection<T extends IObject>(
+    nameOrType: string | Class | Interface | AssociationType | RoleType
+  ): T[] {
     if (typeof nameOrType === 'string') {
       return (this.collections.get(nameOrType.toUpperCase()) as T[]) ?? null;
     }
@@ -45,14 +79,27 @@ export class PullResult extends Result implements IPullResult {
     switch (nameOrType.kind) {
       case 'AssociationType':
       case 'RoleType':
-        return (this.collections.get((nameOrType.isMany ? nameOrType.pluralName : nameOrType.singularName).toUpperCase()) as T[]) ?? null;
+        return (
+          (this.collections.get(
+            (nameOrType.isMany
+              ? nameOrType.pluralName
+              : nameOrType.singularName
+            ).toUpperCase()
+          ) as T[]) ?? null
+        );
       default:
-        return (this.collections.get(nameOrType.pluralName.toUpperCase()) as T[]) ?? null;
+        return (
+          (this.collections.get(nameOrType.pluralName.toUpperCase()) as T[]) ??
+          null
+        );
     }
   }
 
-  object<T extends IObject>(nameOrType: string | Class | Interface | AssociationType | RoleType): T {
-    const name = typeof nameOrType === 'string' ? nameOrType : nameOrType.singularName;
+  object<T extends IObject>(
+    nameOrType: string | Class | Interface | AssociationType | RoleType
+  ): T {
+    const name =
+      typeof nameOrType === 'string' ? nameOrType : nameOrType.singularName;
     return this.objects.get(name.toUpperCase()) as T;
   }
 

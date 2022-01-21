@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Params, Router, ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { IPullResult, Pull } from '@allors/workspace/domain/system';
 
 import { PanelService } from './panel.service';

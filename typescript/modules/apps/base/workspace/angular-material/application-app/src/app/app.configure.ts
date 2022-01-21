@@ -1,5 +1,5 @@
 import { M } from '@allors/workspace/meta/default';
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import {
   angularFilterDefinition,
   angularForms,

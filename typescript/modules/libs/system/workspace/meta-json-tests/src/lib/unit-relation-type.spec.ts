@@ -1,5 +1,13 @@
-import { Composite, Unit, RoleType, Interface, UnitTags, Multiplicity, Origin } from '@allors/workspace/meta/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import {
+  Composite,
+  Unit,
+  RoleType,
+  Interface,
+  UnitTags,
+  Multiplicity,
+  Origin,
+} from '@allors/system/workspace/meta';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 
 describe('Unit Relation in MetaPopulation', () => {
   describe('with minimal unit relation metadata', () => {
@@ -63,7 +71,14 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.String, 'Name', 'Names', 1024]]]],
+      c: [
+        [
+          '10',
+          'Organisation',
+          [],
+          [['11', UnitTags.String, 'Name', 'Names', 1024]],
+        ],
+      ],
       o: [['11']],
       m: [['11']],
       d: ['11'],
@@ -217,7 +232,9 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.Decimal, 'Balance', 25]]]],
+      c: [
+        ['10', 'Organisation', [], [['11', UnitTags.Decimal, 'Balance', 25]]],
+      ],
     }) as M;
 
     const { Organisation, Decimal } = metaPopulation;
@@ -266,7 +283,14 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.Decimal, 'Balance', 25, 2]]]],
+      c: [
+        [
+          '10',
+          'Organisation',
+          [],
+          [['11', UnitTags.Decimal, 'Balance', 25, 2]],
+        ],
+      ],
     }) as M;
 
     const { Organisation, Decimal } = metaPopulation;
@@ -315,7 +339,14 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.Decimal, 'Balance', 'PluralBalance', 26]]]],
+      c: [
+        [
+          '10',
+          'Organisation',
+          [],
+          [['11', UnitTags.Decimal, 'Balance', 'PluralBalance', 26]],
+        ],
+      ],
     }) as M;
 
     const { Organisation, Decimal } = metaPopulation;
@@ -364,7 +395,14 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.Decimal, 'Balance', 'PluralBalance', 26, 5]]]],
+      c: [
+        [
+          '10',
+          'Organisation',
+          [],
+          [['11', UnitTags.Decimal, 'Balance', 'PluralBalance', 26, 5]],
+        ],
+      ],
     }) as M;
 
     const { Organisation, Decimal } = metaPopulation;
@@ -560,7 +598,9 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.String, 'Text', 512, 10]]]],
+      c: [
+        ['10', 'Organisation', [], [['11', UnitTags.String, 'Text', 512, 10]]],
+      ],
     }) as M;
 
     const { Organisation, String } = metaPopulation;
@@ -609,7 +649,14 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.String, 'Text', 'PluralText', 512]]]],
+      c: [
+        [
+          '10',
+          'Organisation',
+          [],
+          [['11', UnitTags.String, 'Text', 'PluralText', 512]],
+        ],
+      ],
     }) as M;
 
     const { Organisation, String } = metaPopulation;
@@ -658,7 +705,14 @@ describe('Unit Relation in MetaPopulation', () => {
     }
 
     const metaPopulation = new LazyMetaPopulation({
-      c: [['10', 'Organisation', [], [['11', UnitTags.String, 'Text', 'PluralText', 512, 1]]]],
+      c: [
+        [
+          '10',
+          'Organisation',
+          [],
+          [['11', UnitTags.String, 'Text', 'PluralText', 512, 1]],
+        ],
+      ],
     }) as M;
 
     const { Organisation, String } = metaPopulation;

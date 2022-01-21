@@ -1,4 +1,4 @@
-import { PropertyType } from '@allors/workspace/meta/system';
+import { PropertyType } from '@allors/system/workspace/meta';
 import { Node } from './node';
 
 export interface Select {

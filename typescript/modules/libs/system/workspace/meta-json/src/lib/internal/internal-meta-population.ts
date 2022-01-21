@@ -1,4 +1,8 @@
-import { MetaObject, MetaPopulation, ObjectType } from '@allors/workspace/meta/system';
+import {
+  MetaObject,
+  MetaPopulation,
+  ObjectType,
+} from '@allors/system/workspace/meta';
 import { InternalComposite } from './internal-composite';
 
 export interface InternalMetaPopulation extends MetaPopulation {

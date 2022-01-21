@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { Filter } from '../filter/filter';
 import { angularFilterDefinition } from './angular.filter.definition';
 
@@ -8,7 +8,10 @@ interface AngularFilterExtension {
 
 export function angularFilter(composite: Composite): Filter;
 export function angularFilter(composite: Composite, filter: Filter): void;
-export function angularFilter(composite: Composite, filter?: Filter): Filter | void {
+export function angularFilter(
+  composite: Composite,
+  filter?: Filter
+): Filter | void {
   if (composite == null) {
     return;
   }

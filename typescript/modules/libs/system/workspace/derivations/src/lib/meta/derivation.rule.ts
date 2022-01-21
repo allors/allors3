@@ -1,5 +1,5 @@
 import { IObject, IRule } from '@allors/workspace/domain/system';
-import { RoleType } from '@allors/workspace/meta/system';
+import { RoleType } from '@allors/system/workspace/meta';
 
 export interface DerivationsRuleExtension {
   rule?: IRule<IObject>;
@@ -7,7 +7,10 @@ export interface DerivationsRuleExtension {
 
 export function derivationRule(roleType: RoleType): IRule<IObject>;
 export function derivationRule(roleType: RoleType, rule: IRule<IObject>): void;
-export function derivationRule(roleType: RoleType, rule?: IRule<IObject>): void | IRule<IObject> {
+export function derivationRule(
+  roleType: RoleType,
+  rule?: IRule<IObject>
+): void | IRule<IObject> {
   if (roleType == null) {
     return;
   }

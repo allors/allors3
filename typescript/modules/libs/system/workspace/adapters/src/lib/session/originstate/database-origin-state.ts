@@ -1,5 +1,13 @@
-import { IObject, IPullResult, Operations } from '@allors/workspace/domain/system';
-import { MethodType, RelationType, RoleType } from '@allors/workspace/meta/system';
+import {
+  IObject,
+  IPullResult,
+  Operations,
+} from '@allors/workspace/domain/system';
+import {
+  MethodType,
+  RelationType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import { DatabaseRecord } from '../../database/database-record';
 import { WorkspaceInitialVersion } from '../../version';
 import { IRecord } from '../../irecord';
@@ -47,7 +55,11 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
       return true;
     }
 
-    const permission = this.session.workspace.database.getPermission(this.class, roleType, Operations.Read);
+    const permission = this.session.workspace.database.getPermission(
+      this.class,
+      roleType,
+      Operations.Read
+    );
     return this.databaseRecord.isPermitted(permission);
   }
 
@@ -64,7 +76,11 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
       return true;
     }
 
-    const permission = this.session.workspace.database.getPermission(this.class, roleType, Operations.Write);
+    const permission = this.session.workspace.database.getPermission(
+      this.class,
+      roleType,
+      Operations.Write
+    );
     return this.databaseRecord.isPermitted(permission);
   }
 
@@ -78,7 +94,11 @@ export abstract class DatabaseOriginState extends RecordBasedOriginState {
       return false;
     }
 
-    const permission = this.session.workspace.database.getPermission(this.class, methodType, Operations.Execute);
+    const permission = this.session.workspace.database.getPermission(
+      this.class,
+      methodType,
+      Operations.Execute
+    );
     return this.databaseRecord.isPermitted(permission);
   }
 

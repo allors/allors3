@@ -1,4 +1,4 @@
-import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
+import { Composite, Dependency, RoleType } from '@allors/system/workspace/meta';
 import { IObject } from '../iobject';
 
 export interface IRule<T extends IObject> {

@@ -1,4 +1,4 @@
-import { Origin, Unit, UnitTags } from '@allors/workspace/meta/system';
+import { Origin, Unit, UnitTags } from '@allors/system/workspace/meta';
 import { InternalMetaPopulation } from './internal/internal-meta-population';
 
 export class LazyUnit implements Unit {
@@ -19,8 +19,13 @@ export class LazyUnit implements Unit {
   isString = this.tag === UnitTags.String;
   isUnique = this.tag === UnitTags.Unique;
 
-  constructor(public metaPopulation: InternalMetaPopulation, public tag: string, public singularName: string) {
-    this.pluralName = singularName === 'Binary' ? 'Binaries' : singularName + 's';
+  constructor(
+    public metaPopulation: InternalMetaPopulation,
+    public tag: string,
+    public singularName: string
+  ) {
+    this.pluralName =
+      singularName === 'Binary' ? 'Binaries' : singularName + 's';
     metaPopulation.onNewObjectType(this);
   }
 }

@@ -1,9 +1,11 @@
-import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
+import { Composite, Dependency, RoleType } from '@allors/system/workspace/meta';
 import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';
 import { Organisation } from '@allors/workspace/domain/default';
 
-export class OrganisationDisplayClassificationRule implements IRule<Organisation> {
+export class OrganisationDisplayClassificationRule
+  implements IRule<Organisation>
+{
   objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];

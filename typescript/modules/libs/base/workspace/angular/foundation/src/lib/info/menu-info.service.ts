@@ -1,6 +1,6 @@
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { Injectable } from '@angular/core';
-import { MetaPopulation } from '@allors/workspace/meta/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
 import { angularMenu } from '../meta/angular.menu';
 import { MenuItem } from '../menu/menu-item';
 
@@ -17,7 +17,8 @@ export class MenuInfoService {
   metaPopulation: MetaPopulation;
 
   constructor(private workspaceService: WorkspaceService) {
-    this.metaPopulation = this.workspaceService.workspace.configuration.metaPopulation;
+    this.metaPopulation =
+      this.workspaceService.workspace.configuration.metaPopulation;
   }
 
   write(allors: { [key: string]: unknown }) {

@@ -1,6 +1,12 @@
-import { Class, RelationType, RoleType } from '@allors/workspace/meta/system';
-import { DatabaseRecord as SystemDatabaseRecord, IRange } from '@allors/workspace/adapters/system';
-import { SyncResponseObject, SyncResponseRole } from '@allors/protocol/json/system';
+import { Class, RelationType, RoleType } from '@allors/system/workspace/meta';
+import {
+  DatabaseRecord as SystemDatabaseRecord,
+  IRange,
+} from '@allors/workspace/adapters/system';
+import {
+  SyncResponseObject,
+  SyncResponseRole,
+} from '@allors/protocol/json/system';
 import { DatabaseConnection } from './database-connection';
 import { ResponseContext } from './security/response-context';
 import { unitFromJson } from '../json/from-json';
@@ -12,12 +18,28 @@ export class DatabaseRecord extends SystemDatabaseRecord {
   private _roleByRelationType?: Map<RelationType, unknown>;
   private syncResponseRoles?: SyncResponseRole[];
 
-  constructor(public readonly database: DatabaseConnection, cls: Class, id: number, public version: number) {
+  constructor(
+    public readonly database: DatabaseConnection,
+    cls: Class,
+    id: number,
+    public version: number
+  ) {
     super(cls, id, version);
   }
 
-  static fromResponse(database: DatabaseConnection, ctx: ResponseContext, syncResponseObject: SyncResponseObject): DatabaseRecord {
-    const object = new DatabaseRecord(database, database.configuration.metaPopulation.metaObjectByTag.get(syncResponseObject.c) as Class, syncResponseObject.i, syncResponseObject.v);
+  static fromResponse(
+    database: DatabaseConnection,
+    ctx: ResponseContext,
+    syncResponseObject: SyncResponseObject
+  ): DatabaseRecord {
+    const object = new DatabaseRecord(
+      database,
+      database.configuration.metaPopulation.metaObjectByTag.get(
+        syncResponseObject.c
+      ) as Class,
+      syncResponseObject.i,
+      syncResponseObject.v
+    );
     object.syncResponseRoles = syncResponseObject.ro;
     object.grants = ctx.checkForMissingGrants(syncResponseObject.g);
     object.revocations = ctx.checkForMissingRevocations(syncResponseObject.r);
@@ -29,9 +51,15 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       const metaPopulation = this.database.configuration.metaPopulation;
       this._roleByRelationType = new Map(
         this.syncResponseRoles.map((v) => {
-          const relationType = metaPopulation.metaObjectByTag.get(v.t) as RelationType;
+          const relationType = metaPopulation.metaObjectByTag.get(
+            v.t
+          ) as RelationType;
           if (relationType == null) {
-            throw new Error('RelationType with Tag ' + v.t + ' is not present. Please regenerate your workspace.');
+            throw new Error(
+              'RelationType with Tag ' +
+                v.t +
+                ' is not present. Please regenerate your workspace.'
+            );
           }
 
           const roleType = relationType.roleType;
@@ -72,10 +100,23 @@ export class DatabaseRecord extends SystemDatabaseRecord {
       return false;
     }
 
-    if (this.revocations != null && this.revocations.some((v) => this.database.ranges.has(this.database.revocationById.get(v).permissionIds, permission))) {
+    if (
+      this.revocations != null &&
+      this.revocations.some((v) =>
+        this.database.ranges.has(
+          this.database.revocationById.get(v).permissionIds,
+          permission
+        )
+      )
+    ) {
       return false;
     }
 
-    return this.grants.some((v) => this.database.ranges.has(this.database.grantById.get(v).permissionIds, permission));
+    return this.grants.some((v) =>
+      this.database.ranges.has(
+        this.database.grantById.get(v).permissionIds,
+        permission
+      )
+    );
   }
 }

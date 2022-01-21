@@ -16,7 +16,7 @@ import {
   Pull,
   ResultError,
 } from '@allors/workspace/domain/system';
-import { Class, Origin } from '@allors/workspace/meta/system';
+import { Class, Origin } from '@allors/system/workspace/meta';
 import { DatabaseConnection } from '../database/database-connection';
 import { DatabaseRecord } from '../database/database-record';
 import { InvokeResult } from '../database/invoke/invoke-result';

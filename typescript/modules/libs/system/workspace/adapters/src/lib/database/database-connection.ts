@@ -1,5 +1,9 @@
-import { Configuration, IWorkspace, Operations } from '@allors/workspace/domain/system';
-import { Class, OperandType } from '@allors/workspace/meta/system';
+import {
+  Configuration,
+  IWorkspace,
+  Operations,
+} from '@allors/workspace/domain/system';
+import { Class, OperandType } from '@allors/system/workspace/meta';
 
 import { DefaultNumberRanges } from '../collections/ranges/default-number-ranges';
 import { Ranges } from '../collections/ranges/ranges';
@@ -18,7 +22,11 @@ export abstract class DatabaseConnection {
 
   abstract getRecord(id: number): DatabaseRecord | undefined;
 
-  abstract getPermission(cls: Class, operandType: OperandType, operation: Operations): number | undefined;
+  abstract getPermission(
+    cls: Class,
+    operandType: OperandType,
+    operation: Operations
+  ): number | undefined;
 
   nextId(): number {
     return this.configuration.idGenerator();

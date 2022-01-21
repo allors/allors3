@@ -14,7 +14,7 @@ import {
   Method,
   Pull,
 } from '@allors/workspace/domain/system';
-import { Class, Composite } from '@allors/workspace/meta/system';
+import { Class, Composite } from '@allors/system/workspace/meta';
 import { derivationRules } from '@allors/workspace/derivations/system';
 
 export class AppsContext implements Context {

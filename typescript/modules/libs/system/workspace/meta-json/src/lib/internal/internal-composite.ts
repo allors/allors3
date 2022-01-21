@@ -1,4 +1,9 @@
-import { AssociationType, Composite, ObjectType, RoleType } from '@allors/workspace/meta/system';
+import {
+  AssociationType,
+  Composite,
+  ObjectType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 
 import { Lookup } from '../utils/lookup';
 import { InternalInterface } from './internal-interface';

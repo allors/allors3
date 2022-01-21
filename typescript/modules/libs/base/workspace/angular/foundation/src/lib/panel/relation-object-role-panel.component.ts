@@ -1,6 +1,6 @@
 import { Directive, HostBinding } from '@angular/core';
 import { IObject } from '@allors/workspace/domain/system';
-import { ObjectType, RoleType } from '@allors/workspace/meta/system';
+import { ObjectType, RoleType } from '@allors/system/workspace/meta';
 import { PanelService } from './panel.service';
 import { M } from '@allors/workspace/meta/default';
 

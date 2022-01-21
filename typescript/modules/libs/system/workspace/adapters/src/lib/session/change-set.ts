@@ -1,5 +1,10 @@
 import { IChangeSet, IObject } from '@allors/workspace/domain/system';
-import { AssociationType, PropertyType, RelationType, RoleType } from '@allors/workspace/meta/system';
+import {
+  AssociationType,
+  PropertyType,
+  RelationType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 
 import { MapMap } from '../collections/map-map';
 import { frozenEmptySet } from '../collections/frozen-empty-set';
@@ -21,7 +26,9 @@ export class ChangeSet implements IChangeSet {
     this.ranges = this.session.ranges;
   }
 
-  public addSessionStateChanges(sessionStateChangeSet: MapMap<PropertyType, IObject, unknown>) {
+  public addSessionStateChanges(
+    sessionStateChangeSet: MapMap<PropertyType, IObject, unknown>
+  ) {
     for (const [propertyType, map] of sessionStateChangeSet.mapMap) {
       const strategies = new Set<IObject>();
 
@@ -30,7 +37,10 @@ export class ChangeSet implements IChangeSet {
       }
 
       if (propertyType.isAssociationType) {
-        this.rolesByAssociationType.set(propertyType as AssociationType, strategies);
+        this.rolesByAssociationType.set(
+          propertyType as AssociationType,
+          strategies
+        );
       } else if (propertyType.isRoleType) {
         this.associationsByRoleType.set(propertyType as RoleType, strategies);
       } else {
@@ -39,13 +49,23 @@ export class ChangeSet implements IChangeSet {
     }
   }
 
-  public diffUnit(association: IObject, relationType: RelationType, current: unknown, previous: unknown) {
+  public diffUnit(
+    association: IObject,
+    relationType: RelationType,
+    current: unknown,
+    previous: unknown
+  ) {
     if (current !== previous) {
       this.addAssociation(relationType, association);
     }
   }
 
-  public diffCompositeStrategyRecord(association: IObject, relationType: RelationType, current: IObject, previous: number) {
+  public diffCompositeStrategyRecord(
+    association: IObject,
+    relationType: RelationType,
+    current: IObject,
+    previous: number
+  ) {
     if (current?.id === previous) {
       return;
     }
@@ -64,7 +84,12 @@ export class ChangeSet implements IChangeSet {
     this.addAssociation(relationType, association);
   }
 
-  public diffCompositeRecordRecord(association: IObject, relationType: RelationType, current: number, previous: number) {
+  public diffCompositeRecordRecord(
+    association: IObject,
+    relationType: RelationType,
+    current: number,
+    previous: number
+  ) {
     if (current === previous) {
       return;
     }
@@ -80,7 +105,12 @@ export class ChangeSet implements IChangeSet {
     this.addAssociation(relationType, association);
   }
 
-  public diffCompositeStrategyStrategy(association: IObject, relationType: RelationType, current: IObject, previous: IObject) {
+  public diffCompositeStrategyStrategy(
+    association: IObject,
+    relationType: RelationType,
+    current: IObject,
+    previous: IObject
+  ) {
     if (current === previous) {
       return;
     }
@@ -96,18 +126,49 @@ export class ChangeSet implements IChangeSet {
     this.addAssociation(relationType, association);
   }
 
-  public diffCompositesStrategyRecord(association: IObject, relationType: RelationType, current: IRange<IObject>, previousRange: IRange<number>) {
-    const previous: IRange<IObject> = previousRange?.map((v) => (this.session as Session).getObject(v));
-    this.diffCompositesStrategyStrategy(association, relationType, current, previous);
+  public diffCompositesStrategyRecord(
+    association: IObject,
+    relationType: RelationType,
+    current: IRange<IObject>,
+    previousRange: IRange<number>
+  ) {
+    const previous: IRange<IObject> = previousRange?.map((v) =>
+      (this.session as Session).getObject(v)
+    );
+    this.diffCompositesStrategyStrategy(
+      association,
+      relationType,
+      current,
+      previous
+    );
   }
 
-  public diffCompositesRecordRecord(association: IObject, relationType: RelationType, currentRange: IRange<number>, previousRange: IRange<number>) {
-    const current: IRange<IObject> = currentRange?.map((v) => (this.session as Session).getObject(v));
-    const previous: IRange<IObject> = previousRange?.map((v) => (this.session as Session).getObject(v));
-    this.diffCompositesStrategyStrategy(association, relationType, current, previous);
+  public diffCompositesRecordRecord(
+    association: IObject,
+    relationType: RelationType,
+    currentRange: IRange<number>,
+    previousRange: IRange<number>
+  ) {
+    const current: IRange<IObject> = currentRange?.map((v) =>
+      (this.session as Session).getObject(v)
+    );
+    const previous: IRange<IObject> = previousRange?.map((v) =>
+      (this.session as Session).getObject(v)
+    );
+    this.diffCompositesStrategyStrategy(
+      association,
+      relationType,
+      current,
+      previous
+    );
   }
 
-  public diffCompositesStrategyStrategy(association: IObject, relationType: RelationType, current: IRange<IObject>, previous: IRange<IObject>) {
+  public diffCompositesStrategyStrategy(
+    association: IObject,
+    relationType: RelationType,
+    current: IRange<IObject>,
+    previous: IRange<IObject>
+  ) {
     let hasChange = false;
 
     for (const v of this.ranges.enumerate(previous)) {

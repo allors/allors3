@@ -1,4 +1,4 @@
-import { Class } from '@allors/workspace/meta/system';
+import { Class } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/workspace/domain/system';
 import { EventEmitter } from '@angular/core';
 

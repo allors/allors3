@@ -1,4 +1,4 @@
-import { MetaPopulation } from '@allors/workspace/meta/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
 import { MenuItem } from '../menu/menu-item';
 
 interface AngularMenuExtension {
@@ -6,8 +6,14 @@ interface AngularMenuExtension {
 }
 
 export function angularMenu(metaPopulation: MetaPopulation): MenuItem[];
-export function angularMenu(metaPopulation: MetaPopulation, menu: MenuItem[]): void;
-export function angularMenu(metaPopulation: MetaPopulation, menu?: MenuItem[]): MenuItem[] | void {
+export function angularMenu(
+  metaPopulation: MetaPopulation,
+  menu: MenuItem[]
+): void;
+export function angularMenu(
+  metaPopulation: MetaPopulation,
+  menu?: MenuItem[]
+): MenuItem[] | void {
   if (metaPopulation == null) {
     return;
   }

@@ -1,6 +1,9 @@
 import { Sort as MaterialSort } from '@angular/material/sort';
-import { Sort as AllorsSort, SortDirection } from '@allors/workspace/domain/system';
-import { RoleType } from '@allors/workspace/meta/system';
+import {
+  Sort as AllorsSort,
+  SortDirection,
+} from '@allors/workspace/domain/system';
+import { RoleType } from '@allors/system/workspace/meta';
 
 export class Sorter {
   private config: { [index: string]: RoleType | RoleType[] };
@@ -11,7 +14,10 @@ export class Sorter {
 
   create(sort: MaterialSort): AllorsSort[] {
     if (sort) {
-      const sortDirection = sort.direction === 'desc' ? SortDirection.Descending : SortDirection.Ascending;
+      const sortDirection =
+        sort.direction === 'desc'
+          ? SortDirection.Descending
+          : SortDirection.Ascending;
       const roleTypeOrRoleTypes = this.config[sort.active];
 
       if (roleTypeOrRoleTypes instanceof Array) {

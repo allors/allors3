@@ -1,5 +1,8 @@
-import { humanize, ObjectType, UnitTags } from '@allors/workspace/meta/system';
-import { ParameterizablePredicate, parameterizablePredicateObjectType } from '@allors/workspace/domain/system';
+import { humanize, ObjectType, UnitTags } from '@allors/system/workspace/meta';
+import {
+  ParameterizablePredicate,
+  parameterizablePredicateObjectType,
+} from '@allors/workspace/domain/system';
 
 import { FilterOptions } from './filter-options';
 
@@ -36,7 +39,9 @@ export class FilterFieldDefinition {
   }
 
   get name(): string | undefined {
-    return this.predicate.parameter ? humanize(this.predicate.parameter) : undefined;
+    return this.predicate.parameter
+      ? humanize(this.predicate.parameter)
+      : undefined;
   }
 
   get criteria(): string {

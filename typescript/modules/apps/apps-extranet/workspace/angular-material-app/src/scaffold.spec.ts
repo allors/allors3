@@ -1,10 +1,15 @@
 import * as fs from 'fs';
 
 import { data } from '@allors/workspace/meta/json/default';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { configure } from './app/configure';
 import { M } from '@allors/workspace/meta/default';
-import { angularList, angularMenu, angularOverview, MenuItem } from '@allors/workspace/angular/base';
+import {
+  angularList,
+  angularMenu,
+  angularOverview,
+  MenuItem,
+} from '@allors/workspace/angular/base';
 
 import { create, edit } from './app/app.module';
 
@@ -50,7 +55,10 @@ describe('Scaffold', () => {
     const menu: MenuInfo[] = angularMenu(m).map(menuMapper);
 
     const dialogs = {
-      create: Object.keys(create).map((v) => ({ tag: v, component: create[v].name })),
+      create: Object.keys(create).map((v) => ({
+        tag: v,
+        component: create[v].name,
+      })),
       edit: Object.keys(edit).map((v) => ({ tag: v, component: edit[v].name })),
     };
 

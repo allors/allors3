@@ -1,6 +1,6 @@
 import { HostBinding, Directive, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Class } from '@allors/workspace/meta/system';
+import { Class } from '@allors/system/workspace/meta';
 import { M } from '@allors/workspace/meta/default';
 import { IObject } from '@allors/workspace/domain/system';
 import { Context, ContextService } from '@allors/workspace/angular/core';

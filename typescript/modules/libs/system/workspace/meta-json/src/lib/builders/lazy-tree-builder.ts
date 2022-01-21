@@ -1,4 +1,4 @@
-import { MetaPopulation } from '@allors/workspace/meta/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
 
 export class LazyTreeBuilder {
   constructor(metaPopulation: MetaPopulation) {
@@ -11,7 +11,8 @@ export class LazyTreeBuilder {
         const entries = Object.entries(obj);
         return entries.length > 0
           ? entries.map(([key, value]) => {
-              const propertyType = composite.propertyTypeByPropertyName.get(key);
+              const propertyType =
+                composite.propertyTypeByPropertyName.get(key);
               return value != null
                 ? {
                     propertyType,

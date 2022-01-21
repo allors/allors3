@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { Extent } from '../../data/extent';
 import { Result } from '../../data/result';
 import { IObject } from '../../iobject';

@@ -1,4 +1,12 @@
-import { AssociationType, Dependency, MethodType, Origin, pluralize, PropertyType, RoleType } from '@allors/workspace/meta/system';
+import {
+  AssociationType,
+  Dependency,
+  MethodType,
+  Origin,
+  pluralize,
+  PropertyType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import { ObjectTypeData } from '@allors/protocol/json/system';
 
 import { frozenEmptySet } from './utils/frozen-empty-set';
@@ -50,7 +58,11 @@ export abstract class LazyComposite implements InternalComposite {
 
   abstract isAssignableFrom(objectType: InternalComposite): boolean;
 
-  constructor(public metaPopulation: InternalMetaPopulation, public d: ObjectTypeData, lookup: Lookup) {
+  constructor(
+    public metaPopulation: InternalMetaPopulation,
+    public d: ObjectTypeData,
+    lookup: Lookup
+  ) {
     const [t, s] = this.d;
     this.tag = t;
     this.singularName = s;
@@ -72,7 +84,11 @@ export abstract class LazyComposite implements InternalComposite {
     this._pluralName = p;
 
     if (d) {
-      this.directSupertypes = new Set(d?.map((v) => this.metaPopulation.metaObjectByTag.get(v) as InternalInterface));
+      this.directSupertypes = new Set(
+        d?.map(
+          (v) => this.metaPopulation.metaObjectByTag.get(v) as InternalInterface
+        )
+      );
     } else {
       this.directSupertypes = frozenEmptySet as Set<InternalInterface>;
     }
@@ -80,7 +96,9 @@ export abstract class LazyComposite implements InternalComposite {
     r?.forEach((v) => new LazyRelationType(this, v, lookup));
 
     if (m) {
-      this.directMethodTypes = new Set(m?.map((v) => new LazyMethodType(this, v)));
+      this.directMethodTypes = new Set(
+        m?.map((v) => new LazyMethodType(this, v))
+      );
     } else {
       this.directMethodTypes = frozenEmptySet as Set<MethodType>;
     }
@@ -99,14 +117,24 @@ export abstract class LazyComposite implements InternalComposite {
     this.roleTypes = new Set(this.roleTypeGenerator());
     this.methodTypes = new Set(this.methodTypeGenerator());
 
-    this.associationTypes.forEach((v) => ((this as Record<string, unknown>)[v.name] = v));
-    this.roleTypes.forEach((v) => ((this as Record<string, unknown>)[v.name] = v));
-    this.methodTypes.forEach((v) => ((this as Record<string, unknown>)[v.name] = v));
+    this.associationTypes.forEach(
+      (v) => ((this as Record<string, unknown>)[v.name] = v)
+    );
+    this.roleTypes.forEach(
+      (v) => ((this as Record<string, unknown>)[v.name] = v)
+    );
+    this.methodTypes.forEach(
+      (v) => ((this as Record<string, unknown>)[v.name] = v)
+    );
   }
 
   deriveOriginRoleType() {
-    this.databaseOriginRoleTypes = new Set(this.databaseOriginRoleTypesGenerator());
-    this.workspaceOriginRoleTypes = new Set(this.workspaceOriginRoleTypesGenerator());
+    this.databaseOriginRoleTypes = new Set(
+      this.databaseOriginRoleTypesGenerator()
+    );
+    this.workspaceOriginRoleTypes = new Set(
+      this.workspaceOriginRoleTypesGenerator()
+    );
   }
 
   abstract derivePropertyTypeByPropertyName();
@@ -115,11 +143,17 @@ export abstract class LazyComposite implements InternalComposite {
     this.dependencyByPropertyType = new Map();
 
     for (const associationType of this.associationTypes) {
-      this.dependencyByPropertyType.set(associationType, new LazyDependency(this, associationType));
+      this.dependencyByPropertyType.set(
+        associationType,
+        new LazyDependency(this, associationType)
+      );
     }
 
     for (const roleType of this.roleTypes) {
-      this.dependencyByPropertyType.set(roleType, new LazyDependency(this, roleType));
+      this.dependencyByPropertyType.set(
+        roleType,
+        new LazyDependency(this, roleType)
+      );
     }
   }
 

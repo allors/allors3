@@ -2,7 +2,7 @@ import { Subject } from 'rxjs';
 
 import { PrintConfig } from './print.service';
 import { Action, ActionTarget } from '@allors/workspace/angular/base';
-import { RoleType } from '@allors/workspace/meta/system';
+import { RoleType } from '@allors/system/workspace/meta';
 import { Printable } from '@allors/workspace/domain/default';
 
 export class PrintAction implements Action {
@@ -31,7 +31,10 @@ export class PrintAction implements Action {
     if (Array.isArray(target)) {
       return true;
     } else {
-      return !(target as Printable).canReadPrintDocument || !(target as Printable).PrintDocument;
+      return (
+        !(target as Printable).canReadPrintDocument ||
+        !(target as Printable).PrintDocument
+      );
     }
   };
 }

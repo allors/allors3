@@ -1,5 +1,9 @@
-import { Configuration, ISession, IWorkspace } from '@allors/workspace/domain/system';
-import { Class, RelationType } from '@allors/workspace/meta/system';
+import {
+  Configuration,
+  ISession,
+  IWorkspace,
+} from '@allors/workspace/domain/system';
+import { Class, RelationType } from '@allors/system/workspace/meta';
 
 import { Ranges } from '../collections/ranges/ranges';
 import { DatabaseConnection } from '../database/database-connection';
@@ -33,7 +37,12 @@ export abstract class Workspace implements IWorkspace {
     return this.recordById.get(id);
   }
 
-  push(id: number, cls: Class, version: number, changedRoleByRoleType: Map<RelationType, unknown> | undefined): void {
+  push(
+    id: number,
+    cls: Class,
+    version: number,
+    changedRoleByRoleType: Map<RelationType, unknown> | undefined
+  ): void {
     this.workspaceClassByWorkspaceId.set(id, cls);
     let ids = this.workspaceIdsByWorkspaceClass.get(cls);
     if (ids == null) {
@@ -50,7 +59,12 @@ export abstract class Workspace implements IWorkspace {
         if (value instanceof Strategy) {
           roleByRelationType.set(key, value.id);
         } else if (value instanceof Set) {
-          roleByRelationType.set(key, this.ranges.importFrom([...(value as Set<Strategy>)].map((v) => v.id)));
+          roleByRelationType.set(
+            key,
+            this.ranges.importFrom(
+              [...(value as Set<Strategy>)].map((v) => v.id)
+            )
+          );
         } else {
           roleByRelationType.set(key, value);
         }
@@ -59,9 +73,18 @@ export abstract class Workspace implements IWorkspace {
 
     const originalWorkspaceRecord = this.recordById.get(id);
     if (originalWorkspaceRecord == null) {
-      this.recordById.set(id, new WorkspaceRecord(cls, id, ++version, roleByRelationType));
+      this.recordById.set(
+        id,
+        new WorkspaceRecord(cls, id, ++version, roleByRelationType)
+      );
     } else {
-      this.recordById.set(id, WorkspaceRecord.fromOriginal(originalWorkspaceRecord, roleByRelationType));
+      this.recordById.set(
+        id,
+        WorkspaceRecord.fromOriginal(
+          originalWorkspaceRecord,
+          roleByRelationType
+        )
+      );
     }
   }
 }

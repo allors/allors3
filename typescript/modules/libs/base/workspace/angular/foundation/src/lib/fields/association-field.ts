@@ -1,15 +1,31 @@
 // tslint:disable: directive-selector
 // tslint:disable: directive-class-suffix
-import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive, HostBinding } from '@angular/core';
+import {
+  AfterViewInit,
+  Input,
+  OnDestroy,
+  QueryList,
+  ViewChildren,
+  Directive,
+  HostBinding,
+} from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 
-import { AssociationType, RoleType, assert, humanize } from '@allors/workspace/meta/system';
+import {
+  AssociationType,
+  RoleType,
+  assert,
+  humanize,
+} from '@allors/system/workspace/meta';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { Field } from './field';
 
 @Directive()
-export abstract class AssociationField extends Field implements AfterViewInit, OnDestroy {
+export abstract class AssociationField
+  extends Field
+  implements AfterViewInit, OnDestroy
+{
   dataAllorsKind = 'field-association';
 
   @HostBinding('attr.data-allors-id')
@@ -31,7 +47,10 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
   }
 
   set associationType(associationType: AssociationType) {
-    assert(!associationType || associationType.isOne, 'AssociationType should have one multiplicity');
+    assert(
+      !associationType || associationType.isOne,
+      'AssociationType should have one multiplicity'
+    );
     this._associationType = associationType;
   }
 
@@ -63,7 +82,10 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
   }
 
   get model(): IObject | undefined {
-    const model = this.existObject && this.associationType ? this.object.strategy.getCompositeAssociation(this.associationType) : null;
+    const model =
+      this.existObject && this.associationType
+        ? this.object.strategy.getCompositeAssociation(this.associationType)
+        : null;
 
     return model;
   }
@@ -95,7 +117,9 @@ export abstract class AssociationField extends Field implements AfterViewInit, O
   }
 
   get label(): string | undefined {
-    return this.assignedLabel ? this.assignedLabel : humanize(this.associationType.name);
+    return this.assignedLabel
+      ? this.assignedLabel
+      : humanize(this.associationType.name);
   }
 
   public ngAfterViewInit(): void {

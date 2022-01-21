@@ -1,4 +1,4 @@
-import { Composite, Dependency, RoleType } from '@allors/workspace/meta/system';
+import { Composite, Dependency, RoleType } from '@allors/system/workspace/meta';
 import { Organisation } from '@allors/workspace/domain/default';
 import { IRule } from '@allors/workspace/domain/system';
 import { M } from '@allors/workspace/meta/default';

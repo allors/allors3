@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { IObject } from '@allors/workspace/domain/system';
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 
 import { angularList } from '../meta/angular.list';
@@ -14,7 +14,10 @@ import { NavigationService } from './navigation.service';
   providedIn: 'root',
 })
 export class NavigationServiceCore extends NavigationService {
-  constructor(private router: Router, private workspaceService: WorkspaceService) {
+  constructor(
+    private router: Router,
+    private workspaceService: WorkspaceService
+  ) {
     super();
   }
 

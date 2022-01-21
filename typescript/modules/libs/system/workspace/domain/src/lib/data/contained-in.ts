@@ -1,4 +1,4 @@
-import { PropertyType } from '@allors/workspace/meta/system';
+import { PropertyType } from '@allors/system/workspace/meta';
 import { IObject } from '../iobject';
 import { Extent } from './extent';
 import { ParameterizablePredicateBase } from './parameterizable-predicate';

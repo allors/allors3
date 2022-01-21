@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Composite, Class, humanize } from '@allors/workspace/meta/system';
+import { Composite, Class, humanize } from '@allors/system/workspace/meta';
 import { IObject, ISession } from '@allors/workspace/domain/system';
 import {
   AllorsComponent,

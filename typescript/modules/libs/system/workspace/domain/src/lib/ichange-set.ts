@@ -1,4 +1,4 @@
-import { AssociationType, RoleType } from '@allors/workspace/meta/system';
+import { AssociationType, RoleType } from '@allors/system/workspace/meta';
 import { IObject } from './iobject';
 import { ISession } from './isession';
 

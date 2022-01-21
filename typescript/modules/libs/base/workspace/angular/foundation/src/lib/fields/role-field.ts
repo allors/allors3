@@ -1,16 +1,26 @@
 // tslint:disable: directive-selector
 // tslint:disable: directive-class-suffix
-import { AfterViewInit, Input, OnDestroy, QueryList, ViewChildren, Directive, HostBinding } from '@angular/core';
+import {
+  AfterViewInit,
+  Input,
+  OnDestroy,
+  QueryList,
+  ViewChildren,
+  Directive,
+  HostBinding,
+} from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 
-import { RoleType, humanize, UnitTags } from '@allors/workspace/meta/system';
+import { RoleType, humanize, UnitTags } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/workspace/domain/system';
 
 import { Field } from './field';
 
 @Directive()
-export abstract class RoleField extends Field implements AfterViewInit, OnDestroy {
-
+export abstract class RoleField
+  extends Field
+  implements AfterViewInit, OnDestroy
+{
   dataAllorsKind = 'field-role';
 
   @HostBinding('attr.data-allors-id')
@@ -116,7 +126,11 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
       }
 
       if (this.assignedRoleType) {
-        if (this.object.strategy.isNew && this.derivedInitialRole && this.derivedInitialRole === value) {
+        if (
+          this.object.strategy.isNew &&
+          this.derivedInitialRole &&
+          this.derivedInitialRole === value
+        ) {
           this.object.strategy.setRole(this.assignedRoleType, null);
         } else {
           this.object.strategy.setRole(this.assignedRoleType, value);
@@ -132,11 +146,16 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   get canWrite(): boolean | undefined {
-    return this.object?.strategy.canWrite(this.assignedRoleType ?? this.roleType);
+    return this.object?.strategy.canWrite(
+      this.assignedRoleType ?? this.roleType
+    );
   }
 
   get textType(): string {
-    if (this.roleType.objectType.tag == UnitTags.Integer || this.roleType.objectType.tag == UnitTags.Float) {
+    if (
+      this.roleType.objectType.tag == UnitTags.Integer ||
+      this.roleType.objectType.tag == UnitTags.Float
+    ) {
       return 'number';
     }
 
@@ -160,11 +179,15 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   get name(): string {
-    return this.assignedName ? this.assignedName : this.roleType.name + '_' + this.id;
+    return this.assignedName
+      ? this.assignedName
+      : this.roleType.name + '_' + this.id;
   }
 
   get label(): string {
-    return this.assignedLabel ? this.assignedLabel : humanize(this.roleType.name);
+    return this.assignedLabel
+      ? this.assignedLabel
+      : humanize(this.roleType.name);
   }
 
   get required(): boolean {
@@ -184,11 +207,16 @@ export abstract class RoleField extends Field implements AfterViewInit, OnDestro
   }
 
   get canRestore(): boolean {
-    return this.ExistObject && this.assignedRoleType && this.object.strategy.hasChanged(this.assignedRoleType);
+    return (
+      this.ExistObject &&
+      this.assignedRoleType &&
+      this.object.strategy.hasChanged(this.assignedRoleType)
+    );
   }
 
   restore(): void {
-    this.ExistObject && this.object?.strategy.restoreRole(this.assignedRoleType);
+    this.ExistObject &&
+      this.object?.strategy.restoreRole(this.assignedRoleType);
   }
 
   public add(value: IObject) {

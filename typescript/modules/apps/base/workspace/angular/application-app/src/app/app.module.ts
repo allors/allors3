@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/workspace/meta/json/default';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { M } from '@allors/workspace/meta/default';
@@ -23,9 +23,16 @@ import { CoreContext } from '../allors/core-context';
 import { Configuration } from '@allors/workspace/domain/system';
 import { applyRules } from '@allors/workspace/derivations/system';
 
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
+export function appInitFactory(
+  workspaceService: WorkspaceService,
+  httpClient: HttpClient
+) {
   return async () => {
-    const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
+    const angularClient = new AngularClient(
+      httpClient,
+      environment.baseUrl,
+      environment.authUrl
+    );
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;
@@ -72,7 +79,12 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, QueryComponent, FetchComponent],
-  imports: [BrowserModule, FormsModule, HttpClientModule, RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' })],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
+  ],
   providers: [
     {
       provide: APP_INITIALIZER,

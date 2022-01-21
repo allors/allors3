@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
 import { IObject, ISession } from '@allors/workspace/domain/system';
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { CreateService, OnCreate } from '@allors/workspace/angular/base';
 import { CreateDialogData } from './create.dialog.data';
 

@@ -1,5 +1,5 @@
-import { MetaPopulation } from '@allors/workspace/meta/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 
 describe('MetaPopulation', () => {
   describe('default constructor', () => {

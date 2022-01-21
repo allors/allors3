@@ -1,5 +1,10 @@
-import { Origin, Composite, Interface, MethodType } from '@allors/workspace/meta/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import {
+  Origin,
+  Composite,
+  Interface,
+  MethodType,
+} from '@allors/system/workspace/meta';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 
 interface Action extends Interface {
   Do: MethodType;

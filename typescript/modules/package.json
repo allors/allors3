@@ -11,14 +11,11 @@
     "angular-apps-intranet:serve": "npx nx serve angular-apps-intranet",
     "angular-base:serve": "npx nx serve angular-base-app",
     "angular-core:serve": "npx nx serve angular-core-app",
-    "test:workspace-meta-system": "npx nx test workspace-meta-system-tests --skipNxCache",
-    "test:workspace-meta-json-system": "npx nx test workspace-meta-json-system-tests --skipNxCache",
+    "test:system-workspace-meta": "npx nx test system-workspace-meta-tests --skipNxCache",
+    "test:system-workspace-meta-json": "npx nx test system-workspace-meta-json-tests --skipNxCache",
     "test:workspace-adapters-system": "npx nx test workspace-adapters-system-tests --skipNxCache",
     "test:workspace-adapters-json-system": "npx nx test workspace-adapters-json-system-tests --skipNxCache",
-    "test:all": "npm run test:workspace-meta-system && npm run test:workspace-meta-json-system && npm run test:workspace-adapters-system && npm run test:workspace-adapters-json-system",
-    "scaffold-apps-extranet": "npx tsc --project ./tools/scaffold/tsconfig.json && node ./dist/out-tsc/tools/scaffold/apps-extranet.js",
-    "scaffold-apps-intranet": "npx tsc --project ./tools/scaffold/tsconfig.json && node ./dist/out-tsc/tools/scaffold/apps-intranet.js",
-    "scaffold-base": "npx tsc --project ./tools/scaffold/tsconfig.json && node ./dist/out-tsc/tools/scaffold/base.js"
+    "test:all": "npm run test:workspace-meta-system && npm run test:workspace-meta-json-system && npm run test:workspace-adapters-system && npm run test:workspace-adapters-json-system"
   },
   "private": true,
   "devDependencies": {

@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 import { FilterDefinition } from '../filter/filter-definition';
 
 interface AngularFilterDefinitionExtension {
@@ -6,8 +6,14 @@ interface AngularFilterDefinitionExtension {
 }
 
 export function angularFilterDefinition(composite: Composite): FilterDefinition;
-export function angularFilterDefinition(composite: Composite, filterDefinition: FilterDefinition): void;
-export function angularFilterDefinition(composite: Composite, filterDefinition?: FilterDefinition): FilterDefinition | void {
+export function angularFilterDefinition(
+  composite: Composite,
+  filterDefinition: FilterDefinition
+): void;
+export function angularFilterDefinition(
+  composite: Composite,
+  filterDefinition?: FilterDefinition
+): FilterDefinition | void {
   if (composite == null) {
     return;
   }
@@ -16,5 +22,6 @@ export function angularFilterDefinition(composite: Composite, filterDefinition?:
     return (composite._ as AngularFilterDefinitionExtension).filterDefinition;
   }
 
-  (composite._ as AngularFilterDefinitionExtension).filterDefinition = filterDefinition;
+  (composite._ as AngularFilterDefinitionExtension).filterDefinition =
+    filterDefinition;
 }

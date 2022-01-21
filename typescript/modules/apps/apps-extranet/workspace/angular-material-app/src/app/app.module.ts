@@ -2,17 +2,24 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpClientModule,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
 import { WorkspaceService } from '@allors/workspace/angular/core';
 import { PrototypeObjectFactory } from '@allors/workspace/adapters/system';
 import { DatabaseConnection } from '@allors/workspace/adapters/json/system';
-import { LazyMetaPopulation } from '@allors/workspace/meta/json/system';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { data } from '@allors/workspace/meta/json/default';
 import { M, tags } from '@allors/workspace/meta/default';
 import { ruleBuilder } from '@allors/workspace/derivations/default';
@@ -119,7 +126,15 @@ import {
 } from '@allors/workspace/angular/base';
 
 // Angular Material Base
-import { WorkEffortListComponent, WorkTaskCreateComponent, WorkTaskOverviewComponent, WorkTaskOverviewDetailComponent, WorkTaskOverviewSummaryComponent, PrintService, PrintConfig } from '@allors/workspace/angular/apps/extranet';
+import {
+  WorkEffortListComponent,
+  WorkTaskCreateComponent,
+  WorkTaskOverviewComponent,
+  WorkTaskOverviewDetailComponent,
+  WorkTaskOverviewSummaryComponent,
+  PrintService,
+  PrintConfig,
+} from '@allors/workspace/angular/apps/extranet';
 
 import { LoginComponent } from './auth/login.component';
 import { MainComponent } from './main/main.component';
@@ -131,9 +146,16 @@ import { ExtranetContext } from '../allors/extranet-context';
 import { Configuration } from '@allors/workspace/domain/system';
 import { applyRules } from '@allors/workspace/derivations/system';
 
-export function appInitFactory(workspaceService: WorkspaceService, httpClient: HttpClient) {
+export function appInitFactory(
+  workspaceService: WorkspaceService,
+  httpClient: HttpClient
+) {
   return async () => {
-    const angularClient = new AngularClient(httpClient, environment.baseUrl, environment.authUrl);
+    const angularClient = new AngularClient(
+      httpClient,
+      environment.baseUrl,
+      environment.authUrl
+    );
 
     const metaPopulation = new LazyMetaPopulation(data);
     const m = metaPopulation as unknown as M;
@@ -154,7 +176,8 @@ export function appInitFactory(workspaceService: WorkspaceService, httpClient: H
     const workspace = database.createWorkspace();
 
     workspaceService.workspace = workspace;
-    workspaceService.contextBuilder = () => new ExtranetContext(workspaceService);
+    workspaceService.contextBuilder = () =>
+      new ExtranetContext(workspaceService);
 
     configure(m);
   };
@@ -321,10 +344,16 @@ export const edit = {};
       useValue: { autoActiveFirstOption: true },
     },
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
-    { provide: AllorsMaterialDialogService, useClass: AllorsMaterialDialogServiceCore },
+    {
+      provide: AllorsMaterialDialogService,
+      useClass: AllorsMaterialDialogServiceCore,
+    },
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: SaveService, useClass: SaveServiceCore },
-    { provide: AllorsMaterialSideNavService, useClass: AllorsMaterialSideNavServiceCore },
+    {
+      provide: AllorsMaterialSideNavService,
+      useClass: AllorsMaterialSideNavServiceCore,
+    },
     PrintService,
     { provide: PrintConfig, useValue: { url: environment.baseUrl } },
     { provide: ObjectService, useClass: ObjectServiceCore },

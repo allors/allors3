@@ -1,4 +1,4 @@
-import { Composite } from '@allors/workspace/meta/system';
+import { Composite } from '@allors/system/workspace/meta';
 
 interface AngularListExtension {
   list?: string;
@@ -6,7 +6,10 @@ interface AngularListExtension {
 
 export function angularList(composite: Composite): string;
 export function angularList(composite: Composite, list: string): void;
-export function angularList(composite: Composite, list?: string): string | void {
+export function angularList(
+  composite: Composite,
+  list?: string
+): string | void {
   if (composite == null) {
     return;
   }

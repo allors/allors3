@@ -1,10 +1,13 @@
 import { IObject, IRule } from '@allors/workspace/domain/system';
-import { MetaPopulation } from '@allors/workspace/meta/system';
+import { MetaPopulation } from '@allors/system/workspace/meta';
 import { derivationRule } from './meta/derivation.rule';
 import { derivationRuleByClass } from './meta/derivation.rule.by.class';
 import { derivationRules } from './meta/derivation.rules';
 
-export function applyRules(metaPopulation: MetaPopulation, rules: IRule<IObject>[]) {
+export function applyRules(
+  metaPopulation: MetaPopulation,
+  rules: IRule<IObject>[]
+) {
   Object.freeze(rules);
   derivationRules(metaPopulation, rules);
 
