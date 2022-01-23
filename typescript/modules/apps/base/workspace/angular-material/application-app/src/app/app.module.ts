@@ -21,7 +21,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
@@ -264,6 +264,7 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
       useValue: { autoActiveFirstOption: true },
     },
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
+    { provide: MatDialogRef, useValue: {} },
     {
       provide: AllorsMaterialDialogService,
       useClass: AllorsMaterialDialogServiceCore,

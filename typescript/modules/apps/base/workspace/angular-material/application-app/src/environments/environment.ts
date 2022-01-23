@@ -32,10 +32,10 @@ export function appInitializerFactory(
       environment.baseUrl,
       environment.authUrl
     );
-  };
 
-  createService.createControlByObjectTypeTag = dialogs.create;
-  editService.editControlByObjectTypeTag = dialogs.edit;
+    createService.createControlByObjectTypeTag = dialogs.create;
+    editService.editControlByObjectTypeTag = dialogs.edit;
+  };
 }
 
 export function appBootstrapListenerFactory(

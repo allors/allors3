@@ -3,6 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { init } from '../app/app.init';
 import { ErrorHandlerService } from '../allors/errorhandler.service';
+import {
+  AllorsMaterialCreateService,
+  AllorsMaterialEditService,
+} from '@allors/base/workspace/angular-material/application';
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
@@ -10,7 +14,9 @@ import { ErrorHandlerService } from '../allors/errorhandler.service';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,
-  httpClient: HttpClient
+  httpClient: HttpClient,
+  createService: AllorsMaterialCreateService,
+  editService: AllorsMaterialEditService
 ) {
   return async () => {
     init(
@@ -19,6 +25,9 @@ export function appInitFactory(
       environment.baseUrl,
       environment.authUrl
     );
+
+    createService.createControlByObjectTypeTag = dialogs.create;
+    editService.editControlByObjectTypeTag = dialogs.edit;
   };
 }
 

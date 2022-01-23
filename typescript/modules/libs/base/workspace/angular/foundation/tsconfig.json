@@ -24,10 +24,10 @@
       "@allors/system/workspace/meta-json": ["libs/system/workspace/meta-json/src/index.ts"],
       "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"],
       // Default
-      "@allors/default/workspace/domain": ["libs/workspace/domain/base/src/index.ts"],
-      "@allors/default/workspace/derivations": ["libs/workspace/derivations/base/src/index.ts"],
-      "@allors/default/workspace/meta": ["libs/workspace/meta/base/src/index.ts"],
-      "@allors/default/workspace/meta-json": ["libs/workspace/meta/json/base/src/index.ts"]
+      "@allors/default/workspace/domain": ["libs/base/workspace/domain/src/index.ts"],
+      "@allors/default/workspace/derivations": ["libs/base/workspace/derivations/src/index.ts"],
+      "@allors/default/workspace/meta": ["libs/base/workspace/meta/src/index.ts"],
+      "@allors/default/workspace/meta-json": ["libs/base/workspace/meta/json/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
