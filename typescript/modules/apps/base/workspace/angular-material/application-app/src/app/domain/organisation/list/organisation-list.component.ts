@@ -20,6 +20,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   angularSorter,
+  CreateDialogData,
   DeleteService,
   MethodService,
   OverviewService,
@@ -52,6 +53,8 @@ export class OrganisationListComponent
   filter: Filter;
   override m: M;
 
+  createData: CreateDialogData;
+
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
@@ -65,6 +68,10 @@ export class OrganisationListComponent
   ) {
     super(allors, titleService);
     this.objectType = this.m.Organisation;
+    this.createData = {
+      kind: 'CreateDialogData',
+      objectType: this.m.Organisation,
+    };
 
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {

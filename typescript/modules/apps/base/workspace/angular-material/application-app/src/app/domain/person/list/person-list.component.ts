@@ -19,6 +19,7 @@ import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import {
   angularSorter,
+  CreateDialogData,
   DeleteService,
   OverviewService,
   Table,
@@ -47,6 +48,8 @@ export class PersonListComponent
 
   private subscription: Subscription;
 
+  createData: CreateDialogData;
+
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
@@ -59,6 +62,10 @@ export class PersonListComponent
   ) {
     super(allors, titleService);
     this.objectType = this.m.Person;
+    this.createData = {
+      kind: 'CreateDialogData',
+      objectType: this.objectType,
+    };
 
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {

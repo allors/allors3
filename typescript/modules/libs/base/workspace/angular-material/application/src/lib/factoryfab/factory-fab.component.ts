@@ -8,6 +8,7 @@ import {
   CreateService,
   OnCreate,
 } from '@allors/base/workspace/angular/foundation';
+import { CreateDialogData } from '../create/create.dialog.data';
 
 @Component({
   selector: 'a-mat-factory-fab',
@@ -15,9 +16,7 @@ import {
   styleUrls: ['./factory-fab.component.scss'],
 })
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
-  @Input() public session: ISession;
-
-  @Input() public objectType: Composite;
+  @Input() public createData: CreateDialogData;
 
   @Input() public onCreate?: OnCreate;
 
@@ -30,10 +29,10 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.objectType.isInterface) {
-      this.classes = [...this.objectType.classes];
+    if (this.createData.objectType.isInterface) {
+      this.classes = [...this.createData.objectType.classes];
     } else {
-      this.classes = [this.objectType as Class];
+      this.classes = [this.createData.objectType as Class];
     }
 
     this.classes = this.classes.filter((v) => this.createService.canCreate(v));
@@ -44,13 +43,11 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
   }
 
   create(objectType: Class) {
-    this.createService
-      .create(this.session, objectType, this.onCreate)
-      .subscribe((v) => {
-        if (v && this.created) {
-          this.created.next(v);
-        }
-      });
+    this.createService.create(objectType, this.onCreate).subscribe((v) => {
+      if (v && this.created) {
+        this.created.next(v);
+      }
+    });
   }
 
   icon(cls: Class): string {

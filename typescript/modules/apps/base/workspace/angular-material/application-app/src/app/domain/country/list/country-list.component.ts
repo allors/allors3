@@ -6,6 +6,7 @@ import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import {
   angularSorter,
+  CreateDialogData,
   DeleteService,
   EditRoleService,
   OverviewService,
@@ -51,6 +52,8 @@ export class CountryListComponent
   filter: Filter;
   override m: M;
 
+  createData: CreateDialogData;
+
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
@@ -63,6 +66,11 @@ export class CountryListComponent
   ) {
     super(allors, titleService);
     this.objectType = this.m.Country;
+
+    this.createData = {
+      kind: 'CreateDialogData',
+      objectType: this.objectType,
+    };
 
     this.edit = editRoleService.edit();
     this.edit.result.subscribe(() => {

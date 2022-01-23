@@ -5,7 +5,7 @@
       mat-fab
       type="button"
       (click)="create(classes[0])"
-      attr.data-allors-objecttype="{{ objectType.tag }}"
+      attr.data-allors-objecttype="{{ createData.objectType.tag }}"
     >
       <mat-icon>add</mat-icon>
     </button>
@@ -14,7 +14,7 @@
       <button
         mat-fab
         [matMenuTriggerFor]="menu"
-        attr.data-allors-objecttype="{{ objectType.tag }}"
+        attr.data-allors-objecttype="{{ createData.objectType.tag }}"
       >
         <mat-icon>add</mat-icon>
       </button>

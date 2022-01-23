@@ -13,6 +13,7 @@ import {
   AllorsRelationObjectPanelComponent,
 } from '@allors/base/workspace/angular/foundation';
 import {
+  CreateDialogData,
   DeleteService,
   EditRoleService,
   Table,
@@ -163,10 +164,12 @@ export class EmploymentComponent
     }
   }
 
-  get createData(): ObjectData {
+  get createData(): CreateDialogData {
     return {
-      associationId: this.panel.manager.id,
-      associationObjectType: this.panel.manager.objectType,
+      kind: 'CreateDialogData',
+      objectType: this.m.Employment,
+      // associationId: this.panel.manager.id,
+      // associationObjectType: this.panel.manager.objectType,
     };
   }
 }

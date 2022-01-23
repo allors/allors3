@@ -8,10 +8,10 @@ import { Locale, Person, Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  ObjectData,
   RefreshService,
   SaveService,
 } from '@allors/base/workspace/angular/foundation';
+import { CreateDialogData } from '@allors/base/workspace/angular-material/application';
 
 @Component({
   templateUrl: './person-create.component.html',
@@ -32,7 +32,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
+    @Inject(MAT_DIALOG_DATA) public data: CreateDialogData,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
@@ -61,9 +61,9 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
                 },
               },
             }),
-            pull.Organisation({
-              objectId: this.data.associationId,
-            }),
+            // pull.Organisation({
+            //   objectId: this.data.associationId,
+            // }),
           ];
 
           return this.allors.context.pull(pulls);

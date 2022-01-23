@@ -40,8 +40,7 @@
   </div>
 
   <a-mat-factory-fab
-    [objectType]="m.Employment"
-    []="createData"
+    [createData]="createData"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 
