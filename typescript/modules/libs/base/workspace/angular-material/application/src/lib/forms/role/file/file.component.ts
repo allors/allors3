@@ -28,12 +28,12 @@ export class AllorsMaterialFileComponent extends RoleField {
   accept = '*/*';
 
   constructor(
-    @Optional() parentForm: NgForm,
+    @Optional() form: NgForm,
     private dialog: MatDialog,
     private mediaService: MediaService,
     private workspaceService: WorkspaceService
   ) {
-    super(parentForm);
+    super(form);
   }
 
   get media(): Media {

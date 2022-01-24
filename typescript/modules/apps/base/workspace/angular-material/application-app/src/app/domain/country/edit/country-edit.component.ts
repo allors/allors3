@@ -1,4 +1,4 @@
-import { Component, Inject, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   CreateDialogData,
@@ -10,7 +10,7 @@ import { IObject } from '@allors/system/workspace/domain';
 @Component({
   templateUrl: 'country-edit.component.html',
 })
-export class CountryEditComponent implements AfterViewInit {
+export class CountryEditComponent implements OnInit {
   @ViewChild(CountryFormComponent)
   private country!: CountryFormComponent;
 
@@ -19,7 +19,7 @@ export class CountryEditComponent implements AfterViewInit {
     private dialogRef: MatDialogRef<CountryEditComponent>
   ) {}
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     if (this.data.kind === 'EditDialogData')
       this.country.edit(this.data.object.id);
   }

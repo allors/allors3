@@ -1,9 +1,7 @@
 // tslint:disable: directive-selector
 // tslint:disable: directive-class-suffix
 import {
-  AfterViewInit,
   Input,
-  OnDestroy,
   QueryList,
   ViewChildren,
   Directive,
@@ -22,10 +20,7 @@ import { IObject } from '@allors/system/workspace/domain';
 import { Field } from './field';
 
 @Directive()
-export abstract class AssociationField
-  extends Field
-  implements AfterViewInit, OnDestroy
-{
+export abstract class AssociationField extends Field {
   override dataAllorsKind = 'field-association';
 
   @HostBinding('attr.data-allors-id')
@@ -57,11 +52,8 @@ export abstract class AssociationField
   @Input()
   hint: string;
 
-  // tslint:disable-next-line:no-input-rename
   @Input('label')
   public assignedLabel: string;
-
-  @ViewChildren(NgModel) private controls: QueryList<NgModel>;
 
   get roleType(): RoleType {
     return this.associationType?.relationType.roleType;
@@ -71,8 +63,8 @@ export abstract class AssociationField
 
   private _associationType: AssociationType;
 
-  constructor(private parentForm: NgForm) {
-    super();
+  constructor(form: NgForm) {
+    super(form);
     // TODO: wrap around
     this.id = ++Field.counter;
   }
@@ -120,21 +112,5 @@ export abstract class AssociationField
     return this.assignedLabel
       ? this.assignedLabel
       : humanize(this.associationType.name);
-  }
-
-  public ngAfterViewInit(): void {
-    if (this.parentForm) {
-      this.controls.forEach((control: NgModel) => {
-        this.parentForm.addControl(control);
-      });
-    }
-  }
-
-  public ngOnDestroy(): void {
-    if (this.parentForm) {
-      this.controls.forEach((control: NgModel) => {
-        this.parentForm.removeControl(control);
-      });
-    }
   }
 }

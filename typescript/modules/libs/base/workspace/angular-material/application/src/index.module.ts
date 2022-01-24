@@ -77,6 +77,8 @@ import {
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
+  DynamicCreateComponent,
+  DynamicEditComponent,
 } from './index';
 
 @NgModule({
@@ -119,6 +121,8 @@ import {
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
+    DynamicCreateComponent,
+    DynamicEditComponent,
   ],
   imports: [
     BrowserModule,

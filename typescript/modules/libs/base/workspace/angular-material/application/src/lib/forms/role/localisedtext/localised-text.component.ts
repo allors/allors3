@@ -7,7 +7,7 @@ import { LocalisedRoleField } from '@allors/base/workspace/angular/foundation';
   templateUrl: './localised-text.component.html',
 })
 export class AllorsMaterialLocalisedTextComponent extends LocalisedRoleField {
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 }

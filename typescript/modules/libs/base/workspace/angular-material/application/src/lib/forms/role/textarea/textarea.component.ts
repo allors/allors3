@@ -11,8 +11,8 @@ import { RoleField } from '@allors/base/workspace/angular/foundation';
 export class AllorsMaterialTextareaComponent extends RoleField {
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
-  constructor(@Optional() parentForm: NgForm, private ngZone: NgZone) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm, private ngZone: NgZone) {
+    super(form);
   }
 
   triggerResize() {

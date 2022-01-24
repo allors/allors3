@@ -1,9 +1,6 @@
-// tslint:disable: directive-selector
-// tslint:disable: directive-class-suffix
+import { Subscription } from 'rxjs';
 import {
-  AfterViewInit,
   Input,
-  OnDestroy,
   QueryList,
   ViewChildren,
   Directive,
@@ -17,10 +14,7 @@ import { IObject } from '@allors/system/workspace/domain';
 import { Field } from './field';
 
 @Directive()
-export abstract class RoleField
-  extends Field
-  implements AfterViewInit, OnDestroy
-{
+export abstract class RoleField extends Field {
   override dataAllorsKind = 'field-role';
 
   @HostBinding('attr.data-allors-id')
@@ -73,12 +67,10 @@ export abstract class RoleField
   @Input()
   public emptyStringIsNull = true;
 
-  @ViewChildren(NgModel) private controls: QueryList<NgModel>;
-
   private id = 0;
 
-  constructor(private parentForm: NgForm) {
-    super();
+  constructor(form: NgForm) {
+    super(form);
     // TODO: wrap around
     this.id = ++Field.counter;
   }
@@ -228,22 +220,6 @@ export abstract class RoleField
   public remove(value: IObject) {
     if (this.ExistObject) {
       this.object.strategy.removeCompositesRole(this.roleType, value);
-    }
-  }
-
-  public ngAfterViewInit(): void {
-    if (this.parentForm) {
-      this.controls.forEach((control: NgModel) => {
-        this.parentForm.addControl(control);
-      });
-    }
-  }
-
-  public ngOnDestroy(): void {
-    if (this.parentForm) {
-      this.controls.forEach((control: NgModel) => {
-        this.parentForm.removeControl(control);
-      });
     }
   }
 }

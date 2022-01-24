@@ -1,6 +1,6 @@
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Component, Self, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Self, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Person } from '@allors/default/workspace/domain';
@@ -19,7 +19,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 })
 export class PersonOverviewComponent
   extends AllorsOverviewComponent<Person>
-  implements AfterViewInit, OnDestroy
+  implements OnInit, OnDestroy
 {
   private subscription: Subscription;
 
@@ -34,7 +34,7 @@ export class PersonOverviewComponent
     super(allors, panelManager, titleService);
   }
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: p } = m;
 

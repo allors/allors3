@@ -28,11 +28,11 @@ export class AllorsMaterialLocalisedMarkdownComponent
 
   easyMDE: EasyMDE;
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 
-  override ngAfterViewInit() {
+  ngOnInit() {
     this.easyMDE = new EasyMDE({
       element: this.elementRef.nativeElement,
     });

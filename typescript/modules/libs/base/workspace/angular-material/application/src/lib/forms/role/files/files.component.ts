@@ -27,11 +27,11 @@ export class AllorsMaterialFilesComponent extends RoleField {
   public files: File[] | null;
 
   constructor(
-    @Optional() parentForm: NgForm,
+    @Optional() form: NgForm,
     private mediaService: MediaService,
     private workspaceService: WorkspaceService
   ) {
-    super(parentForm);
+    super(form);
   }
 
   get medias(): Media[] {

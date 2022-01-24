@@ -2,8 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 import { AngularClient } from '../allors/angular-client';
-import { configure } from './app.configure';
-import { BaseContext } from '../allors/base-context';
 import { Configuration } from '@allors/system/workspace/domain';
 import { applyRules } from '@allors/system/workspace/derivations';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
@@ -11,6 +9,11 @@ import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { M } from '@allors/default/workspace/meta';
+import { BaseContext } from '../allors/base-context';
+import { initForms } from './app.init-forms';
+import { initMenu } from './app.init-menu';
+import { initNav } from './app.init-nav';
+import { initFilter } from './app.init-filter';
 
 export function init(
   workspaceService: WorkspaceService,
@@ -41,5 +44,8 @@ export function init(
 
   workspaceService.contextBuilder = () => new BaseContext(workspaceService);
 
-  configure(m);
+  initForms(m);
+  initMenu(m);
+  initNav(m);
+  initFilter(m);
 }

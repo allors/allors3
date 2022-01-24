@@ -16,6 +16,7 @@ export * from './lib/dialog/dialog.service';
 export * from './lib/dialog/dialog.service.core';
 export * from './lib/dialog/dialog.component';
 
+export * from './lib/dynamic/create/create.component';
 export * from './lib/dynamic/edit/edit.component';
 export * from './lib/dynamic/form/form-host.directive';
 

@@ -33,7 +33,7 @@ export class AllorsMaterialStaticComponent extends RoleField {
     return null;
   }
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 }

@@ -1,10 +1,10 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   ViewEncapsulation,
   Optional,
   ViewChild,
+  OnInit,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { RoleField } from '@allors/base/workspace/angular/foundation';
@@ -20,18 +20,18 @@ import * as EasyMDE from 'easymde';
 })
 export class AllorsMaterialMarkdownComponent
   extends RoleField
-  implements AfterViewInit
+  implements OnInit
 {
   @ViewChild('easymde', { static: true })
   elementRef: ElementRef;
 
   easyMDE: EasyMDE;
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 
-  override ngAfterViewInit() {
+  ngOnInit() {
     this.easyMDE = new EasyMDE({
       element: this.elementRef.nativeElement,
       errorCallback: (errorMessage) => {

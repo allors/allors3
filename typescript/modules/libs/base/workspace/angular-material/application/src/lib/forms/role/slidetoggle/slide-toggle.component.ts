@@ -10,8 +10,8 @@ export class AllorsMaterialSlideToggleComponent extends RoleField {
   @Output()
   public changed: EventEmitter<any> = new EventEmitter();
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 
   public change(): void {

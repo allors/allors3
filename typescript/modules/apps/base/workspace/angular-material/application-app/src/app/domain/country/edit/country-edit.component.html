@@ -1,18 +1,14 @@
-<a-form-container>
-  <h3 mat-dialog-title>TODO</h3>
-
-  <mat-dialog-content>
+<h2 mat-dialog-title>Edit Country</h2>
+<mat-dialog-content class="mat-typography">
+  <form ngForm="form" novalidate (submit)="$event.preventDefault()">
     <country-form
       #form
       (saved)="saved($event)"
       (cancelled)="cancelled()"
     ></country-form>
-  </mat-dialog-content>
-
-  <div mat-dialog-actions>
-    <div mat-dialog-actions>
-      <a-mat-cancel [form]="form"></a-mat-cancel>
-      <a-mat-save [form]="form"></a-mat-save>
-    </div>
-  </div>
-</a-form-container>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <a-mat-cancel [form]="form"></a-mat-cancel>
+  <a-mat-save [form]="form"></a-mat-save>
+</mat-dialog-actions>

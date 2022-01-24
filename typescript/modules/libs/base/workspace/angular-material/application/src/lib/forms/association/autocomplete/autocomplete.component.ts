@@ -50,8 +50,8 @@ export class AllorsMaterialAssociationAutoCompleteComponent extends AssociationF
 
   private focused = false;
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 
   public ngOnInit(): void {

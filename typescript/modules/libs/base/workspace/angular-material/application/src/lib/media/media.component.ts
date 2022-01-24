@@ -27,7 +27,7 @@ export class AllorsMaterialMediaComponent extends AllorsComponent {
   @Output() public delete: EventEmitter<IObject> = new EventEmitter();
 
   constructor(
-    @Optional() parentForm: NgForm,
+    @Optional() form: NgForm,
     private dialog: MatDialog,
     private mediaService: MediaService
   ) {

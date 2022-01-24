@@ -53,7 +53,7 @@ export class SalesOrderOverviewComponent implements AfterViewInit, OnDestroy {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
   }
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
 

@@ -51,7 +51,7 @@ export class PersonOverviewComponent implements AfterViewInit, OnDestroy {
     titleService.setTitle(this.title);
   }
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: p } = m;
 

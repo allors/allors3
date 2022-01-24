@@ -16,8 +16,8 @@ export class AllorsMaterialRadioGroupComponent extends RoleField {
   @Input()
   public options: RadioGroupOption[];
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 
   get keys(): string[] {

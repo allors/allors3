@@ -7,7 +7,7 @@ import { RoleField } from '@allors/base/workspace/angular/foundation';
   templateUrl: './checkbox.component.html',
 })
 export class AllorsMaterialCheckboxComponent extends RoleField {
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 }
