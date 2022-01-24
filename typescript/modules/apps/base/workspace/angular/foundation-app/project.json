@@ -1,0 +1,93 @@
+{
+  "projectType": "application",
+  "root": "apps/base/workspace/angular/foundation-app",
+  "sourceRoot": "apps/base/workspace/angular/foundation-app/src",
+  "prefix": "allors",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/base/workspace/angular/foundation-app",
+        "index": "apps/base/workspace/angular/foundation-app/src/index.html",
+        "main": "apps/base/workspace/angular/foundation-app/src/main.ts",
+        "polyfills": "apps/base/workspace/angular/foundation-app/src/polyfills.ts",
+        "tsConfig": "apps/base/workspace/angular/foundation-app/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": ["apps/base/workspace/angular/foundation-app/src/favicon.ico", "apps/base/workspace/angular/foundation-app/src/assets"],
+        "styles": ["apps/base/workspace/angular/foundation-app/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/base/workspace/angular/foundation-app/src/environments/environment.ts",
+              "with": "apps/base/workspace/angular/foundation-app/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "base-workspace-angular-foundation-app:build:production",
+          "proxyConfig": "apps/base/workspace/angular/foundation-app/proxy.conf.json"
+        },
+        "development": {
+          "browserTarget": "base-workspace-angular-foundation-app:build:development",
+          "proxyConfig": "apps/base/workspace/angular/foundation-app/proxy.conf.json"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "base-workspace-angular-foundation-app:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/base/workspace/angular/foundation-app/src/**/*.ts",
+          "apps/base/workspace/angular/foundation-app/src/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/base/workspace/angular/foundation-app"],
+      "options": {
+        "jestConfig": "apps/base/workspace/angular/foundation-app/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

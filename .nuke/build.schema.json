@@ -172,10 +172,11 @@
               "TypescriptE2EAngularAppsIntranetTest",
               "TypescriptE2EAngularBaseTest",
               "TypescriptInstall",
-              "TypescriptWorkspaceAdaptersJsonSystem",
+              "TypescriptSystemWorkspaceAdapters",
+              "TypescriptSystemWorkspaceAdaptersJson",
+              "TypescriptSystemWorkspaceMeta",
+              "TypescriptSystemWorkspaceMetaJson",
               "TypescriptWorkspaceAdaptersJsonTest",
-              "TypescriptWorkspaceAdaptersSystem",
-              "TypescriptWorkspaceMetaJsonSystem",
               "TypescriptWorkspaceTest"
             ]
           }
@@ -276,10 +277,11 @@
               "TypescriptE2EAngularAppsIntranetTest",
               "TypescriptE2EAngularBaseTest",
               "TypescriptInstall",
-              "TypescriptWorkspaceAdaptersJsonSystem",
+              "TypescriptSystemWorkspaceAdapters",
+              "TypescriptSystemWorkspaceAdaptersJson",
+              "TypescriptSystemWorkspaceMeta",
+              "TypescriptSystemWorkspaceMetaJson",
               "TypescriptWorkspaceAdaptersJsonTest",
-              "TypescriptWorkspaceAdaptersSystem",
-              "TypescriptWorkspaceMetaJsonSystem",
               "TypescriptWorkspaceTest"
             ]
           }

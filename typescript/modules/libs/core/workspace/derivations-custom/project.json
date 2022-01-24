@@ -1,0 +1,23 @@
+{
+  "root": "libs/core/workspace/derivations-custom",
+  "sourceRoot": "libs/core/workspace/derivations-custom/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/core/workspace/derivations-custom/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/core/workspace/derivations-custom"],
+      "options": {
+        "jestConfig": "libs/core/workspace/derivations-custom/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

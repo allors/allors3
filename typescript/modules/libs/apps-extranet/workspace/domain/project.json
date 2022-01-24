@@ -1,0 +1,23 @@
+{
+  "root": "libs/apps-extranet/workspace/domain",
+  "sourceRoot": "libs/apps-extranet/workspace/domain/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/apps-extranet/workspace/domain/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/apps-extranet/workspace/domain"],
+      "options": {
+        "jestConfig": "libs/apps-extranet/workspace/domain/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

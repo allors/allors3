@@ -1,0 +1,23 @@
+{
+  "root": "libs/system/workspace/adapters",
+  "sourceRoot": "libs/system/workspace/adapters/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/system/workspace/adapters/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/system/workspace/adapters"],
+      "options": {
+        "jestConfig": "libs/system/workspace/adapters/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,25 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    // "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@allors/default/workspace/domain": ["libs/workspace/domain/base/src/index.ts"],
+      "@allors/system/workspace/domain": ["libs/system/workspace/domain/src/index.ts"],
+      "@allors/default/workspace/meta": ["libs/workspace/meta/base/src/index.ts"],
+      "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"]
+    }
+  }
+}

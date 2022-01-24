@@ -29,9 +29,9 @@ namespace Allors.Meta.Generation.Storage
                 { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
                 { "../Core/Workspace/CSharp/Templates/uml.cs.stg", "Workspace/CSharp/Domain.Diagrams/generated" },
 
-                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/workspace/meta/base/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/workspace/meta/json/base/src/lib/generated" },
-                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/workspace/domain/base/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/base/workspace/meta/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/base/workspace/meta-json/src/lib/generated" },
+                { "../../typescript/modules/templates/workspace.domain.ts.stg", "../../typescript/modules/libs/base/workspace/domain/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

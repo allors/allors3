@@ -1,0 +1,40 @@
+{
+  "extends": "../../../../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    // "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      // System
+      "@allors/system/common/protocol-json": ["libs/system/common/protocol-json/src/index.ts"],
+      "@allors/system/workspace/adapters-json": ["libs/system/workspace/adapters-json/src/index.ts"],
+      "@allors/system/workspace/adapters": ["libs/system/workspace/adapters/src/index.ts"],
+      "@allors/system/workspace/domain": ["libs/system/workspace/domain/src/index.ts"],
+      "@allors/system/workspace/meta-json": ["libs/system/workspace/meta-json/src/index.ts"],
+      "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"],
+      // Base
+      "@allors/base/workspace/angular/foundation": ["libs/base/workspace/angular/foundation/src/index.ts"],
+      // Default
+      "@allors/default/workspace/domain": ["libs/base/workspace/domain/src/index.ts"],
+      "@allors/default/workspace/derivations": ["libs/base/workspace/derivations/src/index.ts"],
+      "@allors/default/workspace/meta": ["libs/base/workspace/meta/src/index.ts"],
+      "@allors/default/workspace/meta-json": ["libs/base/workspace/meta/json/src/index.ts"]
+    },
+    "angularCompilerOptions": {
+      "strictInjectionParameters": true,
+      "strictInputAccessModifiers": true,
+      "strictTemplates": true
+    }
+  }
+}

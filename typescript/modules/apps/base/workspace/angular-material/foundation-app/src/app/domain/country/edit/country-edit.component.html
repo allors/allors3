@@ -1,0 +1,18 @@
+<a-form-container>
+  <h3 mat-dialog-title>TODO</h3>
+
+  <mat-dialog-content>
+    <country-form
+      #form
+      (saved)="saved($event)"
+      (cancelled)="cancelled()"
+    ></country-form>
+  </mat-dialog-content>
+
+  <div mat-dialog-actions>
+    <div mat-dialog-actions>
+      <a-mat-cancel [form]="form"></a-mat-cancel>
+      <a-mat-save [form]="form"></a-mat-save>
+    </div>
+  </div>
+</a-form-container>
