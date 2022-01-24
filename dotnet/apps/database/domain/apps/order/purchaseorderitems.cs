@@ -3,6 +3,9 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Collections.Generic;
+using Allors.Database.Meta;
+
 namespace Allors.Database.Domain
 {
     public partial class PurchaseOrderItems
@@ -27,22 +30,29 @@ namespace Allors.Database.Domain
             var cancel = this.Meta.Cancel;
             var reject = this.Meta.Reject;
             var quickReceive = this.Meta.QuickReceive;
+            var @return = this.Meta.Return;
             var reopen = this.Meta.Reopen;
             var delete = this.Meta.Delete;
 
-            config.Deny(this.ObjectType, created, reopen);
-            config.Deny(this.ObjectType, onHold, quickReceive, delete, reopen);
-            config.Deny(this.ObjectType, awaitingApproval, cancel, reject, quickReceive, delete, reopen);
+            config.Deny(this.ObjectType, created, quickReceive, reopen, @return);
+            config.Deny(this.ObjectType, onHold, quickReceive, delete, reopen, @return);
+            config.Deny(this.ObjectType, awaitingApproval, cancel, reject, quickReceive, delete, reopen, @return);
             config.Deny(this.ObjectType, inProcess, cancel, reject, delete, quickReceive, delete, reopen);
             config.Deny(this.ObjectType, completed, cancel, reject, delete);
-            config.Deny(this.ObjectType, cancelled, cancel, reject);
-            config.Deny(this.ObjectType, rejected, cancel, reject);
+            config.Deny(this.ObjectType, cancelled, cancel, reject, quickReceive, @return);
+            config.Deny(this.ObjectType, rejected, cancel, reject, quickReceive, @return);
 
             config.Deny(this.ObjectType, inProcess, Operations.Write);
             config.Deny(this.ObjectType, cancelled, Operations.Write);
             config.Deny(this.ObjectType, rejected, Operations.Write);
-            config.Deny(this.ObjectType, completed, Operations.Execute, Operations.Write);
-            config.Deny(this.ObjectType, finished, Operations.Execute, Operations.Write);
+
+            var except = new HashSet<IOperandType>
+            {
+                this.Meta.Return,
+            };
+
+            config.DenyExcept(this.ObjectType, completed, except, Operations.Execute, Operations.Write);
+            config.DenyExcept(this.ObjectType, finished, except, Operations.Execute, Operations.Write);
 
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);

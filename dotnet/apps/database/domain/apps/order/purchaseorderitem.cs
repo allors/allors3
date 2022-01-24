@@ -168,17 +168,62 @@ namespace Allors.Database.Domain
                     shipmentItem.SerialisedItem = serialisedItem;
                 }
 
-                if (shipment.ShipToParty is InternalOrganisation internalOrganisation)
+                if (shipment.ShipToParty is InternalOrganisation internalOrganisation && internalOrganisation.IsAutomaticallyReceived)
                 {
-                    if (internalOrganisation.IsAutomaticallyReceived)
-                    {
-                        shipment.Receive();
-                    }
+                    shipment.Receive();
                 }
             }
             else
             {
                 this.QuantityReceived = 1;
+            }
+
+            method.StopPropagation = true;
+        }
+
+        public void AppsReturn(PurchaseOrderReturn method)
+        {
+            if (this.PurchaseOrderItemShipmentState.IsReceived || this.PurchaseOrderItemShipmentState.IsPartiallyReceived)
+            {
+                var order = this.PurchaseOrderWherePurchaseOrderItem;
+                var store = order.OrderedBy.StoresWhereInternalOrganisation.FirstOrDefault();
+                var address = order.TakenViaSupplier.ShippingAddress ?? order.TakenViaSupplier.GeneralCorrespondence as PostalAddress;
+
+                var purchaseReturn = order.OrderedBy.AppsGetPendingOutgoingShipmentForStore(address, store, order.OrderedBy.DefaultShipmentMethod);
+
+                if (purchaseReturn == null)
+                {
+                    purchaseReturn = new PurchaseReturnBuilder(this.Strategy.Transaction)
+                        .WithShipFromParty(order.OrderedBy)
+                        .WithShipFromAddress(order.DerivedShipToAddress)
+                        .WithShipToAddress(order.TakenViaSupplier.ShippingAddress)
+                        .WithShipToParty(order.TakenViaSupplier)
+                        .WithStore(store)
+                        .WithShipmentMethod(order.OrderedBy.DefaultShipmentMethod)
+                        .Build();
+
+                    if (store?.AutoGenerateShipmentPackage == true)
+                    {
+                        purchaseReturn.AddShipmentPackage(new ShipmentPackageBuilder(this.Strategy.Transaction).Build());
+                    }
+                }
+
+                var shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
+                    .WithPart(this.Part)
+                    .WithSerialisedItem(this.SerialisedItem)
+                    .WithQuantity(this.QuantityReceived)
+                    .WithContentsDescription($"{this.QuantityReceived} * {this.Part.Name}")
+                    .Build();
+
+                purchaseReturn.AddShipmentItem(shipmentItem);
+
+                new OrderShipmentBuilder(this.Strategy.Transaction)
+                    .WithOrderItem(this)
+                    .WithShipmentItem(shipmentItem)
+                    .WithQuantity(this.QuantityReceived)
+                    .Build();
+
+                this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Strategy.Transaction).Returned;
             }
 
             method.StopPropagation = true;

@@ -447,5 +447,11 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public void QuickReceive() { }
+
+        #region Allors
+        [Id("4603bd17-347d-46b5-9142-959e282b8e3c")]
+        #endregion
+        [Workspace(Default)]
+        public void Return() { }
     }
 }

@@ -244,7 +244,7 @@ namespace Allors.Database.Domain
                 {
                     foreach (var address in addresses)
                     {
-                        var pendingShipment = address.Value.AppsGetPendingCustomerShipmentForStore(address.Key, this.Store, this.DerivedShipmentMethod);
+                        var pendingShipment = address.Value.AppsGetPendingOutgoingShipmentForStore(address.Key, this.Store, this.DerivedShipmentMethod);
 
                         if (pendingShipment == null)
                         {

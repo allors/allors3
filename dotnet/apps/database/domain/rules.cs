@@ -258,6 +258,7 @@ namespace Allors.Database.Domain
                 new PurchaseOrderItemDeniedPermissionRule(m),
                 new PurchaseOrderItemDisplayNameRule(m),
                 new PurchaseOrderItemIsReceivableRule(m),
+                new PurchaseOrderItemQuantityReturnedRule(m),
                 new PurchaseOrderItemRule(m),
                 new PurchaseOrderItemStateRule(m),
                 new PurchaseOrderPriceRule(m),

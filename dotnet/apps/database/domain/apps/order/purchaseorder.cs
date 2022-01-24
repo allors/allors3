@@ -345,6 +345,53 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
+        public void AppsReturn(PurchaseOrderReturn method)
+        {
+            if (this.PurchaseOrderShipmentState.IsReceived || this.PurchaseOrderShipmentState.IsPartiallyReceived)
+            {
+                var store = this.OrderedBy.StoresWhereInternalOrganisation.FirstOrDefault();
+
+                var purchaseReturn = new PurchaseReturnBuilder(this.Strategy.Transaction)
+                    .WithShipFromParty(this.OrderedBy)
+                    .WithShipFromAddress(this.DerivedShipToAddress)
+                    .WithShipToAddress(this.TakenViaSupplier.ShippingAddress ?? this.TakenViaSupplier.GeneralCorrespondence as PostalAddress)
+                    .WithShipToParty(this.TakenViaSupplier)
+                    .WithStore(store)
+                    .WithShipmentMethod(this.OrderedBy.DefaultShipmentMethod)
+                    .Build();
+
+                if (store?.AutoGenerateShipmentPackage == true)
+                {
+                    purchaseReturn.AddShipmentPackage(new ShipmentPackageBuilder(this.Strategy.Transaction).Build());
+                }
+
+                foreach (PurchaseOrderItem orderItem in this.ValidOrderItems)
+                {
+                    if (orderItem.ExistPart)
+                    {
+                        var shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
+                            .WithPart(orderItem.Part)
+                            .WithSerialisedItem(orderItem.SerialisedItem)
+                            .WithQuantity(orderItem.QuantityReceived)
+                            .WithContentsDescription($"{orderItem.QuantityReceived} * {orderItem.Part.Name}")
+                            .Build();
+
+                        purchaseReturn.AddShipmentItem(shipmentItem);
+
+                        new OrderShipmentBuilder(this.Strategy.Transaction)
+                            .WithOrderItem(orderItem)
+                            .WithShipmentItem(shipmentItem)
+                            .WithQuantity(orderItem.QuantityReceived)
+                            .Build();
+                    }
+                }
+
+                this.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Strategy.Transaction).Returned;
+            }
+
+            method.StopPropagation = true;
+        }
+
         public void AppsInvoice(PurchaseOrderInvoice method)
         {
             if (this.CanInvoice)

@@ -39,17 +39,17 @@ namespace Allors.Database.Domain
             var send = this.Meta.Send;
             var revise = this.Meta.Revise;
             var quickReceive = this.Meta.QuickReceive;
+            var @return = this.Meta.Return;
             var invoice = this.Meta.Invoice;
 
-            config.Deny(this.ObjectType, created, approve, cancel, reject, @continue, reopen, send, quickReceive, invoice, revise);
-            config.Deny(this.ObjectType, onHold, approve, hold, setReadyForProcessing, reopen, send, quickReceive, invoice, revise);
-            config.Deny(this.ObjectType, cancelled, approve, reject, hold, @continue, setReadyForProcessing, cancel, send, quickReceive, invoice, revise);
-            config.Deny(this.ObjectType, rejected, approve, reject, hold, @continue, setReadyForProcessing, cancel, send, quickReceive, invoice, revise);
-            config.Deny(this.ObjectType, awaitingApprovalLevel1, hold, @continue, setReadyForProcessing, cancel, reopen, send, quickReceive, @continue, revise);
-            config.Deny(this.ObjectType, awaitingApprovalLevel2, hold, @continue, setReadyForProcessing, cancel, reopen, send, quickReceive, @continue, revise);
-            config.Deny(this.ObjectType, inProcess, approve, reject, @continue, setReadyForProcessing, quickReceive);
-            config.Deny(this.ObjectType, inProcess, approve, reject, hold, @continue, setReadyForProcessing, reopen);
-            config.Deny(this.ObjectType, sent, approve, reject, hold, @continue, setReadyForProcessing, reopen, send);
+            config.Deny(this.ObjectType, created, approve, cancel, reject, @continue, reopen, send, quickReceive, invoice, revise, @return);
+            config.Deny(this.ObjectType, onHold, approve, hold, setReadyForProcessing, reopen, send, quickReceive, invoice, revise, @return);
+            config.Deny(this.ObjectType, cancelled, approve, reject, hold, @continue, setReadyForProcessing, cancel, send, quickReceive, invoice, revise, @return);
+            config.Deny(this.ObjectType, rejected, approve, reject, hold, @continue, setReadyForProcessing, cancel, send, quickReceive, invoice, revise, @return);
+            config.Deny(this.ObjectType, awaitingApprovalLevel1, hold, @continue, setReadyForProcessing, cancel, reopen, send, quickReceive, @continue, revise, @return);
+            config.Deny(this.ObjectType, awaitingApprovalLevel2, hold, @continue, setReadyForProcessing, cancel, reopen, send, quickReceive, @continue, revise, @return);
+            config.Deny(this.ObjectType, inProcess, approve, reject, hold, @continue, setReadyForProcessing, reopen, quickReceive, @return);
+            config.Deny(this.ObjectType, sent, approve, reject, hold, @continue, setReadyForProcessing, reopen, send, @return);
             config.Deny(this.ObjectType, completed, approve, reject, hold, @continue, setReadyForProcessing, cancel, reopen, send, quickReceive);
 
             var except = new HashSet<IOperandType>
@@ -61,8 +61,16 @@ namespace Allors.Database.Domain
             config.DenyExcept(this.ObjectType, inProcess, except, Operations.Write);
             config.DenyExcept(this.ObjectType, cancelled, except, Operations.Write);
             config.DenyExcept(this.ObjectType, rejected, except, Operations.Write);
-            config.DenyExcept(this.ObjectType, completed, except, Operations.Write);
-            config.DenyExcept(this.ObjectType, finished, except, Operations.Execute, Operations.Write);
+
+            var exceptCompleted = new HashSet<IOperandType>
+            {
+                this.Meta.ElectronicDocuments,
+                this.Meta.Print,
+                this.Meta.Return,
+            };
+
+            config.DenyExcept(this.ObjectType, completed, exceptCompleted, Operations.Write);
+            config.DenyExcept(this.ObjectType, finished, exceptCompleted, Operations.Execute, Operations.Write);
 
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);

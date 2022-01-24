@@ -137,6 +137,13 @@ namespace Allors.Repository
         public decimal QuantityReceived { get; set; }
 
         #region Allors
+        [Id("4983578c-757e-43f4-9e3a-237e8f8b1ea0")]
+        #endregion
+        [Precision(19)]
+        [Scale(2)]
+        public decimal QuantityReturned { get; set; }
+
+        #region Allors
         [Id("E366DDED-1EB3-4864-B000-B3FA5BC40023")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

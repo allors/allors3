@@ -248,6 +248,16 @@ namespace Allors.Repository
         public decimal QuantityReceived { get; set; }
 
         #region Allors
+        [Id("a0b95172-c7c9-4dfe-ab7b-9e7fe6a743ee")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace(Default)]
+        public decimal QuantityReturned { get; set; }
+
+        #region Allors
         [Id("e2dc0027-220b-4935-bc5a-cb2e2b6be248")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -323,5 +333,11 @@ namespace Allors.Repository
         [Workspace(Default)]
         #endregion
         public void QuickReceive() { }
+
+        #region Allors
+        [Id("59b520d6-efeb-4ea5-b48e-33b32dc901d8")]
+        #endregion
+        [Workspace(Default)]
+        public void Return() { }
     }
 }

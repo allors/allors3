@@ -37,11 +37,11 @@ namespace Allors.Database.Domain
                                                              && (!relationship.ExistThroughDate || relationship.ThroughDate >= date));
         }
 
-        public static CustomerShipment AppsGetPendingCustomerShipmentForStore(this Party @this, PostalAddress address, Store store, ShipmentMethod shipmentMethod)
+        public static Shipment AppsGetPendingOutgoingShipmentForStore(this Party @this, PostalAddress? address, Store store, ShipmentMethod shipmentMethod)
         {
             var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
 
-            var shipments = @this.ShipmentsWhereShipToParty.OfType<CustomerShipment>();
+            var shipments = @this.ShipmentsWhereShipToParty;
             if (address != null)
             {
                 shipments = shipments.Where(v => Equals(address, v.ShipToAddress));
