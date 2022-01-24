@@ -54,9 +54,10 @@ export abstract class AllorsRelationObjectAssociationPanelComponent<
 
   protected onRelationObjectType() {
     // TODO: add to configure
-    this.panel.name = this.objectType?.singularName;
-    this.panel.title = this.objectType?.pluralName;
-    this.panel.icon = this.objectType?.singularName.toLocaleLowerCase();
+    this.panel.name = this.associationRoleType?.singularName;
+    this.panel.title = this.associationRoleType?.pluralName;
+    this.panel.icon =
+      this.associationRoleType?.singularName.toLocaleLowerCase();
     this.panel.expandable = true;
   }
 }

@@ -85,7 +85,7 @@ export class EmployerComponent
       autoFilter: true,
     });
 
-    const pullName = `${this.panel.name}_${this.m.Employment.tag}`;
+    const pullName = `${this.panel.name}_${this.m.Employment.tag}_employer`;
 
     this.panel.onPull = (pulls) => {
       const m = this.m;

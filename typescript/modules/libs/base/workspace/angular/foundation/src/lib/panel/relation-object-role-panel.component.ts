@@ -54,9 +54,9 @@ export abstract class AllorsRelationObjectRolePanelComponent<
 
   protected onRelationObjectType() {
     // TODO: add to configure
-    this.panel.name = this.objectType?.singularName;
-    this.panel.title = this.objectType?.pluralName;
-    this.panel.icon = this.objectType?.singularName.toLocaleLowerCase();
+    this.panel.name = this.roleRoleType?.singularName;
+    this.panel.title = this.roleRoleType?.pluralName;
+    this.panel.icon = this.roleRoleType?.singularName.toLocaleLowerCase();
     this.panel.expandable = true;
   }
 }
