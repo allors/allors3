@@ -26,6 +26,11 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SupplierRelationship>())
             {
                 @this.Parties = new Party[] { @this.Supplier, @this.InternalOrganisation };
+
+                if (@this.ExistSupplier)
+                {
+                    @this.Supplier.DerivationTrigger = Guid.NewGuid();
+                }
             }
         }
     }

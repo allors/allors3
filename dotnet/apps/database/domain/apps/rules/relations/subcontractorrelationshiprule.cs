@@ -26,6 +26,11 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SubContractorRelationship>())
             {
                 @this.Parties = new[] { @this.Contractor, @this.SubContractor };
+
+                if (@this.ExistSubContractor)
+                {
+                    @this.SubContractor.DerivationTrigger = Guid.NewGuid();
+                }
             }
         }
     }

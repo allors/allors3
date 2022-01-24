@@ -26,6 +26,11 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<OrganisationContactRelationship>())
             {
                 @this.Parties = new Party[] { @this.Contact, @this.Organisation };
+
+                if (@this.ExistContact)
+                {
+                    @this.Contact.DerivationTrigger = Guid.NewGuid();
+                }
             }
         }
     }
