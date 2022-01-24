@@ -4,10 +4,12 @@ import { IObject } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   angularDisplayName,
+} from '@allors/base/workspace/angular/foundation';
+import {
   angularIcon,
   CreateService,
   OnCreate,
-} from '@allors/base/workspace/angular/foundation';
+} from '@allors/base/workspace/angular/application';
 import { CreateDialogData } from '../create/create.dialog.data';
 
 @Component({

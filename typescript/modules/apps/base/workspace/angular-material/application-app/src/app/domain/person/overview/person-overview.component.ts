@@ -4,13 +4,13 @@ import { Component, Self, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Person } from '@allors/default/workspace/domain';
+import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsOverviewComponent,
   NavigationActivatedRoute,
   NavigationService,
   PanelManagerService,
-  RefreshService,
-} from '@allors/base/workspace/angular/foundation';
+} from '@allors/base/workspace/angular/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({

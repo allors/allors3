@@ -7,10 +7,10 @@ import { M } from '@allors/default/workspace/meta';
 import { Locale, Person, Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  NavigationService,
   RefreshService,
   SaveService,
 } from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import { CreateDialogData } from '@allors/base/workspace/angular-material/application';
 
 @Component({

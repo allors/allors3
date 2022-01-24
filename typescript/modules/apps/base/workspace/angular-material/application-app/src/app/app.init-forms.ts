@@ -1,6 +1,6 @@
 import { M } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
-import { angularForms } from '@allors/base/workspace/angular/foundation';
+import { angularForms } from '@allors/base/workspace/angular/application';
 import { CountryFormComponent } from './domain/country/forms/country-form.component';
 
 function forms(composite: Composite, both: unknown);

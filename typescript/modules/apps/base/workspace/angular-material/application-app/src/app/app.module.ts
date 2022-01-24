@@ -57,19 +57,22 @@ import {
   MediaServiceCore,
   AllorsBarcodeServiceCore,
   AllorsFocusServiceCore,
-  NavigationServiceCore,
   RefreshServiceCore,
   AuthenticationService,
   DateService,
   AllorsFocusService,
   RefreshService,
   AllorsBarcodeService,
-  NavigationService,
   MediaService,
   AllorsFormContainerComponent,
+} from '@allors/base/workspace/angular/foundation';
+
+import {
   CreateService,
   EditService,
-} from '@allors/base/workspace/angular/foundation';
+  NavigationServiceCore,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 
 import {
   AllorsMaterialDialogService,

@@ -1,32 +1,25 @@
-import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  Injector,
-} from '@angular/core';
+import { Component, Self, OnDestroy, Injector, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
+import { M } from '@allors/default/workspace/meta';
+import { Person, Employment } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,
-  PanelManagerService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
+import { PanelManagerService } from '@allors/base/workspace/angular/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { Person, Employment } from '@allors/default/workspace/domain';
-
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './person-overview.component.html',
   providers: [PanelManagerService, ContextService],
 })
-export class PersonOverviewComponent implements AfterViewInit, OnDestroy {
+export class PersonOverviewComponent implements OnInit, OnDestroy {
   title = 'Person';
 
   person: Person;

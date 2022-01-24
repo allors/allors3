@@ -2,8 +2,10 @@ import { HostBinding, Directive } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Composite } from '@allors/system/workspace/meta';
 import { M } from '@allors/default/workspace/meta';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { AllorsComponent } from '../component';
+import {
+  AllorsComponent,
+  ContextService,
+} from '@allors/base/workspace/angular/foundation';
 
 @Directive()
 export abstract class AllorsListComponent extends AllorsComponent {

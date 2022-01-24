@@ -1,22 +1,25 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
+
 import { Person } from '@allors/default/workspace/domain';
 import {
-  Action,
-  AllorsListComponent,
+  ContextService,
   angularFilterFromDefinition,
   Filter,
   FilterField,
   MediaService,
-  NavigationService,
-  CreateService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+import {
+  Action,
+  AllorsListComponent,
+  CreateService,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 import {
   angularSorter,
   CreateDialogData,

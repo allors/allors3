@@ -9,20 +9,21 @@ import {
 } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsObjectDetailPanelComponent,
-  NavigationService,
-  PanelService,
   RefreshService,
   SaveService,
 } from '@allors/base/workspace/angular/foundation';
-
+import {
+  AllorsPanelDetailComponent,
+  NavigationService,
+  PanelService,
+} from '@allors/base/workspace/angular/application';
 @Component({
   selector: 'person-detail',
   templateUrl: './person-detail.component.html',
   providers: [PanelService, ContextService],
 })
 export class PersonDetailComponent
-  extends AllorsObjectDetailPanelComponent<Person>
+  extends AllorsPanelDetailComponent<Person>
   implements OnInit, OnDestroy
 {
   emailAddresses: string[] = [];

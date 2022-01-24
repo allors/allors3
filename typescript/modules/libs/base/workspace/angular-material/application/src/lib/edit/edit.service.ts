@@ -1,9 +1,10 @@
+import { Observable, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, throwError } from 'rxjs';
-import { IObject } from '@allors/system/workspace/domain';
-import { EditService } from '@allors/base/workspace/angular/foundation';
+
 import { Composite } from '@allors/system/workspace/meta';
+import { IObject } from '@allors/system/workspace/domain';
+import { EditService } from '@allors/base/workspace/angular/application';
 import { EditDialogData } from './edit.dialog.data';
 
 @Injectable()

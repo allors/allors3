@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import {
-  Action,
   RefreshService,
   SaveService,
 } from '@allors/base/workspace/angular/foundation';
+import { Action } from '@allors/base/workspace/angular/application';
 import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
 import { DeleteAction } from './delete-action';
 

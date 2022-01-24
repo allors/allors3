@@ -6,12 +6,12 @@ import { Router, NavigationEnd } from '@angular/router';
 import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { angularDisplayName } from '@allors/base/workspace/angular/foundation';
 import {
-  angularDisplayName,
   angularIcon,
   angularList,
   angularMenu,
-} from '@allors/base/workspace/angular/foundation';
+} from '@allors/base/workspace/angular/application';
 import {
   AllorsMaterialSideNavService,
   SideMenuItem,

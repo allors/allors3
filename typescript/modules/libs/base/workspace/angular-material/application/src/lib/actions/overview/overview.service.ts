@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   Action,
   NavigationService,
-} from '@allors/base/workspace/angular/foundation';
+} from '@allors/base/workspace/angular/application';
 import { OverviewAction } from './overview-action';
 
 @Injectable({

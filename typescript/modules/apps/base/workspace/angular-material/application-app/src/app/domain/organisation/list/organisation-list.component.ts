@@ -8,16 +8,18 @@ import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  Action,
-  AllorsListComponent,
   angularFilterFromDefinition,
-  CreateService,
   Filter,
   FilterField,
   MediaService,
-  NavigationService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  Action,
+  AllorsListComponent,
+  CreateService,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 import {
   angularSorter,
   CreateDialogData,

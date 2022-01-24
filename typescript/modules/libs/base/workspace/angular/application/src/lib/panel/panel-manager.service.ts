@@ -3,12 +3,11 @@ import { Params, Router, ActivatedRoute } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Composite } from '@allors/system/workspace/meta';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
-
-import { PanelService } from './panel.service';
 import {
   Context,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
+import { PanelService } from './panel.service';
 
 @Injectable()
 export class PanelManagerService {

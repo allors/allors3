@@ -6,7 +6,7 @@ import { Composite } from '@allors/system/workspace/meta';
 import {
   CreateService,
   OnCreate,
-} from '@allors/base/workspace/angular/foundation';
+} from '@allors/base/workspace/angular/application';
 import { CreateDialogData } from './create.dialog.data';
 
 @Injectable()

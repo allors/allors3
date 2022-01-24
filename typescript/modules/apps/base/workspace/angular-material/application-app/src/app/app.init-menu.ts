@@ -1,5 +1,5 @@
 import { M } from '@allors/default/workspace/meta';
-import { angularMenu } from '@allors/base/workspace/angular/foundation';
+import { angularMenu } from '@allors/base/workspace/angular/application';
 
 export function initMenu(m: M) {
   // Menu

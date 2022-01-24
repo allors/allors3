@@ -5,21 +5,22 @@ import { M } from '@allors/default/workspace/meta';
 import { Organisation, Country } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsObjectDetailPanelComponent,
-  PanelService,
   RefreshService,
   SaveService,
   SearchFactory,
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
-
+import {
+  AllorsPanelDetailComponent,
+  PanelService,
+} from '@allors/base/workspace/angular/application';
 @Component({
   selector: 'organisation-detail',
   templateUrl: './organisation-detail.component.html',
   providers: [ContextService, PanelService],
 })
 export class OrganisationDetailComponent
-  extends AllorsObjectDetailPanelComponent<Organisation>
+  extends AllorsPanelDetailComponent<Organisation>
   implements OnInit, OnDestroy
 {
   override readonly m: M;

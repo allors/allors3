@@ -5,13 +5,15 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
-  NavigationService,
+  ContextService,
   RefreshService,
-  PanelManagerService,
-  NavigationActivatedRoute,
-  AllorsOverviewComponent,
 } from '@allors/base/workspace/angular/foundation';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsOverviewComponent,
+  NavigationService,
+  NavigationActivatedRoute,
+  PanelManagerService,
+} from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './organisation-overview.component.html',

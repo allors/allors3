@@ -3,11 +3,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Deletable } from '@allors/default/workspace/domain';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import {
-  Action,
-  ActionTarget,
   RefreshService,
   SaveService,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  Action,
+  ActionTarget,
+} from '@allors/base/workspace/angular/application';
 import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
 
 export class DeleteAction implements Action {

@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  AllorsComponent,
-  PanelManagerService,
-} from '@allors/base/workspace/angular/foundation';
+import { AllorsComponent } from '@allors/base/workspace/angular/foundation';
+import { PanelManagerService } from '@allors/base/workspace/angular/application';
 
 @Component({
   selector: 'a-mat-launcher',

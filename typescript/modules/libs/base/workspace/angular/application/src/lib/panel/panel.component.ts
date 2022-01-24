@@ -1,11 +1,11 @@
 import { Directive, HostBinding } from '@angular/core';
 import { M } from '@allors/default/workspace/meta';
-import { AllorsComponent } from '../component';
 import { PanelService } from './panel.service';
 import { IObject } from '@allors/system/workspace/domain';
+import { AllorsComponent } from '@allors/base/workspace/angular/foundation';
 
 @Directive()
-export abstract class AllorsObjectPanelComponent<
+export abstract class AllorsPanelComponent<
   T extends IObject
 > extends AllorsComponent {
   @HostBinding('attr.data-allors-id')

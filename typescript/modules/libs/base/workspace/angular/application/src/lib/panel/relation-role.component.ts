@@ -1,8 +1,8 @@
 import { Directive, HostBinding } from '@angular/core';
 import { IObject } from '@allors/system/workspace/domain';
 import { ObjectType, RoleType } from '@allors/system/workspace/meta';
-import { PanelService } from './panel.service';
 import { M } from '@allors/default/workspace/meta';
+import { PanelService } from './panel.service';
 
 @Directive()
 export abstract class AllorsRelationObjectRolePanelComponent<
