@@ -22,13 +22,11 @@ export * from './lib/page/page-list.component';
 export * from './lib/page/page-object.component';
 
 export * from './lib/panel/panel-detail.component';
-export * from './lib/panel/panel.component';
-export * from './lib/panel/panel-summary.component';
-export * from './lib/panel/panel.service';
 export * from './lib/panel/panel-manager.service';
-export * from './lib/panel/panel-relation.component';
-export * from './lib/panel/panel-association.component';
-export * from './lib/panel/panel-role.component';
+export * from './lib/panel/panel-relationship.component';
+export * from './lib/panel/panel-summary.component';
+export * from './lib/panel/panel.component';
+export * from './lib/panel/panel.service';
 
 export * from './lib/navigation/navigation.service';
 export * from './lib/navigation/navigation-meta.service';

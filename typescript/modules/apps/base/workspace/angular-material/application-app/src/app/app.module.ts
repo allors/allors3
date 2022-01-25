@@ -123,8 +123,6 @@ import {
 import { routes, components as routesComponents } from './app.routes';
 import { components as dialogsComponents } from './app.dialogs';
 
-import { EmployeeComponent } from './domain/employment/employee/employee.component';
-import { EmployerComponent } from './domain/employment/employer/employer.component';
 import { EmploymentComponent } from './domain/employment/employment/employment.component';
 import { OrganisationDetailComponent } from './domain/organisation/detail/organisation-detail.component';
 import { OrganisationSummaryComponent } from './domain/organisation/summary/organisation-summary.component';
@@ -180,8 +178,6 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     ...routesComponents,
     ...dialogsComponents,
     // Non routed and non dialog components
-    EmployeeComponent,
-    EmployerComponent,
     EmploymentComponent,
     OrganisationDetailComponent,
     OrganisationSummaryComponent,

@@ -1,11 +1,11 @@
 import { Directive, HostBinding } from '@angular/core';
 import { IObject } from '@allors/system/workspace/domain';
 import { ObjectType, RoleType } from '@allors/system/workspace/meta';
-import { M } from '@allors/default/workspace/meta';
 import { PanelService } from './panel.service';
+import { M } from '@allors/default/workspace/meta';
 
 @Directive()
-export abstract class AllorsPanelRoleComponent<T extends IObject> {
+export abstract class AllorsPanelRelationshipComponent<T extends IObject> {
   @HostBinding('attr.data-allors-kind')
   dataAllorsKind = 'panel-relation-object';
 
@@ -52,9 +52,9 @@ export abstract class AllorsPanelRoleComponent<T extends IObject> {
 
   protected onRelationObjectType() {
     // TODO: add to configure
-    this.panel.name = this.roleRoleType?.singularName;
-    this.panel.title = this.roleRoleType?.pluralName;
-    this.panel.icon = this.roleRoleType?.singularName.toLocaleLowerCase();
+    this.panel.name = this.objectType?.singularName;
+    this.panel.title = this.objectType?.pluralName;
+    this.panel.icon = this.objectType?.singularName.toLocaleLowerCase();
     this.panel.expandable = true;
   }
 }

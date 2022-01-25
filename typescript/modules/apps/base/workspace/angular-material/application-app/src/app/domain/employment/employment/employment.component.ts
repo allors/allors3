@@ -10,7 +10,7 @@ import {
   Action,
   NavigationService,
   PanelService,
-  AllorsPanelRelationComponent,
+  AllorsPanelRelationshipComponent,
   CreateData,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -34,7 +34,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class EmploymentComponent
-  extends AllorsPanelRelationComponent<Organisation | Person>
+  extends AllorsPanelRelationshipComponent<Organisation | Person>
   implements OnInit
 {
   @HostBinding('class.expanded-panel')
