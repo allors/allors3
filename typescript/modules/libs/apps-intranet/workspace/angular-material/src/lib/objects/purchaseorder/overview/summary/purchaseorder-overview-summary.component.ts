@@ -12,7 +12,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -38,7 +38,7 @@ export class PurchaseOrderOverviewSummaryComponent {
 
     public navigation: NavigationService,
     public printService: PrintService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
 
     public refreshService: RefreshService,
     public snackBar: MatSnackBar
@@ -108,7 +108,7 @@ export class PurchaseOrderOverviewSummaryComponent {
     this.panel.manager.context.invoke(this.order.Approve).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully approved.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public cancel(): void {
@@ -117,14 +117,14 @@ export class PurchaseOrderOverviewSummaryComponent {
       this.snackBar.open('Successfully cancelled.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public reject(): void {
     this.panel.manager.context.invoke(this.order.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public hold(): void {
@@ -133,7 +133,7 @@ export class PurchaseOrderOverviewSummaryComponent {
       this.snackBar.open('Successfully put on hold.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public continue(): void {
@@ -142,7 +142,7 @@ export class PurchaseOrderOverviewSummaryComponent {
       this.snackBar.open('Successfully removed from hold.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public setReadyForProcessing(): void {
@@ -153,28 +153,28 @@ export class PurchaseOrderOverviewSummaryComponent {
         this.snackBar.open('Successfully set ready for processing.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public reopen(): void {
     this.panel.manager.context.invoke(this.order.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public revise(): void {
     this.panel.manager.context.invoke(this.order.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully revised.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public send(): void {
     this.panel.manager.context.invoke(this.order.Send).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully send.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public invoice(): void {
@@ -183,7 +183,7 @@ export class PurchaseOrderOverviewSummaryComponent {
       this.snackBar.open('Successfully created purchase invoice', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public quickReceive(): void {
@@ -193,6 +193,6 @@ export class PurchaseOrderOverviewSummaryComponent {
         duration: 5000,
       });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

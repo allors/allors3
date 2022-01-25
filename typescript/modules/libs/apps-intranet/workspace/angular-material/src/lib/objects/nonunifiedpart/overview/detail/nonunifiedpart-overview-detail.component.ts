@@ -24,7 +24,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -73,7 +73,7 @@ export class NonUnifiedPartOverviewDetailComponent
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
@@ -309,7 +309,7 @@ export class NonUnifiedPartOverviewDetailComponent
 
     this.allors.context.push().subscribe(() => {
       this.panel.toggle();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public update(): void {
@@ -318,7 +318,7 @@ export class NonUnifiedPartOverviewDetailComponent
     this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private onSave() {

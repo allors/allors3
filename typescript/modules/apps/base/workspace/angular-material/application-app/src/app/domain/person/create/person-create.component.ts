@@ -8,7 +8,7 @@ import { Locale, Person, Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import { CreateDialogData } from '@allors/base/workspace/angular-material/application';
@@ -37,7 +37,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -93,6 +93,6 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.person);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

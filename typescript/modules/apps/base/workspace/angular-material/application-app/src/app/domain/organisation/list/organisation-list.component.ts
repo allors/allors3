@@ -16,7 +16,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
-  AllorsListComponent,
+  AllorsPageListComponent,
   CreateService,
   NavigationService,
 } from '@allors/base/workspace/angular/application';
@@ -42,7 +42,7 @@ interface Row extends TableRow {
   providers: [ContextService],
 })
 export class OrganisationListComponent
-  extends AllorsListComponent
+  extends AllorsPageListComponent
   implements OnInit, OnDestroy
 {
   public override title = 'Organisations';

@@ -27,7 +27,7 @@ import {
   NavigationService,
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -68,7 +68,7 @@ export class NonUnifiedGoodCreateComponent implements OnInit, OnDestroy {
 
     private refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService
   ) {
     this.allors.context.name = this.constructor.name;
@@ -140,6 +140,6 @@ export class NonUnifiedGoodCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.good);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

@@ -8,7 +8,7 @@ import { NonSerialisedInventoryItem } from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -35,7 +35,7 @@ export class NonSerialisedInventoryItemEditComponent
     public dialogRef: MatDialogRef<NonSerialisedInventoryItemEditComponent>,
 
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
@@ -97,6 +97,6 @@ export class NonSerialisedInventoryItemEditComponent
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.nonSerialisedInventoryItem);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

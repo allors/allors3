@@ -11,7 +11,7 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -49,7 +49,7 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) data: CreateDialogData | EditDialogData,
     public dialogRef: MatDialogRef<EmploymentEditComponent>,
     public refreshService: RefreshService,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -142,6 +142,6 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.employment);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

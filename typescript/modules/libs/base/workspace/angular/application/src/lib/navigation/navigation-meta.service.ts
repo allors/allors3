@@ -13,7 +13,7 @@ import { NavigationService } from './navigation.service';
 @Injectable({
   providedIn: 'root',
 })
-export class NavigationServiceCore extends NavigationService {
+export class NavigationMetaService extends NavigationService {
   constructor(
     private router: Router,
     private workspaceService: WorkspaceService

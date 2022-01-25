@@ -45,33 +45,32 @@ import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 
 import {
-  SaveService,
+  ErrorService,
   DateConfig,
   MediaConfig,
   AuthenticationConfig,
   AuthenticationInterceptor,
   AllorsFocusDirective,
   AllorsBarcodeDirective,
-  AuthenticationServiceBase,
-  DateServiceCore,
-  MediaServiceCore,
-  AllorsBarcodeServiceCore,
-  AllorsFocusServiceCore,
-  RefreshServiceCore,
+  AuthenticationSessionStoreService,
+  DateStaticService,
+  AllorsBarcodeKeypressService,
+  AllorsFocusBehaviorSubjectService,
+  RefreshBehaviorService,
   AuthenticationService,
   DateService,
   AllorsFocusService,
   RefreshService,
   AllorsBarcodeService,
   MediaService,
-  AllorsFormContainerComponent,
+  MediaLocalService,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
   CreateService,
   EditService,
-  NavigationServiceCore,
   NavigationService,
+  NavigationMetaService,
 } from '@allors/base/workspace/angular/application';
 
 import {
@@ -117,7 +116,7 @@ import {
   DynamicEditComponent,
   DynamicFormHostDirective,
   AllorsMaterialDialogServiceCore,
-  SaveServiceCore,
+  ErrorServiceCore,
   AllorsMaterialSideNavServiceCore,
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
@@ -142,7 +141,6 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     // Allors Angular Base
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    AllorsFormContainerComponent,
     // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
@@ -237,7 +235,10 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
   ],
   providers: [
     WorkspaceService,
-    { provide: AuthenticationService, useClass: AuthenticationServiceBase },
+    {
+      provide: AuthenticationService,
+      useClass: AuthenticationSessionStoreService,
+    },
     {
       provide: AuthenticationConfig,
       useValue: {
@@ -249,19 +250,22 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
       useClass: AuthenticationInterceptor,
       multi: true,
     },
-    { provide: AllorsBarcodeService, useClass: AllorsBarcodeServiceCore },
-    { provide: DateService, useClass: DateServiceCore },
+    { provide: AllorsBarcodeService, useClass: AllorsBarcodeKeypressService },
+    { provide: DateService, useClass: DateStaticService },
     {
       provide: DateConfig,
       useValue: {
         locale: enGB,
       },
     },
-    { provide: AllorsFocusService, useClass: AllorsFocusServiceCore },
-    { provide: MediaService, useClass: MediaServiceCore },
+    {
+      provide: AllorsFocusService,
+      useClass: AllorsFocusBehaviorSubjectService,
+    },
+    { provide: MediaService, useClass: MediaLocalService },
     { provide: MediaConfig, useValue: { url: environment.baseUrl } },
-    { provide: NavigationService, useClass: NavigationServiceCore },
-    { provide: RefreshService, useClass: RefreshServiceCore },
+    { provide: NavigationService, useClass: NavigationMetaService },
+    { provide: RefreshService, useClass: RefreshBehaviorService },
 
     // Angular Material
     {
@@ -274,7 +278,7 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
       provide: AllorsMaterialDialogService,
       useClass: AllorsMaterialDialogServiceCore,
     },
-    { provide: SaveService, useClass: SaveServiceCore },
+    { provide: ErrorService, useClass: ErrorServiceCore },
     {
       provide: AllorsMaterialSideNavService,
       useClass: AllorsMaterialSideNavServiceCore,

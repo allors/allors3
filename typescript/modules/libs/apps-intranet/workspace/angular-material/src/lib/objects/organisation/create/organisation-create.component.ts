@@ -20,7 +20,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -65,7 +65,7 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<OrganisationCreateComponent>,
 
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private route: ActivatedRoute,
     private fetcher: FetcherService,
     private singletonId: SingletonId,
@@ -195,6 +195,6 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.organisation);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

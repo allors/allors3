@@ -1,11 +1,11 @@
-import { SaveService } from '@allors/base/workspace/angular/foundation';
+import { ErrorService } from '@allors/base/workspace/angular/foundation';
 import { ResultError } from '@allors/system/workspace/domain';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AllorsMaterialErrorDialogComponent } from './error/error-dialog.component';
 
 @Injectable()
-export class SaveServiceCore extends SaveService {
+export class ErrorServiceCore extends ErrorService {
   public errorHandler: (error: any) => void;
 
   constructor(private dialog: MatDialog) {

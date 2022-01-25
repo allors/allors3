@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { Action } from '@allors/base/workspace/angular/application';
 import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
@@ -16,7 +16,7 @@ export class DeleteService {
   constructor(
     private refreshService: RefreshService,
     private dialogService: AllorsMaterialDialogService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -24,7 +24,7 @@ export class DeleteService {
     return new DeleteAction(
       this.refreshService,
       this.dialogService,
-      this.saveService,
+      this.errorService,
       this.snackBar,
       context
     );

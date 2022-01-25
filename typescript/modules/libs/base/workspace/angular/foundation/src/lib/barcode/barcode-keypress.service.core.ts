@@ -4,7 +4,7 @@ import { map, filter, scan, debounceTime, share } from 'rxjs/operators';
 import { AllorsBarcodeService } from './barcode.service';
 
 @Injectable()
-export class AllorsBarcodeServiceCore extends AllorsBarcodeService {
+export class AllorsBarcodeKeypressService extends AllorsBarcodeService {
   scan$: Observable<string>;
 
   private keypressSubject: Subject<any>;
@@ -19,7 +19,9 @@ export class AllorsBarcodeServiceCore extends AllorsBarcodeService {
 
     const scanner = this.keypressSubject.pipe(
       scan((events: KeyboardEvent[], event: KeyboardEvent) => {
-        events = [...events, event].filter((v) => event.timeStamp < v.timeStamp + 100);
+        events = [...events, event].filter(
+          (v) => event.timeStamp < v.timeStamp + 100
+        );
         return events;
       }, []),
       debounceTime(50),

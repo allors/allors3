@@ -8,7 +8,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 
 @Component({
@@ -28,7 +28,7 @@ export class WorkRequirementOverviewSummaryComponent {
     public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -70,28 +70,28 @@ export class WorkRequirementOverviewSummaryComponent {
       this.snackBar.open('Successfully cancelled.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public reopen(): void {
     this.panel.manager.context.invoke(this.requirement.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public start(): void {
     this.panel.manager.context.invoke(this.requirement.Start).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully started.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public close(): void {
     this.panel.manager.context.invoke(this.requirement.Close).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully closed.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public createWorkTask(): void {
@@ -100,6 +100,6 @@ export class WorkRequirementOverviewSummaryComponent {
       .subscribe(() => {
         this.refreshService.refresh();
         this.snackBar.open('Work order created.', 'close', { duration: 5000 });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 }

@@ -33,7 +33,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -121,7 +121,7 @@ export class SalesOrderItemEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<SalesOrderItemEditComponent>,
     public refreshService: RefreshService,
     private fetcher: FetcherService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.allors.context.name = this.constructor.name;
@@ -485,7 +485,7 @@ export class SalesOrderItemEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.orderItem);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public goodSelected(product: IObject): void {
@@ -606,7 +606,7 @@ export class SalesOrderItemEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private refreshSerialisedItems(product: Product): void {

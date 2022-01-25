@@ -4,7 +4,7 @@ import { DateConfig } from './date.config';
 import { DateService } from './date.service';
 
 @Injectable()
-export class DateServiceCore extends DateService {
+export class DateStaticService extends DateService {
   public locale: Locale;
 
   constructor(dateConfig: DateConfig) {

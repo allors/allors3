@@ -15,7 +15,7 @@ import {
 import {
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -43,7 +43,7 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: PanelService,
-    public saveService: SaveService,
+    public errorService: ErrorService,
     public refreshService: RefreshService,
     private singletonId: SingletonId,
     private fetcher: FetcherService
@@ -169,6 +169,6 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       window.history.back();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

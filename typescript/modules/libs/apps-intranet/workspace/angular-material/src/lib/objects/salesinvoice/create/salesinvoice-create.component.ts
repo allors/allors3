@@ -23,7 +23,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -118,7 +118,7 @@ export class SalesInvoiceCreateComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SalesInvoiceCreateComponent>,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public refreshService: RefreshService,
     public internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
@@ -214,7 +214,7 @@ export class SalesInvoiceCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.invoice);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public shipToCustomerAdded(party: Party): void {

@@ -15,7 +15,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -40,7 +40,7 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -200,6 +200,6 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

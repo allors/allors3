@@ -25,7 +25,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -78,7 +78,7 @@ export class PurchaseInvoiceItemEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<PurchaseInvoiceItemEditComponent>,
     private fetcher: FetcherService,
     public refreshService: RefreshService,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -287,7 +287,7 @@ export class PurchaseInvoiceItemEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.invoiceItem);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private refreshSerialisedItems(unifiedGood: UnifiedGood): void {

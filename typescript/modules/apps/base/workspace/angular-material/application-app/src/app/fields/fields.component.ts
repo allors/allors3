@@ -13,7 +13,7 @@ import {
 import { IPullResult } from '@allors/system/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { RadioGroupOption } from '@allors/base/workspace/angular-material/application';
@@ -58,7 +58,7 @@ export class FieldsComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     private titleService: Title,
     private route: ActivatedRoute,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.title = 'Form';
@@ -188,7 +188,7 @@ export class FieldsComponent implements OnInit, OnDestroy {
       console.log('+');
       this.data = null;
       this.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public goBack(): void {}

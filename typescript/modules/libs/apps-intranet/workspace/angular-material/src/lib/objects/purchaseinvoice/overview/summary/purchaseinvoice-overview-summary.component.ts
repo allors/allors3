@@ -11,7 +11,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -41,7 +41,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
 
     public navigation: NavigationService,
     public printService: PrintService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
 
     public refreshService: RefreshService,
     public snackBar: MatSnackBar
@@ -126,7 +126,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
       this.snackBar.open('Successfully confirmed.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public cancel(): void {
@@ -135,21 +135,21 @@ export class PurchasInvoiceOverviewSummaryComponent {
       this.snackBar.open('Successfully cancelled.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public reopen(): void {
     this.panel.manager.context.invoke(this.invoice.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public revise(): void {
     this.panel.manager.context.invoke(this.invoice.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public finishRevising(): void {
@@ -160,21 +160,21 @@ export class PurchasInvoiceOverviewSummaryComponent {
         this.snackBar.open('Successfully finished revising.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public approve(): void {
     this.panel.manager.context.invoke(this.invoice.Approve).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully approved.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public reject(): void {
     this.panel.manager.context.invoke(this.invoice.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public createSalesInvoice(invoice: PurchaseInvoice): void {
@@ -185,6 +185,6 @@ export class PurchasInvoiceOverviewSummaryComponent {
           duration: 5000,
         });
         this.refreshService.refresh();
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 }

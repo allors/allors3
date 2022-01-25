@@ -9,7 +9,7 @@ import {
 import { PanelManagerService } from '../panel/panel-manager.service';
 
 @Directive()
-export abstract class AllorsOverviewComponent<
+export abstract class AllorsPageObjectComponent<
   T extends IObject
 > extends AllorsComponent {
   override dataAllorsKind = 'overview';

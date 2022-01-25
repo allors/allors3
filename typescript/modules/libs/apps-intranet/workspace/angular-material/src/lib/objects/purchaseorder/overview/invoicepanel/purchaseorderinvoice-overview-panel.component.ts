@@ -21,7 +21,7 @@ import {
   ObjectService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
   Table,
   TableRow,
   OverviewService,
@@ -87,7 +87,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
     public overviewService: OverviewService,
     public deleteService: DeleteService,
     public printService: PrintService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
@@ -323,7 +323,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
       this.allors.context.reset();
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public removeFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
@@ -345,7 +345,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
             this.snackBar.open('Successfully removed from invoice.', 'close', {
               duration: 5000,
             });
-          }, this.saveService.errorHandler);
+          }, this.errorService.errorHandler);
         }
       }
     );

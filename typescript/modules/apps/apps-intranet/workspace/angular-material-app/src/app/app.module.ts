@@ -80,7 +80,7 @@ import {
   NavigationService,
   MediaService,
   ObjectService,
-  SaveService,
+  ErrorService,
   OBJECT_CREATE_TOKEN,
   OBJECT_EDIT_TOKEN,
 } from '@allors/base/workspace/angular/foundation';
@@ -124,7 +124,7 @@ import {
   FactoryFabComponent,
   AllorsMaterialDialogServiceCore,
   ObjectServiceCore,
-  SaveServiceCore,
+  ErrorServiceCore,
   AllorsMaterialSideNavServiceCore,
 } from '@allors/base/workspace/angular-material/application';
 
@@ -1055,7 +1055,7 @@ export const edit = {
       useClass: AllorsMaterialDialogServiceCore,
     },
     { provide: ObjectService, useClass: ObjectServiceCore },
-    { provide: SaveService, useClass: SaveServiceCore },
+    { provide: ErrorService, useClass: ErrorServiceCore },
     {
       provide: AllorsMaterialSideNavService,
       useClass: AllorsMaterialSideNavServiceCore,

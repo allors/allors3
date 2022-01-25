@@ -7,7 +7,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -30,7 +30,7 @@ export class CustomerShipmentOverviewSummaryComponent {
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -92,7 +92,7 @@ export class CustomerShipmentOverviewSummaryComponent {
     this.panel.manager.context.invoke(this.shipment.Invoice).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully invoiced.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public cancel(): void {
@@ -101,7 +101,7 @@ export class CustomerShipmentOverviewSummaryComponent {
       this.snackBar.open('Successfully cancelled.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public hold(): void {
@@ -110,7 +110,7 @@ export class CustomerShipmentOverviewSummaryComponent {
       this.snackBar.open('Successfully put on hold.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public continue(): void {
@@ -119,7 +119,7 @@ export class CustomerShipmentOverviewSummaryComponent {
       this.snackBar.open('Successfully removed from hold.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public pick(): void {
@@ -127,7 +127,7 @@ export class CustomerShipmentOverviewSummaryComponent {
       this.panel.toggle();
       this.snackBar.open('Successfully picked.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public ship(): void {
@@ -135,6 +135,6 @@ export class CustomerShipmentOverviewSummaryComponent {
       this.panel.toggle();
       this.snackBar.open('Successfully shipped.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

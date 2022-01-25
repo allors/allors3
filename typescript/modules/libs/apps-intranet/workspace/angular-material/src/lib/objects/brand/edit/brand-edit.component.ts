@@ -8,7 +8,7 @@ import { Brand, Model, Locale } from '@allors/default/workspace/domain';
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -37,7 +37,7 @@ export class BrandEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<BrandEditComponent>,
 
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService
   ) {
     this.allors.context.name = this.constructor.name;
@@ -114,6 +114,6 @@ export class BrandEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.brand);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

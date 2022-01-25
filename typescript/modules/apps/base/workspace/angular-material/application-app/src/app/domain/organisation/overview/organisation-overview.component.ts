@@ -9,7 +9,7 @@ import {
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsOverviewComponent,
+  AllorsPageObjectComponent,
   NavigationService,
   NavigationActivatedRoute,
   PanelManagerService,
@@ -20,7 +20,7 @@ import {
   providers: [PanelManagerService, ContextService],
 })
 export class OrganisationOverviewComponent
-  extends AllorsOverviewComponent<Organisation>
+  extends AllorsPageObjectComponent<Organisation>
   implements OnInit, OnDestroy
 {
   subscription: Subscription;

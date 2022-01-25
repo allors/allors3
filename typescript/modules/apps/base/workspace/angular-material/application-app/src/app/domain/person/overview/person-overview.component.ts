@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Person } from '@allors/default/workspace/domain';
 import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsOverviewComponent,
+  AllorsPageObjectComponent,
   NavigationActivatedRoute,
   NavigationService,
   PanelManagerService,
@@ -18,7 +18,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   providers: [PanelManagerService, ContextService],
 })
 export class PersonOverviewComponent
-  extends AllorsOverviewComponent<Person>
+  extends AllorsPageObjectComponent<Person>
   implements OnInit, OnDestroy
 {
   private subscription: Subscription;

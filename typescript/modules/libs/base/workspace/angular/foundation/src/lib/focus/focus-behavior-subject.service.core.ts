@@ -3,7 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { AllorsFocusService } from './focus.service';
 
 @Injectable()
-export class AllorsFocusServiceCore extends AllorsFocusService {
+export class AllorsFocusBehaviorSubjectService extends AllorsFocusService {
   public focus$: Observable<any>;
   private focusSubject: BehaviorSubject<any>;
 

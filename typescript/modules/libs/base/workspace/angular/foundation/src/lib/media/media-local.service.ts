@@ -5,7 +5,7 @@ import { MediaConfig } from './media.config';
 import { MediaService } from './media.service';
 
 @Injectable()
-export class MediaServiceCore extends MediaService {
+export class MediaLocalService extends MediaService {
   constructor(private config: MediaConfig) {
     super();
   }

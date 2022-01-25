@@ -10,7 +10,7 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsPanelDetailComponent,
@@ -39,7 +39,7 @@ export class PersonDetailComponent
     @Self() panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     super(allors, panel);
 
@@ -124,6 +124,6 @@ export class PersonDetailComponent
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

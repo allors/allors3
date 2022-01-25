@@ -6,7 +6,7 @@ import { Organisation, Country } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
@@ -34,7 +34,7 @@ export class OrganisationDetailComponent
   constructor(
     @Self() allors: ContextService,
     @Self() panel: PanelService,
-    public saveService: SaveService,
+    public errorService: ErrorService,
     public refreshService: RefreshService,
     private singletonId: SingletonId
   ) {
@@ -118,6 +118,6 @@ export class OrganisationDetailComponent
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       window.history.back();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

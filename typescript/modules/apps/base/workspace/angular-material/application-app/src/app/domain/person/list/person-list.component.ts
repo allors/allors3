@@ -16,7 +16,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
-  AllorsListComponent,
+  AllorsPageListComponent,
   CreateService,
   NavigationService,
 } from '@allors/base/workspace/angular/application';
@@ -41,7 +41,7 @@ interface Row extends TableRow {
   providers: [ContextService],
 })
 export class PersonListComponent
-  extends AllorsListComponent
+  extends AllorsPageListComponent
   implements OnInit, OnDestroy
 {
   table: Table<Row>;

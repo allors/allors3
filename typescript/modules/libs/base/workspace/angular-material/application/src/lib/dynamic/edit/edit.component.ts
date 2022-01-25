@@ -7,8 +7,10 @@ import {
   OnInit,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AllorsForm } from '@allors/base/workspace/angular/foundation';
-import { angularForms } from '@allors/base/workspace/angular/application';
+import {
+  AllorsForm,
+  angularForms,
+} from '@allors/base/workspace/angular/foundation';
 import { DynamicFormHostDirective } from '../form/form-host.directive';
 import { EditDialogData } from '../../edit/edit.dialog.data';
 import { Composite } from '@allors/system/workspace/meta';

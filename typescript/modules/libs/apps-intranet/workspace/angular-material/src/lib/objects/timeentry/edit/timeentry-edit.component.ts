@@ -19,7 +19,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -54,7 +54,7 @@ export class TimeEntryEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<TimeEntryEditComponent>,
     public refreshService: RefreshService,
     private snackBar: MatSnackBar,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -222,7 +222,7 @@ export class TimeEntryEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public save(): void {
@@ -233,6 +233,6 @@ export class TimeEntryEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.timeEntry);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

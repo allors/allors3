@@ -26,7 +26,7 @@ import {
 import {
   NavigationService,
   Action,
-  AllorsListComponent,
+  AllorsPageListComponent,
 } from '@allors/base/workspace/angular/application';
 
 interface Row extends TableRow {
@@ -40,7 +40,7 @@ interface Row extends TableRow {
   providers: [ContextService],
 })
 export class CountryListComponent
-  extends AllorsListComponent
+  extends AllorsPageListComponent
   implements OnInit, OnDestroy
 {
   public override title = 'Countries';

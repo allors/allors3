@@ -6,13 +6,13 @@ import { throwError, Observable } from 'rxjs';
 
 import { UserId } from '../state/user-id';
 
-import { AuthenticationConfig } from './authentication.config';
+import { AuthenticationConfig } from './authentication-config';
 import { AuthenticationTokenResponse } from './authentication-token-response';
 import { AuthenticationTokenRequest } from './authentication-token-request';
 import { AuthenticationService } from './authentication.service';
 
 @Injectable()
-export class AuthenticationServiceBase extends AuthenticationService {
+export class AuthenticationSessionStoreService extends AuthenticationService {
   private tokenName = 'ALLORS_JWT';
 
   public get token(): string | null {
@@ -27,11 +27,19 @@ export class AuthenticationServiceBase extends AuthenticationService {
     }
   }
 
-  constructor(private http: HttpClient, private authenticationConfig: AuthenticationConfig, private userIdState: UserId, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private authenticationConfig: AuthenticationConfig,
+    private userIdState: UserId,
+    private router: Router
+  ) {
     super();
   }
 
-  login$(userName: string, password: string): Observable<AuthenticationTokenResponse> {
+  login$(
+    userName: string,
+    password: string
+  ): Observable<AuthenticationTokenResponse> {
     const url = this.authenticationConfig.url;
     const request: AuthenticationTokenRequest = { l: userName, p: password };
 
@@ -45,7 +53,11 @@ export class AuthenticationServiceBase extends AuthenticationService {
         return result;
       }),
       catchError((error: any) => {
-        const errMsg = error.message ? error.message : error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+        const errMsg = error.message
+          ? error.message
+          : error.status
+          ? `${error.status} - ${error.statusText}`
+          : 'Server error';
         return throwError(errMsg);
       })
     );

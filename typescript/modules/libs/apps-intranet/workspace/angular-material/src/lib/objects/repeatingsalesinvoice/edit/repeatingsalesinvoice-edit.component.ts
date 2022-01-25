@@ -13,7 +13,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
@@ -37,7 +37,7 @@ export class RepeatingSalesInvoiceEditComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RepeatingSalesInvoiceEditComponent>,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public refreshService: RefreshService
   ) {
     this.allors.context.name = this.constructor.name;
@@ -127,6 +127,6 @@ export class RepeatingSalesInvoiceEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.repeatinginvoice);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

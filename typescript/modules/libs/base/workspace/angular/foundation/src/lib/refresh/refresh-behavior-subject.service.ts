@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { RefreshService } from './refresh.service';
 
 @Injectable()
-export class RefreshServiceCore extends RefreshService {
+export class RefreshBehaviorService extends RefreshService {
   override refresh$: Observable<Date>;
   private refreshSubject$: BehaviorSubject<Date>;
 

@@ -4,7 +4,7 @@ import { Deletable } from '@allors/default/workspace/domain';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
@@ -18,7 +18,7 @@ export class DeleteAction implements Action {
   constructor(
     refreshService: RefreshService,
     dialogService: AllorsMaterialDialogService,
-    saveService: SaveService,
+    errorService: ErrorService,
     snackBar: MatSnackBar,
     context: Context
   ) {
@@ -47,7 +47,7 @@ export class DeleteAction implements Action {
                 });
                 refreshService.refresh();
                 this.result.next(true);
-              }, saveService.errorHandler);
+              }, errorService.errorHandler);
             }
           });
       }
