@@ -7,10 +7,10 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   angularIcon,
+  CreateData,
   CreateService,
   OnCreate,
 } from '@allors/base/workspace/angular/application';
-import { CreateDialogData } from '../create/create.dialog.data';
 
 @Component({
   selector: 'a-mat-factory-fab',
@@ -18,7 +18,7 @@ import { CreateDialogData } from '../create/create.dialog.data';
   styleUrls: ['./factory-fab.component.scss'],
 })
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
-  @Input() public createData: CreateDialogData;
+  @Input() public createData: CreateData;
 
   @Input() public onCreate?: OnCreate;
 

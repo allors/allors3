@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { AllorsMaterialSideNavService } from './side-nav.service';
 
 @Injectable()
-export class AllorsMaterialSideNavServiceCore extends AllorsMaterialSideNavService {
+export class AllorsMaterialSideNavSubjectService extends AllorsMaterialSideNavService {
   private toggleSource = new Subject<void>();
   public toggle$ = this.toggleSource.asObservable();
 

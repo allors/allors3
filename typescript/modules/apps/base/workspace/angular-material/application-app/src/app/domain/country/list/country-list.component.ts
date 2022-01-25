@@ -6,7 +6,6 @@ import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import {
   angularSorter,
-  CreateDialogData,
   DeleteService,
   EditRoleService,
   OverviewService,
@@ -27,6 +26,7 @@ import {
   NavigationService,
   Action,
   AllorsPageListComponent,
+  CreateData,
 } from '@allors/base/workspace/angular/application';
 
 interface Row extends TableRow {
@@ -54,7 +54,7 @@ export class CountryListComponent
   filter: Filter;
   override m: M;
 
-  createData: CreateDialogData;
+  createData: CreateData;
 
   constructor(
     @Self() allors: ContextService,
@@ -70,7 +70,7 @@ export class CountryListComponent
     this.objectType = this.m.Country;
 
     this.createData = {
-      kind: 'CreateDialogData',
+      kind: 'CreateData',
       objectType: this.objectType,
     };
 

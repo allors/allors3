@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { AllorsMaterialDialogService } from './dialog.service';
-import { DialogData } from './dialog.data';
-import { DialogConfig } from './dialog.config';
+import { AllorsMaterialDialogData } from './dialog.data';
 import { AllorsMaterialDialogComponent } from './dialog.component';
+import {
+  AllorsDialogService,
+  DialogConfig,
+} from '@allors/base/workspace/angular/foundation';
 
 @Injectable()
-export class AllorsMaterialDialogServiceCore extends AllorsMaterialDialogService {
+export class AllorsMaterialDialogService extends AllorsDialogService {
   constructor(private dialog: MatDialog) {
     super();
   }
 
   public alert(config: DialogConfig): Observable<any> {
-    const data: DialogData = {
+    const data: AllorsMaterialDialogData = {
       alert: true,
       config,
     };
@@ -28,7 +30,7 @@ export class AllorsMaterialDialogServiceCore extends AllorsMaterialDialogService
   }
 
   public confirm(config: DialogConfig): Observable<boolean> {
-    const data: DialogData = {
+    const data: AllorsMaterialDialogData = {
       confirmation: true,
       config,
     };
@@ -43,7 +45,7 @@ export class AllorsMaterialDialogServiceCore extends AllorsMaterialDialogService
   }
 
   public prompt(config: DialogConfig): Observable<string> {
-    const data: DialogData = {
+    const data: AllorsMaterialDialogData = {
       prompt: true,
       config,
     };

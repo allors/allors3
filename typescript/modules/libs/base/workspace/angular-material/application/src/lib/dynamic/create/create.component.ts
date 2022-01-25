@@ -1,3 +1,5 @@
+import { Subscription, tap } from 'rxjs';
+import { Class, Composite } from '@allors/system/workspace/meta';
 import {
   Component,
   Inject,
@@ -11,10 +13,8 @@ import {
   AllorsForm,
   angularForms,
 } from '@allors/base/workspace/angular/foundation';
+import { CreateData } from '@allors/base/workspace/angular/application';
 import { DynamicFormHostDirective } from '../form/form-host.directive';
-import { CreateDialogData } from '../../create/create.dialog.data';
-import { Class, Composite } from '@allors/system/workspace/meta';
-import { Subscription, tap } from 'rxjs';
 
 @Component({
   templateUrl: 'create.component.html',
@@ -36,7 +36,7 @@ export class DynamicCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private data: CreateDialogData,
+    private data: CreateData,
     private dialogRef: MatDialogRef<DynamicCreateComponent>
   ) {
     this.objectType = this.data.objectType;

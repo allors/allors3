@@ -64,6 +64,7 @@ import {
   AllorsBarcodeService,
   MediaService,
   MediaLocalService,
+  AllorsDialogService,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
@@ -74,18 +75,17 @@ import {
 } from '@allors/base/workspace/angular/application';
 
 import {
+  AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
+} from '@allors/base/workspace/angular-material/foundation';
+
+import {
   AllorsMaterialSideNavService,
   AllorsMaterialAssociationAutoCompleteComponent,
-  AllorsMaterialDialogComponent,
   AllorsMaterialErrorDialogComponent,
   AllorsMaterialFilterFieldDialogComponent,
   AllorsMaterialFilterFieldSearchComponent,
   AllorsMaterialFilterComponent,
-  AllorsMaterialFooterComponent,
-  AllorsMaterialFooterSaveCancelComponent,
-  AllorsMaterialHeaderComponent,
-  AllorsMaterialLauncherComponent,
   AllorsMaterialMediaComponent,
   AllorMediaPreviewComponent,
   AllorsMaterialCancelComponent,
@@ -107,7 +107,7 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
-  AllorsMaterialScannerComponent,
+  AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
@@ -115,9 +115,8 @@ import {
   DynamicCreateComponent,
   DynamicEditComponent,
   DynamicFormHostDirective,
-  AllorsMaterialDialogServiceCore,
-  ErrorServiceCore,
-  AllorsMaterialSideNavServiceCore,
+  AllorsMaterialErrorService,
+  AllorsMaterialSideNavSubjectService,
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
 } from '@allors/base/workspace/angular-material/application';
@@ -148,10 +147,6 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,
     AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialFooterComponent,
-    AllorsMaterialFooterSaveCancelComponent,
-    AllorsMaterialHeaderComponent,
-    AllorsMaterialLauncherComponent,
     AllorsMaterialMediaComponent,
     AllorMediaPreviewComponent,
     AllorsMaterialCancelComponent,
@@ -173,7 +168,7 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
-    AllorsMaterialScannerComponent,
+    AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
@@ -275,13 +270,13 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
     { provide: MatDialogRef, useValue: {} },
     {
-      provide: AllorsMaterialDialogService,
-      useClass: AllorsMaterialDialogServiceCore,
+      provide: AllorsDialogService,
+      useClass: AllorsMaterialDialogService,
     },
-    { provide: ErrorService, useClass: ErrorServiceCore },
+    { provide: ErrorService, useClass: AllorsMaterialErrorService },
     {
       provide: AllorsMaterialSideNavService,
-      useClass: AllorsMaterialSideNavServiceCore,
+      useClass: AllorsMaterialSideNavSubjectService,
     },
     {
       provide: AllorsMaterialCreateService,

@@ -1,11 +1,11 @@
 import { Component, Inject, ViewChild, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {
-  CreateDialogData,
-  EditDialogData,
-} from '@allors/base/workspace/angular-material/application';
 import { CountryFormComponent } from '../forms/country-form.component';
 import { IObject } from '@allors/system/workspace/domain';
+import {
+  CreateData,
+  EditData,
+} from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: 'country-edit.component.html',
@@ -15,7 +15,7 @@ export class CountryEditComponent implements OnInit {
   private country!: CountryFormComponent;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: CreateDialogData | EditDialogData,
+    @Inject(MAT_DIALOG_DATA) private data: CreateData | EditData,
     private dialogRef: MatDialogRef<CountryEditComponent>
   ) {}
 

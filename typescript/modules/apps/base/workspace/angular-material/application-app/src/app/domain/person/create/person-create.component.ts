@@ -10,8 +10,10 @@ import {
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
-import { CreateDialogData } from '@allors/base/workspace/angular-material/application';
+import {
+  CreateData,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './person-create.component.html',
@@ -32,7 +34,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: CreateDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: CreateData,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,

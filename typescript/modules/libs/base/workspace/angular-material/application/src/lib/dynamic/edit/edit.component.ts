@@ -12,9 +12,9 @@ import {
   angularForms,
 } from '@allors/base/workspace/angular/foundation';
 import { DynamicFormHostDirective } from '../form/form-host.directive';
-import { EditDialogData } from '../../edit/edit.dialog.data';
 import { Composite } from '@allors/system/workspace/meta';
 import { Subscription, tap } from 'rxjs';
+import { EditData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: 'edit.component.html',
@@ -36,7 +36,7 @@ export class DynamicEditComponent implements OnInit, OnDestroy {
   constructor(
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private data: EditDialogData,
+    private data: EditData,
     private dialogRef: MatDialogRef<DynamicEditComponent>
   ) {
     this.objectType = this.data.objectType ?? this.data.object.strategy.cls;

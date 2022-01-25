@@ -5,10 +5,10 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 
 @Component({
-  selector: 'a-mat-scanner',
-  templateUrl: './scanner.component.html',
+  selector: 'a-mat-barcode-entry',
+  templateUrl: './barcode-entry.component.html',
 })
-export class AllorsMaterialScannerComponent extends AllorsComponent {
+export class AllorsMaterialBarcodeEntryComponent extends AllorsComponent {
   showScanner = false;
   barcode: string | null;
 

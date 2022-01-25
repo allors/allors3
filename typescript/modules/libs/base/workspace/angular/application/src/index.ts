@@ -2,8 +2,10 @@ export * from './lib/actions/action';
 export * from './lib/actions/action-result';
 export * from './lib/actions/action-target';
 
+export * from './lib/create/create.data';
 export * from './lib/create/create.service';
 
+export * from './lib/edit/edit-data';
 export * from './lib/edit/edit.service';
 
 export * from './lib/info/menu-info.service';

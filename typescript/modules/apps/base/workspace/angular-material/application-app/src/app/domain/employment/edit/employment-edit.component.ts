@@ -1,5 +1,5 @@
 import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { M } from '@allors/default/workspace/meta';
@@ -15,9 +15,9 @@ import {
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  CreateDialogData,
-  EditDialogData,
-} from '@allors/base/workspace/angular-material/application';
+  CreateData,
+  EditData,
+} from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './employment-edit.component.html',
@@ -39,14 +39,14 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
   addEmployee = false;
   canSave: boolean;
 
-  createData: CreateDialogData;
-  editData: EditDialogData;
+  createData: CreateData;
+  editData: EditData;
 
   private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) data: CreateDialogData | EditDialogData,
+    @Inject(MAT_DIALOG_DATA) data: CreateData | EditData,
     public dialogRef: MatDialogRef<EmploymentEditComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService
@@ -66,7 +66,7 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
 
     this.canSave = true;
 
-    if (data.kind === 'CreateDialogData') {
+    if (data.kind === 'CreateData') {
       this.createData = data;
     } else {
       this.editData = data;

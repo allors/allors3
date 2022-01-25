@@ -1,7 +1,10 @@
 import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Deletable } from '@allors/default/workspace/domain';
-import { Context } from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsDialogService,
+  Context,
+} from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
   ErrorService,
@@ -10,14 +13,13 @@ import {
   Action,
   ActionTarget,
 } from '@allors/base/workspace/angular/application';
-import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
 
 export class DeleteAction implements Action {
   name = 'delete';
 
   constructor(
     refreshService: RefreshService,
-    dialogService: AllorsMaterialDialogService,
+    dialogService: AllorsDialogService,
     errorService: ErrorService,
     snackBar: MatSnackBar,
     context: Context

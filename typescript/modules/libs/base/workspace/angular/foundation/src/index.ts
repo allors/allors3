@@ -18,6 +18,9 @@ export * from './lib/date/date.config';
 export * from './lib/date/date.service';
 export * from './lib/date/date-static.service.core';
 
+export * from './lib/dialog/dialog.config';
+export * from './lib/dialog/dialog.service';
+
 export * from './lib/field/association-field';
 export * from './lib/field/field';
 export * from './lib/field/localised-role-field';

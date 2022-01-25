@@ -17,12 +17,12 @@ import {
 import {
   Action,
   AllorsPageListComponent,
+  CreateData,
   CreateService,
   NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
   angularSorter,
-  CreateDialogData,
   DeleteService,
   OverviewService,
   Table,
@@ -51,7 +51,7 @@ export class PersonListComponent
 
   private subscription: Subscription;
 
-  createData: CreateDialogData;
+  createData: CreateData;
 
   constructor(
     @Self() allors: ContextService,
@@ -66,7 +66,7 @@ export class PersonListComponent
     super(allors, titleService);
     this.objectType = this.m.Person;
     this.createData = {
-      kind: 'CreateDialogData',
+      kind: 'CreateData',
       objectType: this.objectType,
     };
 

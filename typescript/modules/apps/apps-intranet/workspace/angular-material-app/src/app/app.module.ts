@@ -86,7 +86,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 
 import {
-  AllorsMaterialDialogService,
+  AllorsDialogService,
   AllorsMaterialSideNavService,
   AllorsMaterialAssociationAutoCompleteComponent,
   AllorsMaterialDialogComponent,
@@ -122,7 +122,7 @@ import {
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
-  AllorsMaterialDialogServiceCore,
+  AllorsDialogServiceCore,
   ObjectServiceCore,
   ErrorServiceCore,
   AllorsMaterialSideNavServiceCore,
@@ -1051,8 +1051,8 @@ export const edit = {
     },
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
     {
-      provide: AllorsMaterialDialogService,
-      useClass: AllorsMaterialDialogServiceCore,
+      provide: AllorsDialogService,
+      useClass: AllorsDialogServiceCore,
     },
     { provide: ObjectService, useClass: ObjectServiceCore },
     { provide: ErrorService, useClass: ErrorServiceCore },

@@ -10,7 +10,7 @@ import {
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import { CreateDialogData } from '@allors/base/workspace/angular-material/application';
+import { CreateData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './organisation-create.component.html',
@@ -30,7 +30,7 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: CreateDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: CreateData,
     public dialogRef: MatDialogRef<OrganisationCreateComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,

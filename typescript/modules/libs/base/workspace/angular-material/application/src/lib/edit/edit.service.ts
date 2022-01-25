@@ -4,8 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { Composite } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
-import { EditService } from '@allors/base/workspace/angular/application';
-import { EditDialogData } from './edit.dialog.data';
+import {
+  EditData,
+  EditService,
+} from '@allors/base/workspace/angular/application';
 
 @Injectable()
 export class AllorsMaterialEditService extends EditService {
@@ -20,7 +22,7 @@ export class AllorsMaterialEditService extends EditService {
   }
 
   edit(object: IObject, objectType?: Composite): Observable<IObject> {
-    const data: EditDialogData = {
+    const data: EditData = {
       kind: 'EditDialogData',
       object,
       objectType,

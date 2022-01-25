@@ -11,9 +11,9 @@ import {
   NavigationService,
   PanelService,
   AllorsPanelAssociationComponent,
+  CreateData,
 } from '@allors/base/workspace/angular/application';
 import {
-  CreateDialogData,
   DeleteService,
   EditRoleService,
   Table,
@@ -164,9 +164,9 @@ export class EmployeeComponent
     }
   }
 
-  get createData(): CreateDialogData {
+  get createData(): CreateData {
     return {
-      kind: 'CreateDialogData',
+      kind: 'CreateData',
       objectType: this.m.Employment,
       // associationId: this.panel.manager.id,
       // associationObjectType: this.panel.manager.objectType,

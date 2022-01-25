@@ -1,8 +1,10 @@
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Component, Inject } from '@angular/core';
-import { AllorsComponent } from '@allors/base/workspace/angular/foundation';
-import { DialogData } from './dialog.data';
-import { PromptType } from './dialog.config';
+import {
+  AllorsComponent,
+  PromptType,
+} from '@allors/base/workspace/angular/foundation';
+import { AllorsMaterialDialogData } from './dialog.data';
 
 @Component({
   templateUrl: 'dialog.component.html',
@@ -21,7 +23,7 @@ export class AllorsMaterialDialogComponent extends AllorsComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AllorsMaterialDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
+    @Inject(MAT_DIALOG_DATA) public data: AllorsMaterialDialogData
   ) {
     super();
 
