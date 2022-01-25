@@ -1,30 +1,30 @@
 import {
   Component,
   Inject,
-  AfterViewInit,
   ViewChild,
-  ComponentRef,
   OnDestroy,
   Optional,
+  OnInit,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { IObject } from '@allors/system/workspace/domain';
 import {
   AllorsForm,
   angularForms,
 } from '@allors/base/workspace/angular/foundation';
 import { DynamicFormHostDirective } from '../form/form-host.directive';
-import { CreateDialogData } from '../../create/create.dialog.data';
-import { EditDialogData } from '../../edit/edit.dialog.data';
-import { Class } from '@allors/system/workspace/meta';
+import { Composite } from '@allors/system/workspace/meta';
 import { Subscription, tap } from 'rxjs';
+import { EditData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: 'edit.component.html',
 })
-export class DynamicEditComponent implements AfterViewInit, OnDestroy {
+export class DynamicEditComponent implements OnInit, OnDestroy {
   @ViewChild(DynamicFormHostDirective, { static: true })
   dynamicFormHost!: DynamicFormHostDirective;
+
+  objectType: Composite;
+  title: string;
 
   component: unknown;
 
@@ -36,38 +36,25 @@ export class DynamicEditComponent implements AfterViewInit, OnDestroy {
   constructor(
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private data: CreateDialogData | EditDialogData,
+    private data: EditData,
     private dialogRef: MatDialogRef<DynamicEditComponent>
-  ) {}
+  ) {
+    this.objectType = this.data.objectType ?? this.data.object.strategy.cls;
+  }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     const viewContainerRef = this.dynamicFormHost.viewContainerRef;
     viewContainerRef.clear();
 
-    let componentRef: ComponentRef<AllorsForm>;
+    const componentRef = viewContainerRef.createComponent<AllorsForm>(
+      angularForms(this.objectType).edit
+    );
 
-    switch (this.data.kind) {
-      case 'EditDialogData':
-        componentRef = viewContainerRef.createComponent<AllorsForm>(
-          angularForms(this.data.objectType).edit
-        );
-
-        this.form = componentRef.instance;
-        this.form.edit(this.data.object.id);
-        break;
-
-      case 'CreateDialogData':
-        componentRef = viewContainerRef.createComponent<AllorsForm>(
-          angularForms(this.data.objectType).create
-        );
-
-        this.form = componentRef.instance;
-        this.form.create(this.data.objectType as Class);
-        break;
-    }
+    this.form = componentRef.instance;
+    this.form.edit(this.data.object.id);
 
     this.cancelledSubscription = this.form.cancelled
-      .pipe(tap(() => this.dialogRef.close))
+      .pipe(tap(() => this.dialogRef.close()))
       .subscribe();
 
     this.savedSubscription = this.form.saved

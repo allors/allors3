@@ -26,7 +26,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -81,7 +81,7 @@ export class PurchaseOrderItemEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<PurchaseOrderItemEditComponent>,
     private fetcher: FetcherService,
     public refreshService: RefreshService,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -332,7 +332,7 @@ export class PurchaseOrderItemEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.orderItem);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private refreshSerialisedItems(product: Product): void {

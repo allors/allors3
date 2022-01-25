@@ -5,21 +5,22 @@ import { M } from '@allors/default/workspace/meta';
 import { Organisation, Country } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsObjectDetailPanelComponent,
-  PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
-
+import {
+  AllorsPanelDetailComponent,
+  PanelService,
+} from '@allors/base/workspace/angular/application';
 @Component({
   selector: 'organisation-detail',
   templateUrl: './organisation-detail.component.html',
   providers: [ContextService, PanelService],
 })
 export class OrganisationDetailComponent
-  extends AllorsObjectDetailPanelComponent<Organisation>
+  extends AllorsPanelDetailComponent<Organisation>
   implements OnInit, OnDestroy
 {
   override readonly m: M;
@@ -33,7 +34,7 @@ export class OrganisationDetailComponent
   constructor(
     @Self() allors: ContextService,
     @Self() panel: PanelService,
-    public saveService: SaveService,
+    public errorService: ErrorService,
     public refreshService: RefreshService,
     private singletonId: SingletonId
   ) {
@@ -117,6 +118,6 @@ export class OrganisationDetailComponent
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       window.history.back();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

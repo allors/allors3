@@ -1,25 +1,28 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
+
 import { Person } from '@allors/default/workspace/domain';
 import {
-  Action,
-  AllorsListComponent,
+  ContextService,
   angularFilterFromDefinition,
   Filter,
   FilterField,
   MediaService,
-  NavigationService,
-  CreateService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+import {
+  Action,
+  AllorsPageListComponent,
+  CreateData,
+  CreateService,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 import {
   angularSorter,
-  CreateDialogData,
   DeleteService,
   OverviewService,
   Table,
@@ -38,7 +41,7 @@ interface Row extends TableRow {
   providers: [ContextService],
 })
 export class PersonListComponent
-  extends AllorsListComponent
+  extends AllorsPageListComponent
   implements OnInit, OnDestroy
 {
   table: Table<Row>;
@@ -48,7 +51,7 @@ export class PersonListComponent
 
   private subscription: Subscription;
 
-  createData: CreateDialogData;
+  createData: CreateData;
 
   constructor(
     @Self() allors: ContextService,
@@ -63,7 +66,7 @@ export class PersonListComponent
     super(allors, titleService);
     this.objectType = this.m.Person;
     this.createData = {
-      kind: 'CreateDialogData',
+      kind: 'CreateData',
       objectType: this.objectType,
     };
 

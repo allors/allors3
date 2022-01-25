@@ -17,7 +17,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -46,7 +46,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private route: ActivatedRoute,
     public refreshService: RefreshService,
     private internalOrganisationId: InternalOrganisationId,
@@ -158,7 +158,7 @@ export class CommunicationEventWorkTaskComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.goBack();
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public goBack(): void {

@@ -35,6 +35,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
+import { AllorsMaterialDialogComponent } from '@allors/base/workspace/angular-material/foundation';
+
 import {
   AllorsFocusDirective,
   AllorsBarcodeDirective,
@@ -42,15 +44,10 @@ import {
 
 import {
   AllorsMaterialAssociationAutoCompleteComponent,
-  AllorsMaterialDialogComponent,
   AllorsMaterialErrorDialogComponent,
   AllorsMaterialFilterFieldDialogComponent,
   AllorsMaterialFilterFieldSearchComponent,
   AllorsMaterialFilterComponent,
-  AllorsMaterialFooterComponent,
-  AllorsMaterialFooterSaveCancelComponent,
-  AllorsMaterialHeaderComponent,
-  AllorsMaterialLauncherComponent,
   AllorsMaterialMediaComponent,
   AllorMediaPreviewComponent,
   AllorsMaterialCancelComponent,
@@ -72,27 +69,25 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
-  AllorsMaterialScannerComponent,
+  AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
+  DynamicCreateComponent,
+  DynamicEditComponent,
 } from './index';
 
 @NgModule({
   declarations: [
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
+    AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialErrorDialogComponent,
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,
     AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialFooterComponent,
-    AllorsMaterialFooterSaveCancelComponent,
-    AllorsMaterialHeaderComponent,
-    AllorsMaterialLauncherComponent,
     AllorsMaterialMediaComponent,
     AllorMediaPreviewComponent,
     AllorsMaterialCancelComponent,
@@ -114,11 +109,13 @@ import {
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
-    AllorsMaterialScannerComponent,
+    AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
+    DynamicCreateComponent,
+    DynamicEditComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,12 @@
 <mat-sidenav-container class="sidenav-container" fullscreen>
-  <mat-sidenav style="width: 18rem" #drawer class="sidenav side-theme" fixedInViewport="true" attr.role="navigation" mode="side">
+  <mat-sidenav
+    style="width: 18rem"
+    #drawer
+    class="sidenav side-theme"
+    fixedInViewport="true"
+    attr.role="navigation"
+    mode="side"
+  >
     <mat-toolbar>Allors Base</mat-toolbar>
     <a-mat-sidemenu [items]="sideMenuItems"></a-mat-sidemenu>
   </mat-sidenav>
@@ -9,10 +16,17 @@
       <mat-toolbar color="primary">
         <a-mat-sidenavtoggle></a-mat-sidenavtoggle>
         <span style="padding-left: 0.5rem"></span>
-        <button mat-raised-button color="primary" type="button" [routerLink]="['/']">Allors Applications</button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          [routerLink]="['/']"
+        >
+          Allors Applications
+        </button>
         <span class="ml-auto">
           <span style="padding-left: 1rem">
-            <a-mat-scanner></a-mat-scanner>
+            <a-mat-barcode-entry></a-mat-barcode-entry>
           </span>
         </span>
       </mat-toolbar>

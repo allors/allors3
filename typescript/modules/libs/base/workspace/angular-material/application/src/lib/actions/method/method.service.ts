@@ -3,10 +3,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import { MethodType } from '@allors/system/workspace/meta';
 import {
-  Action,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
+import { Action } from '@allors/base/workspace/angular/application';
 import { MethodAction } from './method-action';
 import { MethodConfig } from './method-config';
 
@@ -16,7 +16,7 @@ import { MethodConfig } from './method-config';
 export class MethodService {
   constructor(
     private refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -29,7 +29,7 @@ export class MethodService {
       this.refreshService,
       this.snackBar,
       context,
-      this.saveService,
+      this.errorService,
       methodType,
       config
     );

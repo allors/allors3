@@ -1,5 +1,5 @@
 import { Composite } from '@allors/system/workspace/meta';
-import { Sorter } from '../sorting/sorter';
+import { Sorter } from '../sort/sorter';
 
 interface AngularSorterExtension {
   sorter?: Sorter;

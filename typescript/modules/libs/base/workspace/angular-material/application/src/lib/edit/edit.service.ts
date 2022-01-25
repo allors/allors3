@@ -1,10 +1,13 @@
+import { Observable, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, throwError } from 'rxjs';
-import { IObject } from '@allors/system/workspace/domain';
-import { EditService } from '@allors/base/workspace/angular/foundation';
+
 import { Composite } from '@allors/system/workspace/meta';
-import { EditDialogData } from './edit.dialog.data';
+import { IObject } from '@allors/system/workspace/domain';
+import {
+  EditData,
+  EditService,
+} from '@allors/base/workspace/angular/application';
 
 @Injectable()
 export class AllorsMaterialEditService extends EditService {
@@ -19,7 +22,7 @@ export class AllorsMaterialEditService extends EditService {
   }
 
   edit(object: IObject, objectType?: Composite): Observable<IObject> {
-    const data: EditDialogData = {
+    const data: EditData = {
       kind: 'EditDialogData',
       object,
       objectType,

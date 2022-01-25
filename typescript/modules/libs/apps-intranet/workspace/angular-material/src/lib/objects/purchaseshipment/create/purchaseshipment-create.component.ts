@@ -27,7 +27,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -71,7 +71,7 @@ export class PurchaseShipmentCreateComponent implements OnInit, OnDestroy {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<PurchaseShipmentCreateComponent>,
     private refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
@@ -142,7 +142,7 @@ export class PurchaseShipmentCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.shipment);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public facilityAdded(facility: Facility): void {

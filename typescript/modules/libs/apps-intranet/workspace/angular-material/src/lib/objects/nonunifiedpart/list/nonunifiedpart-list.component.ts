@@ -23,7 +23,7 @@ import {
   NavigationService,
   ObjectService,
   RefreshService,
-  SaveService,
+  ErrorService,
   Table,
   TableRow,
   UserId,
@@ -86,7 +86,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     public navigation: NavigationService,
     public mediaService: MediaService,
     public printService: PrintService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private singletonId: SingletonId,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId,
@@ -347,6 +347,6 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         this.print.execute(this.nonUnifiedPartBarcodePrint);
         this.refreshService.refresh();
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

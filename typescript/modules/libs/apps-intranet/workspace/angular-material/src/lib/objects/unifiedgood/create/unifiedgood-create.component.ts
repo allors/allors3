@@ -24,7 +24,7 @@ import {
   NavigationService,
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
@@ -56,7 +56,7 @@ export class UnifiedGoodCreateComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<UnifiedGoodCreateComponent>,
     private refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService
   ) {
     this.allors.context.name = this.constructor.name;
@@ -120,6 +120,6 @@ export class UnifiedGoodCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.good);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

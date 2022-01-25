@@ -8,7 +8,7 @@ import {
   Action,
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IResult } from '@allors/system/workspace/domain';
@@ -38,7 +38,7 @@ export class PurchaseInvoiceApprovalEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<PurchaseInvoiceApprovalEditComponent>,
     public printService: PrintService,
     public refreshService: RefreshService,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -118,6 +118,6 @@ export class PurchaseInvoiceApprovalEditComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.dialogRef.close(this.purchaseInvoiceApproval);
         this.refreshService.refresh();
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 }

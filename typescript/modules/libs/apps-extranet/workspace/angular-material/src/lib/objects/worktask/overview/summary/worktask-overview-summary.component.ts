@@ -14,7 +14,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { PrintService } from '../../../../actions/print/print.service';
 
@@ -39,7 +39,7 @@ export class WorkTaskOverviewSummaryComponent {
     public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar,
     public printService: PrintService
   ) {

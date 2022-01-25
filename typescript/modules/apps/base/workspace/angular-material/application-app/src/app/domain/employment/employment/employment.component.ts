@@ -5,15 +5,15 @@ import {
   Organisation,
   Person,
 } from '@allors/default/workspace/domain';
+import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   NavigationService,
   PanelService,
-  RefreshService,
-  AllorsRelationObjectPanelComponent,
-} from '@allors/base/workspace/angular/foundation';
+  AllorsPanelRelationComponent,
+  CreateData,
+} from '@allors/base/workspace/angular/application';
 import {
-  CreateDialogData,
   DeleteService,
   EditRoleService,
   Table,
@@ -34,7 +34,7 @@ interface Row extends TableRow {
   providers: [PanelService],
 })
 export class EmploymentComponent
-  extends AllorsRelationObjectPanelComponent<Organisation | Person>
+  extends AllorsPanelRelationComponent<Organisation | Person>
   implements OnInit
 {
   @HostBinding('class.expanded-panel')
@@ -164,9 +164,9 @@ export class EmploymentComponent
     }
   }
 
-  get createData(): CreateDialogData {
+  get createData(): CreateData {
     return {
-      kind: 'CreateDialogData',
+      kind: 'CreateData',
       objectType: this.m.Employment,
       // associationId: this.panel.manager.id,
       // associationObjectType: this.panel.manager.objectType,

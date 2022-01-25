@@ -1,16 +1,16 @@
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Component, Self, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Self, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Person } from '@allors/default/workspace/domain';
+import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsOverviewComponent,
+  AllorsPageObjectComponent,
   NavigationActivatedRoute,
   NavigationService,
   PanelManagerService,
-  RefreshService,
-} from '@allors/base/workspace/angular/foundation';
+} from '@allors/base/workspace/angular/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
@@ -18,8 +18,8 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   providers: [PanelManagerService, ContextService],
 })
 export class PersonOverviewComponent
-  extends AllorsOverviewComponent<Person>
-  implements AfterViewInit, OnDestroy
+  extends AllorsPageObjectComponent<Person>
+  implements OnInit, OnDestroy
 {
   private subscription: Subscription;
 
@@ -34,7 +34,7 @@ export class PersonOverviewComponent
     super(allors, panelManager, titleService);
   }
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: p } = m;
 

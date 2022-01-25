@@ -14,7 +14,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -51,7 +51,7 @@ export class OrganisationContactRelationshipEditComponent
     public dialogRef: MatDialogRef<OrganisationContactRelationshipEditComponent>,
 
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
@@ -173,6 +173,6 @@ export class OrganisationContactRelationshipEditComponent
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.partyRelationship);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

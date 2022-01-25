@@ -9,20 +9,21 @@ import {
 } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsObjectDetailPanelComponent,
+  RefreshService,
+  ErrorService,
+} from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsPanelDetailComponent,
   NavigationService,
   PanelService,
-  RefreshService,
-  SaveService,
-} from '@allors/base/workspace/angular/foundation';
-
+} from '@allors/base/workspace/angular/application';
 @Component({
   selector: 'person-detail',
   templateUrl: './person-detail.component.html',
   providers: [PanelService, ContextService],
 })
 export class PersonDetailComponent
-  extends AllorsObjectDetailPanelComponent<Person>
+  extends AllorsPanelDetailComponent<Person>
   implements OnInit, OnDestroy
 {
   emailAddresses: string[] = [];
@@ -38,7 +39,7 @@ export class PersonDetailComponent
     @Self() panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     super(allors, panel);
 
@@ -123,6 +124,6 @@ export class PersonDetailComponent
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

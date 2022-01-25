@@ -57,7 +57,7 @@ export class RequestForQuoteOverviewComponent
     titleService.setTitle(this.title);
   }
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};

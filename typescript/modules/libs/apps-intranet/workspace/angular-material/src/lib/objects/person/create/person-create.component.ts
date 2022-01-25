@@ -24,7 +24,7 @@ import {
   NavigationService,
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
@@ -74,7 +74,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService,
     private singletonId: SingletonId,
     private internalOrganisationId: InternalOrganisationId
@@ -213,6 +213,6 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.person);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

@@ -22,7 +22,7 @@ import {
   NavigationService,
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -65,7 +65,7 @@ export class WorkTaskCreateComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<WorkTaskCreateComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private route: ActivatedRoute,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
@@ -216,6 +216,6 @@ export class WorkTaskCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workTask);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

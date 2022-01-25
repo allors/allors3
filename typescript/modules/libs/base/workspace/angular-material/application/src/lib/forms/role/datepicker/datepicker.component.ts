@@ -15,8 +15,8 @@ export class AllorsMaterialDatepickerComponent extends RoleField {
   private _previousModel: Date;
   private _shadow: DateTime;
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 
   get shadow(): DateTime {

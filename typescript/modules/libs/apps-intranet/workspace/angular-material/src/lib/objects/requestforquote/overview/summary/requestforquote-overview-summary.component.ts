@@ -7,7 +7,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
@@ -26,7 +26,7 @@ export class RequestForQuoteOverviewSummaryComponent {
     @Self() public panel: PanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar,
     public navigation: NavigationService
   ) {
@@ -87,7 +87,7 @@ export class RequestForQuoteOverviewSummaryComponent {
         this.snackBar.open('Successfully cancelled.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public reject(): void {
@@ -98,7 +98,7 @@ export class RequestForQuoteOverviewSummaryComponent {
         this.snackBar.open('Successfully rejected.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public submit(): void {
@@ -109,7 +109,7 @@ export class RequestForQuoteOverviewSummaryComponent {
         this.snackBar.open('Successfully submitted.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public hold(): void {
@@ -118,7 +118,7 @@ export class RequestForQuoteOverviewSummaryComponent {
       .subscribe(() => {
         this.refreshService.refresh();
         this.snackBar.open('Successfully held.', 'close', { duration: 5000 });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public createQuote(): void {
@@ -129,6 +129,6 @@ export class RequestForQuoteOverviewSummaryComponent {
         this.snackBar.open('Successfully created a quote.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 }

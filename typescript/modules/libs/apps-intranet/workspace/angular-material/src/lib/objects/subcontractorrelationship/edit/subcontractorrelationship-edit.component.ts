@@ -12,7 +12,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
@@ -42,7 +42,7 @@ export class SubContractorRelationshipEditComponent
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<SubContractorRelationshipEditComponent>,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
@@ -147,6 +147,6 @@ export class SubContractorRelationshipEditComponent
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.partyRelationship);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

@@ -8,18 +8,12 @@ export * from './lib/actions/method/method-config';
 export * from './lib/actions/overview/overview.service';
 export * from './lib/actions/overview/overview-action';
 
-export * from './lib/create/create.dialog.data';
 export * from './lib/create/create.service';
 
-export * from './lib/dialog/dialog.config';
-export * from './lib/dialog/dialog.service';
-export * from './lib/dialog/dialog.service.core';
-export * from './lib/dialog/dialog.component';
-
+export * from './lib/dynamic/create/create.component';
 export * from './lib/dynamic/edit/edit.component';
 export * from './lib/dynamic/form/form-host.directive';
 
-export * from './lib/edit/edit.dialog.data';
 export * from './lib/edit/edit.service';
 
 export * from './lib/factoryfab/factory-fab.component';
@@ -28,33 +22,25 @@ export * from './lib/filter/field/dialog.component';
 export * from './lib/filter/field/search.component';
 export * from './lib/filter/filter.component';
 
-export * from './lib/footer/savecancel/save-cancel.component';
-export * from './lib/footer/footer.component';
-
-export * from './lib/header/header.component';
-
-export * from './lib/launcher/launcher.component';
-
 export * from './lib/media/preview/dialog.data';
 export * from './lib/media/preview/media-preview.component';
 export * from './lib/media/media.component';
 
 export * from './lib/meta/angular.sorter';
 
-export * from './lib/save/save.service.core';
-export * from './lib/save/error/error-dialog.component';
+export * from './lib/error/error-dialog.component';
+export * from './lib/error/error.service';
 
-export * from './lib/scanner/scanner.component';
+export * from './lib/barcode/barcode-entry.component';
 
 export * from './lib/sidemenu/side-menu.component';
 export * from './lib/sidemenu/side-menu-item';
 
 export * from './lib/sidenav/side-nav.service';
-export * from './lib/sidenav/side-nav.service.core';
+export * from './lib/sidenav/side-nav-subject.service';
+export * from './lib/sidenav/side-nav-toggle.component';
 
-export * from './lib/sidenavtoggle/side-nav-toggle.component';
-
-export * from './lib/sorting/sorter';
+export * from './lib/sort/sorter';
 
 export * from './lib/table/base-table';
 export * from './lib/table/column';

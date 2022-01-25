@@ -16,7 +16,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -53,7 +53,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortFixedAssetAssignmentEditComponent>,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
@@ -185,7 +185,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workEffortFixedAssetAssignment);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private updateSerialisedItems(customer: Party) {

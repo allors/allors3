@@ -1,22 +1,26 @@
 import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Deletable } from '@allors/default/workspace/domain';
-import { Context } from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsDialogService,
+  Context,
+} from '@allors/base/workspace/angular/foundation';
+import {
+  RefreshService,
+  ErrorService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   ActionTarget,
-  RefreshService,
-  SaveService,
-} from '@allors/base/workspace/angular/foundation';
-import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
+} from '@allors/base/workspace/angular/application';
 
 export class DeleteAction implements Action {
   name = 'delete';
 
   constructor(
     refreshService: RefreshService,
-    dialogService: AllorsMaterialDialogService,
-    saveService: SaveService,
+    dialogService: AllorsDialogService,
+    errorService: ErrorService,
     snackBar: MatSnackBar,
     context: Context
   ) {
@@ -45,7 +49,7 @@ export class DeleteAction implements Action {
                 });
                 refreshService.refresh();
                 this.result.next(true);
-              }, saveService.errorHandler);
+              }, errorService.errorHandler);
             }
           });
       }

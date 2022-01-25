@@ -1,4 +1,7 @@
-import { DynamicEditComponent } from '@allors/base/workspace/angular-material/application';
+import {
+  DynamicCreateComponent,
+  DynamicEditComponent,
+} from '@allors/base/workspace/angular-material/application';
 import { tags } from '@allors/default/workspace/meta';
 
 import { CountryEditComponent } from './domain/country/edit/country-edit.component';
@@ -8,7 +11,7 @@ import { PersonCreateComponent } from './domain/person/create/person-create.comp
 
 export const dialogs = {
   create: {
-    [tags.Country]: DynamicEditComponent,
+    [tags.Country]: DynamicCreateComponent,
     [tags.Employment]: EmploymentEditComponent,
     [tags.Organisation]: OrganisationCreateComponent,
     [tags.Person]: PersonCreateComponent,

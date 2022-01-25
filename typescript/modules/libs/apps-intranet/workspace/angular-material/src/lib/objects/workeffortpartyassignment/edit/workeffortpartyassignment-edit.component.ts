@@ -14,7 +14,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -47,7 +47,7 @@ export class WorkEffortPartyAssignmentEditComponent
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortPartyAssignmentEditComponent>,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
@@ -184,6 +184,6 @@ export class WorkEffortPartyAssignmentEditComponent
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workEffortPartyAssignment);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

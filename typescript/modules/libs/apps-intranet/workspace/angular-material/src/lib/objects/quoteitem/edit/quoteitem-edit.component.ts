@@ -33,7 +33,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -116,7 +116,7 @@ export class QuoteItemEditComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<QuoteItemEditComponent>,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public refreshService: RefreshService,
 
     private fetcher: FetcherService,
@@ -586,7 +586,7 @@ export class QuoteItemEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.quoteItem);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private refreshSerialisedItems(product: Product): void {

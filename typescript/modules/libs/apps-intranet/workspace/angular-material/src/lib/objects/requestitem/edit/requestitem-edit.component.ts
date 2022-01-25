@@ -26,7 +26,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -96,7 +96,7 @@ export class RequestItemEditComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<RequestItemEditComponent>,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public refreshService: RefreshService,
     public snackBar: MatSnackBar
   ) {
@@ -493,7 +493,7 @@ export class RequestItemEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.requestItem);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private refreshSerialisedItems(product: Product): void {

@@ -2,10 +2,8 @@ import { Component, Self } from '@angular/core';
 import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  PanelService,
-} from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
+import { PanelService } from '@allors/base/workspace/angular/application';
 
 @Component({
   selector: 'organisation-summary',

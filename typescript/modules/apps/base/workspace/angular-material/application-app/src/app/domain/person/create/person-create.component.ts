@@ -7,11 +7,13 @@ import { M } from '@allors/default/workspace/meta';
 import { Locale, Person, Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  NavigationService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import { CreateDialogData } from '@allors/base/workspace/angular-material/application';
+import {
+  CreateData,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './person-create.component.html',
@@ -32,12 +34,12 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: CreateDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: CreateData,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
-    private saveService: SaveService
+    private errorService: ErrorService
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -93,6 +95,6 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.person);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

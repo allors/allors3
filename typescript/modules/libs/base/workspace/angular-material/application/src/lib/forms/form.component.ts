@@ -10,7 +10,7 @@ import {
 import {
   AllorsComponent,
   AllorsForm,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 
 @Directive()
@@ -37,7 +37,7 @@ export abstract class AllorsFormComponent<T extends IObject>
 
   constructor(
     allors: ContextService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public form: NgForm
   ) {
     super();
@@ -72,7 +72,7 @@ export abstract class AllorsFormComponent<T extends IObject>
         this.saved.emit(this.object);
       },
       error: (error) => {
-        this.saveService.errorHandler(error);
+        this.errorService.errorHandler(error);
       },
     });
   }

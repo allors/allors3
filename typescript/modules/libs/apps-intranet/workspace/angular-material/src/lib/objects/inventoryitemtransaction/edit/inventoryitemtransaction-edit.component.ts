@@ -20,7 +20,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -61,7 +61,7 @@ export class InventoryItemTransactionEditComponent
     public dialogRef: MatDialogRef<InventoryItemTransactionEditComponent>,
 
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService
   ) {
     this.allors.context.name = this.constructor.name;
@@ -194,7 +194,7 @@ export class InventoryItemTransactionEditComponent
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.inventoryItemTransaction);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public facilityAdded(facility: Facility): void {

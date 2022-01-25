@@ -4,10 +4,10 @@ import { Observable, throwError } from 'rxjs';
 import { IObject } from '@allors/system/workspace/domain';
 import { Composite } from '@allors/system/workspace/meta';
 import {
+  CreateData,
   CreateService,
   OnCreate,
-} from '@allors/base/workspace/angular/foundation';
-import { CreateDialogData } from './create.dialog.data';
+} from '@allors/base/workspace/angular/application';
 
 @Injectable()
 export class AllorsMaterialCreateService extends CreateService {
@@ -22,8 +22,8 @@ export class AllorsMaterialCreateService extends CreateService {
   }
 
   create(objectType: Composite, onCreate: OnCreate): Observable<IObject> {
-    const data: CreateDialogData = {
-      kind: 'CreateDialogData',
+    const data: CreateData = {
+      kind: 'CreateData',
       objectType,
       onCreate,
     };

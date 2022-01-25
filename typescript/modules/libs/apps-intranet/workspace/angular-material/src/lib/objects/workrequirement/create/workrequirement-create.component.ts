@@ -18,7 +18,7 @@ import {
   PanelService,
   RadioGroupOption,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -53,7 +53,7 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<WorkRequirementCreateComponent>,
 
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
@@ -192,7 +192,7 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.requirement);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private updateOriginator(party: Party) {

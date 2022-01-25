@@ -31,7 +31,7 @@ export class AllorsMaterialSliderComponent extends RoleField {
   @Input()
   public color: 'primary' | 'accent' | 'warn' = 'accent';
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 }

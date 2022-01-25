@@ -21,7 +21,7 @@ import {
   NavigationService,
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
@@ -60,7 +60,7 @@ export class PhoneCommunicationEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<PhoneCommunicationEditComponent>,
     public refreshService: RefreshService,
     public navigation: NavigationService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
@@ -404,6 +404,6 @@ export class PhoneCommunicationEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.communicationEvent);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

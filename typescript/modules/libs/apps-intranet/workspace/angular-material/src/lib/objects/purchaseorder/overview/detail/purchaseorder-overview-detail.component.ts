@@ -23,7 +23,7 @@ import {
 import {
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -79,7 +79,7 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
@@ -212,7 +212,7 @@ export class PurchaseOrderOverviewDetailComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.refreshService.refresh();
       this.panel.toggle();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public facilityAdded(facility: Facility): void {

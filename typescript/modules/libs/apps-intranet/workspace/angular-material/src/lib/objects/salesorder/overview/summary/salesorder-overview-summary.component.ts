@@ -16,7 +16,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { PrintService } from '../../../../actions/print/print.service';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
@@ -47,7 +47,7 @@ export class SalesOrderOverviewSummaryComponent {
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -176,7 +176,7 @@ export class SalesOrderOverviewSummaryComponent {
     this.panel.manager.context.invoke(this.order.Approve).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully approved.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public setReadyForPosting() {
@@ -187,35 +187,35 @@ export class SalesOrderOverviewSummaryComponent {
         this.snackBar.open('Successfully set ready for posting.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public reopen() {
     this.panel.manager.context.invoke(this.order.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public post() {
     this.panel.manager.context.invoke(this.order.Post).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully posted.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public accept() {
     this.panel.manager.context.invoke(this.order.Accept).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully accepted.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public revise(): void {
     this.panel.manager.context.invoke(this.order.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully revised.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public cancel(): void {
@@ -224,14 +224,14 @@ export class SalesOrderOverviewSummaryComponent {
       this.snackBar.open('Successfully cancelled.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public reject(): void {
     this.panel.manager.context.invoke(this.order.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public hold(): void {
@@ -240,7 +240,7 @@ export class SalesOrderOverviewSummaryComponent {
       this.snackBar.open('Successfully put on hold.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public continue(): void {
@@ -249,14 +249,14 @@ export class SalesOrderOverviewSummaryComponent {
       this.snackBar.open('Successfully removed from hold.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public finish(): void {
     this.panel.manager.context.invoke(this.order.Continue).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully finished.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public ship(): void {
@@ -266,7 +266,7 @@ export class SalesOrderOverviewSummaryComponent {
         duration: 5000,
       });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public invoice(): void {
@@ -276,6 +276,6 @@ export class SalesOrderOverviewSummaryComponent {
         duration: 5000,
       });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

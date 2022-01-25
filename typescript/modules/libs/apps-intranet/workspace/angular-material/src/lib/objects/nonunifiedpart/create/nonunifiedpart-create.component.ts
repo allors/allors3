@@ -32,7 +32,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -78,7 +78,7 @@ export class NonUnifiedPartCreateComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<NonUnifiedPartCreateComponent>,
 
     private refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
@@ -212,7 +212,7 @@ export class NonUnifiedPartCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.part);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public update(): void {
@@ -221,7 +221,7 @@ export class NonUnifiedPartCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private onSave() {

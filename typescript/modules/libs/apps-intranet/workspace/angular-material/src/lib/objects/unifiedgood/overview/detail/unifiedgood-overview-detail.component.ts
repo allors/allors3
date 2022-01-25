@@ -24,7 +24,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -74,7 +74,7 @@ export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
     @Self() public panel: PanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService,
     private snackBar: MatSnackBar
   ) {
@@ -306,7 +306,7 @@ export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   private onSave() {

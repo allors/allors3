@@ -30,7 +30,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
   SearchFactory,
   PanelManagerService,
 } from '@allors/base/workspace/angular/foundation';
@@ -87,7 +87,7 @@ export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<CustomerShipmentCreateComponent>,
 
     private refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
@@ -195,7 +195,7 @@ export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.customerShipment);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public shipToContactPersonAdded(person: Person): void {

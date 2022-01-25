@@ -8,9 +8,9 @@ import { Organisation, Country } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import { CreateDialogData } from '@allors/base/workspace/angular-material/application';
+import { CreateData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './organisation-create.component.html',
@@ -30,10 +30,10 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: CreateDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: CreateData,
     public dialogRef: MatDialogRef<OrganisationCreateComponent>,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private route: ActivatedRoute
   ) {
     this.allors.context.name = this.constructor.name;
@@ -78,6 +78,6 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.organisation);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

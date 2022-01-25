@@ -14,7 +14,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -40,7 +40,7 @@ export class PersonOverviewSummaryComponent {
     public navigation: NavigationService,
     private mediaService: MediaService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -127,7 +127,7 @@ export class PersonOverviewSummaryComponent {
       this.snackBar.open('Password reset mail send to user.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   get src(): string {

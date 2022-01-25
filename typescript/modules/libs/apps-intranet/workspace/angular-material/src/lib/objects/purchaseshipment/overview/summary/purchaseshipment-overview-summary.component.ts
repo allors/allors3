@@ -11,7 +11,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -36,7 +36,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -100,6 +100,6 @@ export class PurchaseShipmentOverviewSummaryComponent {
       this.panel.toggle();
       this.snackBar.open('Successfully received.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

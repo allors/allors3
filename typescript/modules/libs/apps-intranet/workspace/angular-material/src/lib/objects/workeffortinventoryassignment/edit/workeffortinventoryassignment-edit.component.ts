@@ -20,7 +20,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
@@ -51,7 +51,7 @@ export class WorkEffortInventoryAssignmentEditComponent
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortInventoryAssignmentEditComponent>,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId,
     private snackBar: MatSnackBar
   ) {
@@ -176,14 +176,14 @@ export class WorkEffortInventoryAssignmentEditComponent
     this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public save(): void {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workEffortInventoryAssignment);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public inventoryItemSelected(inventoryItem: IObject): void {

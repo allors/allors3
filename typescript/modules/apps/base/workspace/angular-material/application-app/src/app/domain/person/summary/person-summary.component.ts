@@ -2,12 +2,14 @@ import { Component, Self } from '@angular/core';
 
 import { Person, Organisation } from '@allors/default/workspace/domain';
 import {
-  AllorsPanelSummaryComponent,
   MediaService,
-  NavigationService,
-  PanelService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsPanelSummaryComponent,
+  NavigationService,
+  PanelService,
+} from '@allors/base/workspace/angular/application';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({

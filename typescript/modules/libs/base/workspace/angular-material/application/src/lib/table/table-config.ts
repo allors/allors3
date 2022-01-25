@@ -1,5 +1,5 @@
 import { Sort, SortDirection } from '@angular/material/sort';
-import { Action } from '@allors/base/workspace/angular/foundation';
+import { Action } from '@allors/base/workspace/angular/application';
 import { Column } from './column';
 
 export interface TableConfig {

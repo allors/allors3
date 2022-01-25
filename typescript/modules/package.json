@@ -10,8 +10,6 @@
     "angular-apps-extranet:serve": "npx nx serve angular-apps-extranet",
     "angular-apps-intranet:serve": "npx nx serve angular-apps-intranet",
     "base-workspace-angular-foundation:serve": "npx nx serve base-workspace-angular-foundation-app",
-    "base-workspace-angular-application:serve": "npx nx serve base-workspace-angular-application-app",
-    "base-workspace-angular-material-foundation:serve": "npx nx serve base-workspace-angular-material-foundation-app",
     "base-workspace-angular-material-application:serve": "npx nx serve base-workspace-angular-material-application-app",
     "system-workspace-meta:test": "npx nx test system-workspace-meta-tests --skipNxCache",
     "system-workspace-meta-json:test": "npx nx test system-workspace-meta-json-tests --skipNxCache",

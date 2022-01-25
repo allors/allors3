@@ -14,7 +14,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
   ActionTarget,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -43,7 +43,7 @@ export class WorkTaskOverviewSummaryComponent {
     public navigation: NavigationService,
     public refreshService: RefreshService,
     public printService: PrintService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -162,14 +162,14 @@ export class WorkTaskOverviewSummaryComponent {
       this.snackBar.open('Successfully cancelled.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public reopen(): void {
     this.panel.manager.context.invoke(this.workTask.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public revise(): void {
@@ -178,7 +178,7 @@ export class WorkTaskOverviewSummaryComponent {
       this.snackBar.open('Revise successfully executed.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public complete(): void {
@@ -187,13 +187,13 @@ export class WorkTaskOverviewSummaryComponent {
       this.snackBar.open('Successfully completed.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public invoice(): void {
     this.panel.manager.context.invoke(this.workTask.Invoice).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully invoiced.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

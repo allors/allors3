@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Context } from '@allors/base/workspace/angular/foundation';
 import {
-  Action,
-  RefreshService,
-  SaveService,
+  AllorsDialogService,
+  Context,
 } from '@allors/base/workspace/angular/foundation';
-import { AllorsMaterialDialogService } from '../../dialog/dialog.service';
+import {
+  RefreshService,
+  ErrorService,
+} from '@allors/base/workspace/angular/foundation';
+import { Action } from '@allors/base/workspace/angular/application';
 import { DeleteAction } from './delete-action';
 
 @Injectable({
@@ -15,8 +17,8 @@ import { DeleteAction } from './delete-action';
 export class DeleteService {
   constructor(
     private refreshService: RefreshService,
-    private dialogService: AllorsMaterialDialogService,
-    private saveService: SaveService,
+    private dialogService: AllorsDialogService,
+    private errorService: ErrorService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -24,7 +26,7 @@ export class DeleteService {
     return new DeleteAction(
       this.refreshService,
       this.dialogService,
-      this.saveService,
+      this.errorService,
       this.snackBar,
       context
     );

@@ -4,11 +4,13 @@ import { MethodType } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import {
+  RefreshService,
+  ErrorService,
+} from '@allors/base/workspace/angular/foundation';
+import {
   Action,
   ActionTarget,
-  RefreshService,
-  SaveService,
-} from '@allors/base/workspace/angular/foundation';
+} from '@allors/base/workspace/angular/application';
 import { MethodConfig } from './method-config';
 
 export class MethodAction implements Action {
@@ -18,7 +20,7 @@ export class MethodAction implements Action {
     refreshService: RefreshService,
     snackBar: MatSnackBar,
     context: Context,
-    saveService: SaveService,
+    errorService: ErrorService,
     public methodType: MethodType,
     public config?: MethodConfig
   ) {
@@ -37,7 +39,7 @@ export class MethodAction implements Action {
           );
           refreshService.refresh();
           this.result.next(true);
-        }, saveService.errorHandler);
+        }, errorService.errorHandler);
       }
     };
   }

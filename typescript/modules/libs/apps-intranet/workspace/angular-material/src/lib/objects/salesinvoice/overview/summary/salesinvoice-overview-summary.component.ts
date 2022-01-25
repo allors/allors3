@@ -13,7 +13,7 @@ import {
   NavigationService,
   PanelService,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../../actions/print/print.service';
@@ -46,7 +46,7 @@ export class SalesInvoiceOverviewSummaryComponent {
     public navigation: NavigationService,
     public printService: PrintService,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     public snackBar: MatSnackBar
   ) {
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
@@ -165,7 +165,7 @@ export class SalesInvoiceOverviewSummaryComponent {
     this.panel.manager.context.invoke(this.invoice.Send).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully sent.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public cancel(): void {
@@ -176,7 +176,7 @@ export class SalesInvoiceOverviewSummaryComponent {
         this.snackBar.open('Successfully cancelled.', 'close', {
           duration: 5000,
         });
-      }, this.saveService.errorHandler);
+      }, this.errorService.errorHandler);
   }
 
   public writeOff(): void {
@@ -185,34 +185,34 @@ export class SalesInvoiceOverviewSummaryComponent {
       this.snackBar.open('Successfully written off.', 'close', {
         duration: 5000,
       });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public reopen(): void {
     this.panel.manager.context.invoke(this.invoice.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully Reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public credit(): void {
     this.panel.manager.context.invoke(this.invoice.Credit).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully Credited.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public revise(): void {
     this.panel.manager.context.invoke(this.invoice.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully Reopened.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public copy(): void {
     this.panel.manager.context.invoke(this.invoice.Copy).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully copied.', 'close', { duration: 5000 });
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

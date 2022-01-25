@@ -23,8 +23,8 @@ export class AllorsMaterialSelectComponent extends RoleField {
   @Output()
   public selected: EventEmitter<IObject> = new EventEmitter();
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
   }
 
   public onModelChange(option: IObject): void {

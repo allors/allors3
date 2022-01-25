@@ -60,13 +60,13 @@ export class AllorsMaterialChipsComponent
 
   focus$: BehaviorSubject<Date>;
 
-  constructor(@Optional() parentForm: NgForm) {
-    super(parentForm);
+  constructor(@Optional() form: NgForm) {
+    super(form);
 
     this.focus$ = new BehaviorSubject<Date>(new Date());
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     if (this.filter) {
       this.filteredOptions = combineLatest([
         this.searchControl.valueChanges,

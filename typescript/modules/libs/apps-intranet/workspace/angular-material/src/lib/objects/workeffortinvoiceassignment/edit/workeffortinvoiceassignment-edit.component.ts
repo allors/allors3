@@ -8,7 +8,7 @@ import { M } from '@allors/default/workspace/meta';
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
@@ -45,7 +45,7 @@ export class WorkEffortInvoiceItemAssignmentEditComponent
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<WorkEffortInvoiceItemAssignmentEditComponent>,
     public refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private snackBar: MatSnackBar,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
@@ -157,13 +157,13 @@ export class WorkEffortInvoiceItemAssignmentEditComponent
     this.allors.context.push().subscribe(() => {
       this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 
   public save(): void {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.workEffortInvoiceItemAssignment);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }

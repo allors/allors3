@@ -45,45 +45,47 @@ import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 
 import {
-  SaveService,
+  ErrorService,
   DateConfig,
   MediaConfig,
   AuthenticationConfig,
   AuthenticationInterceptor,
   AllorsFocusDirective,
   AllorsBarcodeDirective,
-  AuthenticationServiceBase,
-  DateServiceCore,
-  MediaServiceCore,
-  AllorsBarcodeServiceCore,
-  AllorsFocusServiceCore,
-  NavigationServiceCore,
-  RefreshServiceCore,
+  AuthenticationSessionStoreService,
+  DateStaticService,
+  AllorsBarcodeKeypressService,
+  AllorsFocusBehaviorSubjectService,
+  RefreshBehaviorService,
   AuthenticationService,
   DateService,
   AllorsFocusService,
   RefreshService,
   AllorsBarcodeService,
-  NavigationService,
   MediaService,
-  AllorsFormContainerComponent,
-  CreateService,
-  EditService,
+  MediaLocalService,
+  AllorsDialogService,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
+  CreateService,
+  EditService,
+  NavigationService,
+  NavigationMetaService,
+} from '@allors/base/workspace/angular/application';
+
+import {
+  AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
+} from '@allors/base/workspace/angular-material/foundation';
+
+import {
   AllorsMaterialSideNavService,
   AllorsMaterialAssociationAutoCompleteComponent,
-  AllorsMaterialDialogComponent,
   AllorsMaterialErrorDialogComponent,
   AllorsMaterialFilterFieldDialogComponent,
   AllorsMaterialFilterFieldSearchComponent,
   AllorsMaterialFilterComponent,
-  AllorsMaterialFooterComponent,
-  AllorsMaterialFooterSaveCancelComponent,
-  AllorsMaterialHeaderComponent,
-  AllorsMaterialLauncherComponent,
   AllorsMaterialMediaComponent,
   AllorMediaPreviewComponent,
   AllorsMaterialCancelComponent,
@@ -105,16 +107,16 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
-  AllorsMaterialScannerComponent,
+  AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
+  DynamicCreateComponent,
   DynamicEditComponent,
   DynamicFormHostDirective,
-  AllorsMaterialDialogServiceCore,
-  SaveServiceCore,
-  AllorsMaterialSideNavServiceCore,
+  AllorsMaterialErrorService,
+  AllorsMaterialSideNavSubjectService,
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
 } from '@allors/base/workspace/angular-material/application';
@@ -138,7 +140,6 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     // Allors Angular Base
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    AllorsFormContainerComponent,
     // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
@@ -146,10 +147,6 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,
     AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialFooterComponent,
-    AllorsMaterialFooterSaveCancelComponent,
-    AllorsMaterialHeaderComponent,
-    AllorsMaterialLauncherComponent,
     AllorsMaterialMediaComponent,
     AllorMediaPreviewComponent,
     AllorsMaterialCancelComponent,
@@ -171,11 +168,12 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
-    AllorsMaterialScannerComponent,
+    AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
+    DynamicCreateComponent,
     DynamicEditComponent,
     DynamicFormHostDirective,
     // Routed and dialog components
@@ -232,7 +230,10 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
   ],
   providers: [
     WorkspaceService,
-    { provide: AuthenticationService, useClass: AuthenticationServiceBase },
+    {
+      provide: AuthenticationService,
+      useClass: AuthenticationSessionStoreService,
+    },
     {
       provide: AuthenticationConfig,
       useValue: {
@@ -244,19 +245,22 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
       useClass: AuthenticationInterceptor,
       multi: true,
     },
-    { provide: AllorsBarcodeService, useClass: AllorsBarcodeServiceCore },
-    { provide: DateService, useClass: DateServiceCore },
+    { provide: AllorsBarcodeService, useClass: AllorsBarcodeKeypressService },
+    { provide: DateService, useClass: DateStaticService },
     {
       provide: DateConfig,
       useValue: {
         locale: enGB,
       },
     },
-    { provide: AllorsFocusService, useClass: AllorsFocusServiceCore },
-    { provide: MediaService, useClass: MediaServiceCore },
+    {
+      provide: AllorsFocusService,
+      useClass: AllorsFocusBehaviorSubjectService,
+    },
+    { provide: MediaService, useClass: MediaLocalService },
     { provide: MediaConfig, useValue: { url: environment.baseUrl } },
-    { provide: NavigationService, useClass: NavigationServiceCore },
-    { provide: RefreshService, useClass: RefreshServiceCore },
+    { provide: NavigationService, useClass: NavigationMetaService },
+    { provide: RefreshService, useClass: RefreshBehaviorService },
 
     // Angular Material
     {
@@ -266,13 +270,13 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
     { provide: MatDialogRef, useValue: {} },
     {
-      provide: AllorsMaterialDialogService,
-      useClass: AllorsMaterialDialogServiceCore,
+      provide: AllorsDialogService,
+      useClass: AllorsMaterialDialogService,
     },
-    { provide: SaveService, useClass: SaveServiceCore },
+    { provide: ErrorService, useClass: AllorsMaterialErrorService },
     {
       provide: AllorsMaterialSideNavService,
-      useClass: AllorsMaterialSideNavServiceCore,
+      useClass: AllorsMaterialSideNavSubjectService,
     },
     {
       provide: AllorsMaterialCreateService,

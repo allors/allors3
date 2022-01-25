@@ -15,7 +15,7 @@ import {
 import {
   ObjectData,
   RefreshService,
-  SaveService,
+  ErrorService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -48,7 +48,7 @@ export class CatalogueEditComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<CatalogueEditComponent>,
 
     private refreshService: RefreshService,
-    private saveService: SaveService,
+    private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
@@ -132,6 +132,6 @@ export class CatalogueEditComponent implements OnInit, OnDestroy {
     this.allors.context.push().subscribe(() => {
       this.dialogRef.close(this.catalogue);
       this.refreshService.refresh();
-    }, this.saveService.errorHandler);
+    }, this.errorService.errorHandler);
   }
 }
