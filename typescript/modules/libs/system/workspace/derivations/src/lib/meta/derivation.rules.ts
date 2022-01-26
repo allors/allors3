@@ -16,13 +16,11 @@ export function derivationRules(
   metaPopulation: MetaPopulation,
   rules?: IRule<IObject>[]
 ): void | IRule<IObject>[] {
-  if (metaPopulation == null) {
-    return;
-  }
+  const extension = metaPopulation._ as DerivationRulesExtension;
 
   if (rules == null) {
-    return (metaPopulation._ as DerivationRulesExtension).rules;
+    return extension.rules;
   }
 
-  (metaPopulation._ as DerivationRulesExtension).rules = rules;
+  extension.rules = rules;
 }

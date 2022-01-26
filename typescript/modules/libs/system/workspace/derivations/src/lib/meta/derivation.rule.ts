@@ -11,13 +11,11 @@ export function derivationRule(
   roleType: RoleType,
   rule?: IRule<IObject>
 ): void | IRule<IObject> {
-  if (roleType == null) {
-    return;
-  }
+  const extension = roleType._ as DerivationsRuleExtension;
 
   if (rule == null) {
-    return (roleType._ as DerivationsRuleExtension).rule;
+    return extension.rule;
   }
 
-  (roleType._ as DerivationsRuleExtension).rule = rule;
+  extension.rule = rule;
 }

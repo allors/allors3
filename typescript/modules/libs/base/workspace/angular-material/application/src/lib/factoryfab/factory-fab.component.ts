@@ -6,11 +6,11 @@ import {
   angularDisplayName,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  angularIcon,
   CreateData,
   CreateService,
   OnCreate,
 } from '@allors/base/workspace/angular/application';
+import { angularIcon } from '../meta/angular-icon';
 
 @Component({
   selector: 'a-mat-factory-fab',

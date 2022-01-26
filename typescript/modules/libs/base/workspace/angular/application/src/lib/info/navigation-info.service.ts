@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { angularList } from '../meta/angular.list';
-import { angularOverview } from '../meta/angular.overview';
+import { angularPageList } from '../meta/angular-page-list';
+import { angularPageObject } from '../meta/angular-page-object';
 
 export interface NavigationInfo {
   tag: string;
@@ -28,8 +28,8 @@ export class NavigationInfoService {
       (v) => {
         return {
           tag: v.tag,
-          list: angularList(v),
-          overview: angularOverview(v),
+          list: angularPageList(v),
+          overview: angularPageObject(v),
         };
       }
     );

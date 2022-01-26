@@ -16,13 +16,11 @@ export function derivationRuleByClass(
   roleType: RoleType,
   ruleByClass?: Map<Class, IRule<IObject>>
 ): void | Map<Class, IRule<IObject>> {
-  if (roleType == null) {
-    return;
-  }
+  const extension = roleType._ as DerivationsRuleByClassExtension;
 
   if (ruleByClass == null) {
-    return (roleType._ as DerivationsRuleByClassExtension).ruleByClass;
+    return extension.ruleByClass;
   }
 
-  (roleType._ as DerivationsRuleByClassExtension).ruleByClass = ruleByClass;
+  extension.ruleByClass = ruleByClass;
 }

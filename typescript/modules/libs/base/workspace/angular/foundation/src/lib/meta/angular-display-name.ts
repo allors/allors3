@@ -13,13 +13,11 @@ export function angularDisplayName(
   meta: Composite | RoleType,
   displayName?: string
 ): string | void {
-  if (meta == null) {
-    return;
-  }
+  const extension = meta._ as AngularDisplayNameExtension;
 
   if (displayName == null) {
-    return (meta._ as AngularDisplayNameExtension).displayName;
+    return extension.displayName;
   }
 
-  (meta._ as AngularDisplayNameExtension).displayName = displayName;
+  extension.displayName = displayName;
 }

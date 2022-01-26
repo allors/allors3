@@ -26,7 +26,8 @@ export * from './lib/media/preview/dialog.data';
 export * from './lib/media/preview/media-preview.component';
 export * from './lib/media/media.component';
 
-export * from './lib/meta/angular.sorter';
+export * from './lib/meta/angular-icon';
+export * from './lib/meta/angular-sorter';
 
 export * from './lib/error/error-dialog.component';
 export * from './lib/error/error.service';

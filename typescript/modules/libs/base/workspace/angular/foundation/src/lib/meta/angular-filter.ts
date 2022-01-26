@@ -1,6 +1,6 @@
 import { Composite } from '@allors/system/workspace/meta';
 import { Filter } from '../filter/filter';
-import { angularFilterDefinition } from './angular.filter.definition';
+import { angularFilterDefinition } from './angular-filter-definition';
 
 interface AngularFilterExtension {
   filter?: Filter;
@@ -12,15 +12,13 @@ export function angularFilter(
   composite: Composite,
   filter?: Filter
 ): Filter | void {
-  if (composite == null) {
-    return;
-  }
+  const extension = composite._ as AngularFilterExtension;
 
   if (filter == null) {
-    return (composite._ as AngularFilterExtension).filter;
+    return extension.filter;
   }
 
-  (composite._ as AngularFilterExtension).filter = filter;
+  extension.filter = filter;
 }
 
 export function angularFilterFromDefinition(composite: Composite): Filter {

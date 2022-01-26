@@ -8,12 +8,12 @@ import { Organisation } from '@allors/default/workspace/domain';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { angularDisplayName } from '@allors/base/workspace/angular/foundation';
 import {
-  angularIcon,
-  angularList,
+  angularPageList,
   angularMenu,
 } from '@allors/base/workspace/angular/application';
 import {
   AllorsMaterialSideNavService,
+  angularIcon,
   SideMenuItem,
 } from '@allors/base/workspace/angular-material/application';
 
@@ -54,7 +54,7 @@ export class MainComponent implements OnInit, OnDestroy {
           menuItem.title ??
           angularDisplayName(objectType) ??
           objectType?.pluralName,
-        link: menuItem.link ?? angularList(objectType),
+        link: menuItem.link ?? angularPageList(objectType),
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
@@ -65,7 +65,7 @@ export class MainComponent implements OnInit, OnDestroy {
                 childMenuItem.title ??
                 angularDisplayName(childObjectType) ??
                 childObjectType?.pluralName,
-              link: childMenuItem.link ?? angularList(childObjectType),
+              link: childMenuItem.link ?? angularPageList(childObjectType),
             };
           }),
       };

@@ -10,13 +10,11 @@ export function angularIcon(
   composite: Composite,
   icon?: string
 ): string | void {
-  if (composite == null) {
-    return;
-  }
+  const extension = composite._ as AngularIconExtension;
 
   if (icon == null) {
-    return (composite._ as AngularIconExtension).icon;
+    return extension.icon;
   }
 
-  (composite._ as AngularIconExtension).icon = icon;
+  extension.icon = icon;
 }

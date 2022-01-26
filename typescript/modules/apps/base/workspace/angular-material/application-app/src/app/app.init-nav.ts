@@ -1,13 +1,13 @@
 import { M } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
 import {
-  angularList,
-  angularOverview,
+  angularPageList,
+  angularPageObject,
 } from '@allors/base/workspace/angular/application';
 
 function nav(composite: Composite, list: string, overview?: string) {
-  angularList(composite, list);
-  angularOverview(composite, overview);
+  angularPageList(composite, list);
+  angularPageObject(composite, overview);
 }
 
 export function initNav(m: M) {

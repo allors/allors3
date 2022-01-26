@@ -11,13 +11,11 @@ export function angularSorter(
   composite: Composite,
   sorter?: Sorter
 ): Sorter | void {
-  if (composite == null) {
-    return;
-  }
+  const extension = composite._ as AngularSorterExtension;
 
   if (sorter == null) {
-    return (composite._ as AngularSorterExtension).sorter;
+    return extension.sorter;
   }
 
-  (composite._ as AngularSorterExtension).sorter = sorter;
+  extension.sorter = sorter;
 }
