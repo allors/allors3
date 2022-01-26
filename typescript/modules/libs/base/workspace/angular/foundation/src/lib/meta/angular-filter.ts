@@ -12,10 +12,10 @@ export function angularFilter(
   composite: Composite,
   filter?: Filter
 ): Filter | void {
-  const extension = composite._ as AngularFilterExtension;
+  const extension = composite?._ as AngularFilterExtension;
 
   if (filter == null) {
-    return extension.filter;
+    return extension?.filter;
   }
 
   extension.filter = filter;

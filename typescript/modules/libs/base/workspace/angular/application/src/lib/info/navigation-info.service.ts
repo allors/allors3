@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { angularPageList } from '../meta/angular-page-list';
-import { angularPageObject } from '../meta/angular-page-object';
+import { angularPageEdit } from '../meta/angular-page-edit';
 
 export interface NavigationInfo {
   tag: string;
@@ -29,7 +29,7 @@ export class NavigationInfoService {
         return {
           tag: v.tag,
           list: angularPageList(v),
-          overview: angularPageObject(v),
+          overview: angularPageEdit(v),
         };
       }
     );

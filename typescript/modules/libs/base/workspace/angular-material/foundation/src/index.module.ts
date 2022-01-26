@@ -35,10 +35,16 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AllorsMaterialDialogComponent } from './index';
+import {
+  AllorsMaterialDialogComponent,
+  AllorsMaterialPeriodToggleComponent,
+} from './index';
 
 @NgModule({
-  declarations: [AllorsMaterialDialogComponent],
+  declarations: [
+    AllorsMaterialDialogComponent,
+    AllorsMaterialPeriodToggleComponent,
+  ],
   imports: [
     BrowserModule,
     NoopAnimationsModule,

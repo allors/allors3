@@ -10,10 +10,10 @@ export function angularPageList(
   composite: Composite,
   list?: string
 ): string | void {
-  const extension = composite._ as AngularPageListExtension;
+  const extension = composite?._ as AngularPageListExtension;
 
   if (list == null) {
-    return extension.list;
+    return extension?.list;
   }
 
   extension.list = list;

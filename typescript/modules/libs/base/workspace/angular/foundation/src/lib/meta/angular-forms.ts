@@ -15,10 +15,10 @@ export function angularForms(
   composite: Composite,
   forms?: AngularForms
 ): AngularForms | void {
-  const extension = composite._ as AngularFormsExtension;
+  const extension = composite?._ as AngularFormsExtension;
 
   if (forms == null) {
-    return extension.forms;
+    return extension?.forms;
   }
 
   extension.forms = forms;

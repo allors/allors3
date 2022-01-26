@@ -65,6 +65,7 @@ import {
   MediaService,
   MediaLocalService,
   AllorsDialogService,
+  FormHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
@@ -77,6 +78,7 @@ import {
 import {
   AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
+  AllorsMaterialPeriodToggleComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
@@ -114,7 +116,7 @@ import {
   FactoryFabComponent,
   DynamicCreateComponent,
   DynamicEditComponent,
-  DynamicFormHostDirective,
+  AllorsMaterialDynamicRelationshipPanelComponent,
   AllorsMaterialErrorService,
   AllorsMaterialSideNavSubjectService,
   AllorsMaterialCreateService,
@@ -123,7 +125,6 @@ import {
 import { routes, components as routesComponents } from './app.routes';
 import { components as dialogsComponents } from './app.dialogs';
 
-import { EmploymentComponent } from './domain/employment/employment/employment.component';
 import { OrganisationDetailComponent } from './domain/organisation/detail/organisation-detail.component';
 import { OrganisationSummaryComponent } from './domain/organisation/summary/organisation-summary.component';
 import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
@@ -141,6 +142,7 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
+    AllorsMaterialPeriodToggleComponent,
     AllorsMaterialErrorDialogComponent,
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,
@@ -173,12 +175,12 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     FactoryFabComponent,
     DynamicCreateComponent,
     DynamicEditComponent,
-    DynamicFormHostDirective,
+    AllorsMaterialDynamicRelationshipPanelComponent,
+    FormHostDirective,
     // Routed and dialog components
     ...routesComponents,
     ...dialogsComponents,
     // Non routed and non dialog components
-    EmploymentComponent,
     OrganisationDetailComponent,
     OrganisationSummaryComponent,
     PersonInlineComponent,

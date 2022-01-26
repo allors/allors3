@@ -76,6 +76,7 @@ import {
   FactoryFabComponent,
   DynamicCreateComponent,
   DynamicEditComponent,
+  AllorsMaterialDynamicRelationshipPanelComponent,
 } from './index';
 
 @NgModule({
@@ -116,6 +117,7 @@ import {
     FactoryFabComponent,
     DynamicCreateComponent,
     DynamicEditComponent,
+    AllorsMaterialDynamicRelationshipPanelComponent,
   ],
   imports: [
     BrowserModule,

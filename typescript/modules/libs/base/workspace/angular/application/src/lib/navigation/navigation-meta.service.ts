@@ -6,7 +6,7 @@ import { Composite } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 import { angularPageList } from '../meta/angular-page-list';
-import { angularPageObject } from '../meta/angular-page-object';
+import { angularPageEdit } from '../meta/angular-page-edit';
 
 import { NavigationService } from './navigation.service';
 
@@ -34,12 +34,12 @@ export class NavigationMetaService extends NavigationService {
   }
 
   hasOverview(obj: IObject): boolean {
-    const overview = obj ? angularPageObject(obj.strategy.cls) : null;
+    const overview = obj ? angularPageEdit(obj.strategy.cls) : null;
     return overview != null;
   }
 
   overview(object: IObject) {
-    const overview = object ? angularPageObject(object.strategy.cls) : null;
+    const overview = object ? angularPageEdit(object.strategy.cls) : null;
     const url = overview?.replace(`:id`, object.strategy.id.toString());
     if (url != null) {
       this.router.navigate([url]);

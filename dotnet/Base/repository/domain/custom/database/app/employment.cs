@@ -13,7 +13,7 @@ namespace Allors.Repository
     [Id("CE633852-D115-468E-A52F-22A777E27198")]
     #endregion
     [Workspace(Default)]
-    public partial class Employment : Deletable
+    public partial class Employment : Period, Deletable
     {
         #region inherited properties
 
@@ -21,20 +21,10 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
-        #endregion
-
-        #region Allors
-        [Id("39EE0BD9-889E-4C72-B03D-C745A178B658")]
-        #endregion
-        [Required]
-        [Workspace(Default)]
         public DateTime FromDate { get; set; }
-
-        #region Allors
-        [Id("A8634A39-7A29-464D-B6D6-0B7665DDD212")]
-        #endregion
-        [Workspace(Default)]
         public DateTime ThroughDate { get; set; }
+
+        #endregion
 
         #region Allors
         [Id("93B8F2E1-9902-4C0B-BFAC-74629C494346")]
@@ -53,6 +43,7 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         public Organisation Employer { get; set; }
+   
 
         #region inherited methods
 

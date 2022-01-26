@@ -1,10 +1,7 @@
 import { format } from 'date-fns';
-import { Component, Self, OnInit, HostBinding } from '@angular/core';
-import {
-  Employment,
-  Organisation,
-  Person,
-} from '@allors/default/workspace/domain';
+import { Component, Self, OnInit, HostBinding, Input } from '@angular/core';
+import { Composite, RoleType } from '@allors/system/workspace/meta';
+import { IObject } from '@allors/system/workspace/domain';
 import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
@@ -13,28 +10,24 @@ import {
   AllorsPanelRelationshipComponent,
   CreateData,
 } from '@allors/base/workspace/angular/application';
-import {
-  DeleteService,
-  EditRoleService,
-  Table,
-  TableRow,
-} from '@allors/base/workspace/angular-material/application';
+import { TableRow } from '../table/table-row';
+import { Table } from '../table/table';
+import { DeleteService } from '../actions/delete/delete.service';
+import { EditRoleService } from '../actions/edit-role/edit-role.service';
+import { angularIcon } from '../meta/angular-icon';
+import { PeriodToggle } from '@allors/base/workspace/angular-material/foundation';
 
 interface Row extends TableRow {
-  object: Employment;
-  type: string;
-  parties: string;
-  from: string;
-  through: string;
+  object: IObject;
 }
 
 @Component({
-  selector: 'employment',
-  templateUrl: './employment.component.html',
+  selector: 'a-mat-dyn-relationship-panel',
+  templateUrl: './dynamic-relationship-panel.component.html',
   providers: [PanelService],
 })
-export class EmploymentComponent
-  extends AllorsPanelRelationshipComponent<Organisation | Person>
+export class AllorsMaterialDynamicRelationshipPanelComponent
+  extends AllorsPanelRelationshipComponent
   implements OnInit
 {
   @HostBinding('class.expanded-panel')
@@ -42,14 +35,21 @@ export class EmploymentComponent
     return this.panel.isExpanded;
   }
 
-  collection = 'Current';
+  @Input()
+  self: RoleType;
+
+  @Input()
+  other: RoleType;
+
+  period: PeriodToggle = 'Current';
+
   table: Table<Row>;
   delete: Action;
   edit: Action;
 
-  all: Employment[];
-  active: Employment[];
-  inactive: Employment[];
+  all: IObject[];
+  active: IObject[];
+  inactive: IObject[];
 
   constructor(
     @Self() panel: PanelService,
@@ -59,14 +59,17 @@ export class EmploymentComponent
     public editRoleService: EditRoleService
   ) {
     super(panel);
-
-    const employment = this.m.Employment;
-    this.objectType = employment;
-    this.associationRoleType = employment.Employer;
-    this.roleRoleType = employment.Employee;
   }
 
   ngOnInit() {
+    const objectType =
+      this.self?.associationType.objectType ??
+      this.other?.associationType.objectType;
+    this.panel.name = this.other?.pluralName;
+    this.panel.title = this.other?.pluralName;
+    this.panel.icon = angularIcon(objectType as Composite);
+    this.panel.expandable = true;
+
     this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editRoleService.edit();
 
@@ -100,12 +103,7 @@ export class EmploymentComponent
             operands: [
               {
                 kind: 'Equals',
-                propertyType: this.associationRoleType,
-                value: id,
-              },
-              {
-                kind: 'Equals',
-                propertyType: this.roleRoleType,
+                propertyType: this.self,
                 value: id,
               },
             ],
@@ -122,13 +120,15 @@ export class EmploymentComponent
     };
 
     this.panel.onPulled = (loaded) => {
-      this.all = loaded.collection<Employment>(pullName) ?? [];
-      this.active = this.all.filter((v) =>
-        v.Employer?.ActiveEmployments.includes(v)
-      );
-      this.inactive = this.all.filter((v) =>
-        v.Employer?.InactiveEmployments.includes(v)
-      );
+      this.all = loaded.collection<IObject>(pullName) ?? [];
+      this.active = this.all;
+      this.inactive = this.all;
+      // this.active = this.all.filter((v) =>
+      //   v.Employer?.ActiveEmployments.includes(v)
+      // );
+      // this.inactive = this.all.filter((v) =>
+      //   v.Employer?.InactiveEmployments.includes(v)
+      // );
 
       this.table.total = (loaded.value(`${pullName}_total`) ??
         this.active?.length ??
@@ -138,22 +138,21 @@ export class EmploymentComponent
   }
 
   public refreshTable() {
-    this.table.data = this.employments?.map((v) => {
+    this.table.data = this.relationships?.map((v) => {
       return {
         object: v,
         type: v.strategy.cls.singularName,
-        parties: v.Employer?.Name + ', ' + v.Employee.FirstName,
-        from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
-        through:
-          v.ThroughDate != null
-            ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
-            : '',
+        // from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
+        // through:
+        //   v.ThroughDate != null
+        //     ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+        //     : '',
       } as Row;
     });
   }
 
-  get employments() {
-    switch (this.collection) {
+  get relationships() {
+    switch (this.period) {
       case 'Current':
         return this.active;
       case 'Inactive':
@@ -167,7 +166,7 @@ export class EmploymentComponent
   get createData(): CreateData {
     return {
       kind: 'CreateData',
-      objectType: this.m.Employment,
+      objectType: this.self.associationType.objectType as Composite,
       // associationId: this.panel.manager.id,
       // associationObjectType: this.panel.manager.objectType,
     };

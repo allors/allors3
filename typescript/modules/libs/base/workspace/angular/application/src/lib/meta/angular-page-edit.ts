@@ -4,19 +4,19 @@ interface AngularPageObjectExtension {
   pageObject?: string;
 }
 
-export function angularPageObject(composite: Composite): string;
-export function angularPageObject(
+export function angularPageEdit(composite: Composite): string;
+export function angularPageEdit(
   composite: Composite,
   pageObject?: string
 ): void;
-export function angularPageObject(
+export function angularPageEdit(
   composite: Composite,
   pageObject?: string
 ): string | void {
-  const extension = composite._ as AngularPageObjectExtension;
+  const extension = composite?._ as AngularPageObjectExtension;
 
   if (pageObject == null) {
-    return extension.pageObject;
+    return extension?.pageObject;
   }
 
   extension.pageObject = pageObject;

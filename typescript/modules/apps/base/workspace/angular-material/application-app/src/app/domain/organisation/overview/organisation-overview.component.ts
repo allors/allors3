@@ -1,6 +1,12 @@
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Component, Self, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  Self,
+  OnDestroy,
+  OnInit,
+  AfterViewInit,
+} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '@allors/default/workspace/domain';
@@ -21,7 +27,7 @@ import {
 })
 export class OrganisationOverviewComponent
   extends AllorsPageObjectComponent<Organisation>
-  implements OnInit, OnDestroy
+  implements AfterViewInit, OnDestroy
 {
   subscription: Subscription;
 
@@ -36,7 +42,7 @@ export class OrganisationOverviewComponent
     super(allors, panelManager, titleService);
   }
 
-  public ngOnInit(): void {
+  public ngAfterViewInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
 

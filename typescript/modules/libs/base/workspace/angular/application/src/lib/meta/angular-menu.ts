@@ -14,10 +14,10 @@ export function angularMenu(
   metaPopulation: MetaPopulation,
   menu?: MenuItem[]
 ): MenuItem[] | void {
-  const extension = metaPopulation._ as AngularMenuExtension;
+  const extension = metaPopulation?._ as AngularMenuExtension;
 
   if (menu == null) {
-    return extension.menu;
+    return extension?.menu;
   }
 
   extension.menu = menu;

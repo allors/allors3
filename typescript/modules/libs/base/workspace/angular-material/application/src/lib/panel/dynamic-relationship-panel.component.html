@@ -9,7 +9,7 @@
       </div>
       <div class="col-9 col-md-10 p-3">
         <h4>{{ panel.title }}</h4>
-        <div>{{ table.total }} total employments</div>
+        <div>total {{ table.total }} {{ panel.title }}</div>
       </div>
     </div>
   </div>
@@ -27,7 +27,7 @@
   >
     <div class="row pt-3">
       <div class="col pl-3">
-        <h4>Employments</h4>
+        <h4>{{ panel.title }}</h4>
       </div>
       <div class="pr-3">
         <mat-icon>expand_less</mat-icon>
@@ -42,15 +42,8 @@
 
   <a-mat-table [table]="table"></a-mat-table>
 
-  <div>
-    <mat-button-toggle-group
-      appearance="legacy"
-      [(ngModel)]="collection"
-      (valueChange)="refreshTable()"
-    >
-      <mat-button-toggle value="Current">Current</mat-button-toggle>
-      <mat-button-toggle value="Inactive">Inactive</mat-button-toggle>
-      <mat-button-toggle value="All">All</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
+  <a-mat-period-toggle
+    [(selection)]="period"
+    (selectionChange)="this.refreshService.refresh()"
+  ></a-mat-period-toggle>
 </div>

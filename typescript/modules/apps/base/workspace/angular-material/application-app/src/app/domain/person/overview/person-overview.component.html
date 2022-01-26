@@ -21,7 +21,10 @@
         [ngClass]="panelManager.panelContainerClass"
       >
         <person-detail></person-detail>
-        <employment></employment>
+        <a-mat-dyn-relationship-panel
+          [self]="m.Employment.Employee"
+          [other]="m.Employment.Employer"
+        ></a-mat-dyn-relationship-panel>
       </div>
     </div>
   </div>

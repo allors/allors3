@@ -2,12 +2,12 @@ import { M } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
 import {
   angularPageList,
-  angularPageObject,
+  angularPageEdit,
 } from '@allors/base/workspace/angular/application';
 
 function nav(composite: Composite, list: string, overview?: string) {
   angularPageList(composite, list);
-  angularPageObject(composite, overview);
+  angularPageEdit(composite, overview);
 }
 
 export function initNav(m: M) {

@@ -14,10 +14,10 @@ export function angularFilterDefinition(
   composite: Composite,
   filterDefinition?: FilterDefinition
 ): FilterDefinition | void {
-  const extension = composite._ as AngularFilterDefinitionExtension;
+  const extension = composite?._ as AngularFilterDefinitionExtension;
 
   if (filterDefinition == null) {
-    return extension.filterDefinition;
+    return extension?.filterDefinition;
   }
 
   extension.filterDefinition = filterDefinition;

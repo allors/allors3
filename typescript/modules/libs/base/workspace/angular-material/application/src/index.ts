@@ -8,13 +8,14 @@ export * from './lib/actions/method/method-config';
 export * from './lib/actions/overview/overview.service';
 export * from './lib/actions/overview/overview-action';
 
+export * from './lib/barcode/barcode-entry.component';
+
 export * from './lib/create/create.service';
 
-export * from './lib/dynamic/create/create.component';
-export * from './lib/dynamic/edit/edit.component';
-export * from './lib/dynamic/form/form-host.directive';
-
 export * from './lib/edit/edit.service';
+
+export * from './lib/error/error-dialog.component';
+export * from './lib/error/error.service';
 
 export * from './lib/factoryfab/factory-fab.component';
 
@@ -29,10 +30,10 @@ export * from './lib/media/media.component';
 export * from './lib/meta/angular-icon';
 export * from './lib/meta/angular-sorter';
 
-export * from './lib/error/error-dialog.component';
-export * from './lib/error/error.service';
+export * from './lib/page/create/create.component';
+export * from './lib/page/edit/edit.component';
 
-export * from './lib/barcode/barcode-entry.component';
+export * from './lib/panel/dynamic-relationship-panel.component';
 
 export * from './lib/sidemenu/side-menu.component';
 export * from './lib/sidemenu/side-menu-item';
