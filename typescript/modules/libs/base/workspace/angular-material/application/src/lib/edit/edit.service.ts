@@ -7,7 +7,7 @@ import { IObject } from '@allors/system/workspace/domain';
 import {
   EditData,
   EditService,
-} from '@allors/base/workspace/angular/application';
+} from '@allors/base/workspace/angular/foundation';
 
 @Injectable()
 export class AllorsMaterialEditService extends EditService {

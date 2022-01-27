@@ -12,7 +12,11 @@ import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import {
+  CreateService,
+  EditService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -69,8 +73,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 
 import {
-  CreateService,
-  EditService,
   NavigationService,
   NavigationMetaService,
 } from '@allors/base/workspace/angular/application';

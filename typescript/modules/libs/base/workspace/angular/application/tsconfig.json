@@ -25,6 +25,7 @@
       "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"],
       // Base
       "@allors/base/workspace/angular/foundation": ["libs/base/workspace/angular/foundation/src/index.ts"],
+      "@allors/base/workspace/angular/application": ["libs/base/workspace/angular/application/src/index.ts"],
       // Default
       "@allors/default/workspace/domain": ["libs/base/workspace/domain/src/index.ts"],
       "@allors/default/workspace/derivations": ["libs/base/workspace/derivations/src/index.ts"],

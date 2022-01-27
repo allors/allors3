@@ -5,7 +5,7 @@ import { IObject } from '@allors/system/workspace/domain';
 import {
   CreateData,
   EditData,
-} from '@allors/base/workspace/angular/application';
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   templateUrl: 'country-edit.component.html',

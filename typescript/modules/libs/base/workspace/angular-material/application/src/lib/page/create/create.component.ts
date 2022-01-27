@@ -12,9 +12,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AllorsForm,
   angularForms,
+  CreateData,
   FormHostDirective,
 } from '@allors/base/workspace/angular/foundation';
-import { CreateData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: 'create.component.html',

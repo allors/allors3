@@ -10,11 +10,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AllorsForm,
   angularForms,
+  EditData,
   FormHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 import { Composite } from '@allors/system/workspace/meta';
 import { Subscription, tap } from 'rxjs';
-import { EditData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: 'edit.component.html',

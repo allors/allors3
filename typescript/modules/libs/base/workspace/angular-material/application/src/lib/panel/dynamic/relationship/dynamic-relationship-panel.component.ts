@@ -2,13 +2,15 @@ import { format } from 'date-fns';
 import { Component, Self, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import { IObject, Pull } from '@allors/system/workspace/domain';
-import { RefreshService } from '@allors/base/workspace/angular/foundation';
+import {
+  CreateData,
+  RefreshService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   NavigationService,
   PanelService,
   AllorsPanelRelationshipComponent,
-  CreateData,
 } from '@allors/base/workspace/angular/application';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import { angularIcon } from '../../../meta/angular-icon';
@@ -17,6 +19,7 @@ import { TableRow } from '../../../table/table-row';
 import { DeleteService } from '../../../actions/delete/delete.service';
 import { EditRoleService } from '../../../actions/edit-role/edit-role.service';
 import { Period } from '@allors/default/workspace/domain';
+import { TableConfig } from '../../../table/table-config';
 
 interface Row extends TableRow {
   object: IObject;
@@ -45,6 +48,8 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
   @Input()
   display: RoleType;
 
+  objectType: Composite;
+
   hasPeriod: boolean;
   periodSelection: PeriodSelection = PeriodSelection.Current;
 
@@ -66,30 +71,38 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
   }
 
   ngOnInit() {
-    const objectType = this.target.associationType.objectType as Composite;
-    this.hasPeriod = objectType.supertypes.has(this.m.Period);
+    this.objectType = this.target.associationType.objectType as Composite;
+    this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
 
     this.panel.name = this.target.pluralName;
     this.panel.title = this.target.pluralName;
-    this.panel.icon = angularIcon(objectType);
+    this.panel.icon = angularIcon(this.objectType);
     this.panel.expandable = true;
 
     this.delete = this.deleteService.delete(this.panel.manager.context);
     this.edit = this.editRoleService.edit();
 
     const sort = true;
-    this.table = new Table({
+
+    const tableConfig: TableConfig = {
       selection: true,
-      columns: [
-        { name: this.target.name, sort },
-        { name: 'from', sort },
-        { name: 'through', sort },
-      ],
+      columns: [{ name: this.target.name, sort }],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
-    });
+    };
+
+    if (this.hasPeriod) {
+      tableConfig.columns.push(
+        ...[
+          { name: 'from', sort },
+          { name: 'through', sort },
+        ]
+      );
+    }
+
+    this.table = new Table(tableConfig);
 
     const pullName = `${this.panel.name}_${this.m.Employment.tag}`;
 
@@ -99,7 +112,7 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
       const pull: Pull = {
         extent: {
           kind: 'Filter',
-          objectType,
+          objectType: this.objectType,
           predicate: {
             kind: 'Equals',
             propertyType: this.anchor,
@@ -177,17 +190,23 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
         .getUnitRole(this.display)
         ?.toString(); // TODO: Use relation
 
-      const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
-      const throughDate = v.strategy.getUnitRole(
-        this.m.Period.ThroughDate
-      ) as Date;
+      let from: string;
+      let through: string;
+      if (this.hasPeriod) {
+        const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
+        from = format(fromDate, 'dd-MM-yyyy');
+        const throughDate = v.strategy.getUnitRole(
+          this.m.Period.ThroughDate
+        ) as Date;
+        through = throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
+      }
 
       return {
         object: v,
         [this.target.name]: targetDisplay,
         type: v.strategy.cls.singularName,
-        from: format(fromDate, 'dd-MM-yyyy'),
-        through: throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '',
+        from,
+        through,
       } as Row;
     });
   }
@@ -195,9 +214,13 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
   get createData(): CreateData {
     return {
       kind: 'CreateData',
-      objectType: this.anchor.associationType.objectType as Composite,
-      // associationId: this.panel.manager.id,
-      // associationObjectType: this.panel.manager.objectType,
+      objectType: this.objectType,
+      args: [
+        {
+          roleType: this.anchor,
+          objectId: this.panel.manager.id,
+        },
+      ],
     };
   }
 }

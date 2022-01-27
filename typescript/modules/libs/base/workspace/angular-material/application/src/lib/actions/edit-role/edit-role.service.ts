@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { RoleType } from '@allors/system/workspace/meta';
-import { RefreshService } from '@allors/base/workspace/angular/foundation';
-import { EditService } from '@allors/base/workspace/angular/application';
+import {
+  RefreshService,
+  EditService,
+} from '@allors/base/workspace/angular/foundation';
 import { EditRoleAction } from './edit-role-action';
 
 @Injectable({

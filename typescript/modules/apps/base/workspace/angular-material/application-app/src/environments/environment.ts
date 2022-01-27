@@ -4,13 +4,15 @@ import {
   ComponentRef,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import {
+  CreateService,
+  EditService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import { RouteInfoService } from '@allors/base/workspace/angular/foundation';
 import {
   MenuInfoService,
   NavigationInfoService,
-  CreateService,
-  EditService,
 } from '@allors/base/workspace/angular/application';
 import { dialogs } from '../app/app.dialogs';
 import { init } from '../app/app.init';

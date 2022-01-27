@@ -7,7 +7,7 @@ import {
   CreateData,
   CreateService,
   OnCreate,
-} from '@allors/base/workspace/angular/application';
+} from '@allors/base/workspace/angular/foundation';
 
 @Injectable()
 export class AllorsMaterialCreateService extends CreateService {
@@ -25,7 +25,7 @@ export class AllorsMaterialCreateService extends CreateService {
     const data: CreateData = {
       kind: 'CreateData',
       objectType,
-      onCreate,
+      onCreate: onCreate,
     };
 
     const component = this.createControlByObjectTypeTag[objectType.tag];

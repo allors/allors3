@@ -8,16 +8,16 @@ import {
   Organisation,
   Employment,
 } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
+  ContextService,
+  CreateData,
+  EditData,
+} from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
   ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  CreateData,
-  EditData,
-} from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './employment-edit.component.html',

@@ -7,12 +7,15 @@ export * from './lib/authentication/authentication-config';
 export * from './lib/authentication/authentication-interceptor';
 export * from './lib/authentication/authentication-session-store.service';
 
-export * from './lib/context/context-service';
-export * from './lib/context/context';
-
 export * from './lib/barcode/barcode.service';
 export * from './lib/barcode/barcode.directive';
 export * from './lib/barcode/barcode-keypress.service.core';
+
+export * from './lib/context/context-service';
+export * from './lib/context/context';
+
+export * from './lib/create/create.data';
+export * from './lib/create/create.service';
 
 export * from './lib/date/date.config';
 export * from './lib/date/date.service';
@@ -20,6 +23,9 @@ export * from './lib/date/date-static.service.core';
 
 export * from './lib/dialog/dialog.config';
 export * from './lib/dialog/dialog.service';
+
+export * from './lib/edit/edit-data';
+export * from './lib/edit/edit.service';
 
 export * from './lib/field/association-field';
 export * from './lib/field/field';

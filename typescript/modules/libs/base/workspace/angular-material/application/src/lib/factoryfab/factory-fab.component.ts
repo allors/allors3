@@ -4,12 +4,10 @@ import { IObject } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   angularDisplayName,
-} from '@allors/base/workspace/angular/foundation';
-import {
   CreateData,
   CreateService,
   OnCreate,
-} from '@allors/base/workspace/angular/application';
+} from '@allors/base/workspace/angular/foundation';
 import { angularIcon } from '../meta/angular-icon';
 
 @Component({
