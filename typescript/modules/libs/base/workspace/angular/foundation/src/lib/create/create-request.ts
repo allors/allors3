@@ -1,8 +1,8 @@
-import { Composite } from '@allors/system/workspace/meta';
+import { Class } from '@allors/system/workspace/meta';
 import { CreateRequestArgument } from './create-request-argument';
 
 export interface CreateRequest {
   readonly kind: 'CreateRequest';
-  objectType: Composite;
+  objectType: Class;
   arguments?: CreateRequestArgument[];
 }

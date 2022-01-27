@@ -1,0 +1,34 @@
+<div class="container-fluid">
+  <div class="row">
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.Employment.FromDate"
+    ></a-mat-datepicker>
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.Employment.ThroughDate"
+    ></a-mat-datepicker>
+  </div>
+
+  <div class="row">
+    <a-mat-autocomplete
+      class="col"
+      [object]="object"
+      [roleType]="m.Employment.Employer"
+      [filter]="organisationsFilter.create(context)"
+      display="Name"
+    ></a-mat-autocomplete>
+  </div>
+
+  <div class="row">
+    <a-mat-autocomplete
+      class="col"
+      [object]="object"
+      [roleType]="m.Employment.Employee"
+      [filter]="peopleFilter.create(context)"
+      display="FirstName"
+    ></a-mat-autocomplete>
+  </div>
+</div>

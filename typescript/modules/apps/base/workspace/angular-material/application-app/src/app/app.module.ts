@@ -136,7 +136,7 @@ import { PersonInlineComponent } from './domain/person/inline/person-inline.comp
 import { PersonDetailComponent } from './domain/person/detail/person-detail.component';
 import { PersonSummaryComponent } from './domain/person/summary/person-summary.component';
 
-import { CountryFormComponent } from './domain/country/forms/country-form.component';
+import { CountryFormComponent } from './domain/country/form/country-form.component';
 
 @NgModule({
   bootstrap: [AppComponent],

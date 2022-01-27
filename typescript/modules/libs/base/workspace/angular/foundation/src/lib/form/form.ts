@@ -1,6 +1,7 @@
-import { Class } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
 import { EventEmitter } from '@angular/core';
+import { CreateRequest } from '../create/create-request';
+import { EditRequest } from '../edit/edit-request';
 
 export interface AllorsFormConstructor {
   new (): AllorsForm;
@@ -17,9 +18,9 @@ export interface AllorsForm {
 
   cancelled: EventEmitter<void>;
 
-  create(objectType: Class): void;
+  create(request: CreateRequest): void;
 
-  edit(objectId: number): void;
+  edit(request: EditRequest): void;
 
   save(): void;
 

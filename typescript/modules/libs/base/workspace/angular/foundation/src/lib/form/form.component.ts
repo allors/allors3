@@ -1,13 +1,15 @@
 import { HostBinding, Directive, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Class } from '@allors/system/workspace/meta';
 import { M } from '@allors/default/workspace/meta';
-import { IObject } from '@allors/system/workspace/domain';
+import { IObject, Pull } from '@allors/system/workspace/domain';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
 import { Context } from '../context/context';
 import { ContextService } from '../context/context-service';
 import { ErrorService } from '../error/error.service';
+import { CreateRequest } from '../create/create-request';
+import { EditRequest } from '../edit/edit-request';
+import { Subscription } from 'rxjs';
 
 @Directive()
 export abstract class AllorsFormComponent<T extends IObject>
@@ -43,21 +45,57 @@ export abstract class AllorsFormComponent<T extends IObject>
     this.m = this.context.configuration.metaPopulation as M;
   }
 
+  private subscription: Subscription;
+
   get canSave() {
     return this.form.form.valid && this.context.hasChanges();
   }
 
-  get canWrite() {
-    // TODO: From meta
+  get canWrite(): any {
     return true;
   }
 
-  create(objectType: Class): void {
-    this.object = this.context.create<T>(objectType);
+  create(request: CreateRequest): void {
+    if (request.arguments?.length) {
+      const pulls = request.arguments.map(v=>);
+      for (const arg of request.arguments) {
+      }
+
+      p.Employment({
+        objectId,
+        include: {
+          Employee: {},
+          Employer: {},
+        },
+      });
+
+      this.subscription?.unsubscribe();
+      this.subscription = this.context.pull(pulls).subscribe((loaded) => {
+        this.object = this.context.create<T>(request.objectType);
+        this.object.FromDate = new Date();
+
+        this.object.Employer = this.organisation;
+        this.object.Employee = this.person;
+      });
+    } else {
+      this.object = this.context.create<T>(request.objectType);
+    }
   }
 
-  edit(objectId: number): void {
-    this.context.pull({ objectId }).subscribe((loaded) => {
+  edit(request: EditRequest): void {
+    const m = this.m;
+    const { pullBuilder: p } = m;
+
+    const pull = p.Employment({
+      objectId: request.object.id,
+      include: {
+        Employee: {},
+        Employer: {},
+      },
+    });
+
+    this.subscription?.unsubscribe();
+    this.subscription = this.context.pull(pull).subscribe((loaded) => {
       this.object = loaded.objects.values().next()?.value;
     });
   }

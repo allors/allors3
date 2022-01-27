@@ -51,7 +51,9 @@ namespace Allors.Database.Domain
             acme.Owner = jenny;
             acme.Manager = jane;
             new EmploymentBuilder(this.transaction).WithEmployer(acme).WithEmployee(jane).Build();
-            new EmploymentBuilder(this.transaction).WithEmployer(acme).WithEmployee(john).Build();
+
+            var now = this.transaction.Now();
+            new EmploymentBuilder(this.transaction).WithEmployer(acme).WithEmployee(john).WithFromDate(now.AddDays(-2)).WithThroughDate(now.AddDays(-1)).Build();
 
             // Create cycles between Organisation and Person
             var cycleOrganisation1 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle One").Build();
