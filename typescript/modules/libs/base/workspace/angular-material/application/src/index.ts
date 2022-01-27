@@ -33,7 +33,7 @@ export * from './lib/meta/angular-sorter';
 export * from './lib/page/create/create.component';
 export * from './lib/page/edit/edit.component';
 
-export * from './lib/panel/dynamic-relationship-panel.component';
+export * from './lib/panel/dynamic/relationship/dynamic-relationship-panel.component';
 
 export * from './lib/sidemenu/side-menu.component';
 export * from './lib/sidemenu/side-menu-item';

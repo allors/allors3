@@ -42,8 +42,8 @@
 
   <a-mat-table [table]="table"></a-mat-table>
 
-  <a-mat-period-toggle
-    [(selection)]="period"
-    (selectionChange)="this.refreshService.refresh()"
-  ></a-mat-period-toggle>
+  <a-mat-period-selection-toggle
+    [periodSelection]="periodSelection"
+    (periodSelectionChange)="this.onPeriodSelectionChange($event)"
+  ></a-mat-period-selection-toggle>
 </div>

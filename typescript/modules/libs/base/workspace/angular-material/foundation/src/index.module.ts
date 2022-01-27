@@ -37,7 +37,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import {
   AllorsMaterialDialogComponent,
-  AllorsMaterialPeriodToggleComponent,
+  AllorsMaterialPeriodSelectionToggleComponent,
   AllorsMaterialAssociationAutoCompleteComponent,
   AllorsMaterialCancelComponent,
   AllorsMaterialSaveComponent,
@@ -63,7 +63,7 @@ import {
 @NgModule({
   declarations: [
     AllorsMaterialDialogComponent,
-    AllorsMaterialPeriodToggleComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialCancelComponent,
     AllorsMaterialSaveComponent,

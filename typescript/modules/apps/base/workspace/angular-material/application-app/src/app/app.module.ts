@@ -78,7 +78,7 @@ import {
 import {
   AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
-  AllorsMaterialPeriodToggleComponent,
+  AllorsMaterialPeriodSelectionToggleComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
@@ -145,7 +145,7 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
-    AllorsMaterialPeriodToggleComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
     AllorsMaterialErrorDialogComponent,
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,

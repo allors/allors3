@@ -63,6 +63,7 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
+  AllorsMaterialPeriodSelectionToggleComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
@@ -121,6 +122,7 @@ import {
     DynamicCreateComponent,
     DynamicEditComponent,
     AllorsMaterialDynamicRelationshipPanelComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
   ],
   imports: [
     BrowserModule,

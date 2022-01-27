@@ -24,4 +24,4 @@ export * from './lib/field/role/textarea/textarea.component';
 export * from './lib/form/cancel.component';
 export * from './lib/form/save.component';
 
-export * from './lib/period/period-toggle.component';
+export * from './lib/period/period-selection-toggle.component';

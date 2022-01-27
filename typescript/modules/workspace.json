@@ -20,6 +20,7 @@
     "base-workspace-angular-material-application-app": "apps/base/workspace/angular-material/application-app",
     "base-workspace-angular-material-foundation": "libs/base/workspace/angular-material/foundation",
     "base-workspace-derivations": "libs/base/workspace/derivations",
+    "base-workspace-derivations-custom": "libs/base/workspace/derivations-custom",
     "base-workspace-domain": "libs/base/workspace/domain",
     "base-workspace-meta": "libs/base/workspace/meta",
     "base-workspace-meta-json": "libs/base/workspace/meta-json",
