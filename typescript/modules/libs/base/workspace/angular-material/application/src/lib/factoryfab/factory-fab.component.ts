@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Class, humanize } from '@allors/system/workspace/meta';
+import { Class, Composite, humanize } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   angularDisplayName,
-  CreateData,
+  CreateRequest,
+  CreateRequestArgument,
   CreateService,
-  OnCreate,
 } from '@allors/base/workspace/angular/foundation';
 import { angularIcon } from '../meta/angular-icon';
 
@@ -16,9 +16,9 @@ import { angularIcon } from '../meta/angular-icon';
   styleUrls: ['./factory-fab.component.scss'],
 })
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
-  @Input() public createData: CreateData;
+  @Input() public objectType: Composite;
 
-  @Input() public onCreate?: OnCreate;
+  @Input() public createRequestArguments: CreateRequestArgument[];
 
   @Output() public created?: EventEmitter<IObject> = new EventEmitter();
 
@@ -29,10 +29,10 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.createData.objectType.isInterface) {
-      this.classes = [...this.createData.objectType.classes];
+    if (this.objectType.isInterface) {
+      this.classes = [...this.objectType.classes];
     } else {
-      this.classes = [this.createData.objectType as Class];
+      this.classes = [this.objectType as Class];
     }
 
     this.classes = this.classes.filter((v) => this.createService.canCreate(v));
@@ -43,7 +43,13 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
   }
 
   create(objectType: Class) {
-    this.createService.create(objectType, this.onCreate).subscribe((v) => {
+    const request: CreateRequest = {
+      kind: 'CreateRequest',
+      objectType,
+      arguments: this.createRequestArguments,
+    };
+
+    this.createService.create(request).subscribe((v) => {
       if (v && this.created) {
         this.created.next(v);
       }

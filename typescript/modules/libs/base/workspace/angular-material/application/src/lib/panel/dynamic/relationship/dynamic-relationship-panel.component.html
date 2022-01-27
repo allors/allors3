@@ -36,7 +36,8 @@
   </div>
 
   <a-mat-factory-fab
-    [createData]="createData"
+    [objectType]="objectType"
+    [createRequestArguments]="createRequestArguments"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 

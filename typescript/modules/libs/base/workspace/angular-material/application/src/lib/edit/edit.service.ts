@@ -2,10 +2,9 @@ import { Observable, throwError } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { Composite } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
 import {
-  EditData,
+  EditRequest,
   EditService,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -21,17 +20,12 @@ export class AllorsMaterialEditService extends EditService {
     return !!this.editControlByObjectTypeTag[object.strategy.cls.tag];
   }
 
-  edit(object: IObject, objectType?: Composite): Observable<IObject> {
-    const data: EditData = {
-      kind: 'EditDialogData',
-      object,
-      objectType,
-    };
-
-    const component = this.editControlByObjectTypeTag[object.strategy.cls.tag];
+  edit(request: EditRequest): Observable<IObject> {
+    const component =
+      this.editControlByObjectTypeTag[request.object.strategy.cls.tag];
     if (component) {
       const dialogRef = this.dialog.open(component, {
-        data,
+        data: request,
         minWidth: '80vw',
         maxHeight: '90vh',
       });

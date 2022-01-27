@@ -7,7 +7,7 @@ import { M } from '@allors/default/workspace/meta';
 import { Locale, Person, Organisation } from '@allors/default/workspace/domain';
 import {
   ContextService,
-  CreateData,
+  CreateRequest,
 } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
@@ -34,7 +34,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: CreateData,
+    @Inject(MAT_DIALOG_DATA) public data: CreateRequest,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,

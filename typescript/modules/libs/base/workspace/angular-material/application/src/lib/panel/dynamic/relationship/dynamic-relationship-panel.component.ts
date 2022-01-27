@@ -3,7 +3,8 @@ import { Component, Self, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import { IObject, Pull } from '@allors/system/workspace/domain';
 import {
-  CreateData,
+  CreateRequest,
+  CreateRequestArgument,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -211,16 +212,13 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
     });
   }
 
-  get createData(): CreateData {
-    return {
-      kind: 'CreateData',
-      objectType: this.objectType,
-      args: [
-        {
-          roleType: this.anchor,
-          objectId: this.panel.manager.id,
-        },
-      ],
-    };
+  get createRequestArguments(): CreateRequestArgument[] {
+    return [
+      {
+        kind: 'RoleArgument',
+        roleType: this.anchor,
+        role: this.panel.manager.id,
+      },
+    ];
   }
 }

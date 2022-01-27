@@ -2,6 +2,7 @@ import { Subject } from 'rxjs';
 import { RoleType } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
 import {
+  EditRequest,
   EditService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
@@ -38,8 +39,12 @@ export class EditRoleAction implements Action {
   }
 
   execute(target: ActionTarget) {
-    const editObject = this.resolve(target);
-    this.editService.edit(editObject).subscribe(() => {
+    const request: EditRequest = {
+      kind: 'EditRequest',
+      object: this.resolve(target),
+    };
+
+    this.editService.edit(request).subscribe(() => {
       this.refreshService.refresh();
       this.result.next(true);
     });

@@ -13,7 +13,7 @@ import {
   FilterField,
   MediaService,
   RefreshService,
-  CreateData,
+  CreateRequest,
   CreateService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -51,8 +51,6 @@ export class PersonListComponent
 
   private subscription: Subscription;
 
-  createData: CreateData;
-
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
@@ -65,10 +63,6 @@ export class PersonListComponent
   ) {
     super(allors, titleService);
     this.objectType = this.m.Person;
-    this.createData = {
-      kind: 'CreateData',
-      objectType: this.objectType,
-    };
 
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {
