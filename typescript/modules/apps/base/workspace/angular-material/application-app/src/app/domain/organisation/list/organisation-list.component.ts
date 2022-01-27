@@ -6,7 +6,10 @@ import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
+  ContextService,
+  CreateService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   angularFilterFromDefinition,
   Filter,
@@ -17,8 +20,6 @@ import {
 import {
   Action,
   AllorsPageListComponent,
-  CreateData,
-  CreateService,
   NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -55,8 +56,6 @@ export class OrganisationListComponent
   filter: Filter;
   override m: M;
 
-  createData: CreateData;
-
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
@@ -70,10 +69,6 @@ export class OrganisationListComponent
   ) {
     super(allors, titleService);
     this.objectType = this.m.Organisation;
-    this.createData = {
-      kind: 'CreateData',
-      objectType: this.m.Organisation,
-    };
 
     this.delete = deleteService.delete(allors.context);
     this.delete.result.subscribe(() => {

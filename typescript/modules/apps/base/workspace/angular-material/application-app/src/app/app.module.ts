@@ -12,7 +12,11 @@ import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import {
+  CreateService,
+  EditService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -69,8 +73,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 
 import {
-  CreateService,
-  EditService,
   NavigationService,
   NavigationMetaService,
 } from '@allors/base/workspace/angular/application';
@@ -78,18 +80,11 @@ import {
 import {
   AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
-  AllorsMaterialPeriodToggleComponent,
+  AllorsMaterialPeriodSelectionToggleComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
-  AllorsMaterialSideNavService,
   AllorsMaterialAssociationAutoCompleteComponent,
-  AllorsMaterialErrorDialogComponent,
-  AllorsMaterialFilterFieldDialogComponent,
-  AllorsMaterialFilterFieldSearchComponent,
-  AllorsMaterialFilterComponent,
-  AllorsMaterialMediaComponent,
-  AllorMediaPreviewComponent,
   AllorsMaterialCancelComponent,
   AllorsMaterialSaveComponent,
   AllorsMaterialAutocompleteComponent,
@@ -109,6 +104,16 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
+} from '@allors/base/workspace/angular-material/foundation';
+
+import {
+  AllorsMaterialSideNavService,
+  AllorsMaterialErrorDialogComponent,
+  AllorsMaterialFilterFieldDialogComponent,
+  AllorsMaterialFilterFieldSearchComponent,
+  AllorsMaterialFilterComponent,
+  AllorsMaterialMediaComponent,
+  AllorMediaPreviewComponent,
   AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
@@ -142,7 +147,7 @@ import { CountryFormComponent } from './domain/country/forms/country-form.compon
     // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
-    AllorsMaterialPeriodToggleComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
     AllorsMaterialErrorDialogComponent,
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,

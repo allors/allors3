@@ -44,12 +44,6 @@ import {
 
 import {
   AllorsMaterialAssociationAutoCompleteComponent,
-  AllorsMaterialErrorDialogComponent,
-  AllorsMaterialFilterFieldDialogComponent,
-  AllorsMaterialFilterFieldSearchComponent,
-  AllorsMaterialFilterComponent,
-  AllorsMaterialMediaComponent,
-  AllorMediaPreviewComponent,
   AllorsMaterialCancelComponent,
   AllorsMaterialSaveComponent,
   AllorsMaterialAutocompleteComponent,
@@ -69,6 +63,16 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
+  AllorsMaterialPeriodSelectionToggleComponent,
+} from '@allors/base/workspace/angular-material/foundation';
+
+import {
+  AllorsMaterialErrorDialogComponent,
+  AllorsMaterialFilterFieldDialogComponent,
+  AllorsMaterialFilterFieldSearchComponent,
+  AllorsMaterialFilterComponent,
+  AllorsMaterialMediaComponent,
+  AllorMediaPreviewComponent,
   AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
@@ -118,6 +122,7 @@ import {
     DynamicCreateComponent,
     DynamicEditComponent,
     AllorsMaterialDynamicRelationshipPanelComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
   ],
   imports: [
     BrowserModule,

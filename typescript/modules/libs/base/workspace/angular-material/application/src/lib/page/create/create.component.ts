@@ -12,9 +12,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AllorsForm,
   angularForms,
+  CreateRequest,
   FormHostDirective,
 } from '@allors/base/workspace/angular/foundation';
-import { CreateData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: 'create.component.html',
@@ -36,10 +36,10 @@ export class DynamicCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private data: CreateData,
+    private request: CreateRequest,
     private dialogRef: MatDialogRef<DynamicCreateComponent>
   ) {
-    this.objectType = this.data.objectType;
+    this.objectType = this.request.objectType;
   }
 
   ngOnInit(): void {
@@ -51,7 +51,7 @@ export class DynamicCreateComponent implements OnInit, OnDestroy {
     );
 
     this.form = componentRef.instance;
-    this.form.create(this.data.objectType as Class);
+    this.form.create(this.request.objectType as Class);
 
     this.cancelledSubscription = this.form.cancelled
       .pipe(tap(() => this.dialogRef.close()))

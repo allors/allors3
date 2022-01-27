@@ -8,16 +8,16 @@ import {
   Organisation,
   Employment,
 } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
+  ContextService,
+  CreateRequest,
+  EditRequest,
+} from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
   ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  CreateData,
-  EditData,
-} from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './employment-edit.component.html',
@@ -39,14 +39,14 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
   addEmployee = false;
   canSave: boolean;
 
-  createData: CreateData;
-  editData: EditData;
+  createRequest: CreateRequest;
+  editRequest: EditRequest;
 
   private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) data: CreateData | EditData,
+    @Inject(MAT_DIALOG_DATA) data: CreateRequest | EditRequest,
     public dialogRef: MatDialogRef<EmploymentEditComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService
@@ -66,10 +66,10 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
 
     this.canSave = true;
 
-    if (data.kind === 'CreateData') {
-      this.createData = data;
+    if (data.kind === 'CreateRequest') {
+      this.createRequest = data;
     } else {
-      this.editData = data;
+      this.editRequest = data;
     }
   }
 
@@ -83,10 +83,10 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
         switchMap(() => {
           const pulls = [];
 
-          if (this.editData) {
+          if (this.editRequest) {
             pulls.push(
               pull.Employment({
-                objectId: this.editData.object.id,
+                objectId: this.editRequest.object.id,
                 include: {
                   Employee: x,
                   Employer: x,
@@ -104,7 +104,7 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
         this.organisation = loaded.object<Organisation>(m.Organisation);
         this.person = loaded.object<Person>(m.Person);
 
-        if (this.createData) {
+        if (this.createRequest) {
           this.title = 'Add Employment';
 
           this.employment = this.allors.context.create<Employment>(
@@ -114,8 +114,6 @@ export class EmploymentEditComponent implements OnInit, OnDestroy {
 
           this.employment.Employer = this.organisation;
           this.employment.Employee = this.person;
-
-          this.createData.onCreate(this.employment);
         } else {
           this.employment = loaded.object<Employment>(m.Employment);
 

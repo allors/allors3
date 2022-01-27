@@ -1,8 +1,10 @@
 import { Component, Self } from '@angular/core';
 import { Country } from '@allors/default/workspace/domain';
-import { ErrorService } from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsFormComponent,
+  ErrorService,
+} from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { AllorsFormComponent } from '@allors/base/workspace/angular-material/application';
 import { NgForm } from '@angular/forms';
 
 @Component({

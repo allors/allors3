@@ -16,7 +16,7 @@ import {
   ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
-import { RadioGroupOption } from '@allors/base/workspace/angular-material/application';
+import { RadioGroupOption } from '@allors/base/workspace/angular-material/foundation';
 
 @Component({
   templateUrl: './fields.component.html',

@@ -5,15 +5,15 @@ import { ActivatedRoute } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { M } from '@allors/default/workspace/meta';
 import { Locale, Person, Organisation } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
+  ContextService,
+  CreateRequest,
+} from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  CreateData,
-  NavigationService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './person-create.component.html',
@@ -34,7 +34,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: CreateData,
+    @Inject(MAT_DIALOG_DATA) public data: CreateRequest,
     public dialogRef: MatDialogRef<PersonCreateComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,

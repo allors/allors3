@@ -10,11 +10,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AllorsForm,
   angularForms,
+  EditRequest,
   FormHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 import { Composite } from '@allors/system/workspace/meta';
 import { Subscription, tap } from 'rxjs';
-import { EditData } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: 'edit.component.html',
@@ -36,10 +36,11 @@ export class DynamicEditComponent implements OnInit, OnDestroy {
   constructor(
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private data: EditData,
+    private request: EditRequest,
     private dialogRef: MatDialogRef<DynamicEditComponent>
   ) {
-    this.objectType = this.data.objectType ?? this.data.object.strategy.cls;
+    this.objectType =
+      this.request.objectType ?? this.request.object.strategy.cls;
   }
 
   ngOnInit(): void {
@@ -51,7 +52,7 @@ export class DynamicEditComponent implements OnInit, OnDestroy {
     );
 
     this.form = componentRef.instance;
-    this.form.edit(this.data.object.id);
+    this.form.edit(this.request.object.id);
 
     this.cancelledSubscription = this.form.cancelled
       .pipe(tap(() => this.dialogRef.close()))

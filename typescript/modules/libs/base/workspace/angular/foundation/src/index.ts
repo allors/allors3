@@ -7,12 +7,16 @@ export * from './lib/authentication/authentication-config';
 export * from './lib/authentication/authentication-interceptor';
 export * from './lib/authentication/authentication-session-store.service';
 
-export * from './lib/context/context-service';
-export * from './lib/context/context';
-
 export * from './lib/barcode/barcode.service';
 export * from './lib/barcode/barcode.directive';
 export * from './lib/barcode/barcode-keypress.service.core';
+
+export * from './lib/context/context-service';
+export * from './lib/context/context';
+
+export * from './lib/create/create-request-argument';
+export * from './lib/create/create-request';
+export * from './lib/create/create.service';
 
 export * from './lib/date/date.config';
 export * from './lib/date/date.service';
@@ -20,6 +24,9 @@ export * from './lib/date/date-static.service.core';
 
 export * from './lib/dialog/dialog.config';
 export * from './lib/dialog/dialog.service';
+
+export * from './lib/edit/edit-request';
+export * from './lib/edit/edit.service';
 
 export * from './lib/field/association-field';
 export * from './lib/field/field';
@@ -37,6 +44,7 @@ export * from './lib/focus/focus.directive';
 export * from './lib/focus/focus-behavior-subject.service.core';
 
 export * from './lib/form/form';
+export * from './lib/form/form.component';
 export * from './lib/form/form-host.directive';
 
 export * from './lib/info/route-info.service';

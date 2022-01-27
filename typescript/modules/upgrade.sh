@@ -43,6 +43,7 @@ npx nx g @nrwl/workspace:library base/workspace/angular/application
 npx nx g @nrwl/workspace:library base/workspace/angular-material/foundation
 npx nx g @nrwl/workspace:library base/workspace/angular-material/application
 npx nx g @nrwl/workspace:library base/workspace/derivations
+npx nx g @nrwl/workspace:library base/workspace/derivations-custom
 npx nx g @nrwl/workspace:library base/workspace/domain
 npx nx g @nrwl/workspace:library base/workspace/meta
 npx nx g @nrwl/workspace:library base/workspace/meta-json

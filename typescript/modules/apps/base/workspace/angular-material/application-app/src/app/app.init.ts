@@ -4,6 +4,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { AngularClient } from '../allors/angular-client';
 import { Configuration } from '@allors/system/workspace/domain';
 import { applyRules } from '@allors/system/workspace/derivations';
+import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
@@ -35,7 +36,7 @@ export function init(
     idGenerator: () => nextId--,
   };
 
-  const rules = [];
+  const rules = ruleBuilder(m);
   applyRules(m, rules);
 
   const database = new DatabaseConnection(configuration, angularClient);

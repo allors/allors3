@@ -14,7 +14,10 @@ import {
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 import { Country } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
+  ContextService,
+  CreateRequest,
+} from '@allors/base/workspace/angular/foundation';
 import {
   angularFilterFromDefinition,
   Filter,
@@ -26,7 +29,6 @@ import {
   NavigationService,
   Action,
   AllorsPageListComponent,
-  CreateData,
 } from '@allors/base/workspace/angular/application';
 
 interface Row extends TableRow {
@@ -54,8 +56,6 @@ export class CountryListComponent
   filter: Filter;
   override m: M;
 
-  createData: CreateData;
-
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
@@ -68,11 +68,6 @@ export class CountryListComponent
   ) {
     super(allors, titleService);
     this.objectType = this.m.Country;
-
-    this.createData = {
-      kind: 'CreateData',
-      objectType: this.objectType,
-    };
 
     this.edit = editRoleService.edit();
     this.edit.result.subscribe(() => {
