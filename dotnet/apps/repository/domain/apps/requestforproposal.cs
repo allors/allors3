@@ -86,6 +86,8 @@ namespace Allors.Repository
 
         public string SearchString { get; set; }
 
+        public Guid DerivationTrigger { get; set; }
+
         #endregion
 
         #region Allors

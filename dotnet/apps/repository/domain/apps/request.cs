@@ -169,6 +169,13 @@ namespace Allors.Repository
         int SortableRequestNumber { get; set; }
 
         #region Allors
+        [Id("fe145108-5c77-4905-b921-8ed26d117032")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public Guid DerivationTrigger { get; set; }
+
+        #region Allors
 
         [Id("8C8032CB-4FEC-4EAC-8EB7-C51A2223F556")]
 
