@@ -15,17 +15,17 @@ export abstract class AllorsPanelRelationshipComponent {
 
   @HostBinding('attr.data-allors-from-relationtype')
   get dataAllorsFromRelationType() {
-    return this.self.relationType.tag;
+    return this.anchor.relationType.tag;
   }
 
   @HostBinding('attr.data-allors-to-relationtype')
   get dataAllorsToRelationType() {
-    return this.other.relationType.tag;
+    return this.target.relationType.tag;
   }
 
-  abstract self: RoleType;
+  abstract anchor: RoleType;
 
-  abstract other: RoleType;
+  abstract target: RoleType;
 
   m: M;
 

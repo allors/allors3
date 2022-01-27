@@ -37,6 +37,7 @@ export * from './lib/focus/focus.directive';
 export * from './lib/focus/focus-behavior-subject.service.core';
 
 export * from './lib/form/form';
+export * from './lib/form/form.component';
 export * from './lib/form/form-host.directive';
 
 export * from './lib/info/route-info.service';

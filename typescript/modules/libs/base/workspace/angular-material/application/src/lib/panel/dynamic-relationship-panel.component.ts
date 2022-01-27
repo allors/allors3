@@ -36,10 +36,10 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
   }
 
   @Input()
-  self: RoleType;
+  anchor: RoleType;
 
   @Input()
-  other: RoleType;
+  target: RoleType;
 
   period: PeriodToggle = 'Current';
 
@@ -63,10 +63,10 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
 
   ngOnInit() {
     const objectType =
-      this.self?.associationType.objectType ??
-      this.other?.associationType.objectType;
-    this.panel.name = this.other?.pluralName;
-    this.panel.title = this.other?.pluralName;
+      this.anchor?.associationType.objectType ??
+      this.target?.associationType.objectType;
+    this.panel.name = this.target?.pluralName;
+    this.panel.title = this.target?.pluralName;
     this.panel.icon = angularIcon(objectType as Composite);
     this.panel.expandable = true;
 
@@ -103,7 +103,7 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
             operands: [
               {
                 kind: 'Equals',
-                propertyType: this.self,
+                propertyType: this.anchor,
                 value: id,
               },
             ],
@@ -166,7 +166,7 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
   get createData(): CreateData {
     return {
       kind: 'CreateData',
-      objectType: this.self.associationType.objectType as Composite,
+      objectType: this.anchor.associationType.objectType as Composite,
       // associationId: this.panel.manager.id,
       // associationObjectType: this.panel.manager.objectType,
     };

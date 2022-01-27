@@ -82,14 +82,7 @@ import {
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
-  AllorsMaterialSideNavService,
   AllorsMaterialAssociationAutoCompleteComponent,
-  AllorsMaterialErrorDialogComponent,
-  AllorsMaterialFilterFieldDialogComponent,
-  AllorsMaterialFilterFieldSearchComponent,
-  AllorsMaterialFilterComponent,
-  AllorsMaterialMediaComponent,
-  AllorMediaPreviewComponent,
   AllorsMaterialCancelComponent,
   AllorsMaterialSaveComponent,
   AllorsMaterialAutocompleteComponent,
@@ -109,6 +102,16 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
+} from '@allors/base/workspace/angular-material/foundation';
+
+import {
+  AllorsMaterialSideNavService,
+  AllorsMaterialErrorDialogComponent,
+  AllorsMaterialFilterFieldDialogComponent,
+  AllorsMaterialFilterFieldSearchComponent,
+  AllorsMaterialFilterComponent,
+  AllorsMaterialMediaComponent,
+  AllorMediaPreviewComponent,
   AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
