@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Class, Composite, humanize } from '@allors/system/workspace/meta';
-import { IObject } from '@allors/system/workspace/domain';
+import { IObject, OnObjectCreate } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   angularDisplayName,
   CreateRequest,
-  CreateRequestArgument,
   CreateService,
 } from '@allors/base/workspace/angular/foundation';
 import { angularIcon } from '../meta/angular-icon';
@@ -18,7 +17,7 @@ import { angularIcon } from '../meta/angular-icon';
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
   @Input() public objectType: Composite;
 
-  @Input() public createRequestArguments: CreateRequestArgument[];
+  @Input() public onObjectCreate: OnObjectCreate;
 
   @Output() public created?: EventEmitter<IObject> = new EventEmitter();
 
@@ -46,7 +45,7 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
     const request: CreateRequest = {
       kind: 'CreateRequest',
       objectType,
-      arguments: this.createRequestArguments,
+      handlers: [this.onObjectCreate],
     };
 
     this.createService.create(request).subscribe((v) => {

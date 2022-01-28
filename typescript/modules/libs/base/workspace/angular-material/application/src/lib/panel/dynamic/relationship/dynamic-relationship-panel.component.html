@@ -37,7 +37,7 @@
 
   <a-mat-factory-fab
     [objectType]="objectType"
-    [createRequestArguments]="createRequestArguments"
+    [onObjectCreate]="onObjectCreate"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 

@@ -1,15 +1,12 @@
-import { IObject } from '@allors/system/workspace/domain';
+import { IObject, OnObjectCreate } from '@allors/system/workspace/domain';
+import { ObjectType } from '@allors/system/workspace/meta';
 import { EventEmitter } from '@angular/core';
-import { CreateRequest } from '../create/create-request';
-import { EditRequest } from '../edit/edit-request';
 
 export interface AllorsFormConstructor {
   new (): AllorsForm;
 }
 
 export interface AllorsForm {
-  object: IObject;
-
   readonly canWrite: boolean;
 
   readonly canSave: boolean;
@@ -18,9 +15,11 @@ export interface AllorsForm {
 
   cancelled: EventEmitter<void>;
 
-  create(request: CreateRequest): void;
+  object: IObject;
 
-  edit(request: EditRequest): void;
+  create(objectType: ObjectType, handlers?: OnObjectCreate[]): void;
+
+  edit(objectId: number): void;
 
   save(): void;
 

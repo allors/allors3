@@ -1,12 +1,14 @@
 import { format } from 'date-fns';
 import { Component, Self, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
-import { IObject, Pull } from '@allors/system/workspace/domain';
 import {
-  CreateRequest,
-  CreateRequestArgument,
-  RefreshService,
-} from '@allors/base/workspace/angular/foundation';
+  IObject,
+  OnObjectCreate,
+  OnObjectCreateRole,
+  Pull,
+} from '@allors/system/workspace/domain';
+import { Period } from '@allors/default/workspace/domain';
+import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   NavigationService,
@@ -19,7 +21,6 @@ import { Table } from '../../../table/table';
 import { TableRow } from '../../../table/table-row';
 import { DeleteService } from '../../../actions/delete/delete.service';
 import { EditRoleService } from '../../../actions/edit-role/edit-role.service';
-import { Period } from '@allors/default/workspace/domain';
 import { TableConfig } from '../../../table/table-config';
 
 interface Row extends TableRow {
@@ -212,13 +213,7 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
     });
   }
 
-  get createRequestArguments(): CreateRequestArgument[] {
-    return [
-      {
-        kind: 'RoleArgument',
-        roleType: this.anchor,
-        role: this.panel.manager.id,
-      },
-    ];
+  get onObjectCreate(): OnObjectCreate {
+    return new OnObjectCreateRole(this.anchor, this.panel.manager.id);
   }
 }

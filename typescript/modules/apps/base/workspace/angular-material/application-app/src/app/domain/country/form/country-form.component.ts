@@ -20,18 +20,4 @@ export class CountryFormComponent extends AllorsFormComponent<Country> {
   ) {
     super(allors, errorService, form);
   }
-
-  get canWrite(): any {
-    return true;
-  }
-
-  create(objectType: Class): void {
-    this.object = this.context.create<Country>(objectType);
-  }
-
-  edit(objectId: number): void {
-    this.context.pull({ objectId }).subscribe((loaded) => {
-      this.object = loaded.objects.values().next()?.value;
-    });
-  }
 }

@@ -1,31 +1,30 @@
-import { Subscription } from 'rxjs';
-import { Component, OnDestroy, Self } from '@angular/core';
+import { Component, Self } from '@angular/core';
 import { Employment } from '@allors/default/workspace/domain';
 import {
   AllorsFormComponent,
   ContextService,
-  CreateRequest,
-  EditRequest,
 } from '@allors/base/workspace/angular/foundation';
 import {
   ErrorService,
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { NgForm } from '@angular/forms';
-import { Pull } from '@allors/system/workspace/domain';
+import {
+  OnObjectPostCreate,
+  OnObjectPreEdit,
+  Pull,
+} from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './employment-form.component.html',
   providers: [ContextService],
 })
-export class EmploymentEditComponent
+export class EmploymentFormComponent
   extends AllorsFormComponent<Employment>
-  implements OnDestroy
+  implements OnObjectPostCreate, OnObjectPreEdit
 {
   organisationsFilter: SearchFactory;
   peopleFilter: SearchFactory;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() allors: ContextService,
@@ -45,25 +44,22 @@ export class EmploymentEditComponent
     });
   }
 
-  edit(request: EditRequest): void {
+  onObjectPostCreate(object: Employment) {
+    object.FromDate = new Date();
+  }
+
+  onObjectPreEdit(objectId: number, pulls: Pull[]) {
     const m = this.m;
     const { pullBuilder: p } = m;
 
-    const pull = p.Employment({
-      objectId: request.object.id,
-      include: {
-        Employee: {},
-        Employer: {},
-      },
-    });
-
-    this.subscription?.unsubscribe();
-    this.subscription = this.context.pull(pull).subscribe((loaded) => {
-      this.object = loaded.objects.values().next()?.value;
-    });
-  }
-
-  public ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+    pulls.push(
+      p.Employment({
+        objectId,
+        include: {
+          Employee: {},
+          Employer: {},
+        },
+      })
+    );
   }
 }

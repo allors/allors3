@@ -14,7 +14,6 @@ export * from './lib/barcode/barcode-keypress.service.core';
 export * from './lib/context/context-service';
 export * from './lib/context/context';
 
-export * from './lib/create/create-request-argument';
 export * from './lib/create/create-request';
 export * from './lib/create/create.service';
 

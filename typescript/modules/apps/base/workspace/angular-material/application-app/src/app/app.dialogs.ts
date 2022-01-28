@@ -1,28 +1,28 @@
 import {
-  DynamicCreateComponent,
-  DynamicEditComponent,
+  AllorsMaterialDynamicCreateComponent as Create,
+  AllorsMaterialDynamicEditComponent as Edit,
 } from '@allors/base/workspace/angular-material/application';
 import { tags } from '@allors/default/workspace/meta';
 
-import { EmploymentEditComponent } from './domain/employment/form/employment-form.component';
+import { EmploymentFormComponent } from './domain/employment/form/employment-form.component';
 import { OrganisationCreateComponent } from './domain/organisation/create/organisation-create.component';
 import { PersonCreateComponent } from './domain/person/create/person-create.component';
 
 export const dialogs = {
   create: {
-    [tags.Country]: DynamicCreateComponent,
-    [tags.Employment]: EmploymentEditComponent,
+    [tags.Country]: Create,
+    [tags.Employment]: Create,
     [tags.Organisation]: OrganisationCreateComponent,
     [tags.Person]: PersonCreateComponent,
   },
   edit: {
-    [tags.Country]: DynamicEditComponent,
-    [tags.Employment]: EmploymentEditComponent,
+    [tags.Country]: Edit,
+    [tags.Employment]: Edit,
   },
 };
 
 export const components: any[] = [
-  EmploymentEditComponent,
+  EmploymentFormComponent,
   OrganisationCreateComponent,
   PersonCreateComponent,
 ];

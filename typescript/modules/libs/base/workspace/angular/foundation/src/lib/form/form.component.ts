@@ -1,20 +1,36 @@
-import { HostBinding, Directive, EventEmitter, Output } from '@angular/core';
+import {
+  HostBinding,
+  Directive,
+  EventEmitter,
+  Output,
+  OnDestroy,
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { M } from '@allors/default/workspace/meta';
-import { IObject, Pull } from '@allors/system/workspace/domain';
+import {
+  IObject,
+  OnObjectCreate,
+  OnObjectEdit,
+  OnObjectPostCreate,
+  OnObjectPostEdit,
+  OnObjectPreCreate,
+  OnObjectPreEdit,
+  Pull,
+} from '@allors/system/workspace/domain';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
 import { Context } from '../context/context';
 import { ContextService } from '../context/context-service';
 import { ErrorService } from '../error/error.service';
-import { CreateRequest } from '../create/create-request';
-import { EditRequest } from '../edit/edit-request';
 import { Subscription } from 'rxjs';
+import { Class } from '@allors/system/workspace/meta';
+
+const nameof = <T>(name: Extract<keyof T, string>): string => name;
 
 @Directive()
 export abstract class AllorsFormComponent<T extends IObject>
   extends AllorsComponent
-  implements AllorsForm
+  implements AllorsForm, OnDestroy
 {
   override dataAllorsKind = 'form';
 
@@ -45,7 +61,8 @@ export abstract class AllorsFormComponent<T extends IObject>
     this.m = this.context.configuration.metaPopulation as M;
   }
 
-  private subscription: Subscription;
+  private createSubscription: Subscription;
+  private editSubscription: Subscription;
 
   get canSave() {
     return this.form.form.valid && this.context.hasChanges();
@@ -55,49 +72,80 @@ export abstract class AllorsFormComponent<T extends IObject>
     return true;
   }
 
-  create(request: CreateRequest): void {
-    if (request.arguments?.length) {
-      const pulls = request.arguments.map(v=>);
-      for (const arg of request.arguments) {
+  create(objectType: Class, handlers?: OnObjectCreate[]): void {
+    const hasPreCreate =
+      this[nameof<OnObjectPreCreate>('onObjectPreCreate')] != null;
+    const hasPostCreate =
+      this[nameof<OnObjectPostCreate>('onObjectPostCreate')] != null;
+    const hasHandlers = handlers?.length > 0;
+
+    if (hasPreCreate || hasPostCreate || hasHandlers) {
+      const pulls: Pull[] = [];
+
+      if (hasPreCreate) {
+        (this as unknown as OnObjectPreCreate).onObjectPreCreate(pulls);
       }
+      handlers?.forEach((v) => v.onObjectPreCreate(pulls));
 
-      p.Employment({
-        objectId,
-        include: {
-          Employee: {},
-          Employer: {},
-        },
-      });
+      this.createSubscription = this.context
+        .pull(pulls)
+        .subscribe((pullResult) => {
+          this.onObjectCreate(objectType);
 
-      this.subscription?.unsubscribe();
-      this.subscription = this.context.pull(pulls).subscribe((loaded) => {
-        this.object = this.context.create<T>(request.objectType);
-        this.object.FromDate = new Date();
+          handlers?.forEach((v) =>
+            v.onObjectPostCreate(this.object, pullResult)
+          );
 
-        this.object.Employer = this.organisation;
-        this.object.Employee = this.person;
-      });
+          if (hasPostCreate) {
+            (this as unknown as OnObjectPostCreate).onObjectPostCreate(
+              this.object,
+              pullResult
+            );
+          }
+        });
     } else {
-      this.object = this.context.create<T>(request.objectType);
+      this.onObjectCreate(objectType);
     }
   }
 
-  edit(request: EditRequest): void {
-    const m = this.m;
-    const { pullBuilder: p } = m;
+  onObjectCreate(objectType: Class) {
+    this.object = this.context.create<T>(objectType);
+  }
 
-    const pull = p.Employment({
-      objectId: request.object.id,
-      include: {
-        Employee: {},
-        Employer: {},
-      },
-    });
+  edit(objectId: number, handlers?: OnObjectEdit[]): void {
+    const name = 'AllorsFormComponent';
+    const pull: Pull = { objectId, results: [{ name }] };
 
-    this.subscription?.unsubscribe();
-    this.subscription = this.context.pull(pull).subscribe((loaded) => {
-      this.object = loaded.objects.values().next()?.value;
-    });
+    const hasPreEdit = this[nameof<OnObjectPreEdit>('onObjectPreEdit')] != null;
+    const hasPostEdit =
+      this[nameof<OnObjectPostEdit>('onObjectPostEdit')] != null;
+    const hasHandlers = handlers?.length > 0;
+
+    if (hasPreEdit || hasPostEdit || hasHandlers) {
+      const pulls: Pull[] = [pull];
+
+      if (hasPreEdit) {
+        (this as unknown as OnObjectPreEdit).onObjectPreEdit(objectId, pulls);
+      }
+      handlers?.forEach((v) => v.onObjectPreEdit(objectId, pulls));
+
+      this.editSubscription = this.context.pull(pulls).subscribe((result) => {
+        this.object = result.objects.values().next()?.value;
+
+        handlers?.forEach((v) => v.onObjectPostEdit(this.object, result));
+
+        if (hasPostEdit) {
+          (this as unknown as OnObjectPostEdit).onObjectPostEdit(
+            this.object,
+            result
+          );
+        }
+      });
+    } else {
+      this.context.pull(pull).subscribe((result) => {
+        this.object = result.object(name);
+      });
+    }
   }
 
   save(): void {
@@ -113,5 +161,10 @@ export abstract class AllorsFormComponent<T extends IObject>
 
   cancel(): void {
     this.cancelled.emit();
+  }
+
+  ngOnDestroy(): void {
+    this.createSubscription?.unsubscribe();
+    this.editSubscription?.unsubscribe();
   }
 }

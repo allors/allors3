@@ -30,8 +30,8 @@ export * from './lib/media/media.component';
 export * from './lib/meta/angular-icon';
 export * from './lib/meta/angular-sorter';
 
-export * from './lib/page/create/create.component';
-export * from './lib/page/edit/edit.component';
+export * from './lib/page/create/dynamic-create.component';
+export * from './lib/page/edit/dynamic-edit.component';
 
 export * from './lib/panel/dynamic/relationship/dynamic-relationship-panel.component';
 

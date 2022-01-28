@@ -1,8 +1,8 @@
 import { Class } from '@allors/system/workspace/meta';
-import { CreateRequestArgument } from './create-request-argument';
+import { OnObjectCreate } from '@allors/system/workspace/domain';
 
 export interface CreateRequest {
   readonly kind: 'CreateRequest';
   objectType: Class;
-  arguments?: CreateRequestArgument[];
+  handlers?: OnObjectCreate[];
 }

@@ -1,5 +1,3 @@
-import { Subscription, tap } from 'rxjs';
-import { Class, Composite } from '@allors/system/workspace/meta';
 import {
   Component,
   Inject,
@@ -12,14 +10,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AllorsForm,
   angularForms,
-  CreateRequest,
+  EditRequest,
   FormHostDirective,
 } from '@allors/base/workspace/angular/foundation';
+import { Composite } from '@allors/system/workspace/meta';
+import { Subscription, tap } from 'rxjs';
 
 @Component({
-  templateUrl: 'create.component.html',
+  templateUrl: 'dynamic-edit.component.html',
 })
-export class DynamicCreateComponent implements OnInit, OnDestroy {
+export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
   @ViewChild(FormHostDirective, { static: true })
   formHost!: FormHostDirective;
 
@@ -36,10 +36,11 @@ export class DynamicCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Optional()
     @Inject(MAT_DIALOG_DATA)
-    private request: CreateRequest,
-    private dialogRef: MatDialogRef<DynamicCreateComponent>
+    private request: EditRequest,
+    private dialogRef: MatDialogRef<AllorsMaterialDynamicEditComponent>
   ) {
-    this.objectType = this.request.objectType;
+    this.objectType =
+      this.request.objectType ?? this.request.object.strategy.cls;
   }
 
   ngOnInit(): void {
@@ -47,11 +48,11 @@ export class DynamicCreateComponent implements OnInit, OnDestroy {
     viewContainerRef.clear();
 
     const componentRef = viewContainerRef.createComponent<AllorsForm>(
-      angularForms(this.objectType).create
+      angularForms(this.objectType).edit
     );
 
     this.form = componentRef.instance;
-    this.form.create(this.request.objectType as Class);
+    this.form.edit(this.request.object.id);
 
     this.cancelledSubscription = this.form.cancelled
       .pipe(tap(() => this.dialogRef.close()))
