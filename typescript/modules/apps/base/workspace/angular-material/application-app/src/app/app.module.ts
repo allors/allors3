@@ -120,6 +120,7 @@ import {
   AllorsMaterialTableComponent,
   FactoryFabComponent,
   AllorsMaterialDynamicCreateComponent,
+  AllorsMaterialDynamicDetailPanelComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicRelationshipPanelComponent,
   AllorsMaterialErrorService,
@@ -127,16 +128,15 @@ import {
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
 } from '@allors/base/workspace/angular-material/application';
+
 import { routes, components as routesComponents } from './app.routes';
 import { components as dialogsComponents } from './app.dialogs';
+import { components as formComponents } from './app.forms';
 
-import { OrganisationDetailComponent } from './domain/organisation/detail/organisation-detail.component';
 import { OrganisationSummaryComponent } from './domain/organisation/summary/organisation-summary.component';
 import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
 import { PersonDetailComponent } from './domain/person/detail/person-detail.component';
 import { PersonSummaryComponent } from './domain/person/summary/person-summary.component';
-
-import { CountryFormComponent } from './domain/country/form/country-form.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -179,20 +179,19 @@ import { CountryFormComponent } from './domain/country/form/country-form.compone
     AllorsMaterialTableComponent,
     FactoryFabComponent,
     AllorsMaterialDynamicCreateComponent,
+    AllorsMaterialDynamicDetailPanelComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicRelationshipPanelComponent,
     FormHostDirective,
     // Routed and dialog components
     ...routesComponents,
     ...dialogsComponents,
+    ...formComponents,
     // Non routed and non dialog components
-    OrganisationDetailComponent,
     OrganisationSummaryComponent,
     PersonInlineComponent,
     PersonDetailComponent,
     PersonSummaryComponent,
-    // Forms
-    CountryFormComponent,
     // App
     AppComponent,
   ],

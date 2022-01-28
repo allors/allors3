@@ -35,13 +35,13 @@ export class PersonDetailComponent
   private subscription: Subscription;
 
   constructor(
-    @Self() allors: ContextService,
     @Self() panel: PanelService,
+    @Self() private allors: ContextService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private errorService: ErrorService
   ) {
-    super(allors, panel);
+    super(panel);
 
     // Collapsed
     const pullName = `${this.panel.name}_${this.m.Person.tag}`;

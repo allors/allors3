@@ -46,8 +46,9 @@ export class AllorsMaterialDynamicCreateComponent implements OnInit, OnDestroy {
     const viewContainerRef = this.formHost.viewContainerRef;
     viewContainerRef.clear();
 
+    const forms = angularForms(this.objectType);
     const componentRef = viewContainerRef.createComponent<AllorsForm>(
-      angularForms(this.objectType).create
+      forms.create
     );
 
     this.form = componentRef.instance;

@@ -4,6 +4,7 @@ import { angularForms } from '@allors/base/workspace/angular/foundation';
 
 import { CountryFormComponent } from './domain/country/form/country-form.component';
 import { EmploymentFormComponent } from './domain/employment/form/employment-form.component';
+import { OrganisationFormComponent } from './domain/organisation/form/organisation-form.component';
 
 function forms(composite: Composite, both: unknown);
 function forms(composite: Composite, create: unknown, edit: unknown);
@@ -18,7 +19,14 @@ function forms(composite: Composite, bothOrCreate: unknown, edit?: unknown) {
 export function initForms(m: M) {
   // Objects
   forms(m.Country, CountryFormComponent);
+  forms(m.Organisation, OrganisationFormComponent);
 
   // RelationShips
   forms(m.Employment, EmploymentFormComponent);
 }
+
+export const components: any[] = [
+  CountryFormComponent,
+  EmploymentFormComponent,
+  OrganisationFormComponent,
+];

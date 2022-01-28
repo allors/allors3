@@ -15,7 +15,7 @@ namespace Allors.Protocol.Json.Data
         /// <summary>
         /// Sort Direction
         /// </summary>
-        public SortDirection d { get; set; }
+        public SortDirection? d { get; set; }
 
         public void Accept(IVisitor visitor) => visitor.VisitSort(this);
     }

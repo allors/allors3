@@ -11,7 +11,7 @@ import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { M } from '@allors/default/workspace/meta';
 import { BaseContext } from '../allors/base-context';
-import { initForms } from './app.init-forms';
+import { initForms } from './app.forms';
 import { initMenu } from './app.init-menu';
 import { initNav } from './app.init-nav';
 import { initFilter } from './app.init-filter';

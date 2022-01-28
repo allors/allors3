@@ -45,7 +45,7 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
     const request: CreateRequest = {
       kind: 'CreateRequest',
       objectType,
-      handlers: [this.onObjectCreate],
+      handlers: this.onObjectCreate ? [this.onObjectCreate] : null,
     };
 
     this.createService.create(request).subscribe((v) => {

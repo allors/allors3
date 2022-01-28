@@ -2,7 +2,6 @@ import { IObject } from '@allors/system/workspace/domain';
 import { Directive } from '@angular/core';
 import { PanelService } from './panel.service';
 import { AllorsPanelComponent } from './panel.component';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Directive()
 export abstract class AllorsPanelDetailComponent<
@@ -10,13 +9,8 @@ export abstract class AllorsPanelDetailComponent<
 > extends AllorsPanelComponent<T> {
   override dataAllorsKind = 'panel-detail';
 
-  constructor(
-    public allors: ContextService,
-    public override panel: PanelService
-  ) {
+  constructor(public override panel: PanelService) {
     super(panel);
-
-    this.allors.context.name = this.constructor.name;
 
     panel.name = 'detail';
   }

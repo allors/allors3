@@ -39,6 +39,12 @@ export abstract class AllorsFormComponent<T extends IObject>
     return this.object?.strategy.id;
   }
 
+  isCreate: boolean;
+
+  get isEdit() {
+    return !this.isCreate;
+  }
+
   context: Context;
   m: M;
   object: T;
@@ -73,6 +79,8 @@ export abstract class AllorsFormComponent<T extends IObject>
   }
 
   create(objectType: Class, handlers?: OnObjectCreate[]): void {
+    this.isCreate = true;
+
     const hasPreCreate =
       this[nameof<OnObjectPreCreate>('onObjectPreCreate')] != null;
     const hasPostCreate =
@@ -113,6 +121,8 @@ export abstract class AllorsFormComponent<T extends IObject>
   }
 
   edit(objectId: number, handlers?: OnObjectEdit[]): void {
+    this.isCreate = false;
+
     const name = 'AllorsFormComponent';
     const pull: Pull = { objectId, results: [{ name }] };
 
