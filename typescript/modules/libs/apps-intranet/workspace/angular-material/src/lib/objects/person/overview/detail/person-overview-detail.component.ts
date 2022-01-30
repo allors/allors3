@@ -18,7 +18,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   SingletonId,
@@ -30,7 +30,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 @Component({
   selector: 'person-overview-detail',
   templateUrl: './person-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
@@ -49,7 +49,7 @@ export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private errorService: ErrorService,

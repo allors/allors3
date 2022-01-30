@@ -1,8 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[formHost]',
+  selector: '[templateHost]',
 })
-export class FormHostDirective {
+export class TemplateHostDirective {
   constructor(public viewContainerRef: ViewContainerRef) {}
 }

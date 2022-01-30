@@ -70,3 +70,4 @@ export * from './lib/lifecycle/onobjectcreate';
 export * from './lib/lifecycle/onobjectcreateassociation';
 export * from './lib/lifecycle/onobjectcreaterole';
 export * from './lib/lifecycle/onobjectedit';
+export * from './lib/lifecycle/onpull';

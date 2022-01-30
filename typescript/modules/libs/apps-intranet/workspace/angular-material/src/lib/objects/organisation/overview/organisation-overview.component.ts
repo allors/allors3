@@ -18,7 +18,7 @@ import {
 import {
   NavigationService,
   RefreshService,
-  PanelManagerService,
+  OldPanelManagerService,
   NavigationActivatedRoute,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -30,7 +30,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './organisation-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class OrganisationOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Organisation';
@@ -43,7 +43,7 @@ export class OrganisationOverviewComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

@@ -12,7 +12,7 @@ import {
   NavigationService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -35,7 +35,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'nonserialisedinventoryitem-overview-panel',
   templateUrl: './nonserialisedinventoryitem-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class NonSerialisedInventoryItemComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -59,7 +59,7 @@ export class NonSerialisedInventoryItemComponent implements OnInit {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public objectService: ObjectService,
     public factoryService: ObjectService,

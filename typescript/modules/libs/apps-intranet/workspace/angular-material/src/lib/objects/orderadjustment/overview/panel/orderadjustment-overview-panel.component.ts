@@ -15,7 +15,7 @@ import {
   NavigationService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -32,7 +32,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'orderadjustment-overview-panel',
   templateUrl: './orderadjustment-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class OrderAdjustmentOverviewPanelComponent {
   container: Quote | Order | Invoice;
@@ -75,7 +75,7 @@ export class OrderAdjustmentOverviewPanelComponent {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public objectService: ObjectService,
     public refreshService: RefreshService,

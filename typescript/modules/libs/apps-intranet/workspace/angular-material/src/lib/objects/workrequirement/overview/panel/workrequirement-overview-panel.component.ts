@@ -11,7 +11,7 @@ import {
   DeleteService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -30,7 +30,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'workrequirement-overview-panel',
   templateUrl: './workrequirement-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkRequirementOverviewPanelComponent implements OnInit {
   serialisedItem: SerialisedItem;
@@ -54,7 +54,7 @@ export class WorkRequirementOverviewPanelComponent implements OnInit {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

@@ -11,7 +11,7 @@ import {
   NavigationService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -30,7 +30,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'shipmentitem-overview-panel',
   templateUrl: './shipmentitem-overview-panel.component.html',
-  providers: [ContextService, PanelService],
+  providers: [ContextService, OldPanelService],
 })
 export class ShipmentItemOverviewPanelComponent {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -56,7 +56,7 @@ export class ShipmentItemOverviewPanelComponent {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public objectService: ObjectService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

@@ -27,6 +27,8 @@ export * from './lib/dialog/dialog.service';
 export * from './lib/edit/edit-request';
 export * from './lib/edit/edit.service';
 
+export * from './lib/error/error.service';
+
 export * from './lib/field/association-field';
 export * from './lib/field/field';
 export * from './lib/field/localised-role-field';
@@ -44,7 +46,6 @@ export * from './lib/focus/focus-behavior-subject.service.core';
 
 export * from './lib/form/form';
 export * from './lib/form/form.component';
-export * from './lib/form/form-host.directive';
 
 export * from './lib/info/route-info.service';
 
@@ -57,10 +58,10 @@ export * from './lib/meta/angular-filter';
 export * from './lib/meta/angular-filter-definition';
 export * from './lib/meta/angular-forms';
 
+export * from './lib/pull/onpull-service';
+
 export * from './lib/refresh/refresh.service';
 export * from './lib/refresh/refresh-behavior-subject.service';
-
-export * from './lib/error/error.service';
 
 export * from './lib/search/search-factory';
 export * from './lib/search/search-options';
@@ -68,5 +69,7 @@ export * from './lib/search/search-options';
 export * from './lib/state/session-state';
 export * from './lib/state/singleton-id';
 export * from './lib/state/user-id';
+
+export * from './lib/template/template-host.directive';
 
 export * from './lib/workspace/workspace-service';

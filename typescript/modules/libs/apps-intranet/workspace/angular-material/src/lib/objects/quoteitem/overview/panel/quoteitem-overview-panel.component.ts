@@ -12,7 +12,7 @@ import {
   NavigationService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -34,7 +34,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'quoteitem-overview-panel',
   templateUrl: './quoteitem-overview-panel.component.html',
-  providers: [ContextService, PanelService],
+  providers: [ContextService, OldPanelService],
 })
 export class QuoteItemOverviewPanelComponent {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -64,7 +64,7 @@ export class QuoteItemOverviewPanelComponent {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public objectService: ObjectService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

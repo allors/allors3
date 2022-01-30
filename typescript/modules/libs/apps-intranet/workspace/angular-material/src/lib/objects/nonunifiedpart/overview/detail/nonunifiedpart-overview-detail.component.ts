@@ -22,7 +22,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   SearchFactory,
@@ -34,7 +34,7 @@ import { Filters } from '../../../../filters/filters';
 @Component({
   selector: 'nonunifiedpart-overview-detail',
   templateUrl: './nonunifiedpart-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class NonUnifiedPartOverviewDetailComponent
   implements OnInit, OnDestroy
@@ -70,7 +70,7 @@ export class NonUnifiedPartOverviewDetailComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private errorService: ErrorService,

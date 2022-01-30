@@ -11,7 +11,7 @@ import {
   AllorsForm,
   angularForms,
   EditRequest,
-  FormHostDirective,
+  TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 import { Composite } from '@allors/system/workspace/meta';
 import { Subscription, tap } from 'rxjs';
@@ -20,8 +20,8 @@ import { Subscription, tap } from 'rxjs';
   templateUrl: 'dynamic-edit.component.html',
 })
 export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
-  @ViewChild(FormHostDirective, { static: true })
-  formHost!: FormHostDirective;
+  @ViewChild(TemplateHostDirective, { static: true })
+  templateHost!: TemplateHostDirective;
 
   objectType: Composite;
   title: string;
@@ -44,7 +44,7 @@ export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const viewContainerRef = this.formHost.viewContainerRef;
+    const viewContainerRef = this.templateHost.viewContainerRef;
     viewContainerRef.clear();
 
     const componentRef = viewContainerRef.createComponent<AllorsForm>(

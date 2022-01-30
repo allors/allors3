@@ -12,7 +12,7 @@ import {
 import {
   MediaService,
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -22,7 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'person-overview-summary',
   templateUrl: './person-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class PersonOverviewSummaryComponent {
   m: M;
@@ -34,7 +34,7 @@ export class PersonOverviewSummaryComponent {
   user: User;
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,

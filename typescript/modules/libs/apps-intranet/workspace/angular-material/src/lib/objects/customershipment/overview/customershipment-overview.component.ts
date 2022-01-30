@@ -21,7 +21,7 @@ import {
 import {
   NavigationService,
   RefreshService,
-  PanelManagerService,
+  OldPanelManagerService,
   NavigationActivatedRoute,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -34,7 +34,7 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   templateUrl: './customershipment-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class CustomerShipmentOverviewComponent
   implements AfterViewInit, OnDestroy
@@ -55,7 +55,7 @@ export class CustomerShipmentOverviewComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

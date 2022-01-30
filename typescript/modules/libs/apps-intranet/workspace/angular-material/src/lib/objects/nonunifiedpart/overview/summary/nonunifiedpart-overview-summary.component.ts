@@ -11,7 +11,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
 } from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { SortDirection } from '@allors/system/workspace/domain';
@@ -19,7 +19,7 @@ import { SortDirection } from '@allors/system/workspace/domain';
 @Component({
   selector: 'nonunifiedpart-overview-summary',
   templateUrl: './nonunifiedpart-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class NonUnifiedPartOverviewSummaryComponent {
   m: M;
@@ -37,7 +37,7 @@ export class NonUnifiedPartOverviewSummaryComponent {
   partnumber: string[];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService
   ) {

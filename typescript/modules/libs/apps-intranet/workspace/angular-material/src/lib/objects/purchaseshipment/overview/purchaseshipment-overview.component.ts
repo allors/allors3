@@ -21,7 +21,7 @@ import {
 import {
   NavigationActivatedRoute,
   NavigationService,
-  PanelManagerService,
+  OldPanelManagerService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -33,7 +33,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './purchaseshipment-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class PurchaseShipmentOverviewComponent
   implements AfterViewInit, OnDestroy
@@ -53,7 +53,7 @@ export class PurchaseShipmentOverviewComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

@@ -69,7 +69,7 @@ import {
   MediaService,
   MediaLocalService,
   AllorsDialogService,
-  FormHostDirective,
+  TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
@@ -122,7 +122,8 @@ import {
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicDetailPanelComponent,
   AllorsMaterialDynamicEditComponent,
-  AllorsMaterialDynamicRelationshipPanelComponent,
+  AllorsMaterialDynamicRelationshipEditPanelComponent,
+  AllorsMaterialDynamicRelationshipViewPanelComponent,
   AllorsMaterialErrorService,
   AllorsMaterialSideNavSubjectService,
   AllorsMaterialCreateService,
@@ -181,8 +182,9 @@ import { PersonSummaryComponent } from './domain/person/summary/person-summary.c
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicDetailPanelComponent,
     AllorsMaterialDynamicEditComponent,
-    AllorsMaterialDynamicRelationshipPanelComponent,
-    FormHostDirective,
+    AllorsMaterialDynamicRelationshipEditPanelComponent,
+    AllorsMaterialDynamicRelationshipViewPanelComponent,
+    TemplateHostDirective,
     // Routed and dialog components
     ...routesComponents,
     ...dialogsComponents,

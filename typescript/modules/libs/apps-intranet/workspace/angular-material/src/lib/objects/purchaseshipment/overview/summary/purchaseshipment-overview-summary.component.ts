@@ -9,7 +9,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -20,7 +20,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 @Component({
   selector: 'purchaseshipment-overview-summary',
   templateUrl: './purchaseshipment-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class PurchaseShipmentOverviewSummaryComponent {
   m: M;
@@ -30,7 +30,7 @@ export class PurchaseShipmentOverviewSummaryComponent {
   shipmentItems: ShipmentItem[] = [];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,

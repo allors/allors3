@@ -19,7 +19,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   SearchFactory,
@@ -34,7 +34,7 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 @Component({
   selector: 'customershipment-overview-detail',
   templateUrl: './customershipment-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class CustomerShipmentOverviewDetailComponent
   implements OnInit, OnDestroy
@@ -74,7 +74,7 @@ export class CustomerShipmentOverviewDetailComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private errorService: ErrorService,

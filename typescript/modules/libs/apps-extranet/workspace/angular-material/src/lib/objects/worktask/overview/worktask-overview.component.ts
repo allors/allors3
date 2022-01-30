@@ -15,7 +15,7 @@ import { WorkTask } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,
-  PanelManagerService,
+  OldPanelManagerService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -25,7 +25,7 @@ import {
 
 @Component({
   templateUrl: './worktask-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class WorkTaskOverviewComponent implements AfterViewInit, OnDestroy {
   readonly m: M;
@@ -37,7 +37,7 @@ export class WorkTaskOverviewComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

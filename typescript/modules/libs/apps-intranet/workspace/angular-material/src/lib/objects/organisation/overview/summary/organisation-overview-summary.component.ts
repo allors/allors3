@@ -4,14 +4,14 @@ import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
 } from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'organisation-overview-summary',
   templateUrl: './organisation-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class OrganisationOverviewSummaryComponent {
   m: M;
@@ -20,7 +20,7 @@ export class OrganisationOverviewSummaryComponent {
   contactKindsText: string;
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService
   ) {

@@ -11,7 +11,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -29,7 +29,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'workeffortpurchaseorderitemassignment-overview-panel',
   templateUrl: './workeffortpoiassignment-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkEffortPOIAssignmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
@@ -54,7 +54,7 @@ export class WorkEffortPOIAssignmentOverviewPanelComponent implements OnInit {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

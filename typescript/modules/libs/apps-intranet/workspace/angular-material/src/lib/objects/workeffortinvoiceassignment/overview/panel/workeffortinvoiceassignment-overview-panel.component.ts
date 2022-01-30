@@ -12,7 +12,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -28,7 +28,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'workeffortinvoiceitemeassignment-overview-panel',
   templateUrl: './workeffortinvoiceassignment-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkEffortInvoiceItemAssignmentOverviewPanelComponent
   implements OnInit
@@ -55,7 +55,7 @@ export class WorkEffortInvoiceItemAssignmentOverviewPanelComponent
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
 
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,

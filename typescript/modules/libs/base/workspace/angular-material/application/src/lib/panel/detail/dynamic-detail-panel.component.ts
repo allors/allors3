@@ -1,16 +1,16 @@
 import { Component, Self, OnInit, HostBinding } from '@angular/core';
 import { IObject } from '@allors/system/workspace/domain';
 import {
-  PanelService,
+  OldPanelService,
   AllorsPanelDetailComponent,
 } from '@allors/base/workspace/angular/application';
-import { angularIcon } from '../../../meta/angular-icon';
+import { angularIcon } from '../../meta/angular-icon';
 import { RoleType } from '@allors/system/workspace/meta';
 
 @Component({
   selector: 'a-mat-dyn-detail-panel',
   templateUrl: './dynamic-detail-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class AllorsMaterialDynamicDetailPanelComponent
   extends AllorsPanelDetailComponent<IObject>
@@ -23,7 +23,7 @@ export class AllorsMaterialDynamicDetailPanelComponent
     return this.panel.isExpanded;
   }
 
-  constructor(@Self() panel: PanelService) {
+  constructor(@Self() panel: OldPanelService) {
     super(panel);
   }
 

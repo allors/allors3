@@ -1,15 +1,15 @@
 import { IObject } from '@allors/system/workspace/domain';
 import { Directive } from '@angular/core';
-import { PanelService } from './panel.service';
-import { AllorsPanelComponent } from './panel.component';
+import { OldAllorsPanelComponent } from '../panel/old/panel.component';
+import { OldPanelService } from '../panel/old/panel.service';
 
 @Directive()
 export abstract class AllorsPanelDetailComponent<
   T extends IObject
-> extends AllorsPanelComponent<T> {
+> extends OldAllorsPanelComponent<T> {
   override dataAllorsKind = 'panel-detail';
 
-  constructor(public override panel: PanelService) {
+  constructor(public override panel: OldPanelService) {
     super(panel);
 
     panel.name = 'detail';

@@ -13,7 +13,7 @@ import {
   NavigationService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -38,7 +38,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'purchaseorder-overview-panel',
   templateUrl: './purchaseorder-overview-panel.component.html',
-  providers: [ContextService, PanelService],
+  providers: [ContextService, OldPanelService],
 })
 export class PurchaseOrderOverviewPanelComponent {
   internalOrganisation: InternalOrganisation;
@@ -65,7 +65,7 @@ export class PurchaseOrderOverviewPanelComponent {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public objectService: ObjectService,
     public methodService: MethodService,
     public refreshService: RefreshService,

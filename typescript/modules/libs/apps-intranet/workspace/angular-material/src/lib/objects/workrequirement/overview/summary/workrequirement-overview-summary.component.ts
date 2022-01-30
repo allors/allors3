@@ -6,7 +6,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { WorkEffort, WorkRequirement } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -15,7 +15,7 @@ import {
   // tslint:disable-next-line:component-selector
   selector: 'workrequirement-overview-summary',
   templateUrl: './workrequirement-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkRequirementOverviewSummaryComponent {
   m: M;
@@ -24,7 +24,7 @@ export class WorkRequirementOverviewSummaryComponent {
   workEffort: WorkEffort;
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public refreshService: RefreshService,

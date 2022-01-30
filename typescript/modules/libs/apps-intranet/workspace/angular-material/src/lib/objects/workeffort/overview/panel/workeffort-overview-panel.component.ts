@@ -8,7 +8,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -27,7 +27,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'workeffort-overview-panel',
   templateUrl: './workeffort-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkEffortOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -49,7 +49,7 @@ export class WorkEffortOverviewPanelComponent implements OnInit {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,

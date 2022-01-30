@@ -9,13 +9,13 @@ import {
   AllorsPageObjectComponent,
   NavigationActivatedRoute,
   NavigationService,
-  PanelManagerService,
+  OldPanelManagerService,
 } from '@allors/base/workspace/angular/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   templateUrl: './person-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class PersonOverviewComponent
   extends AllorsPageObjectComponent<Person>
@@ -25,7 +25,7 @@ export class PersonOverviewComponent
 
   constructor(
     @Self() allors: ContextService,
-    @Self() panelManager: PanelManagerService,
+    @Self() panelManager: OldPanelManagerService,
     titleService: Title,
     public refreshService: RefreshService,
     public navigation: NavigationService,

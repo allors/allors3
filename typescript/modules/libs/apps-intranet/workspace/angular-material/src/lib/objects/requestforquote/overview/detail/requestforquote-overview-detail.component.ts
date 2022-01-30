@@ -17,7 +17,7 @@ import {
   CustomerRelationship,
 } from '@allors/default/workspace/domain';
 import {
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   SearchFactory,
@@ -31,7 +31,7 @@ import { Filters } from '../../../../filters/filters';
 @Component({
   selector: 'requestforquote-overview-detail',
   templateUrl: './requestforquote-overview-detail.component.html',
-  providers: [ContextService, PanelService],
+  providers: [ContextService, OldPanelService],
 })
 export class RequestForQuoteOverviewDetailComponent
   implements OnInit, OnDestroy
@@ -56,7 +56,7 @@ export class RequestForQuoteOverviewDetailComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private fetcher: FetcherService,

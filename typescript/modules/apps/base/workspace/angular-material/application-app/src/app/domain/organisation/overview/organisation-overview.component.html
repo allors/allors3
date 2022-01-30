@@ -13,19 +13,23 @@
   <div class="a-overview container">
     <div class="a-content row">
       <div class="col-md-4 mb-3">
-        <organisation-summary></organisation-summary>
+        <h1>Organisation</h1>
+        <!-- <organisation-summary></organisation-summary> -->
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
-        <a-mat-dyn-detail-panel></a-mat-dyn-detail-panel>
-        <a-mat-dyn-relationship-panel
+      <!-- [ngClass]="panelManager.panelContainerClass" -->
+      <div class="col-md-8 align-self-stretch">
+        <!-- <a-mat-dyn-detail-panel></a-mat-dyn-detail-panel> -->
+        <a-mat-dyn-rel-view-panel
           [anchor]="m.Employment.Employer"
           [target]="m.Employment.Employee"
           [display]="m.Person.FullName"
-        ></a-mat-dyn-relationship-panel>
+        ></a-mat-dyn-rel-view-panel>
+        <a-mat-dyn-rel-edit-panel
+          [anchor]="m.Employment.Employer"
+          [target]="m.Employment.Employee"
+          [display]="m.Person.FullName"
+        ></a-mat-dyn-rel-edit-panel>
       </div>
     </div>
   </div>

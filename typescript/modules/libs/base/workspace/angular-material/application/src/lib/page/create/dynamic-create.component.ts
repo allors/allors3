@@ -13,15 +13,15 @@ import {
   AllorsForm,
   angularForms,
   CreateRequest,
-  FormHostDirective,
+  TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   templateUrl: 'dynamic-create.component.html',
 })
 export class AllorsMaterialDynamicCreateComponent implements OnInit, OnDestroy {
-  @ViewChild(FormHostDirective, { static: true })
-  formHost!: FormHostDirective;
+  @ViewChild(TemplateHostDirective, { static: true })
+  templateHost!: TemplateHostDirective;
 
   objectType: Composite;
   title: string;
@@ -43,7 +43,7 @@ export class AllorsMaterialDynamicCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const viewContainerRef = this.formHost.viewContainerRef;
+    const viewContainerRef = this.templateHost.viewContainerRef;
     viewContainerRef.clear();
 
     const forms = angularForms(this.objectType);

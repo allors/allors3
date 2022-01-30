@@ -12,7 +12,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -32,7 +32,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'workeffortassignmentrate-overview-panel',
   templateUrl: './workeffortassignmentrate-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkEffortAssignmentRateOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
@@ -62,7 +62,7 @@ export class WorkEffortAssignmentRateOverviewPanelComponent implements OnInit {
   allRates: WorkEffortAssignmentRate[] = [];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,

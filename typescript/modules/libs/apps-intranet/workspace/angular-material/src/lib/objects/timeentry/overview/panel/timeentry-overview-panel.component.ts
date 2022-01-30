@@ -9,7 +9,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -27,7 +27,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'timeentry-overview-panel',
   templateUrl: './timeentry-overview-panel.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class TimeEntryOverviewPanelComponent {
   workEffort: WorkEffort;
@@ -52,7 +52,7 @@ export class TimeEntryOverviewPanelComponent {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,

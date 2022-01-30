@@ -9,7 +9,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -26,7 +26,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'partycontactmechanism-overview-panel',
   templateUrl: './partycontactmechanism-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class PartyContactMechanismOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -54,7 +54,7 @@ export class PartyContactMechanismOverviewPanelComponent implements OnInit {
   allPartyContactMechanisms: PartyContactMechanism[] = [];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

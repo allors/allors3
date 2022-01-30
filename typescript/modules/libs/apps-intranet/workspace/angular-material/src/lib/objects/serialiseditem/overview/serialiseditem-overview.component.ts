@@ -15,7 +15,7 @@ import { Party, Part, SerialisedItem } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,
-  PanelManagerService,
+  OldPanelManagerService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -27,7 +27,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './serialiseditem-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class SerialisedItemOverviewComponent
   implements AfterViewInit, OnDestroy
@@ -43,7 +43,7 @@ export class SerialisedItemOverviewComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

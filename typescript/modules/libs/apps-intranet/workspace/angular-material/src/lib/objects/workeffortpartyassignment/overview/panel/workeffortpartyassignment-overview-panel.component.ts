@@ -12,7 +12,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -32,7 +32,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'workeffortpartyassignment-overview-panel',
   templateUrl: './workeffortpartyassignment-overview-panel.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class WorkEffortPartyAssignmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
@@ -60,7 +60,7 @@ export class WorkEffortPartyAssignmentOverviewPanelComponent implements OnInit {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public deleteService: DeleteService,

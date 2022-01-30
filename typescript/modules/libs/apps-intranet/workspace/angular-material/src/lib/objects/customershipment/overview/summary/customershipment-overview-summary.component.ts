@@ -5,7 +5,7 @@ import { M } from '@allors/default/workspace/meta';
 import { CustomerShipment, SalesOrder } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -16,7 +16,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 @Component({
   selector: 'customershipment-overview-summary',
   templateUrl: './customershipment-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class CustomerShipmentOverviewSummaryComponent {
   m: M;
@@ -25,7 +25,7 @@ export class CustomerShipmentOverviewSummaryComponent {
   salesOrders: SalesOrder[] = [];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public printService: PrintService,

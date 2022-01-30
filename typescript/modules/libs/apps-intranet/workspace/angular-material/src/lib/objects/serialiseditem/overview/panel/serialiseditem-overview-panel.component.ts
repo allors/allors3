@@ -8,7 +8,7 @@ import {
   NavigationService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -30,7 +30,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'serialiseditem-overview-panel',
   templateUrl: './serialiseditem-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class SerialisedItemOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -52,7 +52,7 @@ export class SerialisedItemOverviewPanelComponent implements OnInit {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public factoryService: ObjectService,

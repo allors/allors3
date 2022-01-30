@@ -6,7 +6,7 @@ import {
   AllorsComponent,
   ContextService,
 } from '@allors/base/workspace/angular/foundation';
-import { PanelManagerService } from '../panel/panel-manager.service';
+import { OldPanelManagerService } from '../panel/old/panel-manager.service';
 
 @Directive()
 export abstract class AllorsPageObjectComponent<
@@ -36,7 +36,7 @@ export abstract class AllorsPageObjectComponent<
 
   constructor(
     public allors: ContextService,
-    public panelManager: PanelManagerService,
+    public panelManager: OldPanelManagerService,
     private titleService: Title
   ) {
     super();

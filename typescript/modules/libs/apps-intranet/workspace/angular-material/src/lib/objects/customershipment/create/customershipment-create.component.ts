@@ -32,7 +32,7 @@ import {
   RefreshService,
   ErrorService,
   SearchFactory,
-  PanelManagerService,
+  OldPanelManagerService,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IObject } from '@allors/system/workspace/domain';
@@ -43,7 +43,7 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './customershipment-create.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
   readonly m: M;
@@ -81,7 +81,7 @@ export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
     public dialogRef: MatDialogRef<CustomerShipmentCreateComponent>,

@@ -3,7 +3,7 @@ import { Component, Self } from '@angular/core';
 import { M } from '@allors/default/workspace/meta';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
 } from '@allors/base/workspace/angular/foundation';
 import { NonUnifiedGood } from '@allors/default/workspace/domain';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
@@ -11,7 +11,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 @Component({
   selector: 'nonunifiedgood-overview-summary',
   templateUrl: './nonunifiedgood-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class NonUnifiedGoodOverviewSummaryComponent {
   m: M;
@@ -19,7 +19,7 @@ export class NonUnifiedGoodOverviewSummaryComponent {
   good: NonUnifiedGood;
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService
   ) {

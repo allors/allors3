@@ -11,7 +11,7 @@ import {
   DeleteService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -29,7 +29,7 @@ interface Row extends TableRow {
   // tslint:disable-next-line:component-selector
   selector: 'workrequirementfulfillment-overview-panel',
   templateUrl: './workrequirementfulfillment-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkRequirementFulfillmentOverviewPanelComponent
   implements OnInit
@@ -55,7 +55,7 @@ export class WorkRequirementFulfillmentOverviewPanelComponent
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,

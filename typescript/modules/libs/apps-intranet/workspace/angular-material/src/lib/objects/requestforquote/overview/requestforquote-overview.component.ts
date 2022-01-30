@@ -15,7 +15,7 @@ import { RequestForQuote, Quote } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,
-  PanelManagerService,
+  OldPanelManagerService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -27,7 +27,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 
 @Component({
   templateUrl: './requestforquote-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class RequestForQuoteOverviewComponent
   implements AfterViewInit, OnDestroy
@@ -42,7 +42,7 @@ export class RequestForQuoteOverviewComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

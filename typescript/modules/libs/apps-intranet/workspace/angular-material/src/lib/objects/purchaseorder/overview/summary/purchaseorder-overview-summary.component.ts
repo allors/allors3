@@ -10,7 +10,7 @@ import {
 import {
   Action,
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -21,7 +21,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 @Component({
   selector: 'purchaseorder-overview-summary',
   templateUrl: './purchaseorder-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class PurchaseOrderOverviewSummaryComponent {
   m: M;
@@ -33,7 +33,7 @@ export class PurchaseOrderOverviewSummaryComponent {
   shipments: Shipment[];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,

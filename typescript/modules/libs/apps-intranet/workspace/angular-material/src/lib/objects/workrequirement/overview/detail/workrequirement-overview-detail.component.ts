@@ -13,7 +13,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RadioGroupOption,
   RefreshService,
   ErrorService,
@@ -30,7 +30,7 @@ import { Filters } from '../../../../filters/filters';
   // tslint:disable-next-line:component-selector
   selector: 'workrequirement-overview-detail',
   templateUrl: './workrequirement-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class WorkRequirementOverviewDetailComponent
   implements OnInit, OnDestroy
@@ -49,7 +49,7 @@ export class WorkRequirementOverviewDetailComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private errorService: ErrorService,

@@ -9,7 +9,7 @@ import {
 import {
   Action,
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -20,7 +20,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 @Component({
   selector: 'purchaseinvoice-overview-summary',
   templateUrl: './purchaseinvoice-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class PurchasInvoiceOverviewSummaryComponent {
   m: M;
@@ -36,7 +36,7 @@ export class PurchasInvoiceOverviewSummaryComponent {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public navigation: NavigationService,

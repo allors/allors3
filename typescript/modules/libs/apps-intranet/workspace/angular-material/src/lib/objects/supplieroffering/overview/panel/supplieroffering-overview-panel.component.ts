@@ -9,7 +9,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -28,7 +28,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'supplieroffering-overview-panel',
   templateUrl: './supplieroffering-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class SupplierOfferingOverviewPanelComponent implements OnInit {
   currentObjects: SupplierOffering[];
@@ -55,7 +55,7 @@ export class SupplierOfferingOverviewPanelComponent implements OnInit {
   collection = 'Current';
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

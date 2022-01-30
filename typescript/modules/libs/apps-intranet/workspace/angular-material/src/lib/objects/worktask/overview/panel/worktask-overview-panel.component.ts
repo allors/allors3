@@ -8,7 +8,7 @@ import {
   DeleteService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -29,7 +29,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'worktask-overview-panel',
   templateUrl: './worktask-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkTaskOverviewPanelComponent implements OnInit {
   serialisedItem: SerialisedItem;
@@ -53,7 +53,7 @@ export class WorkTaskOverviewPanelComponent implements OnInit {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

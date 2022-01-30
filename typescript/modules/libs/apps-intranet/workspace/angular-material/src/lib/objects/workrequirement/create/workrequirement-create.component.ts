@@ -15,7 +15,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   ObjectData,
-  PanelService,
+  OldPanelService,
   RadioGroupOption,
   RefreshService,
   ErrorService,
@@ -31,7 +31,7 @@ import { Filters } from '../../../filters/filters';
 @Component({
   selector: 'workrequirement-create',
   templateUrl: './workrequirement-create.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
   readonly m: M;

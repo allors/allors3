@@ -12,7 +12,7 @@ import {
 import {
   Action,
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -21,7 +21,7 @@ import { PrintService } from '../../../../actions/print/print.service';
 @Component({
   selector: 'worktask-overview-summary',
   templateUrl: './worktask-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkTaskOverviewSummaryComponent {
   m: M;
@@ -35,7 +35,7 @@ export class WorkTaskOverviewSummaryComponent {
   assets: FixedAsset[];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public refreshService: RefreshService,

@@ -1,44 +1,40 @@
 import { format } from 'date-fns';
-import { Component, Self, OnInit, HostBinding, Input } from '@angular/core';
+import { Component, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
-import {
-  IObject,
-  OnObjectCreate,
-  OnObjectCreateRole,
-  Pull,
-} from '@allors/system/workspace/domain';
+import { IObject, OnObjectCreate } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
-import { RefreshService } from '@allors/base/workspace/angular/foundation';
+import {
+  RefreshService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   NavigationService,
-  PanelService,
-  AllorsPanelRelationshipComponent,
+  AllorsRelationshipEditPanelComponent,
+  PanelManagerService,
 } from '@allors/base/workspace/angular/application';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
-import { angularIcon } from '../../../meta/angular-icon';
-import { Table } from '../../../table/table';
-import { TableRow } from '../../../table/table-row';
-import { DeleteService } from '../../../actions/delete/delete.service';
-import { EditRoleService } from '../../../actions/edit-role/edit-role.service';
-import { TableConfig } from '../../../table/table-config';
+import { Table } from '../table/table';
+import { TableRow } from '../table/table-row';
+import { DeleteService } from '../actions/delete/delete.service';
+import { EditRoleService } from '../actions/edit-role/edit-role.service';
 
 interface Row extends TableRow {
   object: IObject;
 }
 
 @Component({
-  selector: 'a-mat-dyn-relationship-panel',
-  templateUrl: './dynamic-relationship-panel.component.html',
-  providers: [PanelService],
+  selector: 'a-mat-dyn-rel-edit-panel',
+  templateUrl: './dynamic-relationship-edit-panel.component.html',
 })
-export class AllorsMaterialDynamicRelationshipPanelComponent
-  extends AllorsPanelRelationshipComponent
+export class AllorsMaterialDynamicRelationshipEditPanelComponent
+  extends AllorsRelationshipEditPanelComponent
   implements OnInit
 {
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
-    return this.panel.isExpanded;
+    return true;
+    // return this.panel.isExpanded;
   }
 
   @Input()
@@ -63,87 +59,88 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
   filtered: IObject[];
 
   constructor(
-    @Self() panel: PanelService,
+    panelManagerService: PanelManagerService,
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public deleteService: DeleteService,
     public editRoleService: EditRoleService
   ) {
-    super(panel);
+    super(panelManagerService, workspaceService);
   }
 
   ngOnInit() {
     this.objectType = this.target.associationType.objectType as Composite;
     this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
 
-    this.panel.name = this.target.pluralName;
-    this.panel.title = this.target.pluralName;
-    this.panel.icon = angularIcon(this.objectType);
-    this.panel.expandable = true;
+    // this.panel.name = this.target.pluralName;
+    // this.panel.title = this.target.pluralName;
+    // this.panel.icon = angularIcon(this.objectType);
+    // this.panel.expandable = true;
 
-    this.delete = this.deleteService.delete(this.panel.manager.context);
-    this.edit = this.editRoleService.edit();
+    // this.delete = this.deleteService.delete(this.panel.manager.context);
+    // this.edit = this.editRoleService.edit();
 
-    const sort = true;
+    // const sort = true;
 
-    const tableConfig: TableConfig = {
-      selection: true,
-      columns: [{ name: this.target.name, sort }],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
-      autoSort: true,
-      autoFilter: true,
-    };
+    // const tableConfig: TableConfig = {
+    //   selection: true,
+    //   columns: [{ name: this.target.name, sort }],
+    //   actions: [this.edit, this.delete],
+    //   defaultAction: this.edit,
+    //   autoSort: true,
+    //   autoFilter: true,
+    // };
 
-    if (this.hasPeriod) {
-      tableConfig.columns.push(
-        ...[
-          { name: 'from', sort },
-          { name: 'through', sort },
-        ]
-      );
-    }
+    // if (this.hasPeriod) {
+    //   tableConfig.columns.push(
+    //     ...[
+    //       { name: 'from', sort },
+    //       { name: 'through', sort },
+    //     ]
+    //   );
+    // }
 
-    this.table = new Table(tableConfig);
+    // this.table = new Table(tableConfig);
 
-    const pullName = `${this.panel.name}_${this.m.Employment.tag}`;
+    // const pullName = `${this.panel.name}_${this.m.Employment.tag}`;
 
-    this.panel.onPull = (pulls) => {
-      const id = this.panel.manager.id;
+    // this.panel.onPull = (pulls) => {
+    //   const id = this.panel.manager.id;
 
-      const pull: Pull = {
-        extent: {
-          kind: 'Filter',
-          objectType: this.objectType,
-          predicate: {
-            kind: 'Equals',
-            propertyType: this.anchor,
-            value: id,
-          },
-        },
-        results: [
-          {
-            name: pullName,
-            include: [
-              {
-                propertyType: this.anchor,
-              },
-              {
-                propertyType: this.target,
-              },
-            ],
-          },
-        ],
-      };
+    //   const pull: Pull = {
+    //     extent: {
+    //       kind: 'Filter',
+    //       objectType: this.objectType,
+    //       predicate: {
+    //         kind: 'Equals',
+    //         propertyType: this.anchor,
+    //         value: id,
+    //       },
+    //     },
+    //     results: [
+    //       {
+    //         name: pullName,
+    //         include: [
+    //           {
+    //             propertyType: this.anchor,
+    //           },
+    //           {
+    //             propertyType: this.target,
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   };
 
-      pulls.push(pull);
-    };
+    //   pulls.push(pull);
+    // };
 
-    this.panel.onPulled = (loaded) => {
-      this.objects = loaded.collection<IObject>(pullName) ?? [];
-      this.updateFilter();
-      this.refreshTable();
-    };
+    // this.panel.onPulled = (loaded) => {
+    //   this.objects = loaded.collection<IObject>(pullName) ?? [];
+    //   this.updateFilter();
+    //   this.refreshTable();
+    // };
   }
 
   onPeriodSelectionChange(newPeriodSelection: PeriodSelection) {
@@ -214,6 +211,7 @@ export class AllorsMaterialDynamicRelationshipPanelComponent
   }
 
   get onObjectCreate(): OnObjectCreate {
-    return new OnObjectCreateRole(this.anchor, this.panel.manager.id);
+    return null;
+    // return new OnObjectCreateRole(this.anchor, this.panel.manager.id);
   }
 }

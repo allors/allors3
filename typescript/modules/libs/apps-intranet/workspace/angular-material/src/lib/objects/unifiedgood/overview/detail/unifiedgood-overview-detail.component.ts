@@ -22,7 +22,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   SearchFactory,
@@ -35,7 +35,7 @@ import { Filters } from '../../../../filters/filters';
 @Component({
   selector: 'unifiedgood-overview-detail',
   templateUrl: './unifiedgood-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
@@ -71,7 +71,7 @@ export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private errorService: ErrorService,

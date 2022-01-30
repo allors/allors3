@@ -8,7 +8,7 @@ import {
   EditService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -25,7 +25,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'productidentification-panel',
   templateUrl: './productIdentification-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class ProductIdentificationsPanelComponent implements OnInit {
   @Input() roleType: RoleType;
@@ -50,7 +50,7 @@ export class ProductIdentificationsPanelComponent implements OnInit {
     };
   }
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public objectService: ObjectService,
     public refreshService: RefreshService,

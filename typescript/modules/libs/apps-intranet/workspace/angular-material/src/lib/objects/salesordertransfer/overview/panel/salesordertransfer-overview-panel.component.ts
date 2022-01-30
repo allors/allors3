@@ -14,7 +14,7 @@ import {
   NavigationService,
   ObjectData,
   ObjectService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -30,7 +30,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'salesordertransfer-overview-panel',
   templateUrl: './salesordertransfer-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class SalesOrderTransferOverviewPanelComponent {
   container: SalesOrder | SalesInvoice;
@@ -64,7 +64,7 @@ export class SalesOrderTransferOverviewPanelComponent {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public objectService: ObjectService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,

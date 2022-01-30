@@ -13,7 +13,7 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -22,7 +22,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 @Component({
   selector: 'worktask-overview-detail',
   templateUrl: './worktask-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
@@ -37,7 +37,7 @@ export class WorkTaskOverviewDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private errorService: ErrorService

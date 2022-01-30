@@ -5,7 +5,7 @@ import { M } from '@allors/default/workspace/meta';
 import { RequestForQuote, Quote } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
@@ -14,7 +14,7 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 @Component({
   selector: 'requestforquote-overview-summary',
   templateUrl: './requestforquote-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class RequestForQuoteOverviewSummaryComponent {
   m: M;
@@ -23,7 +23,7 @@ export class RequestForQuoteOverviewSummaryComponent {
   quote: Quote;
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     private errorService: ErrorService,

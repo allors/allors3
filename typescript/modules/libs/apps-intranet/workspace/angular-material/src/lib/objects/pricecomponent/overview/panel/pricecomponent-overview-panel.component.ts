@@ -9,7 +9,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -28,7 +28,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'pricecomponent-overview-panel',
   templateUrl: './pricecomponent-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class PriceComponentOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -53,7 +53,7 @@ export class PriceComponentOverviewPanelComponent implements OnInit {
   priceComponentsCollection: string;
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

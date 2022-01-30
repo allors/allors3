@@ -14,7 +14,7 @@ import { Good, UnifiedGood } from '@allors/default/workspace/domain';
 import {
   NavigationActivatedRoute,
   NavigationService,
-  PanelManagerService,
+  OldPanelManagerService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
@@ -27,7 +27,7 @@ import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './unifiedgood-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class UnifiedGoodOverviewComponent implements AfterViewInit, OnDestroy {
   title = 'Good';
@@ -40,7 +40,7 @@ export class UnifiedGoodOverviewComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,

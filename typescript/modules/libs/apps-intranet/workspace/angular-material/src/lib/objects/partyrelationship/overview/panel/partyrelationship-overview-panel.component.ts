@@ -9,7 +9,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -27,7 +27,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'partyrelationship-overview-panel',
   templateUrl: './partyrelationship-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class PartyRelationshipOverviewPanelComponent implements OnInit {
   @HostBinding('class.expanded-panel') get expandedPanelClass() {
@@ -55,7 +55,7 @@ export class PartyRelationshipOverviewPanelComponent implements OnInit {
   allPartyRelationships: PartyRelationship[] = [];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

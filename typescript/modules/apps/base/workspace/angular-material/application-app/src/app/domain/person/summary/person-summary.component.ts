@@ -6,22 +6,22 @@ import {
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsPanelSummaryComponent,
+  AllorsSummaryPanelComponent,
   NavigationService,
-  PanelService,
+  OldPanelService,
 } from '@allors/base/workspace/angular/application';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'person-summary',
   templateUrl: './person-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
-export class PersonSummaryComponent extends AllorsPanelSummaryComponent<Person> {
+export class PersonSummaryComponent extends AllorsSummaryPanelComponent<Person> {
   organisation: Organisation;
 
   constructor(
-    @Self() panel: PanelService,
+    @Self() panel: OldPanelService,
     public navigation: NavigationService,
     private mediaService: MediaService,
     public refreshService: RefreshService,

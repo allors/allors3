@@ -13,7 +13,7 @@ import {
   LegalForm,
 } from '@allors/default/workspace/domain';
 import {
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   SingletonId,
@@ -25,7 +25,7 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 @Component({
   selector: 'organisation-overview-detail',
   templateUrl: './organisation-overview-detail.component.html',
-  providers: [ContextService, PanelService],
+  providers: [ContextService, OldPanelService],
 })
 export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
   readonly m: M;
@@ -42,7 +42,7 @@ export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public errorService: ErrorService,
     public refreshService: RefreshService,
     private singletonId: SingletonId,

@@ -12,7 +12,7 @@ import {
 import {
   Action,
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   ActionTarget,
@@ -24,7 +24,7 @@ import { IObject } from '@allors/system/workspace/domain';
 @Component({
   selector: 'worktask-overview-summary',
   templateUrl: './worktask-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkTaskOverviewSummaryComponent {
   m: M;
@@ -38,7 +38,7 @@ export class WorkTaskOverviewSummaryComponent {
   assets: FixedAsset[];
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public refreshService: RefreshService,

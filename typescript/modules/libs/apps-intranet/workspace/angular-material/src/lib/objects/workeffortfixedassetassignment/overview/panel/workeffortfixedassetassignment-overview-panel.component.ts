@@ -12,7 +12,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  PanelService,
+  OldPanelService,
   RefreshService,
   Table,
   TableRow,
@@ -32,7 +32,7 @@ interface Row extends TableRow {
 @Component({
   selector: 'workeffortfixedassetassignment-overview-panel',
   templateUrl: './workeffortfixedassetassignment-overview-panel.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class WorkEffortFAAssignmentOverviewPanelComponent implements OnInit {
   workEffort: WorkEffort;
@@ -57,7 +57,7 @@ export class WorkEffortFAAssignmentOverviewPanelComponent implements OnInit {
   }
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,

@@ -4,7 +4,7 @@ import { switchMap, filter } from 'rxjs/operators';
 
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
   RefreshService,
   ErrorService,
   SearchFactory,
@@ -31,7 +31,7 @@ import { Filters } from '../../../../filters/filters';
 @Component({
   selector: 'nonunifiedgood-overview-detail',
   templateUrl: './nonunifiedgood-overview-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class NonUnifiedGoodOverviewDetailComponent
   implements OnInit, OnDestroy
@@ -66,7 +66,7 @@ export class NonUnifiedGoodOverviewDetailComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     private errorService: ErrorService,

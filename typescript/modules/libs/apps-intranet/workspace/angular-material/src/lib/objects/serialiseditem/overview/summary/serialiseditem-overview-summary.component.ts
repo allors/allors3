@@ -12,14 +12,14 @@ import {
 } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  PanelService,
+  OldPanelService,
 } from '@allors/base/workspace/angular/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'serialiseditem-overview-summary',
   templateUrl: './serialiseditem-overview-summary.component.html',
-  providers: [PanelService],
+  providers: [OldPanelService],
 })
 export class SerialisedItemOverviewSummaryComponent {
   m: M;
@@ -33,7 +33,7 @@ export class SerialisedItemOverviewSummaryComponent {
   invoice: SalesInvoice;
 
   constructor(
-    @Self() public panel: PanelService,
+    @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
     public navigation: NavigationService
   ) {

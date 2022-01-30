@@ -11,13 +11,13 @@ import {
   NavigationService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
-import { PanelManagerService } from '@allors/base/workspace/angular/application';
+import { OldPanelManagerService } from '@allors/base/workspace/angular/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './person-overview.component.html',
-  providers: [PanelManagerService, ContextService],
+  providers: [OldPanelManagerService, ContextService],
 })
 export class PersonOverviewComponent implements OnInit, OnDestroy {
   title = 'Person';
@@ -30,7 +30,7 @@ export class PersonOverviewComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panelManager: PanelManagerService,
+    @Self() public panelManager: OldPanelManagerService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private route: ActivatedRoute,

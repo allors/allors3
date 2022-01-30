@@ -15,12 +15,12 @@ import {
 import {
   AllorsPanelDetailComponent,
   NavigationService,
-  PanelService,
+  OldPanelService,
 } from '@allors/base/workspace/angular/application';
 @Component({
   selector: 'person-detail',
   templateUrl: './person-detail.component.html',
-  providers: [PanelService, ContextService],
+  providers: [OldPanelService, ContextService],
 })
 export class PersonDetailComponent
   extends AllorsPanelDetailComponent<Person>
@@ -35,7 +35,7 @@ export class PersonDetailComponent
   private subscription: Subscription;
 
   constructor(
-    @Self() panel: PanelService,
+    @Self() panel: OldPanelService,
     @Self() private allors: ContextService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
