@@ -166,8 +166,11 @@ export class AllorsMaterialDynamicRelationshipEditPanelComponent
 
   onPeriodSelectionChange(newPeriodSelection: PeriodSelection) {
     this.periodSelection = newPeriodSelection;
-    this.updateFilter();
-    this.refreshTable();
+
+    if (this.objects != null) {
+      this.updateFilter();
+      this.refreshTable();
+    }
   }
 
   updateFilter() {

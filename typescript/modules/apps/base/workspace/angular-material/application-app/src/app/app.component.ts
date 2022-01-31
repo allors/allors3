@@ -38,7 +38,7 @@ export class AppComponent implements OnDestroy {
           for (const onPull of onPulls) {
             const prefix = `${++counter}`;
             prefixByOnPull.set(onPull, prefix);
-            onPull.onPrePull(pulls);
+            onPull.onPrePull(pulls, prefix);
           }
 
           return context.pull(pulls).pipe(

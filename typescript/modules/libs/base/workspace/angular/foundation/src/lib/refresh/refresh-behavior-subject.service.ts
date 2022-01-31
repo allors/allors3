@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, debounceTime } from 'rxjs';
 import { RefreshService } from './refresh.service';
 
 @Injectable()
@@ -9,7 +9,8 @@ export class RefreshBehaviorService extends RefreshService {
 
   constructor() {
     super();
-    this.refresh$ = this.refreshSubject$ = new BehaviorSubject(new Date());
+    this.refreshSubject$ = new BehaviorSubject(new Date());
+    this.refresh$ = this.refreshSubject$.pipe(debounceTime(50));
   }
 
   refresh() {
