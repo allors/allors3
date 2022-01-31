@@ -19,7 +19,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
-  AllorsPageListComponent,
+  AllorsListPageComponent,
   NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -43,7 +43,7 @@ interface Row extends TableRow {
   providers: [ContextService],
 })
 export class OrganisationListComponent
-  extends AllorsPageListComponent
+  extends AllorsListPageComponent
   implements OnInit, OnDestroy
 {
   public override title = 'Organisations';
@@ -70,7 +70,7 @@ export class OrganisationListComponent
     super(allors, titleService);
     this.objectType = this.m.Organisation;
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

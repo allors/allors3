@@ -8,7 +8,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 
 @Directive()
-export abstract class AllorsPageListComponent extends AllorsComponent {
+export abstract class AllorsListPageComponent extends AllorsComponent {
   override dataAllorsKind = 'list';
 
   @HostBinding('attr.data-allors-objecttype')

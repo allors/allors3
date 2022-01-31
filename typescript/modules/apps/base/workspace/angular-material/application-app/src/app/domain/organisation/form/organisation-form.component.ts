@@ -39,7 +39,7 @@ export class OrganisationFormComponent
     });
   }
 
-  onObjectPreCreate(pulls: Pull[]) {
+  onPreCreate(pulls: Pull[]) {
     const m = this.m;
     const { pullBuilder: p } = m;
 
@@ -50,7 +50,7 @@ export class OrganisationFormComponent
     );
   }
 
-  onObjectPostCreate(object: IObject, pullResult: IPullResult) {
+  onPostCreate(object: IObject, pullResult: IPullResult) {
     this.countries = pullResult.collection<Country>(this.m.Country);
   }
 }

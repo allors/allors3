@@ -1,77 +1,85 @@
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { Component, Self, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, combineLatest, tap } from 'rxjs';
+import { Component, Self, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Person } from '@allors/default/workspace/domain';
-import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsPageObjectComponent,
+  OnPullService,
+  RefreshService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsOverviewPageComponent,
   NavigationActivatedRoute,
   NavigationService,
-  OldPanelManagerService,
+  OverviewPageService,
+  PanelService,
 } from '@allors/base/workspace/angular/application';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './person-overview.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [OverviewPageService, PanelService],
 })
 export class PersonOverviewComponent
-  extends AllorsPageObjectComponent<Person>
-  implements OnInit, OnDestroy
+  extends AllorsOverviewPageComponent
+  implements OnPull, OnDestroy
 {
+  object: Person;
+
   private subscription: Subscription;
 
   constructor(
-    @Self() allors: ContextService,
-    @Self() panelManager: OldPanelManagerService,
-    titleService: Title,
-    public refreshService: RefreshService,
+    @Self() overviewService: OverviewPageService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private route: ActivatedRoute
+    onPullService: OnPullService,
+    titleService: Title,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    super(allors, panelManager, titleService);
-  }
+    super(overviewService, workspaceService);
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: p } = m;
+    onPullService.register(this);
 
-    this.subscription = combineLatest([
-      this.route.url,
-      this.route.queryParams,
-      this.refreshService.refresh$,
-    ])
+    this.subscription = combineLatest([route.url, route.queryParams])
       .pipe(
-        switchMap(([, ,]) => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.panelManager.id = navRoute.id();
-          this.panelManager.objectType = m.Person;
-          this.panelManager.expanded = navRoute.panel();
+        tap(() => {
+          const navRoute = new NavigationActivatedRoute(route);
+          this.overviewService.objectType = this.m.Organisation;
+          this.overviewService.id = navRoute.id();
 
-          this.panelManager.on();
+          const panel = panelService.get(navRoute.panel(), 'Edit');
+          panelService.select(panel);
 
-          const pulls = [
-            p.Person({
-              objectId: this.panelManager.id,
-            }),
-          ];
+          const title = this.overviewService.objectType.singularName;
+          titleService.setTitle(title);
 
-          this.panelManager.onPull(pulls);
-
-          return this.allors.context.pull(pulls);
+          refreshService.refresh();
         })
       )
-      .subscribe((loaded) => {
-        this.panelManager.context.reset();
-        this.panelManager.onPulled(loaded);
-
-        this.object = loaded.object<Person>(m.Person);
-      });
+      .subscribe();
   }
 
-  public ngOnDestroy(): void {
+  onPrePull(pulls: Pull[], prefix: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
+
+    pulls.push(
+      p.Organisation({
+        name: prefix,
+        objectId: this.overviewService.id,
+      })
+    );
+  }
+
+  onPostPull(pullResult: IPullResult, prefix: string) {
+    this.object = pullResult.object(prefix);
+  }
+
+  ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

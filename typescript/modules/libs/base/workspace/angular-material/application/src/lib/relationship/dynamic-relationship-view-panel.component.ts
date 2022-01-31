@@ -33,6 +33,10 @@ export class AllorsMaterialDynamicRelationshipViewPanelComponent
 
   objectType: Composite;
 
+  get panelId() {
+    return `${this.target.name}`;
+  }
+
   hasPeriod: boolean;
   periodSelection: PeriodSelection = PeriodSelection.Current;
 

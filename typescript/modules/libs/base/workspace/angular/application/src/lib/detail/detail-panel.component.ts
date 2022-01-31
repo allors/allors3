@@ -1,27 +1,38 @@
-import { IObject } from '@allors/system/workspace/domain';
-import { Directive } from '@angular/core';
-import { OldAllorsPanelComponent } from '../panel/old/panel.component';
-import { OldPanelService } from '../panel/old/panel.service';
+import { Directive, HostBinding } from '@angular/core';
+import { M } from '@allors/default/workspace/meta';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import { PanelService } from '../panel/panel-manager.service';
+import { OverviewPageService } from '../overview/overview.service';
+import { Panel, PanelKind, PanelMode } from '../panel/panel';
 
 @Directive()
-export abstract class AllorsPanelDetailComponent<
-  T extends IObject
-> extends OldAllorsPanelComponent<T> {
-  override dataAllorsKind = 'panel-detail';
+export abstract class AllorsDetailPanelComponent implements Panel {
+  @HostBinding('attr.data-allors-kind')
+  abstract dataAllorsKind: string;
 
-  constructor(public override panel: OldPanelService) {
-    super(panel);
-
-    panel.name = 'detail';
+  @HostBinding('attr.data-allors-id')
+  get dataAllorsId() {
+    return this.overviewService.id;
   }
 
-  protected override onObject() {
-    super.onObject();
+  @HostBinding('attr.data-allors-objecttype')
+  get dataAllorsFromRelationType() {
+    return this.overviewService.objectType.tag;
+  }
 
-    // TODO: add to configure
-    const objectType = this.object?.strategy.cls;
-    this.panel.title = objectType?.singularName;
-    this.panel.icon = objectType?.singularName.toLowerCase();
-    this.panel.expandable = true;
+  abstract panelId: string;
+
+  panelKind: PanelKind = 'Detail';
+
+  abstract panelMode: PanelMode;
+
+  m: M;
+
+  constructor(
+    public overviewService: OverviewPageService,
+    public panelService: PanelService,
+    workspaceService: WorkspaceService
+  ) {
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 }

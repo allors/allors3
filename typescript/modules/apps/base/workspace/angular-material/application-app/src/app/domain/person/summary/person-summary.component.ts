@@ -1,58 +1,61 @@
-import { Component, Self } from '@angular/core';
-
-import { Person, Organisation } from '@allors/default/workspace/domain';
+import { Component } from '@angular/core';
+import { Person } from '@allors/default/workspace/domain';
 import {
   MediaService,
-  RefreshService,
+  OnPullService,
+  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsSummaryPanelComponent,
+  AllorsSummaryViewPanelComponent,
   NavigationService,
-  OldPanelService,
+  OverviewPageService,
+  PanelService,
 } from '@allors/base/workspace/angular/application';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'person-summary',
   templateUrl: './person-summary.component.html',
-  providers: [OldPanelService],
 })
-export class PersonSummaryComponent extends AllorsSummaryPanelComponent<Person> {
-  organisation: Organisation;
+export class PersonSummaryComponent
+  extends AllorsSummaryViewPanelComponent
+  implements OnPull
+{
+  object: Person;
 
   constructor(
-    @Self() panel: OldPanelService,
+    overviewService: OverviewPageService,
+    panelService: PanelService,
+    onPullService: OnPullService,
+    workspaceService: WorkspaceService,
     public navigation: NavigationService,
-    private mediaService: MediaService,
-    public refreshService: RefreshService,
-    public snackBar: MatSnackBar
+    private mediaService: MediaService
   ) {
-    super(panel);
+    super(overviewService, panelService, workspaceService);
 
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+    panelService.register(this);
+    onPullService.register(this);
+  }
 
-    const personPullName = `${panel.name}_${this.m.Person.tag}`;
+  onPrePull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    panel.onPull = (pulls) => {
-      const id = this.panel.manager.id;
+    pulls.push(
+      p.Person({
+        name: prefix,
+        objectId: this.overviewService.id,
+        include: {
+          Locale: {},
+          Photo: {},
+        },
+      })
+    );
+  }
 
-      pulls.push(
-        pull.Person({
-          name: personPullName,
-          objectId: id,
-          include: {
-            Locale: x,
-            Photo: x,
-          },
-        })
-      );
-    };
-
-    panel.onPulled = (loaded) => {
-      this.object = loaded.object<Person>(personPullName);
-    };
+  onPostPull(pullResult: IPullResult, prefix?: string) {
+    this.object = pullResult.object<Person>(prefix);
   }
 
   get src(): string {

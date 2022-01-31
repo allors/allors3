@@ -25,7 +25,7 @@ import {
 import {
   NavigationService,
   Action,
-  AllorsPageListComponent,
+  AllorsListPageComponent,
 } from '@allors/base/workspace/angular/application';
 
 interface Row extends TableRow {
@@ -39,7 +39,7 @@ interface Row extends TableRow {
   providers: [ContextService],
 })
 export class CountryListComponent
-  extends AllorsPageListComponent
+  extends AllorsListPageComponent
   implements OnInit, OnDestroy
 {
   public override title = 'Countries';
@@ -71,7 +71,7 @@ export class CountryListComponent
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });

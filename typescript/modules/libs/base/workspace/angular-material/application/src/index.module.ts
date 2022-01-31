@@ -80,7 +80,7 @@ import {
   FactoryFabComponent,
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
-  AllorsMaterialDynamicDetailPanelComponent,
+  AllorsMaterialDynamicEditDetailPanelComponent,
   AllorsMaterialDynamicRelationshipEditPanelComponent,
   AllorsMaterialDynamicRelationshipViewPanelComponent,
 } from './index';
@@ -122,7 +122,7 @@ import {
     AllorsMaterialTableComponent,
     FactoryFabComponent,
     AllorsMaterialDynamicCreateComponent,
-    AllorsMaterialDynamicDetailPanelComponent,
+    AllorsMaterialDynamicEditDetailPanelComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicRelationshipEditPanelComponent,
     AllorsMaterialDynamicRelationshipViewPanelComponent,

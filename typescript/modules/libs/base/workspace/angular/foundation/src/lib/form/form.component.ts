@@ -12,9 +12,9 @@ import {
   OnCreate,
   OnEdit,
   OnPostCreate,
-  OnObjectPostEdit,
+  OnPostEdit,
   OnPreCreate,
-  OnObjectPreEdit,
+  OnPreEdit,
   Pull,
 } from '@allors/system/workspace/domain';
 import { AllorsComponent } from '../component';
@@ -122,15 +122,15 @@ export abstract class AllorsFormComponent<T extends IObject>
     const name = 'AllorsFormComponent';
     const pull: Pull = { objectId, results: [{ name }] };
 
-    const hasPreEdit = this[nameof<OnObjectPreEdit>('onPreEdit')] != null;
-    const hasPostEdit = this[nameof<OnObjectPostEdit>('onPostEdit')] != null;
+    const hasPreEdit = this[nameof<OnPreEdit>('onPreEdit')] != null;
+    const hasPostEdit = this[nameof<OnPostEdit>('onPostEdit')] != null;
     const hasHandlers = handlers?.length > 0;
 
     if (hasPreEdit || hasPostEdit || hasHandlers) {
       const pulls: Pull[] = [pull];
 
       if (hasPreEdit) {
-        (this as unknown as OnObjectPreEdit).onPreEdit(objectId, pulls);
+        (this as unknown as OnPreEdit).onPreEdit(objectId, pulls);
       }
       handlers?.forEach((v) => v.onPreEdit(objectId, pulls));
 
@@ -140,7 +140,7 @@ export abstract class AllorsFormComponent<T extends IObject>
         handlers?.forEach((v) => v.onPostEdit(this.object, result));
 
         if (hasPostEdit) {
-          (this as unknown as OnObjectPostEdit).onPostEdit(this.object, result);
+          (this as unknown as OnPostEdit).onPostEdit(this.object, result);
         }
       });
     } else {

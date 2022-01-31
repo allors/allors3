@@ -5,6 +5,7 @@ import {
   RefreshService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
+import { OnPull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'allors-root',
@@ -30,18 +31,28 @@ export class AppComponent implements OnDestroy {
           const context = this.workspaceService.contextBuilder();
           const onPulls = [...this.onPullService.onPulls];
 
+          const prefixByOnPull: Map<OnPull, string> = new Map();
+          let counter = 0;
+
           const pulls = [];
           for (const onPull of onPulls) {
-            onPull.onPrePull(context, pulls);
+            const prefix = `${++counter}`;
+            prefixByOnPull.set(onPull, prefix);
+            onPull.onPrePull(pulls);
           }
 
-          return context
-            .pull(pulls)
-            .pipe(map((pullResult) => ({ context, onPulls, pullResult })));
+          return context.pull(pulls).pipe(
+            map((pullResult) => ({
+              onPulls,
+              pullResult,
+              prefixByOnPull,
+            }))
+          );
         }),
-        tap(({ context, onPulls, pullResult }) => {
+        tap(({ onPulls, pullResult, prefixByOnPull }) => {
           for (const onPull of onPulls) {
-            onPull.onPostPull(context, pullResult);
+            const prefix = prefixByOnPull.get(onPull);
+            onPull.onPostPull(pullResult, prefix);
           }
         })
       )

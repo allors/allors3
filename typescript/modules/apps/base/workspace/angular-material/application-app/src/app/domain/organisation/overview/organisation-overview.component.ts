@@ -4,7 +4,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
-  ContextService,
   OnPullService,
   RefreshService,
   WorkspaceService,
@@ -20,7 +19,7 @@ import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './organisation-overview.component.html',
-  providers: [ContextService, PanelService, OnPullService],
+  providers: [OverviewPageService, PanelService],
 })
 export class OrganisationOverviewComponent
   extends AllorsOverviewPageComponent
