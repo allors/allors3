@@ -9,11 +9,11 @@ import { NgForm } from '@angular/forms';
 import { M } from '@allors/default/workspace/meta';
 import {
   IObject,
-  OnObjectCreate,
-  OnObjectEdit,
-  OnObjectPostCreate,
+  OnCreate,
+  OnEdit,
+  OnPostCreate,
   OnObjectPostEdit,
-  OnObjectPreCreate,
+  OnPreCreate,
   OnObjectPreEdit,
   Pull,
 } from '@allors/system/workspace/domain';
@@ -74,81 +74,73 @@ export abstract class AllorsFormComponent<T extends IObject>
     return this.form.form.valid && this.context.hasChanges();
   }
 
-  get canWrite(): any {
+  get canWrite() {
     return true;
   }
 
-  create(objectType: Class, handlers?: OnObjectCreate[]): void {
+  create(objectType: Class, handlers?: OnCreate[]): void {
     this.isCreate = true;
 
-    const hasPreCreate =
-      this[nameof<OnObjectPreCreate>('onObjectPreCreate')] != null;
-    const hasPostCreate =
-      this[nameof<OnObjectPostCreate>('onObjectPostCreate')] != null;
+    const hasPreCreate = this[nameof<OnPreCreate>('onPreCreate')] != null;
+    const hasPostCreate = this[nameof<OnPostCreate>('onPostCreate')] != null;
     const hasHandlers = handlers?.length > 0;
 
     if (hasPreCreate || hasPostCreate || hasHandlers) {
       const pulls: Pull[] = [];
 
       if (hasPreCreate) {
-        (this as unknown as OnObjectPreCreate).onObjectPreCreate(pulls);
+        (this as unknown as OnPreCreate).onPreCreate(pulls);
       }
-      handlers?.forEach((v) => v.onObjectPreCreate(pulls));
+      handlers?.forEach((v) => v.onPreCreate(pulls));
 
       this.createSubscription = this.context
         .pull(pulls)
         .subscribe((pullResult) => {
-          this.onObjectCreate(objectType);
+          this.onCreate(objectType);
 
-          handlers?.forEach((v) =>
-            v.onObjectPostCreate(this.object, pullResult)
-          );
+          handlers?.forEach((v) => v.onPostCreate(this.object, pullResult));
 
           if (hasPostCreate) {
-            (this as unknown as OnObjectPostCreate).onObjectPostCreate(
+            (this as unknown as OnPostCreate).onPostCreate(
               this.object,
               pullResult
             );
           }
         });
     } else {
-      this.onObjectCreate(objectType);
+      this.onCreate(objectType);
     }
   }
 
-  onObjectCreate(objectType: Class) {
+  onCreate(objectType: Class) {
     this.object = this.context.create<T>(objectType);
   }
 
-  edit(objectId: number, handlers?: OnObjectEdit[]): void {
+  edit(objectId: number, handlers?: OnEdit[]): void {
     this.isCreate = false;
 
     const name = 'AllorsFormComponent';
     const pull: Pull = { objectId, results: [{ name }] };
 
-    const hasPreEdit = this[nameof<OnObjectPreEdit>('onObjectPreEdit')] != null;
-    const hasPostEdit =
-      this[nameof<OnObjectPostEdit>('onObjectPostEdit')] != null;
+    const hasPreEdit = this[nameof<OnObjectPreEdit>('onPreEdit')] != null;
+    const hasPostEdit = this[nameof<OnObjectPostEdit>('onPostEdit')] != null;
     const hasHandlers = handlers?.length > 0;
 
     if (hasPreEdit || hasPostEdit || hasHandlers) {
       const pulls: Pull[] = [pull];
 
       if (hasPreEdit) {
-        (this as unknown as OnObjectPreEdit).onObjectPreEdit(objectId, pulls);
+        (this as unknown as OnObjectPreEdit).onPreEdit(objectId, pulls);
       }
-      handlers?.forEach((v) => v.onObjectPreEdit(objectId, pulls));
+      handlers?.forEach((v) => v.onPreEdit(objectId, pulls));
 
       this.editSubscription = this.context.pull(pulls).subscribe((result) => {
         this.object = result.objects.values().next()?.value;
 
-        handlers?.forEach((v) => v.onObjectPostEdit(this.object, result));
+        handlers?.forEach((v) => v.onPostEdit(this.object, result));
 
         if (hasPostEdit) {
-          (this as unknown as OnObjectPostEdit).onObjectPostEdit(
-            this.object,
-            result
-          );
+          (this as unknown as OnObjectPostEdit).onPostEdit(this.object, result);
         }
       });
     } else {

@@ -2,17 +2,18 @@ import { Directive, HostBinding } from '@angular/core';
 import { RoleType } from '@allors/system/workspace/meta';
 import { M } from '@allors/default/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { PanelManagerService } from '../panel/panel-manager.service';
+import { PanelService } from '../panel/panel-manager.service';
+import { OverviewPageService } from '../overview/overview.service';
+import { Panel, PanelKind, PanelMode } from '../panel/panel';
 
 @Directive()
-export abstract class AllorsRelationshipPanelComponent {
+export abstract class AllorsRelationshipPanelComponent implements Panel {
   @HostBinding('attr.data-allors-kind')
   abstract dataAllorsKind: string;
 
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {
-    return null;
-    // return this.panel.manager.id;
+    return this.overviewService.id;
   }
 
   @HostBinding('attr.data-allors-anchor')
@@ -29,10 +30,17 @@ export abstract class AllorsRelationshipPanelComponent {
 
   abstract target: RoleType;
 
+  abstract panelId: string;
+
+  panelKind: PanelKind = 'RelationShip';
+
+  abstract panelMode: PanelMode;
+
   m: M;
 
   constructor(
-    public panelManagerService: PanelManagerService,
+    public overviewService: OverviewPageService,
+    public panelService: PanelService,
     workspaceService: WorkspaceService
   ) {
     this.m = workspaceService.workspace.configuration.metaPopulation as M;

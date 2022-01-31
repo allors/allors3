@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   AllorsDialogService,
-  Context,
+  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   RefreshService,
@@ -16,19 +16,20 @@ import { DeleteAction } from './delete-action';
 })
 export class DeleteService {
   constructor(
+    private workspaceService: WorkspaceService,
     private refreshService: RefreshService,
     private dialogService: AllorsDialogService,
     private errorService: ErrorService,
     private snackBar: MatSnackBar
   ) {}
 
-  delete(context: Context): Action {
+  delete(): Action {
     return new DeleteAction(
       this.refreshService,
       this.dialogService,
       this.errorService,
       this.snackBar,
-      context
+      this.workspaceService.contextBuilder()
     );
   }
 }

@@ -10,17 +10,18 @@ import { ErrorService } from '@allors/base/workspace/angular/foundation';
 import {
   IObject,
   IPullResult,
-  OnObjectCreate,
+  OnCreate,
   Pull,
 } from '@allors/system/workspace/domain';
 
 @Component({
+  selector: 'organisation-form',
   templateUrl: './organisation-form.component.html',
   providers: [ContextService],
 })
 export class OrganisationFormComponent
   extends AllorsFormComponent<Organisation>
-  implements OnObjectCreate
+  implements OnCreate
 {
   countries: Country[];
   peopleFilter: SearchFactory;

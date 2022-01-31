@@ -1,51 +1,59 @@
 import { Component, Self } from '@angular/core';
 import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
-import { OldPanelService } from '@allors/base/workspace/angular/application';
+import {
+  OnPullService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
+import {
+  AllorsSummaryViewPanelComponent,
+  NavigationService,
+  OverviewPageService,
+  PanelService,
+} from '@allors/base/workspace/angular/application';
+import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'organisation-summary',
   templateUrl: './organisation-summary.component.html',
-  providers: [OldPanelService],
 })
-export class OrganisationSummaryComponent {
-  m: M;
-
+export class OrganisationSummaryComponent
+  extends AllorsSummaryViewPanelComponent
+  implements OnPull
+{
   organisation: Organisation;
   contactKindsText: string;
 
   constructor(
-    @Self() public panel: OldPanelService,
-    public workspaceService: WorkspaceService,
+    overviewService: OverviewPageService,
+    panelService: PanelService,
+    onPullService: OnPullService,
+    workspaceService: WorkspaceService,
     public navigation: NavigationService
   ) {
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+    super(overviewService, panelService, workspaceService);
 
-    panel.name = 'summary';
+    panelService.register(this);
+    onPullService.register(this);
+  }
 
-    const organisationPullName = `${panel.name}_${this.m.Organisation.tag}`;
+  onPrePull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    panel.onPull = (pulls) => {
-      const id = this.panel.manager.id;
+    pulls.push(
+      p.Organisation({
+        name: prefix,
+        objectId: this.overviewService.id,
+        include: {
+          Country: {},
+        },
+      })
+    );
+  }
 
-      pulls.push(
-        pull.Organisation({
-          name: organisationPullName,
-          objectId: id,
-          include: {
-            Country: x,
-          },
-        })
-      );
-    };
-
-    panel.onPulled = (loaded) => {
-      this.organisation = loaded.object<Organisation>(organisationPullName);
-    };
+  onPostPull(pullResult: IPullResult, prefix?: string) {
+    this.organisation = pullResult.object<Organisation>(prefix);
   }
 }

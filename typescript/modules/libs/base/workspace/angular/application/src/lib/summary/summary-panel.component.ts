@@ -1,17 +1,39 @@
-import { Directive } from '@angular/core';
-import { IObject } from '@allors/system/workspace/domain';
-import { OldPanelService } from '../panel/old/panel.service';
-import { OldAllorsPanelComponent } from '../panel/old/panel.component';
+import { Directive, HostBinding } from '@angular/core';
+import { RoleType } from '@allors/system/workspace/meta';
+import { M } from '@allors/default/workspace/meta';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import { PanelService } from '../panel/panel-manager.service';
+import { OverviewPageService } from '../overview/overview.service';
+import { Panel, PanelKind, PanelMode } from '../panel/panel';
 
 @Directive()
-export abstract class AllorsSummaryPanelComponent<
-  T extends IObject
-> extends OldAllorsPanelComponent<T> {
-  override dataAllorsKind = 'panel-summary';
+export abstract class AllorsSummaryPanelComponent implements Panel {
+  @HostBinding('attr.data-allors-kind')
+  abstract dataAllorsKind: string;
 
-  constructor(public override panel: OldPanelService) {
-    super(panel);
+  @HostBinding('attr.data-allors-id')
+  get dataAllorsId() {
+    return this.overviewService.id;
+  }
 
-    panel.name = 'summary';
+  @HostBinding('attr.data-allors-objecttype')
+  get dataAllorsFromRelationType() {
+    return this.overviewService.objectType.tag;
+  }
+
+  abstract panelId: string;
+
+  panelKind: PanelKind = 'Summary';
+
+  abstract panelMode: PanelMode;
+
+  m: M;
+
+  constructor(
+    public overviewService: OverviewPageService,
+    public panelService: PanelService,
+    workspaceService: WorkspaceService
+  ) {
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 }

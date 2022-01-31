@@ -1,5 +1,5 @@
-import { combineLatest, Subscription, switchMap } from 'rxjs';
-import { Component, Self, OnDestroy, AfterViewInit } from '@angular/core';
+import { combineLatest, Subscription, tap } from 'rxjs';
+import { Component, Self, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '@allors/default/workspace/domain';
@@ -7,105 +7,80 @@ import {
   ContextService,
   OnPullService,
   RefreshService,
+  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
+  AllorsOverviewPageComponent,
   NavigationService,
-  AllorsEditPageComponent,
-  PanelManagerService,
+  NavigationActivatedRoute,
+  OverviewPageService,
+  PanelService,
 } from '@allors/base/workspace/angular/application';
+import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './organisation-overview.component.html',
-  providers: [ContextService, PanelManagerService, OnPullService],
+  providers: [ContextService, PanelService, OnPullService],
 })
 export class OrganisationOverviewComponent
-  extends AllorsEditPageComponent<Organisation>
-  implements AfterViewInit, OnDestroy
+  extends AllorsOverviewPageComponent
+  implements OnPull, OnDestroy
 {
-  subscription: Subscription;
+  object: Organisation;
+
+  private subscription: Subscription;
 
   constructor(
-    @Self() allors: ContextService,
-    @Self() panelManagerService: PanelManagerService,
-    @Self() onPullService: OnPullService,
-    titleService: Title,
-    public refreshService: RefreshService,
+    @Self() overviewService: OverviewPageService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private route: ActivatedRoute
+    onPullService: OnPullService,
+    titleService: Title,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    super(allors, panelManagerService, titleService);
+    super(overviewService, workspaceService);
 
-    // this.subscription = combineLatest([
-    //   this.route.url,
-    //   this.route.queryParams,
-    //   this.refreshService.refresh$,
-    // ])
-    //   .pipe(
-    //     switchMap(([, ,]) => {
-    //       const navRoute = new NavigationActivatedRoute(this.route);
-    //       this.panelService.objectType = m.Organisation;
-    //       this.panelService.id = navRoute.id();
-    //       this.panelService.expanded = navRoute.panel();
+    onPullService.register(this);
 
-    //       this.panelManager.on();
+    this.subscription = combineLatest([route.url, route.queryParams])
+      .pipe(
+        tap(() => {
+          const navRoute = new NavigationActivatedRoute(route);
+          this.overviewService.objectType = this.m.Organisation;
+          this.overviewService.id = navRoute.id();
 
-    //       const pulls = [
-    //         pull.Organisation({
-    //           objectId: this.panelManager.id,
-    //         }),
-    //       ];
+          const panel = panelService.get(navRoute.panel(), 'Edit');
+          panelService.select(panel);
 
-    //       this.panelManager.onPull(pulls);
+          const title = this.overviewService.objectType.singularName;
+          titleService.setTitle(title);
 
-    //       return this.panelManager.context.pull(pulls);
-    //     })
-    //   )
-    //   .subscribe((loaded) => {
-    //     this.panelManager.context.reset();
-    //     this.panelManager.onPulled(loaded);
-
-    //     this.object = loaded.object<Organisation>(m.Organisation);
-    //   });
+          refreshService.refresh();
+        })
+      )
+      .subscribe();
   }
 
-  public ngAfterViewInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[], prefix: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    // this.subscription = combineLatest([
-    //   this.route.url,
-    //   this.route.queryParams,
-    //   this.refreshService.refresh$,
-    // ])
-    //   .pipe(
-    //     switchMap(([, ,]) => {
-    //       const navRoute = new NavigationActivatedRoute(this.route);
-    //       this.panelManager.objectType = m.Organisation;
-    //       this.panelManager.id = navRoute.id();
-    //       this.panelManager.expanded = navRoute.panel();
-
-    //       this.panelManager.on();
-
-    //       const pulls = [
-    //         pull.Organisation({
-    //           objectId: this.panelManager.id,
-    //         }),
-    //       ];
-
-    //       this.panelManager.onPull(pulls);
-
-    //       return this.panelManager.context.pull(pulls);
-    //     })
-    //   )
-    //   .subscribe((loaded) => {
-    //     this.panelManager.context.reset();
-    //     this.panelManager.onPulled(loaded);
-
-    //     this.object = loaded.object<Organisation>(m.Organisation);
-    //   });
+    pulls.push(
+      p.Organisation({
+        name: prefix,
+        objectId: this.overviewService.id,
+      })
+    );
   }
 
-  public ngOnDestroy(): void {
+  onPostPull(pullResult: IPullResult, prefix: string) {
+    this.object = pullResult.object(prefix);
+  }
+
+  ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

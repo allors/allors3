@@ -66,8 +66,8 @@ export * from './lib/role';
 export * from './lib/types';
 
 // lifecycle
-export * from './lib/lifecycle/onobjectcreate';
-export * from './lib/lifecycle/onobjectcreateassociation';
-export * from './lib/lifecycle/onobjectcreaterole';
-export * from './lib/lifecycle/onobjectedit';
+export * from './lib/lifecycle/oncreate';
+export * from './lib/lifecycle/oncreate-association';
+export * from './lib/lifecycle/oncreate-role';
+export * from './lib/lifecycle/onedit';
 export * from './lib/lifecycle/onpull';

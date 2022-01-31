@@ -1,0 +1,40 @@
+<mat-tab-group>
+  <mat-tab label="General">
+    <div class="container-fluid">
+      <div class="row pt-3">
+        <a-mat-input
+          class="col-md"
+          [object]="object"
+          [roleType]="m.Person.FirstName"
+        ></a-mat-input>
+        <a-mat-input
+          class="col-md"
+          [object]="object"
+          [roleType]="m.Person.LastName"
+        ></a-mat-input>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Extra">
+    <div class="container-fluid">
+      <div class="row pt-3">
+        <a-mat-select
+          class="col-md"
+          [object]="object"
+          [roleType]="m.Person.Locale"
+          [options]="locales"
+          display="Name"
+        >
+        </a-mat-select>
+        <a-mat-select
+          class="col-md"
+          [object]="object"
+          [roleType]="m.Person.Gender"
+          [options]="genders"
+          display="Name"
+        >
+        </a-mat-select>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>

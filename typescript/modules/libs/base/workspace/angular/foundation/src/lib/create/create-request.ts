@@ -1,8 +1,8 @@
 import { Class } from '@allors/system/workspace/meta';
-import { OnObjectCreate } from '@allors/system/workspace/domain';
+import { OnCreate } from '@allors/system/workspace/domain';
 
 export interface CreateRequest {
   readonly kind: 'CreateRequest';
   objectType: Class;
-  handlers?: OnObjectCreate[];
+  handlers?: OnCreate[];
 }

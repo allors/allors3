@@ -3,13 +3,15 @@ import { Directive } from '@angular/core';
 import { OverviewPageService } from '../overview/overview.service';
 import { PanelMode } from '../panel/panel';
 import { PanelService } from '../panel/panel-manager.service';
-import { AllorsRelationshipPanelComponent } from './relationship-panel.component';
+import { AllorsSummaryPanelComponent } from './summary-panel.component';
 
 @Directive()
-export abstract class AllorsRelationshipEditPanelComponent extends AllorsRelationshipPanelComponent {
-  dataAllorsKind = 'rel-edit-panel';
+export abstract class AllorsSummaryViewPanelComponent extends AllorsSummaryPanelComponent {
+  dataAllorsKind = 'rel-view-panel';
 
-  panelMode: PanelMode = 'Edit';
+  panelId = 'SummaryView';
+
+  panelMode: PanelMode = 'View';
 
   constructor(
     overviewService: OverviewPageService,

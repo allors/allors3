@@ -1,11 +1,11 @@
-import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 export interface OnPrePull {
-  onObjectPreCreate(pulls: Pull[]);
+  onPrePull(pulls: Pull[], prefix?: string);
 }
 
 export interface OnPostPull {
-  onObjectPostCreate(object: IObject, pullResult: IPullResult);
+  onPostPull(pullResult: IPullResult, prefix?: string);
 }
 
 export interface OnPull extends OnPrePull, OnPostPull {}

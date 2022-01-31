@@ -2,7 +2,8 @@ import { Component, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   AllorsRelationshipViewPanelComponent,
-  PanelManagerService,
+  OverviewPageService,
+  PanelService,
 } from '@allors/base/workspace/angular/application';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
@@ -36,10 +37,11 @@ export class AllorsMaterialDynamicRelationshipViewPanelComponent
   periodSelection: PeriodSelection = PeriodSelection.Current;
 
   constructor(
-    panelManagerService: PanelManagerService,
+    overviewService: OverviewPageService,
+    panelService: PanelService,
     workspaceService: WorkspaceService
   ) {
-    super(panelManagerService, workspaceService);
+    super(overviewService, panelService, workspaceService);
   }
 
   ngOnInit() {

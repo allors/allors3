@@ -136,7 +136,7 @@ import { components as formComponents } from './app.forms';
 
 import { OrganisationSummaryComponent } from './domain/organisation/summary/organisation-summary.component';
 import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
-import { PersonDetailComponent } from './domain/person/detail/person-detail.component';
+import { PersonDetailComponent } from './domain/person/form/person-form.component';
 import { PersonSummaryComponent } from './domain/person/summary/person-summary.component';
 
 @NgModule({
