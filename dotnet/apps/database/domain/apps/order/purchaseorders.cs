@@ -90,6 +90,11 @@ namespace Allors.Database.Domain
                 permissions.Get(this.Meta, this.Meta.QuickReceive),
             };
 
+            revocations.PurchaseOrderReturnRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Return),
+            };
+
             revocations.PurchaseOrderReviseRevocation.DeniedPermissions = new[]
             {
                 permissions.Get(this.Meta, this.Meta.Revise),

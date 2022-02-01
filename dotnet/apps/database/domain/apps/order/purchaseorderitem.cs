@@ -181,7 +181,7 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
-        public void AppsReturn(PurchaseOrderReturn method)
+        public void AppsReturn(PurchaseOrderItemReturn method)
         {
             if (this.PurchaseOrderItemShipmentState.IsReceived || this.PurchaseOrderItemShipmentState.IsPartiallyReceived)
             {
@@ -208,11 +208,14 @@ namespace Allors.Database.Domain
                     }
                 }
 
+                var inventoryItem = this.Part.InventoryItemsWherePart.First(v => v.Facility.Equals(this.StoredInFacility));
+
                 var shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
                     .WithPart(this.Part)
                     .WithSerialisedItem(this.SerialisedItem)
                     .WithQuantity(this.QuantityReceived)
                     .WithContentsDescription($"{this.QuantityReceived} * {this.Part.Name}")
+                    .WithReservedFromInventoryItem(inventoryItem)
                     .Build();
 
                 purchaseReturn.AddShipmentItem(shipmentItem);
@@ -222,8 +225,6 @@ namespace Allors.Database.Domain
                     .WithShipmentItem(shipmentItem)
                     .WithQuantity(this.QuantityReceived)
                     .Build();
-
-                this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(this.Strategy.Transaction).Returned;
             }
 
             method.StopPropagation = true;

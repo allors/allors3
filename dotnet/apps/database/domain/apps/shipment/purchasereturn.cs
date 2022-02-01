@@ -62,5 +62,45 @@ namespace Allors.Database.Domain
                 deletable.Strategy.Delete();
             }
         }
+
+        public void AppsShip(PurchaseReturnShip method)
+        {
+            this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Shipped;
+            this.EstimatedShipDate = this.Transaction().Now().Date;
+
+            foreach (var shipmentItem in this.ShipmentItems)
+            {
+                shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Shipped;
+
+                foreach (var inventoryItem in shipmentItem.ReservedFromInventoryItems)
+                {
+                    if (inventoryItem.Part.InventoryItemKind.IsSerialised)
+                    {
+                        new InventoryItemTransactionBuilder(this.Transaction())
+                            .WithPart(shipmentItem.Part)
+                            .WithSerialisedItem(shipmentItem.SerialisedItem)
+                            .WithUnitOfMeasure(inventoryItem.Part.UnitOfMeasure)
+                            .WithFacility(inventoryItem.Facility)
+                            .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
+                            .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction()).Good)
+                            .WithQuantity(1)
+                            .Build();
+                    }
+                    else
+                    {
+                        new InventoryItemTransactionBuilder(this.Transaction())
+                            .WithPart(inventoryItem.Part)
+                            .WithUnitOfMeasure(inventoryItem.Part.UnitOfMeasure)
+                            .WithFacility(inventoryItem.Facility)
+                            .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
+                            .WithQuantity(shipmentItem.Quantity)
+                            .WithCost(inventoryItem.Part.PartWeightedAverage.AverageCost)
+                            .Build();
+                    }
+                }
+            }
+
+            method.StopPropagation = true;
+        }
     }
 }

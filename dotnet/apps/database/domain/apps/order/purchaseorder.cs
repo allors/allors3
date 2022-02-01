@@ -369,9 +369,12 @@ namespace Allors.Database.Domain
                 {
                     if (orderItem.ExistPart)
                     {
+                        var inventoryItem = orderItem.Part.InventoryItemsWherePart.FirstOrDefault(v => v.Facility.Equals(orderItem.StoredInFacility));
+
                         var shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
                             .WithPart(orderItem.Part)
                             .WithSerialisedItem(orderItem.SerialisedItem)
+                            .WithReservedFromInventoryItem(inventoryItem)
                             .WithQuantity(orderItem.QuantityReceived)
                             .WithContentsDescription($"{orderItem.QuantityReceived} * {orderItem.Part.Name}")
                             .Build();
@@ -385,8 +388,6 @@ namespace Allors.Database.Domain
                             .Build();
                     }
                 }
-
-                this.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Strategy.Transaction).Returned;
             }
 
             method.StopPropagation = true;

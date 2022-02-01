@@ -121,6 +121,14 @@ namespace Allors.Repository
         public PurchaseReturnVersion[] AllVersions { get; set; }
         #endregion
 
+        #region Allors
+        [Id("a6178073-2743-49a2-8a1d-59480b12b9d5")]
+        #endregion
+        [Derived]
+        [Required]
+        [Workspace(Default)]
+        public bool CanShip { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }
@@ -142,5 +150,17 @@ namespace Allors.Repository
         public void Delete() { }
 
         #endregion
+
+        #region Allors
+        [Id("ef13cb5c-96ab-4011-854d-cb52a68d21d7")]
+        #endregion
+        [Workspace(Default)]
+        public void Cancel() { }
+
+        #region Allors
+        [Id("7ff94863-ecb2-4866-8632-1d5091cf1052")]
+        #endregion
+        [Workspace(Default)]
+        public void Ship() { }
     }
 }

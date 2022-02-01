@@ -13,8 +13,6 @@ namespace Allors.Database.Domain
 
         public bool IsReceived => Equals(this.UniqueId, PurchaseOrderItemShipmentStates.ReceivedId);
 
-        public bool IsReturned => Equals(this.UniqueId, PurchaseOrderItemShipmentStates.ReturnedId);
-
         public bool IsNa => Equals(this.UniqueId, PurchaseOrderItemShipmentStates.NaId);
     }
 }

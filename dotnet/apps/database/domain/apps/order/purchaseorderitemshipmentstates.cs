@@ -12,7 +12,6 @@ namespace Allors.Database.Domain
         internal static readonly Guid NotReceivedId = new Guid("CF26D4F9-E8AF-4A1D-9841-73B8C5266117");
         internal static readonly Guid PartiallyReceivedId = new Guid("C142144A-8CAE-4D2B-A56B-94BAF236227A");
         internal static readonly Guid ReceivedId = new Guid("AD66619F-BB48-42AF-B019-3E4028AD7B6B");
-        internal static readonly Guid ReturnedId = new Guid("6b8c6dba-2630-4924-b04e-56e11ca6f25f");
         internal static readonly Guid NaId = new Guid("6cde2d53-5ab9-49c9-88e5-4484aac27a20");
 
         private UniquelyIdentifiableCache<PurchaseOrderItemShipmentState> cache;
@@ -22,8 +21,6 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemShipmentState PartiallyReceived => this.Cache[PartiallyReceivedId];
 
         public PurchaseOrderItemShipmentState Received => this.Cache[ReceivedId];
-
-        public PurchaseOrderItemShipmentState Returned => this.Cache[ReturnedId];
 
         public PurchaseOrderItemShipmentState Na => this.Cache[NaId];
 
@@ -36,7 +33,6 @@ namespace Allors.Database.Domain
             merge(NotReceivedId, v => v.Name = "Not Received");
             merge(PartiallyReceivedId, v => v.Name = "Partially Received");
             merge(ReceivedId, v => v.Name = "Received");
-            merge(ReturnedId, v => v.Name = "Returned");
             merge(NaId, v => v.Name = "Shipping Not applicable");
         }
     }

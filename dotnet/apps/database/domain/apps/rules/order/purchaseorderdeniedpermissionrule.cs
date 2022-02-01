@@ -41,6 +41,7 @@ namespace Allors.Database.Domain
                 var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderDeleteRevocation;
                 var invoiceRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderInvoiceRevocation;
                 var quickReceiveRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderQuickReceiveRevocation;
+                var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReturnRevocation;
                 var reviseRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReviseRevocation;
                 var receivedRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReceivedRevocation;
                 var reopenRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReopenRevocation;
@@ -71,6 +72,12 @@ namespace Allors.Database.Domain
                 else
                 {
                     @this.AddRevocation(quickReceiveRevocation);
+                }
+
+                var returnItemRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
+                if (@this.ValidOrderItems.All(v => ((PurchaseOrderItem)v).Revocations.Contains(returnItemRevocation)))
+                {
+                    @this.AddRevocation(returnRevocation);
                 }
 
                 if (@this.IsDeletable)

@@ -61,6 +61,11 @@ namespace Allors.Database.Domain
             {
                 permissions.Get(this.Meta, this.Meta.Delete),
             };
+
+            revocations.PurchaseOrderItemReturnRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Return),
+            };
         }
     }
 }

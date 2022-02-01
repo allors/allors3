@@ -88,4 +88,131 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
     }
+
+    public class PurchaseReturnCanShipRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseReturnCanShipRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedNonSerialisInventoryItemQuantityOnHandThrowValidationError()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Derive();
+
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(part)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            order.Return();
+            this.Transaction.Derive();
+
+            var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
+
+            Assert.True(purchaseReturn.CanShip);
+
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Theft).WithPart(part).Build();
+            this.Transaction.Derive();
+
+            Assert.False(purchaseReturn.CanShip);
+        }
+    }
+
+    [Trait("Category", "Security")]
+    public class PurchaseReturnDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseReturnDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.shipRevocation = new Revocations(this.Transaction).PurchaseReturnShipRevocation;
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Revocation shipRevocation;
+
+        [Fact]
+        public void ChangedPurchaseReturnTransitionalDeniedPermissionsDeriveShipPermissionAllowed()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Derive();
+
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(part)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            order.Return();
+            this.Transaction.Derive();
+
+            var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
+
+            Assert.DoesNotContain(this.shipRevocation, purchaseReturn.Revocations);
+        }
+
+        [Fact]
+        public void ChangedPurchaseReturnCanShipDeriveShipPermissionDenied()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Derive();
+
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(part)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            order.Return();
+            this.Transaction.Derive();
+
+            var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
+
+            Assert.True(purchaseReturn.CanShip);
+
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Theft).WithPart(part).Build();
+            this.Transaction.Derive();
+
+            Assert.Contains(this.shipRevocation, purchaseReturn.Revocations);
+        }
+    }
 }

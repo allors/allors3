@@ -1551,6 +1551,7 @@ namespace Allors.Database.Domain.Tests
             this.invoiceRevocation = new Revocations(this.Transaction).PurchaseOrderInvoiceRevocation;
             this.reviseRevocation = new Revocations(this.Transaction).PurchaseOrderReviseRevocation;
             this.quickReceiveRevocation = new Revocations(this.Transaction).PurchaseOrderQuickReceiveRevocation;
+            this.returnRevocation = new Revocations(this.Transaction).PurchaseOrderReturnRevocation;
             this.receivedRevocation = new Revocations(this.Transaction).PurchaseOrderReceivedRevocation;
         }
 
@@ -1560,6 +1561,7 @@ namespace Allors.Database.Domain.Tests
         private readonly Revocation invoiceRevocation;
         private readonly Revocation reviseRevocation;
         private readonly Revocation quickReceiveRevocation;
+        private readonly Revocation returnRevocation;
         private readonly Revocation receivedRevocation;
 
         [Fact]
@@ -1713,6 +1715,65 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(this.quickReceiveRevocation, order.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedTransitionalDeniedPermissionsDeriveReturnPermissionAllowed()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            Assert.Contains(this.returnRevocation, order.Revocations);
+
+            order.QuickReceive();
+            this.Derive();
+
+            Assert.DoesNotContain(this.returnRevocation, order.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedTransitionalDeniedPermissionsDeriveReturnPermissionDenied()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Derive();
+
+            Assert.DoesNotContain(this.returnRevocation, order.Revocations);
+
+            order.Return();
+            this.Derive();
+
+            Assert.Contains(this.returnRevocation, order.Revocations);
         }
 
         [Fact]

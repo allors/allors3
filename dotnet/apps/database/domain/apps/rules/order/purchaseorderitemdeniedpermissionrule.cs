@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.PurchaseOrderItem.RolePattern(v => v.TransitionalRevocations),
+            m.PurchaseOrderItem.RolePattern(v => v.QuantityReturned),
             m.OrderItemBilling.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
             m.OrderRequirementCommitment.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
             m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, m.PurchaseOrderItem),
@@ -33,14 +34,20 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
-                var revocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemDeleteRevocation;
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemDeleteRevocation;
                 if (@this.IsDeletable)
                 {
-                    @this.RemoveRevocation(revocation);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddRevocation(revocation);
+                    @this.AddRevocation(deleteRevocation);
+                }
+
+                var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
+                if (@this.QuantityReceived == @this.QuantityReturned)
+                {
+                    @this.AddRevocation(returnRevocation);
                 }
             }
         }

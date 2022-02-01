@@ -341,6 +341,41 @@ namespace Allors.Database.Domain.Tests
             var errors = this.Derive().Errors.OfType<IDerivationErrorRequired>();
             Assert.Contains(this.M.ShipmentItem.UnitPurchasePrice, errors.SelectMany(v => v.RoleTypes).Distinct());
         }
+
+        [Fact]
+        public void ChangedPurchaseReturnQuantityThrowValidationError()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            order.Return();
+            this.Transaction.Derive();
+
+            var shipmentItem = supplier.ShipmentsWhereShipToParty.First().ShipmentItems.First();
+
+            shipmentItem.Quantity++;
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.InvalidQuantity));
+        }
     }
 
     public class ShipmentItemStateRuleTests : DomainTest, IClassFixture<Fixture>

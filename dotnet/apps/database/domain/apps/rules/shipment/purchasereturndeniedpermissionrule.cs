@@ -14,10 +14,11 @@ namespace Allors.Database.Domain
 
     public class PurchaseReturnDeniedPermissionRule : Rule
     {
-        public PurchaseReturnDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("73e1af05-a7b3-433c-8f52-15bc1370d1fe")) =>
+        public PurchaseReturnDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("ef11645e-ad8b-497d-87e8-ca69a416499a")) =>
             this.Patterns = new Pattern[]
         {
             m.PurchaseReturn.RolePattern(v => v.TransitionalRevocations),
+            m.PurchaseReturn.RolePattern(v => v.CanShip),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -28,6 +29,13 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<PurchaseReturn>())
             {
                 @this.Revocations = @this.TransitionalRevocations;
+
+                var shipRevocation = new Revocations(@this.Strategy.Transaction).PurchaseReturnShipRevocation;
+
+                if (@this.ShipmentState.IsCreated && !@this.CanShip)
+                {
+                    @this.AddRevocation(shipRevocation);
+                }
             }
         }
     }

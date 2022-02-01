@@ -839,7 +839,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedPurchaseOrderPurchaseOrderStateDerivePurchaseOrderItemState()
+        public void ChangedPurchaseOrderPurchaseOrderStateDerivePurchaseOrderItemStateInProcess()
         {
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Derive();
@@ -1019,6 +1019,80 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal(new PurchaseOrderItemStates(this.Transaction).Finished, orderItem.PurchaseOrderItemState);
+        }
+    }
+
+    public class PurchaseOrderItemQuantityReturnedRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderItemQuantityReturnedRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedOrderShipmentQuantityDeriveQuantityReturned()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithIsReceivable(true)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).WithQuantityAccepted(2).Build();
+            this.Derive();
+
+            orderItem.Return();
+            this.Derive();
+
+            Assert.Equal(2, orderItem.QuantityReturned);
+        }
+
+        [Fact]
+        public void ChangedMultipleShipmentsOrderShipmentQuantityDeriveQuantityReturned()
+        {
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithIsReceivable(true)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            new ShipmentReceiptBuilder(this.Transaction).WithOrderItem(orderItem).WithQuantityAccepted(2).Build();
+            this.Derive();
+
+            var shipment1 = new PurchaseReturnBuilder(this.Transaction).Build();
+            var shipmentItem1 = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
+            shipment1.AddShipmentItem(shipmentItem1);
+
+            var shipment2 = new PurchaseReturnBuilder(this.Transaction).Build();
+            var shipmentItem2 = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
+            shipment2.AddShipmentItem(shipmentItem2);
+
+            new OrderShipmentBuilder(this.Transaction)
+                .WithOrderItem(orderItem)
+                .WithShipmentItem(shipmentItem1)
+                .WithQuantity(1)
+                .Build();
+
+            new OrderShipmentBuilder(this.Transaction)
+                .WithOrderItem(orderItem)
+                .WithShipmentItem(shipmentItem2)
+                .WithQuantity(1)
+                .Build();
+
+            this.Derive();
+
+            Assert.Equal(2, orderItem.QuantityReturned);
         }
     }
 
@@ -1520,11 +1594,17 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class PurchaseOrderItemDeniedPermissonRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public PurchaseOrderItemDeniedPermissonRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).PurchaseOrderItemDeleteRevocation;
+        public PurchaseOrderItemDeniedPermissonRuleTests(Fixture fixture) : base(fixture)
+        {
+            this.deleteRevocation = new Revocations(this.Transaction).PurchaseOrderItemDeleteRevocation;
+            this.returnRevocation = new Revocations(this.Transaction).PurchaseOrderItemReturnRevocation;
+        }
 
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Revocation deleteRevocation;
+
+        private readonly Revocation returnRevocation;
 
         [Fact]
         public void OnChangedOrderItemBillingOrderItemDeriveDeletePermission()
@@ -1606,6 +1686,38 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(this.deleteRevocation, orderItem.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedQuantityReturnedDeriveReturnPermission()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            Assert.True(orderItem.PurchaseOrderItemState.IsCompleted);
+            Assert.DoesNotContain(this.returnRevocation, orderItem.Revocations);
+
+            orderItem.Return();
+            this.Derive();
+
+            Assert.Contains(this.returnRevocation, orderItem.Revocations);
         }
     }
 }
