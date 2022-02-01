@@ -20,16 +20,16 @@
       <!-- [ngClass]="panelManager.panelContainerClass" -->
       <div class="col-md-8 align-self-stretch">
         <!-- <a-mat-dyn-detail-panel></a-mat-dyn-detail-panel> -->
-        <a-mat-dyn-rel-view-panel
+        <a-mat-dyn-view-rel-panel
           [anchor]="m.Employment.Employer"
           [target]="m.Employment.Employee"
           [display]="m.Person.FullName"
-        ></a-mat-dyn-rel-view-panel>
-        <a-mat-dyn-rel-edit-panel
+        ></a-mat-dyn-view-rel-panel>
+        <a-mat-dyn-edit-rel-panel
           [anchor]="m.Employment.Employer"
           [target]="m.Employment.Employee"
           [display]="m.Person.FullName"
-        ></a-mat-dyn-rel-edit-panel>
+        ></a-mat-dyn-edit-rel-panel>
       </div>
     </div>
   </div>

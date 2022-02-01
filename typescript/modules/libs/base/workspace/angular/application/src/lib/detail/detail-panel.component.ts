@@ -1,9 +1,9 @@
 import { Directive, HostBinding } from '@angular/core';
 import { M } from '@allors/default/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { PanelService } from '../panel/panel-manager.service';
 import { OverviewPageService } from '../overview/overview.service';
 import { Panel, PanelKind, PanelMode } from '../panel/panel';
+import { PanelService } from '../panel/panel.service';
 
 @Directive()
 export abstract class AllorsDetailPanelComponent implements Panel {
@@ -16,15 +16,17 @@ export abstract class AllorsDetailPanelComponent implements Panel {
   }
 
   @HostBinding('attr.data-allors-objecttype')
-  get dataAllorsFromRelationType() {
+  get dataAllorsObjectType() {
     return this.overviewService.objectType.tag;
   }
 
   abstract panelId: string;
 
+  abstract panelMode: PanelMode;
+
   panelKind: PanelKind = 'Detail';
 
-  abstract panelMode: PanelMode;
+  panelEnabled: boolean;
 
   m: M;
 

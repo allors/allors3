@@ -3,8 +3,8 @@ export * from './lib/actions/action-result';
 export * from './lib/actions/action-target';
 
 export * from './lib/detail/detail-panel.component';
-export * from './lib/detail/detail-edit-panel.component';
-export * from './lib/detail/detail-view-panel.component';
+export * from './lib/detail/edit-detail-panel.component';
+export * from './lib/detail/view-detail-panel.component';
 
 export * from './lib/info/menu-info.service';
 export * from './lib/info/navigation-info.service';
@@ -25,11 +25,11 @@ export * from './lib/overview/overview.service';
 export * from './lib/overview/overview-page.component';
 
 export * from './lib/panel/panel';
-export * from './lib/panel/panel-manager.service';
+export * from './lib/panel/panel.service';
 
 export * from './lib/relationship/relationship-panel.component';
-export * from './lib/relationship/relationship-edit-panel.component';
-export * from './lib/relationship/relationship-view-panel.component';
+export * from './lib/relationship/edit-relationship-panel.component';
+export * from './lib/relationship/view-relationship-panel.component';
 
 export * from './lib/summary/summary-panel.component';
 export * from './lib/summary/summary-edit-panel.component';
