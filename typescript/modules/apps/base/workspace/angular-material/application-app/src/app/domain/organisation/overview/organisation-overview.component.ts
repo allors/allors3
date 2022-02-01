@@ -1,5 +1,5 @@
-import { combineLatest, Subscription, tap } from 'rxjs';
-import { Component, Self, OnDestroy } from '@angular/core';
+import { combineLatest, Subscription, switchMap, tap } from 'rxjs';
+import { Component, Self, OnDestroy, AfterViewInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '@allors/default/workspace/domain';
@@ -16,14 +16,21 @@ import {
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
+import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 
 @Component({
   templateUrl: './organisation-overview.component.html',
-  providers: [OverviewPageService, PanelService],
+  providers: [
+    OverviewPageService,
+    {
+      provide: PanelService,
+      useClass: AllorsMaterialPanelService,
+    },
+  ],
 })
 export class OrganisationOverviewComponent
   extends AllorsOverviewPageComponent
-  implements OnPull, OnDestroy
+  implements OnPull, AfterViewInit, OnDestroy
 {
   object: Organisation;
 
@@ -31,35 +38,43 @@ export class OrganisationOverviewComponent
 
   constructor(
     @Self() overviewService: OverviewPageService,
-    @Self() panelService: PanelService,
+    @Self() private panelService: PanelService,
     public navigation: NavigationService,
+    private titleService: Title,
+    private refreshService: RefreshService,
+    private route: ActivatedRoute,
     onPullService: OnPullService,
-    titleService: Title,
-    refreshService: RefreshService,
-    route: ActivatedRoute,
     workspaceService: WorkspaceService
   ) {
     super(overviewService, workspaceService);
 
     onPullService.register(this);
+  }
 
-    this.subscription = combineLatest([route.url, route.queryParams])
+  ngAfterViewInit(): void {
+    this.subscription = combineLatest([this.route.url, this.route.queryParams])
       .pipe(
-        tap(() => {
-          const navRoute = new NavigationActivatedRoute(route);
+        switchMap(() => {
+          const navRoute = new NavigationActivatedRoute(this.route);
           this.overviewService.objectType = this.m.Organisation;
           this.overviewService.id = navRoute.id();
 
-          const panel = panelService.get(navRoute.panel(), 'Edit');
-          panelService.select(panel);
-
           const title = this.overviewService.objectType.singularName;
-          titleService.setTitle(title);
+          this.titleService.setTitle(title);
 
-          refreshService.refresh();
+          return this.panelService.startEdit(navRoute.panel());
+        }),
+        tap(() => {
+          this.refreshService.refresh();
         })
       )
       .subscribe();
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   onPrePull(pulls: Pull[], prefix: string) {
@@ -77,11 +92,5 @@ export class OrganisationOverviewComponent
 
   onPostPull(pullResult: IPullResult, prefix: string) {
     this.object = pullResult.object(prefix);
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 }

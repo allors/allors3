@@ -81,8 +81,8 @@ import {
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
-  AllorsMaterialDynamicRelationshipEditPanelComponent,
-  AllorsMaterialDynamicRelationshipViewPanelComponent,
+  AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicViewRelationshipPanelComponent,
 } from './index';
 
 @NgModule({
@@ -124,8 +124,8 @@ import {
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
     AllorsMaterialDynamicEditComponent,
-    AllorsMaterialDynamicRelationshipEditPanelComponent,
-    AllorsMaterialDynamicRelationshipViewPanelComponent,
+    AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicViewRelationshipPanelComponent,
     AllorsMaterialPeriodSelectionToggleComponent,
   ],
   imports: [

@@ -1,17 +1,18 @@
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
 import { OverviewPageService } from '../overview/overview.service';
-import { PanelMode } from '../panel/panel';
-import { PanelService } from '../panel/panel-manager.service';
-import { AllorsDetailPanelComponent } from './detail-panel.component';
+import { ViewPanel } from '../panel/panel';
+import { PanelService } from '../panel/panel.service';
+import { AllorsRelationshipPanelComponent } from './relationship-panel.component';
 
 @Directive()
-export abstract class AllorsDetailEditPanelComponent extends AllorsDetailPanelComponent {
-  dataAllorsKind = 'detail-edit-panel';
+export abstract class AllorsViewRelationshipPanelComponent
+  extends AllorsRelationshipPanelComponent
+  implements ViewPanel
+{
+  dataAllorsKind = 'view-relationship-panel';
 
-  panelId = 'DetailEdit';
-
-  panelMode: PanelMode = 'Edit';
+  panelMode: 'View' = 'View';
 
   constructor(
     overviewService: OverviewPageService,

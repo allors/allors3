@@ -17,7 +17,7 @@ import {
 import {
   Action,
   NavigationService,
-  AllorsRelationshipEditPanelComponent,
+  AllorsEditRelationshipPanelComponent,
   PanelService,
   OverviewPageService,
   Panel,
@@ -35,11 +35,11 @@ interface Row extends TableRow {
 }
 
 @Component({
-  selector: 'a-mat-dyn-rel-edit-panel',
-  templateUrl: './dynamic-relationship-edit-panel.component.html',
+  selector: 'a-mat-dyn-edit-rel-panel',
+  templateUrl: './dynamic-edit-relationship-panel.component.html',
 })
-export class AllorsMaterialDynamicRelationshipEditPanelComponent
-  extends AllorsRelationshipEditPanelComponent
+export class AllorsMaterialDynamicEditRelationshipPanelComponent
+  extends AllorsEditRelationshipPanelComponent
   implements Panel, OnPull, OnInit
 {
   @HostBinding('class.expanded-panel')

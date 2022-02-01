@@ -1,7 +1,7 @@
 import { Component, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
-  AllorsRelationshipViewPanelComponent,
+  AllorsViewRelationshipPanelComponent,
   OverviewPageService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
@@ -9,11 +9,11 @@ import { PeriodSelection } from '@allors/base/workspace/angular-material/foundat
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
-  selector: 'a-mat-dyn-rel-view-panel',
-  templateUrl: './dynamic-relationship-view-panel.component.html',
+  selector: 'a-mat-dyn-view-rel-panel',
+  templateUrl: './dynamic-view-relationship-panel.component.html',
 })
-export class AllorsMaterialDynamicRelationshipViewPanelComponent
-  extends AllorsRelationshipViewPanelComponent
+export class AllorsMaterialDynamicViewRelationshipPanelComponent
+  extends AllorsViewRelationshipPanelComponent
   implements OnInit
 {
   @HostBinding('class.expanded-panel')

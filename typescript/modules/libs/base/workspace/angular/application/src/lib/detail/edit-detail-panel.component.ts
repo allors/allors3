@@ -2,14 +2,18 @@ import { Observable, of } from 'rxjs';
 import { Directive } from '@angular/core';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { OverviewPageService } from '../overview/overview.service';
+import { EditPanel } from '../panel/panel';
 import { PanelService } from '../panel/panel.service';
-import { AllorsSummaryPanelComponent } from './summary-panel.component';
+import { AllorsDetailPanelComponent } from './detail-panel.component';
 
 @Directive()
-export abstract class AllorsSummaryEditPanelComponent extends AllorsSummaryPanelComponent {
-  dataAllorsKind = 'edit-summary-panel';
+export abstract class AllorsEditDetailPanelComponent
+  extends AllorsDetailPanelComponent
+  implements EditPanel
+{
+  dataAllorsKind = 'edit-detail-panel';
 
-  panelId = 'EditSummary';
+  panelId = 'EditDetail';
 
   panelMode: 'Edit' = 'Edit';
 
