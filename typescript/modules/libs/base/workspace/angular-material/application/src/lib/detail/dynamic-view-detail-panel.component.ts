@@ -1,20 +1,16 @@
 import { Component } from '@angular/core';
 import {
-  PanelService,
-  AllorsEditDetailPanelComponent,
+  AllorsViewDetailPanelComponent,
   OverviewPageService,
+  PanelService,
 } from '@allors/base/workspace/angular/application';
-import { RoleType } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
-  selector: 'a-mat-dyn-detail-panel',
-  templateUrl: './dynamic-edit-detail-panel.component.html',
+  selector: 'a-mat-dyn-view-detail-panel',
+  templateUrl: './dynamic-view-detail-panel.component.html',
 })
-export class AllorsMaterialDynamicEditDetailPanelComponent extends AllorsEditDetailPanelComponent {
-  anchor: RoleType;
-  target: RoleType;
-
+export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDetailPanelComponent {
   constructor(
     overviewService: OverviewPageService,
     panelService: PanelService,

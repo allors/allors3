@@ -29,6 +29,7 @@ export class AppComponent implements OnDestroy {
       .pipe(
         switchMap(() => {
           const context = this.workspaceService.contextBuilder();
+          context.name = 'refresh';
           const onPulls = [...this.onPullService.onPulls];
 
           const prefixByOnPull: Map<OnPull, string> = new Map();

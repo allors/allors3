@@ -69,5 +69,6 @@ export * from './lib/types';
 export * from './lib/lifecycle/oncreate';
 export * from './lib/lifecycle/oncreate-association';
 export * from './lib/lifecycle/oncreate-role';
+export * from './lib/lifecycle/oncreateoredit';
 export * from './lib/lifecycle/onedit';
 export * from './lib/lifecycle/onpull';

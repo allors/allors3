@@ -12,8 +12,10 @@ import {
   OnCreate,
   OnEdit,
   OnPostCreate,
+  OnPostCreateOrEdit,
   OnPostEdit,
   OnPreCreate,
+  OnPreCreateOrEdit,
   OnPreEdit,
   Pull,
 } from '@allors/system/workspace/domain';
@@ -78,19 +80,52 @@ export abstract class AllorsFormComponent<T extends IObject>
     return true;
   }
 
+  get hasPreCreate() {
+    return this[nameof<OnPreCreate>('onPreCreate')] != null;
+  }
+
+  get hasPreEdit() {
+    return this[nameof<OnPreEdit>('onPreEdit')] != null;
+  }
+
+  get hasPreCreateOrEdit() {
+    return this[nameof<OnPreCreateOrEdit>('onPreCreateOrEdit')] != null;
+  }
+
+  get hasPostCreate() {
+    return this[nameof<OnPostCreate>('onPostCreate')] != null;
+  }
+
+  get hasPostEdit() {
+    return this[nameof<OnPostEdit>('onPostEdit')] != null;
+  }
+
+  get hasPostCreateOrEdit() {
+    return this[nameof<OnPostCreateOrEdit>('onPostCreateOrEdit')] != null;
+  }
+
   create(objectType: Class, handlers?: OnCreate[]): void {
     this.isCreate = true;
 
-    const hasPreCreate = this[nameof<OnPreCreate>('onPreCreate')] != null;
-    const hasPostCreate = this[nameof<OnPostCreate>('onPostCreate')] != null;
     const hasHandlers = handlers?.length > 0;
 
-    if (hasPreCreate || hasPostCreate || hasHandlers) {
+    if (
+      this.hasPreCreate ||
+      this.hasPostCreate ||
+      this.hasPreCreateOrEdit ||
+      this.hasPostCreateOrEdit ||
+      hasHandlers
+    ) {
       const pulls: Pull[] = [];
 
-      if (hasPreCreate) {
+      if (this.hasPreCreate) {
         (this as unknown as OnPreCreate).onPreCreate(pulls);
       }
+
+      if (this.hasPreCreateOrEdit) {
+        (this as unknown as OnPreCreateOrEdit).onPreCreateOrEdit(pulls);
+      }
+
       handlers?.forEach((v) => v.onPreCreate(pulls));
 
       this.createSubscription = this.context
@@ -100,8 +135,15 @@ export abstract class AllorsFormComponent<T extends IObject>
 
           handlers?.forEach((v) => v.onPostCreate(this.object, pullResult));
 
-          if (hasPostCreate) {
+          if (this.hasPostCreate) {
             (this as unknown as OnPostCreate).onPostCreate(
+              this.object,
+              pullResult
+            );
+          }
+
+          if (this.hasPostCreateOrEdit) {
+            (this as unknown as OnPostCreateOrEdit).onPostCreateOrEdit(
               this.object,
               pullResult
             );
@@ -122,16 +164,25 @@ export abstract class AllorsFormComponent<T extends IObject>
     const name = 'AllorsFormComponent';
     const pull: Pull = { objectId, results: [{ name }] };
 
-    const hasPreEdit = this[nameof<OnPreEdit>('onPreEdit')] != null;
-    const hasPostEdit = this[nameof<OnPostEdit>('onPostEdit')] != null;
     const hasHandlers = handlers?.length > 0;
 
-    if (hasPreEdit || hasPostEdit || hasHandlers) {
+    if (
+      this.hasPreEdit ||
+      this.hasPostEdit ||
+      this.hasPreCreateOrEdit ||
+      this.hasPostCreateOrEdit ||
+      hasHandlers
+    ) {
       const pulls: Pull[] = [pull];
 
-      if (hasPreEdit) {
+      if (this.hasPreEdit) {
         (this as unknown as OnPreEdit).onPreEdit(objectId, pulls);
       }
+
+      if (this.hasPreCreateOrEdit) {
+        (this as unknown as OnPreCreateOrEdit).onPreCreateOrEdit(pulls);
+      }
+
       handlers?.forEach((v) => v.onPreEdit(objectId, pulls));
 
       this.editSubscription = this.context.pull(pulls).subscribe((result) => {
@@ -139,8 +190,15 @@ export abstract class AllorsFormComponent<T extends IObject>
 
         handlers?.forEach((v) => v.onPostEdit(this.object, result));
 
-        if (hasPostEdit) {
+        if (this.hasPostEdit) {
           (this as unknown as OnPostEdit).onPostEdit(this.object, result);
+        }
+
+        if (this.hasPostCreateOrEdit) {
+          (this as unknown as OnPostCreateOrEdit).onPostCreateOrEdit(
+            this.object,
+            result
+          );
         }
       });
     } else {

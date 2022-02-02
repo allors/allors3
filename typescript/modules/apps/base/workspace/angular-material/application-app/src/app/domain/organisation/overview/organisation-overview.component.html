@@ -1,4 +1,4 @@
-<div class="a-main">
+<div class="a-main" *ngIf="overviewService.id">
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
       <div class="col">
@@ -13,13 +13,12 @@
   <div class="a-overview container">
     <div class="a-content row">
       <div class="col-md-4 mb-3">
-        <h1>Organisation</h1>
-        <!-- <organisation-summary></organisation-summary> -->
+        <organisation-summary></organisation-summary>
       </div>
 
-      <!-- [ngClass]="panelManager.panelContainerClass" -->
       <div class="col-md-8 align-self-stretch">
-        <!-- <a-mat-dyn-detail-panel></a-mat-dyn-detail-panel> -->
+        <a-mat-dyn-view-detail-panel></a-mat-dyn-view-detail-panel>
+        <a-mat-dyn-edit-detail-panel></a-mat-dyn-edit-detail-panel>
         <a-mat-dyn-view-rel-panel
           [anchor]="m.Employment.Employer"
           [target]="m.Employment.Employee"

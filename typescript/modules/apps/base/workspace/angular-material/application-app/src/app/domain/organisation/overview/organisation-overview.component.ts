@@ -1,4 +1,4 @@
-import { combineLatest, Subscription, switchMap, tap } from 'rxjs';
+import { combineLatest, delay, Subscription, switchMap, tap } from 'rxjs';
 import { Component, Self, OnDestroy, AfterViewInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -30,7 +30,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 })
 export class OrganisationOverviewComponent
   extends AllorsOverviewPageComponent
-  implements OnPull, AfterViewInit, OnDestroy
+  implements OnPull, OnDestroy
 {
   object: Organisation;
 
@@ -38,35 +38,31 @@ export class OrganisationOverviewComponent
 
   constructor(
     @Self() overviewService: OverviewPageService,
-    @Self() private panelService: PanelService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private titleService: Title,
-    private refreshService: RefreshService,
-    private route: ActivatedRoute,
+    titleService: Title,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
     onPullService: OnPullService,
     workspaceService: WorkspaceService
   ) {
     super(overviewService, workspaceService);
 
     onPullService.register(this);
-  }
 
-  ngAfterViewInit(): void {
-    this.subscription = combineLatest([this.route.url, this.route.queryParams])
+    this.subscription = combineLatest([route.url, route.queryParams])
       .pipe(
         switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(this.route);
+          const navRoute = new NavigationActivatedRoute(route);
           this.overviewService.objectType = this.m.Organisation;
           this.overviewService.id = navRoute.id();
 
           const title = this.overviewService.objectType.singularName;
-          this.titleService.setTitle(title);
+          titleService.setTitle(title);
 
-          return this.panelService.startEdit(navRoute.panel());
+          return panelService.startEdit(navRoute.panel());
         }),
-        tap(() => {
-          this.refreshService.refresh();
-        })
+        tap(() => refreshService.refresh())
       )
       .subscribe();
   }

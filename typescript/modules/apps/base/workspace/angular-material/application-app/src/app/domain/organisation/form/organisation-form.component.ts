@@ -8,9 +8,9 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ErrorService } from '@allors/base/workspace/angular/foundation';
 import {
-  IObject,
   IPullResult,
-  OnCreate,
+  OnCreateOrEdit,
+  OnPreEdit,
   Pull,
 } from '@allors/system/workspace/domain';
 
@@ -21,7 +21,7 @@ import {
 })
 export class OrganisationFormComponent
   extends AllorsFormComponent<Organisation>
-  implements OnCreate
+  implements OnPreEdit, OnCreateOrEdit
 {
   countries: Country[];
   peopleFilter: SearchFactory;
@@ -39,7 +39,22 @@ export class OrganisationFormComponent
     });
   }
 
-  onPreCreate(pulls: Pull[]) {
+  onPreEdit(objectId: number, pulls: Pull[]) {
+    const m = this.m;
+    const { pullBuilder: p } = m;
+
+    pulls.push(
+      p.Organisation({
+        objectId,
+        include: {
+          Owner: {},
+          Country: {},
+        },
+      })
+    );
+  }
+
+  onPreCreateOrEdit(pulls: Pull[]) {
     const m = this.m;
     const { pullBuilder: p } = m;
 
@@ -50,7 +65,7 @@ export class OrganisationFormComponent
     );
   }
 
-  onPostCreate(object: IObject, pullResult: IPullResult) {
+  onPostCreateOrEdit(object: Organisation, pullResult: IPullResult) {
     this.countries = pullResult.collection<Country>(this.m.Country);
   }
 }

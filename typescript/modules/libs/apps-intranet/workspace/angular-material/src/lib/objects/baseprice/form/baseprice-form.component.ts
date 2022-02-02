@@ -22,7 +22,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './baseprice-edit.component.html',
+  templateUrl: './baseprice-form.component.html',
   providers: [ContextService],
 })
 export class BasepriceEditComponent implements OnInit, OnDestroy {

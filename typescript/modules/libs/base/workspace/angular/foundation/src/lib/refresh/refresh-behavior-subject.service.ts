@@ -10,7 +10,7 @@ export class RefreshBehaviorService extends RefreshService {
   constructor() {
     super();
     this.refreshSubject$ = new BehaviorSubject(new Date());
-    this.refresh$ = this.refreshSubject$.pipe(debounceTime(50));
+    this.refresh$ = this.refreshSubject$.pipe(debounceTime(200));
   }
 
   refresh() {
