@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import {
   PanelService,
   AllorsEditDetailPanelComponent,
@@ -10,7 +16,7 @@ import {
   TemplateHostDirective,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { map, Subscription, tap } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 
 @Component({
   selector: 'a-mat-dyn-edit-detail-panel',
@@ -18,10 +24,10 @@ import { map, Subscription, tap } from 'rxjs';
 })
 export class AllorsMaterialDynamicEditDetailPanelComponent
   extends AllorsEditDetailPanelComponent
-  implements OnInit, OnDestroy
+  implements AfterViewInit, OnDestroy
 {
-  @ViewChild(TemplateHostDirective, { static: true })
-  templateHost!: TemplateHostDirective;
+  @ViewChildren(TemplateHostDirective)
+  templateHosts!: QueryList<TemplateHostDirective>;
 
   form: AllorsForm;
 
@@ -34,34 +40,47 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     workspaceService: WorkspaceService
   ) {
     super(overviewService, panelService, workspaceService);
+
+    panelService.register(this);
   }
 
-  ngOnInit(): void {
-    const viewContainerRef = this.templateHost.viewContainerRef;
-    viewContainerRef.clear();
+  ngAfterViewInit() {
+    this.templateHosts.changes.subscribe(() => {
+      const templateHost = this.templateHosts.first;
 
-    const componentRef = viewContainerRef.createComponent<AllorsForm>(
-      angularForms(this.overviewService.objectType).edit
-    );
+      this.cancelledSubscription?.unsubscribe();
+      this.savedSubscription?.unsubscribe();
 
-    this.form = componentRef.instance;
-    this.form.edit(this.overviewService.id);
+      if (!templateHost) {
+        return;
+      }
 
-    this.cancelledSubscription = this.form.cancelled
-      .pipe(
-        map(() => {
-          this.panelService.stopEdit();
-        })
-      )
-      .subscribe();
+      const viewContainerRef = templateHost.viewContainerRef;
+      viewContainerRef.clear();
 
-    this.savedSubscription = this.form.saved
-      .pipe(
-        map(() => {
-          this.panelService.stopEdit();
-        })
-      )
-      .subscribe();
+      const componentRef = viewContainerRef.createComponent<AllorsForm>(
+        angularForms(this.overviewService.objectType).edit
+      );
+
+      this.form = componentRef.instance;
+      this.form.edit(this.overviewService.id);
+
+      this.cancelledSubscription = this.form.cancelled
+        .pipe(
+          map(() => {
+            this.panelService.stopEdit().subscribe();
+          })
+        )
+        .subscribe();
+
+      this.savedSubscription = this.form.saved
+        .pipe(
+          map(() => {
+            this.panelService.stopEdit().subscribe();
+          })
+        )
+        .subscribe();
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,21 +1,23 @@
 import { Observable, of } from 'rxjs';
 import { Directive } from '@angular/core';
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import {
+  EditBlocking,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import { OverviewPageService } from '../overview/overview.service';
-import { EditPanel } from '../panel/panel';
 import { PanelService } from '../panel/panel.service';
 import { AllorsDetailPanelComponent } from './detail-panel.component';
 
 @Directive()
 export abstract class AllorsEditDetailPanelComponent
   extends AllorsDetailPanelComponent
-  implements EditPanel
+  implements EditBlocking
 {
   dataAllorsKind = 'edit-detail-panel';
 
-  panelId = 'EditDetail';
+  panelId = 'Detail';
 
-  panelMode: 'Edit' = 'Edit';
+  readonly panelMode = 'Edit';
 
   constructor(
     overviewService: OverviewPageService,
@@ -25,7 +27,7 @@ export abstract class AllorsEditDetailPanelComponent
     super(overviewService, panelService, workspaceService);
   }
 
-  panelStopEdit(): Observable<boolean> {
+  stopEdit(): Observable<boolean> {
     return of(true);
   }
 }

@@ -17,7 +17,7 @@ export abstract class AllorsSummaryPanelComponent implements Panel {
 
   @HostBinding('attr.data-allors-objecttype')
   get dataAllorsFromRelationType() {
-    return this.overviewService.objectType.tag;
+    return this.overviewService.objectType?.tag;
   }
 
   abstract panelId: string;

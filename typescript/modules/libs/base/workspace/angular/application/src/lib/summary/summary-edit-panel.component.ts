@@ -11,7 +11,7 @@ export abstract class AllorsSummaryEditPanelComponent extends AllorsSummaryPanel
 
   panelId = 'EditSummary';
 
-  panelMode: 'Edit' = 'Edit';
+  readonly panelMode = 'Edit';
 
   constructor(
     overviewService: OverviewPageService,
