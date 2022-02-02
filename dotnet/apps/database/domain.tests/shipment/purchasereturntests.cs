@@ -87,6 +87,47 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(this.InternalOrganisation.ShippingAddress, shipment.ShipFromAddress);
         }
+
+        [Fact]
+        public void GivingPurchaseReturnWhenShipThenUpdateQuantityOnHand()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var supplier = this.InternalOrganisation.ActiveSuppliers.First();
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            this.Derive();
+
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(98).WithReason(new InventoryTransactionReasons(this.Transaction).Unknown).WithPart(part).Build();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(part)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            order.Return();
+            this.Transaction.Derive();
+
+            var inventory = part.InventoryItemsWherePart.ToArray().FirstOrDefault() as NonSerialisedInventoryItem;
+
+            Assert.Equal(100, inventory.QuantityOnHand);
+
+            var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
+            purchaseReturn.Ship();
+            this.Transaction.Derive();
+
+            Assert.Equal(98, inventory.QuantityOnHand);
+        }
     }
 
     public class PurchaseReturnCanShipRuleTests : DomainTest, IClassFixture<Fixture>
