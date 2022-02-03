@@ -365,19 +365,35 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedQuoteSequenceDeriveQuoteNumberCounter()
+        public void ChangedQuoteSequenceDeriveProductQuoteQuoteNumberCounter()
         {
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithQuoteSequence(new QuoteSequences(this.Transaction).RestartOnFiscalYear)
                 .WithIsInternalOrganisation(true).Build();
             this.Derive();
 
-            Assert.False(internalOrganisation.ExistQuoteNumberCounter);
+            Assert.False(internalOrganisation.ExistProductQuoteNumberCounter);
 
             internalOrganisation.QuoteSequence = new QuoteSequences(this.Transaction).EnforcedSequence;
             this.Derive();
 
-            Assert.True(internalOrganisation.ExistQuoteNumberCounter);
+            Assert.True(internalOrganisation.ExistProductQuoteNumberCounter);
+        }
+
+        [Fact]
+        public void ChangedQuoteSequenceDeriveStatementOfWorkQuoteNumberCounter()
+        {
+            var internalOrganisation = new OrganisationBuilder(this.Transaction)
+                .WithQuoteSequence(new QuoteSequences(this.Transaction).RestartOnFiscalYear)
+                .WithIsInternalOrganisation(true).Build();
+            this.Derive();
+
+            Assert.False(internalOrganisation.ExistStatementOfWorkNumberCounter);
+
+            internalOrganisation.QuoteSequence = new QuoteSequences(this.Transaction).EnforcedSequence;
+            this.Derive();
+
+            Assert.True(internalOrganisation.ExistStatementOfWorkNumberCounter);
         }
 
         [Fact]

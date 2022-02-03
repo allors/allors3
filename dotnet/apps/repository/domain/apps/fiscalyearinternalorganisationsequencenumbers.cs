@@ -119,7 +119,7 @@ namespace Allors.Repository
         #endregion
         [Size(256)]
         [Workspace(Default)]
-        public string QuoteNumberPrefix { get; set; }
+        public string ProductQuoteNumberPrefix { get; set; }
 
         #region Allors
         [Id("5bbfbf49-59ab-49f2-b00f-799cb0568e35")]
@@ -127,7 +127,22 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Counter QuoteNumberCounter { get; set; }
+        public Counter ProductQuoteNumberCounter { get; set; }
+
+        #region Allors
+        [Id("85ac5b50-0eeb-404f-b459-6778bb892119")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string StatementOfWorkNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("233f35a7-e35d-486e-b211-17a72148d0ca")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public Counter StatementOfWorkNumberCounter { get; set; }
 
         #region Allors
         [Id("9de2d2aa-c787-4a3c-9e77-49cd60fb2e27")]

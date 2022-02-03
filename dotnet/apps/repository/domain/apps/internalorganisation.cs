@@ -48,6 +48,13 @@ namespace Allors.Repository
         PaymentMethod DefaultCollectionMethod { get; set; }
 
         #region Allors
+        [Id("9d6aaa81-9f97-427e-9f46-1f1e93748248")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        string PurchaseInvoiceNumberPrefix { get; set; }
+
+        #region Allors
         [Id("1a986cbf-b7db-4850-af06-d96e1339beb7")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
@@ -160,14 +167,6 @@ namespace Allors.Repository
         Counter PurchaseOrderNumberCounter { get; set; }
 
         #region Allors
-        [Id("A49663B5-A432-41FA-BBCA-8368D1B9D53D")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        Counter RequestNumberCounter { get; set; }
-
-        #region Allors
         [Id("fe96e14b-9dbd-4497-935f-f605abd2ada7")]
         #endregion
         [Workspace(Default)]
@@ -211,14 +210,6 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public Counter IncomingTransferNumberCounter { get; set; }
-
-        #region Allors
-        [Id("ba00c0d2-6067-4584-bdc4-e6c72be77232")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        Counter QuoteNumberCounter { get; set; }
 
         #region Allors
         [Id("d5645df8-2b10-435d-8e47-57b5d268541a")]
@@ -282,18 +273,34 @@ namespace Allors.Repository
         bool VatDeactivated { get; set; }
 
         #region Allors
-        [Id("9d6aaa81-9f97-427e-9f46-1f1e93748248")]
-        #endregion
-        [Size(256)]
-        [Workspace(Default)]
-        string PurchaseInvoiceNumberPrefix { get; set; }
-
-        #region Allors
         [Id("e9af1ca5-d24f-4af2-8687-833744941b24")]
         #endregion
         [Size(256)]
         [Workspace(Default)]
-        string QuoteNumberPrefix { get; set; }
+        string ProductQuoteNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("ba00c0d2-6067-4584-bdc4-e6c72be77232")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        Counter ProductQuoteNumberCounter { get; set; }
+
+        #region Allors
+        [Id("64b3d289-d36d-483b-a8d1-d56aaa991ce2")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        string StatementOfWorkNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("17990b75-8104-42f1-aec5-0b59ba77432f")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        Counter StatementOfWorkNumberCounter { get; set; }
 
         #region Allors
         [Id("06FABCD6-EFA4-45DD-B76C-8F791A0E10EF")]
@@ -447,6 +454,14 @@ namespace Allors.Repository
         [Size(256)]
         [Workspace(Default)]
         string RequirementNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("A49663B5-A432-41FA-BBCA-8368D1B9D53D")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        Counter RequestNumberCounter { get; set; }
 
         /// <summary>
         /// Gets or sets a flag to indicate if this InternalOrganisation Requires Existing WorkEffortPartyAssignment

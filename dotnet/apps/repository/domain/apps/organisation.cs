@@ -77,13 +77,17 @@ namespace Allors.Repository
 
         public string PurchaseInvoiceNumberPrefix { get; set; }
 
-        public Counter QuoteNumberCounter { get; set; }
+        public string ProductQuoteNumberPrefix { get; set; }
+
+        public Counter ProductQuoteNumberCounter { get; set; }
+
+        public string StatementOfWorkNumberPrefix { get; set; }
+
+        public Counter StatementOfWorkNumberCounter { get; set; }
 
         public Counter RequestNumberCounter { get; set; }
 
         public bool DoAccounting { get; set; }
-
-        public string QuoteNumberPrefix { get; set; }
 
         public string RequestNumberPrefix { get; set; }
 

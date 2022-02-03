@@ -122,7 +122,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenIssuerWithoutQuoteNumberPrefix_WhenDeriving_ThenSortableQuoteNumberIsSet()
         {
-            this.InternalOrganisation.RemoveQuoteNumberPrefix();
+            this.InternalOrganisation.RemoveProductQuoteNumberPrefix();
             this.Transaction.Derive();
 
             var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
@@ -141,7 +141,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenIssuerWithQuoteNumberPrefix_WhenDeriving_ThenSortableQuoteNumberIsSet()
         {
             this.InternalOrganisation.QuoteSequence = new QuoteSequences(this.Transaction).EnforcedSequence;
-            this.InternalOrganisation.QuoteNumberPrefix = "prefix-";
+            this.InternalOrganisation.ProductQuoteNumberPrefix = "prefix-";
             this.Transaction.Derive();
 
             var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
@@ -160,7 +160,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenIssuerWithParametrizedQuoteNumberPrefix_WhenDeriving_ThenSortableQuoteNumberIsSet()
         {
             this.InternalOrganisation.QuoteSequence = new QuoteSequences(this.Transaction).EnforcedSequence;
-            this.InternalOrganisation.QuoteNumberPrefix = "prefix-{year}-";
+            this.InternalOrganisation.ProductQuoteNumberPrefix = "prefix-{year}-";
             this.Transaction.Derive();
 
             var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();

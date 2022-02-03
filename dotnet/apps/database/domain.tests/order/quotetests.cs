@@ -246,10 +246,10 @@ namespace Allors.Database.Domain.Tests
         public QuoteRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedStoreDeriveOrderNumber()
+        public void ChangedStoreDeriveProductQuoteQuoteNumber()
         {
-            this.InternalOrganisation.RemoveQuoteNumberPrefix();
-            var number = this.InternalOrganisation.QuoteNumberCounter.Value;
+            this.InternalOrganisation.RemoveProductQuoteNumberPrefix();
+            var number = this.InternalOrganisation.ProductQuoteNumberCounter.Value;
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Derive();
@@ -258,11 +258,34 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedStoreDeriveSortableOrderNumber()
+        public void ChangedStoreDeriveProductQuoteSortableOrderNumber()
         {
-            var number = this.InternalOrganisation.QuoteNumberCounter.Value;
+            var number = this.InternalOrganisation.ProductQuoteNumberCounter.Value;
 
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
+            this.Derive();
+
+            Assert.Equal(quote.SortableQuoteNumber.Value, number + 1);
+        }
+
+        [Fact]
+        public void ChangedStoreDeriveStatementOfWorkQuoteNumber()
+        {
+            this.InternalOrganisation.RemoveStatementOfWorkNumberPrefix();
+            var number = this.InternalOrganisation.StatementOfWorkNumberCounter.Value;
+
+            var quote = new StatementOfWorkBuilder(this.Transaction).Build();
+            this.Derive();
+
+            Assert.Equal(quote.QuoteNumber, (number + 1).ToString());
+        }
+
+        [Fact]
+        public void ChangedStoreDeriveStatementOfWorkSortableOrderNumber()
+        {
+            var number = this.InternalOrganisation.StatementOfWorkNumberCounter.Value;
+
+            var quote = new StatementOfWorkBuilder(this.Transaction).Build();
             this.Derive();
 
             Assert.Equal(quote.SortableQuoteNumber.Value, number + 1);

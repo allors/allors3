@@ -24,9 +24,14 @@ namespace Allors.Database.Domain
                 this.RequestNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
-            if (!this.ExistQuoteNumberCounter)
+            if (!this.ExistProductQuoteNumberCounter)
             {
-                this.QuoteNumberCounter = new CounterBuilder(this.Transaction()).Build();
+                this.ProductQuoteNumberCounter = new CounterBuilder(this.Transaction()).Build();
+            }
+
+            if (!this.ExistStatementOfWorkNumberCounter)
+            {
+                this.StatementOfWorkNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
             if (!this.ExistPurchaseShipmentNumberCounter)
@@ -73,10 +78,16 @@ namespace Allors.Database.Domain
             return string.Concat(this.ExistRequestNumberPrefix ? this.RequestNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
         }
 
-        public string NextQuoteNumber(int year)
+        public string NextProductQuoteNumber(int year)
         {
-            var number = this.QuoteNumberCounter.NextValue();
-            return string.Concat(this.ExistQuoteNumberPrefix ? this.QuoteNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
+            var number = this.ProductQuoteNumberCounter.NextValue();
+            return string.Concat(this.ExistProductQuoteNumberPrefix ? this.ProductQuoteNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
+        }
+
+        public string NextStatementOfWorkNumber(int year)
+        {
+            var number = this.StatementOfWorkNumberCounter.NextValue();
+            return string.Concat(this.ExistStatementOfWorkNumberPrefix ? this.StatementOfWorkNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
         }
 
         public string NextPurchaseShipmentNumber(int year)

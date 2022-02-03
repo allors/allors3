@@ -12,25 +12,25 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class QuoteRule : Rule
+    public class ProposalQuoteNumberRule : Rule
     {
-        public QuoteRule(MetaPopulation m) : base(m, new Guid("B2464D89-5370-44D7-BB6B-7E6FA48EEF0B")) =>
+        public ProposalQuoteNumberRule(MetaPopulation m) : base(m, new Guid("f95644e6-dfdd-48a1-82dd-6b46be0bdb45")) =>
             this.Patterns = new Pattern[]
             {
-                m.Quote.RolePattern(v => v.Issuer),
+                m.Proposal.RolePattern(v => v.Issuer),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<Quote>())
+            foreach (var @this in matches.Cast<Proposal>())
             {
                 if (!@this.ExistQuoteNumber && @this.ExistIssuer)
                 {
                     var year = @this.IssueDate.Year;
-                    @this.QuoteNumber = @this.Issuer.NextQuoteNumber(year);
+                    @this.QuoteNumber = @this.Issuer.NextProductQuoteNumber(year);
 
                     var fiscalYearInternalOrganisationSequenceNumbers = @this.Issuer.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = @this.Issuer.QuoteSequence.IsEnforcedSequence ? @this.Issuer.QuoteNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.QuoteNumberPrefix;
+                    var prefix = @this.Issuer.QuoteSequence.IsEnforcedSequence ? @this.Issuer.ProductQuoteNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.ProductQuoteNumberPrefix;
                     @this.SortableQuoteNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.QuoteNumber, year.ToString());
                 }
             }

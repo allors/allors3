@@ -28,9 +28,14 @@ namespace Allors.Database.Domain
                 var organisation = (Organisation)@this;
                 if (organisation.IsInternalOrganisation)
                 {
-                    if (@this.QuoteSequence != new QuoteSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistQuoteNumberCounter)
+                    if (@this.QuoteSequence != new QuoteSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistProductQuoteNumberCounter)
                     {
-                        @this.QuoteNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
+                        @this.ProductQuoteNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
+                    }
+
+                    if (@this.QuoteSequence != new QuoteSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistStatementOfWorkNumberCounter)
+                    {
+                        @this.StatementOfWorkNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
                 }
             }

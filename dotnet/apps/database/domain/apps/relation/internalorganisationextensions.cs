@@ -192,11 +192,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static string NextQuoteNumber(this InternalOrganisation @this, int year)
+        public static string NextProductQuoteNumber(this InternalOrganisation @this, int year)
         {
             if (@this.QuoteSequence.Equals(new QuoteSequences(@this.Transaction()).EnforcedSequence))
             {
-                return string.Concat(@this.QuoteNumberPrefix, @this.QuoteNumberCounter?.NextValue()).Replace("{year}", year.ToString());
+                return string.Concat(@this.ProductQuoteNumberPrefix, @this.ProductQuoteNumberCounter?.NextValue()).Replace("{year}", year.ToString());
             }
             else
             {
@@ -208,7 +208,27 @@ namespace Allors.Database.Domain
                     @this.AddFiscalYearsInternalOrganisationSequenceNumber(fiscalYearInternalOrganisationSequenceNumbers);
                 }
 
-                return fiscalYearInternalOrganisationSequenceNumbers.NextQuoteNumber(year);
+                return fiscalYearInternalOrganisationSequenceNumbers.NextProductQuoteNumber(year);
+            }
+        }
+
+        public static string NextStatementOfWorkNumber(this InternalOrganisation @this, int year)
+        {
+            if (@this.QuoteSequence.Equals(new QuoteSequences(@this.Transaction()).EnforcedSequence))
+            {
+                return string.Concat(@this.StatementOfWorkNumberPrefix, @this.StatementOfWorkNumberCounter?.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearInternalOrganisationSequenceNumbers = @this.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearInternalOrganisationSequenceNumbers == null)
+                {
+                    fiscalYearInternalOrganisationSequenceNumbers = new FiscalYearInternalOrganisationSequenceNumbersBuilder(@this.Transaction()).WithFiscalYear(year).Build();
+                    @this.AddFiscalYearsInternalOrganisationSequenceNumber(fiscalYearInternalOrganisationSequenceNumbers);
+                }
+
+                return fiscalYearInternalOrganisationSequenceNumbers.NextStatementOfWorkNumber(year);
             }
         }
 

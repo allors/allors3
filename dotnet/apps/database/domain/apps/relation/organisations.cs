@@ -51,7 +51,8 @@ namespace Allors.Database.Domain
             string purchaseOrderNumberPrefix,
             string purchaseInvoiceNumberPrefix,
             string requestNumberPrefix,
-            string quoteNumberPrefix,
+            string productQuoteNumberPrefix,
+            string statementOfWorkNumberPrefix,
             string productNumberPrefix,
             string workEffortPrefix,
             string requirementPrefix,
@@ -65,7 +66,8 @@ namespace Allors.Database.Domain
             bool autoGeneratePurchaseShipment,
             bool useCreditNoteSequence,
             int? requestCounterValue,
-            int? quoteCounterValue,
+            int? productQuoteCounterValue,
+            int? statementOfWorkCounterValue,
             int? orderCounterValue,
             int? purchaseOrderCounterValue,
             int? invoiceCounterValue,
@@ -211,20 +213,32 @@ namespace Allors.Database.Domain
                     internalOrganisation.AddFiscalYearsInternalOrganisationSequenceNumber(sequenceNumbers);
                 }
 
-                sequenceNumbers.QuoteNumberPrefix = quoteNumberPrefix;
+                sequenceNumbers.ProductQuoteNumberPrefix = productQuoteNumberPrefix;
+                sequenceNumbers.StatementOfWorkNumberPrefix = statementOfWorkNumberPrefix;
 
-                if (quoteCounterValue != null)
+                if (productQuoteCounterValue != null)
                 {
-                    sequenceNumbers.QuoteNumberCounter = new CounterBuilder(transaction).WithValue(quoteCounterValue).Build();
+                    sequenceNumbers.ProductQuoteNumberCounter = new CounterBuilder(transaction).WithValue(productQuoteCounterValue).Build();
+                }
+
+                if (statementOfWorkCounterValue != null)
+                {
+                    sequenceNumbers.StatementOfWorkNumberCounter = new CounterBuilder(transaction).WithValue(statementOfWorkCounterValue).Build();
                 }
             }
             else
             {
-                internalOrganisation.QuoteNumberPrefix = quoteNumberPrefix;
+                internalOrganisation.ProductQuoteNumberPrefix = productQuoteNumberPrefix;
+                internalOrganisation.StatementOfWorkNumberPrefix = statementOfWorkNumberPrefix;
 
-                if (quoteCounterValue != null)
+                if (productQuoteCounterValue != null)
                 {
-                    internalOrganisation.QuoteNumberCounter = new CounterBuilder(transaction).WithValue(quoteCounterValue).Build();
+                    internalOrganisation.ProductQuoteNumberCounter = new CounterBuilder(transaction).WithValue(productQuoteCounterValue).Build();
+                }
+
+                if (statementOfWorkCounterValue != null)
+                {
+                    internalOrganisation.StatementOfWorkNumberCounter = new CounterBuilder(transaction).WithValue(statementOfWorkCounterValue).Build();
                 }
             }
 

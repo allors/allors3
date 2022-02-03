@@ -24,7 +24,8 @@ namespace Allors.Database.Domain
 
                 return new PrefetchPolicyBuilder()
                     .WithRule(this.M.Organisation.RequestNumberCounter)
-                    .WithRule(this.M.Organisation.QuoteNumberCounter)
+                    .WithRule(this.M.Organisation.ProductQuoteNumberCounter)
+                    .WithRule(this.M.Organisation.StatementOfWorkNumberCounter)
                     .WithRule(this.M.Organisation.PurchaseInvoiceNumberCounter)
                     .WithRule(this.M.Organisation.PurchaseOrderNumberCounter)
                     .WithRule(this.M.Organisation.PurchaseShipmentNumberCounter)
