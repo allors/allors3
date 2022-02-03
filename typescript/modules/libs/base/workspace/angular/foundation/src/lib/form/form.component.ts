@@ -9,15 +9,15 @@ import { NgForm } from '@angular/forms';
 import { M } from '@allors/default/workspace/meta';
 import {
   IObject,
-  OnCreate,
-  OnEdit,
-  OnPostCreate,
-  OnPostCreateOrEdit,
-  OnPostEdit,
-  OnPreCreate,
-  OnPreCreateOrEdit,
-  OnPreEdit,
+  CreatePullHandler,
+  EditPullHandler,
+  PostCreateOrEditPullHandler,
+  PreCreatePullHandler,
+  PreCreateOrEditPullHandler,
+  PreEditPullHandler,
   Pull,
+  PostEditPullHandler,
+  PostCreatePullHandler,
 } from '@allors/system/workspace/domain';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
@@ -41,6 +41,8 @@ export abstract class AllorsFormComponent<T extends IObject>
     return this.object?.strategy.id;
   }
 
+  m: M;
+
   isCreate: boolean;
 
   get isEdit() {
@@ -48,7 +50,6 @@ export abstract class AllorsFormComponent<T extends IObject>
   }
 
   context: Context;
-  m: M;
   object: T;
 
   @Output()
@@ -64,9 +65,11 @@ export abstract class AllorsFormComponent<T extends IObject>
   ) {
     super();
 
+    this.m = allors.workspaceService.workspace.configuration
+      .metaPopulation as M;
+
     this.context = allors.context;
     this.context.name = this.constructor.name;
-    this.m = this.context.configuration.metaPopulation as M;
   }
 
   private createSubscription: Subscription;
@@ -81,30 +84,35 @@ export abstract class AllorsFormComponent<T extends IObject>
   }
 
   get hasPreCreate() {
-    return this[nameof<OnPreCreate>('onPreCreate')] != null;
+    return this[nameof<PreCreatePullHandler>('onPreCreatePull')] != null;
   }
 
   get hasPreEdit() {
-    return this[nameof<OnPreEdit>('onPreEdit')] != null;
+    return this[nameof<PreEditPullHandler>('onPreEditPull')] != null;
   }
 
   get hasPreCreateOrEdit() {
-    return this[nameof<OnPreCreateOrEdit>('onPreCreateOrEdit')] != null;
+    return (
+      this[nameof<PreCreateOrEditPullHandler>('onPreCreateOrEditPull')] != null
+    );
   }
 
   get hasPostCreate() {
-    return this[nameof<OnPostCreate>('onPostCreate')] != null;
+    return this[nameof<PostCreatePullHandler>('onPostCreatePull')] != null;
   }
 
   get hasPostEdit() {
-    return this[nameof<OnPostEdit>('onPostEdit')] != null;
+    return this[nameof<PostEditPullHandler>('onPostEditPull')] != null;
   }
 
   get hasPostCreateOrEdit() {
-    return this[nameof<OnPostCreateOrEdit>('onPostCreateOrEdit')] != null;
+    return (
+      this[nameof<PostCreateOrEditPullHandler>('onPostCreateOrEditPull')] !=
+      null
+    );
   }
 
-  create(objectType: Class, handlers?: OnCreate[]): void {
+  create(objectType: Class, handlers?: CreatePullHandler[]): void {
     this.isCreate = true;
 
     const hasHandlers = handlers?.length > 0;
@@ -119,34 +127,35 @@ export abstract class AllorsFormComponent<T extends IObject>
       const pulls: Pull[] = [];
 
       if (this.hasPreCreate) {
-        (this as unknown as OnPreCreate).onPreCreate(pulls);
+        (this as unknown as PreCreatePullHandler).onPreCreatePull(pulls);
       }
 
       if (this.hasPreCreateOrEdit) {
-        (this as unknown as OnPreCreateOrEdit).onPreCreateOrEdit(pulls);
+        (this as unknown as PreCreateOrEditPullHandler).onPreCreateOrEditPull(
+          pulls
+        );
       }
 
-      handlers?.forEach((v) => v.onPreCreate(pulls));
+      handlers?.forEach((v) => v.onPreCreatePull(pulls));
 
       this.createSubscription = this.context
         .pull(pulls)
         .subscribe((pullResult) => {
           this.onCreate(objectType);
 
-          handlers?.forEach((v) => v.onPostCreate(this.object, pullResult));
+          handlers?.forEach((v) => v.onPostCreatePull(this.object, pullResult));
 
           if (this.hasPostCreate) {
-            (this as unknown as OnPostCreate).onPostCreate(
+            (this as unknown as PostCreatePullHandler).onPostCreatePull(
               this.object,
               pullResult
             );
           }
 
           if (this.hasPostCreateOrEdit) {
-            (this as unknown as OnPostCreateOrEdit).onPostCreateOrEdit(
-              this.object,
-              pullResult
-            );
+            (
+              this as unknown as PostCreateOrEditPullHandler
+            ).onPostCreateOrEditPull(this.object, pullResult);
           }
         });
     } else {
@@ -158,7 +167,7 @@ export abstract class AllorsFormComponent<T extends IObject>
     this.object = this.context.create<T>(objectType);
   }
 
-  edit(objectId: number, handlers?: OnEdit[]): void {
+  edit(objectId: number, handlers?: EditPullHandler[]): void {
     this.isCreate = false;
 
     const name = 'AllorsFormComponent';
@@ -176,29 +185,33 @@ export abstract class AllorsFormComponent<T extends IObject>
       const pulls: Pull[] = [pull];
 
       if (this.hasPreEdit) {
-        (this as unknown as OnPreEdit).onPreEdit(objectId, pulls);
+        (this as unknown as PreEditPullHandler).onPreEditPull(objectId, pulls);
       }
 
       if (this.hasPreCreateOrEdit) {
-        (this as unknown as OnPreCreateOrEdit).onPreCreateOrEdit(pulls);
+        (this as unknown as PreCreateOrEditPullHandler).onPreCreateOrEditPull(
+          pulls
+        );
       }
 
-      handlers?.forEach((v) => v.onPreEdit(objectId, pulls));
+      handlers?.forEach((v) => v.onPreEditPull(objectId, pulls));
 
       this.editSubscription = this.context.pull(pulls).subscribe((result) => {
         this.object = result.objects.values().next()?.value;
 
-        handlers?.forEach((v) => v.onPostEdit(this.object, result));
+        handlers?.forEach((v) => v.onPostEditPull(this.object, result));
 
         if (this.hasPostEdit) {
-          (this as unknown as OnPostEdit).onPostEdit(this.object, result);
-        }
-
-        if (this.hasPostCreateOrEdit) {
-          (this as unknown as OnPostCreateOrEdit).onPostCreateOrEdit(
+          (this as unknown as PostEditPullHandler).onPostEditPull(
             this.object,
             result
           );
+        }
+
+        if (this.hasPostCreateOrEdit) {
+          (
+            this as unknown as PostCreateOrEditPullHandler
+          ).onPostCreateOrEditPull(this.object, result);
         }
       });
     } else {

@@ -65,10 +65,10 @@ export * from './lib/operations';
 export * from './lib/role';
 export * from './lib/types';
 
-// lifecycle
-export * from './lib/lifecycle/oncreate';
-export * from './lib/lifecycle/oncreate-association';
-export * from './lib/lifecycle/oncreate-role';
-export * from './lib/lifecycle/oncreateoredit';
-export * from './lib/lifecycle/onedit';
-export * from './lib/lifecycle/onpull';
+// handlers
+export * from './lib/pull/create-association-pull-handler';
+export * from './lib/pull/create-or-edit-pull-handler';
+export * from './lib/pull/create-pull-handler';
+export * from './lib/pull/create-role-pull-handler';
+export * from './lib/pull/edit-pull-handler';
+export * from './lib/pull/shared-pull-handler';

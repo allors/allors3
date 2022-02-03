@@ -1,47 +1,44 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
-  OnPullService,
   RefreshService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsSummaryViewPanelComponent,
+  AllorsItemViewSummaryPanelComponent,
+  ItemPageService,
   NavigationService,
-  OverviewPageService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'organisation-summary',
-  templateUrl: './organisation-summary.component.html',
+  templateUrl: './organisation-item-summary-panel.component.html',
 })
-export class OrganisationSummaryComponent
-  extends AllorsSummaryViewPanelComponent
-  implements OnPull, OnDestroy, AfterViewInit
-{
+export class OrganisationItemSummaryPanelComponent extends AllorsItemViewSummaryPanelComponent {
   organisation: Organisation;
   contactKindsText: string;
 
   constructor(
-    overviewService: OverviewPageService,
+    itemPageService: ItemPageService,
     panelService: PanelService,
-    onPullService: OnPullService,
+    sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
     refreshService: RefreshService,
     public navigation: NavigationService
   ) {
     super(
-      overviewService,
+      itemPageService,
       panelService,
-      onPullService,
+      sharedPullService,
       refreshService,
       workspaceService
     );
   }
 
-  onPrePull(pulls: Pull[], prefix?: string) {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
@@ -49,7 +46,7 @@ export class OrganisationSummaryComponent
     pulls.push(
       p.Organisation({
         name: prefix,
-        objectId: this.overviewPageInfo.id,
+        objectId: this.itemPageInfo.id,
         include: {
           Country: {},
         },
@@ -57,7 +54,7 @@ export class OrganisationSummaryComponent
     );
   }
 
-  onPostPull(pullResult: IPullResult, prefix?: string) {
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.organisation = pullResult.object<Organisation>(prefix);
   }
 }

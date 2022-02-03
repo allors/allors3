@@ -1,11 +1,11 @@
 import { map, Subscription, switchMap, tap } from 'rxjs';
 import { Component, OnDestroy } from '@angular/core';
 import {
-  OnPullService,
   RefreshService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { OnPull } from '@allors/system/workspace/domain';
+import { SharedPullHandler } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'allors-root',
@@ -18,7 +18,7 @@ export class AppComponent implements OnDestroy {
   constructor(
     private workspaceService: WorkspaceService,
     private refreshService: RefreshService,
-    private onPullService: OnPullService
+    private sharePullService: SharedPullService
   ) {
     this.subscribe();
   }
@@ -30,16 +30,16 @@ export class AppComponent implements OnDestroy {
         switchMap(() => {
           const context = this.workspaceService.contextBuilder();
           context.name = 'refresh';
-          const onPulls = [...this.onPullService.onPulls];
+          const onPulls = [...this.sharePullService.handlers];
 
-          const prefixByOnPull: Map<OnPull, string> = new Map();
+          const prefixByOnPull: Map<SharedPullHandler, string> = new Map();
           let counter = 0;
 
           const pulls = [];
           for (const onPull of onPulls) {
             const prefix = `${++counter}`;
             prefixByOnPull.set(onPull, prefix);
-            onPull.onPrePull(pulls, prefix);
+            onPull.onPreSharedPull(pulls, prefix);
           }
 
           return context.pull(pulls).pipe(
@@ -53,7 +53,7 @@ export class AppComponent implements OnDestroy {
         tap(({ onPulls, pullResult, prefixByOnPull }) => {
           for (const onPull of onPulls) {
             const prefix = prefixByOnPull.get(onPull);
-            onPull.onPostPull(pullResult, prefix);
+            onPull.onPostSharedPull(pullResult, prefix);
           }
         })
       )

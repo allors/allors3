@@ -13,6 +13,7 @@ export * from './lib/barcode/barcode-keypress.service.core';
 
 export * from './lib/context/context-service';
 export * from './lib/context/context';
+export * from './lib/context/shared-pull-service';
 
 export * from './lib/create/create-request';
 export * from './lib/create/create.service';
@@ -58,8 +59,6 @@ export * from './lib/meta/angular-display-name';
 export * from './lib/meta/angular-filter';
 export * from './lib/meta/angular-filter-definition';
 export * from './lib/meta/angular-forms';
-
-export * from './lib/pull/onpull-service';
 
 export * from './lib/refresh/refresh.service';
 export * from './lib/refresh/refresh-behavior-subject.service';

@@ -2,42 +2,44 @@ import { Component } from '@angular/core';
 import { Person } from '@allors/default/workspace/domain';
 import {
   MediaService,
-  OnPullService,
+  RefreshService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsSummaryViewPanelComponent,
+  AllorsItemViewSummaryPanelComponent,
+  ItemPageService,
   NavigationService,
-  OverviewPageService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'person-summary',
-  templateUrl: './person-summary.component.html',
+  templateUrl: './person-item-summary-page.component.html',
 })
-export class PersonSummaryComponent
-  extends AllorsSummaryViewPanelComponent
-  implements OnPull
-{
+export class PersonSummaryComponent extends AllorsItemViewSummaryPanelComponent {
   object: Person;
 
   constructor(
-    overviewService: OverviewPageService,
+    itemPageService: ItemPageService,
     panelService: PanelService,
-    onPullService: OnPullService,
+    sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
+    refreshService: RefreshService,
     public navigation: NavigationService,
     private mediaService: MediaService
   ) {
-    super(overviewService, panelService, workspaceService);
-
-    panelService.register(this);
-    onPullService.register(this);
+    super(
+      itemPageService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      workspaceService
+    );
   }
 
-  onPrePull(pulls: Pull[], prefix?: string) {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
@@ -45,7 +47,7 @@ export class PersonSummaryComponent
     pulls.push(
       p.Person({
         name: prefix,
-        objectId: this.overviewService.id,
+        objectId: this.itemPageInfo.id,
         include: {
           Locale: {},
           Photo: {},
@@ -54,7 +56,7 @@ export class PersonSummaryComponent
     );
   }
 
-  onPostPull(pullResult: IPullResult, prefix?: string) {
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.object = pullResult.object<Person>(prefix);
   }
 

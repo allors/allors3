@@ -1,10 +1,8 @@
 import { AssociationType } from '@allors/system/workspace/meta';
-import { IPullResult } from '../api/pull/ipull-result';
-import { Pull } from '../api/pull/pull';
-import { IObject } from '../iobject';
-import { OnCreate } from './oncreate';
+import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
+import { CreatePullHandler } from './create-pull-handler';
 
-export class OnOCreateAssociation implements OnCreate {
+export class CreateAssociationPullHandler implements CreatePullHandler {
   private static counter = 0;
 
   private name: string;
@@ -13,10 +11,10 @@ export class OnOCreateAssociation implements OnCreate {
     public readonly associationType: AssociationType,
     public readonly objectId: number
   ) {
-    this.name = `OnCreateAssociation-${++OnOCreateAssociation.counter}`;
+    this.name = `CreateAssociation-${++CreateAssociationPullHandler.counter}`;
   }
 
-  onPreCreate(pulls: Pull[]) {
+  onPreCreatePull(pulls: Pull[]) {
     pulls.push({
       objectId: this.objectId,
       results: [
@@ -27,7 +25,7 @@ export class OnOCreateAssociation implements OnCreate {
     });
   }
 
-  onPostCreate(object: IObject, pullResult: IPullResult) {
+  onPostCreatePull(object: IObject, pullResult: IPullResult) {
     const association = pullResult.object(this.name);
 
     const roleType = this.associationType.roleType;

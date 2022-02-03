@@ -2,12 +2,12 @@ import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Composite } from '@allors/system/workspace/meta';
 
-export interface OverviewPageInfo {
+export interface ItemPageInfo {
   objectType: Composite;
   id: number;
 }
 
 @Injectable()
-export class OverviewPageService {
-  info$: Observable<OverviewPageInfo>;
+export class ItemPageService {
+  info$: Observable<ItemPageInfo>;
 }

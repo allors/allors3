@@ -12,8 +12,8 @@ import {
 import { ErrorService } from '@allors/base/workspace/angular/foundation';
 import {
   IPullResult,
-  OnCreateOrEdit,
-  OnPreEdit,
+  CreateOrEditPullHandler,
+  PreEditPullHandler,
   Pull,
 } from '@allors/system/workspace/domain';
 import { NgForm } from '@angular/forms';
@@ -22,9 +22,9 @@ import { NgForm } from '@angular/forms';
   templateUrl: './person-form.component.html',
   providers: [ContextService],
 })
-export class PersonDetailComponent
+export class PersonFormComponent
   extends AllorsFormComponent<Person>
-  implements OnPreEdit, OnCreateOrEdit
+  implements PreEditPullHandler, CreateOrEditPullHandler
 {
   locales: Locale[];
   genders: Enumeration[];
@@ -37,7 +37,7 @@ export class PersonDetailComponent
     super(allors, errorService, form);
   }
 
-  onPreEdit(objectId: number, pulls: Pull[]) {
+  onPreEditPull(objectId: number, pulls: Pull[]) {
     const m = this.m;
     const { pullBuilder: p } = m;
 
@@ -52,14 +52,14 @@ export class PersonDetailComponent
     );
   }
 
-  onPreCreateOrEdit(pulls: Pull[]) {
+  onPreCreateOrEditPull(pulls: Pull[]) {
     const m = this.m;
     const { pullBuilder: p } = m;
 
     pulls.push(p.Locale({}), p.Gender({}));
   }
 
-  onPostCreateOrEdit(object: Person, pullResult: IPullResult) {
+  onPostCreateOrEditPull(object: Person, pullResult: IPullResult) {
     const m = this.m;
 
     this.genders = pullResult.collection<Gender>(m.Gender);

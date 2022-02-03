@@ -7,12 +7,14 @@ import {
 } from '@angular/core';
 import {
   PanelService,
-  AllorsEditDetailPanelComponent,
-  OverviewPageService,
+  ItemPageService,
+  AllorsItemEditDetailPanelComponent,
 } from '@allors/base/workspace/angular/application';
 import {
   AllorsForm,
   angularForms,
+  RefreshService,
+  SharedPullService,
   TemplateHostDirective,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
@@ -23,7 +25,7 @@ import { map, Subscription } from 'rxjs';
   templateUrl: './dynamic-edit-detail-panel.component.html',
 })
 export class AllorsMaterialDynamicEditDetailPanelComponent
-  extends AllorsEditDetailPanelComponent
+  extends AllorsItemEditDetailPanelComponent
   implements AfterViewInit, OnDestroy
 {
   @ViewChildren(TemplateHostDirective)
@@ -35,16 +37,22 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
   private savedSubscription: Subscription;
 
   constructor(
-    overviewService: OverviewPageService,
+    itemPageService: ItemPageService,
     panelService: PanelService,
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
-    super(overviewService, panelService, workspaceService);
-
-    panelService.register(this);
+    super(
+      itemPageService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      workspaceService
+    );
   }
 
-  ngAfterViewInit() {
+  onPreSharedPull(): void {
     this.templateHosts.changes.subscribe(() => {
       const templateHost = this.templateHosts.first;
 
@@ -59,11 +67,11 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
       viewContainerRef.clear();
 
       const componentRef = viewContainerRef.createComponent<AllorsForm>(
-        angularForms(this.overviewService.objectType).edit
+        angularForms(this.itemPageInfo.objectType).edit
       );
 
       this.form = componentRef.instance;
-      this.form.edit(this.overviewService.id);
+      this.form.edit(this.itemPageInfo.id);
 
       this.cancelledSubscription = this.form.cancelled
         .pipe(
@@ -83,7 +91,11 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     });
   }
 
-  ngOnDestroy(): void {
+  onPostSharedPull(): void {}
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+
     this.cancelledSubscription?.unsubscribe();
     this.savedSubscription?.unsubscribe();
   }

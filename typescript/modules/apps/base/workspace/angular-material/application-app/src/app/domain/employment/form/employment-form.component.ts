@@ -9,7 +9,11 @@ import {
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { NgForm } from '@angular/forms';
-import { OnPostCreate, OnPreEdit, Pull } from '@allors/system/workspace/domain';
+import {
+  PostCreatePullHandler,
+  PreEditPullHandler,
+  Pull,
+} from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './employment-form.component.html',
@@ -17,7 +21,7 @@ import { OnPostCreate, OnPreEdit, Pull } from '@allors/system/workspace/domain';
 })
 export class EmploymentFormComponent
   extends AllorsFormComponent<Employment>
-  implements OnPostCreate, OnPreEdit
+  implements PostCreatePullHandler, PreEditPullHandler
 {
   organisationsFilter: SearchFactory;
   peopleFilter: SearchFactory;
@@ -40,11 +44,11 @@ export class EmploymentFormComponent
     });
   }
 
-  onPostCreate(object: Employment) {
+  onPostCreatePull(object: Employment) {
     object.FromDate = new Date();
   }
 
-  onPreEdit(objectId: number, pulls: Pull[]) {
+  onPreEditPull(objectId: number, pulls: Pull[]) {
     const m = this.m;
     const { pullBuilder: p } = m;
 

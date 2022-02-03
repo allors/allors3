@@ -7,30 +7,31 @@ import {
 } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
-  AllorsViewRelationshipPanelComponent,
-  OverviewPageService,
+  AllorsItemViewRelationshipPanelComponent,
+  ItemPageService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
   WorkspaceService,
-  OnPullService,
+  SharedPullService,
+  RefreshService,
 } from '@allors/base/workspace/angular/foundation';
-import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import {
   IObject,
   IPullResult,
-  OnPull,
   Pull,
+  SharedPullHandler,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
+import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 
 @Component({
   selector: 'a-mat-dyn-view-rel-panel',
   templateUrl: './dynamic-view-relationship-panel.component.html',
 })
 export class AllorsMaterialDynamicViewRelationshipPanelComponent
-  extends AllorsViewRelationshipPanelComponent
-  implements OnPull, OnInit, OnDestroy
+  extends AllorsItemViewRelationshipPanelComponent
+  implements SharedPullHandler, OnInit
 {
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
@@ -63,15 +64,19 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   filtered: IObject[];
 
   constructor(
-    overviewService: OverviewPageService,
+    ItemPageService: ItemPageService,
     panelService: PanelService,
-    workspaceService: WorkspaceService,
-    private onPullService: OnPullService
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    workspaceService: WorkspaceService
   ) {
-    super(overviewService, panelService, workspaceService);
-
-    this.panelService.register(this);
-    this.onPullService.register(this);
+    super(
+      ItemPageService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      workspaceService
+    );
   }
 
   ngOnInit() {
@@ -81,8 +86,8 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     this.title = this.target.pluralName;
   }
 
-  onPrePull(pulls: Pull[], prefix?: string): void {
-    const id = this.overviewService.id;
+  onPreSharedPull(pulls: Pull[], prefix?: string): void {
+    const id = this.itemPageInfo.id;
 
     const pull: Pull = {
       extent: {
@@ -112,7 +117,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     pulls.push(pull);
   }
 
-  onPostPull(pullResult: IPullResult, prefix?: string): void {
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
     this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
 
@@ -131,11 +136,6 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
 
   toggle() {
     this.panelService.startEdit(this.panelId).subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.panelService.unregister(this);
-    this.onPullService.unregister(this);
   }
 
   private updateFilter() {

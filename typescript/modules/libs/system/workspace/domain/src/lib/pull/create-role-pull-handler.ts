@@ -1,10 +1,8 @@
+import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
 import { RoleType } from '@allors/system/workspace/meta';
-import { IPullResult } from '../api/pull/ipull-result';
-import { Pull } from '../api/pull/pull';
-import { IObject } from '../iobject';
-import { OnCreate } from './oncreate';
+import { CreatePullHandler } from './create-pull-handler';
 
-export class OnCreateRole implements OnCreate {
+export class CreateRolePullHandler implements CreatePullHandler {
   private static counter = 0;
 
   private name: string;
@@ -13,10 +11,10 @@ export class OnCreateRole implements OnCreate {
     public readonly roleType: RoleType,
     public readonly objectId: number
   ) {
-    this.name = `OnCreateRole-${++OnCreateRole.counter}`;
+    this.name = `CreateRole-${++CreateRolePullHandler.counter}`;
   }
 
-  onPreCreate(pulls: Pull[]) {
+  onPreCreatePull(pulls: Pull[]) {
     pulls.push({
       objectId: this.objectId,
       results: [
@@ -27,7 +25,7 @@ export class OnCreateRole implements OnCreate {
     });
   }
 
-  onPostCreate(object: IObject, pullResult: IPullResult) {
+  onPostCreatePull(object: IObject, pullResult: IPullResult) {
     const role = pullResult.object(this.name);
     if (this.roleType.isOne) {
       object.strategy.setCompositeRole(this.roleType, role);

@@ -1,34 +1,32 @@
 import { format } from 'date-fns';
-import { Component, OnInit, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
-  OnCreate,
-  OnPull,
+  CreatePullHandler,
   Pull,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import {
-  OnPullService,
+  SharedPullService,
   RefreshService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   NavigationService,
-  AllorsEditRelationshipPanelComponent,
+  AllorsItemEditRelationshipPanelComponent,
   PanelService,
-  OverviewPageService,
-  Panel,
+  ItemPageService,
 } from '@allors/base/workspace/angular/application';
-import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import { Table } from '../table/table';
 import { TableRow } from '../table/table-row';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
 import { angularIcon } from '../meta/angular-icon';
 import { TableConfig } from '../table/table-config';
+import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 
 interface Row extends TableRow {
   object: IObject;
@@ -38,10 +36,7 @@ interface Row extends TableRow {
   selector: 'a-mat-dyn-edit-rel-panel',
   templateUrl: './dynamic-edit-relationship-panel.component.html',
 })
-export class AllorsMaterialDynamicEditRelationshipPanelComponent
-  extends AllorsEditRelationshipPanelComponent
-  implements Panel, OnPull, OnInit
-{
+export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsItemEditRelationshipPanelComponent {
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -82,19 +77,26 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
   }
 
   constructor(
-    overviewService: OverviewPageService,
+    itemPageService: ItemPageService,
     panelService: PanelService,
-    onPullService: OnPullService,
-    public workspaceService: WorkspaceService,
-    public refreshService: RefreshService,
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    workspaceService: WorkspaceService,
+
     public navigationService: NavigationService,
     public deleteService: DeleteService,
     public editRoleService: EditRoleService
   ) {
-    super(overviewService, panelService, workspaceService);
+    super(
+      itemPageService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      workspaceService
+    );
 
     panelService.register(this);
-    onPullService.register(this);
+    sharedPullService.register(this);
   }
 
   ngOnInit() {
@@ -127,8 +129,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
     this.table = new Table(tableConfig);
   }
 
-  onPrePull(pulls: Pull[], prefix?: string) {
-    const id = this.overviewService.id;
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
+    const id = this.itemPageInfo.id;
 
     const pull: Pull = {
       extent: {
@@ -158,7 +160,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
     pulls.push(pull);
   }
 
-  onPostPull(pullResult: IPullResult, prefix?: string) {
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
     this.refreshTable();
@@ -234,7 +236,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
     });
   }
 
-  get onObjectCreate(): OnCreate {
+  get onObjectCreate(): CreatePullHandler {
     return null;
     // return new OnObjectCreateRole(this.anchor, this.panel.manager.id);
   }

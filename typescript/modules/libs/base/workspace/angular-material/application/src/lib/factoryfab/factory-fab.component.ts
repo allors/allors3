@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Class, Composite, humanize } from '@allors/system/workspace/meta';
-import { IObject, OnCreate } from '@allors/system/workspace/domain';
+import { IObject, CreatePullHandler } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   angularDisplayName,
@@ -17,7 +17,7 @@ import { angularIcon } from '../meta/angular-icon';
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
   @Input() public objectType: Composite;
 
-  @Input() public onObjectCreate: OnCreate;
+  @Input() public onObjectCreate: CreatePullHandler;
 
   @Output() public created?: EventEmitter<IObject> = new EventEmitter();
 

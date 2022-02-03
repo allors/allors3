@@ -9,9 +9,9 @@ import { FieldsComponent } from './fields/fields.component';
 
 import { CountryListComponent } from './domain/country/list/country-list.component';
 import { OrganisationListComponent } from './domain/organisation/list/organisation-list.component';
-import { OrganisationOverviewComponent } from './domain/organisation/overview/organisation-overview.component';
+import { OrganisationItemPageComponent } from './domain/organisation/item/organisation-item-page.component';
 import { PersonListComponent } from './domain/person/list/person-list.component';
-import { PersonOverviewComponent } from './domain/person/overview/person-overview.component';
+import { PersonItemPageComponent } from './domain/person/item/person-item-page.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -29,11 +29,11 @@ export const routes: Routes = [
         path: 'contacts',
         children: [
           { path: 'people', component: PersonListComponent },
-          { path: 'person/:id', component: PersonOverviewComponent },
+          { path: 'person/:id', component: PersonItemPageComponent },
           { path: 'organisations', component: OrganisationListComponent },
           {
             path: 'organisation/:id',
-            component: OrganisationOverviewComponent,
+            component: OrganisationItemPageComponent,
           },
           { path: 'countries', component: CountryListComponent },
         ],
@@ -53,7 +53,7 @@ export const components: any[] = [
   FieldsComponent,
   CountryListComponent,
   OrganisationListComponent,
-  OrganisationOverviewComponent,
+  OrganisationItemPageComponent,
   PersonListComponent,
-  PersonOverviewComponent,
+  PersonItemPageComponent,
 ];

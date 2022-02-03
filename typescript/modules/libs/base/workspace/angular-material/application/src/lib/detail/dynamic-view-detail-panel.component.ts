@@ -1,47 +1,44 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import {
-  AllorsViewDetailPanelComponent,
-  OverviewPageService,
+  AllorsItemViewDetailPanelComponent,
+  ItemPageService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
   angularDisplayName,
-  OnPullService,
+  RefreshService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  IObject,
-  IPullResult,
-  OnPull,
-  Pull,
-} from '@allors/system/workspace/domain';
+import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'a-mat-dyn-view-detail-panel',
   templateUrl: './dynamic-view-detail-panel.component.html',
 })
-export class AllorsMaterialDynamicViewDetailPanelComponent
-  extends AllorsViewDetailPanelComponent
-  implements OnPull, OnDestroy
-{
+export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsItemViewDetailPanelComponent {
   title: string;
   description: string;
 
   constructor(
-    overviewService: OverviewPageService,
+    itemPageService: ItemPageService,
     panelService: PanelService,
-    workspaceService: WorkspaceService,
-    private onPullService: OnPullService
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    workspaceService: WorkspaceService
   ) {
-    super(overviewService, panelService, workspaceService);
-
-    this.panelService.register(this);
-    this.onPullService.register(this);
+    super(
+      itemPageService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      workspaceService
+    );
   }
 
-  onPrePull(pulls: Pull[], prefix?: string): void {
+  onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const pull: Pull = {
-      objectId: this.overviewService.id,
+      objectId: this.itemPageInfo.id,
       results: [
         {
           name: prefix,
@@ -52,7 +49,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent
     pulls.push(pull);
   }
 
-  onPostPull(pullResult: IPullResult, prefix?: string): void {
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
     const object = pullResult.object<IObject>(prefix);
 
     this.title = `${
@@ -66,10 +63,5 @@ export class AllorsMaterialDynamicViewDetailPanelComponent
 
   toggle() {
     this.panelService.startEdit(this.panelId).subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.panelService.unregister(this);
-    this.onPullService.unregister(this);
   }
 }

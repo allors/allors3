@@ -3,15 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-
-import { M } from '@allors/default/workspace/meta';
-import { Person, Employment } from '@allors/default/workspace/domain';
-import {
-  NavigationActivatedRoute,
-  NavigationService,
-  RefreshService,
-} from '@allors/base/workspace/angular/foundation';
-import { OldPanelManagerService } from '@allors/base/workspace/angular/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 

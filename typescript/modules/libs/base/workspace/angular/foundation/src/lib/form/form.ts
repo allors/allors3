@@ -1,4 +1,4 @@
-import { IObject, OnCreate } from '@allors/system/workspace/domain';
+import { IObject, CreatePullHandler } from '@allors/system/workspace/domain';
 import { ObjectType } from '@allors/system/workspace/meta';
 import { EventEmitter } from '@angular/core';
 
@@ -17,7 +17,7 @@ export interface AllorsForm {
 
   object: IObject;
 
-  create(objectType: ObjectType, handlers?: OnCreate[]): void;
+  create(objectType: ObjectType, handlers?: CreatePullHandler[]): void;
 
   edit(objectId: number): void;
 
