@@ -378,6 +378,20 @@ namespace Allors.Repository
         Template ProductQuoteTemplate { get; set; }
 
         #region Allors
+        [Id("fe3e5525-19a3-4f2c-93e8-f3661af4b83e")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        Template ProposalTemplate { get; set; }
+
+        #region Allors
+        [Id("67abfc4c-970f-4863-865c-b66badfcae8b")]
+        [Indexed]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        Template StatementOfWorkTemplate { get; set; }
+
+        #region Allors
         [Id("7FD61BF5-AC01-405C-A100-5DA3F2861B81")]
         [Indexed]
         #endregion

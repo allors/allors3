@@ -201,6 +201,10 @@ namespace Allors.Repository
 
         public Template ProductQuoteTemplate { get; set; }
 
+        public Template ProposalTemplate { get; set; }
+
+        public Template StatementOfWorkTemplate { get; set; }
+
         public Template SalesOrderTemplate { get; set; }
 
         public Template PurchaseOrderTemplate { get; set; }
