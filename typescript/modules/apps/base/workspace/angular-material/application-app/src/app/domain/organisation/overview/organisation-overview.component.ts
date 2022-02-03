@@ -1,11 +1,4 @@
-import {
-  combineLatest,
-  debounceTime,
-  delay,
-  Subscription,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { combineLatest, delay, map, Subscription, switchMap, tap } from 'rxjs';
 import { Component, Self, OnDestroy, AfterViewInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -21,6 +14,7 @@ import {
   NavigationActivatedRoute,
   OverviewPageService,
   PanelService,
+  OverviewPageInfo,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, OnPull, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
@@ -39,6 +33,7 @@ export class OrganisationOverviewComponent
   extends AllorsOverviewPageComponent
   implements OnPull, AfterViewInit, OnDestroy
 {
+  info: OverviewPageInfo;
   object: Organisation;
 
   private subscription: Subscription;
@@ -49,30 +44,41 @@ export class OrganisationOverviewComponent
     public navigation: NavigationService,
     private titleService: Title,
     private refreshService: RefreshService,
-    private route: ActivatedRoute,
-    onPullService: OnPullService,
-    workspaceService: WorkspaceService
+    private onPullService: OnPullService,
+    workspaceService: WorkspaceService,
+    route: ActivatedRoute
   ) {
     super(overviewService, workspaceService);
 
     onPullService.register(this);
+
+    this.overviewService.info$ = combineLatest([
+      route.url,
+      route.queryParams,
+    ]).pipe(
+      delay(1),
+      map(() => new NavigationActivatedRoute(route)),
+      switchMap((navRoute) => {
+        return this.panelService
+          .startEdit(navRoute.panel())
+          .pipe(map(() => navRoute));
+      }),
+      map((navRoute) => {
+        return {
+          objectType: this.m.Organisation,
+          id: navRoute.id(),
+        };
+      })
+    );
   }
 
   ngAfterViewInit(): void {
-    this.subscription = combineLatest([this.route.url, this.route.queryParams])
+    this.subscription = this.overviewService.info$
       .pipe(
-        delay(1),
-        switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.overviewService.objectType = this.m.Organisation;
-          this.overviewService.id = navRoute.id();
-
-          const title = this.overviewService.objectType.singularName;
-          this.titleService.setTitle(title);
-
-          return this.panelService.startEdit(navRoute.panel());
-        }),
-        tap(() => this.refreshService.refresh())
+        tap((info) => {
+          this.info = info;
+          this.refreshService.refresh();
+        })
       )
       .subscribe();
   }
@@ -81,6 +87,8 @@ export class OrganisationOverviewComponent
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+
+    this.onPullService.unregister(this);
   }
 
   onPrePull(pulls: Pull[], prefix: string) {
@@ -91,12 +99,14 @@ export class OrganisationOverviewComponent
     pulls.push(
       p.Organisation({
         name: prefix,
-        objectId: this.overviewService.id,
+        objectId: this.info.id,
       })
     );
   }
 
   onPostPull(pullResult: IPullResult, prefix: string) {
     this.object = pullResult.object(prefix);
+    const title = this.info.objectType.singularName;
+    this.titleService.setTitle(title);
   }
 }
