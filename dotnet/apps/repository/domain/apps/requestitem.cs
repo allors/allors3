@@ -164,7 +164,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Product Product { get; set; }
+        public UnifiedProduct Product { get; set; }
 
         #region Allors
         [Id("A3286D1A-0064-404E-B1A2-A3C9B52D7D7A")]

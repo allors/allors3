@@ -194,7 +194,7 @@ namespace Allors.Database.Domain
 
             public Party Customer;  
 
-            public Product Product;
+            public UnifiedProduct Product;
 
             public SalesOrder SalesOrder = null;
 

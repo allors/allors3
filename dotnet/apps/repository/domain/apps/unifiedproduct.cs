@@ -77,6 +77,23 @@ namespace Allors.Repository
         string InternalComment { get; set; }
 
         #region Allors
+        [Id("ec9e84fd-277a-41d3-8657-2d0859aee467")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        UnifiedProduct[] Variants { get; set; }
+
+        #region Allors
+        [Id("14bca67d-0308-4df0-b729-51fff43f5b54")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Derived]
+        [Indexed]
+        [Workspace(Default)]
+        PriceComponent[] BasePrices { get; set; }
+
+        #region Allors
         [Id("7c41deee-b270-4810-abaa-6d00e6507b9b")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]

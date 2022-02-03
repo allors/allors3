@@ -26,9 +26,7 @@ namespace Allors.Repository
 
         public OrderQuantityBreak OrderQuantityBreak { get; set; }
 
-        public Product Product { get; set; }
-
-        public Part Part { get; set; }
+        public UnifiedProduct Product { get; set; }
 
         public ProductFeature ProductFeature { get; set; }
 

@@ -149,7 +149,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
-        public Product[] Products { get; set; }
+        public UnifiedProduct[] Products { get; set; }
 
         #region Allors
         [Id("293A6FED-2EFD-464F-9FCB-5C24E74DCE80")]
@@ -158,7 +158,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Derived]
         [Workspace(Default)]
-        public Product[] AllProducts { get; set; }
+        public UnifiedProduct[] AllProducts { get; set; }
 
         #region Allors
         [Id("43875418-7375-41BD-B6B3-1D091F98AF98")]

@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedAssignmentDeriveUnitSellingPrice()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
+            new BasePriceBuilder(this.Transaction).WithProduct(part).WithPrice(11).Build();
             this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
@@ -97,7 +97,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedWorkeffortTakenByDeriveUnitSellingPrice()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
+            new BasePriceBuilder(this.Transaction).WithProduct(part).WithPrice(11).Build();
             this.Derive();
 
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
@@ -136,7 +136,7 @@ namespace Allors.Database.Domain.Tests
 
             var priceComponent = new BasePriceBuilder(this.Transaction)
                 .WithPricedBy(anotherInternalOrganisation)
-                .WithPart(part)
+                .WithProduct(part)
                 .WithPrice(11)
                 .Build();
             this.Derive();
@@ -172,7 +172,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
             var priceComponent = new BasePriceBuilder(this.Transaction)
-                .WithPart(part)
+                .WithProduct(part)
                 .WithPrice(11)
                 .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
@@ -206,7 +206,7 @@ namespace Allors.Database.Domain.Tests
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
 
             var priceComponent = new BasePriceBuilder(this.Transaction)
-                .WithPart(part)
+                .WithProduct(part)
                 .WithPrice(11)
                 .WithFromDate(this.Transaction.Now().AddHours(-1))
                 .WithThroughDate(this.Transaction.Now().AddHours(-1))

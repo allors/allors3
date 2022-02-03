@@ -133,6 +133,10 @@ namespace Allors.Repository
 
         public SupplierOffering[] CurrentSupplierOfferings { get; set; }
 
+        public UnifiedProduct[] Variants { get; set; }
+
+        public PriceComponent[] BasePrices { get; set; }
+
         #endregion inheritedProperties
 
         #region inheritedMethods

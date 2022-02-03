@@ -60,15 +60,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        Product Product { get; set; }
-
-        #region Allors
-        [Id("1712C7D7-A222-4D3F-BBD9-19F1A491E018")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        Part Part { get; set; }
+        UnifiedProduct Product { get; set; }
 
         #region Allors
         [Id("6c0744ee-b730-490d-bb0c-b6be95211371")]

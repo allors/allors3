@@ -20,19 +20,19 @@ namespace Allors.Database.Domain.Tests
             var basePrice = new BasePriceBuilder(this.Transaction).Build();
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
+            Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
         [Fact]
         public void ChangedPartThrowValidationError()
         {
-            var basePrice = new BasePriceBuilder(this.Transaction).WithPart(new UnifiedGoodBuilder(this.Transaction).Build()).Build();
+            var basePrice = new BasePriceBuilder(this.Transaction).WithProduct(new UnifiedGoodBuilder(this.Transaction).Build()).Build();
             this.Derive();
 
-            basePrice.RemovePart();
+            basePrice.RemoveProduct();
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Part, BasePrice.Product, BasePrice.ProductFeature at least one"));
+            Assert.Contains(errors, e => e.Message.StartsWith("BasePrice.Product, BasePrice.ProductFeature at least one"));
         }
 
         [Fact]

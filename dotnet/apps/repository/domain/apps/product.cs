@@ -50,14 +50,6 @@ namespace Allors.Repository
         Product ProductComplement { get; set; }
 
         #region Allors
-        [Id("60bd113a-d6b9-4de9-bbff-2b5094ec4803")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        Product[] Variants { get; set; }
-
-        #region Allors
         [Id("74fc9be0-8677-463c-b3b6-f0e7bb7478ba")]
         #endregion
         [Workspace(Default)]
@@ -86,15 +78,6 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         VatRegime VatRegime { get; set; }
-
-        #region Allors
-        [Id("f2abc02c-67a1-42b7-83f5-195841e58a6a")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Derived]
-        [Indexed]
-        [Workspace(Default)]
-        PriceComponent[] BasePrices { get; set; }
 
         #region Allors
         [Id("054cd7a3-5d89-49d0-b902-07fd5c35b220")]

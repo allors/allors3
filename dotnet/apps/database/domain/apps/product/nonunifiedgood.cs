@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
         public void AppsOnPostDerive(ObjectOnPostDerive method)
         {
-            if (!this.ExistVariants && !this.ExistProductWhereVariant)
+            if (!this.ExistVariants && !this.ExistUnifiedProductWhereVariant)
             {
                 method.Derivation.Validation.AssertExists(this, this.M.NonUnifiedGood.Part);
             }

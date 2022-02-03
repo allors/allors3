@@ -29,7 +29,7 @@ namespace Allors.Repository
         [Derived]
         [Required]
         [Workspace(Default)]
-        public Product Product { get; set; }
+        public UnifiedProduct Product { get; set; }
 
         #region Allors
         [Id("772acaea-eea6-495b-b23e-fdc99899c3da")]

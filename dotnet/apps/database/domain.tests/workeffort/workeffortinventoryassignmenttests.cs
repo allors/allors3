@@ -683,7 +683,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedInventoryItemDeriveUnitSellingPrice()
         {
             var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
-            new BasePriceBuilder(this.Transaction).WithPart(part).WithPrice(11).Build();
+            new BasePriceBuilder(this.Transaction).WithProduct(part).WithPrice(11).Build();
             this.Derive();
 
             var workEffort = new WorkTaskBuilder(this.Transaction).WithActualStart(this.Transaction.Now()).Build();

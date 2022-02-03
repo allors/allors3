@@ -603,7 +603,7 @@ namespace Allors.Database.Domain.Tests
             var part1BasePriceYesterday = new BasePriceBuilder(this.Transaction)
                 .WithDescription("baseprice part1")
                 .WithPrice(9)
-                .WithPart(part1)
+                .WithProduct(part1)
                 .WithFromDate(yesterday)
                 .WithThroughDate(today)
                 .Build();
@@ -611,7 +611,7 @@ namespace Allors.Database.Domain.Tests
             var part1BasePriceToday = new BasePriceBuilder(this.Transaction)
                 .WithDescription("baseprice part1")
                 .WithPrice(10)
-                .WithPart(part1)
+                .WithProduct(part1)
                 .WithFromDate(today)
                 .WithThroughDate(tomorrow)
                 .Build();
@@ -619,7 +619,7 @@ namespace Allors.Database.Domain.Tests
             var part1BasePriceTomorrow = new BasePriceBuilder(this.Transaction)
                 .WithDescription("baseprice part1")
                 .WithPrice(11)
-                .WithPart(part1)
+                .WithProduct(part1)
                 .WithFromDate(tomorrow)
                 .Build();
 

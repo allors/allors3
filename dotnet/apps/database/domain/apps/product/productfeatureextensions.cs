@@ -9,9 +9,9 @@ namespace Allors.Database.Domain
 
     public static partial class ProductFeatureExtensions
     {
-        public static PriceComponent[] GetPriceComponents(this ProductFeature @this, Product product, PriceComponent[] currentPriceComponents)
+        public static PriceComponent[] GetPriceComponents(this ProductFeature @this, UnifiedProduct product, PriceComponent[] currentPriceComponents)
         {
-            var genericPriceComponents = currentPriceComponents.Where(priceComponent => !priceComponent.ExistProduct && !priceComponent.ExistPart && !priceComponent.ExistProductFeature).ToArray();
+            var genericPriceComponents = currentPriceComponents.Where(priceComponent => !priceComponent.ExistProduct && !priceComponent.ExistProductFeature).ToArray();
 
             var exclusiveProductPriceComponents = currentPriceComponents.Where(priceComponent => priceComponent.ProductFeature?.Equals(@this) == true && priceComponent.Product?.Equals(product) == true).ToArray();
 

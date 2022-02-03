@@ -52,20 +52,6 @@ namespace Allors.Database.Domain
             return id?.Identification;
         }
 
-        public static PriceComponent[] GetPriceComponents(this Part @this, PriceComponent[] currentPriceComponents)
-        {
-            var genericPriceComponents = currentPriceComponents.Where(priceComponent => !priceComponent.ExistPart && !priceComponent.ExistProduct && !priceComponent.ExistProductFeature).ToArray();
-
-            var exclusivePartPriceComponents = currentPriceComponents.Where(priceComponent => priceComponent.Part?.Equals(@this) == true).ToArray();
-
-            if (exclusivePartPriceComponents.Length > 0)
-            {
-                return exclusivePartPriceComponents.Union(genericPriceComponents).ToArray();
-            }
-
-            return genericPriceComponents;
-        }
-
         public static void DeriveRelationships(this Part @this)
         {
             var now = @this.Transaction().Now();

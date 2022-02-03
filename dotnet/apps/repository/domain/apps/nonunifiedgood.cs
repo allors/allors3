@@ -60,7 +60,7 @@ namespace Allors.Repository
 
         public Product ProductComplement { get; set; }
 
-        public Product[] Variants { get; set; }
+        public UnifiedProduct[] Variants { get; set; }
 
         public DateTime IntroductionDate { get; set; }
 

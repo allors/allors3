@@ -204,7 +204,7 @@ namespace Allors.Database.Domain.Tests
             var piece = new UnitsOfMeasure(this.Transaction).Piece;
 
             new BasePriceBuilder(this.Transaction)
-                .WithPart(finishedGood)
+                .WithProduct(finishedGood)
                 .WithFromDate(this.Transaction.Now())
                 .WithPrice(100)
                 .Build();
