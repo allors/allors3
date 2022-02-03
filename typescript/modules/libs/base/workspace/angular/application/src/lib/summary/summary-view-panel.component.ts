@@ -1,7 +1,6 @@
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
 import { OverviewPageService } from '../overview/overview.service';
-import { PanelMode } from '../panel/panel';
 import { PanelService } from '../panel/panel.service';
 import { AllorsSummaryPanelComponent } from './summary-panel.component';
 
@@ -11,7 +10,7 @@ export abstract class AllorsSummaryViewPanelComponent extends AllorsSummaryPanel
 
   panelId = 'SummaryView';
 
-  panelMode: PanelMode = 'View';
+  readonly panelMode = 'View';
 
   constructor(
     overviewService: OverviewPageService,

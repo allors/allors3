@@ -1,7 +1,7 @@
 import { Observable, of, tap } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { EditBlocking } from '@allors/base/workspace/angular/foundation';
 import {
-  EditPanel,
   Panel,
   PanelService,
 } from '@allors/base/workspace/angular/application';
@@ -10,7 +10,7 @@ import {
 export class AllorsMaterialPanelService implements PanelService {
   panels: Set<Panel>;
 
-  private activeEditPanel: EditPanel;
+  private activeEditPanel: Panel;
 
   register(panel: Panel): void {
     this.panels.add(panel);
@@ -21,8 +21,15 @@ export class AllorsMaterialPanelService implements PanelService {
   }
 
   startEdit(panelId: string): Observable<boolean> {
-    if (this.activeEditPanel) {
-      return this.activeEditPanel.panelStopEdit().pipe(
+    if (panelId == null) {
+      return this.stopEdit();
+    }
+
+    if (
+      this.activeEditPanel &&
+      (this.activeEditPanel as unknown as EditBlocking).stopEdit
+    ) {
+      return (this.activeEditPanel as unknown as EditBlocking).stopEdit().pipe(
         tap((success) => {
           if (success) {
             this.enable(panelId);
@@ -36,8 +43,11 @@ export class AllorsMaterialPanelService implements PanelService {
   }
 
   stopEdit(): Observable<boolean> {
-    if (this.activeEditPanel) {
-      return this.activeEditPanel.panelStopEdit().pipe(
+    if (
+      this.activeEditPanel &&
+      (this.activeEditPanel as unknown as EditBlocking).stopEdit
+    ) {
+      return (this.activeEditPanel as unknown as EditBlocking).stopEdit().pipe(
         tap((success) => {
           if (success) {
             this.disable();
@@ -59,7 +69,12 @@ export class AllorsMaterialPanelService implements PanelService {
       if (panel.panelMode === 'View') {
         panel.panelEnabled = panel.panelKind === 'Summary' ? true : false;
       } else {
-        panel.panelEnabled = panel.panelId === panelId ? true : false;
+        const isActivePanel = panel.panelId === panelId;
+        if (isActivePanel) {
+          this.activeEditPanel = panel;
+        }
+
+        panel.panelEnabled = isActivePanel ? true : false;
       }
     }
   }

@@ -1,7 +1,6 @@
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
 import { OverviewPageService } from '../overview/overview.service';
-import { PanelMode } from '../panel/panel';
 import { PanelService } from '../panel/panel.service';
 import { AllorsRelationshipPanelComponent } from './relationship-panel.component';
 
@@ -9,7 +8,7 @@ import { AllorsRelationshipPanelComponent } from './relationship-panel.component
 export abstract class AllorsEditRelationshipPanelComponent extends AllorsRelationshipPanelComponent {
   dataAllorsKind = 'edit-relationship-panel';
 
-  panelMode: PanelMode = 'Edit';
+  readonly panelMode = 'Edit';
 
   constructor(
     overviewService: OverviewPageService,

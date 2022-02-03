@@ -36,7 +36,7 @@ export * from './lib/meta/angular-sorter';
 export * from './lib/page/create/dynamic-create.component';
 export * from './lib/page/edit/dynamic-edit.component';
 
-export * from './lib/panel/panel-manager';
+export * from './lib/panel/panel.service';
 
 export * from './lib/relationship/dynamic-edit-relationship-panel.component';
 export * from './lib/relationship/dynamic-view-relationship-panel.component';

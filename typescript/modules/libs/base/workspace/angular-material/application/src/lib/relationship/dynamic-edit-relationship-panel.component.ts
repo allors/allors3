@@ -173,7 +173,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
     }
   }
 
-  updateFilter() {
+  private updateFilter() {
     if (!this.hasPeriod) {
       this.filtered = this.objects;
       return;
@@ -205,7 +205,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
     }
   }
 
-  refreshTable() {
+  private refreshTable() {
     this.table.total = this.filtered.length;
     this.table.data = this.filtered.map((v) => {
       const target = v.strategy.getCompositeRole(this.target);
@@ -237,5 +237,9 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
   get onObjectCreate(): OnCreate {
     return null;
     // return new OnObjectCreateRole(this.anchor, this.panel.manager.id);
+  }
+
+  toggle() {
+    this.panelService.stopEdit().subscribe();
   }
 }

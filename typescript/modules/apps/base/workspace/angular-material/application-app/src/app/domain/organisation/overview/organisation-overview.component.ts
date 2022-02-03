@@ -1,4 +1,11 @@
-import { combineLatest, delay, Subscription, switchMap, tap } from 'rxjs';
+import {
+  combineLatest,
+  debounceTime,
+  delay,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { Component, Self, OnDestroy, AfterViewInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -30,7 +37,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 })
 export class OrganisationOverviewComponent
   extends AllorsOverviewPageComponent
-  implements OnPull, OnDestroy
+  implements OnPull, AfterViewInit, OnDestroy
 {
   object: Organisation;
 
@@ -38,31 +45,34 @@ export class OrganisationOverviewComponent
 
   constructor(
     @Self() overviewService: OverviewPageService,
-    @Self() panelService: PanelService,
+    @Self() private panelService: PanelService,
     public navigation: NavigationService,
-    titleService: Title,
-    refreshService: RefreshService,
-    route: ActivatedRoute,
+    private titleService: Title,
+    private refreshService: RefreshService,
+    private route: ActivatedRoute,
     onPullService: OnPullService,
     workspaceService: WorkspaceService
   ) {
     super(overviewService, workspaceService);
 
     onPullService.register(this);
+  }
 
-    this.subscription = combineLatest([route.url, route.queryParams])
+  ngAfterViewInit(): void {
+    this.subscription = combineLatest([this.route.url, this.route.queryParams])
       .pipe(
+        delay(1),
         switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(route);
+          const navRoute = new NavigationActivatedRoute(this.route);
           this.overviewService.objectType = this.m.Organisation;
           this.overviewService.id = navRoute.id();
 
           const title = this.overviewService.objectType.singularName;
-          titleService.setTitle(title);
+          this.titleService.setTitle(title);
 
-          return panelService.startEdit(navRoute.panel());
+          return this.panelService.startEdit(navRoute.panel());
         }),
-        tap(() => refreshService.refresh())
+        tap(() => this.refreshService.refresh())
       )
       .subscribe();
   }
