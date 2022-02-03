@@ -1,28 +1,12 @@
-import { HostBinding, Directive } from '@angular/core';
-import {
-  AllorsComponent,
-  WorkspaceService,
-} from '@allors/base/workspace/angular/foundation';
-import { OverviewPageService } from './overview.service';
-import { M } from '@allors/default/workspace/meta';
+import { Directive } from '@angular/core';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import { AllorsOverviewComponent } from './overview.component';
 
 @Directive()
-export abstract class AllorsOverviewPageComponent extends AllorsComponent {
+export abstract class AllorsOverviewPageComponent extends AllorsOverviewComponent {
   override dataAllorsKind = 'overview';
 
-  @HostBinding('attr.data-allors-id')
-  get dataAllorsId() {
-    return this.overviewService?.id;
-  }
-
-  m: M;
-
-  constructor(
-    public overviewService: OverviewPageService,
-    workspaceService: WorkspaceService
-  ) {
-    super();
-
-    this.m = workspaceService.workspace.configuration.metaPopulation as M;
+  constructor(workspaceService: WorkspaceService) {
+    super(workspaceService);
   }
 }

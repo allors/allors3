@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  Self,
-} from '@angular/core';
-import { M } from '@allors/default/workspace/meta';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
   OnPullService,
@@ -34,19 +27,18 @@ export class OrganisationSummaryComponent
   constructor(
     overviewService: OverviewPageService,
     panelService: PanelService,
-    private onPullService: OnPullService,
+    onPullService: OnPullService,
     workspaceService: WorkspaceService,
-    private refreshService: RefreshService,
+    refreshService: RefreshService,
     public navigation: NavigationService
   ) {
-    super(overviewService, panelService, workspaceService);
-
-    panelService.register(this);
-    onPullService.register(this);
-  }
-
-  ngAfterViewInit(): void {
-    this.refreshService.refresh();
+    super(
+      overviewService,
+      panelService,
+      onPullService,
+      refreshService,
+      workspaceService
+    );
   }
 
   onPrePull(pulls: Pull[], prefix?: string) {
@@ -57,7 +49,7 @@ export class OrganisationSummaryComponent
     pulls.push(
       p.Organisation({
         name: prefix,
-        objectId: this.overviewService.id,
+        objectId: this.overviewPageInfo.id,
         include: {
           Country: {},
         },
@@ -67,10 +59,5 @@ export class OrganisationSummaryComponent
 
   onPostPull(pullResult: IPullResult, prefix?: string) {
     this.organisation = pullResult.object<Organisation>(prefix);
-  }
-
-  ngOnDestroy(): void {
-    this.panelService.unregister(this);
-    this.onPullService.unregister(this);
   }
 }
