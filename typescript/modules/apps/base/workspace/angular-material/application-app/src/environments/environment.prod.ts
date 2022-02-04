@@ -2,7 +2,7 @@ import { APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { config } from '../app/app.config';
-import { ErrorHandlerService } from '../allors/errorhandler.service';
+import { ErrorHandlerService } from '../app/services/error-handler.service';
 import {
   AllorsMaterialCreateService,
   AllorsMaterialEditService,

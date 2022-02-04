@@ -31,7 +31,6 @@ export * from './lib/media/preview/media-preview.component';
 export * from './lib/media/media.component';
 
 export * from './lib/meta/angular-icon';
-export * from './lib/meta/angular-sorter';
 
 export * from './lib/page/create/dynamic-create.component';
 export * from './lib/page/edit/dynamic-edit.component';
@@ -48,6 +47,7 @@ export * from './lib/sidenav/side-nav.service';
 export * from './lib/sidenav/side-nav-subject.service';
 export * from './lib/sidenav/side-nav-toggle.component';
 
+export * from './lib/sort/sorter.service';
 export * from './lib/sort/sorter';
 
 export * from './lib/table/base-table';

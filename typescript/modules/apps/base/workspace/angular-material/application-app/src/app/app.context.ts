@@ -20,7 +20,7 @@ import {
 import { Class, Composite } from '@allors/system/workspace/meta';
 import { derivationRules } from '@allors/system/workspace/derivations';
 
-export class BaseContext implements Context {
+export class AppContext implements Context {
   constructor(public workspaceService: WorkspaceService) {
     this.workspace = this.workspaceService.workspace;
     this.configuration = this.workspace.configuration;

@@ -11,8 +11,8 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AllorsForm,
-  angularForms,
   CreateRequest,
+  FormService,
   TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -37,7 +37,8 @@ export class AllorsMaterialDynamicCreateComponent implements OnInit, OnDestroy {
     @Optional()
     @Inject(MAT_DIALOG_DATA)
     private request: CreateRequest,
-    private dialogRef: MatDialogRef<AllorsMaterialDynamicCreateComponent>
+    private dialogRef: MatDialogRef<AllorsMaterialDynamicCreateComponent>,
+    private formService: FormService
   ) {
     this.objectType = this.request.objectType;
   }
@@ -46,9 +47,8 @@ export class AllorsMaterialDynamicCreateComponent implements OnInit, OnDestroy {
     const viewContainerRef = this.templateHost.viewContainerRef;
     viewContainerRef.clear();
 
-    const forms = angularForms(this.objectType);
     const componentRef = viewContainerRef.createComponent<AllorsForm>(
-      forms.create
+      this.formService.createForm(this.objectType)
     );
 
     this.form = componentRef.instance;

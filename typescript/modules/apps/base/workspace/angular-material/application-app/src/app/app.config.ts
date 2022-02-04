@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
-import { AngularClient } from '../allors/angular-client';
+import { AppClient } from './app.client';
 import { Configuration } from '@allors/system/workspace/domain';
 import { applyRules } from '@allors/system/workspace/derivations';
 import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
@@ -10,11 +10,9 @@ import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { M } from '@allors/default/workspace/meta';
-import { BaseContext } from '../allors/base-context';
-import { configForm } from './config/form.config';
+import { AppContext } from './app.context';
 import { configMenu } from './config/menu.config';
 import { configNav } from './config/nav.config';
-import { configFilter } from './config/filter.config';
 
 export function config(
   workspaceService: WorkspaceService,
@@ -22,7 +20,7 @@ export function config(
   baseUrl: string,
   authUrl: string
 ) {
-  const angularClient = new AngularClient(httpClient, baseUrl, authUrl);
+  const angularClient = new AppClient(httpClient, baseUrl, authUrl);
 
   const metaPopulation = new LazyMetaPopulation(data);
   const m = metaPopulation as unknown as M;
@@ -43,10 +41,8 @@ export function config(
   const workspace = database.createWorkspace();
   workspaceService.workspace = workspace;
 
-  workspaceService.contextBuilder = () => new BaseContext(workspaceService);
+  workspaceService.contextBuilder = () => new AppContext(workspaceService);
 
-  configForm(m);
   configMenu(m);
   configNav(m);
-  configFilter(m);
 }

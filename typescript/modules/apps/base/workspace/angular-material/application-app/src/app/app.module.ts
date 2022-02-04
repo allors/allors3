@@ -15,6 +15,8 @@ import { enGB } from 'date-fns/locale';
 import {
   CreateService,
   EditService,
+  FilterService,
+  FormService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -129,16 +131,22 @@ import {
   AllorsMaterialSideNavSubjectService,
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
+  SorterService,
 } from '@allors/base/workspace/angular-material/application';
 
 import { routes, components as routeComponents } from './app.routes';
 import { components as dialogComponents } from './app.dialog';
-import { components as formComponents } from './config/form.config';
+import {
+  AppFormService,
+  components as formComponents,
+} from './services/form.service';
 
 import { OrganisationSummaryPanelComponent } from './domain/organisation/summary/organisation-summary-panel.component';
 import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
 import { PersonFormComponent } from './domain/person/form/person-form.component';
 import { PersonSummaryPanelComponent } from './domain/person/summary/person-summary-panel.component';
+import { AppFilterService } from './services/filter.service';
+import { AppSorterService } from './services/sorter.service';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -267,6 +275,9 @@ import { PersonSummaryPanelComponent } from './domain/person/summary/person-summ
     { provide: MediaConfig, useValue: { url: environment.baseUrl } },
     { provide: NavigationService, useClass: NavigationMetaService },
     { provide: RefreshService, useClass: RefreshBehaviorService },
+    { provide: FilterService, useClass: AppFilterService },
+    { provide: FormService, useClass: AppFormService },
+    { provide: SorterService, useClass: AppSorterService },
 
     // Angular Material
     {

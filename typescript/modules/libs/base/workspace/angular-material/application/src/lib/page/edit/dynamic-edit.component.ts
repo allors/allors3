@@ -9,8 +9,8 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AllorsForm,
-  angularForms,
   EditRequest,
+  FormService,
   TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 import { Composite } from '@allors/system/workspace/meta';
@@ -37,7 +37,8 @@ export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
     @Optional()
     @Inject(MAT_DIALOG_DATA)
     private request: EditRequest,
-    private dialogRef: MatDialogRef<AllorsMaterialDynamicEditComponent>
+    private dialogRef: MatDialogRef<AllorsMaterialDynamicEditComponent>,
+    private formService: FormService
   ) {
     this.objectType =
       this.request.objectType ?? this.request.object.strategy.cls;
@@ -48,7 +49,7 @@ export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
     viewContainerRef.clear();
 
     const componentRef = viewContainerRef.createComponent<AllorsForm>(
-      angularForms(this.objectType).edit
+      this.formService.editForm(this.objectType)
     );
 
     this.form = componentRef.instance;

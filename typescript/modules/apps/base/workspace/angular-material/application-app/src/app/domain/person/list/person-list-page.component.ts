@@ -8,13 +8,12 @@ import { PageEvent } from '@angular/material/paginator';
 import { Person } from '@allors/default/workspace/domain';
 import {
   ContextService,
-  angularFilterFromDefinition,
   Filter,
   FilterField,
   MediaService,
   RefreshService,
-  CreateRequest,
   CreateService,
+  FilterService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
@@ -22,9 +21,9 @@ import {
   NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
-  angularSorter,
   DeleteService,
   OverviewService,
+  SorterService,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular-material/application';
@@ -59,7 +58,9 @@ export class PersonListPageComponent
     public overviewService: OverviewService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
-    public mediaService: MediaService
+    public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService
   ) {
     super(allors, titleService);
     this.objectType = this.m.Person;
@@ -87,7 +88,7 @@ export class PersonListPageComponent
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = angularFilterFromDefinition(m.Person);
+    this.filter = this.filterService.filter(m.Person);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -127,7 +128,9 @@ export class PersonListPageComponent
             const pulls = [
               pull.Person({
                 predicate: this.filter.definition.predicate,
-                sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
+                sorting: sort
+                  ? this.sorterService.sorter(m.Person)?.create(sort)
+                  : null,
                 include: {
                   Pictures: {},
                 },

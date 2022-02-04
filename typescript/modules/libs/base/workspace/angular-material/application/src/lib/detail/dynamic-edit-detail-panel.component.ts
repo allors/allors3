@@ -6,13 +6,13 @@ import {
 } from '@allors/base/workspace/angular/application';
 import {
   AllorsForm,
-  angularForms,
+  FormService,
   RefreshService,
   SharedPullService,
   TemplateHostDirective,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { map, Subscription } from 'rxjs';
+import { map, Subscription, tap } from 'rxjs';
 import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
@@ -39,7 +39,8 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
-    workspaceService: WorkspaceService
+    workspaceService: WorkspaceService,
+    private formService: FormService
   ) {
     super(
       objectService,
@@ -58,7 +59,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
 
   onPostSharedPull(pullResult: IPullResult, scope?: string): void {
     const object = pullResult.object<IObject>(scope);
-    this.title = `Edit ${object}`;
+    this.title = `Edit ${object['Name']}`;
   }
 
   override ngOnDestroy(): void {
@@ -85,7 +86,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
       viewContainerRef.clear();
 
       const componentRef = viewContainerRef.createComponent<AllorsForm>(
-        angularForms(this.objectInfo.objectType).edit
+        this.formService.editForm(this.objectInfo.objectType)
       );
 
       this.form = componentRef.instance;
@@ -94,7 +95,10 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
       this.cancelledSubscription = this.form.cancelled
         .pipe(
           map(() => {
-            this.panelService.stopEdit().subscribe();
+            this.panelService
+              .stopEdit()
+              .pipe(tap(() => this.refreshService.refresh()))
+              .subscribe();
           })
         )
         .subscribe();
@@ -102,7 +106,10 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
       this.savedSubscription = this.form.saved
         .pipe(
           map(() => {
-            this.panelService.stopEdit().subscribe();
+            this.panelService
+              .stopEdit()
+              .pipe(tap(() => this.refreshService.refresh()))
+              .subscribe();
           })
         )
         .subscribe();

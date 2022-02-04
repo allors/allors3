@@ -5,18 +5,20 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import {
-  angularSorter,
   DeleteService,
   EditRoleService,
   OverviewService,
+  SorterService,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 import { Country } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  angularFilterFromDefinition,
+  ContextService,
+  FilterService,
+} from '@allors/base/workspace/angular/foundation';
+import {
   Filter,
   FilterField,
   MediaService,
@@ -61,7 +63,9 @@ export class CountryListPageComponent
     public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
-    public mediaService: MediaService
+    public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService
   ) {
     super(allors, titleService);
     this.objectType = this.m.Country;
@@ -94,7 +98,7 @@ export class CountryListPageComponent
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.Country);
+    this.filter = this.filterService.filter(m.Country);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -134,7 +138,9 @@ export class CountryListPageComponent
             const pulls = [
               pull.Country({
                 predicate: this.filter.definition.predicate,
-                sorting: sort ? angularSorter(m.Country)?.create(sort) : null,
+                sorting: sort
+                  ? this.sorterService.sorter(m.Country)?.create(sort)
+                  : null,
                 include: {
                   LocalisedNames: x,
                 },

@@ -9,9 +9,9 @@ import { Organisation } from '@allors/default/workspace/domain';
 import {
   ContextService,
   CreateService,
+  FilterService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  angularFilterFromDefinition,
   Filter,
   FilterField,
   MediaService,
@@ -23,10 +23,10 @@ import {
   NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
-  angularSorter,
   DeleteService,
   MethodService,
   OverviewService,
+  SorterService,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular-material/application';
@@ -65,7 +65,9 @@ export class OrganisationListPageComponent
     public deleteService: DeleteService,
     public methodService: MethodService,
     public navigation: NavigationService,
-    public mediaService: MediaService
+    public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService
   ) {
     super(allors, titleService);
     this.objectType = this.m.Organisation;
@@ -89,7 +91,7 @@ export class OrganisationListPageComponent
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = angularFilterFromDefinition(m.Organisation);
+    this.filter = this.filterService.filter(m.Organisation);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -130,7 +132,7 @@ export class OrganisationListPageComponent
               pull.Organisation({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? angularSorter(m.Organisation)?.create(sort)
+                  ? this.sorterService.sorter(m.Organisation)?.create(sort)
                   : null,
                 include: {
                   Owner: {},

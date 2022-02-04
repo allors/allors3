@@ -36,18 +36,20 @@ export * from './lib/field/field';
 export * from './lib/field/localised-role-field';
 export * from './lib/field/role-field';
 
-export * from './lib/filter/filter';
 export * from './lib/filter/filter-definition';
-export * from './lib/filter/filter-field';
 export * from './lib/filter/filter-field-definition';
+export * from './lib/filter/filter-field';
 export * from './lib/filter/filter-options';
+export * from './lib/filter/filter.service';
+export * from './lib/filter/filter';
 
 export * from './lib/focus/focus.service';
 export * from './lib/focus/focus.directive';
 export * from './lib/focus/focus-behavior-subject.service.core';
 
-export * from './lib/form/form';
 export * from './lib/form/form.component';
+export * from './lib/form/form.service';
+export * from './lib/form/form';
 
 export * from './lib/info/route-info.service';
 
@@ -55,9 +57,6 @@ export * from './lib/media/media.service';
 export * from './lib/media/media.config';
 export * from './lib/media/media-local.service';
 
-export * from './lib/meta/angular-filter';
-export * from './lib/meta/angular-filter-definition';
-export * from './lib/meta/angular-forms';
 export * from './lib/meta/angular-plural-name';
 export * from './lib/meta/angular-singular-name';
 
