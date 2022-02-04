@@ -1,14 +1,8 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { Component, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import {
   PanelService,
-  ItemPageService,
-  AllorsItemEditDetailPanelComponent,
+  ObjectService,
+  AllorsEditDetailPanelComponent,
 } from '@allors/base/workspace/angular/application';
 import {
   AllorsForm,
@@ -25,8 +19,8 @@ import { map, Subscription } from 'rxjs';
   templateUrl: './dynamic-edit-detail-panel.component.html',
 })
 export class AllorsMaterialDynamicEditDetailPanelComponent
-  extends AllorsItemEditDetailPanelComponent
-  implements AfterViewInit, OnDestroy
+  extends AllorsEditDetailPanelComponent
+  implements OnDestroy
 {
   @ViewChildren(TemplateHostDirective)
   templateHosts!: QueryList<TemplateHostDirective>;
@@ -37,14 +31,14 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
   private savedSubscription: Subscription;
 
   constructor(
-    itemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
     super(
-      itemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,
@@ -67,11 +61,11 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
       viewContainerRef.clear();
 
       const componentRef = viewContainerRef.createComponent<AllorsForm>(
-        angularForms(this.itemPageInfo.objectType).edit
+        angularForms(this.objectInfo.objectType).edit
       );
 
       this.form = componentRef.instance;
-      this.form.edit(this.itemPageInfo.id);
+      this.form.edit(this.objectInfo.id);
 
       this.cancelledSubscription = this.form.cancelled
         .pipe(

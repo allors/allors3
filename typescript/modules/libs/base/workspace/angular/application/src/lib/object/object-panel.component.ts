@@ -4,44 +4,56 @@ import {
   HostBinding,
   OnDestroy,
 } from '@angular/core';
-import { ItemPageInfo, ItemPageService } from './item-page.service';
+import { Panel, PanelKind, PanelMode } from '../panel/panel';
+import { ObjectService } from './object.service';
+import { Subscription, tap } from 'rxjs';
+import { PanelService } from '../panel/panel.service';
 import {
   IPullResult,
   Pull,
   SharedPullHandler,
 } from '@allors/system/workspace/domain';
-import { Subscription, tap } from 'rxjs';
 import {
   AllorsComponent,
-  RefreshService,
   SharedPullService,
+  RefreshService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
+import { ObjectInfo } from './object-info';
 
 @Directive()
-export abstract class AllorsItemPageComponent
+export abstract class AllorsObjectPanelComponent
   extends AllorsComponent
-  implements SharedPullHandler, AfterViewInit, OnDestroy
+  implements Panel, SharedPullHandler, AfterViewInit, OnDestroy
 {
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {
-    return this.overviewPageInfo.id;
+    return this.objectInfo?.id;
   }
 
   @HostBinding('attr.data-allors-objecttype')
   get dataAllorsObjectType() {
-    return this.overviewPageInfo?.objectType?.tag;
+    return this.objectInfo?.objectType?.tag;
   }
 
   m: M;
 
-  overviewPageInfo: ItemPageInfo;
+  abstract panelId: string;
+
+  abstract panelMode: PanelMode;
+
+  abstract panelKind: PanelKind;
+
+  panelEnabled: boolean;
+
+  objectInfo: ObjectInfo;
 
   private subscription: Subscription;
 
   constructor(
-    public itemPageService: ItemPageService,
+    public objectService: ObjectService,
+    public panelService: PanelService,
     public sharedPullService: SharedPullService,
     public refreshService: RefreshService,
     workspaceService: WorkspaceService
@@ -50,14 +62,15 @@ export abstract class AllorsItemPageComponent
 
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
 
+    panelService.register(this);
     this.sharedPullService.register(this);
   }
 
   ngAfterViewInit(): void {
-    this.subscription = this.itemPageService.info$
+    this.subscription = this.objectService.objectInfo$
       .pipe(
         tap((info) => {
-          this.overviewPageInfo = info;
+          this.objectInfo = info;
           this.refreshService.refresh();
         })
       )
@@ -65,6 +78,7 @@ export abstract class AllorsItemPageComponent
   }
 
   ngOnDestroy(): void {
+    this.panelService.unregister(this);
     this.sharedPullService.unregister(this);
 
     if (this.subscription) {

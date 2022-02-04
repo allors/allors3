@@ -15,7 +15,6 @@ import {
 } from '@allors/system/workspace/domain';
 
 @Component({
-  selector: 'organisation-form',
   templateUrl: './organisation-form.component.html',
   providers: [ContextService],
 })

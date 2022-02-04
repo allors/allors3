@@ -4,65 +4,72 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
-
-import { Person } from '@allors/default/workspace/domain';
 import {
-  ContextService,
+  angularSorter,
+  DeleteService,
+  EditRoleService,
+  OverviewService,
+  Table,
+  TableRow,
+} from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
+import { Country } from '@allors/default/workspace/domain';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
   angularFilterFromDefinition,
   Filter,
   FilterField,
   MediaService,
   RefreshService,
-  CreateRequest,
-  CreateService,
 } from '@allors/base/workspace/angular/foundation';
 import {
+  NavigationService,
   Action,
   AllorsListPageComponent,
-  NavigationService,
 } from '@allors/base/workspace/angular/application';
-import {
-  angularSorter,
-  DeleteService,
-  OverviewService,
-  Table,
-  TableRow,
-} from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {
-  object: Person;
-  firstName: string;
-  lastName: string;
-  email: string;
+  object: Country;
+  isoCode: string;
+  name: string;
 }
 
 @Component({
-  templateUrl: './person-list.component.html',
+  templateUrl: './country-list-page.component.html',
   providers: [ContextService],
 })
-export class PersonListComponent
+export class CountryListPageComponent
   extends AllorsListPageComponent
   implements OnInit, OnDestroy
 {
-  table: Table<Row>;
-  filter: Filter;
+  public override title = 'Countries';
 
+  table: Table<Row>;
+
+  edit: Action;
   delete: Action;
 
   private subscription: Subscription;
+  filter: Filter;
+  override m: M;
 
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
-    public createService: CreateService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService
   ) {
     super(allors, titleService);
-    this.objectType = this.m.Person;
+    this.objectType = this.m.Country;
+
+    this.edit = editRoleService.edit();
+    this.edit.result.subscribe(() => {
+      this.table.selection.clear();
+    });
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
@@ -72,22 +79,22 @@ export class PersonListComponent
     this.table = new Table({
       selection: true,
       columns: [
-        { name: 'firstName', sort: true },
-        { name: 'lastName' },
-        { name: 'email' },
+        { name: 'isoCode', sort: true },
+        { name: 'name', sort: true },
       ],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      actions: [this.edit, this.delete],
+      defaultAction: this.edit,
       pageSize: 50,
-      initialSort: 'firstName',
+      initialSort: 'isoCode',
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
+    const x = {};
 
-    this.filter = angularFilterFromDefinition(m.Person);
+    this.filter = angularFilterFromDefinition(m.Country);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -125,11 +132,11 @@ export class PersonListComponent
             PageEvent
           ]) => {
             const pulls = [
-              pull.Person({
+              pull.Country({
                 predicate: this.filter.definition.predicate,
-                sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
+                sorting: sort ? angularSorter(m.Country)?.create(sort) : null,
                 include: {
-                  Pictures: {},
+                  LocalisedNames: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -144,14 +151,13 @@ export class PersonListComponent
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const people = loaded.collection<Person>(m.Person);
-        this.table.total = (loaded.value('People_total') ?? 0) as number;
-        this.table.data = people?.map((v) => {
+        const objects = loaded.collection<Country>(m.Country);
+        this.table.total = (loaded.value('Countrys_total') ?? 0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
-            firstName: v.FirstName,
-            lastName: v.LastName,
-            email: v.UserEmail,
+            isoCode: v.IsoCode,
+            name: v.Name,
           } as Row;
         });
       });

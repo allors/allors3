@@ -16,9 +16,9 @@ import {
 import {
   Action,
   NavigationService,
-  AllorsItemEditRelationshipPanelComponent,
+  AllorsEditRelationshipPanelComponent,
   PanelService,
-  ItemPageService,
+  ObjectService,
 } from '@allors/base/workspace/angular/application';
 import { Table } from '../table/table';
 import { TableRow } from '../table/table-row';
@@ -36,7 +36,7 @@ interface Row extends TableRow {
   selector: 'a-mat-dyn-edit-rel-panel',
   templateUrl: './dynamic-edit-relationship-panel.component.html',
 })
-export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsItemEditRelationshipPanelComponent {
+export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsEditRelationshipPanelComponent {
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -77,7 +77,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsI
   }
 
   constructor(
-    itemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -88,7 +88,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsI
     public editRoleService: EditRoleService
   ) {
     super(
-      itemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,
@@ -130,7 +130,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsI
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
-    const id = this.itemPageInfo.id;
+    const id = this.objectInfo.id;
 
     const pull: Pull = {
       extent: {

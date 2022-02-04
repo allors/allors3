@@ -4,18 +4,17 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
-import { M } from '@allors/default/workspace/meta';
-import { Organisation } from '@allors/default/workspace/domain';
+
+import { Person } from '@allors/default/workspace/domain';
 import {
   ContextService,
-  CreateService,
-} from '@allors/base/workspace/angular/foundation';
-import {
   angularFilterFromDefinition,
   Filter,
   FilterField,
   MediaService,
   RefreshService,
+  CreateRequest,
+  CreateService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
@@ -25,36 +24,32 @@ import {
 import {
   angularSorter,
   DeleteService,
-  MethodService,
   OverviewService,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {
-  object: Organisation;
-  name: string;
-  country: string;
-  owner: string;
+  object: Person;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 @Component({
-  templateUrl: './organisation-list.component.html',
+  templateUrl: './person-list-page.component.html',
   providers: [ContextService],
 })
-export class OrganisationListComponent
+export class PersonListPageComponent
   extends AllorsListPageComponent
   implements OnInit, OnDestroy
 {
-  public override title = 'Organisations';
-
   table: Table<Row>;
+  filter: Filter;
 
   delete: Action;
 
   private subscription: Subscription;
-  filter: Filter;
-  override m: M;
 
   constructor(
     @Self() allors: ContextService,
@@ -63,12 +58,11 @@ export class OrganisationListComponent
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
-    public methodService: MethodService,
     public navigation: NavigationService,
     public mediaService: MediaService
   ) {
     super(allors, titleService);
-    this.objectType = this.m.Organisation;
+    this.objectType = this.m.Person;
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
@@ -77,11 +71,15 @@ export class OrganisationListComponent
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }, 'country', 'owner'],
+      columns: [
+        { name: 'firstName', sort: true },
+        { name: 'lastName' },
+        { name: 'email' },
+      ],
       actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
-      initialSort: 'name',
+      initialSort: 'firstName',
     });
   }
 
@@ -89,7 +87,7 @@ export class OrganisationListComponent
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = angularFilterFromDefinition(m.Organisation);
+    this.filter = angularFilterFromDefinition(m.Person);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -127,14 +125,11 @@ export class OrganisationListComponent
             PageEvent
           ]) => {
             const pulls = [
-              pull.Organisation({
+              pull.Person({
                 predicate: this.filter.definition.predicate,
-                sorting: sort
-                  ? angularSorter(m.Organisation)?.create(sort)
-                  : null,
+                sorting: sort ? angularSorter(m.Person)?.create(sort) : null,
                 include: {
-                  Owner: {},
-                  Country: {},
+                  Pictures: {},
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -149,14 +144,14 @@ export class OrganisationListComponent
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const organisations = loaded.collection<Organisation>(m.Organisation);
-        this.table.total = (loaded.value('Organisations_total') ?? 0) as number;
-        this.table.data = organisations?.map((v) => {
+        const people = loaded.collection<Person>(m.Person);
+        this.table.total = (loaded.value('People_total') ?? 0) as number;
+        this.table.data = people?.map((v) => {
           return {
             object: v,
-            name: v.Name,
-            country: v.Country?.Name ?? null,
-            owner: v.Owner?.UserName ?? null,
+            firstName: v.FirstName,
+            lastName: v.LastName,
+            email: v.UserEmail,
           } as Row;
         });
       });

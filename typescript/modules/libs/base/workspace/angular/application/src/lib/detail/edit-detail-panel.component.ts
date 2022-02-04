@@ -1,33 +1,33 @@
 import { Directive } from '@angular/core';
 
-import { ItemPageService } from '../item-page.service';
-import { PanelService } from '../../panel/panel.service';
-import { AllorsItemPanelComponent } from '../item-panel.component';
 import {
   RefreshService,
   SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
+import { AllorsObjectPanelComponent } from '../object/object-panel.component';
+import { ObjectService } from '../object/object.service';
+import { PanelService } from '../panel/panel.service';
 
 @Directive()
-export abstract class AllorsItemEditDetailPanelComponent extends AllorsItemPanelComponent {
-  override dataAllorsKind = 'item-edit-detail-panel';
+export abstract class AllorsEditDetailPanelComponent extends AllorsObjectPanelComponent {
+  override dataAllorsKind = 'edit-detail-panel';
 
-  panelId = 'ItemDetail';
+  panelId = 'Detail';
 
   readonly panelMode = 'Edit';
 
   readonly panelKind = 'Detail';
 
   constructor(
-    itemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
     super(
-      itemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,

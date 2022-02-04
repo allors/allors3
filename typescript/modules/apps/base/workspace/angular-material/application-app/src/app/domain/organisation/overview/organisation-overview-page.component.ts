@@ -2,7 +2,7 @@ import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { Person } from '@allors/default/workspace/domain';
+import { Organisation } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -12,27 +12,27 @@ import {
   NavigationService,
   NavigationActivatedRoute,
   PanelService,
-  ItemPageService,
-  AllorsItemPageComponent,
+  ObjectService,
+  AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 
 @Component({
-  templateUrl: './person-item-page.component.html',
+  templateUrl: './organisation-overview-page.component.html',
   providers: [
-    ItemPageService,
+    ObjectService,
     {
       provide: PanelService,
       useClass: AllorsMaterialPanelService,
     },
   ],
 })
-export class PersonItemPageComponent extends AllorsItemPageComponent {
-  object: Person;
+export class OrganisationOverviewPageComponent extends AllorsOverviewPageComponent {
+  object: Organisation;
 
   constructor(
-    @Self() itemPageService: ItemPageService,
+    @Self() objectService: ObjectService,
     @Self() private panelService: PanelService,
     public navigation: NavigationService,
     private titleService: Title,
@@ -41,9 +41,9 @@ export class PersonItemPageComponent extends AllorsItemPageComponent {
     workspaceService: WorkspaceService,
     route: ActivatedRoute
   ) {
-    super(itemPageService, sharedPullService, refreshService, workspaceService);
+    super(objectService, sharedPullService, refreshService, workspaceService);
 
-    this.itemPageService.info$ = combineLatest([
+    this.objectService.objectInfo$ = combineLatest([
       route.url,
       route.queryParams,
     ]).pipe(
@@ -71,12 +71,14 @@ export class PersonItemPageComponent extends AllorsItemPageComponent {
     pulls.push(
       p.Organisation({
         name: prefix,
-        objectId: this.overviewPageInfo.id,
+        objectId: this.objectInfo.id,
       })
     );
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix: string) {
     this.object = pullResult.object(prefix);
+    const title = this.objectInfo.objectType.singularName;
+    this.titleService.setTitle(title);
   }
 }

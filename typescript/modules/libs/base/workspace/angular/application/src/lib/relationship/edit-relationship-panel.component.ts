@@ -5,19 +5,19 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { RoleType } from '@allors/system/workspace/meta';
 import { Directive } from '@angular/core';
-import { PanelService } from '../../panel/panel.service';
-import { ItemPageService } from '../item-page.service';
-import { AllorsItemPanelComponent } from '../item-panel.component';
+import { AllorsObjectPanelComponent } from '../object/object-panel.component';
+import { ObjectService } from '../object/object.service';
+import { PanelService } from '../panel/panel.service';
 import { RelationshipPanel } from './relationship-panel';
 
 @Directive()
-export abstract class AllorsItemViewRelationshipPanelComponent
-  extends AllorsItemPanelComponent
+export abstract class AllorsEditRelationshipPanelComponent
+  extends AllorsObjectPanelComponent
   implements RelationshipPanel
 {
-  override dataAllorsKind = 'item-view-relationship-panel';
+  override dataAllorsKind = 'edit-relationship-panel';
 
-  readonly panelMode = 'View';
+  readonly panelMode = 'Edit';
 
   readonly panelKind = 'Relationship';
 
@@ -26,16 +26,16 @@ export abstract class AllorsItemViewRelationshipPanelComponent
   abstract target: RoleType;
 
   constructor(
-    itemPageService: ItemPageService,
+    itemPageService: ObjectService,
     panelService: PanelService,
-    onShareService: SharedPullService,
+    sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
     super(
       itemPageService,
       panelService,
-      onShareService,
+      sharedPullService,
       refreshService,
       workspaceService
     );

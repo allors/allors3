@@ -4,17 +4,12 @@ import { Component, OnDestroy, OnInit, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
-import {
-  angularSorter,
-  DeleteService,
-  EditRoleService,
-  OverviewService,
-  Table,
-  TableRow,
-} from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
-import { Country } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { Organisation } from '@allors/default/workspace/domain';
+import {
+  ContextService,
+  CreateService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   angularFilterFromDefinition,
   Filter,
@@ -23,30 +18,38 @@ import {
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  NavigationService,
   Action,
   AllorsListPageComponent,
+  NavigationService,
 } from '@allors/base/workspace/angular/application';
+import {
+  angularSorter,
+  DeleteService,
+  MethodService,
+  OverviewService,
+  Table,
+  TableRow,
+} from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {
-  object: Country;
-  isoCode: string;
+  object: Organisation;
   name: string;
+  country: string;
+  owner: string;
 }
 
 @Component({
-  templateUrl: './country-list.component.html',
+  templateUrl: './organisation-list-page.component.html',
   providers: [ContextService],
 })
-export class CountryListComponent
+export class OrganisationListPageComponent
   extends AllorsListPageComponent
   implements OnInit, OnDestroy
 {
-  public override title = 'Countries';
+  public override title = 'Organisations';
 
   table: Table<Row>;
 
-  edit: Action;
   delete: Action;
 
   private subscription: Subscription;
@@ -56,20 +59,16 @@ export class CountryListComponent
   constructor(
     @Self() allors: ContextService,
     titleService: Title,
+    public createService: CreateService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
+    public methodService: MethodService,
     public navigation: NavigationService,
     public mediaService: MediaService
   ) {
     super(allors, titleService);
-    this.objectType = this.m.Country;
-
-    this.edit = editRoleService.edit();
-    this.edit.result.subscribe(() => {
-      this.table.selection.clear();
-    });
+    this.objectType = this.m.Organisation;
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
@@ -78,23 +77,19 @@ export class CountryListComponent
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'isoCode', sort: true },
-        { name: 'name', sort: true },
-      ],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      columns: [{ name: 'name', sort: true }, 'country', 'owner'],
+      actions: [overviewService.overview(), this.delete],
+      defaultAction: overviewService.overview(),
       pageSize: 50,
-      initialSort: 'isoCode',
+      initialSort: 'name',
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
-    const x = {};
 
-    this.filter = angularFilterFromDefinition(m.Country);
+    this.filter = angularFilterFromDefinition(m.Organisation);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -132,11 +127,14 @@ export class CountryListComponent
             PageEvent
           ]) => {
             const pulls = [
-              pull.Country({
+              pull.Organisation({
                 predicate: this.filter.definition.predicate,
-                sorting: sort ? angularSorter(m.Country)?.create(sort) : null,
+                sorting: sort
+                  ? angularSorter(m.Organisation)?.create(sort)
+                  : null,
                 include: {
-                  LocalisedNames: x,
+                  Owner: {},
+                  Country: {},
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -151,13 +149,14 @@ export class CountryListComponent
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<Country>(m.Country);
-        this.table.total = (loaded.value('Countrys_total') ?? 0) as number;
-        this.table.data = objects?.map((v) => {
+        const organisations = loaded.collection<Organisation>(m.Organisation);
+        this.table.total = (loaded.value('Organisations_total') ?? 0) as number;
+        this.table.data = organisations?.map((v) => {
           return {
             object: v,
-            isoCode: v.IsoCode,
             name: v.Name,
+            country: v.Country?.Name ?? null,
+            owner: v.Owner?.UserName ?? null,
           } as Row;
         });
       });

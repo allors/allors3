@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {
-  AllorsItemViewDetailPanelComponent,
-  ItemPageService,
+  AllorsViewDetailPanelComponent,
+  ObjectService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -16,19 +16,19 @@ import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
   selector: 'a-mat-dyn-view-detail-panel',
   templateUrl: './dynamic-view-detail-panel.component.html',
 })
-export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsItemViewDetailPanelComponent {
+export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDetailPanelComponent {
   title: string;
   description: string;
 
   constructor(
-    itemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
     super(
-      itemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,
@@ -38,7 +38,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsItemVie
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const pull: Pull = {
-      objectId: this.itemPageInfo.id,
+      objectId: this.objectInfo.id,
       results: [
         {
           name: prefix,

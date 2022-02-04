@@ -1,14 +1,8 @@
-import {
-  Component,
-  OnInit,
-  HostBinding,
-  Input,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
-  AllorsItemViewRelationshipPanelComponent,
-  ItemPageService,
+  AllorsViewRelationshipPanelComponent,
+  ObjectService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -30,7 +24,7 @@ import { PeriodSelection } from '@allors/base/workspace/angular-material/foundat
   templateUrl: './dynamic-view-relationship-panel.component.html',
 })
 export class AllorsMaterialDynamicViewRelationshipPanelComponent
-  extends AllorsItemViewRelationshipPanelComponent
+  extends AllorsViewRelationshipPanelComponent
   implements SharedPullHandler, OnInit
 {
   @HostBinding('class.expanded-panel')
@@ -64,14 +58,14 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   filtered: IObject[];
 
   constructor(
-    ItemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
     super(
-      ItemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,
@@ -87,7 +81,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
-    const id = this.itemPageInfo.id;
+    const id = this.objectInfo.id;
 
     const pull: Pull = {
       extent: {

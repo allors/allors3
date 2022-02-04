@@ -7,22 +7,22 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsItemViewSummaryPanelComponent,
-  ItemPageService,
+  AllorsViewSummaryPanelComponent,
+  ObjectService,
   NavigationService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
-  selector: 'person-summary',
-  templateUrl: './person-item-summary-page.component.html',
+  selector: 'person-summary-panel',
+  templateUrl: './person-summary-panel.component.html',
 })
-export class PersonSummaryComponent extends AllorsItemViewSummaryPanelComponent {
+export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   object: Person;
 
   constructor(
-    itemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
@@ -31,7 +31,7 @@ export class PersonSummaryComponent extends AllorsItemViewSummaryPanelComponent 
     private mediaService: MediaService
   ) {
     super(
-      itemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,
@@ -47,7 +47,7 @@ export class PersonSummaryComponent extends AllorsItemViewSummaryPanelComponent 
     pulls.push(
       p.Person({
         name: prefix,
-        objectId: this.itemPageInfo.id,
+        objectId: this.objectInfo.id,
         include: {
           Locale: {},
           Photo: {},

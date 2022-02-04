@@ -9,7 +9,7 @@ import {
 
 @Directive()
 export abstract class AllorsListPageComponent extends AllorsComponent {
-  override dataAllorsKind = 'list';
+  override dataAllorsKind = 'list-page';
 
   @HostBinding('attr.data-allors-objecttype')
   get dataAllorsObjectType() {

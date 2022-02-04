@@ -135,10 +135,10 @@ import { routes, components as routesComponents } from './app.routes';
 import { components as dialogsComponents } from './app.dialogs';
 import { components as formComponents } from './app.forms';
 
-import { OrganisationItemSummaryPanelComponent } from './domain/organisation/item/summary/organisation-item-summary-panel.component';
+import { OrganisationSummaryPanelComponent } from './domain/organisation/summary/organisation-summary-panel.component';
 import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
 import { PersonFormComponent } from './domain/person/form/person-form.component';
-import { PersonSummaryComponent } from './domain/person/item/summary/person-item-summary-page.component';
+import { PersonSummaryPanelComponent } from './domain/person/summary/person-summary-panel.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -192,10 +192,10 @@ import { PersonSummaryComponent } from './domain/person/item/summary/person-item
     ...dialogsComponents,
     ...formComponents,
     // Non routed and non dialog components
-    OrganisationItemSummaryPanelComponent,
+    OrganisationSummaryPanelComponent,
     PersonInlineComponent,
     PersonFormComponent,
-    PersonSummaryComponent,
+    PersonSummaryPanelComponent,
     // App
     AppComponent,
   ],

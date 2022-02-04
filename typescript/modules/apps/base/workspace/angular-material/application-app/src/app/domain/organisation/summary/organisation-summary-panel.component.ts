@@ -6,23 +6,23 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsItemViewSummaryPanelComponent,
-  ItemPageService,
+  AllorsViewSummaryPanelComponent,
+  ObjectService,
   NavigationService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
-  selector: 'organisation-summary',
-  templateUrl: './organisation-item-summary-panel.component.html',
+  selector: 'organisation-summary-panel',
+  templateUrl: './organisation-summary-panel.component.html',
 })
-export class OrganisationItemSummaryPanelComponent extends AllorsItemViewSummaryPanelComponent {
+export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   organisation: Organisation;
   contactKindsText: string;
 
   constructor(
-    itemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
@@ -30,7 +30,7 @@ export class OrganisationItemSummaryPanelComponent extends AllorsItemViewSummary
     public navigation: NavigationService
   ) {
     super(
-      itemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,
@@ -46,7 +46,7 @@ export class OrganisationItemSummaryPanelComponent extends AllorsItemViewSummary
     pulls.push(
       p.Organisation({
         name: prefix,
-        objectId: this.itemPageInfo.id,
+        objectId: this.objectInfo.id,
         include: {
           Country: {},
         },

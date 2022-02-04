@@ -55,7 +55,7 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
 
-    public factoryService: ObjectService,
+    public objectService: ObjectService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,

@@ -4,29 +4,29 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
-import { PanelService } from '../../panel/panel.service';
-import { ItemPageService } from '../item-page.service';
-import { AllorsItemPanelComponent } from '../item-panel.component';
+import { AllorsObjectPanelComponent } from '../object/object-panel.component';
+import { ObjectService } from '../object/object.service';
+import { PanelService } from '../panel/panel.service';
 
 @Directive()
-export abstract class AllorsItemViewSummaryPanelComponent extends AllorsItemPanelComponent {
-  override dataAllorsKind = 'item-view-summary-panel';
+export abstract class AllorsViewDetailPanelComponent extends AllorsObjectPanelComponent {
+  override dataAllorsKind = 'view-detail-panel';
 
-  panelId = 'ItemSummary';
-
-  readonly panelKind = 'Summary';
+  panelId = 'Detail';
 
   readonly panelMode = 'View';
 
+  readonly panelKind = 'Detail';
+
   constructor(
-    itemPageService: ItemPageService,
+    objectService: ObjectService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
     super(
-      itemPageService,
+      objectService,
       panelService,
       sharedPullService,
       refreshService,

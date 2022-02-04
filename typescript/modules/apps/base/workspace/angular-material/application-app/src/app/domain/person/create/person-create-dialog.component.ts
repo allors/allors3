@@ -16,10 +16,10 @@ import {
 import { NavigationService } from '@allors/base/workspace/angular/application';
 
 @Component({
-  templateUrl: './person-create.component.html',
+  templateUrl: './person-create-dialog.component.html',
   providers: [ContextService],
 })
-export class PersonCreateComponent implements OnInit, OnDestroy {
+export class PersonCreateDialogComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Person';
@@ -35,7 +35,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: CreateRequest,
-    public dialogRef: MatDialogRef<PersonCreateComponent>,
+    public dialogRef: MatDialogRef<PersonCreateDialogComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
