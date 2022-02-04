@@ -73,7 +73,7 @@ export abstract class AllorsOverviewPageComponent
     }
   }
 
-  abstract onPreSharedPull(pulls: Pull[], prefix?: string): void;
+  abstract onPreSharedPull(pulls: Pull[], scope?: string): void;
 
-  abstract onPostSharedPull(pullResult: IPullResult, prefix?: string): void;
+  abstract onPostSharedPull(pullResult: IPullResult, scope?: string): void;
 }

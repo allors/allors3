@@ -63,20 +63,20 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
     );
   }
 
-  onPreSharedPull(pulls: Pull[], prefix: string) {
+  onPreSharedPull(pulls: Pull[], scope?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
 
     pulls.push(
       p.Organisation({
-        name: prefix,
+        name: scope,
         objectId: this.objectInfo.id,
       })
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix: string) {
-    this.object = pullResult.object(prefix);
+  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+    this.object = pullResult.object(scope);
   }
 }

@@ -13,6 +13,7 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { map, Subscription } from 'rxjs';
+import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'a-mat-dyn-edit-detail-panel',
@@ -25,8 +26,11 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
   @ViewChildren(TemplateHostDirective)
   templateHosts!: QueryList<TemplateHostDirective>;
 
+  title: string;
+
   form: AllorsForm;
 
+  private templateSubscription: Subscription;
   private cancelledSubscription: Subscription;
   private savedSubscription: Subscription;
 
@@ -46,8 +50,28 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     );
   }
 
-  onPreSharedPull(): void {
-    this.templateHosts.changes.subscribe(() => {
+  onPreSharedPull(pulls: Pull[], scope?: string): void {
+    pulls.push({ objectId: this.objectInfo.id, results: [{ name: scope }] });
+
+    this.subscribeTemplate();
+  }
+
+  onPostSharedPull(pullResult: IPullResult, scope?: string): void {
+    const object = pullResult.object<IObject>(scope);
+    this.title = `Edit ${object}`;
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+
+    this.templateSubscription?.unsubscribe();
+    this.cancelledSubscription?.unsubscribe();
+    this.savedSubscription?.unsubscribe();
+  }
+
+  private subscribeTemplate() {
+    this.templateSubscription?.unsubscribe();
+    this.templateSubscription = this.templateHosts.changes.subscribe(() => {
       const templateHost = this.templateHosts.first;
 
       this.cancelledSubscription?.unsubscribe();
@@ -83,14 +107,5 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
         )
         .subscribe();
     });
-  }
-
-  onPostSharedPull(): void {}
-
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
-
-    this.cancelledSubscription?.unsubscribe();
-    this.savedSubscription?.unsubscribe();
   }
 }

@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { init } from '../app/app.init';
+import { config } from '../app/app.config';
 import { ErrorHandlerService } from '../allors/errorhandler.service';
 import {
   AllorsMaterialCreateService,
@@ -19,7 +19,7 @@ export function appInitFactory(
   editService: AllorsMaterialEditService
 ) {
   return async () => {
-    init(
+    config(
       workspaceService,
       httpClient,
       environment.baseUrl,

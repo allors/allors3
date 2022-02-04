@@ -11,12 +11,12 @@ import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { M } from '@allors/default/workspace/meta';
 import { BaseContext } from '../allors/base-context';
-import { initForms } from './app.forms';
-import { initMenu } from './app.init-menu';
-import { initNav } from './app.init-nav';
-import { initFilter } from './app.init-filter';
+import { configForm } from './config/form.config';
+import { configMenu } from './config/menu.config';
+import { configNav } from './config/nav.config';
+import { configFilter } from './config/filter.config';
 
-export function init(
+export function config(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
   baseUrl: string,
@@ -45,8 +45,8 @@ export function init(
 
   workspaceService.contextBuilder = () => new BaseContext(workspaceService);
 
-  initForms(m);
-  initMenu(m);
-  initNav(m);
-  initFilter(m);
+  configForm(m);
+  configMenu(m);
+  configNav(m);
+  configFilter(m);
 }

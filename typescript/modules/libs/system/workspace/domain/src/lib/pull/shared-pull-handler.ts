@@ -1,11 +1,11 @@
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 export interface PreSharedPullHandler {
-  onPreSharedPull(pulls: Pull[], prefix?: string): void;
+  onPreSharedPull(pulls: Pull[], scope?: string): void;
 }
 
 export interface PostSharedPullHandler {
-  onPostSharedPull(pullResult: IPullResult, prefix?: string): void;
+  onPostSharedPull(pullResult: IPullResult, scope?: string): void;
 }
 
 export interface SharedPullHandler

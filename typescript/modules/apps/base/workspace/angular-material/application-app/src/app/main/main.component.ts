@@ -5,8 +5,10 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { angularDisplayName } from '@allors/base/workspace/angular/foundation';
+import {
+  angularPluralName,
+  ContextService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   angularPageList,
   angularMenu,
@@ -16,6 +18,7 @@ import {
   angularIcon,
   SideMenuItem,
 } from '@allors/base/workspace/angular-material/application';
+import { Composite } from '@allors/system/workspace/meta';
 
 @Component({
   styleUrls: ['main.component.scss'],
@@ -50,10 +53,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
       const sideMenuItem: SideMenuItem = {
         icon: menuItem.icon ?? angularIcon(objectType),
-        title:
-          menuItem.title ??
-          angularDisplayName(objectType) ??
-          objectType?.pluralName,
+        title: menuItem.title ?? angularPluralName(objectType),
         link: menuItem.link ?? angularPageList(objectType),
         children:
           menuItem.children &&
@@ -61,10 +61,7 @@ export class MainComponent implements OnInit, OnDestroy {
             const childObjectType = childMenuItem.objectType;
             return {
               icon: childMenuItem.icon ?? angularIcon(childObjectType),
-              title:
-                childMenuItem.title ??
-                angularDisplayName(childObjectType) ??
-                childObjectType?.pluralName,
+              title: childMenuItem.title ?? angularPluralName(childObjectType),
               link: childMenuItem.link ?? angularPageList(childObjectType),
             };
           }),

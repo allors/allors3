@@ -10,7 +10,7 @@ function nav(composite: Composite, list: string, overview?: string) {
   angularPageEdit(composite, overview);
 }
 
-export function initNav(m: M) {
+export function configNav(m: M) {
   // Navigation
   nav(m.Person, '/contacts/people', '/contacts/person/:id');
   nav(m.Organisation, '/contacts/organisations', '/contacts/organisation/:id');

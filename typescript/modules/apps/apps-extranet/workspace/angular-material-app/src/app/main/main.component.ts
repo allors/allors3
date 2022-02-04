@@ -8,7 +8,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
   AllorsMaterialSideNavService,
-  angularDisplayName,
+  angularSingularName,
   angularIcon,
   angularList,
   angularMenu,
@@ -51,7 +51,7 @@ export class MainComponent implements OnInit, OnDestroy {
         icon: menuItem.icon ?? angularIcon(objectType),
         title:
           menuItem.title ??
-          angularDisplayName(objectType) ??
+          angularSingularName(objectType) ??
           objectType?.pluralName,
         link: menuItem.link ?? angularList(objectType),
         children:
@@ -62,7 +62,7 @@ export class MainComponent implements OnInit, OnDestroy {
               icon: childMenuItem.icon ?? angularIcon(childObjectType),
               title:
                 childMenuItem.title ??
-                angularDisplayName(childObjectType) ??
+                angularSingularName(childObjectType) ??
                 childObjectType?.pluralName,
               link: childMenuItem.link ?? angularList(childObjectType),
             };

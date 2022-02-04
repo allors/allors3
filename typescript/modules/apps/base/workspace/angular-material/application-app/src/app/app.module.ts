@@ -131,9 +131,9 @@ import {
   AllorsMaterialEditService,
 } from '@allors/base/workspace/angular-material/application';
 
-import { routes, components as routesComponents } from './app.routes';
-import { components as dialogsComponents } from './app.dialogs';
-import { components as formComponents } from './app.forms';
+import { routes, components as routeComponents } from './app.routes';
+import { components as dialogComponents } from './app.dialog';
+import { components as formComponents } from './config/form.config';
 
 import { OrganisationSummaryPanelComponent } from './domain/organisation/summary/organisation-summary-panel.component';
 import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
@@ -188,8 +188,8 @@ import { PersonSummaryPanelComponent } from './domain/person/summary/person-summ
     AllorsMaterialDynamicViewRelationshipPanelComponent,
     TemplateHostDirective,
     // Routed and dialog components
-    ...routesComponents,
-    ...dialogsComponents,
+    ...routeComponents,
+    ...dialogComponents,
     ...formComponents,
     // Non routed and non dialog components
     OrganisationSummaryPanelComponent,

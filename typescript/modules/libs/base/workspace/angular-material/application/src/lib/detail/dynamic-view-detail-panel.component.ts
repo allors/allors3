@@ -5,7 +5,7 @@ import {
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
-  angularDisplayName,
+  angularSingularName,
   RefreshService,
   SharedPullService,
   WorkspaceService,
@@ -36,12 +36,12 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     );
   }
 
-  onPreSharedPull(pulls: Pull[], prefix?: string): void {
+  onPreSharedPull(pulls: Pull[], scope?: string): void {
     const pull: Pull = {
       objectId: this.objectInfo.id,
       results: [
         {
-          name: prefix,
+          name: scope,
         },
       ],
     };
@@ -49,13 +49,10 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     pulls.push(pull);
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
-    const object = pullResult.object<IObject>(prefix);
+  onPostSharedPull(pullResult: IPullResult, scope?: string): void {
+    const object = pullResult.object<IObject>(scope);
 
-    this.title = `${
-      angularDisplayName(object.strategy.cls) ??
-      object.strategy.cls.singularName
-    } details`;
+    this.title = `${angularSingularName(object.strategy.cls)} details`;
 
     // TODO: Meta
     this.description = object['DisplayName'] ?? object['Name'];

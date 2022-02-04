@@ -1,7 +1,7 @@
 import { M } from '@allors/default/workspace/meta';
 import { angularMenu } from '@allors/base/workspace/angular/application';
 
-export function initMenu(m: M) {
+export function configMenu(m: M) {
   // Menu
   angularMenu(m, [
     { title: 'Home', icon: 'home', link: '/' },

@@ -39,14 +39,14 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
     );
   }
 
-  onPreSharedPull(pulls: Pull[], prefix?: string) {
+  onPreSharedPull(pulls: Pull[], scope?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
 
     pulls.push(
       p.Person({
-        name: prefix,
+        name: scope,
         objectId: this.objectInfo.id,
         include: {
           Locale: {},
@@ -56,8 +56,8 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
-    this.object = pullResult.object<Person>(prefix);
+  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+    this.object = pullResult.object<Person>(scope);
   }
 
   get src(): string {

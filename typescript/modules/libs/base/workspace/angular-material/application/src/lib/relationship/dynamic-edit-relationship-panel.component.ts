@@ -129,7 +129,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     this.table = new Table(tableConfig);
   }
 
-  onPreSharedPull(pulls: Pull[], prefix?: string) {
+  onPreSharedPull(pulls: Pull[], scope?: string) {
     const id = this.objectInfo.id;
 
     const pull: Pull = {
@@ -144,7 +144,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
       },
       results: [
         {
-          name: prefix,
+          name: scope,
           include: [
             {
               propertyType: this.anchor,
@@ -160,8 +160,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     pulls.push(pull);
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
-    this.objects = pullResult.collection<IObject>(prefix) ?? [];
+  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+    this.objects = pullResult.collection<IObject>(scope) ?? [];
     this.updateFilter();
     this.refreshTable();
   }

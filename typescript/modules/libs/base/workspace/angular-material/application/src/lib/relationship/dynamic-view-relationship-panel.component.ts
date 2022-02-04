@@ -80,7 +80,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     this.title = this.target.pluralName;
   }
 
-  onPreSharedPull(pulls: Pull[], prefix?: string): void {
+  onPreSharedPull(pulls: Pull[], scope?: string): void {
     const id = this.objectInfo.id;
 
     const pull: Pull = {
@@ -95,7 +95,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
       },
       results: [
         {
-          name: prefix,
+          name: scope,
           include: [
             {
               propertyType: this.anchor,
@@ -111,8 +111,8 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     pulls.push(pull);
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
-    this.objects = pullResult.collection<IObject>(prefix) ?? [];
+  onPostSharedPull(pullResult: IPullResult, scope?: string): void {
+    this.objects = pullResult.collection<IObject>(scope) ?? [];
     this.updateFilter();
 
     if (this.hasPeriod) {

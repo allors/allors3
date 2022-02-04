@@ -14,8 +14,8 @@ import {
   MenuInfoService,
   NavigationInfoService,
 } from '@allors/base/workspace/angular/application';
-import { dialogs } from '../app/app.dialogs';
-import { init } from '../app/app.init';
+import { dialogs } from '../app/app.dialog';
+import { config } from '../app/app.config';
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
@@ -28,7 +28,7 @@ export function appInitializerFactory(
   editService: AllorsMaterialEditService
 ) {
   return async () => {
-    init(
+    config(
       workspaceService,
       httpClient,
       environment.baseUrl,

@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Class, Composite, humanize } from '@allors/system/workspace/meta';
+import { Class, Composite } from '@allors/system/workspace/meta';
 import { IObject, CreatePullHandler } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
-  angularDisplayName,
+  angularSingularName,
   CreateRequest,
   CreateService,
 } from '@allors/base/workspace/angular/foundation';
@@ -60,6 +60,6 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
   }
 
   displayName(cls: Class): string {
-    return angularDisplayName(cls) ?? humanize(cls.singularName);
+    return angularSingularName(cls);
   }
 }

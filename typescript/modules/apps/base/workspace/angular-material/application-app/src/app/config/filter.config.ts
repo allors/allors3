@@ -8,7 +8,7 @@ import {
   Sorter,
 } from '@allors/base/workspace/angular-material/application';
 
-export function initFilter(m: M) {
+export function configFilter(m: M) {
   angularFilterDefinition(
     m.Person,
     new FilterDefinition({

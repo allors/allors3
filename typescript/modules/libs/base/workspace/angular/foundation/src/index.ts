@@ -55,10 +55,11 @@ export * from './lib/media/media.service';
 export * from './lib/media/media.config';
 export * from './lib/media/media-local.service';
 
-export * from './lib/meta/angular-display-name';
 export * from './lib/meta/angular-filter';
 export * from './lib/meta/angular-filter-definition';
 export * from './lib/meta/angular-forms';
+export * from './lib/meta/angular-plural-name';
+export * from './lib/meta/angular-singular-name';
 
 export * from './lib/refresh/refresh.service';
 export * from './lib/refresh/refresh-behavior-subject.service';
