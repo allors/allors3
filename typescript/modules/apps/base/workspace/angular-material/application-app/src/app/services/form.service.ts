@@ -10,6 +10,7 @@ import { EmploymentFormComponent } from '../domain/employment/form/employment-fo
 import { OrganisationFormComponent } from '../domain/organisation/form/organisation-form.component';
 
 import { Injectable } from '@angular/core';
+import { PersonFormComponent } from '../domain/person/form/person-form.component';
 
 @Injectable()
 export class AppFormService implements FormService {
@@ -25,6 +26,7 @@ export class AppFormService implements FormService {
 
   editForm(composite: Composite) {
     switch (composite.tag) {
+      // Objects
       case tags.Country:
         return CountryFormComponent;
 
@@ -32,6 +34,10 @@ export class AppFormService implements FormService {
         return OrganisationFormComponent;
 
       case tags.Person:
+        return PersonFormComponent;
+
+      // Relationships
+      case tags.Employment:
         return EmploymentFormComponent;
     }
 
@@ -41,6 +47,7 @@ export class AppFormService implements FormService {
 
 export const components: any[] = [
   CountryFormComponent,
-  EmploymentFormComponent,
+  PersonFormComponent,
   OrganisationFormComponent,
+  EmploymentFormComponent,
 ];

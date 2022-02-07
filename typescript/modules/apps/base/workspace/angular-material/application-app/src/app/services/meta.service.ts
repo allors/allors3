@@ -1,13 +1,9 @@
 import {
-  MenuItem,
-  MenuService,
-} from '@allors/base/workspace/angular/application';
-import {
   MetaService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { Composite } from '@allors/system/workspace/meta';
+import { Composite, pluralize } from '@allors/system/workspace/meta';
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -36,7 +32,7 @@ export class AppMetaService implements MetaService {
   pluralName(composite: Composite): string {
     return (
       this.pluralNameByComposite.get(composite) ??
-      this.singularNameByComposite.get(composite) ??
+      pluralize(this.singularNameByComposite.get(composite)) ??
       composite.pluralName
     );
   }

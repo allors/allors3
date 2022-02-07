@@ -12,7 +12,7 @@
 
   <a-mat-factory-fab
     [objectType]="objectType"
-    [onObjectCreate]="onObjectCreate"
+    [onObjectCreate]="this"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 
