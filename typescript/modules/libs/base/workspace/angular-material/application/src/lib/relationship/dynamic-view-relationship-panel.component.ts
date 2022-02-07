@@ -9,6 +9,7 @@ import {
   WorkspaceService,
   SharedPullService,
   RefreshService,
+  DisplayService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   IObject,
@@ -39,9 +40,6 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   @Input()
   target: RoleType;
 
-  @Input()
-  display: RoleType;
-
   objectType: Composite;
 
   get panelId() {
@@ -62,7 +60,8 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
-    workspaceService: WorkspaceService
+    workspaceService: WorkspaceService,
+    private diplayService: DisplayService
   ) {
     super(
       objectService,
@@ -116,10 +115,8 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     this.updateFilter();
 
     if (this.hasPeriod) {
-      this.description = `${
+      this.description = `${this.filtered.length} current and ${
         this.objects.length - this.filtered.length
-      } current and ${
-        this.filtered.length
       } inactive ${this.target.pluralName.toLowerCase()}`;
     } else {
       this.description = `${
