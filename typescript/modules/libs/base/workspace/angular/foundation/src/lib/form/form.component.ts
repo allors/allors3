@@ -18,6 +18,7 @@ import {
   Pull,
   PostEditPullHandler,
   PostCreatePullHandler,
+  EditIncludeHandler,
 } from '@allors/system/workspace/domain';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
@@ -97,6 +98,10 @@ export abstract class AllorsFormComponent<T extends IObject>
     );
   }
 
+  get hasEditInclude() {
+    return this[nameof<EditIncludeHandler>('onEditInclude')] != null;
+  }
+
   get hasPostCreate() {
     return this[nameof<PostCreatePullHandler>('onPostCreatePull')] != null;
   }
@@ -171,7 +176,11 @@ export abstract class AllorsFormComponent<T extends IObject>
     this.isCreate = false;
 
     const name = 'AllorsFormComponent';
-    const pull: Pull = { objectId, results: [{ name }] };
+
+    const include = this.hasEditInclude
+      ? (this as unknown as EditIncludeHandler).onEditInclude()
+      : null;
+    const pull: Pull = { objectId, results: [{ name, include }] };
 
     const hasHandlers = handlers?.length > 0;
 

@@ -10,6 +10,8 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NgForm } from '@angular/forms';
 import {
+  EditIncludeHandler,
+  Node,
   PostCreatePullHandler,
   PreEditPullHandler,
   Pull,
@@ -21,7 +23,7 @@ import {
 })
 export class EmploymentFormComponent
   extends AllorsFormComponent<Employment>
-  implements PostCreatePullHandler, PreEditPullHandler
+  implements PostCreatePullHandler, EditIncludeHandler
 {
   organisationsFilter: SearchFactory;
   peopleFilter: SearchFactory;
@@ -48,18 +50,14 @@ export class EmploymentFormComponent
     object.FromDate = new Date();
   }
 
-  onPreEditPull(objectId: number, pulls: Pull[]) {
-    const m = this.m;
-    const { pullBuilder: p } = m;
+  onEditInclude(): Node[] {
+    const {
+      m: { treeBuilder: t },
+    } = this;
 
-    pulls.push(
-      p.Employment({
-        objectId,
-        include: {
-          Employee: {},
-          Employer: {},
-        },
-      })
-    );
+    return t.Employment({
+      Employee: {},
+      Employer: {},
+    });
   }
 }

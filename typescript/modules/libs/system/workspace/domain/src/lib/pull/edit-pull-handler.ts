@@ -1,4 +1,13 @@
-import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
+import {
+  IObject,
+  IPullResult,
+  Pull,
+  Node,
+} from '@allors/system/workspace/domain';
+
+export interface EditIncludeHandler {
+  onEditInclude(): Node[];
+}
 
 export interface PreEditPullHandler {
   onPreEditPull(objectId: number, pulls: Pull[]): void;
