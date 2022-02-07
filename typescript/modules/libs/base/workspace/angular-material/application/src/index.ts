@@ -26,11 +26,11 @@ export * from './lib/filter/field/dialog.component';
 export * from './lib/filter/field/search.component';
 export * from './lib/filter/filter.component';
 
+export * from './lib/icon/icon.service';
+
 export * from './lib/media/preview/dialog.data';
 export * from './lib/media/preview/media-preview.component';
 export * from './lib/media/media.component';
-
-export * from './lib/meta/angular-icon';
 
 export * from './lib/page/create/dynamic-create.component';
 export * from './lib/page/edit/dynamic-edit.component';

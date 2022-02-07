@@ -24,9 +24,9 @@ import { Table } from '../table/table';
 import { TableRow } from '../table/table-row';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
-import { angularIcon } from '../meta/angular-icon';
 import { TableConfig } from '../table/table-config';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
+import { IconService } from '../icon/icon.service';
 
 interface Row extends TableRow {
   object: IObject;
@@ -69,7 +69,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   }
 
   get icon() {
-    return angularIcon(this.objectType);
+    return this.iconService.icon(this.objectType);
   }
 
   get titel() {
@@ -82,10 +82,10 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService,
-
     public navigationService: NavigationService,
     public deleteService: DeleteService,
-    public editRoleService: EditRoleService
+    public editRoleService: EditRoleService,
+    private iconService: IconService
   ) {
     super(
       objectService,

@@ -34,5 +34,4 @@ export * from './lib/irecord';
 export * from './lib/prototype-object-factory';
 export * from './lib/version';
 
-import '@allors/system/workspace/derivations';
 import './lib/configuration';

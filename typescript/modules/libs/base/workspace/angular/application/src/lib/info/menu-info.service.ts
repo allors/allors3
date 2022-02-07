@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MetaPopulation } from '@allors/system/workspace/meta';
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { angularMenu } from '../meta/angular-menu';
 import { MenuItem } from '../menu/menu-item';
+import { MenuService } from '../..';
 
 export interface MenuInfo {
   tag?: string;
@@ -14,12 +12,7 @@ export interface MenuInfo {
 
 @Injectable()
 export class MenuInfoService {
-  metaPopulation: MetaPopulation;
-
-  constructor(private workspaceService: WorkspaceService) {
-    this.metaPopulation =
-      this.workspaceService.workspace.configuration.metaPopulation;
-  }
+  constructor(private menuService: MenuService) {}
 
   write(allors: { [key: string]: unknown }) {
     allors['menu'] = this.menu;
@@ -36,7 +29,7 @@ export class MenuInfoService {
       };
     };
 
-    const menu: MenuInfo[] = angularMenu(this.metaPopulation).map(menuMapper);
+    const menu: MenuInfo[] = this.menuService.menu().map(menuMapper);
 
     return JSON.stringify(menu);
   }

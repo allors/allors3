@@ -4,7 +4,6 @@ import { RoleType } from './role-type';
 
 export interface AssociationType extends PropertyType {
   readonly kind: 'AssociationType';
-  _: unknown;
   relationType: RelationType;
   roleType: RoleType;
 }

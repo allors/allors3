@@ -3,7 +3,6 @@ import { ObjectType } from './object-type';
 import { OperandType } from './operand-type';
 
 export interface PropertyType extends OperandType {
-  _: unknown;
   isRoleType: boolean;
   isAssociationType: boolean;
   isMethodType: boolean;

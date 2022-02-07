@@ -10,7 +10,6 @@ import { Dependency } from './dependency';
 
 export interface MetaPopulation {
   readonly kind: 'MetaPopulation';
-  _: unknown;
   metaObjectByTag: Map<string, MetaObject>;
   units: Set<Unit>;
   interfaces: Set<Interface>;
@@ -19,5 +18,8 @@ export interface MetaPopulation {
   relationTypes: Set<RelationType>;
   methodTypes: Set<MethodType>;
 
-  dependency: <T extends Composite>(objectType: T, propertyType: (objectType: T) => PropertyType) => Dependency;
+  dependency: <T extends Composite>(
+    objectType: T,
+    propertyType: (objectType: T) => PropertyType
+  ) => Dependency;
 }

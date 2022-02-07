@@ -34,7 +34,6 @@
     "system-workspace-adapters-json": "libs/system/workspace/adapters-json",
     "system-workspace-adapters-json-tests": "libs/system/workspace/adapters-json-tests",
     "system-workspace-adapters-tests": "libs/system/workspace/adapters-tests",
-    "system-workspace-derivations": "libs/system/workspace/derivations",
     "system-workspace-domain": "libs/system/workspace/domain",
     "system-workspace-meta": "libs/system/workspace/meta",
     "system-workspace-meta-json": "libs/system/workspace/meta-json",

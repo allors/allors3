@@ -1,5 +1,16 @@
-export function pluralize(singular: string) {
-  if (singular.endsWith('y') && !singular.endsWith('ay') && !singular.endsWith('ey') && !singular.endsWith('iy') && !singular.endsWith('oy') && !singular.endsWith('uy')) {
+export function pluralize(singular?: string): string | null {
+  if (!singular) {
+    return null;
+  }
+
+  if (
+    singular.endsWith('y') &&
+    !singular.endsWith('ay') &&
+    !singular.endsWith('ey') &&
+    !singular.endsWith('iy') &&
+    !singular.endsWith('oy') &&
+    !singular.endsWith('uy')
+  ) {
     return singular.substring(0, singular.length - 1) + 'ies';
   }
 
@@ -11,7 +22,11 @@ export function pluralize(singular: string) {
     return singular + 'es';
   }
 
-  if (singular.endsWith('x') || singular.endsWith('ch') || singular.endsWith('sh')) {
+  if (
+    singular.endsWith('x') ||
+    singular.endsWith('ch') ||
+    singular.endsWith('sh')
+  ) {
     return singular + 'es';
   }
 

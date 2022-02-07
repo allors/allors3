@@ -17,6 +17,7 @@ import {
   EditService,
   FilterService,
   FormService,
+  MetaService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -76,16 +77,13 @@ import {
 
 import {
   NavigationService,
-  NavigationMetaService,
+  MenuService,
 } from '@allors/base/workspace/angular/application';
 
 import {
   AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
   AllorsMaterialPeriodSelectionToggleComponent,
-} from '@allors/base/workspace/angular-material/foundation';
-
-import {
   AllorsMaterialAssociationAutoCompleteComponent,
   AllorsMaterialCancelComponent,
   AllorsMaterialSaveComponent,
@@ -132,6 +130,7 @@ import {
   AllorsMaterialCreateService,
   AllorsMaterialEditService,
   SorterService,
+  IconService,
 } from '@allors/base/workspace/angular-material/application';
 
 import { routes, components as routeComponents } from './app.routes';
@@ -147,6 +146,10 @@ import { PersonFormComponent } from './domain/person/form/person-form.component'
 import { PersonSummaryPanelComponent } from './domain/person/summary/person-summary-panel.component';
 import { AppFilterService } from './services/filter.service';
 import { AppSorterService } from './services/sorter.service';
+import { AppMenuService } from './services/menu.service';
+import { AppNavigationService } from './services/navigation.service';
+import { AppIconService } from './services/icon.service';
+import { AppMetaService } from './services/meta.service';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -273,11 +276,7 @@ import { AppSorterService } from './services/sorter.service';
     },
     { provide: MediaService, useClass: MediaLocalService },
     { provide: MediaConfig, useValue: { url: environment.baseUrl } },
-    { provide: NavigationService, useClass: NavigationMetaService },
     { provide: RefreshService, useClass: RefreshBehaviorService },
-    { provide: FilterService, useClass: AppFilterService },
-    { provide: FormService, useClass: AppFormService },
-    { provide: SorterService, useClass: AppSorterService },
 
     // Angular Material
     {
@@ -302,6 +301,16 @@ import { AppSorterService } from './services/sorter.service';
     { provide: CreateService, useExisting: AllorsMaterialCreateService },
     { provide: AllorsMaterialEditService, useClass: AllorsMaterialEditService },
     { provide: EditService, useExisting: AllorsMaterialEditService },
+
+    // App Services
+    { provide: FilterService, useClass: AppFilterService },
+    { provide: FormService, useClass: AppFormService },
+    { provide: SorterService, useClass: AppSorterService },
+    { provide: MenuService, useClass: AppMenuService },
+    { provide: NavigationService, useClass: AppNavigationService },
+    { provide: IconService, useClass: AppIconService },
+    { provide: MetaService, useClass: AppMetaService },
+
     ...environment.providers,
   ],
 })

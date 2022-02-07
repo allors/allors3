@@ -3,11 +3,11 @@ import { Class, Composite } from '@allors/system/workspace/meta';
 import { IObject, CreatePullHandler } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
-  angularSingularName,
   CreateRequest,
   CreateService,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
-import { angularIcon } from '../meta/angular-icon';
+import { IconService } from '../icon/icon.service';
 
 @Component({
   selector: 'a-mat-factory-fab',
@@ -23,7 +23,11 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
 
   classes: Class[];
 
-  constructor(private readonly createService: CreateService) {
+  constructor(
+    private readonly createService: CreateService,
+    private iconService: IconService,
+    private metaService: MetaService
+  ) {
     super();
   }
 
@@ -56,10 +60,10 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
   }
 
   icon(cls: Class): string {
-    return angularIcon(cls);
+    return this.iconService.icon(cls);
   }
 
   displayName(cls: Class): string {
-    return angularSingularName(cls);
+    return this.metaService.singularName(cls);
   }
 }

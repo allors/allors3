@@ -3,22 +3,20 @@ import { filter } from 'rxjs/operators';
 import { Component, ViewChild, OnDestroy, OnInit, Self } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
-  angularPluralName,
   ContextService,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  angularPageList,
-  angularMenu,
+  MenuService,
+  NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
   AllorsMaterialSideNavService,
-  angularIcon,
+  IconService,
   SideMenuItem,
 } from '@allors/base/workspace/angular-material/application';
-import { Composite } from '@allors/system/workspace/meta';
 
 @Component({
   styleUrls: ['main.component.scss'],
@@ -40,29 +38,36 @@ export class MainComponent implements OnInit, OnDestroy {
   constructor(
     @Self() private allors: ContextService,
     private router: Router,
-    private sideNavService: AllorsMaterialSideNavService
+    private sideNavService: AllorsMaterialSideNavService,
+    private menuService: MenuService,
+    private navigationService: NavigationService,
+    private iconService: IconService,
+    private metaService: MetaService
   ) {
     this.allors.context.name = this.constructor.name;
   }
 
   public ngOnInit(): void {
-    const m = this.allors.context.configuration.metaPopulation as M;
-
-    angularMenu(m).forEach((menuItem) => {
+    this.menuService.menu().forEach((menuItem) => {
       const objectType = menuItem.objectType;
 
       const sideMenuItem: SideMenuItem = {
-        icon: menuItem.icon ?? angularIcon(objectType),
-        title: menuItem.title ?? angularPluralName(objectType),
-        link: menuItem.link ?? angularPageList(objectType),
+        icon: menuItem.icon ?? this.iconService.icon(objectType),
+        title: menuItem.title ?? this.metaService.pluralName(objectType),
+        link: menuItem.link ?? this.navigationService.listUrl(objectType),
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
             const childObjectType = childMenuItem.objectType;
             return {
-              icon: childMenuItem.icon ?? angularIcon(childObjectType),
-              title: childMenuItem.title ?? angularPluralName(childObjectType),
-              link: childMenuItem.link ?? angularPageList(childObjectType),
+              icon:
+                childMenuItem.icon ?? this.iconService.icon(childObjectType),
+              title:
+                childMenuItem.title ??
+                this.metaService.pluralName(childObjectType),
+              link:
+                childMenuItem.link ??
+                this.navigationService.listUrl(childObjectType),
             };
           }),
       };

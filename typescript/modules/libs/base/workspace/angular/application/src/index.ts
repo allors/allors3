@@ -11,13 +11,9 @@ export * from './lib/info/navigation-info.service';
 export * from './lib/list/list-page.component';
 
 export * from './lib/menu/menu-item';
-
-export * from './lib/meta/angular-menu';
-export * from './lib/meta/angular-page-edit';
-export * from './lib/meta/angular-page-list';
+export * from './lib/menu/menu.service';
 
 export * from './lib/navigation/navigation.service';
-export * from './lib/navigation/navigation-meta.service';
 export * from './lib/navigation/navigation-activated-route';
 
 export * from './lib/object/object-info';

@@ -33,10 +33,6 @@ import { ChangeSetTracker } from './trackers/change-set-tracker';
 import { PushToDatabaseTracker } from './trackers/push-to-database-tracker';
 import { PushToWorkspaceTracker } from './trackers/push-to-workspace-tracker';
 import { ChangeSet } from './change-set';
-import {
-  derivationRule,
-  derivationRuleByClass,
-} from '@allors/system/workspace/derivations';
 
 export function isNewId(id: number): boolean {
   return id < 0;
@@ -104,12 +100,7 @@ export abstract class Session implements ISession {
     const activeRules = this.activeRulesByRoleType.get(roleType);
 
     if (activeRules?.size > 0) {
-      let rule: IRule<IObject>;
-      if (roleType.associationType.objectType.isClass) {
-        rule = derivationRule(roleType);
-      } else {
-        rule = derivationRuleByClass(roleType)?.get(strategy.cls);
-      }
+      const rule = this.workspace.rule(roleType, strategy);
 
       if (rule != null && activeRules.has(rule)) {
         return rule;

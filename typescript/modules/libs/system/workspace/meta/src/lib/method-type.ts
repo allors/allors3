@@ -4,6 +4,5 @@ import { OperandType } from './operand-type';
 
 export interface MethodType extends MetaObject, OperandType {
   readonly kind: 'MethodType';
-  _: unknown;
   objectType: Composite;
 }

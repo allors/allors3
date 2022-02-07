@@ -63,9 +63,7 @@ npx nx g @nrwl/workspace:library system/workspace/adapters-json-tests
 npx nx g @nrwl/workspace:library system/workspace/adapters
 npx nx g @nrwl/workspace:library system/workspace/adapters-tests
 
-npx nx g @nrwl/workspace:library system/workspace/derivations
 npx nx g @nrwl/workspace:library system/workspace/domain
-
 npx nx g @nrwl/workspace:library system/workspace/meta-json
 npx nx g @nrwl/workspace:library system/workspace/meta-json-tests
 npx nx g @nrwl/workspace:library system/workspace/meta

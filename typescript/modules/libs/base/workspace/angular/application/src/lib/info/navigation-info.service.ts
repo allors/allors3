@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { angularPageList } from '../meta/angular-page-list';
-import { angularPageEdit } from '../meta/angular-page-edit';
+import { NavigationService } from '../navigation/navigation.service';
 
 export interface NavigationInfo {
   tag: string;
@@ -14,7 +13,10 @@ export interface NavigationInfo {
 export class NavigationInfoService {
   metaPopulation: MetaPopulation;
 
-  constructor(private workspaceService: WorkspaceService) {
+  constructor(
+    private workspaceService: WorkspaceService,
+    private navigationService: NavigationService
+  ) {
     this.metaPopulation =
       this.workspaceService.workspace.configuration.metaPopulation;
   }
@@ -28,8 +30,8 @@ export class NavigationInfoService {
       (v) => {
         return {
           tag: v.tag,
-          list: angularPageList(v),
-          overview: angularPageEdit(v),
+          list: this.navigationService.listUrl(v),
+          overview: this.navigationService.overviewUrl(v),
         };
       }
     );

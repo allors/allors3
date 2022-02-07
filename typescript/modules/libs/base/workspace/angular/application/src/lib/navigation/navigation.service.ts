@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
 import { IObject } from '@allors/system/workspace/domain';
-import { ObjectType } from '@allors/system/workspace/meta';
+import { Composite, ObjectType } from '@allors/system/workspace/meta';
 
 @Injectable()
 export abstract class NavigationService {
-  abstract hasList(obj: IObject): boolean;
+  abstract hasList(objectType: Composite): boolean;
 
-  abstract list(objectType: ObjectType);
+  abstract listUrl(objectType: Composite): string;
+
+  abstract list(objectType: Composite): void;
 
   abstract hasOverview(obj: IObject): boolean;
+
+  abstract overviewUrl(objectType: Composite): string;
 
   abstract overview(obj: IObject): void;
 }

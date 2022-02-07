@@ -8,7 +8,6 @@ import { PropertyType } from './property-type';
 import { RoleType } from './role-type';
 
 export interface Composite extends ObjectType {
-  _: unknown;
   directSupertypes: Set<Interface>;
   directAssociationTypes: Set<AssociationType>;
   directRoleTypes: Set<RoleType>;

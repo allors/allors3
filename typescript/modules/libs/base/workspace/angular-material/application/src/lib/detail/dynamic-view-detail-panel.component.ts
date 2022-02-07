@@ -5,7 +5,7 @@ import {
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
-  angularSingularName,
+  MetaService,
   RefreshService,
   SharedPullService,
   WorkspaceService,
@@ -25,7 +25,8 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
-    workspaceService: WorkspaceService
+    workspaceService: WorkspaceService,
+    private metaService: MetaService
   ) {
     super(
       objectService,
@@ -52,7 +53,9 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
   onPostSharedPull(pullResult: IPullResult, scope?: string): void {
     const object = pullResult.object<IObject>(scope);
 
-    this.title = `${angularSingularName(object.strategy.cls)} details`;
+    this.title = `${this.metaService.singularName(
+      object.strategy.cls
+    )} details`;
 
     // TODO: Meta
     this.description = object['DisplayName'] ?? object['Name'];

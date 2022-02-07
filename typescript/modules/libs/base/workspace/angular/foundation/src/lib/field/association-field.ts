@@ -1,13 +1,7 @@
 // tslint:disable: directive-selector
 // tslint:disable: directive-class-suffix
-import {
-  Input,
-  QueryList,
-  ViewChildren,
-  Directive,
-  HostBinding,
-} from '@angular/core';
-import { NgForm, NgModel } from '@angular/forms';
+import { Input, Directive, HostBinding } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 import {
   AssociationType,
