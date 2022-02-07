@@ -36,7 +36,10 @@ interface Row extends TableRow {
   selector: 'a-mat-dyn-edit-rel-panel',
   templateUrl: './dynamic-edit-relationship-panel.component.html',
 })
-export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsEditRelationshipPanelComponent {
+export class AllorsMaterialDynamicEditRelationshipPanelComponent
+  extends AllorsEditRelationshipPanelComponent
+  implements CreatePullHandler
+{
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -243,5 +246,19 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
 
   toggle() {
     this.panelService.stopEdit().subscribe();
+  }
+
+  onPreCreatePull(pulls: Pull[]): void {
+    const pull: Pull = {
+      objectId: this.objectInfo.id,
+      results: [{ name: '_anchor' }],
+    };
+
+    pulls.push(pull);
+  }
+
+  onPostCreatePull(object: IObject, pullResult: IPullResult): void {
+    const anchorObject = pullResult.object<IObject>('_anchor');
+    object.strategy.setCompositeRole(this.anchor, anchorObject);
   }
 }
