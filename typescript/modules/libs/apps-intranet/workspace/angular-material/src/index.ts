@@ -6,7 +6,7 @@ export { InternalOrganisationId } from './lib/services/state/internal-organisati
 
 export { Filters } from './lib/filters/filters';
 
-export { BasepriceEditComponent } from './lib/objects/baseprice/edit/baseprice-edit.component';
+export { BasepriceEditComponent } from './lib/objects/baseprice/form/baseprice-form.component';
 
 export { BrandEditComponent } from './lib/objects/brand/edit/brand-edit.component';
 export { InlineBrandComponent } from './lib/objects/brand/inline/brand-inline.component';
