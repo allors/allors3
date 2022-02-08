@@ -1,7 +1,12 @@
 <div class="a-main">
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
-      <div class="col"><a (click)="navigation.list(m.PurchaseInvoice)" style="cursor: pointer">PurchaseInvoices</a> / {{ invoice?.InvoiceNumber }}</div>
+      <div class="col">
+        <a (click)="navigation.list(m.PurchaseInvoice)" style="cursor: pointer"
+          >PurchaseInvoices</a
+        >
+        / {{ invoice?.InvoiceNumber }}
+      </div>
     </div>
   </div>
 
@@ -11,8 +16,11 @@
         <purchaseinvoice-overview-summary></purchaseinvoice-overview-summary>
       </div>
 
-      <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
-        <purchaseinvoice-overview-detail></purchaseinvoice-overview-detail>
+      <div
+        class="col-md-8 align-self-stretch"
+        [ngClass]="panelManager.panelContainerClass"
+      >
+        <purchaseinvoice-edit-form></purchaseinvoice-edit-form>
 
         <purchaseinvoiceitem-overview-panel></purchaseinvoiceitem-overview-panel>
 

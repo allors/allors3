@@ -1,28 +1,31 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  ContactMechanism,
-  Enumeration,
-  ElectronicAddress,
-} from '@allors/default/workspace/domain';
-import {
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
-
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './webaddress-edit.component.html',
+  templateUrl: './webaddress-form.component.html',
   providers: [ContextService],
 })
-export class WebAddressEditComponent implements OnInit, OnDestroy {
+export class WebAddressFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   contactMechanism: ElectronicAddress;
@@ -33,7 +36,7 @@ export class WebAddressEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
-    public dialogRef: MatDialogRef<WebAddressEditComponent>,
+    public dialogRef: MatDialogRef<WebAddressFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId

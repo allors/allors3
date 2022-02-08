@@ -1,39 +1,34 @@
-import { Component, OnInit, Self, OnDestroy, Inject } from '@angular/core';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-
-import { M } from '@allors/default/workspace/meta';
 import {
-  Organisation,
-  Party,
-  Priority,
-  WorkRequirement,
-  SerialisedItem,
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 import {
-  ObjectData,
-  OldPanelService,
-  RadioGroupOption,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
-
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../..';
 import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'workrequirement-create',
-  templateUrl: './workrequirement-create.component.html',
+  templateUrl: './workrequirement-create-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
+export class WorkRequirementCreateFormComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title: string;
 
@@ -50,7 +45,7 @@ export class WorkRequirementCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkRequirementCreateComponent>,
+    public dialogRef: MatDialogRef<WorkRequirementCreateFormComponent>,
 
     public refreshService: RefreshService,
     private errorService: ErrorService,

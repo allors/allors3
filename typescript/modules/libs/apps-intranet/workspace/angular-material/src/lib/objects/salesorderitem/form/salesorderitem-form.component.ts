@@ -1,52 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Part,
-  InternalOrganisation,
-  NonSerialisedInventoryItem,
-  InventoryItem,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  SerialisedItemAvailability,
-  SalesOrderItem,
-  RequestItemState,
-  RequestState,
-  QuoteItemState,
-  QuoteState,
-  SalesOrderItemState,
-  SalesOrderState,
-  ShipmentItemState,
-  ShipmentState,
-  SalesOrder,
-  QuoteItem,
-  VatRegime,
-  IrpfRegime,
-  InvoiceItemType,
-  Product,
-  UnifiedGood,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './salesorderitem-edit.component.html',
+  templateUrl: './salesorderitem-form.component.html',
   providers: [ContextService],
 })
-export class SalesOrderItemEditComponent implements OnInit, OnDestroy {
+export class SalesOrderItemFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -118,7 +99,7 @@ export class SalesOrderItemEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SalesOrderItemEditComponent>,
+    public dialogRef: MatDialogRef<SalesOrderItemFormComponent>,
     public refreshService: RefreshService,
     private fetcher: FetcherService,
     private errorService: ErrorService,

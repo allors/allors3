@@ -1,35 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Organisation,
-  Party,
-  SerialisedItem,
-  WorkEffort,
-  WorkEffortFixedAssetAssignment,
-  Enumeration,
-  AssetAssignmentStatus,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './workeffortfixedassetassignment-edit.component.html',
+  templateUrl: './workeffortfixedassetassignment-form.component.html',
   providers: [ContextService],
 })
-export class WorkEffortFixedAssetAssignmentEditComponent
+export class WorkEffortFixedAssetAssignmentFormComponent
   implements OnInit, OnDestroy
 {
   readonly m: M;
@@ -51,7 +49,7 @@ export class WorkEffortFixedAssetAssignmentEditComponent
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkEffortFixedAssetAssignmentEditComponent>,
+    public dialogRef: MatDialogRef<WorkEffortFixedAssetAssignmentFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId

@@ -1,47 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Organisation,
-  Part,
-  SupplierOffering,
-  Facility,
-  NonUnifiedPart,
-  InternalOrganisation,
-  NonSerialisedInventoryItem,
-  InventoryItem,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  UnifiedGood,
-  SerialisedItemAvailability,
-  SalesOrderItem,
-  SalesInvoice,
-  VatRegime,
-  IrpfRegime,
-  InvoiceItemType,
-  SalesInvoiceItem,
-  Product,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './salesinvoiceitem-edit.component.html',
+  templateUrl: './salesinvoiceitem-form.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceItemEditComponent implements OnInit, OnDestroy {
+export class SalesInvoiceItemFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -78,7 +64,7 @@ export class SalesInvoiceItemEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SalesInvoiceItemEditComponent>,
+    public dialogRef: MatDialogRef<SalesInvoiceItemFormComponent>,
     public refreshService: RefreshService,
 
     private fetcher: FetcherService,

@@ -1,27 +1,30 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Receipt,
-  Invoice,
-  PaymentApplication,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 @Component({
-  templateUrl: './receipt-edit.component.html',
+  templateUrl: './receipt-form.component.html',
   providers: [ContextService],
 })
-export class ReceiptEditComponent implements OnInit, OnDestroy {
+export class ReceiptFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   receipt: Receipt;
@@ -35,7 +38,7 @@ export class ReceiptEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ReceiptEditComponent>,
+    public dialogRef: MatDialogRef<ReceiptFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService
   ) {

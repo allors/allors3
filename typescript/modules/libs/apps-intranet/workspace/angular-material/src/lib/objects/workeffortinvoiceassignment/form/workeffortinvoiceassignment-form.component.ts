@@ -1,32 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import {
-  InternalOrganisation,
-  InvoiceItemType,
-  WorkEffortInvoiceItem,
-  WorkEffort,
-  WorkEffortInvoiceItemAssignment,
-} from '@allors/default/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './workeffortinvoiceassignment-edit.component.html',
+  templateUrl: './workeffortinvoiceassignment-form.component.html',
   providers: [ContextService],
 })
-export class WorkEffortInvoiceItemAssignmentEditComponent
+export class WorkEffortInvoiceItemAssignmentFormComponent
   implements OnInit, OnDestroy
 {
   readonly m: M;
@@ -43,7 +44,7 @@ export class WorkEffortInvoiceItemAssignmentEditComponent
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkEffortInvoiceItemAssignmentEditComponent>,
+    public dialogRef: MatDialogRef<WorkEffortInvoiceItemAssignmentFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private snackBar: MatSnackBar,

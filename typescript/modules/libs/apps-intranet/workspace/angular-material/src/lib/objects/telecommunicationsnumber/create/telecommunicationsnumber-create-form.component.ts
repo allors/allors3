@@ -1,32 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Party,
-  PartyContactMechanism,
-  Enumeration,
-  TelecommunicationsNumber,
-  ContactMechanismType,
-  ContactMechanismPurpose,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './telecommunicationsnumber-create.component.html',
+  templateUrl: './telecommunicationsnumber-create-form.component.html',
   providers: [ContextService],
 })
-export class TelecommunicationsNumberCreateComponent
+export class TelecommunicationsNumberCreateFormComponent
   implements OnInit, OnDestroy
 {
   readonly m: M;
@@ -44,7 +44,7 @@ export class TelecommunicationsNumberCreateComponent
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<TelecommunicationsNumberCreateComponent>,
+    public dialogRef: MatDialogRef<TelecommunicationsNumberCreateFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId

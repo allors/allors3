@@ -1,29 +1,30 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Locale,
-  Organisation,
-  UserProfile,
-  Singleton,
-  User,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SingletonId,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
-  templateUrl: './userprofile-edit.component.html',
+  templateUrl: './userprofile-form.component.html',
   providers: [ContextService],
 })
-export class UserProfileEditComponent implements OnInit, OnDestroy {
+export class UserProfileFormComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
@@ -41,7 +42,7 @@ export class UserProfileEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<UserProfileEditComponent>,
+    public dialogRef: MatDialogRef<UserProfileFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private singletonId: SingletonId

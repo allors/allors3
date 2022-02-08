@@ -1,45 +1,35 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  InternalOrganisation,
-  SupplierRelationship,
-  ContactMechanism,
-  PartyContactMechanism,
-  PostalAddress,
-  Currency,
-  VatRegime,
-  IrpfRegime,
-  PurchaseInvoice,
-  PurchaseInvoiceType,
-  CustomerRelationship,
-} from '@allors/default/workspace/domain';
-import {
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
+
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  selector: 'purchaseinvoice-overview-detail',
-  templateUrl: './purchaseinvoice-overview-detail.component.html',
+  selector: 'purchaseinvoice-edit-form',
+  templateUrl: './purchaseinvoice-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class PurchaseInvoiceOverviewDetailComponent
-  implements OnInit, OnDestroy
-{
+export class PurchaseInvoiceEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   invoice: PurchaseInvoice;

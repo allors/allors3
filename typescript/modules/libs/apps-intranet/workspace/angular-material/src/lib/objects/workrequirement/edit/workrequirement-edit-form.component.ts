@@ -1,26 +1,24 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
-import { Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
-
-import { M } from '@allors/default/workspace/meta';
 import {
-  Party,
-  Priority,
-  WorkRequirement,
-  SerialisedItem,
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 import {
-  NavigationService,
-  OldPanelService,
-  RadioGroupOption,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
@@ -28,13 +26,11 @@ import { Filters } from '../../../../filters/filters';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'workrequirement-overview-detail',
-  templateUrl: './workrequirement-overview-detail.component.html',
+  selector: 'workrequirement-edit-form',
+  templateUrl: './workrequirement-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class WorkRequirementOverviewDetailComponent
-  implements OnInit, OnDestroy
-{
+export class WorkRequirementEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title: string;
 

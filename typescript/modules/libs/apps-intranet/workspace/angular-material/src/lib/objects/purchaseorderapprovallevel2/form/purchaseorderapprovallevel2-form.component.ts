@@ -1,26 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, Observable } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
-import { M } from '@allors/default/workspace/meta';
-import { PurchaseOrderApprovalLevel2 } from '@allors/default/workspace/domain';
 import {
-  Action,
-  ObjectData,
-  RefreshService,
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
+import {
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject, IResult } from '@allors/system/workspace/domain';
 
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
-  templateUrl: './purchaseorderapprovallevel2-edit.component.html',
+  templateUrl: './purchaseorderapprovallevel2-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseOrderApprovalLevel2EditComponent
+export class PurchaseOrderApprovalLevel2FormComponent
   implements OnInit, OnDestroy
 {
   title: string;
@@ -37,7 +43,7 @@ export class PurchaseOrderApprovalLevel2EditComponent
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PurchaseOrderApprovalLevel2EditComponent>,
+    public dialogRef: MatDialogRef<PurchaseOrderApprovalLevel2FormComponent>,
     public printService: PrintService,
     public refreshService: RefreshService,
     private errorService: ErrorService

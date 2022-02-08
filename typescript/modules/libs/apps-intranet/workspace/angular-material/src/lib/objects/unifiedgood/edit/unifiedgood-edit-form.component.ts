@@ -1,31 +1,22 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Locale,
-  Organisation,
-  PriceComponent,
-  ProductIdentificationType,
-  Facility,
-  InventoryItemKind,
-  ProductType,
-  Brand,
-  Model,
-  UnitOfMeasure,
-  Settings,
-  ProductCategory,
-  ProductNumber,
-  UnifiedGood,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -33,11 +24,11 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  selector: 'unifiedgood-overview-detail',
-  templateUrl: './unifiedgood-overview-detail.component.html',
+  selector: 'unifiedgood-edit-form',
+  templateUrl: './unifiedgood-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class UnifiedGoodOverviewDetailComponent implements OnInit, OnDestroy {
+export class UnifiedGoodEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   good: UnifiedGood;

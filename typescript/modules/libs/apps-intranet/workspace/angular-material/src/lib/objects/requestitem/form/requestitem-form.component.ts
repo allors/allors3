@@ -1,43 +1,31 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Part,
-  UnitOfMeasure,
-  Good,
-  SerialisedItem,
-  UnifiedGood,
-  Request,
-  RequestItemState,
-  RequestState,
-  QuoteItemState,
-  QuoteState,
-  SalesOrderItemState,
-  SalesOrderState,
-  ShipmentItemState,
-  ShipmentState,
-  RequestItem,
-  Product,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './requestitem-edit.component.html',
+  templateUrl: './requestitem-form.component.html',
   providers: [ContextService],
 })
-export class RequestItemEditComponent implements OnInit, OnDestroy {
+export class RequestItemFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -95,7 +83,7 @@ export class RequestItemEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<RequestItemEditComponent>,
+    public dialogRef: MatDialogRef<RequestItemFormComponent>,
     private errorService: ErrorService,
     public refreshService: RefreshService,
     public snackBar: MatSnackBar

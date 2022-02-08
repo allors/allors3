@@ -1,32 +1,22 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  InternalOrganisation,
-  Locale,
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Currency,
-  Enumeration,
-  CustomerRelationship,
-  Employment,
-  PersonRole,
-  OrganisationContactKind,
-  GenderType,
-  Salutation,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
-  SingletonId,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -35,10 +25,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './person-create.component.html',
+  templateUrl: './person-create-form.component.html',
   providers: [ContextService],
 })
-export class PersonCreateComponent implements OnInit, OnDestroy {
+export class PersonCreateFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Person';
@@ -70,7 +60,7 @@ export class PersonCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PersonCreateComponent>,
+    public dialogRef: MatDialogRef<PersonCreateFormComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,

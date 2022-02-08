@@ -1,27 +1,30 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Disbursement,
-  Invoice,
-  PaymentApplication,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 @Component({
-  templateUrl: './disbursement-edit.component.html',
+  templateUrl: './disbursement-form.component.html',
   providers: [ContextService],
 })
-export class DisbursementEditComponent implements OnInit, OnDestroy {
+export class DisbursementFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   disbursement: Disbursement;
@@ -35,7 +38,7 @@ export class DisbursementEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<DisbursementEditComponent>,
+    public dialogRef: MatDialogRef<DisbursementFormComponent>,
 
     public refreshService: RefreshService,
     private errorService: ErrorService

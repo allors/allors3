@@ -1,36 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Part,
-  Facility,
-  NonSerialisedInventoryItem,
-  InventoryItem,
-  InventoryItemTransaction,
-  InventoryTransactionReason,
-  Lot,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  NonSerialisedInventoryItemState,
-  SerialisedInventoryItemState,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  templateUrl: './inventoryitemtransaction-edit.component.html',
+  templateUrl: './inventoryitemtransaction-form.component.html',
   providers: [ContextService],
 })
-export class InventoryItemTransactionEditComponent
+export class InventoryItemTransactionFormComponent
   implements OnInit, OnDestroy
 {
   readonly m: M;
@@ -58,7 +54,7 @@ export class InventoryItemTransactionEditComponent
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<InventoryItemTransactionEditComponent>,
+    public dialogRef: MatDialogRef<InventoryItemTransactionFormComponent>,
 
     public refreshService: RefreshService,
     private errorService: ErrorService,

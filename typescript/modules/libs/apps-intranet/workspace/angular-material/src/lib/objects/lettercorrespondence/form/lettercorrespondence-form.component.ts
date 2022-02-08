@@ -1,38 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  InternalOrganisation,
-  CommunicationEventPurpose,
-  ContactMechanism,
-  LetterCorrespondence,
-  CommunicationEventState,
-  PartyContactMechanism,
-  PostalAddress,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './lettercorrespondence-edit.component.html',
+  templateUrl: './lettercorrespondence-form.component.html',
   providers: [ContextService],
 })
-export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
+export class LetterCorrespondenceFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   addFromParty = false;
@@ -57,7 +51,7 @@ export class LetterCorrespondenceEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<LetterCorrespondenceEditComponent>,
+    public dialogRef: MatDialogRef<LetterCorrespondenceFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
 

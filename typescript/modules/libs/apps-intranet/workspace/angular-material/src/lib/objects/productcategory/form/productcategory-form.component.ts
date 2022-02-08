@@ -1,31 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Locale,
-  InternalOrganisation,
-  ProductCategory,
-  Scope,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './productcategory-edit.component.html',
+  templateUrl: './productcategory-form.component.html',
   providers: [ContextService],
 })
-export class ProductCategoryEditComponent implements OnInit, OnDestroy {
+export class ProductCategoryFormComponent implements OnInit, OnDestroy {
   public m: M;
   public title: string;
 
@@ -40,7 +42,7 @@ export class ProductCategoryEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ProductCategoryEditComponent>,
+    public dialogRef: MatDialogRef<ProductCategoryFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private fetcher: FetcherService,

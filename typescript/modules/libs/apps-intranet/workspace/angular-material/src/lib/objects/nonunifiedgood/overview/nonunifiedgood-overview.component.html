@@ -1,7 +1,12 @@
 <div class="a-main">
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
-      <div class="col"><a (click)="navigation.list(m.NonUnifiedGood)" style="cursor: pointer">goods</a> / {{ good?.Name }}</div>
+      <div class="col">
+        <a (click)="navigation.list(m.NonUnifiedGood)" style="cursor: pointer"
+          >goods</a
+        >
+        / {{ good?.Name }}
+      </div>
     </div>
   </div>
 
@@ -11,10 +16,15 @@
         <nonunifiedgood-overview-summary></nonunifiedgood-overview-summary>
       </div>
 
-      <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
-        <nonunifiedgood-overview-detail></nonunifiedgood-overview-detail>
+      <div
+        class="col-md-8 align-self-stretch"
+        [ngClass]="panelManager.panelContainerClass"
+      >
+        <nonunifiedgood-edit-form></nonunifiedgood-edit-form>
 
-        <productidentification-panel [roleType]="m.Good.ProductIdentifications"></productidentification-panel>
+        <productidentification-panel
+          [roleType]="m.Good.ProductIdentifications"
+        ></productidentification-panel>
 
         <pricecomponent-overview-panel></pricecomponent-overview-panel>
       </div>

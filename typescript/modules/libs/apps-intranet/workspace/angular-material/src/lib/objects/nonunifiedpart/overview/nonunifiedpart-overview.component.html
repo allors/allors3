@@ -1,7 +1,12 @@
 <div class="a-main">
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
-      <div class="col"><a (click)="navigation.list(m.NonUnifiedPart)" style="cursor: pointer">parts</a> / {{ part?.Name }}</div>
+      <div class="col">
+        <a (click)="navigation.list(m.NonUnifiedPart)" style="cursor: pointer"
+          >parts</a
+        >
+        / {{ part?.Name }}
+      </div>
     </div>
   </div>
 
@@ -11,16 +16,27 @@
         <nonunifiedpart-overview-summary></nonunifiedpart-overview-summary>
       </div>
 
-      <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
-        <nonunifiedpart-overview-detail></nonunifiedpart-overview-detail>
+      <div
+        class="col-md-8 align-self-stretch"
+        [ngClass]="panelManager.panelContainerClass"
+      >
+        <nonunifiedpart-edit-form></nonunifiedpart-edit-form>
 
-        <productidentification-panel [roleType]="m.Part.ProductIdentifications"></productidentification-panel>
+        <productidentification-panel
+          [roleType]="m.Part.ProductIdentifications"
+        ></productidentification-panel>
 
-        <nonserialisedinventoryitem-overview-panel *ngIf="serialised === false"></nonserialisedinventoryitem-overview-panel>
+        <nonserialisedinventoryitem-overview-panel
+          *ngIf="serialised === false"
+        ></nonserialisedinventoryitem-overview-panel>
 
-        <serialisedinventoryitem-overview-panel *ngIf="serialised === true"></serialisedinventoryitem-overview-panel>
+        <serialisedinventoryitem-overview-panel
+          *ngIf="serialised === true"
+        ></serialisedinventoryitem-overview-panel>
 
-        <serialiseditem-overview-panel *ngIf="serialised === true"></serialiseditem-overview-panel>
+        <serialiseditem-overview-panel
+          *ngIf="serialised === true"
+        ></serialiseditem-overview-panel>
 
         <pricecomponent-overview-panel></pricecomponent-overview-panel>
 

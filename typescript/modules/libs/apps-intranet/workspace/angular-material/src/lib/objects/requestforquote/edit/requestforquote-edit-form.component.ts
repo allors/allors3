@@ -1,41 +1,34 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  InternalOrganisation,
-  ContactMechanism,
-  PartyContactMechanism,
-  Currency,
-  RequestForQuote,
-  Quote,
-  CustomerRelationship,
-} from '@allors/default/workspace/domain';
-import {
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  selector: 'requestforquote-overview-detail',
-  templateUrl: './requestforquote-overview-detail.component.html',
+  selector: 'requestforquote-edit-form',
+  templateUrl: './requestforquote-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class RequestForQuoteOverviewDetailComponent
-  implements OnInit, OnDestroy
-{
+export class RequestForQuoteEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   request: RequestForQuote;

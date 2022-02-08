@@ -1,29 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  PartyContactMechanism,
-  Party,
-  PostalAddress,
-  Country,
-} from '@allors/default/workspace/domain';
-import {
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './postaladdress-edit.component.html',
+  templateUrl: './postaladdress-form.component.html',
   providers: [ContextService],
 })
-export class PostalAddressEditComponent implements OnInit, OnDestroy {
+export class PostalAddressFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   contactMechanism: PostalAddress;
@@ -37,7 +40,7 @@ export class PostalAddressEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: IObject,
-    public dialogRef: MatDialogRef<PostalAddressEditComponent>,
+    public dialogRef: MatDialogRef<PostalAddressFormComponent>,
 
     public refreshService: RefreshService,
     private errorService: ErrorService,

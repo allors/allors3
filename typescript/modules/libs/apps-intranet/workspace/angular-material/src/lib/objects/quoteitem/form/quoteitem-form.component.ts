@@ -1,52 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Part,
-  UnitOfMeasure,
-  InternalOrganisation,
-  NonSerialisedInventoryItem,
-  InventoryItem,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  RequestItemState,
-  RequestState,
-  QuoteItemState,
-  QuoteState,
-  SalesOrderItemState,
-  SalesOrderState,
-  ShipmentItemState,
-  ShipmentState,
-  ProductQuote,
-  QuoteItem,
-  VatRegime,
-  IrpfRegime,
-  InvoiceItemType,
-  RequestItem,
-  UnifiedGood,
-  Product,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './quoteitem-edit.component.html',
+  templateUrl: './quoteitem-form.component.html',
   providers: [ContextService],
 })
-export class QuoteItemEditComponent implements OnInit, OnDestroy {
+export class QuoteItemFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -115,7 +96,7 @@ export class QuoteItemEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<QuoteItemEditComponent>,
+    public dialogRef: MatDialogRef<QuoteItemFormComponent>,
     private errorService: ErrorService,
     public refreshService: RefreshService,
 

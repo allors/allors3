@@ -1,10 +1,4 @@
-<form *ngIf="workEffortInvoiceItemAssignment" #form="ngForm" (submit)="save()" novalidate>
-  <h1></h1>
-
-  <h3 mat-dialog-title>{{ title }}</h3>
-
-  <mat-dialog-content>
-    <div class="container-fluid">
+    <div class="container-fluid" *ngIf="workEffortInvoiceItem">
       <div class="row" *ngIf="workEffortInvoiceItem.strategy.isNew">
         <a-mat-select class="col-md" [object]="workEffortInvoiceItem" [roleType]="m.WorkEffortInvoiceItem.InvoiceItemType" [options]="invoiceItemTypes" display="Name"></a-mat-select>
       </div>
@@ -25,10 +19,3 @@
         </div>
       </div>
     </div>
-  </mat-dialog-content>
-
-  <div mat-dialog-actions>
-    <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
-  </div>
-</form>

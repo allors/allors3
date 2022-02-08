@@ -1,70 +1,69 @@
-<div *ngIf="panel.isCollapsed && requirement" (click)="panel.toggle()" attr.data-allors-panel="{{ panel.name }}">
-  <div class="container mb-3">
-    <div class="row rounded" style="background-color: white">
-      <div class="col-3 col-md-2 p-3 rounded-left d-flex justify-content-center align-items-start" style="background-color: lightseagreen">
-        <mat-icon style="color: white; zoom: 250%">{{ panel.icon }}</mat-icon>
-      </div>
-      <div class="col-9 col-md-10 p-3">
-        <h4>{{ panel.title }}</h4>
-        <div>{{ requirement.Description }}</div>
+<div class="container-fluid" *ngIf="requirement">
+  <div class="row">
+    <div class="col-md">
+      <div class="row">
+        <a-mat-autocomplete
+          class="col-md"
+          [object]="requirement"
+          [roleType]="m.WorkRequirement.Originator"
+          [filter]="customersFilter.create(allors.context)"
+          display="DisplayName"
+          (changed)="originatorSelected($event)"
+          label="From"
+        ></a-mat-autocomplete>
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <a-mat-select
+      class="col-md"
+      [object]="requirement"
+      [roleType]="m.WorkRequirement.FixedAsset"
+      [options]="serialisedItems"
+      display="DisplayName"
+    ></a-mat-select>
+  </div>
+
+  <div class="row">
+    <a-mat-radio-group
+      class="col-md"
+      [object]="requirement"
+      [roleType]="m.WorkRequirement.Priority"
+      [options]="priorityOptions"
+    ></a-mat-radio-group>
+  </div>
+
+  <div class="row">
+    <a-mat-input
+      class="col-md"
+      [object]="requirement"
+      [roleType]="m.WorkRequirement.Location"
+    ></a-mat-input>
+  </div>
+
+  <div class="row">
+    <a-mat-textarea
+      class="col-md"
+      [object]="requirement"
+      [roleType]="m.WorkRequirement.Reason"
+    ></a-mat-textarea>
+  </div>
+
+  <div class="row pt-3">
+    <a-mat-files
+      class="col-md-12"
+      [object]="requirement"
+      [roleType]="m.WorkRequirement.Pictures"
+      accept="image/*"
+    ></a-mat-files>
+  </div>
+
+  <div class="row">
+    <a-mat-slidetoggle
+      class="col-md"
+      [object]="requirement"
+      [roleType]="m.WorkRequirement.UnOperable"
+    ></a-mat-slidetoggle>
+  </div>
 </div>
-
-<form *ngIf="panel.isExpanded" #form="ngForm" (submit)="save()" novalidate>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ panel.title }}</mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content>
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md">
-            <div class="row">
-              <a-mat-autocomplete
-                class="col-md"
-                [object]="requirement"
-                [roleType]="m.WorkRequirement.Originator"
-                [filter]="customersFilter.create(allors.context)"
-                display="DisplayName"
-                (changed)="originatorSelected($event)"
-                label="From"
-              ></a-mat-autocomplete>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <a-mat-select class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.FixedAsset" [options]="serialisedItems" display="DisplayName"></a-mat-select>
-        </div>
-    
-        <div class="row">
-          <a-mat-radio-group class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.Priority" [options]="priorityOptions"></a-mat-radio-group>
-        </div>
-
-        <div class="row">
-          <a-mat-input class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.Location"></a-mat-input>
-        </div>
-
-        <div class="row">
-          <a-mat-textarea class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.Reason"></a-mat-textarea>
-        </div>
-
-        <div class="row pt-3">
-          <a-mat-files class="col-md-12" [object]="requirement" [roleType]="m.WorkRequirement.Pictures" accept="image/*"></a-mat-files>
-        </div>
-
-        <div class="row">
-          <a-mat-slidetoggle class="col-md" [object]="requirement" [roleType]="m.WorkRequirement.UnOperable"></a-mat-slidetoggle>
-        </div>
-      </div>
-    </mat-card-content>
-
-    <mat-card-actions>
-      <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
-      <button mat-button (click)="panel.toggle()" type="button">CANCEL</button>
-    </mat-card-actions>
-  </mat-card>
-</form>
