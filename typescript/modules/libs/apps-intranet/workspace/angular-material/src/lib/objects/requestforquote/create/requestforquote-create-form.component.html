@@ -1,8 +1,4 @@
-<form *ngIf="request" class="a-edit" #form="ngForm" (submit)="save()">
-  <h3 mat-dialog-title>{{ title }}</h3>
-
-  <mat-dialog-content>
-    <div class="container-fluid">
+    <div class="container-fluid" *ngIf="request">
       <div class="row">
         <div class="col-md">
           <div class="row">
@@ -92,10 +88,3 @@
         <a-mat-textarea class="col-md" [object]="request" [roleType]="m.Request.InternalComment" class="col-md-12"></a-mat-textarea>
       </div>
     </div>
-  </mat-dialog-content>
-
-  <div mat-dialog-actions>
-    <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE</button>
-  </div>
-</form>
