@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  RequestForQuote,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './requestforquote-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class RequestForQuoteEditFormComponent implements OnInit, OnDestroy {
+export class RequestForQuoteEditFormComponent
+  extends AllorsFormComponent<RequestForQuote>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   request: RequestForQuote;
@@ -49,24 +53,12 @@ export class RequestForQuoteEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Request For Quote Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Collapsed
-    const requestForQuotePullName = `${panel.name}_${this.m.RequestForQuote.tag}`;
-    const productQuotePullName = `${panel.name}_${this.m.ProductQuote.tag}`;
-
+    super(allors, errorService, form);
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
         const m = this.m;

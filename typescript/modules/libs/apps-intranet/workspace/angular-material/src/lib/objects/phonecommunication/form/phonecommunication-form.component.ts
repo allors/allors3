@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PhoneCommunication,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,7 +27,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './phonecommunication-form.component.html',
   providers: [ContextService],
 })
-export class PhoneCommunicationFormComponent implements OnInit, OnDestroy {
+export class PhoneCommunicationFormComponent
+  extends AllorsFormComponent<PhoneCommunication>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   addFromParty = false;
@@ -50,15 +54,11 @@ export class PhoneCommunicationFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PhoneCommunicationFormComponent>,
-    public refreshService: RefreshService,
-    public navigation: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -245,12 +245,6 @@ export class PhoneCommunicationFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public fromPhoneNumberAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
@@ -392,12 +386,5 @@ export class PhoneCommunicationFormComponent implements OnInit, OnDestroy {
         )
         ?.map((v) => v.ContactMechanism);
     });
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.communicationEvent);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

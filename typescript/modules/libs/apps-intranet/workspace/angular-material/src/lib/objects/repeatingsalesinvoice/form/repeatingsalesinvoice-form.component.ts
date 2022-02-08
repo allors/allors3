@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  RepeatingSalesInvoice,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './repeatingsalesinvoice-form.component.html',
   providers: [ContextService],
 })
-export class RepeatingSalesInvoiceFormComponent implements OnInit, OnDestroy {
+export class RepeatingSalesInvoiceFormComponent
+  extends AllorsFormComponent<RepeatingSalesInvoice>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   title: string;
@@ -37,13 +41,10 @@ export class RepeatingSalesInvoiceFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<RepeatingSalesInvoiceFormComponent>,
-    private errorService: ErrorService,
-    public refreshService: RefreshService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -117,18 +118,5 @@ export class RepeatingSalesInvoiceFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.repeatinginvoice);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PartyRate,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './partyrate-form.component.html',
   providers: [ContextService],
 })
-export class PartyRateFormComponent implements OnInit, OnDestroy {
+export class PartyRateFormComponent
+  extends AllorsFormComponent<PartyRate>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   title: string;
   subTitle: string;
 
@@ -39,13 +43,10 @@ export class PartyRateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PartyRateFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -120,18 +121,5 @@ export class PartyRateFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.partyRate);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

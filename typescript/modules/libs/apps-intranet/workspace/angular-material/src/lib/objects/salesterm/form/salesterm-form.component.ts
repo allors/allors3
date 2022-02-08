@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  SalesTerm,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './salesterm-form.component.html',
   providers: [ContextService],
 })
-export class SalesTermFormComponent implements OnInit, OnDestroy {
+export class SalesTermFormComponent
+  extends AllorsFormComponent<SalesTerm>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public m: M;
 
   public title = 'Edit Term Type';
@@ -37,13 +41,10 @@ export class SalesTermFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SalesTermFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -118,18 +119,5 @@ export class SalesTermFormComponent implements OnInit, OnDestroy {
           );
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.object);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

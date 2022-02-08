@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PartCategory,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './partcategory-form.component.html',
   providers: [ContextService],
 })
-export class PartCategoryFormComponent implements OnInit, OnDestroy {
+export class PartCategoryFormComponent
+  extends AllorsFormComponent<PartCategory>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public m: M;
   public title: string;
 
@@ -39,15 +43,12 @@ export class PartCategoryFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PartCategoryFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -113,18 +114,5 @@ export class PartCategoryFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.category);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

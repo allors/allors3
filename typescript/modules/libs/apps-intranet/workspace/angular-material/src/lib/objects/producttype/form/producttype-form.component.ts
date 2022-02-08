@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  ProductType,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './producttype-form.component.html',
   providers: [ContextService],
 })
-export class ProductTypeFormComponent implements OnInit, OnDestroy {
+export class ProductTypeFormComponent
+  extends AllorsFormComponent<ProductType>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public title: string;
   public subTitle: string;
 
@@ -38,13 +42,10 @@ export class ProductTypeFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ProductTypeFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -102,18 +103,5 @@ export class ProductTypeFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.productType);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

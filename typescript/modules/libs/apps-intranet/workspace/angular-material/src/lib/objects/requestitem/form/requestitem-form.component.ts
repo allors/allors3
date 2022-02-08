@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  RequestItem,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -25,7 +26,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './requestitem-form.component.html',
   providers: [ContextService],
 })
-export class RequestItemFormComponent implements OnInit, OnDestroy {
+export class RequestItemFormComponent
+  extends AllorsFormComponent<RequestItem>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   title: string;
@@ -82,14 +86,11 @@ export class RequestItemFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<RequestItemFormComponent>,
-    private errorService: ErrorService,
-    public refreshService: RefreshService,
+    errorService: ErrorService,
+    form: NgForm,
     public snackBar: MatSnackBar
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -357,12 +358,6 @@ export class RequestItemFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public goodSelected(product: IObject): void {
     if (product) {
       this.refreshSerialisedItems(product as Good);
@@ -475,13 +470,6 @@ export class RequestItemFormComponent implements OnInit, OnDestroy {
       this.requestItem.AssignedUnitPrice =
         this.serialisedItem?.ExpectedSalesPrice;
     }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.requestItem);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   private refreshSerialisedItems(product: Product): void {

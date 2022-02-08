@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseShipment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -29,7 +30,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './purchaseshipment-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class PurchaseShipmentEditFormComponent implements OnInit, OnDestroy {
+export class PurchaseShipmentEditFormComponent
+  extends AllorsFormComponent<PurchaseShipment>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   purchaseShipment: PurchaseShipment;
@@ -64,24 +68,12 @@ export class PurchaseShipmentEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-    this.refresh$ = new BehaviorSubject(new Date());
-
-    panel.name = 'detail';
-    panel.title = 'Purchase Shipment Details';
-    panel.icon = 'local_shipping';
-    panel.expandable = true;
-
-    // Collapsed
-    const pullName = `${this.panel.name}_${this.m.PurchaseShipment.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.purchaseShipment = undefined;
@@ -224,19 +216,10 @@ export class PurchaseShipmentEditFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     this.purchaseShipment.ShipToFacility = this.selectedFacility;
 
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 
   public facilityAdded(facility: Facility): void {

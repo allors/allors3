@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseOrderApprovalLevel1,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,8 @@ import { PrintService } from '../../../actions/print/print.service';
   providers: [ContextService],
 })
 export class PurchaseOrderApprovalLevel1FormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<PurchaseOrderApprovalLevel1>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   title: string;
   subTitle: string;
@@ -42,15 +44,11 @@ export class PurchaseOrderApprovalLevel1FormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PurchaseOrderApprovalLevel1FormComponent>,
-
-    public printService: PrintService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm,
+    public printService: PrintService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
 
     this.print = printService.print(
       this.m.PurchaseOrderApprovalLevel1.PurchaseOrder
@@ -89,12 +87,6 @@ export class PurchaseOrderApprovalLevel1FormComponent
       });
   }
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   approve(): void {
     this.saveAndInvoke(() =>
       this.allors.context.invoke(this.purchaseOrderApproval.Approve)
@@ -107,6 +99,7 @@ export class PurchaseOrderApprovalLevel1FormComponent
     );
   }
 
+  // TODO: KOEN
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
     const m = this.m;
     const { pullBuilder: pull } = m;

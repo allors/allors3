@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  NonSerialisedInventoryItem,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,8 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   providers: [ContextService],
 })
 export class NonSerialisedInventoryItemFormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<NonSerialisedInventoryItem>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   public m: M;
   public title: string;
@@ -39,16 +41,12 @@ export class NonSerialisedInventoryItemFormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<NonSerialisedInventoryItemFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -93,18 +91,5 @@ export class NonSerialisedInventoryItemFormComponent
           this.title = 'View Inventory Item';
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.nonSerialisedInventoryItem);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

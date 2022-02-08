@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  Employment,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,7 +28,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './employment-form.component.html',
   providers: [ContextService],
 })
-export class EmploymentFormComponent implements OnInit, OnDestroy {
+export class EmploymentFormComponent
+  extends AllorsFormComponent<Employment>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   partyRelationship: Employment;
@@ -45,15 +49,12 @@ export class EmploymentFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<EmploymentFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
 
     this.canSave = true;
   }
@@ -158,18 +159,5 @@ export class EmploymentFormComponent implements OnInit, OnDestroy {
   public employeeAdded(employee: Person): void {
     this.partyRelationship.Employee = employee;
     this.people.push(employee);
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.partyRelationship);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

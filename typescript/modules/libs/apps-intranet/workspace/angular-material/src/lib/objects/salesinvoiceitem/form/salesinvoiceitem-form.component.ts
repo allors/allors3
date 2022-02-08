@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  SalesInvoiceItem,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './salesinvoiceitem-form.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceItemFormComponent implements OnInit, OnDestroy {
+export class SalesInvoiceItemFormComponent
+  extends AllorsFormComponent<SalesInvoiceItem>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   title: string;
@@ -63,15 +67,11 @@ export class SalesInvoiceItemFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SalesInvoiceItemFormComponent>,
-    public refreshService: RefreshService,
-
-    private fetcher: FetcherService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm,
+    private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
 
     this.goodsFacilityFilter = new SearchFactory({
       objectType: this.m.Good,
@@ -234,19 +234,6 @@ export class SalesInvoiceItemFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.invoiceItem);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   public goodSelected(object: any) {

@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  LetterCorrespondence,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,7 +27,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './lettercorrespondence-form.component.html',
   providers: [ContextService],
 })
-export class LetterCorrespondenceFormComponent implements OnInit, OnDestroy {
+export class LetterCorrespondenceFormComponent
+  extends AllorsFormComponent<LetterCorrespondence>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   addFromParty = false;
@@ -50,16 +54,11 @@ export class LetterCorrespondenceFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<LetterCorrespondenceFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
-
-    public navigation: NavigationService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -260,12 +259,6 @@ export class LetterCorrespondenceFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public fromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.communicationEvent.FromParty) {
       this.communicationEvent.FromParty.addPartyContactMechanism(
@@ -408,12 +401,5 @@ export class LetterCorrespondenceFormComponent implements OnInit, OnDestroy {
       partyContactMechanism.ContactMechanism as PostalAddress;
     this.fromPostalAddresses.push(postalAddress);
     this.communicationEvent.PostalAddress = postalAddress;
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.communicationEvent);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

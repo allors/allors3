@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  WorkEffortInventoryAssignment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,8 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   providers: [ContextService],
 })
 export class WorkEffortInventoryAssignmentFormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<WorkEffortInventoryAssignment>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   readonly m: M;
 
@@ -44,15 +46,12 @@ export class WorkEffortInventoryAssignmentFormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkEffortInventoryAssignmentFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId,
     private snackBar: MatSnackBar
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -160,26 +159,6 @@ export class WorkEffortInventoryAssignmentFormComponent
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public update(): void {
-    this.allors.context.push().subscribe(() => {
-      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.workEffortInventoryAssignment);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   public inventoryItemSelected(inventoryItem: IObject): void {

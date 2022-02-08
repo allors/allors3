@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  WorkRequirement,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './workrequirement-create-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class WorkRequirementCreateFormComponent implements OnInit, OnDestroy {
+export class WorkRequirementCreateFormComponent
+  extends AllorsFormComponent<WorkRequirement>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
   public title: string;
 
@@ -44,16 +48,12 @@ export class WorkRequirementCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkRequirementCreateFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -176,18 +176,9 @@ export class WorkRequirementCreateFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     this.onSave();
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.requirement);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 
   private updateOriginator(party: Party) {

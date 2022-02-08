@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  SalesInvoice,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './salesinvoice-create-form.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceCreateFormComponent implements OnInit, OnDestroy {
+export class SalesInvoiceCreateFormComponent
+  extends AllorsFormComponent<SalesInvoice>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
   public title = 'Add Sales Invoice';
 
@@ -107,15 +111,12 @@ export class SalesInvoiceCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SalesInvoiceCreateFormComponent>,
-    private errorService: ErrorService,
-    public refreshService: RefreshService,
+    errorService: ErrorService,
+    form: NgForm,
     public internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -193,19 +194,6 @@ export class SalesInvoiceCreateFormComponent implements OnInit, OnDestroy {
         this.previousBillToCustomer = this.invoice.BillToCustomer;
         this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.invoice);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   public shipToCustomerAdded(party: Party): void {

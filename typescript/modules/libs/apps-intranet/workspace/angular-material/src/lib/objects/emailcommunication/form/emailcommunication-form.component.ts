@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  EmailCommunication,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -26,7 +27,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './emailcommunication-form.component.html',
   providers: [ContextService],
 })
-export class EmailCommunicationFormComponent implements OnInit, OnDestroy {
+export class EmailCommunicationFormComponent
+  extends AllorsFormComponent<EmailCommunication>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   addFromParty = false;
@@ -52,16 +56,11 @@ export class EmailCommunicationFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<EmailCommunicationFormComponent>,
-    public refreshService: RefreshService,
-
-    public navigation: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -264,12 +263,6 @@ export class EmailCommunicationFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public fromEmailAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.communicationEvent.FromParty) {
       this.communicationEvent.FromParty.addPartyContactMechanism(
@@ -399,12 +392,5 @@ export class EmailCommunicationFormComponent implements OnInit, OnDestroy {
         ?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)
         ?.map((v) => v.ContactMechanism);
     });
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.communicationEvent);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

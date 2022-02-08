@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  SalesOrder,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -29,7 +30,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './salesorder-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class SalesOrderEditFormComponent implements OnInit, OnDestroy {
+export class SalesOrderEditFormComponent
+  extends AllorsFormComponent<SalesOrder>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   order: SalesOrder;
@@ -116,27 +120,13 @@ export class SalesOrderEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private snackBar: MatSnackBar,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Sales Order Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Collapsed
-    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.tag}`;
-    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.tag}`;
-    const goodPullName = `${panel.name}_${this.m.Good.tag}`;
-    const billingProcessPullName = `${panel.name}_${this.m.BillingProcess.tag}`;
-    const serialisedInventoryItemStatePullName = `${panel.name}_${this.m.SerialisedInventoryItemState.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
@@ -364,19 +354,6 @@ export class SalesOrderEditFormComponent implements OnInit, OnDestroy {
           this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
   }
 
   public shipToCustomerAdded(party: Party): void {

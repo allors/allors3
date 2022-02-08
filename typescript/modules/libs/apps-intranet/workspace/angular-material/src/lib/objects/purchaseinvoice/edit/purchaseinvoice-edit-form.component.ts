@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseInvoice,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -29,7 +30,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './purchaseinvoice-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class PurchaseInvoiceEditFormComponent implements OnInit, OnDestroy {
+export class PurchaseInvoiceEditFormComponent
+  extends AllorsFormComponent<PurchaseInvoice>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   invoice: PurchaseInvoice;
@@ -100,19 +104,12 @@ export class PurchaseInvoiceEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     public fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Purchase Invoice Details';
-    panel.icon = 'business';
-    panel.expandable = true;
+    super(allors, errorService, form);
 
     // Normal
     const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;
@@ -273,19 +270,6 @@ export class PurchaseInvoiceEditFormComponent implements OnInit, OnDestroy {
         this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
         this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
   }
 
   public billedFromAdded(organisation: Organisation): void {

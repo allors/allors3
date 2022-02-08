@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  WorkTask,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './worktask-create-form.component.html',
   providers: [ContextService],
 })
-export class WorkTaskCreateFormComponent implements OnInit, OnDestroy {
+export class WorkTaskCreateFormComponent
+  extends AllorsFormComponent<WorkTask>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   public title = 'Add Work Task';
@@ -52,18 +56,13 @@ export class WorkTaskCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkTaskCreateFormComponent>,
-    public navigationService: NavigationService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private route: ActivatedRoute,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-    this.refresh$ = new BehaviorSubject<Date>(undefined);
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -195,18 +194,5 @@ export class WorkTaskCreateFormComponent implements OnInit, OnDestroy {
     this.workTask.Customer.addPartyContactMechanism(partyContactMechanism);
     this.workTask.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.workTask);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

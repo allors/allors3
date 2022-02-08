@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PositionTypeRate,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './positiontyperate-form.component.html',
   providers: [ContextService],
 })
-export class PositionTypeRateFormComponent implements OnInit, OnDestroy {
+export class PositionTypeRateFormComponent
+  extends AllorsFormComponent<PositionTypeRate>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   title: string;
   subTitle: string;
 
@@ -41,13 +45,10 @@ export class PositionTypeRateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PositionTypeRateFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -127,12 +128,6 @@ export class PositionTypeRateFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     if (this.selectedPositionTypes != null) {
       this.selectedPositionTypes.forEach((positionType: PositionType) => {
@@ -149,9 +144,6 @@ export class PositionTypeRateFormComponent implements OnInit, OnDestroy {
       positionType.PositionTypeRate = null;
     });
 
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.positionTypeRate);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

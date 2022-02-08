@@ -39,7 +39,6 @@ export class BasepriceFormComponent
     private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
-    this.allors.context.name = this.constructor.name;
   }
 
   onPreCreateOrEditPull(pulls: Pull[]): void {

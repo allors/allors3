@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  QuoteItem,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './quoteitem-form.component.html',
   providers: [ContextService],
 })
-export class QuoteItemFormComponent implements OnInit, OnDestroy {
+export class QuoteItemFormComponent
+  extends AllorsFormComponent<QuoteItem>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   title: string;
@@ -95,16 +99,13 @@ export class QuoteItemFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<QuoteItemFormComponent>,
-    private errorService: ErrorService,
-    public refreshService: RefreshService,
+    errorService: ErrorService,
+    form: NgForm,
 
     private fetcher: FetcherService,
     public snackBar: MatSnackBar
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -437,12 +438,6 @@ export class QuoteItemFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public goodSelected(product: IObject): void {
     if (product) {
       this.refreshSerialisedItems(product as Product);
@@ -561,13 +556,6 @@ export class QuoteItemFormComponent implements OnInit, OnDestroy {
       );
       this.quoteItem.Quantity = '1';
     }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.quoteItem);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   private refreshSerialisedItems(product: Product): void {

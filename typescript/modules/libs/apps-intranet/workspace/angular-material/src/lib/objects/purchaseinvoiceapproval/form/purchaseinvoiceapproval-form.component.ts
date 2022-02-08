@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseInvoiceApproval,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -20,13 +21,15 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { PrintService } from '../../../actions/print/print.service';
-import { PurchaseInvoiceApproval } from '@allors/default/workspace/domain';
 
 @Component({
   templateUrl: './purchaseinvoiceapproval-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceApprovalFormComponent implements OnInit, OnDestroy {
+export class PurchaseInvoiceApprovalFormComponent
+  extends AllorsFormComponent<PurchaseInvoiceApproval>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   title: string;
   subTitle: string;
 
@@ -40,14 +43,11 @@ export class PurchaseInvoiceApprovalFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PurchaseInvoiceApprovalFormComponent>,
-    public printService: PrintService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm,
+    public printService: PrintService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
 
     this.print = printService.print(
       this.m.PurchaseInvoiceApproval.PurchaseInvoice
@@ -86,12 +86,6 @@ export class PurchaseInvoiceApprovalFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   approve(): void {
     this.saveAndInvoke(() =>
       this.allors.context.invoke(this.purchaseInvoiceApproval.Approve)
@@ -104,6 +98,7 @@ export class PurchaseInvoiceApprovalFormComponent implements OnInit, OnDestroy {
     );
   }
 
+  // TODO: KOEN
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
     const m = this.m;
     const { pullBuilder: pull } = m;

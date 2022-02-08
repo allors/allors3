@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  EmailAddress,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -26,7 +27,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './emailaddress-form.component.html',
   providers: [ContextService],
 })
-export class EmailAddressFormComponent implements OnInit, OnDestroy {
+export class EmailAddressFormComponent
+  extends AllorsFormComponent<EmailAddress>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   contactMechanism: ElectronicAddress;
@@ -37,15 +41,11 @@ export class EmailAddressFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: IObject,
-    public dialogRef: MatDialogRef<EmailAddressFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -79,18 +79,5 @@ export class EmailAddressFormComponent implements OnInit, OnDestroy {
           this.title = 'View Email Address';
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.contactMechanism);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

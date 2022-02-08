@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  WorkTask,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -29,7 +30,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './worktask-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class WorkTaskEditFormComponent implements OnInit, OnDestroy {
+export class WorkTaskEditFormComponent
+  extends AllorsFormComponent<WorkTask>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   workTask: WorkTask;
@@ -50,23 +54,12 @@ export class WorkTaskEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'WorkTask Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Minimized
-    const pullName = `${this.panel.name}_${this.m.WorkTask.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.workTask = undefined;
@@ -200,12 +193,6 @@ export class WorkTaskEditFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public contactPersonAdded(contact: Person): void {
     const organisationContactRelationship =
       this.allors.context.create<OrganisationContactRelationship>(
@@ -289,12 +276,5 @@ export class WorkTaskEditFormComponent implements OnInit, OnDestroy {
 
       this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
     });
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
   }
 }

@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  UnifiedGood,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './unifiedgood-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class UnifiedGoodEditFormComponent implements OnInit, OnDestroy {
+export class UnifiedGoodEditFormComponent
+  extends AllorsFormComponent<UnifiedGood>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   good: UnifiedGood;
@@ -62,24 +66,12 @@ export class UnifiedGoodEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private snackBar: MatSnackBar
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-    this.refresh$ = new BehaviorSubject(new Date());
-
-    panel.name = 'detail';
-    panel.title = 'Good Details';
-    panel.icon = 'person';
-    panel.expandable = true;
-
-    // Collapsed
-    const pullName = `${this.panel.name}_${this.m.UnifiedGood.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.good = undefined;
@@ -240,12 +232,6 @@ export class UnifiedGoodEditFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public brandAdded(brand: Brand): void {
     this.brands.push(brand);
     this.selectedBrand = brand;
@@ -285,19 +271,7 @@ export class UnifiedGoodEditFormComponent implements OnInit, OnDestroy {
   public save(): void {
     this.onSave();
 
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    });
-  }
-
-  public update(): void {
-    this.onSave();
-
-    this.allors.context.push().subscribe(() => {
-      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 
   private onSave() {

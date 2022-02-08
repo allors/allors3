@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseInvoice,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './purchaseinvoice-create-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceCreateFormComponent implements OnInit, OnDestroy {
+export class PurchaseInvoiceCreateFormComponent
+  extends AllorsFormComponent<PurchaseInvoice>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public m: M;
 
   title = 'Add Purchase Invoice';
@@ -104,16 +108,12 @@ export class PurchaseInvoiceCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PurchaseInvoiceCreateFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -204,19 +204,6 @@ export class PurchaseInvoiceCreateFormComponent implements OnInit, OnDestroy {
 
         this.currencyInitialRole = this.internalOrganisation.PreferredCurrency;
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.invoice);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   public billedFromAdded(organisation: Organisation): void {

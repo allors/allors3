@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  FaceToFaceCommunication,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -26,7 +27,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './facetofacecommunication-form.component.html',
   providers: [ContextService],
 })
-export class FaceToFaceCommunicationFormComponent implements OnInit, OnDestroy {
+export class FaceToFaceCommunicationFormComponent
+  extends AllorsFormComponent<FaceToFaceCommunication>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   addFromParty = false;
@@ -46,15 +50,11 @@ export class FaceToFaceCommunicationFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<FaceToFaceCommunicationFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -240,12 +240,6 @@ export class FaceToFaceCommunicationFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public fromPartyAdded(fromParty: Person): void {
     this.addContactRelationship(fromParty);
     this.communicationEvent.FromParty = fromParty;
@@ -264,13 +258,6 @@ export class FaceToFaceCommunicationFormComponent implements OnInit, OnDestroy {
     this.contacts.sort((a, b) =>
       a.DisplayName > b.DisplayName ? 1 : b.DisplayName > a.DisplayName ? -1 : 0
     );
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.communicationEvent);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   private addContactRelationship(party: Person): void {

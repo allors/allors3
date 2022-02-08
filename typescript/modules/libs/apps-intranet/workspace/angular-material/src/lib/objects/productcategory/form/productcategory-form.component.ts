@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  ProductCategory,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './productcategory-form.component.html',
   providers: [ContextService],
 })
-export class ProductCategoryFormComponent implements OnInit, OnDestroy {
+export class ProductCategoryFormComponent
+  extends AllorsFormComponent<ProductCategory>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public m: M;
   public title: string;
 
@@ -41,15 +45,12 @@ export class ProductCategoryFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ProductCategoryFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -121,18 +122,5 @@ export class ProductCategoryFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.category);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

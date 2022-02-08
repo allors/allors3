@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PostalAddress,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,7 +27,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './postaladdress-create-form.component.html',
   providers: [ContextService],
 })
-export class PostalAddressCreateFormComponent implements OnInit, OnDestroy {
+export class PostalAddressCreateFormComponent
+  extends AllorsFormComponent<PostalAddress>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   public title = 'Add Postal Address';
@@ -41,15 +45,11 @@ export class PostalAddressCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PostalAddressCreateFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -105,18 +105,5 @@ export class PostalAddressCreateFormComponent implements OnInit, OnDestroy {
 
         this.party.addPartyContactMechanism(this.partyContactMechanism);
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.contactMechanism);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

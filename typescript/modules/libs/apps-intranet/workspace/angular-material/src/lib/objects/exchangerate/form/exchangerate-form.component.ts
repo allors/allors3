@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  ExchangeRate,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,7 +28,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './exchangerate-form.component.html',
   providers: [ContextService],
 })
-export class ExchangeRateFormComponent implements OnInit, OnDestroy {
+export class ExchangeRateFormComponent
+  extends AllorsFormComponent<ExchangeRate>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public title: string;
   public subTitle: string;
 
@@ -41,16 +45,12 @@ export class ExchangeRateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ExchangeRateFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -113,18 +113,5 @@ export class ExchangeRateFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.exchangeRate);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

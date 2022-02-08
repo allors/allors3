@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  NonUnifiedGood,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './nonunifiedgood-create-form.component.html',
   providers: [ContextService],
 })
-export class NonUnifiedGoodCreateFormComponent implements OnInit, OnDestroy {
+export class NonUnifiedGoodCreateFormComponent
+  extends AllorsFormComponent<NonUnifiedGood>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
   good: Good;
 
@@ -51,16 +55,12 @@ export class NonUnifiedGoodCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<NonUnifiedGoodCreateFormComponent>,
-
-    private refreshService: RefreshService,
-    public navigationService: NavigationService,
+    errorService: ErrorService,
+    form: NgForm,
     private errorService: ErrorService,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -114,20 +114,11 @@ export class NonUnifiedGoodCreateFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     this.selectedCategories.forEach((category: ProductCategory) => {
       category.addProduct(this.good);
     });
 
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.good);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

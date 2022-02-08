@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  Disbursement,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './disbursement-form.component.html',
   providers: [ContextService],
 })
-export class DisbursementFormComponent implements OnInit, OnDestroy {
+export class DisbursementFormComponent
+  extends AllorsFormComponent<Disbursement>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   disbursement: Disbursement;
@@ -37,14 +41,10 @@ export class DisbursementFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<DisbursementFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -113,18 +113,8 @@ export class DisbursementFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
+  public override save(): void {
     this.paymentApplication.AmountApplied = this.disbursement.Amount;
-
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.disbursement.id);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

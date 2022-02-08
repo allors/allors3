@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  NonUnifiedPart,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './nonunifiedpart-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class NonUnifiedPartEditFormComponent implements OnInit, OnDestroy {
+export class NonUnifiedPartEditFormComponent
+  extends AllorsFormComponent<NonUnifiedPart>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   part: Part;
@@ -60,23 +64,12 @@ export class NonUnifiedPartEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private snackBar: MatSnackBar,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Part Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Collapsed
-    const pullName = `${this.panel.name}_${this.m.Part.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.part = undefined;
@@ -230,12 +223,6 @@ export class NonUnifiedPartEditFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public brandAdded(brand: Brand): void {
     this.brands.push(brand);
     this.selectedBrand = brand;
@@ -297,18 +284,7 @@ export class NonUnifiedPartEditFormComponent implements OnInit, OnDestroy {
   public save(): void {
     this.onSave();
 
-    this.allors.context.push().subscribe(() => {
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
-  }
-
-  public update(): void {
-    this.onSave();
-
-    this.allors.context.push().subscribe(() => {
-      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 
   private onSave() {

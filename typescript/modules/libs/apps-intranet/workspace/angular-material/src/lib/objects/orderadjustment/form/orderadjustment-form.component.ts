@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  OrderAdjustment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './orderadjustment-form.component.html',
   providers: [ContextService],
 })
-export class OrderAdjustmentFormComponent implements OnInit, OnDestroy {
+export class OrderAdjustmentFormComponent
+  extends AllorsFormComponent<OrderAdjustment>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public m: M;
 
   public title: string;
@@ -36,14 +40,10 @@ export class OrderAdjustmentFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<OrderAdjustmentFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -105,18 +105,5 @@ export class OrderAdjustmentFormComponent implements OnInit, OnDestroy {
           this.title = `Edit ${this.object.strategy.cls.singularName}`;
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.object);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

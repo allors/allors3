@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseOrder,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -29,7 +30,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './purchaseorder-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class PurchaseOrderEditFormComponent implements OnInit, OnDestroy {
+export class PurchaseOrderEditFormComponent
+  extends AllorsFormComponent<PurchaseOrder>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   order: PurchaseOrder;
@@ -68,22 +72,12 @@ export class PurchaseOrderEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Purchase Order Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Collapsed
-    const purchaseOrderPullName = `${panel.name}_${this.m.PurchaseOrder.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {

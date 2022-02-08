@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  ShipmentItem,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,7 +27,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './shipmentitem-form.component.html',
   providers: [ContextService],
 })
-export class ShipmentItemFormComponent implements OnInit, OnDestroy {
+export class ShipmentItemFormComponent
+  extends AllorsFormComponent<ShipmentItem>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   title: string;
@@ -99,14 +103,11 @@ export class ShipmentItemFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ShipmentItemFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     public snackBar: MatSnackBar
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -531,19 +532,10 @@ export class ShipmentItemFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     this.onSave();
 
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.shipmentItem);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 
   public salesOrderItemSelected(obj: IObject): void {

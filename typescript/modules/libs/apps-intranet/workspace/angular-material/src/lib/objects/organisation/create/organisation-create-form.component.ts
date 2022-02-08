@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  Organisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './organisation-create-form.component.html',
   providers: [ContextService],
 })
-export class OrganisationCreateFormComponent implements OnInit, OnDestroy {
+export class OrganisationCreateFormComponent
+  extends AllorsFormComponent<Organisation>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public m: M;
 
   public title = 'Add Organisation';
@@ -56,19 +60,14 @@ export class OrganisationCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<OrganisationCreateFormComponent>,
-
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private route: ActivatedRoute,
     private fetcher: FetcherService,
     private singletonId: SingletonId,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-    this.refresh$ = new BehaviorSubject<Date>(undefined);
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -162,12 +161,6 @@ export class OrganisationCreateFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     if (this.activeRoles.indexOf(this.customerRole) > -1) {
       const customerRelationship =
@@ -187,9 +180,6 @@ export class OrganisationCreateFormComponent implements OnInit, OnDestroy {
       supplierRelationship.InternalOrganisation = this.internalOrganisation;
     }
 
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.organisation);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

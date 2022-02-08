@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  ProductQuoteApproval,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,7 +27,10 @@ import { PrintService } from '../../../actions/print/print.service';
   templateUrl: './productquoteapproval-form.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteApprovalFormComponent implements OnInit, OnDestroy {
+export class ProductQuoteApprovalFormComponent
+  extends AllorsFormComponent<ProductQuoteApproval>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   title: string;
   subTitle: string;
 
@@ -40,14 +44,11 @@ export class ProductQuoteApprovalFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ProductQuoteApprovalFormComponent>,
-    public printService: PrintService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm,
+    public printService: PrintService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
 
     this.print = printService.print(this.m.ProductQuoteApproval.ProductQuote);
   }
@@ -84,12 +85,6 @@ export class ProductQuoteApprovalFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   approve(): void {
     this.saveAndInvoke(() =>
       this.allors.context.invoke(this.productQuoteApproval.Approve)
@@ -102,6 +97,7 @@ export class ProductQuoteApprovalFormComponent implements OnInit, OnDestroy {
     );
   }
 
+  // TODO: KOEN
   saveAndInvoke(methodCall: () => Observable<IResult>): void {
     const m = this.m;
     const { pullBuilder: pull } = m;

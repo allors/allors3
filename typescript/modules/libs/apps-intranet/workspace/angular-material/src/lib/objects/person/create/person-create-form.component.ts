@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  Person,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './person-create-form.component.html',
   providers: [ContextService],
 })
-export class PersonCreateFormComponent implements OnInit, OnDestroy {
+export class PersonCreateFormComponent
+  extends AllorsFormComponent<Person>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   public title = 'Add Person';
@@ -59,19 +63,15 @@ export class PersonCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PersonCreateFormComponent>,
-    public navigationService: NavigationService,
-    public refreshService: RefreshService,
+    errorService: ErrorService,
+    form: NgForm,
     private route: ActivatedRoute,
     private errorService: ErrorService,
     private fetcher: FetcherService,
     private singletonId: SingletonId,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-    this.refresh$ = new BehaviorSubject<Date>(undefined);
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -166,12 +166,6 @@ export class PersonCreateFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     if (this.selectedRoles.indexOf(this.customerRole) > -1) {
       const customerRelationship =
@@ -200,9 +194,6 @@ export class PersonCreateFormComponent implements OnInit, OnDestroy {
       organisationContactRelationship.ContactKinds = this.selectedContactKinds;
     }
 
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.person);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

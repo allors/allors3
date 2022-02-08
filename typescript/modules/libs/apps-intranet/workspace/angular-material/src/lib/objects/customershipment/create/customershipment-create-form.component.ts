@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  CustomerShipment,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -28,7 +29,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './customershipment-create-form.component.html',
   providers: [OldPanelManagerService, ContextService],
 })
-export class CustomerShipmentCreateFormComponent implements OnInit, OnDestroy {
+export class CustomerShipmentCreateFormComponent
+  extends AllorsFormComponent<CustomerShipment>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
   public title: string;
   public subTitle: string;
@@ -64,18 +68,13 @@ export class CustomerShipmentCreateFormComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Self() public panelManager: OldPanelManagerService,
     @Self() public allors: ContextService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<CustomerShipmentCreateFormComponent>,
-
-    private refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -166,19 +165,6 @@ export class CustomerShipmentCreateFormComponent implements OnInit, OnDestroy {
 
         this.previousShipToparty = this.customerShipment.ShipToParty;
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.customerShipment);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   public shipToContactPersonAdded(person: Person): void {

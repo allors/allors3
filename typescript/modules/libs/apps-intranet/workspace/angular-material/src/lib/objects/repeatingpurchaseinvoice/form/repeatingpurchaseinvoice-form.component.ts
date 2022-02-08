@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  RepeatingPurchaseInvoice,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,7 +27,8 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   providers: [ContextService],
 })
 export class RepeatingPurchaseInvoiceFormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<RepeatingPurchaseInvoice>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   readonly m: M;
 
@@ -41,14 +43,11 @@ export class RepeatingPurchaseInvoiceFormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<RepeatingPurchaseInvoiceFormComponent>,
-    private errorService: ErrorService,
-    private internalOrganisationId: InternalOrganisationId,
-    public refreshService: RefreshService
+    errorService: ErrorService,
+    form: NgForm,
+    private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -136,18 +135,5 @@ export class RepeatingPurchaseInvoiceFormComponent
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.repeatinginvoice);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

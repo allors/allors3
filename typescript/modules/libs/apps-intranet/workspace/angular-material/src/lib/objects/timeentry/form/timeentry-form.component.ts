@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  TimeEntry,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,7 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './timeentry-form.component.html',
   providers: [ContextService],
 })
-export class TimeEntryFormComponent implements OnInit, OnDestroy {
+export class TimeEntryFormComponent
+  extends AllorsFormComponent<TimeEntry>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   title: string;
   subTitle: string;
 
@@ -47,14 +51,11 @@ export class TimeEntryFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<TimeEntryFormComponent>,
-    public refreshService: RefreshService,
-    private snackBar: MatSnackBar,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm,
+    private snackBar: MatSnackBar
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -178,12 +179,6 @@ export class TimeEntryFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public findBillingRate(): void {
     if (
       this.selectedWorker &&
@@ -227,9 +222,6 @@ export class TimeEntryFormComponent implements OnInit, OnDestroy {
       this.timeSheet.addTimeEntry(this.timeEntry);
     }
 
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.timeEntry);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

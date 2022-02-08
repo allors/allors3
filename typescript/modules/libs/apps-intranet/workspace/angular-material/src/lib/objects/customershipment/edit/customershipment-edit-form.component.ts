@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  CustomerShipment,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -29,7 +30,10 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
   templateUrl: './customershipment-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class CustomerShipmentEditFormComponent implements OnInit, OnDestroy {
+export class CustomerShipmentEditFormComponent
+  extends AllorsFormComponent<CustomerShipment>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   customerShipment: CustomerShipment;
@@ -65,24 +69,12 @@ export class CustomerShipmentEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-    this.refresh$ = new BehaviorSubject(new Date());
-
-    panel.name = 'detail';
-    panel.title = 'Customer Shipment Details';
-    panel.icon = 'local_shipping';
-    panel.expandable = true;
-
-    // Collapsed
-    const pullName = `${this.panel.name}_${this.m.CustomerShipment.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.customerShipment = undefined;
@@ -187,19 +179,6 @@ export class CustomerShipmentEditFormComponent implements OnInit, OnDestroy {
 
         this.previousShipToparty = this.customerShipment.ShipToParty;
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
   }
 
   public shipToContactPersonAdded(person: Person): void {

@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  ProductQuote,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -29,7 +30,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './productquote-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class ProductQuoteEditFormComponent implements OnInit, OnDestroy {
+export class ProductQuoteEditFormComponent
+  extends AllorsFormComponent<ProductQuote>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   productQuote: ProductQuote;
@@ -61,19 +65,11 @@ export class ProductQuoteEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
-    private fetcher: FetcherService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'ProductQuote Details';
-    panel.icon = 'business';
-    panel.expandable = true;
+    super(allors, errorService, form);
 
     // Collapsed
     const productQuotePullName = `${panel.name}_${this.m.ProductQuote.tag}`;
@@ -186,19 +182,6 @@ export class ProductQuoteEditFormComponent implements OnInit, OnDestroy {
           this.update(this.productQuote.Receiver);
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
   }
 
   public personAdded(person: Person): void {

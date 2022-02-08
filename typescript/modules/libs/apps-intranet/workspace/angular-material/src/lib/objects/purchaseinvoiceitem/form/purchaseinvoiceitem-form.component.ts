@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseInvoiceItem,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './purchaseinvoiceitem-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceItemFormComponent implements OnInit, OnDestroy {
+export class PurchaseInvoiceItemFormComponent
+  extends AllorsFormComponent<PurchaseInvoiceItem>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   m: M;
 
   title: string;
@@ -63,14 +67,11 @@ export class PurchaseInvoiceItemFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PurchaseInvoiceItemFormComponent>,
-    private fetcher: FetcherService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm,
+    private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -239,12 +240,6 @@ export class PurchaseInvoiceItemFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public goodSelected(unifiedGood: IObject): void {
     if (unifiedGood) {
       this.part = unifiedGood as UnifiedGood;
@@ -273,10 +268,7 @@ export class PurchaseInvoiceItemFormComponent implements OnInit, OnDestroy {
   public save(): void {
     this.onSave();
 
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.invoiceItem);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 
   private refreshSerialisedItems(unifiedGood: UnifiedGood): void {

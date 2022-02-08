@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  Organisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   templateUrl: './organisation-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class OrganisationEditFormComponent implements OnInit, OnDestroy {
+export class OrganisationEditFormComponent
+  extends AllorsFormComponent<Organisation>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   organisation: Organisation;
@@ -42,22 +46,12 @@ export class OrganisationEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public errorService: ErrorService,
-    public refreshService: RefreshService,
+    errorService: ErrorService,
+    form: NgForm,
     private singletonId: SingletonId,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Organisation Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Collapsed
-    const pullName = `${this.panel.name}_${this.m.Organisation.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
@@ -157,18 +151,5 @@ export class OrganisationEditFormComponent implements OnInit, OnDestroy {
         );
         this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      window.history.back();
-    }, this.errorService.errorHandler);
   }
 }

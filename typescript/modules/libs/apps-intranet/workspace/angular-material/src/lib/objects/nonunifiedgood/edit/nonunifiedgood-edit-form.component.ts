@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  NonUnifiedGood,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './nonunifiedgood-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class NonUnifiedGoodEditFormComponent implements OnInit, OnDestroy {
+export class NonUnifiedGoodEditFormComponent
+  extends AllorsFormComponent<NonUnifiedGood>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   good: NonUnifiedGood;
@@ -59,23 +63,11 @@ export class NonUnifiedGoodEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-    this.refresh$ = new BehaviorSubject(new Date());
-
-    panel.name = 'detail';
-    panel.title = 'Good Details';
-    panel.icon = 'person';
-    panel.expandable = true;
-
-    // Collapsed
-    const pullName = `${this.panel.name}_${this.m.Good.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.good = undefined;
@@ -225,12 +217,6 @@ export class NonUnifiedGoodEditFormComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     this.selectedCategories.forEach((category: ProductCategory) => {
       category.addProduct(this.good);
@@ -245,9 +231,6 @@ export class NonUnifiedGoodEditFormComponent implements OnInit, OnDestroy {
       category.removeProduct(this.good);
     });
 
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

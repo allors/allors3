@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  WorkRequirementFulfillment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -25,7 +26,8 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   providers: [ContextService],
 })
 export class WorkRequirementFulfillmentCreateFormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<WorkRequirementFulfillment>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   readonly m: M;
 
@@ -40,13 +42,10 @@ export class WorkRequirementFulfillmentCreateFormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkRequirementFulfillmentCreateFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService
+    errorService: ErrorService,
+    form: NgForm
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -113,18 +112,5 @@ export class WorkRequirementFulfillmentCreateFormComponent
           },
         });
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.workRequirementFulfillment);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

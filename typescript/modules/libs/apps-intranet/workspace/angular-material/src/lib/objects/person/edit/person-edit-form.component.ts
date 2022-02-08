@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  Person,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { FetcherService } from '../../../../services/fetcher/fetcher-service';
   templateUrl: './person-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class PersonEditFormComponent implements OnInit, OnDestroy {
+export class PersonEditFormComponent
+  extends AllorsFormComponent<Person>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   person: Person;
@@ -44,23 +48,12 @@ export class PersonEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private singletonId: SingletonId,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Personal Data';
-    panel.icon = 'person';
-    panel.expandable = true;
-
-    // Minimized
-    const pullName = `${this.panel.name}_${this.m.Person.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.person = undefined;
@@ -216,18 +209,9 @@ export class PersonEditFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
   public save(): void {
     this.onSave();
 
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
+    super.save();
   }
 }

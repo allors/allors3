@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  PurchaseReturn,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './purchasereturn-create-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseReturnCreateFormComponent implements OnInit, OnDestroy {
+export class PurchaseReturnCreateFormComponent
+  extends AllorsFormComponent<PurchaseReturn>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   title = 'Add Purchase Return';
@@ -51,15 +55,12 @@ export class PurchaseReturnCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PurchaseReturnCreateFormComponent>,
-    private refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -115,19 +116,6 @@ export class PurchaseReturnCreateFormComponent implements OnInit, OnDestroy {
           this.updateShipFromParty(this.purchaseReturn.ShipFromParty);
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.purchaseReturn);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   public shipToContactPersonAdded(person: Person): void {

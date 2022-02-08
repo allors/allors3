@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  SalesInvoice,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -29,7 +30,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './salesinvoice-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class SalesInvoiceEditFormComponent implements OnInit, OnDestroy {
+export class SalesInvoiceEditFormComponent
+  extends AllorsFormComponent<SalesInvoice>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   invoice: SalesInvoice;
@@ -103,23 +107,11 @@ export class SalesInvoiceEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
-    private fetcher: FetcherService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'Sales Invoice Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Collapsed
-    const salesInvoicePullName = `${panel.name}_${this.m.SalesInvoice.tag}`;
-    const goodPullName = `${panel.name}_${this.m.Good.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       if (this.panel.isCollapsed) {
@@ -275,19 +267,6 @@ export class SalesInvoiceEditFormComponent implements OnInit, OnDestroy {
           this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
   }
 
   public shipToCustomerAdded(party: Party): void {

@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  ProductQuote,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './productquote-create-form.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteCreateFormComponent implements OnInit, OnDestroy {
+export class ProductQuoteCreateFormComponent
+  extends AllorsFormComponent<ProductQuote>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
 
   title = 'Add Quote';
@@ -54,15 +58,12 @@ export class ProductQuoteCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ProductQuoteCreateFormComponent>,
-    private errorService: ErrorService,
-    public refreshService: RefreshService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -149,19 +150,6 @@ export class ProductQuoteCreateFormComponent implements OnInit, OnDestroy {
     this.quote.Receiver.addPartyContactMechanism(partyContactMechanism);
     this.quote.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.quote);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 
   private update(party: Party) {

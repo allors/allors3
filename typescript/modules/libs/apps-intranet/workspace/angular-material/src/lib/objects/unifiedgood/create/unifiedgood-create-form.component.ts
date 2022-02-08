@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  UnifiedGood,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,7 +27,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './unifiedgood-create-form.component.html',
   providers: [ContextService],
 })
-export class UnifiedGoodCreateFormComponent implements OnInit, OnDestroy {
+export class UnifiedGoodCreateFormComponent
+  extends AllorsFormComponent<UnifiedGood>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
   good: Good;
 
@@ -43,15 +47,11 @@ export class UnifiedGoodCreateFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<UnifiedGoodCreateFormComponent>,
-    private refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -99,18 +99,5 @@ export class UnifiedGoodCreateFormComponent implements OnInit, OnDestroy {
           this.good.addProductIdentification(this.productNumber);
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.good);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

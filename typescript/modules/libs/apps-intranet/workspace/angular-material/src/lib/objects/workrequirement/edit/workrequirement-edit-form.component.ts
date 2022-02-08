@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  WorkRequirement,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -30,7 +31,10 @@ import { Filters } from '../../../../filters/filters';
   templateUrl: './workrequirement-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class WorkRequirementEditFormComponent implements OnInit, OnDestroy {
+export class WorkRequirementEditFormComponent
+  extends AllorsFormComponent<WorkRequirement>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   readonly m: M;
   public title: string;
 
@@ -45,23 +49,12 @@ export class WorkRequirementEditFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Self() public panel: OldPanelService,
-    public navigationService: NavigationService,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    panel.name = 'detail';
-    panel.title = 'WorkRequirement Details';
-    panel.icon = 'business';
-    panel.expandable = true;
-
-    // Minimized
-    const pullName = `${this.panel.name}_${this.m.WorkRequirement.tag}`;
+    super(allors, errorService, form);
 
     panel.onPull = (pulls) => {
       this.requirement = undefined;

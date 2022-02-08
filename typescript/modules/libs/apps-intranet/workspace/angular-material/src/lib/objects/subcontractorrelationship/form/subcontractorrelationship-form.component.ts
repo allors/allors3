@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  SubContractorRelationship,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,7 +29,8 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   providers: [ContextService],
 })
 export class SubContractorRelationshipFormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<SubContractorRelationship>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   readonly m: M;
 
@@ -42,15 +44,12 @@ export class SubContractorRelationshipFormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SubContractorRelationshipFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
 
     this.canSave = true;
   }
@@ -138,18 +137,5 @@ export class SubContractorRelationshipFormComponent
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.partyRelationship);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  Catalogue,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,7 +28,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './catalogue-form.component.html',
   providers: [ContextService],
 })
-export class CatalogueFormComponent implements OnInit, OnDestroy {
+export class CatalogueFormComponent
+  extends AllorsFormComponent<Catalogue>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+{
   public m: M;
 
   public catalogue: Catalogue;
@@ -45,16 +49,12 @@ export class CatalogueFormComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<CatalogueFormComponent>,
-
-    private refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -121,18 +121,5 @@ export class CatalogueFormComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.catalogue);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

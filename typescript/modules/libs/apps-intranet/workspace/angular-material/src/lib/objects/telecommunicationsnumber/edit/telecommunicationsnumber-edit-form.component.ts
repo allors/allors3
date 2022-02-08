@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  TelecommunicationsNumber,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,8 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   providers: [ContextService],
 })
 export class TelecommunicationsNumberFormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<TelecommunicationsNumber>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   readonly m: M;
 
@@ -39,14 +41,11 @@ export class TelecommunicationsNumberFormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: IObject,
-    public dialogRef: MatDialogRef<TelecommunicationsNumberFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -92,18 +91,5 @@ export class TelecommunicationsNumberFormComponent
           this.title = 'View Phone Number';
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.contactMechanism);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }

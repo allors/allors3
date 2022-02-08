@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  SerialisedItemCharacteristicType,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,7 +28,8 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   providers: [ContextService],
 })
 export class SerialisedItemCharacteristicFormComponent
-  implements OnInit, OnDestroy
+  extends AllorsFormComponent<SerialisedItemCharacteristicType>
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   public title: string;
   public subTitle: string;
@@ -46,15 +48,12 @@ export class SerialisedItemCharacteristicFormComponent
 
   constructor(
     @Self() public allors: ContextService,
-    @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SerialisedItemCharacteristicFormComponent>,
-    public refreshService: RefreshService,
-    private errorService: ErrorService,
+    errorService: ErrorService,
+    form: NgForm,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, errorService, form);
   }
 
   public ngOnInit(): void {
@@ -149,18 +148,5 @@ export class SerialisedItemCharacteristicFormComponent
           }
         }
       });
-  }
-
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.dialogRef.close(this.productCharacteristic);
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
   }
 }
