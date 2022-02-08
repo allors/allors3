@@ -1,0 +1,141 @@
+<mat-tab-group>
+  <mat-tab label="General">
+    <div class="container-fluid">
+      <div class="row pt-3">
+        <a-mat-static
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.WorkEffortState"
+          display="Name"
+          label="Status"
+        ></a-mat-static>
+        <a-mat-static
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.WorkEffortPurposes"
+          display="Name"
+          label="Purpose(s)"
+        ></a-mat-static>
+      </div>
+
+      <div class="row">
+        <a-mat-input
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.Name"
+        ></a-mat-input>
+      </div>
+
+      <div class="row">
+        <a-mat-textarea
+          class="col-md-12"
+          [object]="object"
+          [roleType]="m.WorkTask.Description"
+        ></a-mat-textarea>
+      </div>
+
+      <div class="row">
+        <a-mat-static
+          class="col-md-12"
+          [object]="object"
+          [roleType]="m.WorkTask.ExecutedBy"
+          display="DisplayName"
+        ></a-mat-static>
+      </div>
+
+      <div class="row">
+        <div class="col-md">
+          <div class="row">
+            <a-mat-select
+              class="col"
+              [object]="object"
+              [roleType]="m.WorkTask.FullfillContactMechanism"
+              [options]="contactMechanisms"
+              display="DisplayName"
+            ></a-mat-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md">
+          <div class="row">
+            <a-mat-select
+              class="col"
+              [object]="object"
+              [roleType]="m.WorkTask.ContactPerson"
+              [options]="contacts"
+              display="DisplayName"
+              label="Contact Person"
+            ></a-mat-select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <a-mat-static
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.EstimatedHours"
+        ></a-mat-static>
+        <a-mat-static
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.ActualHours"
+        ></a-mat-static>
+      </div>
+
+      <div class="row">
+        <a-mat-datetimepicker
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.ScheduledStart"
+          [disabled]="true"
+        ></a-mat-datetimepicker>
+        <a-mat-datetimepicker
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.ActualStart"
+          [disabled]="true"
+        ></a-mat-datetimepicker>
+      </div>
+
+      <div class="row">
+        <a-mat-datetimepicker
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.ScheduledCompletion"
+          [disabled]="true"
+        ></a-mat-datetimepicker>
+        <a-mat-datetimepicker
+          class="col-md"
+          [object]="object"
+          [roleType]="m.WorkTask.ActualCompletion"
+          [disabled]="true"
+        ></a-mat-datetimepicker>
+      </div>
+
+      <div class="row">
+        <a-mat-textarea
+          class="col-md-12"
+          [object]="object"
+          [roleType]="m.WorkTask.WorkDone"
+          [disabled]="true"
+        ></a-mat-textarea>
+      </div>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Documents">
+    <div class="container-fluid">
+      <div class="row pt-3">
+        <a-mat-files
+          class="col-md-12"
+          [object]="object"
+          [roleType]="m.WorkTask.PublicElectronicDocuments"
+          accept="image/*"
+        ></a-mat-files>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>

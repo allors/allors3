@@ -6,26 +6,32 @@ import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
-import { M } from '@allors/default/workspace/meta';
-import { WorkEffort } from '@allors/default/workspace/domain';
 import {
-  Action,
   DeleteService,
-  Filter,
-  MediaService,
-  NavigationService,
-  ObjectService,
-  RefreshService,
+  OverviewService,
+  SorterService,
   Table,
   TableRow,
-  OverviewService,
-  angularFilterFromDefinition,
-  angularSorter,
+} from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
+import {
+  Filter,
   FilterField,
+  FilterService,
+  MediaService,
+  RefreshService,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  Action,
+  AllorsListPageComponent,
+} from '@allors/base/workspace/angular/application';
+
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { And } from '@allors/system/workspace/domain';
+
+import { WorkEffort } from '@allors/default/workspace/domain';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -38,10 +44,13 @@ interface Row extends TableRow {
 }
 
 @Component({
-  templateUrl: './workeffort-list.component.html',
+  templateUrl: './workeffort-list-page.component.html',
   providers: [ContextService],
 })
-export class WorkEffortListComponent implements OnInit, OnDestroy {
+export class WorkEffortListPageComponent
+  extends AllorsListPageComponent
+  implements OnInit, OnDestroy
+{
   public title = 'Work Orders';
 
   table: Table<Row>;
@@ -50,25 +59,22 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
   filter: Filter;
-  m: M;
 
   constructor(
-    @Self() public allors: ContextService,
-
-    public objectService: ObjectService,
+    @Self() allors: ContextService,
+    titleService: Title,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    titleService: Title
+    public filterService: FilterService,
+    public sorterService: SorterService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
+    super(allors, titleService);
+    this.objectType = this.m.Country;
 
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -96,7 +102,7 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.WorkEffort);
+    this.filter = this.filterService.filter(m.WorkEffort);
 
     const predicate: And = {
       kind: 'And',
@@ -142,7 +148,7 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
               pull.WorkEffort({
                 predicate,
                 sorting: sort
-                  ? angularSorter(m.WorkEffort)?.create(sort)
+                  ? this.sorterService.sorter(m.WorkEffort)?.create(sort)
                   : null,
                 include: {
                   Customer: x,

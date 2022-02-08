@@ -1,6 +1,6 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   BrowserAnimationsModule,
@@ -9,31 +9,27 @@ import {
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete';
-import {
-  HttpClient,
-  HttpClientModule,
-  HTTP_INTERCEPTORS,
-} from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
-import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
-import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
-import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
-import { data } from '@allors/default/workspace/meta-json';
-import { M, tags } from '@allors/default/workspace/meta';
-import { ruleBuilder } from '@allors/default/workspace/derivations';
+import {
+  CreateService,
+  DisplayService,
+  EditService,
+  FilterService,
+  FormService,
+  MetaService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,52 +45,49 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AngularClient } from '../allors/angular-client';
-import { AuthorizationService } from './auth/authorization.service';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 
 import {
+  ErrorService,
   DateConfig,
   MediaConfig,
   AuthenticationConfig,
   AuthenticationInterceptor,
   AllorsFocusDirective,
   AllorsBarcodeDirective,
-  AuthenticationServiceBase,
-  DateServiceCore,
-  MediaServiceCore,
-  AllorsBarcodeServiceCore,
-  AllorsFocusServiceCore,
-  NavigationServiceCore,
-  RefreshServiceCore,
+  AuthenticationSessionStoreService,
+  DateStaticService,
+  AllorsBarcodeKeypressService,
+  AllorsFocusBehaviorSubjectService,
+  RefreshBehaviorService,
   AuthenticationService,
   DateService,
   AllorsFocusService,
   RefreshService,
   AllorsBarcodeService,
-  NavigationService,
   MediaService,
+  MediaLocalService,
   AllorsDialogService,
-  ObjectService,
-  ErrorService,
-  AllorsMaterialSideNavService,
-  AllorsMaterialAssociationAutoCompleteComponent,
+  TemplateHostDirective,
+} from '@allors/base/workspace/angular/foundation';
+
+import {
+  NavigationService,
+  MenuService,
+} from '@allors/base/workspace/angular/application';
+
+import {
   AllorsMaterialDialogComponent,
-  AllorsMaterialErrorDialogComponent,
-  AllorsMaterialFilterFieldDialogComponent,
-  AllorsMaterialFilterFieldSearchComponent,
-  AllorsMaterialFilterComponent,
-  AllorsMaterialFooterComponent,
-  AllorsMaterialFooterSaveCancelComponent,
-  AllorsMaterialHeaderComponent,
-  AllorsMaterialLauncherComponent,
-  AllorsMaterialMediaComponent,
-  AllorMediaPreviewComponent,
+  AllorsMaterialDialogService,
+  AllorsMaterialPeriodSelectionToggleComponent,
+  AllorsMaterialAssociationAutoCompleteComponent,
+  AllorsMaterialCancelComponent,
+  AllorsMaterialSaveComponent,
   AllorsMaterialAutocompleteComponent,
   AllorsMaterialCheckboxComponent,
   AllorsMaterialChipsComponent,
@@ -112,127 +105,68 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
-  AllorsMaterialScannerComponent,
+} from '@allors/base/workspace/angular-material/foundation';
+
+import {
+  AllorsMaterialSideNavService,
+  AllorsMaterialErrorDialogComponent,
+  AllorsMaterialFilterFieldDialogComponent,
+  AllorsMaterialFilterFieldSearchComponent,
+  AllorsMaterialFilterComponent,
+  AllorsMaterialMediaComponent,
+  AllorMediaPreviewComponent,
+  AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
-  AllorsDialogServiceCore,
-  ObjectServiceCore,
-  ErrorServiceCore,
-  AllorsMaterialSideNavServiceCore,
-  OBJECT_CREATE_TOKEN,
-  OBJECT_EDIT_TOKEN,
-} from '@allors/base/workspace/angular/foundation';
+  AllorsMaterialDynamicCreateComponent,
+  AllorsMaterialDynamicEditComponent,
+  AllorsMaterialDynamicEditDetailPanelComponent,
+  AllorsMaterialDynamicViewDetailPanelComponent,
+  AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicViewRelationshipPanelComponent,
+  AllorsMaterialErrorService,
+  AllorsMaterialSideNavSubjectService,
+  AllorsMaterialCreateService,
+  AllorsMaterialEditService,
+  SorterService,
+  IconService,
+} from '@allors/base/workspace/angular-material/application';
 
-// Angular Material Base
+import { routes, components as routeComponents } from './app.routes';
+import { components as dialogComponents } from './app.dialog';
 import {
-  WorkEffortListComponent,
-  WorkTaskCreateComponent,
-  WorkTaskOverviewComponent,
-  WorkTaskOverviewDetailComponent,
-  WorkTaskOverviewSummaryComponent,
-  PrintService,
-  PrintConfig,
-} from '@allors/workspace/angular/apps/extranet';
+  AppFormService,
+  components as formComponents,
+} from './services/form.service';
 
-import { LoginComponent } from './auth/login.component';
-import { MainComponent } from './main/main.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-
-import { ErrorComponent } from './error/error.component';
-import { configure } from './configure';
-import { ExtranetContext } from '../allors/extranet-context';
-import { Configuration } from '@allors/system/workspace/domain';
-import { applyRules } from '@allors/system/workspace/derivations';
-
-export function appInitFactory(
-  workspaceService: WorkspaceService,
-  httpClient: HttpClient
-) {
-  return async () => {
-    const angularClient = new AngularClient(
-      httpClient,
-      environment.baseUrl,
-      environment.authUrl
-    );
-
-    const metaPopulation = new LazyMetaPopulation(data);
-    const m = metaPopulation as unknown as M;
-
-    let nextId = -1;
-
-    const configuration: Configuration = {
-      name: 'Default',
-      metaPopulation,
-      objectFactory: new PrototypeObjectFactory(metaPopulation),
-      idGenerator: () => nextId--,
-    };
-
-    const rules = ruleBuilder(m);
-    applyRules(m, rules);
-
-    const database = new DatabaseConnection(configuration, angularClient);
-    const workspace = database.createWorkspace();
-
-    workspaceService.workspace = workspace;
-    workspaceService.contextBuilder = () =>
-      new ExtranetContext(workspaceService);
-
-    configure(m);
-  };
-}
-
-export const routes: Routes = [
-  ...environment.routes,
-  { path: 'login', component: LoginComponent },
-  { path: 'error', component: ErrorComponent },
-  {
-    canActivate: [AuthorizationService],
-    path: '',
-    component: MainComponent,
-    children: [
-      {
-        path: '',
-        component: DashboardComponent,
-        pathMatch: 'full',
-      },
-
-      {
-        path: 'workefforts',
-        children: [
-          { path: 'workefforts', component: WorkEffortListComponent },
-          { path: 'worktask/:id', component: WorkTaskOverviewComponent },
-        ],
-      },
-    ],
-  },
-];
-
-export const create = {
-  [tags.WorkTask]: WorkTaskCreateComponent,
-};
-
-export const edit = {};
+import { AppFilterService } from './services/filter.service';
+import { AppSorterService } from './services/sorter.service';
+import { AppMenuService } from './services/menu.service';
+import { AppNavigationService } from './services/navigation.service';
+import { AppIconService } from './services/icon.service';
+import { AppMetaService } from './services/meta.service';
+import { AppDisplayService } from './services/display.service';
 
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
-    // Allors Angular Core
+    // Allors Angular Base
     AllorsFocusDirective,
     AllorsBarcodeDirective,
+    // Allors Angular Material Base
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
     AllorsMaterialErrorDialogComponent,
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,
     AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialFooterComponent,
-    AllorsMaterialFooterSaveCancelComponent,
-    AllorsMaterialHeaderComponent,
-    AllorsMaterialLauncherComponent,
     AllorsMaterialMediaComponent,
     AllorMediaPreviewComponent,
+    AllorsMaterialCancelComponent,
+    AllorsMaterialSaveComponent,
     AllorsMaterialAutocompleteComponent,
     AllorsMaterialCheckboxComponent,
     AllorsMaterialChipsComponent,
@@ -250,24 +184,24 @@ export const edit = {};
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
-    AllorsMaterialScannerComponent,
+    AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
-    // Extranet
-    WorkEffortListComponent,
-    WorkTaskCreateComponent,
-    WorkTaskOverviewComponent,
-    WorkTaskOverviewDetailComponent,
-    WorkTaskOverviewSummaryComponent,
+    AllorsMaterialDynamicCreateComponent,
+    AllorsMaterialDynamicEditComponent,
+    AllorsMaterialDynamicEditDetailPanelComponent,
+    AllorsMaterialDynamicViewDetailPanelComponent,
+    AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicViewRelationshipPanelComponent,
+    TemplateHostDirective,
+    // Routed and dialog components
+    ...routeComponents,
+    ...dialogComponents,
+    ...formComponents,
     // App
-    ErrorComponent,
-    LoginComponent,
-    MainComponent,
-    DashboardComponent,
     AppComponent,
-    ...environment.components,
   ],
   imports: [
     BrowserModule,
@@ -278,7 +212,6 @@ export const edit = {};
     RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
     MatLuxonDateModule,
     MatAutocompleteModule,
-    MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -286,7 +219,6 @@ export const edit = {};
     MatChipsModule,
     MatDatepickerModule,
     MatDialogModule,
-    MatExpansionModule,
     MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
@@ -302,19 +234,16 @@ export const edit = {};
     MatSnackBarModule,
     MatSortModule,
     MatStepperModule,
-    MatTabsModule,
     MatTableModule,
+    MatTabsModule,
     MatToolbarModule,
   ],
   providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitFactory,
-      deps: [WorkspaceService, HttpClient],
-      multi: true,
-    },
     WorkspaceService,
-    { provide: AuthenticationService, useClass: AuthenticationServiceBase },
+    {
+      provide: AuthenticationService,
+      useClass: AuthenticationSessionStoreService,
+    },
     {
       provide: AuthenticationConfig,
       useValue: {
@@ -326,39 +255,57 @@ export const edit = {};
       useClass: AuthenticationInterceptor,
       multi: true,
     },
-    { provide: AllorsBarcodeService, useClass: AllorsBarcodeServiceCore },
-    { provide: DateService, useClass: DateServiceCore },
+    { provide: AllorsBarcodeService, useClass: AllorsBarcodeKeypressService },
+    { provide: DateService, useClass: DateStaticService },
     {
       provide: DateConfig,
       useValue: {
         locale: enGB,
       },
     },
-    { provide: AllorsFocusService, useClass: AllorsFocusServiceCore },
-    { provide: MediaService, useClass: MediaServiceCore },
+    {
+      provide: AllorsFocusService,
+      useClass: AllorsFocusBehaviorSubjectService,
+    },
+    { provide: MediaService, useClass: MediaLocalService },
     { provide: MediaConfig, useValue: { url: environment.baseUrl } },
-    { provide: NavigationService, useClass: NavigationServiceCore },
-    { provide: RefreshService, useClass: RefreshServiceCore },
+    { provide: RefreshService, useClass: RefreshBehaviorService },
+
+    // Angular Material
     {
       provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
       useValue: { autoActiveFirstOption: true },
     },
     { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
+    { provide: MatDialogRef, useValue: {} },
     {
       provide: AllorsDialogService,
-      useClass: AllorsDialogServiceCore,
+      useClass: AllorsMaterialDialogService,
     },
-    { provide: ObjectService, useClass: ObjectServiceCore },
-    { provide: ErrorService, useClass: ErrorServiceCore },
+    { provide: ErrorService, useClass: AllorsMaterialErrorService },
     {
       provide: AllorsMaterialSideNavService,
-      useClass: AllorsMaterialSideNavServiceCore,
+      useClass: AllorsMaterialSideNavSubjectService,
     },
-    PrintService,
-    { provide: PrintConfig, useValue: { url: environment.baseUrl } },
-    { provide: ObjectService, useClass: ObjectServiceCore },
-    { provide: OBJECT_CREATE_TOKEN, useValue: create },
-    { provide: OBJECT_EDIT_TOKEN, useValue: edit },
+    {
+      provide: AllorsMaterialCreateService,
+      useClass: AllorsMaterialCreateService,
+    },
+    { provide: CreateService, useExisting: AllorsMaterialCreateService },
+    { provide: AllorsMaterialEditService, useClass: AllorsMaterialEditService },
+    { provide: EditService, useExisting: AllorsMaterialEditService },
+
+    // App Services
+    { provide: FilterService, useClass: AppFilterService },
+    { provide: FormService, useClass: AppFormService },
+    { provide: SorterService, useClass: AppSorterService },
+    { provide: MenuService, useClass: AppMenuService },
+    { provide: NavigationService, useClass: AppNavigationService },
+    { provide: IconService, useClass: AppIconService },
+    { provide: MetaService, useClass: AppMetaService },
+    { provide: DisplayService, useClass: AppDisplayService },
+
+    ...environment.providers,
   ],
 })
 export class AppModule {}

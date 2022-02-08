@@ -1,0 +1,46 @@
+<div class="container-fluid">
+  <div class="row">
+    <a-mat-input
+      class="col-md"
+      [object]="object"
+      [roleType]="m.WorkTask.Name"
+    ></a-mat-input>
+  </div>
+
+  <div class="row">
+    <a-mat-textarea
+      class="col-md-12"
+      [object]="object"
+      [roleType]="m.WorkTask.Description"
+    ></a-mat-textarea>
+  </div>
+
+  <div class="row">
+    <div class="col-md">
+      <div class="row">
+        <a-mat-select
+          class="col"
+          [object]="object"
+          [roleType]="m.WorkTask.FullfillContactMechanism"
+          [options]="contactMechanisms"
+          display="DisplayName"
+        ></a-mat-select>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md">
+      <div class="row">
+        <a-mat-select
+          class="col"
+          [object]="object"
+          [roleType]="m.WorkTask.ContactPerson"
+          [options]="contacts"
+          display="DisplayName"
+          label="Contact Person"
+        ></a-mat-select>
+      </div>
+    </div>
+  </div>
+</div>

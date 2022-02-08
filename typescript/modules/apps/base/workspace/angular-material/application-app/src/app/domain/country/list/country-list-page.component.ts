@@ -53,7 +53,6 @@ export class CountryListPageComponent
 
   private subscription: Subscription;
   filter: Filter;
-  override m: M;
 
   constructor(
     @Self() allors: ContextService,

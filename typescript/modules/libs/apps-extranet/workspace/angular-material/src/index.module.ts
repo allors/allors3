@@ -2,8 +2,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -34,6 +35,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
+import { AllorsMaterialDialogComponent } from '@allors/base/workspace/angular-material/foundation';
+
 import {
   AllorsFocusDirective,
   AllorsBarcodeDirective,
@@ -41,17 +44,8 @@ import {
 
 import {
   AllorsMaterialAssociationAutoCompleteComponent,
-  AllorsMaterialDialogComponent,
-  AllorsMaterialErrorDialogComponent,
-  AllorsMaterialFilterFieldDialogComponent,
-  AllorsMaterialFilterFieldSearchComponent,
-  AllorsMaterialFilterComponent,
-  AllorsMaterialFooterComponent,
-  AllorsMaterialFooterSaveCancelComponent,
-  AllorsMaterialHeaderComponent,
-  AllorsMaterialLauncherComponent,
-  AllorsMaterialMediaComponent,
-  AllorMediaPreviewComponent,
+  AllorsMaterialCancelComponent,
+  AllorsMaterialSaveComponent,
   AllorsMaterialAutocompleteComponent,
   AllorsMaterialCheckboxComponent,
   AllorsMaterialChipsComponent,
@@ -69,38 +63,52 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
-  AllorsMaterialScannerComponent,
+  AllorsMaterialPeriodSelectionToggleComponent,
+} from '@allors/base/workspace/angular-material/foundation';
+
+import {
+  AllorsMaterialErrorDialogComponent,
+  AllorsMaterialFilterFieldDialogComponent,
+  AllorsMaterialFilterFieldSearchComponent,
+  AllorsMaterialFilterComponent,
+  AllorsMaterialMediaComponent,
+  AllorMediaPreviewComponent,
+  AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
   AllorsMaterialTableComponent,
   FactoryFabComponent,
+  AllorsMaterialDynamicCreateComponent,
+  AllorsMaterialDynamicEditComponent,
+  AllorsMaterialDynamicEditDetailPanelComponent,
+  AllorsMaterialDynamicViewDetailPanelComponent,
+  AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicViewRelationshipPanelComponent,
 } from '@allors/base/workspace/angular-material/application';
 
 // Extranet
 import {
-  WorkEffortListComponent,
-  WorkTaskCreateComponent,
+  WorkEffortListPageComponent,
+  WorkTaskCreateFormComponent,
+  WorkTaskEditFormComponent,
   WorkTaskOverviewComponent,
-  WorkTaskOverviewDetailComponent,
-  WorkTaskOverviewSummaryComponent,
+  WorkTaskSummaryPanel,
 } from './index';
 
 @NgModule({
   declarations: [
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialDialogComponent,
+    AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialErrorDialogComponent,
     AllorsMaterialFilterComponent,
     AllorsMaterialFilterFieldDialogComponent,
     AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialFooterComponent,
-    AllorsMaterialFooterSaveCancelComponent,
-    AllorsMaterialHeaderComponent,
-    AllorsMaterialLauncherComponent,
     AllorsMaterialMediaComponent,
     AllorMediaPreviewComponent,
+    AllorsMaterialCancelComponent,
+    AllorsMaterialSaveComponent,
     AllorsMaterialAutocompleteComponent,
     AllorsMaterialCheckboxComponent,
     AllorsMaterialChipsComponent,
@@ -118,17 +126,24 @@ import {
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
-    AllorsMaterialScannerComponent,
+    AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
     AllorsMaterialTableComponent,
     FactoryFabComponent,
+    AllorsMaterialDynamicCreateComponent,
+    AllorsMaterialDynamicEditComponent,
+    AllorsMaterialDynamicEditDetailPanelComponent,
+    AllorsMaterialDynamicViewDetailPanelComponent,
+    AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicViewRelationshipPanelComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
     // Extranet
-    WorkEffortListComponent,
-    WorkTaskCreateComponent,
+    WorkEffortListPageComponent,
+    WorkTaskCreateFormComponent,
+    WorkTaskEditFormComponent,
     WorkTaskOverviewComponent,
-    WorkTaskOverviewDetailComponent,
-    WorkTaskOverviewSummaryComponent,
+    WorkTaskSummaryPanel,
   ],
   imports: [
     BrowserModule,

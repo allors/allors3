@@ -31,7 +31,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Relationship]
         [Required]
         [Workspace(Default)]
         public Person Employee { get; set; }
