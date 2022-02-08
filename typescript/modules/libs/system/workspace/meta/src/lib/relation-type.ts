@@ -8,4 +8,5 @@ export interface RelationType extends MetaObject {
   roleType: RoleType;
   multiplicity: Multiplicity;
   isDerived: boolean;
+  inRelationship: boolean;
 }

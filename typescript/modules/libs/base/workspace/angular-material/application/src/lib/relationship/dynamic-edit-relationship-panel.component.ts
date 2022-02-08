@@ -41,6 +41,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
   extends AllorsEditRelationshipPanelComponent
   implements CreatePullHandler
 {
+  private assignedAnchor: RoleType;
+
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -48,7 +50,26 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
   }
 
   @Input()
-  anchor: RoleType;
+  get anchor(): RoleType {
+    if (this.assignedAnchor) {
+      return this.assignedAnchor;
+    }
+
+    if (this.target) {
+      const composite = this.target.associationType.objectType as Composite;
+      for (const roleType of composite.roleTypes) {
+        if (roleType !== this.target && roleType.relationType.inRelationship) {
+          return roleType;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  set anchor(value: RoleType) {
+    this.assignedAnchor = value;
+  }
 
   @Input()
   target: RoleType;

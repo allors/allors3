@@ -28,5 +28,7 @@ namespace Allors.Database.Meta
         void StructuralDeriveAssociationTypes(HashSet<IAssociationTypeBase> sharedAssociationTypes, Dictionary<IObjectTypeBase, HashSet<IAssociationTypeBase>> associationTypesByRoleTypeObjectType);
 
         void StructuralDeriveMethodTypes(HashSet<IMethodTypeBase> sharedMethodTypeList, Dictionary<ICompositeBase, HashSet<IMethodTypeBase>> methodTypeByClass);
+
+        void StructuralDeriveIsRelationship();
     }
 }

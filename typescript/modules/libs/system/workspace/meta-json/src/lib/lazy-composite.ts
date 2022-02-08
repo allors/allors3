@@ -46,6 +46,8 @@ export abstract class LazyComposite implements InternalComposite {
 
   dependencyByPropertyType: Map<PropertyType, Dependency>;
 
+  isRelationship: boolean;
+
   abstract isInterface: boolean;
   abstract isClass: boolean;
   abstract classes: Set<InternalClass>;
@@ -154,6 +156,16 @@ export abstract class LazyComposite implements InternalComposite {
         roleType,
         new LazyDependency(this, roleType)
       );
+    }
+  }
+
+  deriveIsRelationship(): void {
+    this.isRelationship = false;
+    for (const roleType of this.roleTypes) {
+      if (roleType.relationType.inRelationship) {
+        this.isRelationship = true;
+        break;
+      }
     }
   }
 

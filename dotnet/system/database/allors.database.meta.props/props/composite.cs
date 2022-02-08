@@ -22,11 +22,15 @@ namespace Allors.Database.Meta
 
         private HashSet<IMethodTypeBase> structuralDerivedMethodTypes;
 
+        private bool structuralDerivedIsRelationship;
+
         protected Composite(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => this.AssignedOrigin = Origin.Database;
 
         public override Origin Origin => this.AssignedOrigin;
 
         public Origin AssignedOrigin { get; set; }
+
+        public bool IsRelationship => this.structuralDerivedIsRelationship;
 
         public bool ExistExclusiveClass
         {
@@ -154,6 +158,12 @@ namespace Allors.Database.Meta
         public abstract bool IsAssignableFrom(IComposite objectType);
 
         public abstract void Bind(Dictionary<string, Type> typeByName);
+
+        /// <summary>
+        /// Derive is relationship.
+        /// </summary>
+        /// <param name="directSupertypes">The direct super types.</param>
+        public void StructuralDeriveIsRelationship() => this.structuralDerivedIsRelationship = this.RoleTypes.Any(v => v.RelationType.InRelationship);
 
         /// <summary>
         /// Derive direct super type derivations.
