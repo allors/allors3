@@ -374,7 +374,7 @@ namespace Allors.Database.Meta
                 {
                     type.StructuralDeriveExclusiveSubclass();
                 }
-
+                
                 // RoleTypes & AssociationTypes
                 var roleTypesByAssociationTypeObjectType = this.RelationTypes
                     .GroupBy(v => v.AssociationType.ObjectType)
@@ -405,6 +405,12 @@ namespace Allors.Database.Meta
                 foreach (var composite in this.Composites)
                 {
                     composite.StructuralDeriveMethodTypes(sharedMethodTypeList, methodTypeByClass);
+                }
+
+                // Relationships
+                foreach (var type in this.Composites)
+                {
+                    type.StructuralDeriveIsRelationship();
                 }
             }
             finally

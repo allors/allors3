@@ -20,11 +20,6 @@ export class AppComponent implements OnDestroy {
     private refreshService: RefreshService,
     private sharePullService: SharedPullService
   ) {
-    this.subscribe();
-  }
-
-  private subscribe() {
-    this.subscription?.unsubscribe();
     this.subscription = this.refreshService.refresh$
       .pipe(
         switchMap(() => {
@@ -57,9 +52,7 @@ export class AppComponent implements OnDestroy {
           }
         })
       )
-      .subscribe({
-        error: this.subscribe,
-      });
+      .subscribe();
   }
 
   ngOnDestroy(): void {

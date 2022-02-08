@@ -31,6 +31,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Relationship]
         [Required]
         [Workspace(Default)]
         public Person Employee { get; set; }
@@ -40,10 +41,10 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
+        [Relationship]
         [Required]
         [Workspace(Default)]
         public Organisation Employer { get; set; }
-   
 
         #region inherited methods
 

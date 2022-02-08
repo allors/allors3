@@ -25,5 +25,7 @@ export interface Composite extends ObjectType {
 
   dependencyByPropertyType: Map<PropertyType, Dependency>;
 
+  isRelationship: boolean;
+
   isAssignableFrom(objectType: Composite): boolean;
 }

@@ -101,6 +101,10 @@ namespace Allors.Meta.Generation.Model
             this.WorkspaceNames
                 .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.IsDerived && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
 
+        public IReadOnlyDictionary<string, IOrderedEnumerable<string>> WorkspaceInRelationshipsByWorkspaceName =>
+          this.WorkspaceNames
+              .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.InRelationship && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
+
         public IReadOnlyDictionary<string, IOrderedEnumerable<string>> WorkspaceRequiredTagsByWorkspaceName =>
             this.WorkspaceNames
                 .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.RoleType.IsRequired && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));

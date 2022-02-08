@@ -28,6 +28,7 @@ describe('Interface in MetaPopulation', () => {
       expect(Named.isComposite).toBeTruthy();
       expect(Named.isInterface).toBeTruthy();
       expect(Named.isClass).toBeFalsy();
+      expect(Named.isRelationship).toBeFalsy();
     });
   });
 
@@ -61,6 +62,7 @@ describe('Interface in MetaPopulation', () => {
       expect(I1.isComposite).toBeTruthy();
       expect(I1.isInterface).toBeTruthy();
       expect(I1.isClass).toBeFalsy();
+      expect(I1.isRelationship).toBeFalsy();
 
       expect(I2).toBeDefined();
       expect(I2.metaPopulation).toBe(metaPopulation);
@@ -72,6 +74,7 @@ describe('Interface in MetaPopulation', () => {
       expect(I2.isComposite).toBeTruthy();
       expect(I2.isInterface).toBeTruthy();
       expect(I2.isClass).toBeFalsy();
+      expect(I2.isRelationship).toBeFalsy();
     });
   });
 });

@@ -11,6 +11,8 @@ namespace Allors.Database.Meta
 
     public interface IComposite : IObjectType
     {
+        bool IsRelationship { get; }
+
         IEnumerable<IInterface> Supertypes { get; }
 
         IEnumerable<IComposite> Subtypes { get; }

@@ -28,6 +28,8 @@ namespace Allors.Database.Meta
 
         bool IsManyToMany { get; }
 
+        bool InRelationship { get; }
+
         bool ExistExclusiveDatabaseClasses { get; }
 
         bool IsIndexed { get; }

@@ -6,6 +6,7 @@ namespace Allors.Meta.Generation.Model
 
     public class RelationTypeModel : MetaObjectModel, IMetaIdentifiableObjectModel
     {
+
         public RelationTypeModel(MetaModel metaModel, IRelationType relationType) : base(metaModel) => this.RelationType = relationType;
 
         public IRelationType RelationType { get; }
@@ -22,6 +23,8 @@ namespace Allors.Meta.Generation.Model
         public RoleTypeModel RoleType => this.MetaModel.Map(this.RelationType.RoleType);
 
         public Multiplicity Multiplicity => this.RelationType.Multiplicity;
+
+        public bool InRelationship => this.RelationType.InRelationship;
 
         public bool IsOneToOne => this.RelationType.IsOneToOne;
 
