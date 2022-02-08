@@ -25,6 +25,8 @@ export * from './lib/date/date-static.service.core';
 export * from './lib/dialog/dialog.config';
 export * from './lib/dialog/dialog.service';
 
+export * from './lib/display/display.service';
+
 export * from './lib/edit/edit-blocking';
 export * from './lib/edit/edit-request';
 export * from './lib/edit/edit.service';

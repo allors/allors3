@@ -14,6 +14,7 @@ import { enGB } from 'date-fns/locale';
 
 import {
   CreateService,
+  DisplayService,
   EditService,
   FilterService,
   FormService,
@@ -150,6 +151,7 @@ import { AppMenuService } from './services/menu.service';
 import { AppNavigationService } from './services/navigation.service';
 import { AppIconService } from './services/icon.service';
 import { AppMetaService } from './services/meta.service';
+import { AppDisplayService } from './services/display.service';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -310,6 +312,7 @@ import { AppMetaService } from './services/meta.service';
     { provide: NavigationService, useClass: AppNavigationService },
     { provide: IconService, useClass: AppIconService },
     { provide: MetaService, useClass: AppMetaService },
+    { provide: DisplayService, useClass: AppDisplayService },
 
     ...environment.providers,
   ],

@@ -56,7 +56,7 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
       }),
       map((navRoute) => {
         return {
-          objectType: this.m.Organisation,
+          objectType: this.m.Person,
           id: navRoute.id(),
         };
       })

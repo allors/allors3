@@ -12,6 +12,7 @@ import {
   SharedPullService,
   RefreshService,
   WorkspaceService,
+  DisplayService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
@@ -52,9 +53,6 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
   @Input()
   target: RoleType;
 
-  @Input()
-  display: RoleType;
-
   objectType: Composite;
 
   hasPeriod: boolean;
@@ -88,7 +86,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
     public navigationService: NavigationService,
     public deleteService: DeleteService,
     public editRoleService: EditRoleService,
-    private iconService: IconService
+    private iconService: IconService,
+    private displayService: DisplayService
   ) {
     super(
       objectService,
@@ -210,13 +209,29 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
     }
   }
 
+  toggle() {
+    this.panelService.stopEdit().subscribe();
+  }
+
+  onPreCreatePull(pulls: Pull[]): void {
+    const pull: Pull = {
+      objectId: this.objectInfo.id,
+      results: [{ name: '_anchor' }],
+    };
+
+    pulls.push(pull);
+  }
+
+  onPostCreatePull(object: IObject, pullResult: IPullResult): void {
+    const anchorObject = pullResult.object<IObject>('_anchor');
+    object.strategy.setCompositeRole(this.anchor, anchorObject);
+  }
+
   private refreshTable() {
     this.table.total = this.filtered.length;
     this.table.data = this.filtered.map((v) => {
       const target = v.strategy.getCompositeRole(this.target);
-      const targetDisplay = target.strategy
-        .getUnitRole(this.display)
-        ?.toString(); // TODO: Use relation
+      const targetDisplay = this.displayService.display(target);
 
       let from: string;
       let through: string;
@@ -237,28 +252,5 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
         through,
       } as Row;
     });
-  }
-
-  get onObjectCreate(): CreatePullHandler {
-    return null;
-    // return new OnObjectCreateRole(this.anchor, this.panel.manager.id);
-  }
-
-  toggle() {
-    this.panelService.stopEdit().subscribe();
-  }
-
-  onPreCreatePull(pulls: Pull[]): void {
-    const pull: Pull = {
-      objectId: this.objectInfo.id,
-      results: [{ name: '_anchor' }],
-    };
-
-    pulls.push(pull);
-  }
-
-  onPostCreatePull(object: IObject, pullResult: IPullResult): void {
-    const anchorObject = pullResult.object<IObject>('_anchor');
-    object.strategy.setCompositeRole(this.anchor, anchorObject);
   }
 }
