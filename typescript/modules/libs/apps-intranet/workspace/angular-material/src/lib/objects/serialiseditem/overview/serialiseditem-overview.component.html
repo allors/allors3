@@ -1,7 +1,11 @@
 <div class="a-main">
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
-      <div class="col"><a (click)="navigationService.list(m.SerialisedItem)">Serialised Assets</a>/ {{ serialisedItem?.DisplayName }}</div>
+      <div class="col">
+        <a (click)="navigationService.list(m.SerialisedItem)"
+          >Serialised Assets</a
+        >/ {{ serialisedItem?.DisplayName }}
+      </div>
     </div>
   </div>
 
@@ -11,8 +15,11 @@
         <serialiseditem-overview-summary></serialiseditem-overview-summary>
       </div>
 
-      <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
-        <serialiseditem-overview-detail></serialiseditem-overview-detail>
+      <div
+        class="col-md-8 align-self-stretch"
+        [ngClass]="panelManager.panelContainerClass"
+      >
+        <serialiseditem-edit-form></serialiseditem-edit-form>
 
         <serialisedinventoryitem-overview-panel></serialisedinventoryitem-overview-panel>
 

@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="priceComponent">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="priceComponent"
+      [object]="object"
       [roleType]="m.PriceComponent.FromDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="priceComponent"
+      [object]="object"
       [roleType]="m.PriceComponent.ThroughDate"
     ></a-mat-datepicker>
   </div>
@@ -15,12 +15,12 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="priceComponent"
+      [object]="object"
       [roleType]="m.PriceComponent.Price"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="priceComponent"
+      [object]="object"
       [roleType]="m.PriceComponent.Description"
     ></a-mat-input>
   </div>

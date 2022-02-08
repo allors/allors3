@@ -1,42 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Locale,
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  InternalOrganisation,
-  ContactMechanism,
-  PartyContactMechanism,
-  WorkTask,
-  SerialisedItem,
-  WorkEffortFixedAssetAssignment,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
-
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './worktask-create.component.html',
+  templateUrl: './worktask-create-form.component.html',
   providers: [ContextService],
 })
-export class WorkTaskCreateComponent implements OnInit, OnDestroy {
+export class WorkTaskCreateFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Work Task';
@@ -62,7 +53,7 @@ export class WorkTaskCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkTaskCreateComponent>,
+    public dialogRef: MatDialogRef<WorkTaskCreateFormComponent>,
     public navigationService: NavigationService,
     public refreshService: RefreshService,
     private errorService: ErrorService,

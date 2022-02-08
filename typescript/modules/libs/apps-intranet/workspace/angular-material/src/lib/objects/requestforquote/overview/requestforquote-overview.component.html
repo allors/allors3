@@ -1,7 +1,12 @@
 <div class="a-main">
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
-      <div class="col"><a (click)="navigation.list(m.RequestForQuote)" style="cursor: pointer">Requests</a> / {{ requestForQuote?.RequestNumber }}</div>
+      <div class="col">
+        <a (click)="navigation.list(m.RequestForQuote)" style="cursor: pointer"
+          >Requests</a
+        >
+        / {{ requestForQuote?.RequestNumber }}
+      </div>
     </div>
   </div>
 
@@ -11,8 +16,11 @@
         <requestforquote-overview-summary></requestforquote-overview-summary>
       </div>
 
-      <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
-        <requestforquote-overview-detail></requestforquote-overview-detail>
+      <div
+        class="col-md-8 align-self-stretch"
+        [ngClass]="panelManager.panelContainerClass"
+      >
+        <requestforquote-edit-form></requestforquote-edit-form>
 
         <requestitem-overview-panel></requestitem-overview-panel>
       </div>

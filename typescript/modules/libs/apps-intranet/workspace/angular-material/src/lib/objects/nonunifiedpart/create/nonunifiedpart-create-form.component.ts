@@ -1,39 +1,22 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  Self,
-  Optional,
-  Inject,
-} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { isBefore, isAfter } from 'date-fns';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Organisation,
-  Part,
-  ProductIdentificationType,
-  Facility,
-  InventoryItemKind,
-  ProductType,
-  Brand,
-  Model,
-  PartNumber,
-  UnitOfMeasure,
-  Settings,
-  PartCategory,
-  NonUnifiedPart,
-  Locale,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -41,10 +24,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './nonunifiedpart-create.component.html',
+  templateUrl: './nonunifiedpart-create-form.component.html',
   providers: [ContextService],
 })
-export class NonUnifiedPartCreateComponent implements OnInit, OnDestroy {
+export class NonUnifiedPartCreateFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Add Part';
@@ -75,7 +58,7 @@ export class NonUnifiedPartCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<NonUnifiedPartCreateComponent>,
+    public dialogRef: MatDialogRef<NonUnifiedPartCreateFormComponent>,
 
     private refreshService: RefreshService,
     private errorService: ErrorService,

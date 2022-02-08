@@ -1,26 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, Observable } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
-import { M } from '@allors/default/workspace/meta';
-import { ProductQuoteApproval } from '@allors/default/workspace/domain';
 import {
-  Action,
-  ObjectData,
-  RefreshService,
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
+import {
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IResult } from '@allors/system/workspace/domain';
 
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
-  templateUrl: './productquoteapproval-edit.component.html',
+  templateUrl: './productquoteapproval-form.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteApprovalEditComponent implements OnInit, OnDestroy {
+export class ProductQuoteApprovalFormComponent implements OnInit, OnDestroy {
   title: string;
   subTitle: string;
 
@@ -35,7 +41,7 @@ export class ProductQuoteApprovalEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ProductQuoteApprovalEditComponent>,
+    public dialogRef: MatDialogRef<ProductQuoteApprovalFormComponent>,
     public printService: PrintService,
     public refreshService: RefreshService,
     private errorService: ErrorService

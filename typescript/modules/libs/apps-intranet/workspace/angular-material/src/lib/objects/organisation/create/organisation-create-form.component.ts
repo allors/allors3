@@ -1,27 +1,22 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  InternalOrganisation,
-  Locale,
-  Organisation,
-  Currency,
-  CustomOrganisationClassification,
-  IndustryClassification,
-  LegalForm,
-  CustomerRelationship,
-  SupplierRelationship,
-  OrganisationRole,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SingletonId,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -29,10 +24,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  templateUrl: './organisation-create.component.html',
+  templateUrl: './organisation-create-form.component.html',
   providers: [ContextService],
 })
-export class OrganisationCreateComponent implements OnInit, OnDestroy {
+export class OrganisationCreateFormComponent implements OnInit, OnDestroy {
   public m: M;
 
   public title = 'Add Organisation';
@@ -62,7 +57,7 @@ export class OrganisationCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<OrganisationCreateComponent>,
+    public dialogRef: MatDialogRef<OrganisationCreateFormComponent>,
 
     public refreshService: RefreshService,
     private errorService: ErrorService,

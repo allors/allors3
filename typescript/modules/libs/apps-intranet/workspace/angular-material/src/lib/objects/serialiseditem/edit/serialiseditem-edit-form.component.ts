@@ -1,28 +1,22 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Locale,
-  Organisation,
-  Part,
-  Facility,
-  InternalOrganisation,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  Enumeration,
-  Ownership,
-  SerialisedItemAvailability,
-  SerialisedItemState,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -31,13 +25,11 @@ import { InternalOrganisationId } from '../../../../services/state/internal-orga
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  selector: 'serialiseditem-overview-detail',
-  templateUrl: './serialiseditem-overview-detail.component.html',
+  selector: 'serialiseditem-edit-form',
+  templateUrl: './serialiseditem-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class SerialisedItemOverviewDetailComponent
-  implements OnInit, OnDestroy
-{
+export class SerialisedItemEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   serialisedItem: SerialisedItem;

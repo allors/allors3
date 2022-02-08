@@ -1,21 +1,22 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  InternalOrganisation,
-  Locale,
-  Catalogue,
-  Singleton,
-  ProductCategory,
-  Scope,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -23,10 +24,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './catalogue-edit.component.html',
+  templateUrl: './catalogue-form.component.html',
   providers: [ContextService],
 })
-export class CatalogueEditComponent implements OnInit, OnDestroy {
+export class CatalogueFormComponent implements OnInit, OnDestroy {
   public m: M;
 
   public catalogue: Catalogue;
@@ -45,7 +46,7 @@ export class CatalogueEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<CatalogueEditComponent>,
+    public dialogRef: MatDialogRef<CatalogueFormComponent>,
 
     private refreshService: RefreshService,
     private errorService: ErrorService,

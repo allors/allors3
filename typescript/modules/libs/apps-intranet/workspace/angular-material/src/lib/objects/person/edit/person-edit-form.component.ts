@@ -1,38 +1,33 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { switchMap, filter, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Currency,
-  Enumeration,
-  GenderType,
-  InternalOrganisation,
-  Locale,
-  Person,
-  Salutation,
-  ContactMechanism,
-  PartyContactMechanism,
-  EmailAddress,
-  User,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SingletonId,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
-  selector: 'person-overview-detail',
-  templateUrl: './person-overview-detail.component.html',
+  selector: 'person-edit-form',
+  templateUrl: './person-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class PersonOverviewDetailComponent implements OnInit, OnDestroy {
+export class PersonEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   person: Person;

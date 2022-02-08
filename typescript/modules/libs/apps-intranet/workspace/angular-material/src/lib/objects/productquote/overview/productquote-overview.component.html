@@ -1,7 +1,12 @@
 <div class="a-main">
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
-      <div class="col"><a (click)="navigation.list(m.ProductQuote)" style="cursor: pointer">Quotes</a> / {{ productQuote?.QuoteNumber }}</div>
+      <div class="col">
+        <a (click)="navigation.list(m.ProductQuote)" style="cursor: pointer"
+          >Quotes</a
+        >
+        / {{ productQuote?.QuoteNumber }}
+      </div>
     </div>
   </div>
 
@@ -11,8 +16,11 @@
         <productquote-overview-summary></productquote-overview-summary>
       </div>
 
-      <div class="col-md-8 align-self-stretch" [ngClass]="panelManager.panelContainerClass">
-        <productquote-overview-detail></productquote-overview-detail>
+      <div
+        class="col-md-8 align-self-stretch"
+        [ngClass]="panelManager.panelContainerClass"
+      >
+        <productquote-edit-form></productquote-edit-form>
 
         <quoteitem-overview-panel></quoteitem-overview-panel>
 

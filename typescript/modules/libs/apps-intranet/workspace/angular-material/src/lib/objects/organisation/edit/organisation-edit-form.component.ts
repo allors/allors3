@@ -1,33 +1,33 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  InternalOrganisation,
-  Locale,
-  Organisation,
-  Currency,
-  CustomOrganisationClassification,
-  IndustryClassification,
-  LegalForm,
-} from '@allors/default/workspace/domain';
-import {
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SingletonId,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 
 @Component({
-  selector: 'organisation-overview-detail',
-  templateUrl: './organisation-overview-detail.component.html',
+  selector: 'organisation-edit-form',
+  templateUrl: './organisation-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class OrganisationOverviewDetailComponent implements OnInit, OnDestroy {
+export class OrganisationEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   organisation: Organisation;

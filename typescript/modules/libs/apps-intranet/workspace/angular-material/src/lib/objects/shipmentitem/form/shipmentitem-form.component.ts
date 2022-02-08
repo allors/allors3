@@ -1,52 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Part,
-  SupplierOffering,
-  Facility,
-  NonSerialisedInventoryItem,
-  Good,
-  InventoryItem,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  PurchaseOrderItem,
-  Shipment,
-  ShipmentItem,
-  SerialisedItemAvailability,
-  OrderShipment,
-  SalesOrderItem,
-  RequestItemState,
-  RequestState,
-  QuoteItemState,
-  QuoteState,
-  SalesOrderItemState,
-  SalesOrderState,
-  ShipmentItemState,
-  ShipmentState,
-  PurchaseOrderState,
-  Product,
-  UnifiedGood,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { And, IObject } from '@allors/system/workspace/domain';
+
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './shipmentitem-edit.component.html',
+  templateUrl: './shipmentitem-form.component.html',
   providers: [ContextService],
 })
-export class ShipmentItemEditComponent implements OnInit, OnDestroy {
+export class ShipmentItemFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title: string;
@@ -120,7 +100,7 @@ export class ShipmentItemEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<ShipmentItemEditComponent>,
+    public dialogRef: MatDialogRef<ShipmentItemFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     public snackBar: MatSnackBar

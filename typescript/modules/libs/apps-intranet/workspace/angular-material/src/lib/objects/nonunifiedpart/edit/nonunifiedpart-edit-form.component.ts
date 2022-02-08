@@ -1,44 +1,34 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Organisation,
-  Part,
-  PriceComponent,
-  ProductIdentificationType,
-  Facility,
-  InventoryItemKind,
-  ProductType,
-  Brand,
-  Model,
-  PartNumber,
-  UnitOfMeasure,
-  Settings,
-  PartCategory,
-  Locale,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  selector: 'nonunifiedpart-overview-detail',
-  templateUrl: './nonunifiedpart-overview-detail.component.html',
+  selector: 'nonunifiedpart-edit-form',
+  templateUrl: './nonunifiedpart-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class NonUnifiedPartOverviewDetailComponent
-  implements OnInit, OnDestroy
-{
+export class NonUnifiedPartEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   part: Part;

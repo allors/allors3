@@ -1,51 +1,35 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subscription } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  Facility,
-  InternalOrganisation,
-  ContactMechanism,
-  PartyContactMechanism,
-  PostalAddress,
-  SerialisedInventoryItemState,
-  Currency,
-  SalesOrderItem,
-  ProductQuote,
-  SalesOrder,
-  SalesInvoice,
-  VatRegime,
-  IrpfRegime,
-  VatClause,
-  Store,
-  BillingProcess,
-  CustomerRelationship,
-} from '@allors/default/workspace/domain';
-import {
-  OldPanelService,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  selector: 'salesorder-overview-detail',
-  templateUrl: './salesorder-overview-detail.component.html',
+  selector: 'salesorder-edit-form',
+  templateUrl: './salesorder-edit-form.component.html',
   providers: [ContextService, OldPanelService],
 })
-export class SalesOrderOverviewDetailComponent implements OnInit, OnDestroy {
+export class SalesOrderEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   order: SalesOrder;

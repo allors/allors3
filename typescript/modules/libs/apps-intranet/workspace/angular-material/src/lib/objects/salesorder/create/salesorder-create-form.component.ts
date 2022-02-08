@@ -1,50 +1,34 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  Self,
-  Optional,
-  Inject,
-} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  InternalOrganisation,
-  ContactMechanism,
-  PartyContactMechanism,
-  PostalAddress,
-  Currency,
-  SalesOrder,
-  VatRegime,
-  IrpfRegime,
-  Store,
-  CustomerRelationship,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './salesorder-create.component.html',
+  templateUrl: './salesorder-create-form.component.html',
   providers: [ContextService],
 })
-export class SalesOrderCreateComponent implements OnInit, OnDestroy {
+export class SalesOrderCreateFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   title = 'Add Sales Order';
@@ -130,7 +114,7 @@ export class SalesOrderCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SalesOrderCreateComponent>,
+    public dialogRef: MatDialogRef<SalesOrderCreateFormComponent>,
     private refreshService: RefreshService,
     private errorService: ErrorService,
     private fetcher: FetcherService,

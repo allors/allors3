@@ -1,41 +1,34 @@
-import { Component, OnInit, Self, OnDestroy } from '@angular/core';
-import { Subscription, combineLatest, BehaviorSubject } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 import {
-  NavigationService,
-  OldPanelService,
-  RefreshService,
-  ErrorService,
-  SearchFactory,
-} from '@allors/base/workspace/angular/foundation';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
 import {
-  Brand,
-  Model,
-  NonUnifiedGood,
-  Organisation,
-  Ownership,
-  ProductCategory,
-  ProductDimension,
-  ProductFeatureApplicability,
-  ProductIdentificationType,
-  ProductNumber,
-  ProductType,
-  Locale,
+  BasePrice,
+  InternalOrganisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
+import {
+  ErrorService,
+  AllorsFormComponent,
+} from '@allors/base/workspace/angular/foundation';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
+
 import { FetcherService } from '../../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../../filters/filters';
 
 @Component({
-  selector: 'nonunifiedgood-overview-detail',
-  templateUrl: './nonunifiedgood-overview-detail.component.html',
+  selector: 'nonunifiedgood-edit-form',
+  templateUrl: './nonunifiedgood-edit-form.component.html',
   providers: [OldPanelService, ContextService],
 })
-export class NonUnifiedGoodOverviewDetailComponent
-  implements OnInit, OnDestroy
-{
+export class NonUnifiedGoodEditFormComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   good: NonUnifiedGood;

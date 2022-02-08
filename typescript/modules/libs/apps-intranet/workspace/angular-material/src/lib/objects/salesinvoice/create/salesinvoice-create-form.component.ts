@@ -1,43 +1,34 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  InternalOrganisation,
-  ContactMechanism,
-  PartyContactMechanism,
-  PostalAddress,
-  Currency,
-  SalesInvoice,
-  VatRegime,
-  IrpfRegime,
-  SalesInvoiceType,
-  CustomerRelationship,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './salesinvoice-create.component.html',
+  templateUrl: './salesinvoice-create-form.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceCreateComponent implements OnInit, OnDestroy {
+export class SalesInvoiceCreateFormComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title = 'Add Sales Invoice';
 
@@ -117,7 +108,7 @@ export class SalesInvoiceCreateComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<SalesInvoiceCreateComponent>,
+    public dialogRef: MatDialogRef<SalesInvoiceCreateFormComponent>,
     private errorService: ErrorService,
     public refreshService: RefreshService,
     public internalOrganisationId: InternalOrganisationId,

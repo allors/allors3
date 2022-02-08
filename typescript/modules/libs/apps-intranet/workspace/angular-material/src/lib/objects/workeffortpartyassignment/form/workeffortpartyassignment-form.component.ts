@@ -1,30 +1,32 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Party,
-  WorkEffort,
-  WorkEffortPartyAssignment,
-  Employment,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './workeffortpartyassignment-edit.component.html',
+  templateUrl: './workeffortpartyassignment-form.component.html',
   providers: [ContextService],
 })
-export class WorkEffortPartyAssignmentEditComponent
+export class WorkEffortPartyAssignmentFormComponent
   implements OnInit, OnDestroy
 {
   readonly m: M;
@@ -45,7 +47,7 @@ export class WorkEffortPartyAssignmentEditComponent
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<WorkEffortPartyAssignmentEditComponent>,
+    public dialogRef: MatDialogRef<WorkEffortPartyAssignmentFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService,
     private internalOrganisationId: InternalOrganisationId

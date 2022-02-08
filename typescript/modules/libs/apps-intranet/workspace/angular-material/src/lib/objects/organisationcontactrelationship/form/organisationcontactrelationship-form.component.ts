@@ -1,21 +1,22 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Organisation,
-  OrganisationContactRelationship,
-  Party,
-  OrganisationContactKind,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -23,10 +24,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './organisationcontactrelationship-edit.component.html',
+  templateUrl: './organisationcontactrelationship-form.component.html',
   providers: [ContextService],
 })
-export class OrganisationContactRelationshipEditComponent
+export class OrganisationContactRelationshipFormComponent
   implements OnInit, OnDestroy
 {
   readonly m: M;
@@ -48,7 +49,7 @@ export class OrganisationContactRelationshipEditComponent
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<OrganisationContactRelationshipEditComponent>,
+    public dialogRef: MatDialogRef<OrganisationContactRelationshipFormComponent>,
 
     public refreshService: RefreshService,
     private errorService: ErrorService,

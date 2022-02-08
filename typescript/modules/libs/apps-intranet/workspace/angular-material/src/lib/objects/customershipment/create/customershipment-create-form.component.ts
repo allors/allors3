@@ -1,51 +1,34 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  Self,
-  Optional,
-  Inject,
-} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
-import { M } from '@allors/default/workspace/meta';
 import {
-  Locale,
-  Carrier,
-  Person,
-  Organisation,
-  PartyContactMechanism,
-  OrganisationContactRelationship,
-  Party,
-  CustomerShipment,
-  Currency,
-  PostalAddress,
-  Facility,
-  ShipmentMethod,
-  ShipmentPackage,
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
-  OldPanelManagerService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './customershipment-create.component.html',
+  templateUrl: './customershipment-create-form.component.html',
   providers: [OldPanelManagerService, ContextService],
 })
-export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
+export class CustomerShipmentCreateFormComponent implements OnInit, OnDestroy {
   readonly m: M;
   public title: string;
   public subTitle: string;
@@ -84,7 +67,7 @@ export class CustomerShipmentCreateComponent implements OnInit, OnDestroy {
     @Self() public panelManager: OldPanelManagerService,
     @Self() public allors: ContextService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<CustomerShipmentCreateComponent>,
+    public dialogRef: MatDialogRef<CustomerShipmentCreateFormComponent>,
 
     private refreshService: RefreshService,
     private errorService: ErrorService,

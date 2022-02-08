@@ -1,44 +1,33 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
-import { isBefore, isAfter } from 'date-fns';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
+import {
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  Organisation,
-  Part,
-  SupplierOffering,
-  InternalOrganisation,
-  NonSerialisedInventoryItem,
-  InventoryItem,
-  SerialisedInventoryItem,
-  SerialisedItem,
-  PurchaseOrderItem,
-  UnifiedGood,
-  VatRegime,
-  IrpfRegime,
-  InvoiceItemType,
-  PurchaseInvoice,
-  PurchaseInvoiceItem,
-} from '@allors/default/workspace/domain';
-import {
-  ObjectData,
-  RefreshService,
   ErrorService,
-  SearchFactory,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { And, IObject } from '@allors/system/workspace/domain';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
 @Component({
-  templateUrl: './purchaseinvoiceitem-edit.component.html',
+  templateUrl: './purchaseinvoiceitem-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceItemEditComponent implements OnInit, OnDestroy {
+export class PurchaseInvoiceItemFormComponent implements OnInit, OnDestroy {
   m: M;
 
   title: string;
@@ -75,7 +64,7 @@ export class PurchaseInvoiceItemEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PurchaseInvoiceItemEditComponent>,
+    public dialogRef: MatDialogRef<PurchaseInvoiceItemFormComponent>,
     private fetcher: FetcherService,
     public refreshService: RefreshService,
     private errorService: ErrorService

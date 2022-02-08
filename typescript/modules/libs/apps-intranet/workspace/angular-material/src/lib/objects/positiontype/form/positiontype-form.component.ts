@@ -1,22 +1,30 @@
-import { Component, OnDestroy, OnInit, Self, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Component, Self } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
-import { M } from '@allors/default/workspace/meta';
-import { PositionType } from '@allors/default/workspace/domain';
 import {
-  ObjectData,
-  RefreshService,
+  EditIncludeHandler,
+  Node,
+  CreateOrEditPullHandler,
+  Pull,
+  IPullResult,
+  PostCreatePullHandler,
+} from '@allors/system/workspace/domain';
+import {
+  BasePrice,
+  InternalOrganisation,
+} from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
+import {
   ErrorService,
+  AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 @Component({
-  templateUrl: './positiontype-edit.component.html',
+  templateUrl: './positiontype-form.component.html',
   providers: [ContextService],
 })
-export class PositionTypeEditComponent implements OnInit, OnDestroy {
+export class PositionTypeFormComponent implements OnInit, OnDestroy {
   public title: string;
   public subTitle: string;
 
@@ -29,7 +37,7 @@ export class PositionTypeEditComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: ObjectData,
-    public dialogRef: MatDialogRef<PositionTypeEditComponent>,
+    public dialogRef: MatDialogRef<PositionTypeFormComponent>,
     public refreshService: RefreshService,
     private errorService: ErrorService
   ) {
