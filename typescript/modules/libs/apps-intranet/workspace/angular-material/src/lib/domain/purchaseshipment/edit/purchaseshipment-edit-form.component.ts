@@ -217,7 +217,7 @@ export class PurchaseShipmentEditFormComponent
       });
   }
 
-  public save(): void {
+  public override save(): void {
     this.purchaseShipment.ShipToFacility = this.selectedFacility;
 
     super.save();

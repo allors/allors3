@@ -167,7 +167,7 @@ export class PersonCreateFormComponent
       });
   }
 
-  public save(): void {
+  public override save(): void {
     if (this.selectedRoles.indexOf(this.customerRole) > -1) {
       const customerRelationship =
         this.allors.context.create<CustomerRelationship>(

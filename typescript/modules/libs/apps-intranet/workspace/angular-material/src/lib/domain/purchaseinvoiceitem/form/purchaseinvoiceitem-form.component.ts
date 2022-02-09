@@ -266,7 +266,7 @@ export class PurchaseInvoiceItemFormComponent
     }
   }
 
-  public save(): void {
+  public override save(): void {
     this.onSave();
 
     super.save();

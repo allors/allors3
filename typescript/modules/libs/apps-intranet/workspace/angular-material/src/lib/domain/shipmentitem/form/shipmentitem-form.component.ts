@@ -533,7 +533,7 @@ export class ShipmentItemFormComponent
       });
   }
 
-  public save(): void {
+  public override save(): void {
     this.onSave();
 
     super.save();

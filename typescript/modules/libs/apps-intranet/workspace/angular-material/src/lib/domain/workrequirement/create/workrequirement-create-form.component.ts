@@ -177,7 +177,7 @@ export class WorkRequirementCreateFormComponent
     }
   }
 
-  public save(): void {
+  public override save(): void {
     this.onSave();
     super.save();
   }

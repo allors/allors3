@@ -129,7 +129,7 @@ export class PositionTypeRateFormComponent
       });
   }
 
-  public save(): void {
+  public override save(): void {
     if (this.selectedPositionTypes != null) {
       this.selectedPositionTypes.forEach((positionType: PositionType) => {
         positionType.PositionTypeRate = this.positionTypeRate;

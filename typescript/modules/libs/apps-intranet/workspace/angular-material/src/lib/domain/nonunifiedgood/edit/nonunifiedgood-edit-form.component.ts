@@ -218,7 +218,7 @@ export class NonUnifiedGoodEditFormComponent
       });
   }
 
-  public save(): void {
+  public override save(): void {
     this.selectedCategories.forEach((category: ProductCategory) => {
       category.addProduct(this.good);
 

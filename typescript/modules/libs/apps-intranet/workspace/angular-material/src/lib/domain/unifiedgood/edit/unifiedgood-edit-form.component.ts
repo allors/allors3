@@ -269,7 +269,7 @@ export class UnifiedGoodEditFormComponent
     });
   }
 
-  public save(): void {
+  public override save(): void {
     this.onSave();
 
     super.save();

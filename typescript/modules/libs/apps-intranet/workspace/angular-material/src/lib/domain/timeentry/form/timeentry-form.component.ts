@@ -218,7 +218,7 @@ export class TimeEntryFormComponent
     }, this.errorService.errorHandler);
   }
 
-  public save(): void {
+  public override save(): void {
     if (!this.timeEntry.TimeSheetWhereTimeEntry) {
       this.timeSheet.addTimeEntry(this.timeEntry);
     }

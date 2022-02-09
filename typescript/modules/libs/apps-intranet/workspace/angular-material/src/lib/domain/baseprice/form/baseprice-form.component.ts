@@ -49,7 +49,6 @@ export class BasepriceFormComponent
   }
 
   onEditInclude(): Node[] {
-    // TODO: KOEN
     const { treeBuilder: t } = this.m;
 
     return t.BasePrice({

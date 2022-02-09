@@ -310,7 +310,7 @@ export class PurchaseOrderItemFormComponent
     this.selectedFacility = facility;
   }
 
-  public save(): void {
+  public override save(): void {
     this.onSave();
 
     super.save();

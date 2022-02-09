@@ -282,7 +282,7 @@ export class NonUnifiedPartEditFormComponent
     this.allors.context.pull(pulls);
   }
 
-  public save(): void {
+  public override save(): void {
     this.onSave();
 
     super.save();

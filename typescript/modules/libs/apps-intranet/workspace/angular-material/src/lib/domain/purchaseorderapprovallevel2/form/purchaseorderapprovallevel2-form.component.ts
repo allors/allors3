@@ -88,39 +88,17 @@ export class PurchaseOrderApprovalLevel2FormComponent
       });
   }
 
-  approve(): void {
-    this.saveAndInvoke(() =>
-      this.allors.context.invoke(this.purchaseOrderApproval.Approve)
-    );
-  }
-
-  reject(): void {
-    this.saveAndInvoke(() =>
-      this.allors.context.invoke(this.purchaseOrderApproval.Reject)
-    );
-  }
+  //TODO: KOEN
+  // approve(): void {
+  //   this.saveAndInvoke(() =>
+  //     this.allors.context.invoke(this.purchaseOrderApproval.Approve)
+  //   );
+  // }
 
   //TODO: KOEN
-  saveAndInvoke(methodCall: () => Observable<IResult>): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-
-    this.allors.context
-      .push()
-      .pipe(
-        switchMap(() => {
-          return this.allors.context.pull([
-            pull.PurchaseOrderApprovalLevel2({ objectId: this.data.id }),
-          ]);
-        }),
-        switchMap(() => {
-          this.allors.context.reset();
-          return methodCall();
-        })
-      )
-      .subscribe(() => {
-        this.dialogRef.close(this.purchaseOrderApproval);
-        this.refreshService.refresh();
-      }, this.errorService.errorHandler);
-  }
+  // reject(): void {
+  //   this.saveAndInvoke(() =>
+  //     this.allors.context.invoke(this.purchaseOrderApproval.Reject)
+  //   );
+  // }
 }

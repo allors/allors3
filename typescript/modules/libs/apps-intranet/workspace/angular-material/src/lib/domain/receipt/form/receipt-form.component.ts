@@ -112,7 +112,7 @@ export class ReceiptFormComponent
       });
   }
 
-  public save(): void {
+  public override save(): void {
     this.paymentApplication.AmountApplied = this.receipt.Amount;
 
     super.save();

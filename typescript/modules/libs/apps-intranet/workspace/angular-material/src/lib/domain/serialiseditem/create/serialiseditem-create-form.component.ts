@@ -171,7 +171,7 @@ export class SerialisedItemCreateFormComponent
     }
   }
 
-  public save(): void {
+  public override save(): void {
     this.selectedPart.addSerialisedItem(this.serialisedItem);
 
     super.save();
