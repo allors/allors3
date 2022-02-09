@@ -17,6 +17,7 @@ import {
   Pull,
 } from '@allors/system/workspace/domain';
 import { NgForm } from '@angular/forms';
+import { M } from '@allors/default/workspace/meta';
 @Component({
   selector: 'person-form',
   templateUrl: './person-form.component.html',
@@ -26,6 +27,8 @@ export class PersonFormComponent
   extends AllorsFormComponent<Person>
   implements PreEditPullHandler, CreateOrEditPullHandler
 {
+  m: M;
+
   locales: Locale[];
   genders: Enumeration[];
 
@@ -35,6 +38,7 @@ export class PersonFormComponent
     form: NgForm
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
   }
 
   onPreEditPull(objectId: number, pulls: Pull[]) {

@@ -48,6 +48,7 @@ export class PurchaseInvoiceApprovalFormComponent
     public printService: PrintService
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
 
     this.print = printService.print(
       this.m.PurchaseInvoiceApproval.PurchaseInvoice

@@ -13,6 +13,7 @@ import {
   PreEditPullHandler,
   Pull,
 } from '@allors/system/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './organisation-form.component.html',
@@ -22,6 +23,8 @@ export class OrganisationFormComponent
   extends AllorsFormComponent<Organisation>
   implements PreEditPullHandler, CreateOrEditPullHandler
 {
+  m: M;
+
   countries: Country[];
   peopleFilter: SearchFactory;
 
@@ -31,6 +34,7 @@ export class OrganisationFormComponent
     form: NgForm
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
 
     this.peopleFilter = new SearchFactory({
       objectType: this.m.Person,

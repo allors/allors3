@@ -52,6 +52,7 @@ export class WorkEffortInvoiceItemAssignmentFormComponent
     private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
   }
 
   public ngOnInit(): void {

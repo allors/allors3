@@ -7,15 +7,8 @@ import {
   CreateOrEditPullHandler,
   Pull,
   IPullResult,
-  PostCreatePullHandler,
-  IObject,
 } from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  Brand,
-  InternalOrganisation,
-  Model,
-} from '@allors/default/workspace/domain';
+import { Brand, Locale, Model } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -33,6 +26,8 @@ export class BrandFormComponent
   extends AllorsFormComponent<Brand>
   implements CreateOrEditPullHandler, EditIncludeHandler
 {
+  m: M;
+
   locales: Locale[];
   addModel = false;
   models: Model[];
@@ -44,6 +39,7 @@ export class BrandFormComponent
     private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
   }
 
   onPreCreateOrEditPull(pulls: Pull[]): void {
@@ -51,8 +47,7 @@ export class BrandFormComponent
   }
 
   onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.allors.workspaceService.workspace
-      .configuration.metaPopulation as M;
+    const { treeBuilder: t } = this.m;
 
     return t.Brand({
       LogoImage: {},

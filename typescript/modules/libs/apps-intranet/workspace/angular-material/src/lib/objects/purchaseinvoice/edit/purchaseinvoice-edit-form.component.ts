@@ -110,6 +110,7 @@ export class PurchaseInvoiceEditFormComponent
     private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
 
     // Normal
     const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;

@@ -42,8 +42,6 @@ export abstract class AllorsFormComponent<T extends IObject>
     return this.object?.strategy.id;
   }
 
-  m: M;
-
   isCreate: boolean;
 
   get isEdit() {
@@ -65,9 +63,6 @@ export abstract class AllorsFormComponent<T extends IObject>
     public form: NgForm
   ) {
     super();
-
-    this.m = allors.workspaceService.workspace.configuration
-      .metaPopulation as M;
 
     this.context = allors.context;
     this.context.name = this.constructor.name;

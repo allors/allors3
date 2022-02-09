@@ -14,6 +14,7 @@ import {
   Node,
   PostCreatePullHandler,
 } from '@allors/system/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './employment-form.component.html',
@@ -23,6 +24,8 @@ export class EmploymentFormComponent
   extends AllorsFormComponent<Employment>
   implements PostCreatePullHandler, EditIncludeHandler
 {
+  m: M;
+
   organisationsFilter: SearchFactory;
   peopleFilter: SearchFactory;
 
@@ -32,6 +35,7 @@ export class EmploymentFormComponent
     form: NgForm
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
 
     this.organisationsFilter = new SearchFactory({
       objectType: this.m.Organisation,

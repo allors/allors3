@@ -29,6 +29,8 @@ export class WorkTaskCreateFormComponent
   extends AllorsFormComponent<WorkTask>
   implements CreatePullHandler
 {
+  m: M;
+
   contactMechanisms: ContactMechanism[];
   contacts: Person[];
 
@@ -39,11 +41,11 @@ export class WorkTaskCreateFormComponent
     private userId: UserId
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
   }
 
   onPreCreatePull(pulls: Pull[]): void {
-    const m = this.allors.workspaceService.workspace.configuration
-      .metaPopulation as M;
+    const { m } = this;
     const { pullBuilder: p } = m;
 
     pulls.push(

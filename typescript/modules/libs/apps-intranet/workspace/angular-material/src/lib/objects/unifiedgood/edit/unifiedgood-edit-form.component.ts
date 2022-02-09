@@ -72,6 +72,7 @@ export class UnifiedGoodEditFormComponent
     private snackBar: MatSnackBar
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
 
     panel.onPull = (pulls) => {
       this.good = undefined;

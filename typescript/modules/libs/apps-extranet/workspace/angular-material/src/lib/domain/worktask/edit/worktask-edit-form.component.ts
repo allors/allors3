@@ -31,6 +31,8 @@ export class WorkTaskEditFormComponent
   extends AllorsFormComponent<WorkTask>
   implements EditPullHandler, EditIncludeHandler
 {
+  m: M;
+
   contactMechanisms: ContactMechanism[];
   contacts: Person[];
 
@@ -41,20 +43,19 @@ export class WorkTaskEditFormComponent
     private userId: UserId
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
   }
 
   onEditInclude(): Node[] {
     // TODO: KOEN
-    const { treeBuilder: t } = this.allors.workspaceService.workspace
-      .configuration.metaPopulation as M;
+    const { treeBuilder: t } = this.m;
 
     return t.BasePrice({
       Currency: {},
     });
   }
   onPreEditPull(objectId: number, pulls: Pull[]): void {
-    const m = this.allors.workspaceService.workspace.configuration
-      .metaPopulation as M;
+    const { m } = this;
     const { pullBuilder: p } = m;
 
     pulls.push(

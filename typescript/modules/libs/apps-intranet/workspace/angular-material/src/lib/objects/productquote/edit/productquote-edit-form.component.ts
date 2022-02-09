@@ -70,6 +70,7 @@ export class ProductQuoteEditFormComponent
     private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
 
     // Collapsed
     const productQuotePullName = `${panel.name}_${this.m.ProductQuote.tag}`;

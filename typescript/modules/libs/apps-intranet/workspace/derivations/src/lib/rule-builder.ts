@@ -12,7 +12,9 @@ import { PersonDisplayEmailRule } from './rules/person-display-email.rule';
 import { SerialisedItemAgeRule } from './rules/serialised-item-age.rule';
 import { SerialisedItemYearsToGoRule } from './rules/serialised-item-years-to-go.rule';
 import { WorkEffortInventoryAssignmentTotalSellingPriceRule } from './rules/work-effort-inventory-assignment-total-selling-price.rule';
-export function ruleBuilder(m: M): IRule<IObject>[] {
+import { MetaPopulation } from '@allors/system/workspace/meta';
+export function ruleBuilder(metaPopulation: MetaPopulation): IRule<IObject>[] {
+  const m = metaPopulation as M;
   return [
     new InventoryItemFacilityNameRule(m),
     new InventoryItemPartDisplayNameRule(m),

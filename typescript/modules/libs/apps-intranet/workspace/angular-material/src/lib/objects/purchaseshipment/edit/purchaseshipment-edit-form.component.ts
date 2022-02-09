@@ -74,6 +74,7 @@ export class PurchaseShipmentEditFormComponent
     private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
 
     panel.onPull = (pulls) => {
       this.purchaseShipment = undefined;

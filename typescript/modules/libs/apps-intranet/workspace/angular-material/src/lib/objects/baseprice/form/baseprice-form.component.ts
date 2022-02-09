@@ -30,6 +30,8 @@ export class BasepriceFormComponent
   extends AllorsFormComponent<BasePrice>
   implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
+  m: M;
+
   internalOrganisation: InternalOrganisation;
 
   constructor(
@@ -39,6 +41,7 @@ export class BasepriceFormComponent
     private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
   }
 
   onPreCreateOrEditPull(pulls: Pull[]): void {
@@ -47,8 +50,7 @@ export class BasepriceFormComponent
 
   onEditInclude(): Node[] {
     // TODO: KOEN
-    const { treeBuilder: t } = this.allors.workspaceService.workspace
-      .configuration.metaPopulation as M;
+    const { treeBuilder: t } = this.m;
 
     return t.BasePrice({
       Currency: {},

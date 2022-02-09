@@ -47,6 +47,7 @@ export class WorkEffortAssignmentRateFormComponent
     form: NgForm
   ) {
     super(allors, errorService, form);
+    this.m = allors.metaPopulation as M;
   }
 
   public ngOnInit(): void {
