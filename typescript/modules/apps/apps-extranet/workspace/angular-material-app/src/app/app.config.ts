@@ -1,105 +1,40 @@
-import {
-  angularList,
-  angularOverview,
-  angularMenu,
-  angularFilterDefinition,
-  FilterDefinition,
-  angularSorter,
-  Sorter,
-  SearchFactory,
-} from '@allors/base/workspace/angular/foundation';
+import { HttpClient } from '@angular/common/http';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+
+import { AppClient } from './app.client';
+import { Configuration } from '@allors/system/workspace/domain';
+import { ruleBuilder } from '@allors/apps-extranet/workspace/derivations';
+import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
+import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
+import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
+import { data } from '@allors/default/workspace/meta-json';
 import { M } from '@allors/default/workspace/meta';
-import { Composite } from '@allors/system/workspace/meta';
-import { FixedAsset, WorkEffortState } from '@allors/default/workspace/domain';
+import { AppContext } from './app.context';
 
-function nav(composite: Composite, list: string, overview?: string) {
-  angularList(composite, list);
-  angularOverview(composite, overview);
-}
+export function config(
+  workspaceService: WorkspaceService,
+  httpClient: HttpClient,
+  baseUrl: string,
+  authUrl: string
+) {
+  const angularClient = new AppClient(httpClient, baseUrl, authUrl);
 
-export function configure(m: M) {
-  // Menu
-  angularMenu(m, [
-    { title: 'Home', icon: 'home', link: '/' },
-    {
-      title: 'WorkEfforts',
-      icon: 'schedule',
-      children: [{ objectType: m.WorkEffort }],
-    },
-  ]);
+  const metaPopulation = new LazyMetaPopulation(data);
+  const m = metaPopulation as unknown as M;
 
-  // Navigation
-  nav(m.WorkEffort, '/workefforts/workefforts');
-  nav(m.WorkTask, '/workefforts/workefforts', '/workefforts/worktask/:id');
+  let nextId = -1;
 
-  const workEffortStateSearch = new SearchFactory({
-    objectType: m.WorkEffortState,
-    roleTypes: [m.WorkEffortState.Name],
-  });
+  const configuration: Configuration = {
+    name: 'Default',
+    metaPopulation,
+    objectFactory: new PrototypeObjectFactory(metaPopulation),
+    rules: ruleBuilder(m),
+    idGenerator: () => nextId--,
+  };
 
-  const fixedAssetSearch = new SearchFactory({
-    objectType: m.FixedAsset,
-    roleTypes: [m.FixedAsset.SearchString],
-  });
+  const database = new DatabaseConnection(configuration, angularClient);
+  const workspace = database.createWorkspace();
+  workspaceService.workspace = workspace;
 
-  angularFilterDefinition(
-    m.WorkEffort,
-    new FilterDefinition(
-      {
-        kind: 'And',
-        operands: [
-          {
-            kind: 'Equals',
-            propertyType: m.WorkEffort.WorkEffortState,
-            parameter: 'state',
-          },
-          {
-            kind: 'Like',
-            roleType: m.WorkEffort.WorkEffortNumber,
-            parameter: 'Number',
-          },
-          { kind: 'Like', roleType: m.WorkEffort.Name, parameter: 'Name' },
-          {
-            kind: 'Like',
-            roleType: m.WorkEffort.Description,
-            parameter: 'Description',
-          },
-          {
-            kind: 'ContainedIn',
-            propertyType:
-              m.WorkEffort.WorkEffortFixedAssetAssignmentsWhereAssignment,
-            extent: {
-              kind: 'Filter',
-              objectType: m.WorkEffortFixedAssetAssignment,
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.WorkEffortFixedAssetAssignment.FixedAsset,
-                parameter: 'equipment',
-              },
-            },
-          },
-        ],
-      },
-      {
-        state: {
-          search: () => workEffortStateSearch,
-          display: (v: WorkEffortState) => v && v.Name,
-        },
-        equipment: {
-          search: () => fixedAssetSearch,
-          display: (v: FixedAsset) => v && v.DisplayName,
-        },
-      }
-    )
-  );
-
-  angularSorter(
-    m.WorkEffort,
-    new Sorter({
-      number: [m.WorkEffort.SortableWorkEffortNumber],
-      name: [m.WorkEffort.Name],
-      description: [m.WorkEffort.Description],
-      lastModifiedDate: m.Person.LastModifiedDate,
-    })
-  );
+  workspaceService.contextBuilder = () => new AppContext(workspaceService);
 }

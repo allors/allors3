@@ -134,6 +134,14 @@ import {
   IconService,
 } from '@allors/base/workspace/angular-material/application';
 
+import {
+  WorkEffortListPageComponent,
+  WorkTaskCreateFormComponent,
+  WorkTaskOverviewComponent,
+  WorkTaskEditFormComponent,
+  WorkTaskSummaryPanel,
+} from '@allors/apps-extranet/workspace/angular-material';
+
 import { routes, components as routeComponents } from './app.routes';
 import { components as dialogComponents } from './app.dialog';
 import {
@@ -200,6 +208,12 @@ import { AppDisplayService } from './services/display.service';
     ...routeComponents,
     ...dialogComponents,
     ...formComponents,
+    // Non routed and non dialog components
+    WorkEffortListPageComponent,
+    WorkTaskCreateFormComponent,
+    WorkTaskOverviewComponent,
+    WorkTaskEditFormComponent,
+    WorkTaskSummaryPanel,
     // App
     AppComponent,
   ],

@@ -19,7 +19,8 @@
           "apps/apps-extranet/workspace/angular-material-app/src/assets"
         ],
         "styles": ["apps/apps-extranet/workspace/angular-material-app/src/styles.scss"],
-        "scripts": []
+        "scripts": [],
+        "allowedCommonJsDependencies": ["easymde"]
       },
       "configurations": {
         "production": {

@@ -30,13 +30,12 @@
       "@allors/system/workspace/adapters-json": ["libs/system/workspace/adapters-json/src/index.ts"],
       "@allors/system/workspace/derivations": ["libs/system/workspace/derivations/src/index.ts"],
       // Base
-      "@allors/base/workspace/derivations": ["libs/base/workspace/derivations/src/index.ts"],
-      "@allors/base/workspace/derivations-custom": ["libs/base/workspace/derivations-custom/src/index.ts"],
       "@allors/base/workspace/angular/foundation": ["libs/base/workspace/angular/foundation/src/index.ts"],
       "@allors/base/workspace/angular/application": ["libs/base/workspace/angular/application/src/index.ts"],
       "@allors/base/workspace/angular-material/foundation": ["libs/base/workspace/angular-material/foundation/src/index.ts"],
       "@allors/base/workspace/angular-material/application": ["libs/base/workspace/angular-material/application/src/index.ts"],
       // Apps-Extranet
+      "@allors/apps-extranet/workspace/derivations": ["libs/apps-extranet/workspace/derivations/src/index.ts"],
       "@allors/apps-extranet/workspace/angular-material": ["libs/apps-extranet/workspace/angular-material/src/index.ts"],
       // Default
       "@allors/default/workspace/meta": ["libs/apps-extranet/workspace/meta/src/index.ts"],

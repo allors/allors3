@@ -9,10 +9,7 @@ import {
   RefreshService,
   SharedPullService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
-  WorkspaceService,
-} from '@allors/base/workspace/angular/foundation';
+import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsOverviewPageComponent,
   NavigationActivatedRoute,

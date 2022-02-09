@@ -15,15 +15,10 @@ export class AppMenuService implements MenuService {
     this._menu = [
       { title: 'Home', icon: 'home', link: '/' },
       {
-        title: 'Contacts',
-        icon: 'business',
-        children: [
-          { objectType: m.Person },
-          { objectType: m.Organisation },
-          { objectType: m.Country },
-        ],
+        title: 'WorkEfforts',
+        icon: 'schedule',
+        children: [{ objectType: m.WorkEffort }],
       },
-      { title: 'Fields', icon: 'build', link: '/fields' },
     ];
   }
 

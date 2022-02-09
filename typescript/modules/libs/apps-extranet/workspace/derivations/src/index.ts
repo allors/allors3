@@ -5,4 +5,3 @@ export { PartyDisplayPhoneRule } from './lib/rules/party-display-phone.rule';
 export { PersonDisplayEmailRule } from './lib/rules/person-display-email.rule';
 
 export * from './lib/rule-builder';
-import '@allors/system/workspace/derivations';

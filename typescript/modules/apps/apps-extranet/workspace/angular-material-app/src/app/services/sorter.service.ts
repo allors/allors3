@@ -19,17 +19,12 @@ export class AppSorterService implements SorterService {
     const { m } = this;
 
     switch (composite.tag) {
-      case tags.Country:
-        return new Sorter({ isoCode: m.Country.IsoCode, name: m.Country.Name });
-
-      case tags.Organisation:
-        return new Sorter({ name: m.Organisation.Name });
-
-      case tags.Person:
+      case tags.WorkEffort:
         return new Sorter({
-          firstName: m.Person.FirstName,
-          lastName: m.Person.LastName,
-          email: m.Person.UserEmail,
+          number: [m.WorkEffort.SortableWorkEffortNumber],
+          name: [m.WorkEffort.Name],
+          description: [m.WorkEffort.Description],
+          lastModifiedDate: m.Person.LastModifiedDate,
         });
     }
     return null;

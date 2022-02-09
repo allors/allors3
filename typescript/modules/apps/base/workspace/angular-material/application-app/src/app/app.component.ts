@@ -10,7 +10,6 @@ import { SharedPullHandler } from '@allors/system/workspace/domain';
 @Component({
   selector: 'allors-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnDestroy {
   subscription: Subscription;

@@ -21,12 +21,8 @@ export class AppNavigationService extends NavigationService {
 
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
-    this.listByComposite.set(m.Person, '/contacts/people');
-    this.listByComposite.set(m.Organisation, '/contacts/organisations');
-    this.listByComposite.set(m.Country, '/contacts/countries');
-
-    this.overviewByComposite.set(m.Person, '/contacts/person/:id');
-    this.overviewByComposite.set(m.Organisation, '/contacts/organisation/:id');
+    this.listByComposite.set(m.WorkEffort, '/workefforts/workefforts');
+    this.overviewByComposite.set(m.WorkTask, '/workefforts/worktask/:id');
   }
 
   hasList(objectType: Composite): boolean {

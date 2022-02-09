@@ -18,7 +18,6 @@ import {
   Pull,
 } from '@allors/system/workspace/domain';
 import { Class, Composite } from '@allors/system/workspace/meta';
-import { derivationRules } from '@allors/system/workspace/derivations';
 
 export class AppContext implements Context {
   constructor(public workspaceService: WorkspaceService) {
@@ -27,9 +26,15 @@ export class AppContext implements Context {
     this.session = this.workspace.createSession();
 
     // Auto activate
-    const rules = derivationRules(this.workspace.configuration.metaPopulation);
+    const rules = this.workspace.configuration.rules;
     this.session.activate(rules);
   }
+
+  workspace: IWorkspace;
+
+  configuration: Configuration;
+
+  session: ISession;
 
   get name(): string {
     return this.session.context;
@@ -39,15 +44,10 @@ export class AppContext implements Context {
     this.session.context = value;
   }
 
-  workspace: IWorkspace;
-
-  configuration: Configuration;
-
-  session: ISession;
-
   activate(rules: IRule<IObject>[]) {
     this.session.activate(rules);
   }
+
   create<T extends IObject>(cls: Class): T {
     return this.session.create<T>(cls);
   }

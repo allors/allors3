@@ -51,8 +51,6 @@ export class WorkEffortListPageComponent
   extends AllorsListPageComponent
   implements OnInit, OnDestroy
 {
-  public title = 'Work Orders';
-
   table: Table<Row>;
 
   delete: Action;
@@ -72,7 +70,7 @@ export class WorkEffortListPageComponent
     public sorterService: SorterService
   ) {
     super(allors, titleService);
-    this.objectType = this.m.Country;
+    this.objectType = (this.m as unknown as M).WorkEffort;
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
