@@ -1,6 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Class, Composite } from '@allors/system/workspace/meta';
-import { IObject, CreatePullHandler } from '@allors/system/workspace/domain';
+import {
+  IObject,
+  CreatePullHandler,
+  Initializer,
+} from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   CreateRequest,
@@ -17,7 +21,7 @@ import { IconService } from '../icon/icon.service';
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
   @Input() public objectType: Composite;
 
-  @Input() public onObjectCreate: CreatePullHandler;
+  @Input() public intitializer: Initializer;
 
   @Output() public created?: EventEmitter<IObject> = new EventEmitter();
 
@@ -49,7 +53,7 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
     const request: CreateRequest = {
       kind: 'CreateRequest',
       objectType,
-      handlers: this.onObjectCreate ? [this.onObjectCreate] : null,
+      initializer: this.intitializer,
     };
 
     this.createService.create(request).subscribe((v) => {

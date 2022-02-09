@@ -6,6 +6,7 @@ import {
   IPullResult,
   CreatePullHandler,
   Pull,
+  Initializer,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import {
@@ -37,10 +38,7 @@ interface Row extends TableRow {
   selector: 'a-mat-dyn-edit-rel-panel',
   templateUrl: './dynamic-edit-relationship-panel.component.html',
 })
-export class AllorsMaterialDynamicEditRelationshipPanelComponent
-  extends AllorsEditRelationshipPanelComponent
-  implements CreatePullHandler
-{
+export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsEditRelationshipPanelComponent {
   private assignedAnchor: RoleType;
 
   @HostBinding('class.expanded-panel')
@@ -96,6 +94,10 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
 
   get titel() {
     return this.target.pluralName;
+  }
+
+  get initializer(): Initializer {
+    return { propertyType: this.anchor, id: this.objectInfo.id };
   }
 
   constructor(
@@ -232,20 +234,6 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent
 
   toggle() {
     this.panelService.stopEdit().subscribe();
-  }
-
-  onPreCreatePull(pulls: Pull[]): void {
-    const pull: Pull = {
-      objectId: this.objectInfo.id,
-      results: [{ name: '_anchor' }],
-    };
-
-    pulls.push(pull);
-  }
-
-  onPostCreatePull(object: IObject, pullResult: IPullResult): void {
-    const anchorObject = pullResult.object<IObject>('_anchor');
-    object.strategy.setCompositeRole(this.anchor, anchorObject);
   }
 
   private refreshTable() {

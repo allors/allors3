@@ -19,6 +19,7 @@ import {
   PostEditPullHandler,
   PostCreatePullHandler,
   EditIncludeHandler,
+  Initializer,
 } from '@allors/system/workspace/domain';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
@@ -112,50 +113,48 @@ export abstract class AllorsFormComponent<T extends IObject>
     );
   }
 
-  create(objectType: Class, handlers?: CreatePullHandler[]): void {
+  create(objectType: Class, initializer?: Initializer): void {
     this.isCreate = true;
-
-    const hasHandlers = handlers?.length > 0;
 
     if (
       this.hasPreCreate ||
       this.hasPostCreate ||
       this.hasPreCreateOrEdit ||
-      this.hasPostCreateOrEdit ||
-      hasHandlers
+      this.hasPostCreateOrEdit
     ) {
       const pulls: Pull[] = [];
 
       if (this.hasPreCreate) {
-        (this as unknown as PreCreatePullHandler).onPreCreatePull(pulls);
+        (this as unknown as PreCreatePullHandler).onPreCreatePull(
+          pulls,
+          initializer
+        );
       }
 
       if (this.hasPreCreateOrEdit) {
         (this as unknown as PreCreateOrEditPullHandler).onPreCreateOrEditPull(
-          pulls
+          pulls,
+          initializer
         );
       }
-
-      handlers?.forEach((v) => v.onPreCreatePull(pulls));
 
       this.createSubscription = this.context
         .pull(pulls)
         .subscribe((pullResult) => {
           this.onCreate(objectType);
 
-          handlers?.forEach((v) => v.onPostCreatePull(this.object, pullResult));
-
           if (this.hasPostCreate) {
             (this as unknown as PostCreatePullHandler).onPostCreatePull(
               this.object,
-              pullResult
+              pullResult,
+              initializer
             );
           }
 
           if (this.hasPostCreateOrEdit) {
             (
               this as unknown as PostCreateOrEditPullHandler
-            ).onPostCreateOrEditPull(this.object, pullResult);
+            ).onPostCreateOrEditPull(this.object, pullResult, initializer);
           }
         });
     } else {

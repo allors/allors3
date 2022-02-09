@@ -54,6 +54,7 @@ export * from './lib/diff/iunit-diff';
 
 export * from './lib/configuration';
 export * from './lib/ichange-set';
+export * from './lib/lifecycle/initializer';
 export * from './lib/iobject';
 export * from './lib/iobject-factory';
 export * from './lib/isession';
@@ -66,9 +67,7 @@ export * from './lib/role';
 export * from './lib/types';
 
 // handlers
-export * from './lib/pull/create-association-pull-handler';
-export * from './lib/pull/create-or-edit-pull-handler';
-export * from './lib/pull/create-pull-handler';
-export * from './lib/pull/create-role-pull-handler';
-export * from './lib/pull/edit-pull-handler';
-export * from './lib/pull/shared-pull-handler';
+export * from './lib/lifecycle/create-or-edit-pull-handler';
+export * from './lib/lifecycle/create-pull-handler';
+export * from './lib/lifecycle/edit-pull-handler';
+export * from './lib/lifecycle/shared-pull-handler';

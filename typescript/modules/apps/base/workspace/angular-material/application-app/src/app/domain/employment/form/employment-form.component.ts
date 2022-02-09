@@ -10,11 +10,15 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NgForm } from '@angular/forms';
 import {
+  CreatePullHandler,
   EditIncludeHandler,
+  Initializer,
   Node,
   PostCreatePullHandler,
+  Pull,
 } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
+import { PullResult } from 'libs/system/workspace/adapters-json/src/lib/database/pull/pull-result';
 
 @Component({
   templateUrl: './employment-form.component.html',
@@ -22,7 +26,7 @@ import { M } from '@allors/default/workspace/meta';
 })
 export class EmploymentFormComponent
   extends AllorsFormComponent<Employment>
-  implements PostCreatePullHandler, EditIncludeHandler
+  implements CreatePullHandler, EditIncludeHandler
 {
   m: M;
 
@@ -48,7 +52,46 @@ export class EmploymentFormComponent
     });
   }
 
-  onPostCreatePull(object: Employment) {
+  onPreCreatePull(pulls: Pull[], initializer?: Initializer): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
+    switch (initializer.propertyType) {
+      case m.Employment.Employer:
+        pulls.push(
+          p.Organisation({
+            objectId: initializer.id,
+          })
+        );
+        break;
+
+      case m.Employment.Employee:
+        pulls.push(
+          p.Person({
+            objectId: initializer.id,
+          })
+        );
+        break;
+    }
+  }
+
+  onPostCreatePull(
+    object: Employment,
+    pullResult: PullResult,
+    initializer: Initializer
+  ) {
+    const { m } = this;
+
+    switch (initializer.propertyType) {
+      case m.Employment.Employer:
+        this.object.Employer = pullResult.object(m.Organisation);
+        break;
+
+      case m.Employment.Employee:
+        this.object.Employee = pullResult.object(m.Person);
+        break;
+    }
+
     object.FromDate = new Date();
   }
 

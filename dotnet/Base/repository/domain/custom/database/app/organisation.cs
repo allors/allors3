@@ -58,9 +58,9 @@ namespace Allors.Repository
         #region Allors
         [Id("15f33fa4-c878-45a0-b40c-c5214bce350b")]
         [Indexed]
-        [Workspace(Default)]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace(Default)]
         public Person[] Shareholders { get; set; }
 
         #region Allors

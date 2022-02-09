@@ -28,9 +28,10 @@ namespace Allors.Repository
 
         #region Allors
         [Id("93B8F2E1-9902-4C0B-BFAC-74629C494346")]
+        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        [Relationship]
         [Required]
         [Workspace(Default)]
         public Person Employee { get; set; }

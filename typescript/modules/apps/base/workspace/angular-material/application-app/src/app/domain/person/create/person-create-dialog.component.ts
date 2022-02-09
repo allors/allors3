@@ -63,9 +63,9 @@ export class PersonCreateDialogComponent implements OnInit, OnDestroy {
                 },
               },
             }),
-            // pull.Organisation({
-            //   objectId: this.data.associationId,
-            // }),
+            pull.Organisation({
+              objectId: this.data.initializer?.id,
+            }),
           ];
 
           return this.allors.context.pull(pulls);
