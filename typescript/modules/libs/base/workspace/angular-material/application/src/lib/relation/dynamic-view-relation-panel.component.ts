@@ -1,5 +1,10 @@
 import { Component, OnInit, HostBinding, Input } from '@angular/core';
-import { Composite, PropertyType } from '@allors/system/workspace/meta';
+import {
+  AssociationType,
+  Composite,
+  PropertyType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import {
   AllorsViewRelationPanelComponent,
   ObjectService,
@@ -17,8 +22,6 @@ import {
   Pull,
   ScopedPullHandler,
 } from '@allors/system/workspace/domain';
-import { Period } from '@allors/default/workspace/domain';
-import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 
 @Component({
   selector: 'a-mat-dyn-view-relation-panel',
@@ -40,17 +43,14 @@ export class AllorsMaterialDynamicViewRelationPanelComponent
   objectType: Composite;
 
   get panelId() {
-    return `${this.target.name}`;
+    return `${this.propertyType.name}`;
   }
 
   title: string;
   description: string;
 
-  hasPeriod: boolean;
-  periodSelection: PeriodSelection = PeriodSelection.Current;
-
-  objects: IObject[];
-  filtered: IObject[];
+  object: IObject;
+  properties: IObject[];
 
   constructor(
     objectService: ObjectService,
@@ -70,34 +70,21 @@ export class AllorsMaterialDynamicViewRelationPanelComponent
   }
 
   ngOnInit() {
-    this.objectType = this.target.associationType.objectType as Composite;
-    this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
-
-    this.title = this.target.pluralName;
+    this.objectType = this.propertyType.objectType as Composite;
+    this.title = this.propertyType.pluralName;
   }
 
   onPreScopedPull(pulls: Pull[], scope?: string): void {
     const id = this.objectInfo.id;
 
     const pull: Pull = {
-      extent: {
-        kind: 'Filter',
-        objectType: this.objectType,
-        predicate: {
-          kind: 'Equals',
-          propertyType: this.anchor,
-          value: id,
-        },
-      },
+      objectId: id,
       results: [
         {
           name: scope,
           include: [
             {
-              propertyType: this.anchor,
-            },
-            {
-              propertyType: this.target,
+              propertyType: this.propertyType,
             },
           ],
         },
@@ -108,53 +95,24 @@ export class AllorsMaterialDynamicViewRelationPanelComponent
   }
 
   onPostScopedPull(pullResult: IPullResult, scope?: string): void {
-    this.objects = pullResult.collection<IObject>(scope) ?? [];
-    this.updateFilter();
+    this.object = pullResult.object<IObject>(scope);
 
-    if (this.hasPeriod) {
-      this.description = `${this.filtered.length} current and ${
-        this.objects.length - this.filtered.length
-      } inactive ${this.target.pluralName.toLowerCase()}`;
+    if (this.propertyType.isAssociationType) {
+      this.properties = this.object.strategy.getCompositesAssociation(
+        this.propertyType as AssociationType
+      ) as IObject[];
     } else {
-      this.description = `${
-        this.objects.length
-      } ${this.target.pluralName.toLowerCase()}`;
+      this.properties = this.object.strategy.getCompositesRole(
+        this.propertyType as RoleType
+      ) as IObject[];
     }
+
+    this.description = `${
+      this.properties.length
+    } ${this.propertyType.pluralName.toLowerCase()}`;
   }
 
   toggle() {
     this.panelService.startEdit(this.panelId).subscribe();
-  }
-
-  private updateFilter() {
-    if (!this.hasPeriod) {
-      this.filtered = this.objects;
-      return;
-    }
-
-    const now = new Date(Date.now());
-    switch (this.periodSelection) {
-      case PeriodSelection.Current:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate < now && v.ThroughDate > now;
-          } else {
-            return v.FromDate < now;
-          }
-        });
-        break;
-      case PeriodSelection.Inactive:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate > now || v.ThroughDate < now;
-          } else {
-            return v.FromDate > now;
-          }
-        });
-        break;
-      default:
-        this.filtered = this.objects;
-        break;
-    }
   }
 }

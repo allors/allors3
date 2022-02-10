@@ -1,13 +1,16 @@
-import { format } from 'date-fns';
 import { Component, HostBinding, Input } from '@angular/core';
-import { Composite, RoleType } from '@allors/system/workspace/meta';
+import {
+  AssociationType,
+  Composite,
+  PropertyType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
   Pull,
   Initializer,
 } from '@allors/system/workspace/domain';
-import { Period } from '@allors/default/workspace/domain';
 import {
   SharedPullService,
   RefreshService,
@@ -26,7 +29,6 @@ import { TableRow } from '../table/table-row';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
 import { TableConfig } from '../table/table-config';
-import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import { IconService } from '../icon/icon.service';
 
 interface Row extends TableRow {
@@ -38,8 +40,6 @@ interface Row extends TableRow {
   templateUrl: './dynamic-edit-relation-panel.component.html',
 })
 export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditRelationPanelComponent {
-  private assignedAnchor: RoleType;
-
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -47,56 +47,31 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
   }
 
   @Input()
-  get anchor(): RoleType {
-    if (this.assignedAnchor) {
-      return this.assignedAnchor;
-    }
-
-    if (this.target) {
-      const composite = this.target.associationType.objectType as Composite;
-      for (const roleType of composite.roleTypes) {
-        if (roleType !== this.target && roleType.relationType.inRelation) {
-          return roleType;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  set anchor(value: RoleType) {
-    this.assignedAnchor = value;
-  }
-
-  @Input()
-  target: RoleType;
+  propertyType: PropertyType;
 
   objectType: Composite;
-
-  hasPeriod: boolean;
-  periodSelection: PeriodSelection = PeriodSelection.Current;
 
   table: Table<Row>;
   delete: Action;
   edit: Action;
 
-  objects: IObject[];
-  filtered: IObject[];
+  object: IObject;
+  properties: IObject[];
 
   get panelId() {
-    return this.target.name;
+    return `${this.propertyType.name}`;
   }
 
   get icon() {
-    return this.iconService.icon(this.objectType);
+    return this.iconService.icon(this.propertyType.relationType);
   }
 
   get titel() {
-    return this.target.pluralName;
+    return this.propertyType.pluralName;
   }
 
   get initializer(): Initializer {
-    return { propertyType: this.anchor, id: this.objectInfo.id };
+    return { propertyType: this.propertyType, id: this.objectInfo.id };
   }
 
   constructor(
@@ -124,8 +99,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
   }
 
   ngOnInit() {
-    this.objectType = this.target.associationType.objectType as Composite;
-    this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
+    this.objectType = this.propertyType.objectType as Composite;
 
     this.delete = this.deleteService.delete();
     this.edit = this.editRoleService.edit();
@@ -134,21 +108,12 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: [{ name: this.target.name, sort }],
+      columns: [{ name: this.propertyType.name, sort }],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
       autoFilter: true,
     };
-
-    if (this.hasPeriod) {
-      tableConfig.columns.push(
-        ...[
-          { name: 'from', sort },
-          { name: 'through', sort },
-        ]
-      );
-    }
 
     this.table = new Table(tableConfig);
   }
@@ -157,24 +122,13 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
     const id = this.objectInfo.id;
 
     const pull: Pull = {
-      extent: {
-        kind: 'Filter',
-        objectType: this.objectType,
-        predicate: {
-          kind: 'Equals',
-          propertyType: this.anchor,
-          value: id,
-        },
-      },
+      objectId: id,
       results: [
         {
           name: scope,
           include: [
             {
-              propertyType: this.anchor,
-            },
-            {
-              propertyType: this.target,
+              propertyType: this.propertyType,
             },
           ],
         },
@@ -185,50 +139,19 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
   }
 
   onPostScopedPull(pullResult: IPullResult, scope?: string) {
-    this.objects = pullResult.collection<IObject>(scope) ?? [];
-    this.updateFilter();
+    this.object = pullResult.object<IObject>(scope);
+
+    if (this.propertyType.isAssociationType) {
+      this.properties = this.object.strategy.getCompositesAssociation(
+        this.propertyType as AssociationType
+      ) as IObject[];
+    } else {
+      this.properties = this.object.strategy.getCompositesRole(
+        this.propertyType as RoleType
+      ) as IObject[];
+    }
+
     this.refreshTable();
-  }
-
-  onPeriodSelectionChange(newPeriodSelection: PeriodSelection) {
-    this.periodSelection = newPeriodSelection;
-
-    if (this.objects != null) {
-      this.updateFilter();
-      this.refreshTable();
-    }
-  }
-
-  private updateFilter() {
-    if (!this.hasPeriod) {
-      this.filtered = this.objects;
-      return;
-    }
-
-    const now = new Date(Date.now());
-    switch (this.periodSelection) {
-      case PeriodSelection.Current:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate < now && v.ThroughDate > now;
-          } else {
-            return v.FromDate < now;
-          }
-        });
-        break;
-      case PeriodSelection.Inactive:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate > now || v.ThroughDate < now;
-          } else {
-            return v.FromDate > now;
-          }
-        });
-        break;
-      default:
-        this.filtered = this.objects;
-        break;
-    }
   }
 
   toggle() {
@@ -236,28 +159,14 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
   }
 
   private refreshTable() {
-    this.table.total = this.filtered.length;
-    this.table.data = this.filtered.map((v) => {
-      const target = v.strategy.getCompositeRole(this.target);
-      const targetDisplay = this.displayService.display(target);
-
-      let from: string;
-      let through: string;
-      if (this.hasPeriod) {
-        const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
-        from = format(fromDate, 'dd-MM-yyyy');
-        const throughDate = v.strategy.getUnitRole(
-          this.m.Period.ThroughDate
-        ) as Date;
-        through = throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
-      }
+    this.table.total = this.properties.length;
+    this.table.data = this.properties.map((v) => {
+      const display = this.displayService.display(v);
 
       return {
         object: v,
-        [this.target.name]: targetDisplay,
+        [this.propertyType.name]: display,
         type: v.strategy.cls.singularName,
-        from,
-        through,
       } as Row;
     });
   }

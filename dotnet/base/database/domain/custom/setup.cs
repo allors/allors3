@@ -50,6 +50,8 @@ namespace Allors.Database.Domain
 
             acme.Owner = jenny;
             acme.Manager = jane;
+            acme.AddShareholder(jane);
+            acme.AddShareholder(jenny);
             new EmploymentBuilder(this.transaction).WithEmployer(acme).WithEmployee(jane).Build();
 
             var now = this.transaction.Now();
@@ -58,6 +60,9 @@ namespace Allors.Database.Domain
             // Create cycles between Organisation and Person
             var cycleOrganisation1 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle One").Build();
             var cycleOrganisation2 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle Two").Build();
+
+            cycleOrganisation1.AddShareholder(jane);
+            cycleOrganisation2.AddShareholder(jenny);
 
             var cyclePerson1 = new PersonBuilder(this.transaction).WithFirstName("Person Cycle").WithLastName("One").WithUserName("cycle1@one.org").Build();
             var cyclePerson2 = new PersonBuilder(this.transaction).WithFirstName("Person Cycle").WithLastName("Two").WithUserName("cycle2@one.org").Build();

@@ -3,7 +3,7 @@ import {
   RefreshService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { RoleType } from '@allors/system/workspace/meta';
+import { PropertyType } from '@allors/system/workspace/meta';
 import { Directive } from '@angular/core';
 import { AllorsObjectPanelComponent } from '../object/object-panel.component';
 import { ObjectService } from '../object/object.service';
@@ -21,9 +21,7 @@ export abstract class AllorsViewRelationPanelComponent
 
   readonly panelKind = 'Relation';
 
-  abstract anchor: RoleType;
-
-  abstract target: RoleType;
+  abstract propertyType: PropertyType;
 
   constructor(
     itemPageService: ObjectService,
