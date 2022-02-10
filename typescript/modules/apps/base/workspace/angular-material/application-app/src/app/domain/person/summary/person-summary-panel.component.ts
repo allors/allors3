@@ -39,7 +39,7 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string) {
+  onPreScopedPull(pulls: Pull[], scope?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
@@ -56,7 +56,7 @@ export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+  onPostScopedPull(pullResult: IPullResult, scope?: string) {
     this.object = pullResult.object<Person>(scope);
   }
 

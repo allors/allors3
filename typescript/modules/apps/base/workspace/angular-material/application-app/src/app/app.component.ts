@@ -5,7 +5,7 @@ import {
   SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { SharedPullHandler } from '@allors/system/workspace/domain';
+import { ScopedPullHandler } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'allors-root',
@@ -26,14 +26,14 @@ export class AppComponent implements OnDestroy {
           context.name = 'refresh';
           const onPulls = [...this.sharePullService.handlers];
 
-          const prefixByOnPull: Map<SharedPullHandler, string> = new Map();
+          const prefixByOnPull: Map<ScopedPullHandler, string> = new Map();
           let counter = 0;
 
           const pulls = [];
           for (const onPull of onPulls) {
             const prefix = `${++counter}`;
             prefixByOnPull.set(onPull, prefix);
-            onPull.onPreSharedPull(pulls, prefix);
+            onPull.onPreScopedPull(pulls, prefix);
           }
 
           return context.pull(pulls).pipe(
@@ -47,7 +47,7 @@ export class AppComponent implements OnDestroy {
         tap(({ onPulls, pullResult, prefixByOnPull }) => {
           for (const onPull of onPulls) {
             const prefix = prefixByOnPull.get(onPull);
-            onPull.onPostSharedPull(pullResult, prefix);
+            onPull.onPostScopedPull(pullResult, prefix);
           }
         })
       )

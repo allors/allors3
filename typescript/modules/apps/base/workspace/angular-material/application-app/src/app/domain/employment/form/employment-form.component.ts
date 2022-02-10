@@ -9,25 +9,14 @@ import {
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { NgForm } from '@angular/forms';
-import {
-  CreatePullHandler,
-  EditIncludeHandler,
-  Initializer,
-  Node,
-  PostCreatePullHandler,
-  Pull,
-} from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import { PullResult } from 'libs/system/workspace/adapters-json/src/lib/database/pull/pull-result';
 
 @Component({
   templateUrl: './employment-form.component.html',
   providers: [ContextService],
 })
-export class EmploymentFormComponent
-  extends AllorsFormComponent<Employment>
-  implements CreatePullHandler, EditIncludeHandler
-{
+export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
   m: M;
 
   organisationsFilter: SearchFactory;
@@ -52,57 +41,33 @@ export class EmploymentFormComponent
     });
   }
 
-  onPreCreatePull(pulls: Pull[], initializer?: Initializer): void {
+  onPrePull(pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;
 
-    switch (initializer.propertyType) {
-      case m.Employment.Employer:
-        pulls.push(
-          p.Organisation({
-            objectId: initializer.id,
-          })
-        );
-        break;
-
-      case m.Employment.Employee:
-        pulls.push(
-          p.Person({
-            objectId: initializer.id,
-          })
-        );
-        break;
-    }
-  }
-
-  onPostCreatePull(
-    object: Employment,
-    pullResult: PullResult,
-    initializer: Initializer
-  ) {
-    const { m } = this;
-
-    switch (initializer.propertyType) {
-      case m.Employment.Employer:
-        this.object.Employer = pullResult.object(m.Organisation);
-        break;
-
-      case m.Employment.Employee:
-        this.object.Employee = pullResult.object(m.Person);
-        break;
+    if (this.editRequest) {
+      pulls.push(
+        p.Employment({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Employee: {},
+            Employer: {},
+          },
+        })
+      );
     }
 
-    object.FromDate = new Date();
+    this.onPrePullInitialize(pulls);
   }
 
-  onEditInclude(): Node[] {
-    const {
-      m: { treeBuilder: t },
-    } = this;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    return t.Employment({
-      Employee: {},
-      Employer: {},
-    });
+    this.onPostPullInitialize(pullResult);
+
+    this.object.FromDate = new Date();
   }
 }

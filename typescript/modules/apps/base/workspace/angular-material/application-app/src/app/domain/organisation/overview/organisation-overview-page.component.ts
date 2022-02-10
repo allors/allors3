@@ -63,7 +63,7 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string) {
+  onPreScopedPull(pulls: Pull[], scope?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
@@ -76,7 +76,7 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+  onPostScopedPull(pullResult: IPullResult, scope?: string) {
     this.object = pullResult.object(scope);
     const title = this.objectInfo.objectType.singularName;
     this.titleService.setTitle(title);

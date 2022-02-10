@@ -4,7 +4,6 @@ import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
-  CreatePullHandler,
   Pull,
   Initializer,
 } from '@allors/system/workspace/domain';
@@ -154,7 +153,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     this.table = new Table(tableConfig);
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string) {
+  onPreScopedPull(pulls: Pull[], scope?: string) {
     const id = this.objectInfo.id;
 
     const pull: Pull = {
@@ -185,7 +184,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     pulls.push(pull);
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+  onPostScopedPull(pullResult: IPullResult, scope?: string) {
     this.objects = pullResult.collection<IObject>(scope) ?? [];
     this.updateFilter();
     this.refreshTable();

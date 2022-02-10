@@ -66,7 +66,7 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string) {
+  onPreScopedPull(pulls: Pull[], scope?: string) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
 
@@ -78,7 +78,7 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+  onPostScopedPull(pullResult: IPullResult, scope?: string) {
     this.object = pullResult.object(scope);
     const title = this.objectInfo.objectType.singularName;
     this.titleService.setTitle(title);

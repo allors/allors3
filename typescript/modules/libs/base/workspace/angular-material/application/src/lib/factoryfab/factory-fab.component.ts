@@ -1,10 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Class, Composite } from '@allors/system/workspace/meta';
-import {
-  IObject,
-  CreatePullHandler,
-  Initializer,
-} from '@allors/system/workspace/domain';
+import { IObject, Initializer } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
   CreateRequest,

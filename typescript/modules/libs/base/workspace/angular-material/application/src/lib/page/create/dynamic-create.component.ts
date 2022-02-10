@@ -52,10 +52,11 @@ export class AllorsMaterialDynamicCreateComponent implements OnInit, OnDestroy {
     );
 
     this.form = componentRef.instance;
-    this.form.create(
-      this.request.objectType as Class,
-      this.request.initializer
-    );
+    this.form.create({
+      kind: 'CreateRequest',
+      objectType: this.request.objectType as Class,
+      initializer: this.request.initializer,
+    });
 
     this.cancelledSubscription = this.form.cancelled
       .pipe(tap(() => this.dialogRef.close()))

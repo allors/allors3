@@ -10,12 +10,7 @@ import {
   ContextService,
 } from '@allors/base/workspace/angular/foundation';
 import { ErrorService } from '@allors/base/workspace/angular/foundation';
-import {
-  IPullResult,
-  CreateOrEditPullHandler,
-  PreEditPullHandler,
-  Pull,
-} from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { NgForm } from '@angular/forms';
 import { M } from '@allors/default/workspace/meta';
 @Component({
@@ -23,10 +18,7 @@ import { M } from '@allors/default/workspace/meta';
   templateUrl: './person-form.component.html',
   providers: [ContextService],
 })
-export class PersonFormComponent
-  extends AllorsFormComponent<Person>
-  implements PreEditPullHandler, CreateOrEditPullHandler
-{
+export class PersonFormComponent extends AllorsFormComponent<Person> {
   m: M;
 
   locales: Locale[];
@@ -41,32 +33,36 @@ export class PersonFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  onPreEditPull(objectId: number, pulls: Pull[]) {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
     const { pullBuilder: p } = m;
 
-    pulls.push(
-      p.Person({
-        objectId,
-        include: {
-          Gender: {},
-          Locale: {},
-        },
-      })
-    );
-  }
-
-  onPreCreateOrEditPull(pulls: Pull[]) {
-    const m = this.m;
-    const { pullBuilder: p } = m;
+    if (this.editRequest) {
+      pulls.push(
+        p.Person({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Gender: {},
+            Locale: {},
+          },
+        })
+      );
+    }
 
     pulls.push(p.Locale({}), p.Gender({}));
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onPostCreateOrEditPull(object: Person, pullResult: IPullResult) {
-    const m = this.m;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    this.genders = pullResult.collection<Gender>(m.Gender);
-    this.locales = pullResult.collection<Locale>(m.Locale) || [];
+    this.onPostPullInitialize(pullResult);
+
+    this.genders = pullResult.collection<Gender>(this.m.Gender);
+    this.locales = pullResult.collection<Locale>(this.m.Locale) || [];
   }
 }

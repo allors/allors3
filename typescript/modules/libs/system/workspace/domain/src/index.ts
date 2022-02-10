@@ -66,8 +66,7 @@ export * from './lib/operations';
 export * from './lib/role';
 export * from './lib/types';
 
-// handlers
-export * from './lib/lifecycle/create-or-edit-pull-handler';
-export * from './lib/lifecycle/create-pull-handler';
-export * from './lib/lifecycle/edit-pull-handler';
+// lifecycle
+export * from './lib/lifecycle/initializer';
+export * from './lib/lifecycle/pull-handler';
 export * from './lib/lifecycle/shared-pull-handler';

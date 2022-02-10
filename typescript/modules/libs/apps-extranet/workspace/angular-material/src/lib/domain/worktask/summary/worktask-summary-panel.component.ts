@@ -50,7 +50,7 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string) {
+  onPreScopedPull(pulls: Pull[], scope?: string) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
 
@@ -118,7 +118,7 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     );
   }
 
-  onPostSharedPull(loaded: IPullResult, scope?: string) {
+  onPostScopedPull(loaded: IPullResult, scope?: string) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
     const workTaskPullName = `${scope}_${m.WorkTask.tag}`;

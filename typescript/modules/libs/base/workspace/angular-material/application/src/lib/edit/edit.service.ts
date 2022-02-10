@@ -21,8 +21,7 @@ export class AllorsMaterialEditService extends EditService {
   }
 
   edit(request: EditRequest): Observable<IObject> {
-    const component =
-      this.editControlByObjectTypeTag[request.object.strategy.cls.tag];
+    const component = this.editControlByObjectTypeTag[request.objectType.tag];
     if (component) {
       const dialogRef = this.dialog.open(component, {
         data: request,

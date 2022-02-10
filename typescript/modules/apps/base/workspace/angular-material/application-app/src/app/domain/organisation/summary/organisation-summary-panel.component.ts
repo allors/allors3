@@ -38,7 +38,7 @@ export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelCom
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string) {
+  onPreScopedPull(pulls: Pull[], scope?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
@@ -54,7 +54,7 @@ export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelCom
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+  onPostScopedPull(pullResult: IPullResult, scope?: string) {
     this.organisation = pullResult.object<Organisation>(scope);
   }
 }

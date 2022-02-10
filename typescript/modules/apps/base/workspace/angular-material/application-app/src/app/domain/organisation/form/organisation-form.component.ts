@@ -7,22 +7,14 @@ import {
   SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ErrorService } from '@allors/base/workspace/angular/foundation';
-import {
-  IPullResult,
-  CreateOrEditPullHandler,
-  PreEditPullHandler,
-  Pull,
-} from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './organisation-form.component.html',
   providers: [ContextService],
 })
-export class OrganisationFormComponent
-  extends AllorsFormComponent<Organisation>
-  implements PreEditPullHandler, CreateOrEditPullHandler
-{
+export class OrganisationFormComponent extends AllorsFormComponent<Organisation> {
   m: M;
 
   countries: Country[];
@@ -42,33 +34,39 @@ export class OrganisationFormComponent
     });
   }
 
-  onPreEditPull(objectId: number, pulls: Pull[]) {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
     const { pullBuilder: p } = m;
 
-    pulls.push(
-      p.Organisation({
-        objectId,
-        include: {
-          Owner: {},
-          Country: {},
-        },
-      })
-    );
-  }
-
-  onPreCreateOrEditPull(pulls: Pull[]) {
-    const m = this.m;
-    const { pullBuilder: p } = m;
+    if (this.editRequest) {
+      pulls.push(
+        p.Organisation({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Owner: {},
+            Country: {},
+          },
+        })
+      );
+    }
 
     pulls.push(
       p.Country({
         sorting: [{ roleType: m.Country.Name }],
       })
     );
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onPostCreateOrEditPull(object: Organisation, pullResult: IPullResult) {
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
+
     this.countries = pullResult.collection<Country>(this.m.Country);
   }
 }

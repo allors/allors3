@@ -3,6 +3,6 @@ import { IObject } from '@allors/system/workspace/domain';
 
 export interface EditRequest {
   readonly kind: 'EditRequest';
-  object: IObject;
+  objectId: number;
   objectType?: Composite;
 }

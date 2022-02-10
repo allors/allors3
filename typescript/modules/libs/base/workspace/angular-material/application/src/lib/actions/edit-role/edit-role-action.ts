@@ -41,7 +41,7 @@ export class EditRoleAction implements Action {
   execute(target: ActionTarget) {
     const request: EditRequest = {
       kind: 'EditRequest',
-      object: this.resolve(target),
+      objectId: this.resolve(target).id,
     };
 
     this.editService.edit(request).subscribe(() => {

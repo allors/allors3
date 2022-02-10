@@ -6,30 +6,16 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { M } from '@allors/default/workspace/meta';
-import {
-  IObject,
-  CreatePullHandler,
-  EditPullHandler,
-  PostCreateOrEditPullHandler,
-  PreCreatePullHandler,
-  PreCreateOrEditPullHandler,
-  PreEditPullHandler,
-  Pull,
-  PostEditPullHandler,
-  PostCreatePullHandler,
-  EditIncludeHandler,
-  Initializer,
-} from '@allors/system/workspace/domain';
+import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
 import { Context } from '../context/context';
 import { ContextService } from '../context/context-service';
 import { ErrorService } from '../error/error.service';
 import { Subscription } from 'rxjs';
-import { Class } from '@allors/system/workspace/meta';
-
-const nameof = <T>(name: Extract<keyof T, string>): string => name;
+import { CreateRequest } from '../create/create-request';
+import { EditRequest } from '../edit/edit-request';
+import { AssociationType, RoleType } from '@allors/system/workspace/meta';
 
 @Directive()
 export abstract class AllorsFormComponent<T extends IObject>
@@ -43,20 +29,18 @@ export abstract class AllorsFormComponent<T extends IObject>
     return this.object?.strategy.id;
   }
 
-  isCreate: boolean;
-
-  get isEdit() {
-    return !this.isCreate;
-  }
-
-  context: Context;
-  object: T;
-
   @Output()
   saved: EventEmitter<IObject> = new EventEmitter();
 
   @Output()
   cancelled: EventEmitter<void> = new EventEmitter();
+
+  createRequest: CreateRequest;
+
+  editRequest: EditRequest;
+
+  context: Context;
+  object: T;
 
   constructor(
     allors: ContextService,
@@ -69,8 +53,7 @@ export abstract class AllorsFormComponent<T extends IObject>
     this.context.name = this.constructor.name;
   }
 
-  private createSubscription: Subscription;
-  private editSubscription: Subscription;
+  private formSubscription: Subscription;
 
   get canSave() {
     return this.form.form.valid && this.context.hasChanges();
@@ -80,149 +63,28 @@ export abstract class AllorsFormComponent<T extends IObject>
     return true;
   }
 
-  get hasPreCreate() {
-    return this[nameof<PreCreatePullHandler>('onPreCreatePull')] != null;
+  create(createRequest: CreateRequest): void {
+    this.createRequest = createRequest;
+    this.onPull();
   }
 
-  get hasPreEdit() {
-    return this[nameof<PreEditPullHandler>('onPreEditPull')] != null;
+  edit(editRequest: EditRequest): void {
+    this.editRequest = editRequest;
+    this.onPull();
   }
 
-  get hasPreCreateOrEdit() {
-    return (
-      this[nameof<PreCreateOrEditPullHandler>('onPreCreateOrEditPull')] != null
-    );
+  onPull() {
+    const pulls: Pull[] = [];
+    this.onPrePull(pulls);
+    this.formSubscription?.unsubscribe();
+    this.formSubscription = this.context.pull(pulls).subscribe((pullResult) => {
+      this.onPostPull(pullResult);
+    });
   }
 
-  get hasEditInclude() {
-    return this[nameof<EditIncludeHandler>('onEditInclude')] != null;
-  }
+  abstract onPrePull(pulls: Pull[]): void;
 
-  get hasPostCreate() {
-    return this[nameof<PostCreatePullHandler>('onPostCreatePull')] != null;
-  }
-
-  get hasPostEdit() {
-    return this[nameof<PostEditPullHandler>('onPostEditPull')] != null;
-  }
-
-  get hasPostCreateOrEdit() {
-    return (
-      this[nameof<PostCreateOrEditPullHandler>('onPostCreateOrEditPull')] !=
-      null
-    );
-  }
-
-  create(objectType: Class, initializer?: Initializer): void {
-    this.isCreate = true;
-
-    if (
-      this.hasPreCreate ||
-      this.hasPostCreate ||
-      this.hasPreCreateOrEdit ||
-      this.hasPostCreateOrEdit
-    ) {
-      const pulls: Pull[] = [];
-
-      if (this.hasPreCreate) {
-        (this as unknown as PreCreatePullHandler).onPreCreatePull(
-          pulls,
-          initializer
-        );
-      }
-
-      if (this.hasPreCreateOrEdit) {
-        (this as unknown as PreCreateOrEditPullHandler).onPreCreateOrEditPull(
-          pulls,
-          initializer
-        );
-      }
-
-      this.createSubscription = this.context
-        .pull(pulls)
-        .subscribe((pullResult) => {
-          this.onCreate(objectType);
-
-          if (this.hasPostCreate) {
-            (this as unknown as PostCreatePullHandler).onPostCreatePull(
-              this.object,
-              pullResult,
-              initializer
-            );
-          }
-
-          if (this.hasPostCreateOrEdit) {
-            (
-              this as unknown as PostCreateOrEditPullHandler
-            ).onPostCreateOrEditPull(this.object, pullResult, initializer);
-          }
-        });
-    } else {
-      this.onCreate(objectType);
-    }
-  }
-
-  onCreate(objectType: Class) {
-    this.object = this.context.create<T>(objectType);
-  }
-
-  edit(objectId: number, handlers?: EditPullHandler[]): void {
-    this.isCreate = false;
-
-    const name = 'AllorsFormComponent';
-
-    const include = this.hasEditInclude
-      ? (this as unknown as EditIncludeHandler).onEditInclude()
-      : null;
-    const pull: Pull = { objectId, results: [{ name, include }] };
-
-    const hasHandlers = handlers?.length > 0;
-
-    if (
-      this.hasPreEdit ||
-      this.hasPostEdit ||
-      this.hasPreCreateOrEdit ||
-      this.hasPostCreateOrEdit ||
-      hasHandlers
-    ) {
-      const pulls: Pull[] = [pull];
-
-      if (this.hasPreEdit) {
-        (this as unknown as PreEditPullHandler).onPreEditPull(objectId, pulls);
-      }
-
-      if (this.hasPreCreateOrEdit) {
-        (this as unknown as PreCreateOrEditPullHandler).onPreCreateOrEditPull(
-          pulls
-        );
-      }
-
-      handlers?.forEach((v) => v.onPreEditPull(objectId, pulls));
-
-      this.editSubscription = this.context.pull(pulls).subscribe((result) => {
-        this.object = result.objects.values().next()?.value;
-
-        handlers?.forEach((v) => v.onPostEditPull(this.object, result));
-
-        if (this.hasPostEdit) {
-          (this as unknown as PostEditPullHandler).onPostEditPull(
-            this.object,
-            result
-          );
-        }
-
-        if (this.hasPostCreateOrEdit) {
-          (
-            this as unknown as PostCreateOrEditPullHandler
-          ).onPostCreateOrEditPull(this.object, result);
-        }
-      });
-    } else {
-      this.context.pull(pull).subscribe((result) => {
-        this.object = result.object(name);
-      });
-    }
-  }
+  abstract onPostPull(pullResult: IPullResult): void;
 
   save(): void {
     this.context.push().subscribe({
@@ -239,8 +101,37 @@ export abstract class AllorsFormComponent<T extends IObject>
     this.cancelled.emit();
   }
 
+  onPrePullInitialize(pulls: Pull[]): void {
+    const initializer = this.createRequest?.initializer;
+    if (initializer) {
+      const pull: Pull = {
+        objectId: initializer.id,
+        results: [{ name: '_initializer' }],
+      };
+
+      pulls.push(pull);
+    }
+  }
+
+  onPostPullInitialize(pullResult: IPullResult): void {
+    const initializer = this.createRequest?.initializer;
+    if (initializer) {
+      const initializerObject = pullResult.object<IObject>('_initializer');
+      const propertyType = initializer.propertyType;
+      if (propertyType.isAssociationType) {
+        const associationType = propertyType as AssociationType;
+        initializerObject.strategy.setCompositeRole(
+          associationType.roleType,
+          this.object
+        );
+      } else {
+        const roleType = propertyType as RoleType;
+        this.object.strategy.setCompositeRole(roleType, initializerObject);
+      }
+    }
+  }
+
   ngOnDestroy(): void {
-    this.createSubscription?.unsubscribe();
-    this.editSubscription?.unsubscribe();
+    this.formSubscription?.unsubscribe();
   }
 }

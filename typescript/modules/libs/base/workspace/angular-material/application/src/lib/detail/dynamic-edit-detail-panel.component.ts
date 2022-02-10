@@ -51,13 +51,13 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string): void {
+  onPreScopedPull(pulls: Pull[], scope?: string): void {
     pulls.push({ objectId: this.objectInfo.id, results: [{ name: scope }] });
 
     this.subscribeTemplate();
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string): void {
+  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
     const object = pullResult.object<IObject>(scope);
     this.title = `Edit ${object['Name']}`;
   }
@@ -90,7 +90,10 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
       );
 
       this.form = componentRef.instance;
-      this.form.edit(this.objectInfo.id);
+      this.form.edit({
+        kind: 'EditRequest',
+        objectId: this.objectInfo.id,
+      });
 
       this.cancelledSubscription = this.form.cancelled
         .pipe(

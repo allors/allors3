@@ -15,7 +15,7 @@ import {
   IObject,
   IPullResult,
   Pull,
-  SharedPullHandler,
+  ScopedPullHandler,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
@@ -26,7 +26,7 @@ import { PeriodSelection } from '@allors/base/workspace/angular-material/foundat
 })
 export class AllorsMaterialDynamicViewRelationshipPanelComponent
   extends AllorsViewRelationshipPanelComponent
-  implements SharedPullHandler, OnInit
+  implements ScopedPullHandler, OnInit
 {
   private assignedAnchor: RoleType;
 
@@ -100,7 +100,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     this.title = this.target.pluralName;
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string): void {
+  onPreScopedPull(pulls: Pull[], scope?: string): void {
     const id = this.objectInfo.id;
 
     const pull: Pull = {
@@ -131,7 +131,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     pulls.push(pull);
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string): void {
+  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
     this.objects = pullResult.collection<IObject>(scope) ?? [];
     this.updateFilter();
 

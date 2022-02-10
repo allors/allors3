@@ -63,7 +63,7 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string) {
+  onPreScopedPull(pulls: Pull[], scope?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
@@ -76,7 +76,7 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string) {
+  onPostScopedPull(pullResult: IPullResult, scope?: string) {
     this.object = pullResult.object(scope);
   }
 }

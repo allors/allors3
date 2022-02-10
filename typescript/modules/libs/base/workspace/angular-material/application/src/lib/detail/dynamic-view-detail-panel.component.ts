@@ -37,7 +37,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     );
   }
 
-  onPreSharedPull(pulls: Pull[], scope?: string): void {
+  onPreScopedPull(pulls: Pull[], scope?: string): void {
     const pull: Pull = {
       objectId: this.objectInfo.id,
       results: [
@@ -50,7 +50,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     pulls.push(pull);
   }
 
-  onPostSharedPull(pullResult: IPullResult, scope?: string): void {
+  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
     const object = pullResult.object<IObject>(scope);
 
     this.title = `${this.metaService.singularName(

@@ -7,7 +7,7 @@ import {
 import {
   IPullResult,
   Pull,
-  SharedPullHandler,
+  ScopedPullHandler,
 } from '@allors/system/workspace/domain';
 import { Subscription, tap } from 'rxjs';
 import {
@@ -23,7 +23,7 @@ import { ObjectInfo } from '../object/object-info';
 @Directive()
 export abstract class AllorsOverviewPageComponent
   extends AllorsComponent
-  implements SharedPullHandler, AfterViewInit, OnDestroy
+  implements ScopedPullHandler, AfterViewInit, OnDestroy
 {
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {
@@ -73,7 +73,7 @@ export abstract class AllorsOverviewPageComponent
     }
   }
 
-  abstract onPreSharedPull(pulls: Pull[], scope?: string): void;
+  abstract onPreScopedPull(pulls: Pull[], scope?: string): void;
 
-  abstract onPostSharedPull(pullResult: IPullResult, scope?: string): void;
+  abstract onPostScopedPull(pullResult: IPullResult, scope?: string): void;
 }

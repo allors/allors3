@@ -40,8 +40,7 @@ export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<AllorsMaterialDynamicEditComponent>,
     private formService: FormService
   ) {
-    this.objectType =
-      this.request.objectType ?? this.request.object.strategy.cls;
+    this.objectType = this.request.objectType;
   }
 
   ngOnInit(): void {
@@ -53,7 +52,7 @@ export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
     );
 
     this.form = componentRef.instance;
-    this.form.edit(this.request.object.id);
+    this.form.edit(this.request);
 
     this.cancelledSubscription = this.form.cancelled
       .pipe(tap(() => this.dialogRef.close()))
