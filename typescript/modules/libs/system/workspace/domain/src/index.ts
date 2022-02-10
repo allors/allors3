@@ -69,4 +69,4 @@ export * from './lib/types';
 // lifecycle
 export * from './lib/lifecycle/initializer';
 export * from './lib/lifecycle/pull-handler';
-export * from './lib/lifecycle/shared-pull-handler';
+export * from './lib/lifecycle/scoped-pull-handler';

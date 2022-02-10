@@ -42,15 +42,7 @@ import {
   templateUrl: './emailcommunication-form.component.html',
   providers: [ContextService],
 })
-export class EmailCommunicationFormComponent
-  extends AllorsFormComponent<EmailCommunication>
-  implements
-    CreateOrEditPullHandler,
-    EditIncludeHandler,
-    PostCreatePullHandler,
-    PreEditPullHandler,
-    PostEditPullHandler
-{
+export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCommunication> {
   readonly m: M;
 
   addFromParty = false;
@@ -76,6 +68,50 @@ export class EmailCommunicationFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+  }
+
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Organisation({
+          objectId: initializer.id,
+          include: {
+            CurrentContacts: {},
+            CurrentPartyContactMechanisms: {
+              ContactMechanism: {},
+            },
+          },
+        }),
+        p.Person({
+          objectId: initializer.id,
+        }),
+        p.Person({
+          objectId: initializer.id,
+          select: {
+            OrganisationContactRelationshipsWhereContact: {
+              Organisation: {
+                include: {
+                  CurrentContacts: {},
+                  CurrentPartyContactMechanisms: {
+                    ContactMechanism: {},
+                  },
+                },
+              },
+            },
+          },
+        })
+      );
+    }
+  }
+
+  onPostPull(pullResult: IPullResult): void {
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+    }
   }
 
   onPreCreateOrEditPull(pulls: Pull[]): void {

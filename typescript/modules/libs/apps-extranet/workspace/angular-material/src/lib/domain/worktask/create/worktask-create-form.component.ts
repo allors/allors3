@@ -12,12 +12,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { NgForm } from '@angular/forms';
-import {
-  CreatePullHandler,
-  IObject,
-  IPullResult,
-  Pull,
-} from '@allors/system/workspace/domain';
+import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
@@ -25,10 +20,7 @@ import { M } from '@allors/default/workspace/meta';
   templateUrl: './worktask-create-form.component.html',
   providers: [ContextService],
 })
-export class WorkTaskCreateFormComponent
-  extends AllorsFormComponent<WorkTask>
-  implements CreatePullHandler
-{
+export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
   m: M;
 
   contactMechanisms: ContactMechanism[];
@@ -44,7 +36,7 @@ export class WorkTaskCreateFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  onPreCreatePull(pulls: Pull[]): void {
+  onPrePull(pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;
 
@@ -86,11 +78,19 @@ export class WorkTaskCreateFormComponent
         ],
       })
     );
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onPostCreatePull(object: IObject, loaded: IPullResult): void {
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
+
     this.contactMechanisms =
-      loaded.collection<ContactMechanism>('contactmechanisms');
-    this.contacts = loaded.collection<Person>('contacts');
+      pullResult.collection<ContactMechanism>('contactmechanisms');
+    this.contacts = pullResult.collection<Person>('contacts');
   }
 }

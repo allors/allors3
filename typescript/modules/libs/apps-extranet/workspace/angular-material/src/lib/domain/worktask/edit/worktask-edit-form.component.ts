@@ -12,8 +12,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import {
-  EditIncludeHandler,
-  EditPullHandler,
   IObject,
   IPullResult,
   Node,
@@ -27,10 +25,7 @@ import { M } from '@allors/default/workspace/meta';
   templateUrl: './worktask-edit-form.component.html',
   providers: [ContextService],
 })
-export class WorkTaskEditFormComponent
-  extends AllorsFormComponent<WorkTask>
-  implements EditPullHandler, EditIncludeHandler
-{
+export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
   m: M;
 
   contactMechanisms: ContactMechanism[];
@@ -54,6 +49,7 @@ export class WorkTaskEditFormComponent
       Currency: {},
     });
   }
+
   onPreEditPull(objectId: number, pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;

@@ -56,7 +56,7 @@ export abstract class AllorsFormComponent<T extends IObject>
   private formSubscription: Subscription;
 
   get canSave() {
-    return this.form.form.valid && this.context.hasChanges();
+    return this.canWrite && this.form.form.valid && this.context.hasChanges();
   }
 
   get canWrite() {

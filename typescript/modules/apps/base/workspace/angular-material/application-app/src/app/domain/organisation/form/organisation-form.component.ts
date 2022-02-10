@@ -51,13 +51,13 @@ export class OrganisationFormComponent extends AllorsFormComponent<Organisation>
       );
     }
 
+    this.onPrePullInitialize(pulls);
+
     pulls.push(
       p.Country({
         sorting: [{ roleType: m.Country.Name }],
       })
     );
-
-    this.onPrePullInitialize(pulls);
   }
 
   onPostPull(pullResult: IPullResult) {
