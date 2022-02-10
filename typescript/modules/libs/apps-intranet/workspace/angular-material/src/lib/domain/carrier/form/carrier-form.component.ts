@@ -8,6 +8,7 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   templateUrl: './carrier-form.component.html',
@@ -23,5 +24,29 @@ export class CarrierFormComponent extends AllorsFormComponent<Carrier> {
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+  }
+
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
+    if (this.editRequest) {
+      pulls.push(
+        p.Carrier({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+        })
+      );
+    }
+
+    this.onPrePullInitialize(pulls);
+  }
+
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
   }
 }

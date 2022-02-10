@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="exchangeRate">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="exchangeRate"
+      [object]="object"
       [roleType]="m.ExchangeRate.ValidFrom"
     ></a-mat-datepicker>
   </div>
@@ -10,7 +10,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="exchangeRate"
+      [object]="object"
       [roleType]="m.ExchangeRate.FromCurrency"
       [options]="currencies"
       label="From"
@@ -18,7 +18,7 @@
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="exchangeRate"
+      [object]="object"
       [roleType]="m.ExchangeRate.ToCurrency"
       [options]="currencies"
       label="To"
@@ -29,7 +29,7 @@
   <div class="row">
     <a-mat-input
       class="col-md-6"
-      [object]="exchangeRate"
+      [object]="object"
       [roleType]="m.ExchangeRate.Rate"
     ></a-mat-input>
   </div>

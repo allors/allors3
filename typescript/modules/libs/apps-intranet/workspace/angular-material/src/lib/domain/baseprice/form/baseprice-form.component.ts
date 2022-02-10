@@ -1,14 +1,7 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   BasePrice,
   InternalOrganisation,
@@ -27,10 +20,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './baseprice-form.component.html',
   providers: [ContextService],
 })
-export class BasepriceFormComponent
-  extends AllorsFormComponent<BasePrice>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class BasepriceFormComponent extends AllorsFormComponent<BasePrice> {
   m: M;
 
   internalOrganisation: InternalOrganisation;
@@ -46,38 +36,38 @@ export class BasepriceFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  onPreCreateOrEditPull(pulls: Pull[]): void {
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
     pulls.push(this.fetcher.internalOrganisation);
+
+    if (this.editRequest) {
+      pulls.push(
+        p.BasePrice({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Currency: {},
+          },
+        })
+      );
+    }
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.m;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    return t.BasePrice({
-      Currency: {},
-    });
-  }
+    this.onPostPullInitialize(pullResult);
 
-  onPostCreateOrEditPull(_, loaded: IPullResult): void {
-    this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
-  }
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
 
-  onPostCreatePull(_, loaded: IPullResult): void {
     this.object.FromDate = new Date();
     this.object.PricedBy = this.internalOrganisation;
-
-    this.unifiedGood = loaded.object<UnifiedGood>(this.m.UnifiedGood);
-    this.object.Product = this.unifiedGood;
   }
-
-  // TODO: KOEN
-  // Pre
-  //         if (isCreate && this.data.associationId) {
-  //           pulls = [
-  //             ...pulls,
-  //             pull.UnifiedGood({
-  //               objectId: this.data.associationId,
-  //             }),
-  //           ];
-  //         }
 }

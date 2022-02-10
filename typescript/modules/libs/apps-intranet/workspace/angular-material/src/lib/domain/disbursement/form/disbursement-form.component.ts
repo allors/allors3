@@ -1,13 +1,7 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  IPullResult,
-  Node,
-  PostCreatePullHandler,
-  PostEditPullHandler,
-} from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import {
   Disbursement,
   Invoice,
@@ -24,10 +18,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './disbursement-form.component.html',
   providers: [ContextService],
 })
-export class DisbursementFormComponent
-  extends AllorsFormComponent<Disbursement>
-  implements EditIncludeHandler, PostCreatePullHandler, PostEditPullHandler
-{
+export class DisbursementFormComponent extends AllorsFormComponent<Disbursement> {
   readonly m: M;
   paymentApplication: PaymentApplication;
   invoice: Invoice;
@@ -41,41 +32,45 @@ export class DisbursementFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    return t.Disbursement({
-      PaymentApplications: {},
-    });
+    if (this.editRequest) {
+      pulls.push(
+        p.Disbursement({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            PaymentApplications: {},
+          },
+        })
+      );
+    }
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onPostCreatePull(_, loaded: IPullResult): void {
-    this.paymentApplication = this.allors.context.create<PaymentApplication>(
-      this.m.PaymentApplication
-    );
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    this.invoice = loaded.object<Invoice>(this.m.Invoice);
-    this.paymentApplication.Invoice = this.invoice;
+    if (this.createRequest) {
+      this.paymentApplication = this.allors.context.create<PaymentApplication>(
+        this.m.PaymentApplication
+      );
 
-    this.object.addPaymentApplication(this.paymentApplication);
-  }
+      this.object.addPaymentApplication(this.paymentApplication);
+    } else {
+      this.paymentApplication = this.object.PaymentApplications[0];
+    }
 
-  onPostEditPull(): void {
-    this.paymentApplication = this.object.PaymentApplications[0];
+    this.onPostPullInitialize(pullResult);
   }
 
   public override save(): void {
     this.paymentApplication.AmountApplied = this.object.Amount;
     super.save();
   }
-
-  // TODO: KOEN
-  // Pre
-  // if (isCreate && this.data.associationId) {
-  //   pulls.push(
-  //     pull.Invoice({
-  //       object: this.data.associationId,
-  //     })
-  //   );
-  // }
 }

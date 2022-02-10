@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="inventoryItemTransaction">
+<div class="container-fluid" *ngIf="object">
   <div *ngIf="inventoryItem" class="row">
     <a-mat-static
       class="col-md-6"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.Part"
       display="Name"
     ></a-mat-static>
@@ -11,13 +11,13 @@
   <div *ngIf="inventoryItem" class="row">
     <a-mat-static
       class="col-md"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.Facility"
       display="Name"
     ></a-mat-static>
     <a-mat-select
       class="col-md"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.Reason"
       [options]="inventoryTransactionReasons"
       display="Name"
@@ -67,7 +67,7 @@
   <div *ngIf="!inventoryItem" class="row">
     <a-mat-select
       class="col-md"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.Reason"
       [options]="inventoryTransactionReasons"
       display="Name"
@@ -78,7 +78,7 @@
     <a-mat-select
       *ngIf="!serialised"
       class="col-md"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.NonSerialisedInventoryItemState"
       [options]="nonSerialisedInventoryItemState"
       display="Name"
@@ -87,7 +87,7 @@
     <a-mat-select
       *ngIf="serialised"
       class="col-md"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.SerialisedInventoryItemState"
       [options]="serialisedInventoryItemState"
       display="Name"
@@ -99,13 +99,13 @@
     <a-mat-static
       *ngIf="!serialised"
       class="col-md"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.UnitOfMeasure"
       display="Name"
     ></a-mat-static>
     <a-mat-input
       class="col-md"
-      [object]="inventoryItemTransaction"
+      [object]="object"
       [roleType]="m.InventoryItemTransaction.Quantity"
       label="Quantity Diff."
     ></a-mat-input>

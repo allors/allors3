@@ -1,13 +1,7 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-} from '@allors/system/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   Catalogue,
   InternalOrganisation,
@@ -24,16 +18,12 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { PostCreatePullHandler } from '../../../../../../../../system/workspace/domain/src/lib/pull/create-pull-handler';
 
 @Component({
   templateUrl: './catalogue-form.component.html',
   providers: [ContextService],
 })
-export class CatalogueFormComponent
-  extends AllorsFormComponent<Catalogue>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class CatalogueFormComponent extends AllorsFormComponent<Catalogue> {
   public m: M;
   public singleton: Singleton;
   public locales: Locale[];
@@ -51,8 +41,8 @@ export class CatalogueFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  onPreCreateOrEditPull(pulls: Pull[]): void {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
     const { pullBuilder: p } = m;
 
     pulls.push(this.fetcher.locales);
@@ -60,30 +50,38 @@ export class CatalogueFormComponent
       pulls.push(this.fetcher.locales),
       pulls.push(this.fetcher.internalOrganisation),
       pulls.push(p.Scope({}));
+
+    if (this.editRequest) {
+      pulls.push(
+        p.Catalogue({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            CatalogueImage: {},
+            LocalisedNames: {
+              Locale: {},
+            },
+            LocalisedDescriptions: {
+              Locale: {},
+            },
+          },
+        })
+      );
+    }
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.m;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    return t.Catalogue({
-      CatalogueImage: {},
-      LocalisedNames: {
-        Locale: {},
-      },
-      LocalisedDescriptions: {
-        Locale: {},
-      },
-    });
-  }
+    this.onPostPullInitialize(pullResult);
 
-  onPostCreatePull(): void {
     this.object.InternalOrganisation = this.internalOrganisation;
-  }
-
-  onPostCreateOrEditPull(_, loaded: IPullResult): void {
-    this.locales = this.fetcher.getAdditionalLocales(loaded);
-    this.categories = this.fetcher.getProductCategories(loaded);
-    this.scopes = loaded.collection<Scope>(this.m.Scope);
-    this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
+    this.categories = this.fetcher.getProductCategories(pullResult);
+    this.scopes = pullResult.collection<Scope>(this.m.Scope);
   }
 }

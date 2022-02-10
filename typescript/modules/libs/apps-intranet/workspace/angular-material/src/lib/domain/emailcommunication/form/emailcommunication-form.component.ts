@@ -1,17 +1,8 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-  IObject,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
   CommunicationEventPurpose,
   CommunicationEventState,
   ContactMechanism,
@@ -33,10 +24,6 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import {
-  PreEditPullHandler,
-  PostEditPullHandler,
-} from '../../../../../../../../system/workspace/domain/src/lib/pull/edit-pull-handler';
 
 @Component({
   templateUrl: './emailcommunication-form.component.html',
@@ -74,6 +61,73 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
     const { m } = this;
     const { pullBuilder: p } = m;
 
+    pulls.push(
+      p.Organisation({
+        objectId: this.internalOrganisationId.value,
+        name: 'InternalOrganisation',
+        include: {
+          ActiveEmployees: {
+            CurrentPartyContactMechanisms: {
+              ContactMechanism: {},
+            },
+          },
+        },
+      })
+    );
+    pulls.push(
+      p.CommunicationEventPurpose({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.CommunicationEventPurpose.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
+      })
+    );
+    pulls.push(
+      p.CommunicationEventState({
+        sorting: [{ roleType: m.CommunicationEventState.Name }],
+      })
+    );
+
+    if (this.editRequest) {
+      pulls.push(
+        p.EmailCommunication({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            FromParty: {
+              PartyContactMechanisms: {
+                ContactMechanism: {},
+              },
+              CurrentPartyContactMechanisms: {
+                ContactMechanism: {},
+              },
+            },
+            ToParty: {
+              PartyContactMechanisms: {
+                ContactMechanism: {},
+              },
+              CurrentPartyContactMechanisms: {
+                ContactMechanism: {},
+              },
+            },
+            FromEmail: {},
+            ToEmail: {},
+            EmailTemplate: {},
+            EventPurposes: {},
+            CommunicationEventState: {},
+          },
+        }),
+        p.CommunicationEvent({
+          objectId: this.editRequest.objectId,
+          select: {
+            InvolvedParties: {},
+          },
+        })
+      );
+    }
+
     const initializer = this.createRequest.initializer;
     if (initializer) {
       pulls.push(
@@ -109,111 +163,41 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
   }
 
   onPostPull(pullResult: IPullResult): void {
-    const initializer = this.createRequest.initializer;
-    if (initializer) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    if (this.createRequest) {
+      this.emailTemplate = this.allors.context.create<EmailTemplate>(
+        this.m.EmailTemplate
+      );
+      this.object.EmailTemplate = this.emailTemplate;
+    } else {
+      if (this.object.FromParty) {
+        this.updateFromParty(this.object.FromParty);
+      }
+
+      if (this.object.ToParty) {
+        this.updateToParty(this.object.ToParty);
+      }
     }
-  }
 
-  onPreCreateOrEditPull(pulls: Pull[]): void {
-    const m = this.m;
-    const { pullBuilder: p } = m;
-
-    pulls.push(
-      p.Organisation({
-        objectId: this.internalOrganisationId.value,
-        name: 'InternalOrganisation',
-        include: {
-          ActiveEmployees: {
-            CurrentPartyContactMechanisms: {
-              ContactMechanism: {},
-            },
-          },
-        },
-      })
-    );
-    pulls.push(
-      p.CommunicationEventPurpose({
-        predicate: {
-          kind: 'Equals',
-          propertyType: m.CommunicationEventPurpose.IsActive,
-          value: true,
-        },
-        sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
-      })
-    );
-    pulls.push(
-      p.CommunicationEventState({
-        sorting: [{ roleType: m.CommunicationEventState.Name }],
-      })
-    );
-  }
-
-  onPreEditPull(_, pulls: Pull[]): void {
-    const m = this.m;
-    const { pullBuilder: p } = m;
-
-    pulls.push(
-      p.CommunicationEvent({
-        objectId: this.object.id,
-        select: {
-          InvolvedParties: {},
-        },
-      })
-    );
-  }
-
-  onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.m;
-
-    return t.EmailCommunication({
-      FromParty: {
-        PartyContactMechanisms: {
-          ContactMechanism: {},
-        },
-        CurrentPartyContactMechanisms: {
-          ContactMechanism: {},
-        },
-      },
-      ToParty: {
-        PartyContactMechanisms: {
-          ContactMechanism: {},
-        },
-        CurrentPartyContactMechanisms: {
-          ContactMechanism: {},
-        },
-      },
-      FromEmail: {},
-      ToEmail: {},
-      EmailTemplate: {},
-      EventPurposes: {},
-      CommunicationEventState: {},
-    });
-  }
-
-  onPostCreatePull(): void {
-    this.emailTemplate = this.allors.context.create<EmailTemplate>(
-      this.m.EmailTemplate
-    );
-    this.object.EmailTemplate = this.emailTemplate;
-  }
-
-  onPostCreateOrEditPull(_, loaded: IPullResult): void {
-    this.purposes = loaded.collection<CommunicationEventPurpose>(
+    this.purposes = pullResult.collection<CommunicationEventPurpose>(
       this.m.CommunicationEventPurpose
     );
-    this.eventStates = loaded.collection<CommunicationEventState>(
+    this.eventStates = pullResult.collection<CommunicationEventState>(
       this.m.CommunicationEventState
     );
-    this.parties = loaded.collection<Party>(
+    this.parties = pullResult.collection<Party>(
       this.m.CommunicationEvent.InvolvedParties
     );
 
-    this.person = loaded.object<Person>(this.m.Person);
-    this.organisation = loaded.collection<Organisation>(
+    this.person = pullResult.object<Person>(this.m.Person);
+    this.organisation = pullResult.collection<Organisation>(
       this.m.OrganisationContactRelationship.Organisation
     )[0];
 
-    const internalOrganisation = loaded.object<InternalOrganisation>(
+    const internalOrganisation = pullResult.object<InternalOrganisation>(
       'InternalOrganisation'
     );
 
@@ -244,16 +228,6 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
 
     this.contacts.push(...contacts);
     this.sortContacts();
-  }
-
-  onPostEditPull(): void {
-    if (this.object.FromParty) {
-      this.updateFromParty(this.object.FromParty);
-    }
-
-    if (this.object.ToParty) {
-      this.updateToParty(this.object.ToParty);
-    }
   }
 
   public fromEmailAdded(partyContactMechanism: PartyContactMechanism): void {
@@ -382,39 +356,4 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
         ?.map((v) => v.ContactMechanism);
     });
   }
-
-  // TODO: KOEN
-  // Pre
-  // if (isCreate && this.data.associationId) {
-  //   pulls = [
-  //     ...pulls,
-  //     pull.Organisation({
-  //       object: this.data.associationId,
-  //       include: {
-  //         CurrentContacts: x,
-  //         CurrentPartyContactMechanisms: {
-  //           ContactMechanism: x,
-  //         }
-  //       }
-  //     }),
-  //     pull.Person({
-  //       object: this.data.associationId,
-  //     }),
-  //     pull.Person({
-  //       object: this.data.associationId,
-  //       fetch: {
-  //         OrganisationContactRelationshipsWhereContact: {
-  //           Organisation: {
-  //             include: {
-  //               CurrentContacts: x,
-  //               CurrentPartyContactMechanisms: {
-  //                 ContactMechanism: x,
-  //               }
-  //             }
-  //           }
-  //         }
-  //       }
-  //     })
-  //   ];
-  // }
 }

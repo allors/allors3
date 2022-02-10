@@ -1,10 +1,10 @@
-<div class="container-fluid" *ngIf="customerShipment">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <div class="col-md">
       <div class="row">
         <a-mat-autocomplete
           class="col-md"
-          [object]="customerShipment"
+          [object]="object"
           [roleType]="m.CustomerShipment.ShipToParty"
           [filter]="customersFilter.create(allors.context)"
           display="DisplayName"
@@ -20,7 +20,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="customerShipment"
+          [object]="object"
           [roleType]="m.CustomerShipment.ShipToAddress"
           [options]="shipToAddresses"
           display="DisplayName"
@@ -28,10 +28,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="
-            !customerShipment.ShipToParty ||
-            !customerShipment.canWriteShipToAddress
-          "
+          [disabled]="!object.ShipToParty || !object.canWriteShipToAddress"
           type="button"
           (click)="addShipToAddress = !addShipToAddress"
         >
@@ -40,10 +37,7 @@
         </button>
       </div>
     </div>
-    <div
-      class="col-md-12 pb-3"
-      *ngIf="customerShipment.ShipToParty && addShipToAddress"
-    >
+    <div class="col-md-12 pb-3" *ngIf="object.ShipToParty && addShipToAddress">
       <mat-card>
         <mat-card-header>Add a shipping address</mat-card-header>
         <mat-card-content>
@@ -61,7 +55,7 @@
         <a-mat-select
           class="col"
           [disabled]="shipToCustomerIsPerson"
-          [object]="customerShipment"
+          [object]="object"
           [roleType]="m.CustomerShipment.ShipToContactPerson"
           [options]="shipToContacts"
           display="DisplayName"
@@ -71,8 +65,8 @@
           mat-mini-fab
           color="accent"
           [disabled]="
-            !customerShipment.ShipToParty ||
-            !customerShipment.canWriteShipToContactPerson ||
+            !object.ShipToParty ||
+            !object.canWriteShipToContactPerson ||
             shipToCustomerIsPerson
           "
           type="button"
@@ -103,7 +97,7 @@
     <div class="col-md">
       <div class="row">
         <a-mat-select
-          [object]="customerShipment"
+          [object]="object"
           [roleType]="m.CustomerShipment.ShipFromAddress"
           [options]="shipFromAddresses"
           display="DisplayName"
@@ -112,7 +106,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="!customerShipment.canWriteShipFromAddress"
+          [disabled]="!object.canWriteShipFromAddress"
           type="button"
           (click)="addShipFromAddress = !addShipFromAddress"
         >
@@ -138,14 +132,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="customerShipment"
+      [object]="object"
       [roleType]="m.CustomerShipment.ShipmentMethod"
       [options]="shipmentMethods"
       display="Name"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="customerShipment"
+      [object]="object"
       [roleType]="m.CustomerShipment.ShipFromFacility"
       [options]="facilities"
       display="Name"
@@ -155,7 +149,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="customerShipment"
+      [object]="object"
       [roleType]="m.CustomerShipment.Carrier"
       [options]="carriers"
       display="Name"
@@ -165,12 +159,12 @@
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="customerShipment"
+      [object]="object"
       [roleType]="m.CustomerShipment.EstimatedShipDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="customerShipment"
+      [object]="object"
       [roleType]="m.CustomerShipment.EstimatedArrivalDate"
     ></a-mat-datepicker>
   </div>
@@ -178,7 +172,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="customerShipment"
+      [object]="object"
       [roleType]="m.CustomerShipment.HandlingInstruction"
     ></a-mat-textarea>
   </div>
@@ -188,7 +182,7 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="customerShipment"
+          [object]="object"
           [roleType]="m.CustomerShipment.ElectronicDocuments"
           accept="image/*"
         ></a-mat-files>
@@ -199,7 +193,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="customerShipment"
+      [object]="object"
       [roleType]="m.CustomerShipment.Comment"
     ></a-mat-textarea>
   </div>

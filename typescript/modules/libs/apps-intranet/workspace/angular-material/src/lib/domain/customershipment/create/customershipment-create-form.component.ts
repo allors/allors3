@@ -1,24 +1,28 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Carrier,
   Currency,
   CustomerShipment,
+  Facility,
   InternalOrganisation,
+  Locale,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
+  ShipmentMethod,
+  ShipmentPackage,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -30,10 +34,7 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './customershipment-create-form.component.html',
   providers: [ContextService],
 })
-export class CustomerShipmentCreateFormComponent
-  extends AllorsFormComponent<CustomerShipment>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class CustomerShipmentCreateFormComponent extends AllorsFormComponent<CustomerShipment> {
   readonly m: M;
   currencies: Currency[];
   shipToAddresses: PostalAddress[] = [];
@@ -58,8 +59,8 @@ export class CustomerShipmentCreateFormComponent
 
   get shipToCustomerIsPerson(): boolean {
     return (
-      !this.customerShipment.ShipToParty ||
-      this.customerShipment.ShipToParty.strategy.cls === this.m.Person
+      !this.object.ShipToParty ||
+      this.object.ShipToParty.strategy.cls === this.m.Person
     );
   }
 
@@ -72,96 +73,64 @@ export class CustomerShipmentCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(([, internalOrganisationId]) => {
-          const isCreate = this.data.id == null;
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            this.fetcher.locales,
-            this.fetcher.ownWarehouses,
-            pull.ShipmentMethod({
-              sorting: [{ roleType: m.ShipmentMethod.Name }],
-            }),
-            pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
-            pull.Organisation({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Organisation.IsInternalOrganisation,
-                value: true,
-              },
-              sorting: [{ roleType: m.Organisation.DisplayName }],
-            }),
-          ];
-
-          this.customersFilter = Filters.customersFilter(
-            m,
-            internalOrganisationId
-          );
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    this.fetcher.internalOrganisation,
+      this.fetcher.locales,
+      this.fetcher.ownWarehouses,
+      pulls.push(
+        p.ShipmentMethod({
+          sorting: [{ roleType: m.ShipmentMethod.Name }],
+        }),
+        p.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
+        p.Organisation({
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.Organisation.IsInternalOrganisation,
+            value: true,
+          },
+          sorting: [{ roleType: m.Organisation.DisplayName }],
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.facilities = this.fetcher.getOwnWarehouses(loaded);
-        this.shipmentMethods = loaded.collection<ShipmentMethod>(
-          m.ShipmentMethod
-        );
-        this.carriers = loaded.collection<Carrier>(m.Carrier);
+      );
 
-        if (isCreate) {
-          this.title = 'Add Customer Shipment';
-          this.customerShipment = this.allors.context.create<CustomerShipment>(
-            m.CustomerShipment
-          );
-          this.customerShipment.ShipFromParty = this.internalOrganisation;
+    this.onPrePullInitialize(pulls);
+  }
 
-          const shipmentPackage = this.allors.context.create<ShipmentPackage>(
-            m.ShipmentPackage
-          );
-          this.customerShipment.addShipmentPackage(shipmentPackage);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-          if (this.facilities?.length === 1) {
-            this.customerShipment.ShipFromFacility = this.facilities[0];
-          }
-        } else {
-          this.customerShipment = loaded.object<CustomerShipment>(
-            m.CustomerShipment
-          );
+    this.onPostPullInitialize(pullResult);
 
-          if (this.customerShipment.canWriteComment) {
-            this.title = 'Edit Customer Shipment';
-          } else {
-            this.title = 'View Customer Shipment';
-          }
-        }
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
+    this.facilities = this.fetcher.getOwnWarehouses(pullResult);
+    this.shipmentMethods = pullResult.collection<ShipmentMethod>(
+      this.m.ShipmentMethod
+    );
+    this.carriers = pullResult.collection<Carrier>(this.m.Carrier);
 
-        if (this.customerShipment.ShipToParty) {
-          this.updateShipToParty(this.customerShipment.ShipToParty);
-        }
+    this.object.ShipFromParty = this.internalOrganisation;
+    this.updateShipFromParty(this.internalOrganisation);
 
-        if (this.customerShipment.ShipFromParty) {
-          this.updateShipFromParty(this.customerShipment.ShipFromParty);
-        }
+    const shipmentPackage = this.allors.context.create<ShipmentPackage>(
+      this.m.ShipmentPackage
+    );
 
-        this.previousShipToparty = this.customerShipment.ShipToParty;
-      });
+    this.object.addShipmentPackage(shipmentPackage);
+
+    if (this.facilities?.length === 1) {
+      this.object.ShipFromFacility = this.facilities[0];
+    }
   }
 
   public shipToContactPersonAdded(person: Person): void {
@@ -169,25 +138,23 @@ export class CustomerShipmentCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.customerShipment
+    organisationContactRelationship.Organisation = this.object
       .ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
-    this.customerShipment.ShipToContactPerson = person;
+    this.object.ShipToContactPerson = person;
   }
 
   public shipToAddressAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
-    this.customerShipment.ShipToParty.addPartyContactMechanism(
-      partyContactMechanism
-    );
+    this.object.ShipToParty.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
-    this.customerShipment.ShipToAddress = postalAddress;
+    this.object.ShipToAddress = postalAddress;
   }
 
   public shipFromAddressAdded(
@@ -196,15 +163,14 @@ export class CustomerShipmentCreateFormComponent
     this.shipFromAddresses.push(
       partyContactMechanism.ContactMechanism as PostalAddress
     );
-    this.customerShipment.ShipFromParty.addPartyContactMechanism(
-      partyContactMechanism
-    );
-    this.customerShipment.ShipFromAddress =
+    this.object.ShipFromParty.addPartyContactMechanism(partyContactMechanism);
+    this.object.ShipFromAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
   public customerSelected(customer: IObject) {
     this.updateShipToParty(customer as Party);
+    this.previousShipToparty = this.object.ShipToParty;
   }
 
   private updateShipToParty(customer: Party): void {
@@ -234,10 +200,10 @@ export class CustomerShipmentCreateFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.customerShipment.ShipToParty !== this.previousShipToparty) {
-        this.customerShipment.ShipToAddress = null;
-        this.customerShipment.ShipToContactPerson = null;
-        this.previousShipToparty = this.customerShipment.ShipToParty;
+      if (this.object.ShipToParty !== this.previousShipToparty) {
+        this.object.ShipToAddress = null;
+        this.object.ShipToContactPerson = null;
+        this.previousShipToparty = this.object.ShipToParty;
       }
 
       const partyContactMechanisms = loaded.collection<PartyContactMechanism>(

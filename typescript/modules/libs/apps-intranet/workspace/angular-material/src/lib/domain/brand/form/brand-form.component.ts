@@ -1,13 +1,7 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-} from '@allors/system/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import { Brand, Locale, Model } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -22,10 +16,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './brand-form.component.html',
   providers: [ContextService],
 })
-export class BrandFormComponent
-  extends AllorsFormComponent<Brand>
-  implements CreateOrEditPullHandler, EditIncludeHandler
-{
+export class BrandFormComponent extends AllorsFormComponent<Brand> {
   m: M;
 
   locales: Locale[];
@@ -42,22 +33,37 @@ export class BrandFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  onPreCreateOrEditPull(pulls: Pull[]): void {
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
     pulls.push(this.fetcher.locales);
+
+    if (this.editRequest) {
+      pulls.push(
+        p.Brand({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            LogoImage: {},
+            Models: {},
+            LocalisedDescriptions: {},
+          },
+        })
+      );
+    }
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.m;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    return t.Brand({
-      LogoImage: {},
-      Models: {},
-      LocalisedDescriptions: {},
-    });
-  }
+    this.onPostPullInitialize(pullResult);
 
-  onPostCreateOrEditPull(_, loaded: IPullResult): void {
-    this.locales = this.fetcher.getAdditionalLocales(loaded);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
 
     this.models = this.object.Models.sort((a, b) =>
       a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0

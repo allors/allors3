@@ -1,15 +1,15 @@
-<div class="container-fluid" *ngIf="communicationEvent">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.CommunicationEventState"
       [options]="eventStates"
       display="Name"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.EventPurposes"
       [options]="purposes"
       display="Name"
@@ -19,7 +19,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.Subject"
       class="col-md"
     ></a-mat-input>
@@ -30,7 +30,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="communicationEvent"
+          [object]="object"
           [roleType]="m.CommunicationEvent.FromParty"
           [options]="contacts"
           display="DisplayName"
@@ -65,7 +65,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="communicationEvent"
+          [object]="object"
           [roleType]="m.CommunicationEvent.ToParty"
           [options]="contacts"
           display="DisplayName"
@@ -100,12 +100,12 @@
   <div class="row">
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ScheduledStart"
     ></a-mat-datetimepicker>
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ScheduledEnd"
     ></a-mat-datetimepicker>
   </div>
@@ -113,12 +113,12 @@
   <div class="row">
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ActualStart"
     ></a-mat-datetimepicker>
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ActualEnd"
     ></a-mat-datetimepicker>
   </div>
@@ -126,7 +126,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.FaceToFaceCommunication.Location"
     ></a-mat-input>
   </div>
@@ -134,7 +134,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.Comment"
     ></a-mat-textarea>
   </div>

@@ -1,20 +1,11 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
   Employment,
   InternalOrganisation,
   Organisation,
-  Party,
   Person,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -25,18 +16,13 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { IObject } from '../../../../../../../../system/workspace/domain/src/lib/iobject';
 
 @Component({
   templateUrl: './employment-form.component.html',
   providers: [ContextService],
 })
-export class EmploymentFormComponent
-  extends AllorsFormComponent<Employment>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
   readonly m: M;
   internalOrganisation: InternalOrganisation;
   internalOrganisations: InternalOrganisation[];
@@ -66,52 +52,37 @@ export class EmploymentFormComponent
     });
   }
 
-  onPreCreateOrEditPull(pulls: Pull[]): void {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
     const { pullBuilder: p } = m;
 
-    pulls.push(this.fetcher.internalOrganisation);
+    if (this.editRequest) {
+      pulls.push(
+        p.Employment({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Employee: {},
+            Employer: {},
+          },
+        })
+      );
+    }
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.m;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    return t.Employment({
-      Employee: {},
-      Employer: {},
-    });
-  }
+    this.onPostPullInitialize(pullResult);
 
-  onPostCreatePull(_, loaded: IPullResult): void {
     this.object.FromDate = new Date();
-
-    const party = loaded.object<Party>(this.m.Party);
-
-    // TODO KOEN
-    if (party.strategy.cls === this.m.Person) {
-      this.employee = party as Person;
-    }
-
-    if (party.strategy.cls === this.m.Organisation) {
-      this.employer = party as Organisation;
-    }
-  }
-
-  onPostCreateOrEditPull(_, loaded: IPullResult): void {
-    this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
   }
 
   public employeeAdded(employee: Person): void {
     this.object.Employee = employee;
   }
-
-  // TODO: KOEN
-  // Pre
-  // if (isCreate && this.data.associationId) {
-  //   pulls.push(
-  //     pull.Party({
-  //       objectId: this.data.associationId,
-  //     })
-  //   );
-  // }
 }

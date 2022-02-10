@@ -1,14 +1,7 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   CustomerRelationship,
   InternalOrganisation,
@@ -27,14 +20,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './customerrelationship-form.component.html',
   providers: [ContextService],
 })
-export class CustomerRelationshipFormComponent
-  extends AllorsFormComponent<CustomerRelationship>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class CustomerRelationshipFormComponent extends AllorsFormComponent<CustomerRelationship> {
   readonly m: M;
 
   internalOrganisation: InternalOrganisation;
-  party: Party;
 
   constructor(
     @Self() public allors: ContextService,
@@ -46,40 +35,37 @@ export class CustomerRelationshipFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  onPreCreateOrEditPull(pulls: Pull[]): void {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
     const { pullBuilder: p } = m;
 
-    pulls.push(this.fetcher.internalOrganisation), pulls.push(p.Scope({}));
+    pulls.push(this.fetcher.internalOrganisation);
+
+    if (this.editRequest) {
+      pulls.push(
+        p.CustomerRelationship({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            InternalOrganisation: {},
+          },
+        })
+      );
+    }
+
+    this.onPrePullInitialize(pulls);
   }
 
-  onEditInclude(): Node[] {
-    const { treeBuilder: t } = this.m;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    return t.CustomerRelationship({
-      InternalOrganisation: {},
-    });
-  }
+    this.onPostPullInitialize(pullResult);
 
-  onPostCreatePull(_, loaded: IPullResult): void {
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+
     this.object.FromDate = new Date();
-    this.object.InternalOrganisation = this.internalOrganisation;
-
-    this.party = loaded.object<Party>(this.m.Party);
-    this.object.Customer = this.party;
   }
-
-  onPostCreateOrEditPull(_, loaded: IPullResult): void {
-    this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
-  }
-
-  // TODO: KOEN
-  // Pre
-  // if (isCreate && this.data.associationId) {
-  //   pulls.push(
-  //     pull.Party({
-  //       object: this.data.associationId,
-  //     }),
-  //   );
-  // }
 }

@@ -1,18 +1,19 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  CommunicationEventPurpose,
+  CommunicationEventState,
+  ContactMechanism,
   InternalOrganisation,
   LetterCorrespondence,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,10 +28,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './lettercorrespondence-form.component.html',
   providers: [ContextService],
 })
-export class LetterCorrespondenceFormComponent
-  extends AllorsFormComponent<LetterCorrespondence>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class LetterCorrespondenceFormComponent extends AllorsFormComponent<LetterCorrespondence> {
   readonly m: M;
 
   addFromParty = false;
@@ -44,13 +42,9 @@ export class LetterCorrespondenceFormComponent
   purposes: CommunicationEventPurpose[];
   fromPostalAddresses: ContactMechanism[] = [];
   toPostalAddresses: ContactMechanism[] = [];
-  communicationEvent: LetterCorrespondence;
   eventStates: CommunicationEventState[];
   contacts: Party[] = [];
   parties: Party[];
-  title: string;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -62,240 +56,209 @@ export class LetterCorrespondenceFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-
-          let pulls = [
-            pull.Organisation({
-              objectId: this.internalOrganisationId.value,
-              name: 'InternalOrganisation',
-              include: {
-                ActiveEmployees: {
-                  CurrentPartyContactMechanisms: {
-                    ContactMechanism: {
-                      PostalAddress_Country: x,
-                    },
-                  },
-                },
+    pulls.push(
+      p.Organisation({
+        objectId: this.internalOrganisationId.value,
+        name: 'InternalOrganisation',
+        include: {
+          ActiveEmployees: {
+            CurrentPartyContactMechanisms: {
+              ContactMechanism: {
+                PostalAddress_Country: {},
               },
-            }),
-            pull.CommunicationEventPurpose({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.CommunicationEventPurpose.IsActive,
-                value: true,
+            },
+          },
+        },
+      })
+    );
+    pulls.push(
+      p.CommunicationEventPurpose({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.CommunicationEventPurpose.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
+      })
+    );
+    pulls.push(
+      p.CommunicationEventState({
+        sorting: [{ roleType: m.CommunicationEventState.Name }],
+      })
+    );
+
+    if (this.editRequest) {
+      pulls.push(
+        p.LetterCorrespondence({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            FromParty: {
+              PartyContactMechanisms: {
+                ContactMechanism: {},
               },
-              sorting: [{ roleType: m.CommunicationEventPurpose.Name }],
-            }),
-            pull.CommunicationEventState({
-              sorting: [{ roleType: m.CommunicationEventState.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls = [
-              ...pulls,
-              pull.LetterCorrespondence({
-                objectId: this.data.id,
-                include: {
-                  FromParty: {
-                    PartyContactMechanisms: {
-                      ContactMechanism: x,
-                    },
-                    CurrentPartyContactMechanisms: {
-                      ContactMechanism: x,
-                    },
-                  },
-                  ToParty: {
-                    PartyContactMechanisms: {
-                      ContactMechanism: x,
-                    },
-                    CurrentPartyContactMechanisms: {
-                      ContactMechanism: x,
-                    },
-                  },
-                  PostalAddress: {
-                    Country: x,
-                  },
-                  EventPurposes: x,
-                  CommunicationEventState: x,
-                },
-              }),
-              pull.CommunicationEvent({
-                objectId: this.data.id,
-                select: {
-                  InvolvedParties: x,
-                },
-              }),
-            ];
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls = [
-              ...pulls,
-              pull.Organisation({
-                objectId: this.data.associationId,
-                include: {
-                  CurrentContacts: x,
-                  CurrentPartyContactMechanisms: {
-                    ContactMechanism: {
-                      PostalAddress_Country: x,
-                    },
-                  },
-                },
-              }),
-              pull.Person({
-                objectId: this.data.associationId,
-              }),
-              pull.Person({
-                objectId: this.data.associationId,
-                select: {
-                  OrganisationContactRelationshipsWhereContact: {
-                    Organisation: {
-                      include: {
-                        CurrentContacts: x,
-                        CurrentPartyContactMechanisms: {
-                          ContactMechanism: {
-                            PostalAddress_Country: x,
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              }),
-            ];
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+              CurrentPartyContactMechanisms: {
+                ContactMechanism: {},
+              },
+            },
+            ToParty: {
+              PartyContactMechanisms: {
+                ContactMechanism: {},
+              },
+              CurrentPartyContactMechanisms: {
+                ContactMechanism: {},
+              },
+            },
+            PostalAddress: {
+              Country: {},
+            },
+            EventPurposes: {},
+            CommunicationEventState: {},
+          },
+        }),
+        p.CommunicationEvent({
+          objectId: this.editRequest.objectId,
+          select: {
+            InvolvedParties: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.purposes = loaded.collection<CommunicationEventPurpose>(
-          m.CommunicationEventPurpose
-        );
-        this.eventStates = loaded.collection<CommunicationEventState>(
-          m.CommunicationEventState
-        );
-        this.parties = loaded.collection<Party>(
-          m.CommunicationEvent.InvolvedParties
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Organisation({
+          objectId: initializer.id,
+          include: {
+            CurrentContacts: {},
+            CurrentPartyContactMechanisms: {
+              ContactMechanism: {
+                PostalAddress_Country: {},
+              },
+            },
+          },
+        }),
+        p.Person({
+          objectId: initializer.id,
+        }),
+        p.Person({
+          objectId: initializer.id,
+          select: {
+            OrganisationContactRelationshipsWhereContact: {
+              Organisation: {
+                include: {
+                  CurrentContacts: {},
+                  CurrentPartyContactMechanisms: {
+                    ContactMechanism: {
+                      PostalAddress_Country: {},
+                    },
+                  },
+                },
+              },
+            },
+          },
+        })
+      );
+    }
+  }
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(
-          m.InternalOrganisation
-        );
+  onPostPull(pullResult: IPullResult): void {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-        this.person = loaded.object<Person>(m.Person);
-        this.organisation = loaded.object<Organisation>(
-          m.OrganisationContactRelationship.Organisation
-        );
+    this.purposes = pullResult.collection<CommunicationEventPurpose>(
+      this.m.CommunicationEventPurpose
+    );
+    this.eventStates = pullResult.collection<CommunicationEventState>(
+      this.m.CommunicationEventState
+    );
+    this.parties = pullResult.collection<Party>(
+      this.m.CommunicationEvent.InvolvedParties
+    );
 
-        if (isCreate) {
-          this.title = 'Add Letter';
-          this.communicationEvent =
-            this.allors.context.create<LetterCorrespondence>(
-              m.LetterCorrespondence
-            );
+    this.person = pullResult.object<Person>(this.m.Person);
+    this.organisation = pullResult.collection<Organisation>(
+      this.m.OrganisationContactRelationship.Organisation
+    )[0];
 
-          this.party = this.organisation || this.person;
-        } else {
-          this.communicationEvent = loaded.object<LetterCorrespondence>(
-            m.LetterCorrespondence
-          );
+    if (this.createRequest) {
+      this.party = this.organisation || this.person;
+    } else {
+      this.updateFromParty(this.object.FromParty);
+      this.updateToParty(this.object.ToParty);
+    }
 
-          this.updateFromParty(this.communicationEvent.FromParty);
-          this.updateToParty(this.communicationEvent.ToParty);
+    const internalOrganisation = pullResult.object<InternalOrganisation>(
+      'InternalOrganisation'
+    );
 
-          if (this.communicationEvent.canWriteActualEnd) {
-            this.title = 'Edit Letter';
-          } else {
-            this.title = 'View Letter';
-          }
-        }
+    const contacts = new Set<Party>();
 
-        const contacts = new Set<Party>();
+    if (this.organisation) {
+      contacts.add(this.organisation);
+    }
 
-        if (this.organisation) {
-          contacts.add(this.organisation);
-        }
+    if (internalOrganisation.ActiveEmployees != null) {
+      internalOrganisation.ActiveEmployees?.reduce(
+        (c, e) => c.add(e),
+        contacts
+      );
+    }
 
-        if (internalOrganisation.ActiveEmployees != null) {
-          internalOrganisation.ActiveEmployees?.reduce(
-            (c, e) => c.add(e),
-            contacts
-          );
-        }
+    if (this.organisation && this.organisation.CurrentContacts != null) {
+      this.organisation.CurrentContacts?.reduce((c, e) => c.add(e), contacts);
+    }
 
-        if (this.organisation && this.organisation.CurrentContacts != null) {
-          this.organisation.CurrentContacts?.reduce(
-            (c, e) => c.add(e),
-            contacts
-          );
-        }
+    if (this.person) {
+      contacts.add(this.person);
+    }
 
-        if (this.person) {
-          contacts.add(this.person);
-        }
+    if (this.parties) {
+      this.parties?.reduce((c, e) => c.add(e), contacts);
+    }
 
-        if (this.parties) {
-          this.parties?.reduce((c, e) => c.add(e), contacts);
-        }
-
-        this.contacts.push(...contacts);
-        this.sortContacts();
-      });
+    this.contacts.push(...contacts);
+    this.sortContacts();
   }
 
   public fromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (this.communicationEvent.FromParty) {
-      this.communicationEvent.FromParty.addPartyContactMechanism(
-        partyContactMechanism
-      );
+    if (this.object.FromParty) {
+      this.object.FromParty.addPartyContactMechanism(partyContactMechanism);
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
 
     this.fromPostalAddresses.push(address);
-    this.communicationEvent.PostalAddress = address;
+    this.object.PostalAddress = address;
   }
 
   public toAddressAdded(partyContactMechanism: PartyContactMechanism): void {
-    if (this.communicationEvent.ToParty) {
-      this.communicationEvent.ToParty.addPartyContactMechanism(
-        partyContactMechanism
-      );
+    if (this.object.ToParty) {
+      this.object.ToParty.addPartyContactMechanism(partyContactMechanism);
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
 
     this.toPostalAddresses.push(address);
-    this.communicationEvent.PostalAddress = address;
+    this.object.PostalAddress = address;
   }
 
   public fromPartyAdded(fromParty: Person): void {
     this.addContactRelationship(fromParty);
-    this.communicationEvent.FromParty = fromParty;
+    this.object.FromParty = fromParty;
     this.contacts.push(fromParty);
     this.sortContacts();
   }
 
   public toPartyAdded(toParty: Person): void {
     this.addContactRelationship(toParty);
-    this.communicationEvent.ToParty = toParty;
+    this.object.ToParty = toParty;
     this.contacts.push(toParty);
     this.sortContacts();
   }
@@ -401,6 +364,6 @@ export class LetterCorrespondenceFormComponent
     const postalAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
     this.fromPostalAddresses.push(postalAddress);
-    this.communicationEvent.PostalAddress = postalAddress;
+    this.object.PostalAddress = postalAddress;
   }
 }
