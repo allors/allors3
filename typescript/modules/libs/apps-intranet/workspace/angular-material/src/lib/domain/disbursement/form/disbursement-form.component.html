@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="disbursement">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="disbursement"
+      [object]="object"
       [roleType]="m.Payment.Amount"
     ></a-mat-input>
     <a-mat-datepicker
       class="col-md"
-      [object]="disbursement"
+      [object]="object"
       [roleType]="m.Payment.EffectiveDate"
     ></a-mat-datepicker>
   </div>

@@ -11,6 +11,7 @@ import {
 } from '@allors/system/workspace/domain';
 import {
   BasePrice,
+  Currency,
   CustomerShipment,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
@@ -27,17 +28,13 @@ import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './customershipment-create-form.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [ContextService],
 })
 export class CustomerShipmentCreateFormComponent
   extends AllorsFormComponent<CustomerShipment>
   implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   readonly m: M;
-  public title: string;
-  public subTitle: string;
-
-  customerShipment: CustomerShipment;
   currencies: Currency[];
   shipToAddresses: PostalAddress[] = [];
   shipToContacts: Person[] = [];
@@ -52,7 +49,6 @@ export class CustomerShipmentCreateFormComponent
 
   private previousShipToparty: Party;
 
-  private subscription: Subscription;
   facilities: Facility[];
   locales: Locale[];
   shipmentMethods: ShipmentMethod[];

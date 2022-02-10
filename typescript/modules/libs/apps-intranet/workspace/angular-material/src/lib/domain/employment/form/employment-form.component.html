@@ -1,21 +1,30 @@
-<div class="container-fluid" *ngIf="partyRelationship">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="partyRelationship"
+      [object]="object"
       [roleType]="m.PartyRelationship.FromDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="partyRelationship"
+      [object]="object"
       [roleType]="m.PartyRelationship.ThroughDate"
     ></a-mat-datepicker>
   </div>
 
   <div class="row">
+    <a-mat-autocomplete
+      *ngIf="!employer"
+      class="col"
+      [object]="object"
+      [roleType]="m.Employment.Employer"
+      [filter]="organisationsFilter.create(context)"
+      display="DisplayName"
+    ></a-mat-autocomplete>
     <a-mat-static
+      *ngIf="employer"
       class="col-md"
-      [object]="partyRelationship"
+      [object]="object"
       [roleType]="m.Employment.Employer"
       display="DisplayName"
     ></a-mat-static>
@@ -24,23 +33,23 @@
   <div class="row">
     <div class="col-md">
       <div class="row">
-        <a-mat-select
-          *ngIf="!person"
+        <a-mat-autocomplete
+          *ngIf="!employee"
           class="col"
-          [object]="partyRelationship"
+          [object]="object"
           [roleType]="m.Employment.Employee"
-          [options]="people"
+          [filter]="peopleFilter.create(context)"
           display="DisplayName"
-        ></a-mat-select>
+        ></a-mat-autocomplete>
         <a-mat-static
-          *ngIf="person"
+          *ngIf="employee"
           class="col-md"
-          [object]="partyRelationship"
+          [object]="object"
           [roleType]="m.Employment.Employee"
           display="DisplayName"
         ></a-mat-static>
         <button
-          *ngIf="!person"
+          *ngIf="!employee"
           mat-mini-fab
           color="accent"
           type="button"

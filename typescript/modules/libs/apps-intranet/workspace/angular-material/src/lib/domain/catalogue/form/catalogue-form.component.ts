@@ -24,6 +24,7 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { PostCreatePullHandler } from '../../../../../../../../system/workspace/domain/src/lib/pull/create-pull-handler';
 
 @Component({
   templateUrl: './catalogue-form.component.html',
@@ -31,7 +32,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 })
 export class CatalogueFormComponent
   extends AllorsFormComponent<Catalogue>
-  implements CreateOrEditPullHandler, EditIncludeHandler
+  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
 {
   public m: M;
   public singleton: Singleton;

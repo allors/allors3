@@ -12,6 +12,7 @@ import {
 import {
   BasePrice,
   InternalOrganisation,
+  UnifiedGood,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -33,6 +34,7 @@ export class BasepriceFormComponent
   m: M;
 
   internalOrganisation: InternalOrganisation;
+  unifiedGood: UnifiedGood;
 
   constructor(
     @Self() public allors: ContextService,
@@ -60,9 +62,12 @@ export class BasepriceFormComponent
     this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
   }
 
-  onPostCreatePull(): void {
+  onPostCreatePull(_, loaded: IPullResult): void {
     this.object.FromDate = new Date();
     this.object.PricedBy = this.internalOrganisation;
+
+    this.unifiedGood = loaded.object<UnifiedGood>(this.m.UnifiedGood);
+    this.object.Product = this.unifiedGood;
   }
 
   // TODO: KOEN
@@ -75,8 +80,4 @@ export class BasepriceFormComponent
   //             }),
   //           ];
   //         }
-  // Post
-  // if (this.nonUnifiedGood) {
-  //   this.priceComponent.Product = this.unifiedGood;
-  // }
 }

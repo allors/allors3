@@ -3,16 +3,15 @@ import { NgForm } from '@angular/forms';
 
 import {
   EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
   IPullResult,
+  Node,
   PostCreatePullHandler,
+  PostEditPullHandler,
 } from '@allors/system/workspace/domain';
 import {
-  BasePrice,
   Disbursement,
-  InternalOrganisation,
+  Invoice,
+  PaymentApplication,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,17 +26,11 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 })
 export class DisbursementFormComponent
   extends AllorsFormComponent<Disbursement>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
+  implements EditIncludeHandler, PostCreatePullHandler, PostEditPullHandler
 {
   readonly m: M;
-
-  disbursement: Disbursement;
-  invoice: Invoice;
-
-  title: string;
-
-  private subscription: Subscription;
   paymentApplication: PaymentApplication;
+  invoice: Invoice;
 
   constructor(
     @Self() public allors: ContextService,
@@ -48,74 +41,41 @@ export class DisbursementFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onEditInclude(): Node[] {
+    const { treeBuilder: t } = this.m;
 
-    this.subscription = combineLatest([this.refreshService.refresh$])
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    return t.Disbursement({
+      PaymentApplications: {},
+    });
+  }
 
-          const pulls = [];
+  onPostCreatePull(_, loaded: IPullResult): void {
+    this.paymentApplication = this.allors.context.create<PaymentApplication>(
+      this.m.PaymentApplication
+    );
 
-          if (!isCreate) {
-            pulls.push(
-              pull.Disbursement({
-                objectId: this.data.id,
-                include: {
-                  PaymentApplications: x,
-                },
-              })
-            );
-          }
+    this.invoice = loaded.object<Invoice>(this.m.Invoice);
+    this.paymentApplication.Invoice = this.invoice;
 
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Invoice({
-                objectId: this.data.associationId,
-              })
-            );
-          }
+    this.object.addPaymentApplication(this.paymentApplication);
+  }
 
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
-        })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
-
-        this.invoice = loaded.object<Invoice>(m.Invoice);
-
-        if (isCreate) {
-          this.title = 'Add Disbursement';
-          this.paymentApplication =
-            this.allors.context.create<PaymentApplication>(
-              m.PaymentApplication
-            );
-          this.paymentApplication.Invoice = this.invoice;
-
-          this.disbursement = this.allors.context.create<Disbursement>(
-            m.Disbursement
-          );
-          this.disbursement.addPaymentApplication(this.paymentApplication);
-        } else {
-          this.disbursement = loaded.object<Disbursement>(m.Disbursement);
-          this.paymentApplication = this.disbursement.PaymentApplications[0];
-
-          if (this.disbursement.canWriteAmount) {
-            this.title = 'Edit Disbursement';
-          } else {
-            this.title = 'View Disbursement';
-          }
-        }
-      });
+  onPostEditPull(): void {
+    this.paymentApplication = this.object.PaymentApplications[0];
   }
 
   public override save(): void {
-    this.paymentApplication.AmountApplied = this.disbursement.Amount;
+    this.paymentApplication.AmountApplied = this.object.Amount;
     super.save();
   }
+
+  // TODO: KOEN
+  // Pre
+  // if (isCreate && this.data.associationId) {
+  //   pulls.push(
+  //     pull.Invoice({
+  //       object: this.data.associationId,
+  //     })
+  //   );
+  // }
 }

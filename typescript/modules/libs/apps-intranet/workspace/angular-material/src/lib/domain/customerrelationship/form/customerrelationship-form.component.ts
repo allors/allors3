@@ -10,9 +10,9 @@ import {
   PostCreatePullHandler,
 } from '@allors/system/workspace/domain';
 import {
-  BasePrice,
   CustomerRelationship,
   InternalOrganisation,
+  Party,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -22,7 +22,6 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './customerrelationship-form.component.html',
@@ -34,92 +33,53 @@ export class CustomerRelationshipFormComponent
 {
   readonly m: M;
 
-  partyRelationship: CustomerRelationship;
   internalOrganisation: InternalOrganisation;
   party: Party;
-  title: string;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId
+    private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
+  onPreCreateOrEditPull(pulls: Pull[]): void {
     const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-
-          const pulls = [this.fetcher.internalOrganisation];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.CustomerRelationship({
-                objectId: this.data.id,
-                include: {
-                  InternalOrganisation: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Party({
-                objectId: this.data.associationId,
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
-        })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
-
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.party = loaded.object<Party>(m.Party);
-
-        if (isCreate) {
-          this.title = 'Add Customer Relationship';
-
-          this.partyRelationship =
-            this.allors.context.create<CustomerRelationship>(
-              m.CustomerRelationship
-            );
-          this.partyRelationship.FromDate = new Date();
-          this.partyRelationship.Customer = this.party;
-          this.partyRelationship.InternalOrganisation =
-            this.internalOrganisation;
-        } else {
-          this.partyRelationship = loaded.object<CustomerRelationship>(
-            m.CustomerRelationship
-          );
-
-          if (this.partyRelationship.canWriteFromDate) {
-            this.title = 'Edit Customer Relationship';
-          } else {
-            this.title = 'View Customer Relationship';
-          }
-        }
-      });
+    pulls.push(this.fetcher.internalOrganisation), pulls.push(p.Scope({}));
   }
+
+  onEditInclude(): Node[] {
+    const { treeBuilder: t } = this.m;
+
+    return t.CustomerRelationship({
+      InternalOrganisation: {},
+    });
+  }
+
+  onPostCreatePull(_, loaded: IPullResult): void {
+    this.object.FromDate = new Date();
+    this.object.InternalOrganisation = this.internalOrganisation;
+
+    this.party = loaded.object<Party>(this.m.Party);
+    this.object.Customer = this.party;
+  }
+
+  onPostCreateOrEditPull(_, loaded: IPullResult): void {
+    this.internalOrganisation = this.fetcher.getInternalOrganisation(loaded);
+  }
+
+  // TODO: KOEN
+  // Pre
+  // if (isCreate && this.data.associationId) {
+  //   pulls.push(
+  //     pull.Party({
+  //       object: this.data.associationId,
+  //     }),
+  //   );
+  // }
 }

@@ -1,15 +1,15 @@
-<div class="container-fluid" *ngIf="communicationEvent">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.CommunicationEventState"
       [options]="eventStates"
       display="Name"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.EventPurposes"
       [options]="purposes"
       display="Name"
@@ -21,7 +21,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="communicationEvent"
+          [object]="object"
           [roleType]="m.CommunicationEvent.FromParty"
           [options]="contacts"
           display="DisplayName"
@@ -57,7 +57,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="communicationEvent"
+          [object]="object"
           [roleType]="m.CommunicationEvent.ToParty"
           [options]="contacts"
           display="DisplayName"
@@ -95,7 +95,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="communicationEvent"
+          [object]="object"
           [roleType]="m.EmailCommunication.FromEmail"
           [options]="fromEmails"
           display="DisplayName"
@@ -131,7 +131,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="communicationEvent"
+          [object]="object"
           [roleType]="m.EmailCommunication.ToEmail"
           [options]="toEmails"
           display="DisplayName"
@@ -167,13 +167,13 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="communicationEvent.EmailTemplate"
+      [object]="object.EmailTemplate"
       [roleType]="m.EmailTemplate.SubjectTemplate"
       label="Subject"
     ></a-mat-input>
     <a-mat-textarea
       class="col-md-12"
-      [object]="communicationEvent.EmailTemplate"
+      [object]="object.EmailTemplate"
       [roleType]="m.EmailTemplate.BodyTemplate"
       label="Body"
     ></a-mat-textarea>
@@ -182,12 +182,12 @@
   <div class="row">
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ScheduledStart"
     ></a-mat-datetimepicker>
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ScheduledEnd"
     ></a-mat-datetimepicker>
   </div>
@@ -195,12 +195,12 @@
   <div class="row">
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ActualStart"
     ></a-mat-datetimepicker>
     <a-mat-datetimepicker
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.ActualEnd"
     ></a-mat-datetimepicker>
   </div>
@@ -208,7 +208,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="communicationEvent"
+      [object]="object"
       [roleType]="m.CommunicationEvent.Comment"
     ></a-mat-textarea>
   </div>
