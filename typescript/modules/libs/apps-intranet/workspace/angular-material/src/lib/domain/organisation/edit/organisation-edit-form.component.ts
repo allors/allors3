@@ -1,46 +1,37 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Currency,
+  CustomOrganisationClassification,
+  IndustryClassification,
   InternalOrganisation,
+  LegalForm,
+  Locale,
   Organisation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   selector: 'organisation-edit-form',
   templateUrl: './organisation-edit-form.component.html',
-  providers: [ContextService, OldPanelService],
+  providers: [ContextService],
 })
-export class OrganisationEditFormComponent
-  extends AllorsFormComponent<Organisation>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class OrganisationEditFormComponent extends AllorsFormComponent<Organisation> {
   readonly m: M;
-
-  organisation: Organisation;
   locales: Locale[];
   classifications: CustomOrganisationClassification[];
   industries: IndustryClassification[];
   internalOrganisation: InternalOrganisation;
-
-  private subscription: Subscription;
   legalForms: LegalForm[];
   currencies: Currency[];
 
@@ -53,104 +44,74 @@ export class OrganisationEditFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
-
-    panel.onPull = (pulls) => {
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const id = this.panel.manager.id;
-
-        pulls.push(
-          pull.Organisation({
-            name: pullName,
-            objectId: id,
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.organisation = loaded.object<Organisation>(pullName);
-      }
-    };
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Expanded
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.organisation = undefined;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Singleton({
+        objectId: this.singletonId.value,
+        select: {
+          Locales: {
+            include: {
+              Language: {},
+              Country: {},
+            },
+          },
+        },
+      }),
+      p.Organisation({
+        objectId: this.editRequest.objectId,
+        include: {
+          LegalForm: {},
+          IndustryClassifications: {},
+          CustomClassifications: {},
+          PreferredCurrency: {},
+          LogoImage: {},
+        },
+      }),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.Name }],
+      }),
+      p.CustomOrganisationClassification({
+        sorting: [{ roleType: m.CustomOrganisationClassification.Name }],
+      }),
+      p.IndustryClassification({
+        sorting: [{ roleType: m.IndustryClassification.Name }],
+      }),
+      p.LegalForm({
+        sorting: [{ roleType: m.LegalForm.Description }],
+      })
+    );
 
-          const id = this.panel.manager.id;
+    this.onPrePullInitialize(pulls);
+  }
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Singleton({
-              objectId: this.singletonId.value,
-              select: {
-                Locales: {
-                  include: {
-                    Language: x,
-                    Country: x,
-                  },
-                },
-              },
-            }),
-            pull.Organisation({
-              objectId: id,
-              include: {
-                LegalForm: x,
-                IndustryClassifications: x,
-                CustomClassifications: x,
-                PreferredCurrency: x,
-                LogoImage: x,
-              },
-            }),
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.Name }],
-            }),
-            pull.CustomOrganisationClassification({
-              sorting: [{ roleType: m.CustomOrganisationClassification.Name }],
-            }),
-            pull.IndustryClassification({
-              sorting: [{ roleType: m.IndustryClassification.Name }],
-            }),
-            pull.LegalForm({
-              sorting: [{ roleType: m.LegalForm.Description }],
-            }),
-          ];
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.organisation = loaded.object<Organisation>(m.Organisation);
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.classifications =
-          loaded.collection<CustomOrganisationClassification>(
-            m.CustomOrganisationClassification
-          );
-        this.industries = loaded.collection<IndustryClassification>(
-          m.IndustryClassification
-        );
-        this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
-      });
+    this.onPostPullInitialize(pullResult);
+
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.locales =
+      pullResult.collection<Locale>(this.m.Singleton.Locales) || [];
+    this.classifications =
+      pullResult.collection<CustomOrganisationClassification>(
+        this.m.CustomOrganisationClassification
+      );
+    this.industries = pullResult.collection<IndustryClassification>(
+      this.m.IndustryClassification
+    );
+    this.legalForms = pullResult.collection<LegalForm>(this.m.LegalForm);
   }
 }

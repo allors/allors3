@@ -1,18 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  PositionType,
   PositionTypeRate,
+  RateType,
+  TimeFrequency,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -25,21 +19,13 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './positiontyperate-form.component.html',
   providers: [ContextService],
 })
-export class PositionTypeRateFormComponent
-  extends AllorsFormComponent<PositionTypeRate>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  title: string;
-  subTitle: string;
-
+export class PositionTypeRateFormComponent extends AllorsFormComponent<PositionTypeRate> {
   readonly m: M;
 
-  positionTypeRate: PositionTypeRate;
   timeFrequencies: TimeFrequency[];
   rateTypes: RateType[];
   selectedPositionTypes: PositionType[];
 
-  private subscription: Subscription;
   positionTypes: PositionType[];
   originalPositionTypes: PositionType[];
 
@@ -52,81 +38,65 @@ export class PositionTypeRateFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
+      p.TimeFrequency({
+        sorting: [{ roleType: this.m.TimeFrequency.Name }],
+      }),
+      p.PositionType({
+        sorting: [{ roleType: this.m.PositionType.Title }],
+        include: {
+          PositionTypeRate: {},
+        },
+      })
+    );
 
-          const pulls = [
-            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
-            pull.TimeFrequency({
-              sorting: [{ roleType: this.m.TimeFrequency.Name }],
-            }),
-            pull.PositionType({
-              sorting: [{ roleType: this.m.PositionType.Title }],
-              include: {
-                PositionTypeRate: x,
-              },
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.PositionTypeRate({
-                objectId: this.data.id,
-                include: {
-                  RateType: x,
-                  Frequency: x,
-                },
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.PositionTypeRate({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            RateType: {},
+            Frequency: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.rateTypes = loaded.collection<RateType>(m.RateType);
-        this.timeFrequencies = loaded.collection<TimeFrequency>(
-          m.TimeFrequency
-        );
-        const hour = this.timeFrequencies?.find(
-          (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
-        );
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (isCreate) {
-          this.title = 'Add Position Type Rate';
-          this.positionTypeRate = this.allors.context.create<PositionTypeRate>(
-            m.PositionTypeRate
-          );
-          this.positionTypeRate.Frequency = hour;
-        } else {
-          this.positionTypeRate = loaded.object<PositionTypeRate>(
-            m.PositionTypeRate
-          );
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          if (this.positionTypeRate.canWriteRate) {
-            this.title = 'Edit Position Type Rate';
-          } else {
-            this.title = 'View Position Type Rate';
-          }
-        }
+    this.onPostPullInitialize(pullResult);
 
-        this.positionTypes = loaded.collection<PositionType>(m.PositionType);
-        this.selectedPositionTypes = this.positionTypes?.filter(
-          (v) => v.PositionTypeRate === this.positionTypeRate
-        );
-        this.originalPositionTypes = this.selectedPositionTypes;
-      });
+    this.rateTypes = pullResult.collection<RateType>(this.m.RateType);
+    this.timeFrequencies = pullResult.collection<TimeFrequency>(
+      this.m.TimeFrequency
+    );
+    const hour = this.timeFrequencies?.find(
+      (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
+    );
+
+    this.positionTypes = pullResult.collection<PositionType>(
+      this.m.PositionType
+    );
+    this.selectedPositionTypes = this.positionTypes?.filter(
+      (v) => v.PositionTypeRate === this.object
+    );
+    this.originalPositionTypes = this.selectedPositionTypes;
+
+    if (this.createRequest) {
+      this.object.Frequency = hour;
+    }
   }
 
   public override save(): void {

@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="nonSerialisedInventoryItem">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-static
       class="col-md"
-      [object]="nonSerialisedInventoryItem.Facility"
+      [object]="object.Facility"
       [roleType]="m.Facility.Name"
     ></a-mat-static>
     <a-mat-static
       class="col-md"
-      [object]="nonSerialisedInventoryItem"
+      [object]="object"
       [roleType]="m.NonSerialisedInventoryItem.PartDisplayName"
     ></a-mat-static>
   </div>
@@ -15,7 +15,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="nonSerialisedInventoryItem"
+      [object]="object"
       [roleType]="m.NonSerialisedInventoryItem.PartLocation"
       label="Physical location"
     ></a-mat-input>

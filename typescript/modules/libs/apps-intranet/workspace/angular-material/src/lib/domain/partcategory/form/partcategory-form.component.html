@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="category">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-file
       class="col-md-12"
-      [object]="category"
+      [object]="object"
       [roleType]="m.PartCategory.CategoryImage"
       accept="image/*"
     ></a-mat-file>
@@ -11,7 +11,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="category"
+      [object]="object"
       [roleType]="m.PartCategory.Name"
     ></a-mat-input>
   </div>
@@ -19,7 +19,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="category"
+      [object]="object"
       [roleType]="m.PartCategory.PrimaryParent"
       [options]="categories"
       display="Name"
@@ -29,7 +29,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="category"
+      [object]="object"
       [roleType]="m.PartCategory.SecondaryParents"
       [options]="categories"
       display="Name"
@@ -39,7 +39,7 @@
   <div class="row">
     <a-mat-static
       class="col-md"
-      [object]="category"
+      [object]="object"
       [roleType]="m.PartCategory.Children"
       display="Name"
     ></a-mat-static>
@@ -48,7 +48,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="category"
+      [object]="object"
       [roleType]="m.PartCategory.Description"
     ></a-mat-textarea>
   </div>
@@ -64,13 +64,13 @@
         <div class="row">
           <a-mat-localised-text
             class="col"
-            [object]="category"
+            [object]="object"
             [roleType]="m.PartCategory.LocalisedNames"
             [locale]="locale"
           ></a-mat-localised-text>
           <a-mat-localised-text
             class="col"
-            [object]="category"
+            [object]="object"
             [roleType]="m.PartCategory.LocalisedDescriptions"
             [locale]="locale"
           ></a-mat-localised-text>

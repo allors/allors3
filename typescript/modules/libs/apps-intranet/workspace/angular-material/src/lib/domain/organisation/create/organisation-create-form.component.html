@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="organisation">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.Name"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.TaxNumber"
       label="VAT number"
     >
@@ -17,14 +17,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.LegalForm"
       [options]="legalForms"
       display="Description"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.Locale"
       [options]="locales"
       display="Name"
@@ -46,7 +46,7 @@
     </mat-form-field>
     <a-mat-select
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.PreferredCurrency"
       [options]="currencies"
       display="Name"
@@ -56,7 +56,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.IndustryClassifications"
       [options]="industries"
       display="Name"
@@ -65,7 +65,7 @@
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.CustomClassifications"
       [options]="classifications"
       display="Name"
@@ -77,13 +77,13 @@
   <div class="row">
     <a-mat-slidetoggle
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.IsManufacturer"
     >
     </a-mat-slidetoggle>
     <a-mat-slidetoggle
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.IsInternalOrganisation"
     >
     </a-mat-slidetoggle>
@@ -92,19 +92,19 @@
   <div class="row">
     <a-mat-file
       class="col-md-12"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.LogoImage"
       accept="image/*"
     >
     </a-mat-file>
     <a-mat-textarea
       class="col-md-12"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.Comment"
     ></a-mat-textarea>
     <a-mat-slidetoggle
       class="col-md"
-      [object]="organisation"
+      [object]="object"
       [roleType]="m.Organisation.CollectiveWorkEffortInvoice"
     ></a-mat-slidetoggle>
   </div>

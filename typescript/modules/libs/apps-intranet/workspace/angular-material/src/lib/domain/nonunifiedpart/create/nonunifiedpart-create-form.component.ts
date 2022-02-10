@@ -1,42 +1,40 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Brand,
+  Facility,
+  Locale,
+  InventoryItemKind,
   NonUnifiedPart,
+  ProductType,
+  Model,
+  Organisation,
+  ProductIdentificationType,
+  PartNumber,
+  UnitOfMeasure,
+  Settings,
+  PartCategory,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   templateUrl: './nonunifiedpart-create-form.component.html',
   providers: [ContextService],
 })
-export class NonUnifiedPartCreateFormComponent
-  extends AllorsFormComponent<NonUnifiedPart>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUnifiedPart> {
   readonly m: M;
-
-  public title = 'Add Part';
-
-  part: Part;
   facility: Facility;
   locales: Locale[];
   inventoryItemKinds: InventoryItemKind[];
@@ -57,8 +55,6 @@ export class NonUnifiedPartCreateFormComponent
   selectedCategories: PartCategory[] = [];
   manufacturersFilter: SearchFactory;
 
-  private subscription: Subscription;
-
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
@@ -68,82 +64,78 @@ export class NonUnifiedPartCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.manufacturersFilter = Filters.manufacturersFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            this.fetcher.locales,
-            this.fetcher.Settings,
-            this.fetcher.warehouses,
-            pull.UnitOfMeasure({}),
-            pull.InventoryItemKind({}),
-            pull.ProductIdentificationType({}),
-            pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
-            pull.PartCategory({
-              sorting: [{ roleType: m.PartCategory.Name }],
-            }),
-            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.Brand({
-              include: {
-                Models: x,
-              },
-              sorting: [{ roleType: m.Brand.Name }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.locales,
+      this.fetcher.Settings,
+      this.fetcher.warehouses,
+      p.UnitOfMeasure({}),
+      p.InventoryItemKind({}),
+      p.ProductIdentificationType({}),
+      p.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
+      p.PartCategory({
+        sorting: [{ roleType: m.PartCategory.Name }],
+      }),
+      p.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
+      p.Brand({
+        include: {
+          Models: {},
+        },
+        sorting: [{ roleType: m.Brand.Name }],
+      })
+    );
 
-          this.manufacturersFilter = Filters.manufacturersFilter(m);
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(
-          m.InventoryItemKind
-        );
-        this.productTypes = loaded.collection<ProductType>(m.ProductType);
-        this.brands = loaded.collection<Brand>(m.Brand);
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.facilities = this.fetcher.getWarehouses(loaded);
-        this.categories = loaded.collection<PartCategory>(m.PartCategory);
-        this.settings = this.fetcher.getSettings(loaded);
+    this.onPostPullInitialize(pullResult);
 
-        this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        const piece = this.unitsOfMeasure?.find(
-          (v) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b'
-        );
+    this.inventoryItemKinds = pullResult.collection<InventoryItemKind>(
+      this.m.InventoryItemKind
+    );
+    this.productTypes = pullResult.collection<ProductType>(this.m.ProductType);
+    this.brands = pullResult.collection<Brand>(this.m.Brand);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
+    this.facilities = this.fetcher.getWarehouses(pullResult);
+    this.categories = pullResult.collection<PartCategory>(this.m.PartCategory);
+    this.settings = this.fetcher.getSettings(pullResult);
 
-        this.goodIdentificationTypes =
-          loaded.collection<ProductIdentificationType>(
-            m.ProductIdentificationType
-          );
-        const partNumberType = this.goodIdentificationTypes?.find(
-          (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
-        );
+    this.unitsOfMeasure = pullResult.collection<UnitOfMeasure>(
+      this.m.UnitOfMeasure
+    );
+    const piece = this.unitsOfMeasure?.find(
+      (v) => v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b'
+    );
 
-        this.part = this.allors.context.create<NonUnifiedPart>(
-          m.NonUnifiedPart
-        );
-        this.part.DefaultFacility = this.settings.DefaultFacility;
-        this.part.UnitOfMeasure = piece;
+    this.goodIdentificationTypes =
+      pullResult.collection<ProductIdentificationType>(
+        this.m.ProductIdentificationType
+      );
+    const partNumberType = this.goodIdentificationTypes?.find(
+      (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
+    );
 
-        if (!this.settings.UsePartNumberCounter) {
-          this.partNumber = this.allors.context.create<PartNumber>(
-            m.PartNumber
-          );
-          this.partNumber.ProductIdentificationType = partNumberType;
+    this.object.DefaultFacility = this.settings.DefaultFacility;
+    this.object.UnitOfMeasure = piece;
 
-          this.part.addProductIdentification(this.partNumber);
-        }
-      });
+    if (!this.settings.UsePartNumberCounter) {
+      this.partNumber = this.allors.context.create<PartNumber>(
+        this.m.PartNumber
+      );
+      this.partNumber.ProductIdentificationType = partNumberType;
+
+      this.object.addProductIdentification(this.partNumber);
+    }
   }
 
   public brandAdded(brand: Brand): void {
@@ -190,21 +182,12 @@ export class NonUnifiedPartCreateFormComponent
     super.save();
   }
 
-  public update(): void {
-    this.onSave();
-
-    this.allors.context.push().subscribe(() => {
-      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
-  }
-
   private onSave() {
     this.selectedCategories.forEach((category: PartCategory) => {
-      category.addPart(this.part);
+      category.addPart(this.object);
     });
 
-    this.part.Brand = this.selectedBrand;
-    this.part.Model = this.selectedModel;
+    this.object.Brand = this.selectedBrand;
+    this.object.Model = this.selectedModel;
   }
 }

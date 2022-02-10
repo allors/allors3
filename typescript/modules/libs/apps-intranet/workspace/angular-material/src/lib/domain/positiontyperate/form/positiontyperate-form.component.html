@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="positionTypeRate">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="positionTypeRate"
+      [object]="object"
       [roleType]="m.PositionTypeRate.RateType"
       [options]="rateTypes"
       display="Name"
@@ -26,13 +26,13 @@
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="positionTypeRate"
+      [object]="object"
       [roleType]="m.PositionTypeRate.FromDate"
     >
     </a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="positionTypeRate"
+      [object]="object"
       [roleType]="m.PositionTypeRate.ThroughDate"
     >
     </a-mat-datepicker>
@@ -41,17 +41,17 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="positionTypeRate"
+      [object]="object"
       [roleType]="m.PositionTypeRate.Rate"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="positionTypeRate"
+      [object]="object"
       [roleType]="m.PositionTypeRate.Cost"
     ></a-mat-input>
     <a-mat-select
       class="col-md"
-      [object]="positionTypeRate"
+      [object]="object"
       [roleType]="m.PositionTypeRate.Frequency"
       [options]="timeFrequencies"
       display="Name"

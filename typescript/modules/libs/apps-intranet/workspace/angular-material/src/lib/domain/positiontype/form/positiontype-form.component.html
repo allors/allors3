@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="positionType">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="positionType"
+      [object]="object"
       [roleType]="m.PositionType.Title"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="positionType"
+      [object]="object"
       [roleType]="m.PositionType.Description"
     ></a-mat-input>
   </div>

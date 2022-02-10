@@ -1,40 +1,35 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Currency,
+  EmailAddress,
+  Enumeration,
+  GenderType,
   InternalOrganisation,
+  Locale,
+  PartyContactMechanism,
   Person,
+  Salutation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   selector: 'person-edit-form',
   templateUrl: './person-edit-form.component.html',
-  providers: [OldPanelService, ContextService],
+  providers: [ContextService],
 })
-export class PersonEditFormComponent
-  extends AllorsFormComponent<Person>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PersonEditFormComponent extends AllorsFormComponent<Person> {
   readonly m: M;
-
-  person: Person;
   emailAddresses: string[] = [];
 
   internalOrganisation: InternalOrganisation;
@@ -43,7 +38,6 @@ export class PersonEditFormComponent
   salutations: Enumeration[];
   public confirmPassword: string;
 
-  private subscription: Subscription;
   currencies: Currency[];
 
   constructor(
@@ -55,149 +49,109 @@ export class PersonEditFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
-
-    panel.onPull = (pulls) => {
-      this.person = undefined;
-
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const x = {};
-        const id = this.panel.manager.id;
-
-        pulls.push(
-          pull.Person({
-            name: pullName,
-            objectId: id,
-            include: {
-              GeneralEmail: x,
-              PersonalEmailAddress: x,
-            },
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.person = loaded.object<Person>(pullName);
-      }
-    };
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Maximized
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.person = undefined;
-          const id = this.panel.manager.id;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Singleton({
+        objectId: this.singletonId.value,
+        select: {
+          Locales: {
+            include: {
+              Language: {},
+              Country: {},
+            },
+          },
+        },
+      }),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.Name }],
+      }),
+      p.GenderType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.GenderType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.GenderType.Name }],
+      }),
+      p.Salutation({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Salutation.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Salutation.Name }],
+      }),
+      p.Person({
+        objectId: this.editRequest.objectId,
+        include: {
+          PreferredCurrency: {},
+          Gender: {},
+          Salutation: {},
+          Locale: {},
+          Picture: {},
+        },
+      }),
+      p.Person({
+        objectId: this.editRequest.objectId,
+        select: {
+          PartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                ContactMechanismType: {},
+              },
+            },
+          },
+        },
+      })
+    );
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Singleton({
-              objectId: this.singletonId.value,
-              select: {
-                Locales: {
-                  include: {
-                    Language: x,
-                    Country: x,
-                  },
-                },
-              },
-            }),
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.Name }],
-            }),
-            pull.GenderType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.GenderType.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.GenderType.Name }],
-            }),
-            pull.Salutation({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Salutation.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Salutation.Name }],
-            }),
-            pull.Person({
-              objectId: id,
-              include: {
-                PreferredCurrency: x,
-                Gender: x,
-                Salutation: x,
-                Locale: x,
-                Picture: x,
-              },
-            }),
-            pull.Person({
-              objectId: id,
-              select: {
-                PartyContactMechanisms: {
-                  include: {
-                    ContactMechanism: {
-                      ContactMechanismType: x,
-                    },
-                  },
-                },
-              },
-            }),
-          ];
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
 
-        this.person = loaded.object<Person>(m.Person);
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.genders = loaded.collection<GenderType>(m.GenderType);
-        this.salutations = loaded.collection<Salutation>(m.Salutation);
+    this.onPostPullInitialize(pullResult);
 
-        const partyContactMechanisms: PartyContactMechanism[] =
-          loaded.collection<PartyContactMechanism>(
-            m.Party.PartyContactMechanisms
-          );
-        this.emailAddresses =
-          partyContactMechanisms
-            ?.filter(
-              (v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress
-            )
-            ?.map((v) => v.ContactMechanism)
-            .map((v: EmailAddress) => v.ElectronicAddressString) ?? [];
-      });
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.locales =
+      pullResult.collection<Locale>(this.m.Singleton.Locales) || [];
+    this.genders = pullResult.collection<GenderType>(this.m.GenderType);
+    this.salutations = pullResult.collection<Salutation>(this.m.Salutation);
+
+    const partyContactMechanisms: PartyContactMechanism[] =
+      pullResult.collection<PartyContactMechanism>(
+        this.m.Party.PartyContactMechanisms
+      );
+    this.emailAddresses =
+      partyContactMechanisms
+        ?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)
+        ?.map((v) => v.ContactMechanism)
+        .map((v: EmailAddress) => v.ElectronicAddressString) ?? [];
   }
 
   private onSave(): void {
     if (
-      this.person.UserEmail != null &&
-      this.emailAddresses.indexOf(this.person.UserEmail) == -1
+      this.object.UserEmail != null &&
+      this.emailAddresses.indexOf(this.object.UserEmail) == -1
     ) {
       const emailAddress = this.allors.context.create<EmailAddress>(
         this.m.EmailAddress
       );
-      emailAddress.ElectronicAddressString = this.person.UserEmail;
+      emailAddress.ElectronicAddressString = this.object.UserEmail;
 
       const partyContactMechanism =
         this.allors.context.create<PartyContactMechanism>(
@@ -205,8 +159,8 @@ export class PersonEditFormComponent
         );
       partyContactMechanism.ContactMechanism = emailAddress;
 
-      this.person.addPartyContactMechanism(partyContactMechanism);
-      this.emailAddresses.push(this.person.UserEmail);
+      this.object.addPartyContactMechanism(partyContactMechanism);
+      this.emailAddresses.push(this.object.UserEmail);
     }
   }
 

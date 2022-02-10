@@ -1,19 +1,8 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
-  NonSerialisedInventoryItem,
-} from '@allors/default/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { NonSerialisedInventoryItem } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -28,16 +17,8 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './nonserialisedinventoryitem-form.component.html',
   providers: [ContextService],
 })
-export class NonSerialisedInventoryItemFormComponent
-  extends AllorsFormComponent<NonSerialisedInventoryItem>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class NonSerialisedInventoryItemFormComponent extends AllorsFormComponent<NonSerialisedInventoryItem> {
   public m: M;
-  public title: string;
-
-  public nonSerialisedInventoryItem: NonSerialisedInventoryItem;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -50,47 +31,29 @@ export class NonSerialisedInventoryItemFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(this.fetcher.internalOrganisation);
 
-          const pulls = [];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.NonSerialisedInventoryItem({
-                objectId: this.data.id,
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.NonSerialisedInventoryItem({
+          name: '_object',
+          objectId: this.editRequest.objectId,
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.nonSerialisedInventoryItem =
-          loaded.object<NonSerialisedInventoryItem>(
-            m.NonSerialisedInventoryItem
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (this.nonSerialisedInventoryItem.canWritePartLocation) {
-          this.title = 'Edit Inventory Item';
-        } else {
-          this.title = 'View Inventory Item';
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
   }
 }

@@ -1,44 +1,31 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Organisation,
+  OrganisationContactKind,
   OrganisationContactRelationship,
+  Party,
+  Person,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './organisationcontactrelationship-form.component.html',
   providers: [ContextService],
 })
-export class OrganisationContactRelationshipFormComponent
-  extends AllorsFormComponent<OrganisationContactRelationship>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class OrganisationContactRelationshipFormComponent extends AllorsFormComponent<OrganisationContactRelationship> {
   readonly m: M;
-
-  partyRelationship: OrganisationContactRelationship;
-  title: string;
   addContact = false;
-
-  private subscription: Subscription;
   party: Party;
   person: Person;
   organisation: Organisation;
@@ -51,115 +38,85 @@ export class OrganisationContactRelationshipFormComponent
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm,
-    private internalOrganisationId: InternalOrganisationId
+    form: NgForm
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.peopleFilter = Filters.peopleFilter(this.m);
+    this.organisationsFilter = Filters.organisationsFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
-    // this.filters = Filters;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.OrganisationContactKind({
+        sorting: [{ roleType: this.m.OrganisationContactKind.Description }],
+      })
+    );
 
-          const pulls = [
-            pull.OrganisationContactKind({
-              sorting: [
-                { roleType: this.m.OrganisationContactKind.Description },
-              ],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.OrganisationContactRelationship({
-                objectId: this.data.id,
-                include: {
-                  ContactKinds: x,
-                  Organisation: x,
-                  Contact: x,
-                  Parties: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Party({
-                objectId: this.data.associationId,
-              })
-            );
-          }
-
-          this.peopleFilter = Filters.peopleFilter(m);
-          this.organisationsFilter = Filters.organisationsFilter(m);
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.OrganisationContactRelationship({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            ContactKinds: {},
+            Organisation: {},
+            Contact: {},
+            Parties: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.contactKinds = loaded.collection<OrganisationContactKind>(
-          m.OrganisationContactKind
-        );
-        this.generalContact = this.contactKinds?.find(
-          (v) => v.UniqueId === 'eebe4d65-c452-49c9-a583-c0ffec385e98'
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Party({
+          objectId: initializer.id,
+        })
+      );
+    }
+  }
 
-        if (isCreate) {
-          this.title = 'Add Organisation Contact';
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          this.partyRelationship =
-            this.allors.context.create<OrganisationContactRelationship>(
-              m.OrganisationContactRelationship
-            );
-          this.partyRelationship.FromDate = new Date();
-          this.partyRelationship.addContactKind(this.generalContact);
+    this.contactKinds = pullResult.collection<OrganisationContactKind>(
+      this.m.OrganisationContactKind
+    );
 
-          this.party = loaded.object<Party>(m.Party);
+    this.generalContact = this.contactKinds?.find(
+      (v) => v.UniqueId === 'eebe4d65-c452-49c9-a583-c0ffec385e98'
+    );
 
-          if (this.party.strategy.cls === m.Person) {
-            this.person = this.party as Person;
-            this.partyRelationship.Contact = this.person;
-          }
+    if (this.createRequest) {
+      this.object.FromDate = new Date();
+      this.object.addContactKind(this.generalContact);
 
-          if (this.party.strategy.cls === m.Organisation) {
-            this.organisation = this.party as Organisation;
-            this.partyRelationship.Organisation = this.organisation;
-          }
-        } else {
-          this.partyRelationship =
-            loaded.object<OrganisationContactRelationship>(
-              m.OrganisationContactRelationship
-            );
-          this.person = this.partyRelationship.Contact;
-          this.organisation = this.partyRelationship
-            .Organisation as Organisation;
+      this.party = pullResult.object<Party>(this.m.Party);
 
-          if (this.partyRelationship.canWriteFromDate) {
-            this.title = 'Edit Organisation Contact';
-          } else {
-            this.title = 'View Organisation Contact';
-          }
-        }
-      });
+      if (this.party.strategy.cls === this.m.Person) {
+        this.person = this.party as Person;
+        this.object.Contact = this.person;
+      }
+
+      if (this.party.strategy.cls === this.m.Organisation) {
+        this.organisation = this.party as Organisation;
+        this.object.Organisation = this.organisation;
+      }
+    } else {
+      this.person = this.object.Contact;
+      this.organisation = this.object.Organisation as Organisation;
+    }
   }
 
   public contactAdded(contact: Person): void {
-    this.partyRelationship.Contact = contact;
+    this.object.Contact = contact;
   }
 }

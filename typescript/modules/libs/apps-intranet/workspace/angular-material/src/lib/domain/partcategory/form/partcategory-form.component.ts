@@ -1,19 +1,8 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
-  PartCategory,
-} from '@allors/default/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { Locale, PartCategory } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -28,18 +17,10 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './partcategory-form.component.html',
   providers: [ContextService],
 })
-export class PartCategoryFormComponent
-  extends AllorsFormComponent<PartCategory>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PartCategoryFormComponent extends AllorsFormComponent<PartCategory> {
   public m: M;
-  public title: string;
-
-  public category: PartCategory;
   public locales: Locale[];
   public categories: PartCategory[];
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -52,68 +33,47 @@ export class PartCategoryFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      this.fetcher.locales,
+      p.PartCategory({
+        sorting: [{ roleType: m.PartCategory.Name }],
+      })
+    );
 
-          const pulls = [
-            this.fetcher.locales,
-            pull.PartCategory({
-              sorting: [{ roleType: m.PartCategory.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.PartCategory({
-                objectId: this.data.id,
-                include: {
-                  CategoryImage: x,
-                  Children: x,
-                  LocalisedNames: {
-                    Locale: x,
-                  },
-                  LocalisedDescriptions: {
-                    Locale: x,
-                  },
-                },
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.PartCategory({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            CategoryImage: {},
+            Children: {},
+            LocalisedNames: {
+              Locale: {},
+            },
+            LocalisedDescriptions: {
+              Locale: {},
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.category = loaded.object<PartCategory>(m.PartCategory);
-        this.categories = loaded.collection<PartCategory>(m.PartCategory);
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (isCreate) {
-          this.title = 'Add Part Category';
-          this.category = this.allors.context.create<PartCategory>(
-            m.PartCategory
-          );
-        } else {
-          if (this.category.canWriteName) {
-            this.title = 'Edit Part Category';
-          } else {
-            this.title = 'View Part Category';
-          }
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
+
+    this.categories = pullResult.collection<PartCategory>(this.m.PartCategory);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
   }
 }

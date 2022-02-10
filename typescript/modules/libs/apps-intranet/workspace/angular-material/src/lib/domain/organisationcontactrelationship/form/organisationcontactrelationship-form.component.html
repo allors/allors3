@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="partyRelationship">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="partyRelationship"
+      [object]="object"
       [roleType]="m.PartyRelationship.FromDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="partyRelationship"
+      [object]="object"
       [roleType]="m.PartyRelationship.ThroughDate"
     ></a-mat-datepicker>
   </div>
@@ -15,7 +15,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="partyRelationship"
+      [object]="object"
       [roleType]="m.OrganisationContactRelationship.ContactKinds"
       [options]="contactKinds"
       display="Description"
@@ -28,7 +28,7 @@
         <a-mat-autocomplete
           *ngIf="!organisation"
           class="col-md"
-          [object]="partyRelationship"
+          [object]="object"
           [roleType]="m.OrganisationContactRelationship.Organisation"
           [filter]="organisationsFilter.create(allors.context)"
           display="DisplayName"
@@ -36,7 +36,7 @@
         <a-mat-static
           *ngIf="organisation"
           class="col-md"
-          [object]="partyRelationship"
+          [object]="object"
           [roleType]="m.OrganisationContactRelationship.Organisation"
           display="DisplayName"
         ></a-mat-static>
@@ -50,7 +50,7 @@
         <a-mat-autocomplete
           *ngIf="!person"
           class="col"
-          [object]="partyRelationship"
+          [object]="object"
           [roleType]="m.OrganisationContactRelationship.Contact"
           [filter]="peopleFilter.create(allors.context)"
           display="DisplayName"
@@ -58,7 +58,7 @@
         <a-mat-static
           *ngIf="person"
           class="col-md"
-          [object]="partyRelationship"
+          [object]="object"
           [roleType]="m.OrganisationContactRelationship.Contact"
           display="DisplayName"
         ></a-mat-static>

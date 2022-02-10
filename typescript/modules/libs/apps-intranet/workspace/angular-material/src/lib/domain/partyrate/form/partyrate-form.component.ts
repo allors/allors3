@@ -1,18 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Party,
   PartyRate,
+  RateType,
+  TimeFrequency,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -25,20 +19,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './partyrate-form.component.html',
   providers: [ContextService],
 })
-export class PartyRateFormComponent
-  extends AllorsFormComponent<PartyRate>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  title: string;
-  subTitle: string;
-
+export class PartyRateFormComponent extends AllorsFormComponent<PartyRate> {
   readonly m: M;
-
-  partyRate: PartyRate;
   timeFrequencies: TimeFrequency[];
   rateTypes: RateType[];
-
-  private subscription: Subscription;
   party: Party;
 
   constructor(
@@ -50,77 +34,60 @@ export class PartyRateFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
+      p.TimeFrequency({
+        sorting: [{ roleType: this.m.TimeFrequency.Name }],
+      })
+    );
 
-          const pulls = [
-            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
-            pull.TimeFrequency({
-              sorting: [{ roleType: this.m.TimeFrequency.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.PartyRate({
-                objectId: this.data.id,
-                include: {
-                  RateType: x,
-                  Frequency: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Party({
-                objectId: this.data.associationId,
-                include: {
-                  PartyRates: x,
-                },
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.PartyRate({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            RateType: {},
+            Frequency: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.party = loaded.object<Party>(m.Party);
-        this.rateTypes = loaded.collection<RateType>(m.RateType);
-        this.timeFrequencies = loaded.collection<TimeFrequency>(
-          m.TimeFrequency
-        );
-        const hour = this.timeFrequencies?.find(
-          (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Party({
+          objectId: initializer.id,
+          include: {
+            PartyRates: {},
+          },
+        })
+      );
+    }
+  }
 
-        if (isCreate) {
-          this.title = 'Add Party Rate';
-          this.partyRate = this.allors.context.create<PartyRate>(m.PartyRate);
-          this.partyRate.Frequency = hour;
-          this.party.addPartyRate(this.partyRate);
-        } else {
-          this.partyRate = loaded.object<PartyRate>(m.PartyRate);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          if (this.partyRate.canWriteRate) {
-            this.title = 'Edit Party Rate';
-          } else {
-            this.title = 'View Party Rate';
-          }
-        }
-      });
+    this.party = pullResult.object<Party>(this.m.Party);
+    this.rateTypes = pullResult.collection<RateType>(this.m.RateType);
+    this.timeFrequencies = pullResult.collection<TimeFrequency>(
+      this.m.TimeFrequency
+    );
+    const hour = this.timeFrequencies?.find(
+      (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
+    );
+
+    if (this.createRequest) {
+      this.object.Frequency = hour;
+      this.party.addPartyRate(this.object);
+    }
   }
 }
