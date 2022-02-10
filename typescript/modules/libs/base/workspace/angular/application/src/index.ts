@@ -25,6 +25,10 @@ export * from './lib/overview/overview-page.component';
 export * from './lib/panel/panel';
 export * from './lib/panel/panel.service';
 
+export * from './lib/relation/edit-relation-panel.component';
+export * from './lib/relation/view-relation-panel.component';
+export * from './lib/relation/relation-panel';
+
 export * from './lib/relationship/edit-relationship-panel.component';
 export * from './lib/relationship/view-relationship-panel.component';
 export * from './lib/relationship/relationship-panel';

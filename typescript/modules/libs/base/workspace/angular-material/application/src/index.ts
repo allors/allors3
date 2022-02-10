@@ -37,6 +37,9 @@ export * from './lib/page/edit/dynamic-edit.component';
 
 export * from './lib/panel/panel.service';
 
+export * from './lib/relation/dynamic-edit-relation-panel.component';
+export * from './lib/relation/dynamic-view-relation-panel.component';
+
 export * from './lib/relationship/dynamic-edit-relationship-panel.component';
 export * from './lib/relationship/dynamic-view-relationship-panel.component';
 

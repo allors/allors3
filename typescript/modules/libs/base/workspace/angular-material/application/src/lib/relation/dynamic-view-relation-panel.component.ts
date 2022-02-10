@@ -1,7 +1,7 @@
 import { Component, OnInit, HostBinding, Input } from '@angular/core';
-import { Composite, RoleType } from '@allors/system/workspace/meta';
+import { Composite, PropertyType } from '@allors/system/workspace/meta';
 import {
-  AllorsViewRelationshipPanelComponent,
+  AllorsViewRelationPanelComponent,
   ObjectService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
@@ -21,15 +21,13 @@ import { Period } from '@allors/default/workspace/domain';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 
 @Component({
-  selector: 'a-mat-dyn-view-relationship-panel',
-  templateUrl: './dynamic-view-relationship-panel.component.html',
+  selector: 'a-mat-dyn-view-relation-panel',
+  templateUrl: './dynamic-view-relation-panel.component.html',
 })
-export class AllorsMaterialDynamicViewRelationshipPanelComponent
-  extends AllorsViewRelationshipPanelComponent
+export class AllorsMaterialDynamicViewRelationPanelComponent
+  extends AllorsViewRelationPanelComponent
   implements ScopedPullHandler, OnInit
 {
-  private assignedAnchor: RoleType;
-
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -37,29 +35,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   }
 
   @Input()
-  get anchor(): RoleType {
-    if (this.assignedAnchor) {
-      return this.assignedAnchor;
-    }
-
-    if (this.target) {
-      const composite = this.target.associationType.objectType as Composite;
-      for (const roleType of composite.roleTypes) {
-        if (roleType !== this.target && roleType.relationType.inRelationship) {
-          return roleType;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  set anchor(value: RoleType) {
-    this.assignedAnchor = value;
-  }
-
-  @Input()
-  target: RoleType;
+  propertyType: PropertyType;
 
   objectType: Composite;
 
