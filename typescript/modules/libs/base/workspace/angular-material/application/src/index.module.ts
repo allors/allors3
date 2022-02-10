@@ -82,6 +82,8 @@ import {
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
   AllorsMaterialDynamicViewDetailPanelComponent,
+  AllorsMaterialDynamicEditRelationPanelComponent,
+  AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicEditRelationshipPanelComponent,
   AllorsMaterialDynamicViewRelationshipPanelComponent,
 } from './index';
@@ -126,6 +128,8 @@ import {
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
     AllorsMaterialDynamicViewDetailPanelComponent,
+    AllorsMaterialDynamicEditRelationPanelComponent,
+    AllorsMaterialDynamicViewRelationPanelComponent,
     AllorsMaterialDynamicEditRelationshipPanelComponent,
     AllorsMaterialDynamicViewRelationshipPanelComponent,
     AllorsMaterialPeriodSelectionToggleComponent,

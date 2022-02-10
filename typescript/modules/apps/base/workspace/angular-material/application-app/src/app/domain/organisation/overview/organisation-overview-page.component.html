@@ -19,12 +19,20 @@
       <div class="col-md-8 align-self-stretch">
         <a-mat-dyn-view-detail-panel></a-mat-dyn-view-detail-panel>
         <a-mat-dyn-edit-detail-panel></a-mat-dyn-edit-detail-panel>
-        <a-mat-dyn-view-rel-panel
+        
+        <a-mat-dyn-view-relation-panel
+          [property]="m.Organisation.Shareholder"
+        ></a-mat-dyn-view-relation-panel>
+        <a-mat-dyn-edit-relations-panel
+          [property]="m.Organisation.Shareholder"
+        ></a-mat-dyn-edit-relation-panel>
+
+        <a-mat-dyn-view-relationship-panel
           [target]="m.Employment.Employee"
-        ></a-mat-dyn-view-rel-panel>
-        <a-mat-dyn-edit-rel-panel
+        ></a-mat-dyn-view-relationship-panel>
+        <a-mat-dyn-edit-relationship-panel
           [target]="m.Employment.Employee"
-        ></a-mat-dyn-edit-rel-panel>
+        ></a-mat-dyn-edit-relationship-panel>
       </div>
     </div>
   </div>

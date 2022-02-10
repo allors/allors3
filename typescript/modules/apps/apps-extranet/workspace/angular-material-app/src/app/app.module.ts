@@ -12,16 +12,6 @@ import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
-import {
-  CreateService,
-  DisplayService,
-  EditService,
-  FilterService,
-  FormService,
-  MetaService,
-  WorkspaceService,
-} from '@allors/base/workspace/angular/foundation';
-
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -49,10 +39,14 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
-
 import {
+  CreateService,
+  DisplayService,
+  EditService,
+  FilterService,
+  FormService,
+  MetaService,
+  WorkspaceService,
   ErrorService,
   DateConfig,
   MediaConfig,
@@ -156,6 +150,9 @@ import { AppNavigationService } from './services/navigation.service';
 import { AppIconService } from './services/icon.service';
 import { AppMetaService } from './services/meta.service';
 import { AppDisplayService } from './services/display.service';
+
+import { AppComponent } from './app.component';
+import { environment } from '../environments/environment';
 
 @NgModule({
   bootstrap: [AppComponent],

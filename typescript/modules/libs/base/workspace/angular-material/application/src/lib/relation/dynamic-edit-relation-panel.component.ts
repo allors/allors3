@@ -17,7 +17,7 @@ import {
 import {
   Action,
   NavigationService,
-  AllorsEditRelationshipPanelComponent,
+  AllorsEditRelationPanelComponent,
   PanelService,
   ObjectService,
 } from '@allors/base/workspace/angular/application';
@@ -34,10 +34,10 @@ interface Row extends TableRow {
 }
 
 @Component({
-  selector: 'a-mat-dyn-edit-relationship-panel',
-  templateUrl: './dynamic-edit-relationship-panel.component.html',
+  selector: 'a-mat-dyn-edit-relation-panel',
+  templateUrl: './dynamic-edit-relation-panel.component.html',
 })
-export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsEditRelationshipPanelComponent {
+export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditRelationPanelComponent {
   private assignedAnchor: RoleType;
 
   @HostBinding('class.expanded-panel')
@@ -55,7 +55,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     if (this.target) {
       const composite = this.target.associationType.objectType as Composite;
       for (const roleType of composite.roleTypes) {
-        if (roleType !== this.target && roleType.relationType.inRelationship) {
+        if (roleType !== this.target && roleType.relationType.inRelation) {
           return roleType;
         }
       }

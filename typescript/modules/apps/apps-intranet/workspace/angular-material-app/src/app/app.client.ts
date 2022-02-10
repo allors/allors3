@@ -15,7 +15,7 @@ import {
 import { IDatabaseJsonClient } from '@allors/system/workspace/adapters-json';
 import { HttpClient } from '@angular/common/http';
 
-export class AngularClient implements IDatabaseJsonClient {
+export class AppClient implements IDatabaseJsonClient {
   constructor(
     public httpClient: HttpClient,
     public baseUrl: string,
