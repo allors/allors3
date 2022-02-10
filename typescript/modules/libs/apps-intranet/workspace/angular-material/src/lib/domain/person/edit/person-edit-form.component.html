@@ -1,27 +1,27 @@
-<mat-tab-group *ngIf="person">
+<mat-tab-group *ngIf="object">
   <mat-tab label="General">
     <div class="container-fluid">
       <div class="row pt-3">
         <a-mat-select
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.Salutation"
           [options]="salutations"
           display="Name"
         ></a-mat-select>
         <a-mat-input
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.FirstName"
         ></a-mat-input>
         <a-mat-input
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.MiddleName"
         ></a-mat-input>
         <a-mat-input
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.LastName"
         ></a-mat-input>
       </div>
@@ -29,14 +29,14 @@
       <div class="row">
         <a-mat-select
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.Gender"
           [options]="genders"
           display="Name"
         ></a-mat-select>
         <a-mat-select
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.Locale"
           [options]="locales"
           display="Name"
@@ -46,14 +46,14 @@
       <div class="row">
         <a-mat-select
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.PreferredCurrency"
           [options]="currencies"
           display="Name"
         ></a-mat-select>
         <a-mat-input
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.Function"
         ></a-mat-input>
       </div>
@@ -61,18 +61,18 @@
       <div class="row">
         <a-mat-textarea
           class="col-md-12"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.Comment"
         ></a-mat-textarea>
         <a-mat-file
           class="col-md-12"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.Picture"
           accept="image/*"
         ></a-mat-file>
         <a-mat-slidetoggle
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.CollectiveWorkEffortInvoice"
         ></a-mat-slidetoggle>
       </div>
@@ -83,12 +83,12 @@
       <div class="row pt-3">
         <a-mat-input
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.UserName"
         ></a-mat-input>
         <a-mat-input
           class="col-md"
-          [object]="person"
+          [object]="object"
           [roleType]="m.Person.UserEmail"
         ></a-mat-input>
       </div>
@@ -97,11 +97,11 @@
         <mat-form-field class="col-md">
           <input
             matInput
-            [(ngModel)]="person.InUserPassword"
+            [(ngModel)]="object.InUserPassword"
             placeholder="New password"
             type="password"
             name="newpassword"
-            [disabled]="!person.canWriteInUserPassword"
+            [disabled]="!object.canWriteInUserPassword"
           />
         </mat-form-field>
       </div>
@@ -114,7 +114,7 @@
             placeholder="Confirm new password"
             type="Password"
             name="confirmPassword"
-            [disabled]="!person.canWriteInUserPassword"
+            [disabled]="!object.canWriteInUserPassword"
           />
         </mat-form-field>
       </div>

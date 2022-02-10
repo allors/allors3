@@ -1,49 +1,40 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Currency,
+  CustomerRelationship,
+  CustomOrganisationClassification,
+  IndustryClassification,
   InternalOrganisation,
+  LegalForm,
+  Locale,
   Organisation,
+  OrganisationRole,
+  SupplierRelationship,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './organisation-create-form.component.html',
   providers: [ContextService],
 })
-export class OrganisationCreateFormComponent
-  extends AllorsFormComponent<Organisation>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class OrganisationCreateFormComponent extends AllorsFormComponent<Organisation> {
   public m: M;
-
-  public title = 'Add Organisation';
-
-  public organisation: Organisation;
 
   public locales: Locale[];
   public classifications: CustomOrganisationClassification[];
   public industries: IndustryClassification[];
 
-  public customerRelationship: CustomerRelationship;
-  public supplierRelationship: SupplierRelationship;
   public internalOrganisation: InternalOrganisation;
   public roles: OrganisationRole[];
   public selectableRoles: OrganisationRole[] = [];
@@ -52,9 +43,6 @@ export class OrganisationCreateFormComponent
   private supplierRole: OrganisationRole;
   private manufacturerRole: OrganisationRole;
 
-  private refresh$: BehaviorSubject<Date>;
-  private subscription: Subscription;
-
   legalForms: LegalForm[];
   currencies: Currency[];
 
@@ -62,104 +50,98 @@ export class OrganisationCreateFormComponent
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private route: ActivatedRoute,
     private fetcher: FetcherService,
-    private singletonId: SingletonId,
-    private internalOrganisationId: InternalOrganisationId
+    private singletonId: SingletonId
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.route.url,
-      this.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(([, , internalOrganisationId]) => {
-          const id: string = this.route.snapshot.paramMap.get('id');
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Singleton({
+        objectId: this.singletonId.value,
+        select: {
+          Locales: {
+            include: {
+              Language: {},
+              Country: {},
+            },
+          },
+        },
+      }),
+      p.OrganisationRole({}),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.Name }],
+      }),
+      p.CustomOrganisationClassification({
+        sorting: [{ roleType: m.CustomOrganisationClassification.Name }],
+      }),
+      p.IndustryClassification({
+        sorting: [{ roleType: m.IndustryClassification.Name }],
+      }),
+      p.LegalForm({
+        sorting: [{ roleType: m.LegalForm.Description }],
+      })
+    );
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Singleton({
-              objectId: this.singletonId.value,
-              select: {
-                Locales: {
-                  include: {
-                    Language: x,
-                    Country: x,
-                  },
-                },
-              },
-            }),
-            pull.OrganisationRole({}),
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.Name }],
-            }),
-            pull.CustomOrganisationClassification({
-              sorting: [{ roleType: m.CustomOrganisationClassification.Name }],
-            }),
-            pull.IndustryClassification({
-              sorting: [{ roleType: m.IndustryClassification.Name }],
-            }),
-            pull.LegalForm({
-              sorting: [{ roleType: m.LegalForm.Description }],
-            }),
-          ];
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.organisation = this.allors.context.create<Organisation>(
-          m.Organisation
-        );
-        this.organisation.IsManufacturer = false;
-        this.organisation.IsInternalOrganisation = false;
-        this.organisation.CollectiveWorkEffortInvoice = false;
-        this.organisation.PreferredCurrency =
-          this.internalOrganisation.PreferredCurrency;
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
 
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.classifications =
-          loaded.collection<CustomOrganisationClassification>(
-            m.CustomOrganisationClassification
-          );
-        this.industries = loaded.collection<IndustryClassification>(
-          m.IndustryClassification
-        );
-        this.legalForms = loaded.collection<LegalForm>(m.LegalForm);
-        this.roles = loaded.collection<OrganisationRole>(m.OrganisationRole);
-        this.customerRole = this.roles?.find(
-          (v: OrganisationRole) =>
-            v.UniqueId === '8b5e0cee-4c98-42f1-8f18-3638fba943a0'
-        );
-        this.supplierRole = this.roles?.find(
-          (v: OrganisationRole) =>
-            v.UniqueId === '8c6d629b-1e27-4520-aa8c-e8adf93a5095'
-        );
-        this.manufacturerRole = this.roles?.find(
-          (v: OrganisationRole) =>
-            v.UniqueId === '32e74bef-2d79-4427-8902-b093afa81661'
-        );
-        this.selectableRoles.push(this.customerRole);
-        this.selectableRoles.push(this.supplierRole);
-      });
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.locales =
+      pullResult.collection<Locale>(this.m.Singleton.Locales) || [];
+    this.classifications =
+      pullResult.collection<CustomOrganisationClassification>(
+        this.m.CustomOrganisationClassification
+      );
+    this.industries = pullResult.collection<IndustryClassification>(
+      this.m.IndustryClassification
+    );
+    this.legalForms = pullResult.collection<LegalForm>(this.m.LegalForm);
+    this.roles = pullResult.collection<OrganisationRole>(
+      this.m.OrganisationRole
+    );
+
+    this.customerRole = this.roles?.find(
+      (v: OrganisationRole) =>
+        v.UniqueId === '8b5e0cee-4c98-42f1-8f18-3638fba943a0'
+    );
+
+    this.supplierRole = this.roles?.find(
+      (v: OrganisationRole) =>
+        v.UniqueId === '8c6d629b-1e27-4520-aa8c-e8adf93a5095'
+    );
+
+    this.manufacturerRole = this.roles?.find(
+      (v: OrganisationRole) =>
+        v.UniqueId === '32e74bef-2d79-4427-8902-b093afa81661'
+    );
+
+    this.selectableRoles.push(this.customerRole);
+    this.selectableRoles.push(this.supplierRole);
+
+    this.object.IsManufacturer = false;
+    this.object.IsInternalOrganisation = false;
+    this.object.CollectiveWorkEffortInvoice = false;
+    this.object.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
+
+    this.onPostPullInitialize(pullResult);
   }
 
   public override save(): void {
@@ -168,7 +150,7 @@ export class OrganisationCreateFormComponent
         this.allors.context.create<CustomerRelationship>(
           this.m.CustomerRelationship
         );
-      customerRelationship.Customer = this.organisation;
+      customerRelationship.Customer = this.object;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
 
@@ -177,7 +159,7 @@ export class OrganisationCreateFormComponent
         this.allors.context.create<SupplierRelationship>(
           this.m.SupplierRelationship
         );
-      supplierRelationship.Supplier = this.organisation;
+      supplierRelationship.Supplier = this.object;
       supplierRelationship.InternalOrganisation = this.internalOrganisation;
     }
 

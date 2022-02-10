@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="partyContactMechanism">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="partyContactMechanism"
+      [object]="object"
       [roleType]="m.PartyContactMechanism.FromDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="partyContactMechanism"
+      [object]="object"
       [roleType]="m.PartyContactMechanism.ThroughDate"
     ></a-mat-datepicker>
   </div>
@@ -15,7 +15,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="partyContactMechanism"
+      [object]="object"
       [roleType]="m.PartyContactMechanism.ContactPurposes"
       [options]="contactMechanismPurposes"
       display="Name"
@@ -26,7 +26,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="partyContactMechanism"
+      [object]="object"
       [roleType]="m.PartyContactMechanism.ContactMechanism"
       [options]="contactMechanisms"
       display="DisplayName"
@@ -36,13 +36,13 @@
   <div class="row">
     <a-mat-slidetoggle
       class="col-md"
-      [object]="partyContactMechanism"
+      [object]="object"
       [roleType]="m.PartyContactMechanism.UseAsDefault"
       label="Use as default"
     ></a-mat-slidetoggle>
     <a-mat-slidetoggle
       class="col-md"
-      [object]="partyContactMechanism"
+      [object]="object"
       [roleType]="m.PartyContactMechanism.NonSolicitationIndicator"
       label="Non Solicitation"
     ></a-mat-slidetoggle>

@@ -1,4 +1,4 @@
-<mat-tab-group *ngIf="part">
+<mat-tab-group *ngIf="object">
   <mat-tab label="General">
     <div class="row pt-3">
       <a-mat-static
@@ -8,7 +8,7 @@
       ></a-mat-static>
       <a-mat-input
         class="col-md"
-        [object]="part"
+        [object]="object"
         [roleType]="m.Part.Name"
       ></a-mat-input>
     </div>
@@ -97,14 +97,14 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="part"
+        [object]="object"
         [roleType]="m.Part.DefaultFacility"
         [options]="facilities"
         display="Name"
       ></a-mat-select>
       <a-mat-select
         class="col-md"
-        [object]="part"
+        [object]="object"
         [roleType]="m.Part.UnitOfMeasure"
         [options]="unitsOfMeasure"
         display="Name"
@@ -114,7 +114,7 @@
     <div class="row">
       <a-mat-autocomplete
         class="col-md"
-        [object]="part"
+        [object]="object"
         [roleType]="m.Part.ManufacturedBy"
         [filter]="manufacturersFilter.create(allors.context)"
         display="DisplayName"
@@ -139,7 +139,7 @@
       </mat-form-field>
       <a-mat-input
         class="col-md-6"
-        [object]="part"
+        [object]="object"
         [roleType]="m.Part.HsCode"
       ></a-mat-input>
     </div>
@@ -147,14 +147,14 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="part"
+        [object]="object"
         [roleType]="m.Part.InventoryItemKind"
         [options]="inventoryItemKinds"
         display="Name"
       ></a-mat-select>
       <a-mat-static
         class="col-md"
-        [object]="part.PartWeightedAverage"
+        [object]="object.PartWeightedAverage"
         [roleType]="m.PartWeightedAverage.AverageCost"
         label="Weighted average cost"
       ></a-mat-static>
@@ -171,7 +171,7 @@
           <div class="row">
             <a-mat-localised-text
               class="col-md-12"
-              [object]="part"
+              [object]="object"
               [roleType]="m.Part.LocalisedNames"
               [locale]="locale"
             ></a-mat-localised-text>
@@ -186,7 +186,7 @@
       <div
         class="row"
         *ngFor="
-          let productCharacteristicValue of part.SerialisedItemCharacteristics
+          let productCharacteristicValue of object.SerialisedItemCharacteristics
         "
       >
         <a-mat-input
@@ -211,7 +211,7 @@
       <div
         class="row"
         *ngFor="
-          let productCharacteristicValue of part.SerialisedItemCharacteristics
+          let productCharacteristicValue of object.SerialisedItemCharacteristics
         "
       >
         <a-mat-textarea
@@ -240,7 +240,7 @@
             <div
               class="row"
               *ngFor="
-                let productCharacteristicValue of part.SerialisedItemCharacteristics
+                let productCharacteristicValue of object.SerialisedItemCharacteristics
               "
             >
               <a-mat-localised-text
@@ -270,17 +270,17 @@
       <div class="row pt-3">
         <a-mat-textarea
           class="col-md-12"
-          [object]="part"
+          [object]="object"
           [roleType]="m.Part.InternalComment"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="part"
+          [object]="object"
           [roleType]="m.Part.Keywords"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="part"
+          [object]="object"
           [roleType]="m.Part.Comment"
         ></a-mat-textarea>
       </div>
@@ -296,7 +296,7 @@
             <div class="row">
               <a-mat-localised-text
                 class="col-md-12"
-                [object]="part"
+                [object]="object"
                 [roleType]="m.Part.LocalisedComments"
                 [locale]="locale"
               ></a-mat-localised-text>
@@ -304,7 +304,7 @@
             <div class="row">
               <a-mat-localised-text
                 class="col-md-12"
-                [object]="part"
+                [object]="object"
                 [roleType]="m.Part.LocalisedKeywords"
                 [locale]="locale"
               ></a-mat-localised-text>
@@ -320,14 +320,14 @@
       <div class="row pt-3">
         <a-mat-file
           class="col-md-12"
-          [object]="part"
+          [object]="object"
           [roleType]="m.Part.PrimaryPhoto"
           accept="image/*"
         >
         </a-mat-file>
         <a-mat-files
           class="col-md-12"
-          [object]="part"
+          [object]="object"
           [roleType]="m.Part.Photos"
           accept="image/*"
         ></a-mat-files>
@@ -340,13 +340,13 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="part"
+          [object]="object"
           [roleType]="m.Part.PublicElectronicDocuments"
           accept="image/*"
         ></a-mat-files>
         <a-mat-files
           class="col-md-12"
-          [object]="part"
+          [object]="object"
           [roleType]="m.Part.PrivateElectronicDocuments"
           accept="image/*"
         ></a-mat-files>

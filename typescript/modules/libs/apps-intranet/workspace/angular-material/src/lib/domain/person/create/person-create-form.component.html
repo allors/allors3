@@ -1,25 +1,25 @@
-<div class="container-fluid" *ngIf="person">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.Salutation"
       [options]="salutations"
       display="Name"
     ></a-mat-select>
     <a-mat-input
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.FirstName"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.MiddleName"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.LastName"
     ></a-mat-input>
   </div>
@@ -27,7 +27,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.Gender"
       [options]="genders"
       display="Name"
@@ -35,7 +35,7 @@
     </a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.Locale"
       [options]="locales"
       display="Name"
@@ -76,7 +76,7 @@
     </mat-form-field>
     <a-mat-input
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.Function"
     ></a-mat-input>
   </div>
@@ -84,7 +84,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.PreferredCurrency"
       [options]="currencies"
       display="Name"
@@ -94,18 +94,18 @@
   <div class="row">
     <a-mat-textarea
       class="col-md-12"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.Comment"
     ></a-mat-textarea>
     <a-mat-file
       class="col-md-12"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.Picture"
       accept="image/*"
     ></a-mat-file>
     <a-mat-checkbox
       class="col-md"
-      [object]="person"
+      [object]="object"
       [roleType]="m.Person.CollectiveWorkEffortInvoice"
     >
     </a-mat-checkbox>

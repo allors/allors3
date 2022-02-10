@@ -1,18 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Invoice,
+  Order,
   OrderAdjustment,
+  Quote,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -20,23 +14,17 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { RoleType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './orderadjustment-form.component.html',
   providers: [ContextService],
 })
-export class OrderAdjustmentFormComponent
-  extends AllorsFormComponent<OrderAdjustment>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class OrderAdjustmentFormComponent extends AllorsFormComponent<OrderAdjustment> {
   public m: M;
-
-  public title: string;
 
   public container: IObject;
   public object: OrderAdjustment;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -47,64 +35,44 @@ export class OrderAdjustmentFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([this.refreshService.refresh$])
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-          const cls = this.data.strategy?.cls;
-          const { associationRoleType } = this.data;
-
-          const pulls = [];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.OrderAdjustment({
-                objectId: this.data.id,
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Quote({ objectId: this.data.associationId }),
-              pull.Order({ objectId: this.data.associationId }),
-              pull.Invoice({ objectId: this.data.associationId })
-            );
-          }
-
-          return this.allors.context.pull(pulls).pipe(
-            map((loaded) => ({
-              loaded,
-              create: isCreate,
-              cls,
-              associationRoleType,
-            }))
-          );
+    if (this.editRequest) {
+      pulls.push(
+        p.OrderAdjustment({
+          name: '_object',
+          objectId: this.editRequest.objectId,
         })
-      )
-      .subscribe(({ loaded, create, cls, associationRoleType }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.container =
-          loaded.object<Quote>(m.Quote) ??
-          loaded.object<Order>(m.Order) ??
-          loaded.object<Invoice>(m.Invoice);
-        this.object = loaded.object<OrderAdjustment>(m.OrderAdjustment);
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Quote({ objectId: initializer.id }),
+        p.Order({ objectId: initializer.id }),
+        p.Invoice({ objectId: initializer.id })
+      );
+    }
+  }
 
-        if (create) {
-          this.title = `Add ${cls.singularName}`;
-          this.object = this.allors.context.create<OrderAdjustment>(cls);
-          this.container.strategy.addCompositesRole(
-            associationRoleType,
-            this.object
-          );
-        } else {
-          this.title = `Edit ${this.object.strategy.cls.singularName}`;
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.container =
+      pullResult.object<Quote>(this.m.Quote) ??
+      pullResult.object<Order>(this.m.Order) ??
+      pullResult.object<Invoice>(this.m.Invoice);
+
+    if (this.createRequest) {
+      this.container.strategy.addCompositesRole(
+        this.createRequest.initializer.propertyType as RoleType,
+        this.object
+      );
+    }
   }
 }

@@ -1,4 +1,4 @@
-<div class="container-fluid" *ngIf="part">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       *ngIf="!settings.UsePartNumberCounter"
@@ -8,7 +8,7 @@
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.Name"
     ></a-mat-input>
   </div>
@@ -97,14 +97,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.ProductType"
       [options]="productTypes"
       display="Name"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.InventoryItemKind"
       [options]="inventoryItemKinds"
       display="Name"
@@ -114,14 +114,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.DefaultFacility"
       [options]="facilities"
       display="Name"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.UnitOfMeasure"
       [options]="unitsOfMeasure"
       display="Name"
@@ -131,7 +131,7 @@
   <div class="row">
     <a-mat-autocomplete
       class="col-md"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.ManufacturedBy"
       [filter]="manufacturersFilter.create(allors.context)"
       display="DisplayName"
@@ -156,7 +156,7 @@
 
     <a-mat-input
       class="col-md-6"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.HsCode"
     ></a-mat-input>
   </div>
@@ -164,7 +164,7 @@
   <div class="row">
     <a-mat-file
       class="col-md-12"
-      [object]="part"
+      [object]="object"
       [roleType]="m.Part.PrimaryPhoto"
       accept="image/*"
     ></a-mat-file>
@@ -181,7 +181,7 @@
         <div class="row">
           <a-mat-localised-text
             class="col-md-12"
-            [object]="part"
+            [object]="object"
             [roleType]="m.Part.LocalisedNames"
             [locale]="locale"
           ></a-mat-localised-text>

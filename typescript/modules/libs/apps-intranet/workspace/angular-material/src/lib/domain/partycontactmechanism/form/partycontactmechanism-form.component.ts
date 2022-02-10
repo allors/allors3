@@ -1,17 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  ContactMechanism,
+  ContactMechanismPurpose,
+  Enumeration,
+  Party,
   PartyContactMechanism,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,20 +22,12 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './partycontactmechanism-form.component.html',
   providers: [ContextService],
 })
-export class PartyContactmechanismFormComponent
-  extends AllorsFormComponent<PartyContactMechanism>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PartyContactmechanismFormComponent extends AllorsFormComponent<PartyContactMechanism> {
   readonly m: M;
-
-  partyContactMechanism: PartyContactMechanism;
   contactMechanismPurposes: Enumeration[];
   contactMechanisms: ContactMechanism[] = [];
   organisationContactMechanisms: ContactMechanism[];
   ownContactMechanisms: ContactMechanism[] = [];
-  title: string;
-
-  private subscription: Subscription;
   party: Party;
 
   constructor(
@@ -53,133 +40,108 @@ export class PartyContactmechanismFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.ContactMechanismPurpose({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.ContactMechanismPurpose.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
+      })
+    );
 
-          const pulls = [
-            pull.ContactMechanismPurpose({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.ContactMechanismPurpose.IsActive,
-                value: true,
+    if (this.editRequest) {
+      pulls.push(
+        p.PartyContactMechanism({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            ContactMechanism: {},
+          },
+        }),
+        p.PartyContactMechanism({
+          objectId: this.editRequest.objectId,
+          select: {
+            PartyWherePartyContactMechanism: {
+              include: {
+                CurrentPartyContactMechanisms: {
+                  ContactMechanism: {},
+                },
               },
-              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.PartyContactMechanism({
-                objectId: this.data.id,
-                include: {
-                  ContactMechanism: x,
-                },
-              }),
-              pull.PartyContactMechanism({
-                objectId: this.data.id,
-                select: {
-                  PartyWherePartyContactMechanism: {
-                    include: {
-                      CurrentPartyContactMechanisms: {
-                        ContactMechanism: x,
-                      },
-                    },
-                  },
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Party({
-                objectId: this.data.associationId,
-                include: {
-                  CurrentPartyContactMechanisms: {
-                    ContactMechanism: x,
-                  },
-                },
-              }),
-              pull.Person({
-                objectId: this.data.associationId,
-                select: {
-                  CurrentOrganisationContactMechanisms: x,
-                },
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.contactMechanisms = [];
-        this.ownContactMechanisms = [];
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Party({
+          objectId: initializer.id,
+          include: {
+            CurrentPartyContactMechanisms: {
+              ContactMechanism: {},
+            },
+          },
+        }),
+        p.Person({
+          objectId: initializer.id,
+          select: {
+            CurrentOrganisationContactMechanisms: {},
+          },
+        })
+      );
+    }
+  }
 
-        this.contactMechanismPurposes =
-          loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-        this.party =
-          loaded.object<Party>(m.Party) ||
-          loaded.object<Party>('PARTYWHEREPARTYCONTACTMECHANISM');
+    this.contactMechanisms = [];
+    this.ownContactMechanisms = [];
 
-        this.organisationContactMechanisms =
-          loaded.collection<ContactMechanism>(
-            m.Person.CurrentOrganisationContactMechanisms
-          );
+    this.contactMechanismPurposes =
+      pullResult.collection<ContactMechanismPurpose>(
+        this.m.ContactMechanismPurpose
+      );
 
-        this.party.CurrentPartyContactMechanisms.forEach((v) =>
-          this.ownContactMechanisms.push(v.ContactMechanism)
-        );
+    this.party =
+      pullResult.object<Party>(this.m.Party) ||
+      pullResult.object<Party>('PARTYWHEREPARTYCONTACTMECHANISM');
 
-        if (this.organisationContactMechanisms != null) {
-          this.contactMechanisms = this.contactMechanisms.concat(
-            this.organisationContactMechanisms
-          );
-        }
+    this.organisationContactMechanisms =
+      pullResult.collection<ContactMechanism>(
+        this.m.Person.CurrentOrganisationContactMechanisms
+      );
 
-        if (this.ownContactMechanisms != null) {
-          this.contactMechanisms = this.contactMechanisms.concat(
-            this.ownContactMechanisms
-          );
-        }
+    this.party.CurrentPartyContactMechanisms.forEach((v) =>
+      this.ownContactMechanisms.push(v.ContactMechanism)
+    );
 
-        if (isCreate) {
-          this.title = 'Add Party ContactMechanism';
+    if (this.organisationContactMechanisms != null) {
+      this.contactMechanisms = this.contactMechanisms.concat(
+        this.organisationContactMechanisms
+      );
+    }
 
-          this.partyContactMechanism =
-            this.allors.context.create<PartyContactMechanism>(
-              m.PartyContactMechanism
-            );
-          this.partyContactMechanism.FromDate = new Date();
-          this.partyContactMechanism.UseAsDefault = true;
+    if (this.ownContactMechanisms != null) {
+      this.contactMechanisms = this.contactMechanisms.concat(
+        this.ownContactMechanisms
+      );
+    }
 
-          this.party.addPartyContactMechanism(this.partyContactMechanism);
-        } else {
-          this.partyContactMechanism = loaded.object<PartyContactMechanism>(
-            m.PartyContactMechanism
-          );
-
-          if (this.partyContactMechanism.canWriteComment) {
-            this.title = 'Edit Party ContactMechanism';
-          } else {
-            this.title = 'View Party ContactMechanism';
-          }
-        }
-      });
+    if (this.createRequest) {
+      this.object.FromDate = new Date();
+      this.object.UseAsDefault = true;
+      this.party.addPartyContactMechanism(this.object);
+    }
   }
 }

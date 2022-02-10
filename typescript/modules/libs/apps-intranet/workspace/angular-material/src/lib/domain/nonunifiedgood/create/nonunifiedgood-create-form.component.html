@@ -1,4 +1,4 @@
-<div class="container-fluid" *ngIf="good">
+<div class="container-fluid" *ngIf="object">
   <div class="row pt-3">
     <a-mat-input
       class="col-md"
@@ -8,7 +8,7 @@
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="good"
+      [object]="object"
       [roleType]="m.NonUnifiedGood.Name"
     ></a-mat-input>
   </div>
@@ -16,7 +16,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="good"
+      [object]="object"
       [roleType]="m.NonUnifiedGood.Description"
     ></a-mat-textarea>
   </div>
@@ -24,7 +24,7 @@
   <div class="row">
     <a-mat-autocomplete
       class="col-md"
-      [object]="good"
+      [object]="object"
       [roleType]="m.NonUnifiedGood.Part"
       [filter]="nonUnifiedPartsFilter.create(allors.context)"
       display="Name"
@@ -50,7 +50,7 @@
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="good"
+      [object]="object"
       [roleType]="m.NonUnifiedGood.SalesDiscontinuationDate"
     ></a-mat-datepicker>
   </div>

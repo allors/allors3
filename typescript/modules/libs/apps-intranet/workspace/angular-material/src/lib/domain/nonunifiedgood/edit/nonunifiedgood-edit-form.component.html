@@ -1,4 +1,4 @@
-<mat-tab-group *ngIf="good">
+<mat-tab-group *ngIf="object">
   <mat-tab label="General">
     <div class="row pt-3">
       <a-mat-static
@@ -8,7 +8,7 @@
       ></a-mat-static>
       <a-mat-input
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.NonUnifiedGood.Name"
       ></a-mat-input>
     </div>
@@ -16,7 +16,7 @@
     <div class="row">
       <a-mat-textarea
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.NonUnifiedGood.Description"
       ></a-mat-textarea>
     </div>
@@ -24,12 +24,12 @@
     <div class="row">
       <a-mat-datepicker
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.NonUnifiedGood.SalesDiscontinuationDate"
       ></a-mat-datepicker>
       <a-mat-autocomplete
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.NonUnifiedGood.Part"
         [filter]="nonUnifiedPartsFilter.create(allors.context)"
         display="Name"
@@ -55,13 +55,13 @@
     <div class="row">
       <a-mat-static
         class="col-md"
-        [object]="good.Part?.Brand"
+        [object]="object.Part?.Brand"
         [roleType]="m.Brand.Name"
         label="Brand"
       ></a-mat-static>
       <a-mat-static
         class="col-md"
-        [object]="good.Part?.Model"
+        [object]="object.Part?.Model"
         [roleType]="m.Model.Name"
         label="Model"
       ></a-mat-static>
@@ -78,13 +78,13 @@
           <div class="row">
             <a-mat-localised-text
               class="col-md-12"
-              [object]="good"
+              [object]="object"
               [roleType]="m.NonUnifiedGood.LocalisedNames"
               [locale]="locale"
             ></a-mat-localised-text>
             <a-mat-localised-text
               class="col-md-12"
-              [object]="good"
+              [object]="object"
               [roleType]="m.NonUnifiedGood.LocalisedDescriptions"
               [locale]="locale"
             ></a-mat-localised-text>
@@ -99,17 +99,17 @@
       <div class="row pt-3">
         <a-mat-textarea
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.NonUnifiedGood.InternalComment"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.NonUnifiedGood.Keywords"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.NonUnifiedGood.Comment"
         ></a-mat-textarea>
       </div>
@@ -125,7 +125,7 @@
             <div class="row">
               <a-mat-localised-text
                 class="col-md-12"
-                [object]="good"
+                [object]="object"
                 [roleType]="m.NonUnifiedGood.LocalisedComments"
                 [locale]="locale"
               ></a-mat-localised-text>
@@ -133,7 +133,7 @@
             <div class="row">
               <a-mat-localised-text
                 class="col-md-12"
-                [object]="good"
+                [object]="object"
                 [roleType]="m.NonUnifiedGood.LocalisedKeywords"
                 [locale]="locale"
               ></a-mat-localised-text>
@@ -149,13 +149,13 @@
       <div class="row pt-3">
         <a-mat-file
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.NonUnifiedGood.PrimaryPhoto"
           accept="image/*"
         ></a-mat-file>
         <a-mat-files
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.NonUnifiedGood.Photos"
           accept="image/*"
         ></a-mat-files>
@@ -168,13 +168,13 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.NonUnifiedGood.PublicElectronicDocuments"
           accept="image/*"
         ></a-mat-files>
         <a-mat-files
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.NonUnifiedGood.PrivateElectronicDocuments"
           accept="image/*"
         ></a-mat-files>

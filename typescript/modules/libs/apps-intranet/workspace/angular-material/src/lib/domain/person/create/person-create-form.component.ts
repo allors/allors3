@@ -1,27 +1,31 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Currency,
+  CustomerRelationship,
+  Employment,
+  Enumeration,
+  GenderType,
   InternalOrganisation,
+  Locale,
+  Organisation,
+  OrganisationContactKind,
+  OrganisationContactRelationship,
   Person,
+  PersonRole,
+  Salutation,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SingletonId,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 
@@ -29,18 +33,11 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './person-create-form.component.html',
   providers: [ContextService],
 })
-export class PersonCreateFormComponent
-  extends AllorsFormComponent<Person>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PersonCreateFormComponent extends AllorsFormComponent<Person> {
   readonly m: M;
 
-  public title = 'Add Person';
-
   internalOrganisation: InternalOrganisation;
-  person: Person;
   organisation: Organisation;
-  organisationContactRelationship: OrganisationContactRelationship;
 
   locales: Locale[];
   genders: Enumeration[];
@@ -50,121 +47,106 @@ export class PersonCreateFormComponent
 
   roles: PersonRole[];
   selectedRoles: PersonRole[] = [];
-  customerRelationship: CustomerRelationship;
-  employment: Employment;
   organisationsFilter: SearchFactory;
 
   private customerRole: PersonRole;
   private employeeRole: PersonRole;
-
-  private subscription: Subscription;
-  private readonly refresh$: BehaviorSubject<Date>;
   currencies: Currency[];
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private route: ActivatedRoute,
-    private errorService: ErrorService,
     private fetcher: FetcherService,
-    private singletonId: SingletonId,
-    private internalOrganisationId: InternalOrganisationId
+    private singletonId: SingletonId
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.organisationsFilter = Filters.organisationsFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.route.url,
-      this.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(([,]) => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Singleton({
-              objectId: this.singletonId.value,
-              select: {
-                Locales: {
-                  include: {
-                    Language: x,
-                    Country: x,
-                  },
-                },
-              },
-            }),
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.Name }],
-            }),
-            pull.GenderType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.GenderType.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.GenderType.Name }],
-            }),
-            pull.Salutation({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Salutation.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Salutation.Name }],
-            }),
-            pull.PersonRole({
-              sorting: [{ roleType: m.PersonRole.Name }],
-            }),
-            pull.OrganisationContactKind({
-              sorting: [{ roleType: m.OrganisationContactKind.Description }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Singleton({
+        objectId: this.singletonId.value,
+        select: {
+          Locales: {
+            include: {
+              Language: {},
+              Country: {},
+            },
+          },
+        },
+      }),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.Name }],
+      }),
+      p.GenderType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.GenderType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.GenderType.Name }],
+      }),
+      p.Salutation({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Salutation.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Salutation.Name }],
+      }),
+      p.PersonRole({
+        sorting: [{ roleType: m.PersonRole.Name }],
+      }),
+      p.OrganisationContactKind({
+        sorting: [{ roleType: m.OrganisationContactKind.Description }],
+      })
+    );
 
-          this.organisationsFilter = Filters.organisationsFilter(m);
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-        this.person = loaded.object<Person>(m.Person);
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.locales = loaded.collection<Locale>(m.Singleton.Locales) || [];
-        this.genders = loaded.collection<GenderType>(m.GenderType);
-        this.salutations = loaded.collection<Salutation>(m.Salutation);
-        this.roles = loaded.collection<PersonRole>(m.PersonRole);
-        this.organisationContactKinds =
-          loaded.collection<OrganisationContactKind>(m.OrganisationContactKind);
+    this.onPostPullInitialize(pullResult);
 
-        this.customerRole = this.roles?.find(
-          (v: PersonRole) =>
-            v.UniqueId === 'b29444ef-0950-4d6f-ab3e-9c6dc44c050f'
-        );
-        this.employeeRole = this.roles?.find(
-          (v: PersonRole) =>
-            v.UniqueId === 'db06a3e1-6146-4c18-a60d-dd10e19f7243'
-        );
+    this.internalOrganisation = this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.locales =
+      pullResult.collection<Locale>(this.m.Singleton.Locales) || [];
+    this.genders = pullResult.collection<GenderType>(this.m.GenderType);
+    this.salutations = pullResult.collection<Salutation>(this.m.Salutation);
+    this.roles = pullResult.collection<PersonRole>(this.m.PersonRole);
+    this.organisationContactKinds =
+      pullResult.collection<OrganisationContactKind>(
+        this.m.OrganisationContactKind
+      );
 
-        this.person = this.allors.context.create<Person>(m.Person);
-        this.person.CollectiveWorkEffortInvoice = false;
-        this.person.PreferredCurrency =
-          this.internalOrganisation.PreferredCurrency;
-      });
+    this.customerRole = this.roles?.find(
+      (v: PersonRole) => v.UniqueId === 'b29444ef-0950-4d6f-ab3e-9c6dc44c050f'
+    );
+    this.employeeRole = this.roles?.find(
+      (v: PersonRole) => v.UniqueId === 'db06a3e1-6146-4c18-a60d-dd10e19f7243'
+    );
+
+    this.object.CollectiveWorkEffortInvoice = false;
+    this.object.PreferredCurrency = this.internalOrganisation.PreferredCurrency;
   }
 
   public override save(): void {
@@ -173,7 +155,7 @@ export class PersonCreateFormComponent
         this.allors.context.create<CustomerRelationship>(
           this.m.CustomerRelationship
         );
-      customerRelationship.Customer = this.person;
+      customerRelationship.Customer = this.object;
       customerRelationship.InternalOrganisation = this.internalOrganisation;
     }
 
@@ -181,7 +163,7 @@ export class PersonCreateFormComponent
       const employment = this.allors.context.create<Employment>(
         this.m.Employment
       );
-      employment.Employee = this.person;
+      employment.Employee = this.object;
       employment.Employer = this.internalOrganisation;
     }
 
@@ -190,7 +172,7 @@ export class PersonCreateFormComponent
         this.allors.context.create<OrganisationContactRelationship>(
           this.m.OrganisationContactRelationship
         );
-      organisationContactRelationship.Contact = this.person;
+      organisationContactRelationship.Contact = this.object;
       organisationContactRelationship.Organisation = this.organisation;
       organisationContactRelationship.ContactKinds = this.selectedContactKinds;
     }

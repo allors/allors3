@@ -1,23 +1,20 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Locale,
   NonUnifiedGood,
+  ProductCategory,
+  ProductIdentificationType,
+  ProductNumber,
+  Settings,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -28,28 +25,16 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './nonunifiedgood-create-form.component.html',
   providers: [ContextService],
 })
-export class NonUnifiedGoodCreateFormComponent
-  extends AllorsFormComponent<NonUnifiedGood>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class NonUnifiedGoodCreateFormComponent extends AllorsFormComponent<NonUnifiedGood> {
   readonly m: M;
-  good: Good;
-
-  public title = 'Add Good';
 
   locales: Locale[];
   categories: ProductCategory[];
-  productTypes: ProductType[];
-  manufacturers: Organisation[];
-  ownerships: Ownership[];
-  organisations: Organisation[];
   goodIdentificationTypes: ProductIdentificationType[];
   productNumber: ProductNumber;
   selectedCategories: ProductCategory[] = [];
   settings: Settings;
   goodNumberType: ProductIdentificationType;
-
-  private subscription: Subscription;
 
   nonUnifiedPartsFilter: SearchFactory;
 
@@ -57,67 +42,62 @@ export class NonUnifiedGoodCreateFormComponent
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private errorService: ErrorService,
     private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            this.fetcher.locales,
-            this.fetcher.Settings,
-            pull.ProductIdentificationType({}),
-            pull.ProductCategory({
-              sorting: [{ roleType: m.ProductCategory.Name }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.locales,
+      this.fetcher.Settings,
+      p.ProductIdentificationType({}),
+      p.ProductCategory({
+        sorting: [{ roleType: m.ProductCategory.Name }],
+      })
+    );
 
-          this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(m);
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.goodIdentificationTypes =
-          loaded.collection<ProductIdentificationType>(
-            m.ProductIdentificationType
-          );
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.settings = this.fetcher.getSettings(loaded);
+    this.onPostPullInitialize(pullResult);
 
-        this.goodNumberType = this.goodIdentificationTypes?.find(
-          (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
-        );
+    this.categories = pullResult.collection<ProductCategory>(
+      this.m.ProductCategory
+    );
+    this.goodIdentificationTypes =
+      pullResult.collection<ProductIdentificationType>(
+        this.m.ProductIdentificationType
+      );
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
+    this.settings = this.fetcher.getSettings(pullResult);
 
-        this.good = this.allors.context.create<NonUnifiedGood>(
-          m.NonUnifiedGood
-        );
+    this.goodNumberType = this.goodIdentificationTypes?.find(
+      (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
+    );
 
-        if (!this.settings.UseProductNumberCounter) {
-          this.productNumber = this.allors.context.create<ProductNumber>(
-            m.ProductNumber
-          );
-          this.productNumber.ProductIdentificationType = this.goodNumberType;
+    if (!this.settings.UseProductNumberCounter) {
+      this.productNumber = this.allors.context.create<ProductNumber>(
+        this.m.ProductNumber
+      );
+      this.productNumber.ProductIdentificationType = this.goodNumberType;
 
-          this.good.addProductIdentification(this.productNumber);
-        }
-      });
+      this.object.addProductIdentification(this.productNumber);
+    }
   }
 
   public override save(): void {
     this.selectedCategories.forEach((category: ProductCategory) => {
-      category.addProduct(this.good);
+      category.addProduct(this.object);
     });
 
     super.save();
