@@ -12,16 +12,6 @@ import { MAT_AUTOCOMPLETE_DEFAULT_OPTIONS } from '@angular/material/autocomplete
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { enGB } from 'date-fns/locale';
 
-import {
-  CreateService,
-  DisplayService,
-  EditService,
-  FilterService,
-  FormService,
-  MetaService,
-  WorkspaceService,
-} from '@allors/base/workspace/angular/foundation';
-
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -49,17 +39,20 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AppComponent } from './app.component';
-import { environment } from '../environments/environment';
-
 import {
-  ErrorService,
+  // Config
   DateConfig,
   MediaConfig,
   AuthenticationConfig,
-  AuthenticationInterceptor,
-  AllorsFocusDirective,
-  AllorsBarcodeDirective,
+  // Services
+  CreateService,
+  DisplayService,
+  EditService,
+  FilterService,
+  FormService,
+  MetaService,
+  WorkspaceService,
+  ErrorService,
   AuthenticationSessionStoreService,
   DateStaticService,
   AllorsBarcodeKeypressService,
@@ -73,15 +66,22 @@ import {
   MediaService,
   MediaLocalService,
   AllorsDialogService,
+  // Interceptors
+  AuthenticationInterceptor,
+  // Directives
+  AllorsFocusDirective,
+  AllorsBarcodeDirective,
   TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
+  // Services
   NavigationService,
   MenuService,
 } from '@allors/base/workspace/angular/application';
 
 import {
+  // Components
   AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
   AllorsMaterialPeriodSelectionToggleComponent,
@@ -105,10 +105,19 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
+  AllorsMaterialTableComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
+  // Services
   AllorsMaterialSideNavService,
+  AllorsMaterialErrorService,
+  AllorsMaterialSideNavSubjectService,
+  AllorsMaterialCreateService,
+  AllorsMaterialEditService,
+  SorterService,
+  IconService,
+  // Components
   AllorsMaterialErrorDialogComponent,
   AllorsMaterialFilterFieldDialogComponent,
   AllorsMaterialFilterFieldSearchComponent,
@@ -118,22 +127,16 @@ import {
   AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
-  AllorsMaterialTableComponent,
   FactoryFabComponent,
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
-  AllorsMaterialDynamicViewDetailPanelComponent,
   AllorsMaterialDynamicEditRelationPanelComponent,
-  AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicTableComponent,
+  AllorsMaterialDynamicViewDetailPanelComponent,
+  AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicViewRelationshipPanelComponent,
-  AllorsMaterialErrorService,
-  AllorsMaterialSideNavSubjectService,
-  AllorsMaterialCreateService,
-  AllorsMaterialEditService,
-  SorterService,
-  IconService,
 } from '@allors/base/workspace/angular-material/application';
 
 import { routes, components as routeComponents } from './app.routes';
@@ -154,6 +157,9 @@ import { AppNavigationService } from './services/navigation.service';
 import { AppIconService } from './services/icon.service';
 import { AppMetaService } from './services/meta.service';
 import { AppDisplayService } from './services/display.service';
+
+import { AppComponent } from './app.component';
+import { environment } from '../environments/environment';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -198,10 +204,11 @@ import { AppDisplayService } from './services/display.service';
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
-    AllorsMaterialDynamicViewDetailPanelComponent,
     AllorsMaterialDynamicEditRelationPanelComponent,
-    AllorsMaterialDynamicViewRelationPanelComponent,
     AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicTableComponent,
+    AllorsMaterialDynamicViewDetailPanelComponent,
+    AllorsMaterialDynamicViewRelationPanelComponent,
     AllorsMaterialDynamicViewRelationshipPanelComponent,
     TemplateHostDirective,
     // Routed and dialog components

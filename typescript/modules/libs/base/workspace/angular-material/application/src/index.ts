@@ -53,9 +53,4 @@ export * from './lib/sidenav/side-nav-toggle.component';
 export * from './lib/sort/sorter.service';
 export * from './lib/sort/sorter';
 
-export * from './lib/table/base-table';
-export * from './lib/table/column';
-export * from './lib/table/table';
-export * from './lib/table/table-config';
-export * from './lib/table/table-row';
-export * from './lib/table/table.component';
+export * from './lib/table/dynamic-table.component';

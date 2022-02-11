@@ -10,8 +10,6 @@ import {
   DeleteService,
   OverviewService,
   SorterService,
-  Table,
-  TableRow,
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -20,6 +18,8 @@ import {
   FilterService,
   MediaService,
   RefreshService,
+  Table,
+  TableRow,
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,

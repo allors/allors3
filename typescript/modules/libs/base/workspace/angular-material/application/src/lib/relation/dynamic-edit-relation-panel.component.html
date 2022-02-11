@@ -16,5 +16,9 @@
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 
-  <a-mat-table [table]="table"></a-mat-table>
+  <a-mat-dyn-table
+    [objectType]="objectType"
+    [propertyType]="propertyType"
+    [propertyId]="propertyId"
+  ></a-mat-dyn-table>
 </div>

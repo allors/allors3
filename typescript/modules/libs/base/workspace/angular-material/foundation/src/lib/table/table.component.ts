@@ -1,9 +1,11 @@
 import { Component, Input, ViewChild, OnInit } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { AllorsComponent } from '@allors/base/workspace/angular/foundation';
-import { BaseTable } from './base-table';
-import { Column } from './column';
-import { TableRow } from './table-row';
+import {
+  AllorsComponent,
+  BaseTable,
+  Column,
+  TableRow,
+} from '@allors/base/workspace/angular/foundation';
 
 @Component({
   selector: 'a-mat-table',

@@ -8,5 +8,6 @@ export interface Equals extends ParameterizablePredicateBase {
   propertyType?: PropertyType;
   value?: IUnit;
   object?: IObject;
+  objectId?: number;
   path?: RoleType;
 }

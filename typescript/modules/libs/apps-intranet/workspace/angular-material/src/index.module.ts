@@ -61,6 +61,7 @@ import {
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
   AllorsMaterialPeriodSelectionToggleComponent,
+  AllorsMaterialTableComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
@@ -73,17 +74,17 @@ import {
   AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
-  AllorsMaterialTableComponent,
   FactoryFabComponent,
-  AllorsMaterialDynamicCreateFormComponent,
-  AllorsMaterialDynamicFormComponent,
+  AllorsMaterialDynamicCreateComponent,
+  AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
   AllorsMaterialDynamicViewDetailPanelComponent,
+  AllorsMaterialDynamicEditRelationPanelComponent,
+  AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicEditRelationshipPanelComponent,
   AllorsMaterialDynamicViewRelationshipPanelComponent,
 } from '@allors/base/workspace/angular-material/application';
 
-// Angular Material Base
 import {
   BasepriceFormComponent,
   BrandFormComponent,
@@ -299,15 +300,13 @@ import {
 
 @NgModule({
   declarations: [
+    // Base Foundation
     AllorsFocusDirective,
     AllorsBarcodeDirective,
+    // Base Material Foundation
     AllorsMaterialAssociationAutoCompleteComponent,
-    AllorsMaterialErrorDialogComponent,
-    AllorsMaterialFilterComponent,
-    AllorsMaterialFilterFieldDialogComponent,
-    AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialMediaComponent,
-    AllorMediaPreviewComponent,
+    AllorsMaterialCancelComponent,
+    AllorsMaterialSaveComponent,
     AllorsMaterialAutocompleteComponent,
     AllorsMaterialCheckboxComponent,
     AllorsMaterialChipsComponent,
@@ -325,11 +324,28 @@ import {
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
+    AllorsMaterialTableComponent,
+    // Base Material Application
+    AllorsMaterialErrorDialogComponent,
+    AllorsMaterialFilterFieldDialogComponent,
+    AllorsMaterialFilterFieldSearchComponent,
+    AllorsMaterialFilterComponent,
+    AllorsMaterialMediaComponent,
+    AllorMediaPreviewComponent,
+    AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
-    AllorsMaterialTableComponent,
     FactoryFabComponent,
-    // Apps
+    AllorsMaterialDynamicCreateComponent,
+    AllorsMaterialDynamicEditComponent,
+    AllorsMaterialDynamicEditDetailPanelComponent,
+    AllorsMaterialDynamicViewDetailPanelComponent,
+    AllorsMaterialDynamicEditRelationPanelComponent,
+    AllorsMaterialDynamicViewRelationPanelComponent,
+    AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicViewRelationshipPanelComponent,
+    // Intranet Material
     BasepriceFormComponent,
     BrandFormComponent,
     InlineBrandComponent,

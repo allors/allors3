@@ -183,7 +183,7 @@ export function predicateToJson(from: DataPredicate): Predicate {
         d: from.dependencies,
         a: asAssociationTypeToJson(from.propertyType),
         r: asRoleTypeToJson(from.propertyType),
-        ob: from.object?.id,
+        ob: from.object?.id ?? from.objectId,
         v: unitToJson(from.value),
         pa: roleTypeToJson(from.path),
         p: from.parameter,

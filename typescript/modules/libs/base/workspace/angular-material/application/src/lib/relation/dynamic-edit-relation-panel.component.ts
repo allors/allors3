@@ -1,12 +1,12 @@
-import { Component, HostBinding, Input } from '@angular/core';
 import {
-  AssociationType,
-  Composite,
-  PropertyType,
-  RoleType,
-} from '@allors/system/workspace/meta';
+  Component,
+  HostBinding,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { Composite, PropertyType } from '@allors/system/workspace/meta';
 import {
-  IObject,
   IPullResult,
   Pull,
   Initializer,
@@ -15,31 +15,26 @@ import {
   SharedPullService,
   RefreshService,
   WorkspaceService,
-  DisplayService,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  Action,
   NavigationService,
   AllorsEditRelationPanelComponent,
   PanelService,
   ObjectService,
 } from '@allors/base/workspace/angular/application';
-import { Table } from '../table/table';
-import { TableRow } from '../table/table-row';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
-import { TableConfig } from '../table/table-config';
 import { IconService } from '../icon/icon.service';
-
-interface Row extends TableRow {
-  object: IObject;
-}
+import { delay, pipe, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'a-mat-dyn-edit-relation-panel',
   templateUrl: './dynamic-edit-relation-panel.component.html',
 })
-export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditRelationPanelComponent {
+export class AllorsMaterialDynamicEditRelationPanelComponent
+  extends AllorsEditRelationPanelComponent
+  implements OnInit, OnDestroy
+{
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -49,14 +44,9 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
   @Input()
   propertyType: PropertyType;
 
+  propertyId: number;
+
   objectType: Composite;
-
-  table: Table<Row>;
-  delete: Action;
-  edit: Action;
-
-  object: IObject;
-  properties: IObject[];
 
   get panelId() {
     return `${this.propertyType.name}`;
@@ -74,6 +64,8 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
     return { propertyType: this.propertyType, id: this.objectInfo.id };
   }
 
+  private subscription: Subscription;
+
   constructor(
     objectService: ObjectService,
     panelService: PanelService,
@@ -83,8 +75,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
     public navigationService: NavigationService,
     public deleteService: DeleteService,
     public editRoleService: EditRoleService,
-    private iconService: IconService,
-    private displayService: DisplayService
+    private iconService: IconService
   ) {
     super(
       objectService,
@@ -96,78 +87,37 @@ export class AllorsMaterialDynamicEditRelationPanelComponent extends AllorsEditR
 
     panelService.register(this);
     sharedPullService.register(this);
+
+    this.subscription = this.objectService.objectInfo$
+      .pipe(
+        pipe(delay(1)),
+        tap((object) => {
+          this.propertyId = object.id;
+        }),
+        tap(() => {
+          this.refreshService.refresh();
+        })
+      )
+      .subscribe();
   }
 
   ngOnInit() {
     this.objectType = this.propertyType.objectType as Composite;
-
-    this.delete = this.deleteService.delete();
-    this.edit = this.editRoleService.edit();
-
-    const sort = true;
-
-    const tableConfig: TableConfig = {
-      selection: true,
-      columns: [{ name: this.propertyType.name, sort }],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
-      autoSort: true,
-      autoFilter: true,
-    };
-
-    this.table = new Table(tableConfig);
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string) {
-    const id = this.objectInfo.id;
-
-    const pull: Pull = {
-      objectId: id,
-      results: [
-        {
-          name: scope,
-          include: [
-            {
-              propertyType: this.propertyType,
-            },
-          ],
-        },
-      ],
-    };
-
-    pulls.push(pull);
+  onPreScopedPull(pulls: Pull[], scope?: string): void {
+    // TODO: Remove
   }
-
-  onPostScopedPull(pullResult: IPullResult, scope?: string) {
-    this.object = pullResult.object<IObject>(scope);
-
-    if (this.propertyType.isAssociationType) {
-      this.properties = this.object.strategy.getCompositesAssociation(
-        this.propertyType as AssociationType
-      ) as IObject[];
-    } else {
-      this.properties = this.object.strategy.getCompositesRole(
-        this.propertyType as RoleType
-      ) as IObject[];
-    }
-
-    this.refreshTable();
+  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
+    // TODO: Remove
   }
 
   toggle() {
-    this.panelService.stopEdit().subscribe();
+    this.panelService.stopEdit().pipe().subscribe();
   }
 
-  private refreshTable() {
-    this.table.total = this.properties.length;
-    this.table.data = this.properties.map((v) => {
-      const display = this.displayService.display(v);
-
-      return {
-        object: v,
-        [this.propertyType.name]: display,
-        type: v.strategy.cls.singularName,
-      } as Row;
-    });
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.subscription?.unsubscribe();
   }
 }
