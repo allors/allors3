@@ -1,4 +1,4 @@
-<mat-tab-group *ngIf="good">
+<mat-tab-group *ngIf="object">
   <mat-tab label="General">
     <div class="row pt-3">
       <a-mat-static
@@ -8,7 +8,7 @@
       ></a-mat-static>
       <a-mat-input
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.Name"
       ></a-mat-input>
     </div>
@@ -16,7 +16,7 @@
     <div class="row">
       <a-mat-markdown
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.Description"
       ></a-mat-markdown>
     </div>
@@ -103,15 +103,14 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.ProductType"
         [options]="productTypes"
         display="Name"
-        (selected)="update()"
       ></a-mat-select>
       <a-mat-static
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.InventoryItemKind"
         display="Name"
       ></a-mat-static>
@@ -136,14 +135,14 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.DefaultFacility"
         [options]="facilities"
         display="Name"
       ></a-mat-select>
       <a-mat-select
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.UnitOfMeasure"
         [options]="unitsOfMeasure"
         display="Name"
@@ -153,7 +152,7 @@
     <div class="row">
       <a-mat-autocomplete
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.ManufacturedBy"
         [filter]="manufacturersFilter.create(allors.context)"
         display="DisplayName"
@@ -164,12 +163,12 @@
     <div class="row">
       <a-mat-input
         class="col-md-6"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.HsCode"
       ></a-mat-input>
       <a-mat-datepicker
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.SalesDiscontinuationDate"
       ></a-mat-datepicker>
     </div>
@@ -177,12 +176,12 @@
     <div class="row">
       <a-mat-input
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.LifeTime"
       ></a-mat-input>
       <a-mat-input
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.DepreciationYears"
       ></a-mat-input>
     </div>
@@ -190,7 +189,7 @@
     <div class="row">
       <a-mat-input
         class="col-md"
-        [object]="good"
+        [object]="object"
         [roleType]="m.UnifiedGood.ReplacementValue"
       ></a-mat-input>
     </div>
@@ -206,13 +205,13 @@
           <div class="row">
             <a-mat-localised-text
               class="col-md-12"
-              [object]="good"
+              [object]="object"
               [roleType]="m.UnifiedGood.LocalisedNames"
               [locale]="locale"
             ></a-mat-localised-text>
             <a-mat-localised-text
               class="col-md-12"
-              [object]="good"
+              [object]="object"
               [roleType]="m.UnifiedGood.LocalisedDescriptions"
               [locale]="locale"
             ></a-mat-localised-text>
@@ -227,7 +226,7 @@
       <div
         class="row"
         *ngFor="
-          let productCharacteristicValue of good.SerialisedItemCharacteristics
+          let productCharacteristicValue of object.SerialisedItemCharacteristics
         "
       >
         <a-mat-input
@@ -251,7 +250,7 @@
       <div
         class="row"
         *ngFor="
-          let productCharacteristicValue of good.SerialisedItemCharacteristics
+          let productCharacteristicValue of object.SerialisedItemCharacteristics
         "
       >
         <a-mat-textarea
@@ -279,7 +278,7 @@
             <div
               class="row"
               *ngFor="
-                let productCharacteristicValue of good.SerialisedItemCharacteristics
+                let productCharacteristicValue of object.SerialisedItemCharacteristics
               "
             >
               <a-mat-localised-text
@@ -308,17 +307,17 @@
       <div class="row pt-3">
         <a-mat-textarea
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.UnifiedGood.InternalComment"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.UnifiedGood.Keywords"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.UnifiedGood.Comment"
         ></a-mat-textarea>
       </div>
@@ -334,7 +333,7 @@
             <div class="row">
               <a-mat-localised-text
                 class="col-md-12"
-                [object]="good"
+                [object]="object"
                 [roleType]="m.UnifiedGood.LocalisedComments"
                 [locale]="locale"
               ></a-mat-localised-text>
@@ -342,7 +341,7 @@
             <div class="row">
               <a-mat-localised-text
                 class="col-md-12"
-                [object]="good"
+                [object]="object"
                 [roleType]="m.UnifiedGood.LocalisedKeywords"
                 [locale]="locale"
               ></a-mat-localised-text>
@@ -358,13 +357,13 @@
       <div class="row pt-3">
         <a-mat-file
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.UnifiedGood.PrimaryPhoto"
           accept="image/*"
         ></a-mat-file>
         <a-mat-files
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.UnifiedGood.Photos"
           accept="image/*"
         ></a-mat-files>
@@ -377,13 +376,13 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.UnifiedGood.PublicElectronicDocuments"
           accept="image/*"
         ></a-mat-files>
         <a-mat-files
           class="col-md-12"
-          [object]="good"
+          [object]="object"
           [roleType]="m.UnifiedGood.PrivateElectronicDocuments"
           accept="image/*"
         ></a-mat-files>

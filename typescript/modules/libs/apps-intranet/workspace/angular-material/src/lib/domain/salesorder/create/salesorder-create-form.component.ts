@@ -1,23 +1,28 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  CustomerRelationship,
   InternalOrganisation,
+  IrpfRegime,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
   SalesOrder,
+  Store,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -29,15 +34,8 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './salesorder-create-form.component.html',
   providers: [ContextService],
 })
-export class SalesOrderCreateFormComponent
-  extends AllorsFormComponent<SalesOrder>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrder> {
   readonly m: M;
-
-  title = 'Add Sales Order';
-
-  order: SalesOrder;
   billToContactMechanisms: ContactMechanism[] = [];
   billToEndCustomerContactMechanisms: ContactMechanism[] = [];
   shipFromAddresses: ContactMechanism[] = [];
@@ -75,7 +73,6 @@ export class SalesOrderCreateFormComponent
   private previousShipToEndCustomer: Party;
   private previousBillToCustomer: Party;
   private previousBillToEndCustomer: Party;
-  private subscription: Subscription;
 
   customersFilter: SearchFactory;
   currencyInitialRole: Currency;
@@ -89,29 +86,29 @@ export class SalesOrderCreateFormComponent
 
   get billToCustomerIsPerson(): boolean {
     return (
-      !this.order.BillToCustomer ||
-      this.order.BillToCustomer.strategy.cls === this.m.Person
+      !this.object.BillToCustomer ||
+      this.object.BillToCustomer.strategy.cls === this.m.Person
     );
   }
 
   get shipToCustomerIsPerson(): boolean {
     return (
-      !this.order.ShipToCustomer ||
-      this.order.ShipToCustomer.strategy.cls === this.m.Person
+      !this.object.ShipToCustomer ||
+      this.object.ShipToCustomer.strategy.cls === this.m.Person
     );
   }
 
   get billToEndCustomerIsPerson(): boolean {
     return (
-      !this.order.BillToEndCustomer ||
-      this.order.BillToEndCustomer.strategy.cls === this.m.Person
+      !this.object.BillToEndCustomer ||
+      this.object.BillToEndCustomer.strategy.cls === this.m.Person
     );
   }
 
   get shipToEndCustomerIsPerson(): boolean {
     return (
-      !this.order.ShipToEndCustomer ||
-      this.order.ShipToEndCustomer.strategy.cls === this.m.Person
+      !this.object.ShipToEndCustomer ||
+      this.object.ShipToEndCustomer.strategy.cls === this.m.Person
     );
   }
 
@@ -124,109 +121,106 @@ export class SalesOrderCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(([, internalOrganisationId]) => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
+      }),
+      p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
+      p.Store({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Store.InternalOrganisation,
+          value: this.internalOrganisationId.value,
+        },
+        include: { BillingProcess: {} },
+        sorting: [{ roleType: m.Store.Name }],
+      }),
+      p.Party({
+        objectId: this.internalOrganisationId.value,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: {},
               },
-              sorting: [{ roleType: m.Currency.IsoCode }],
-            }),
-            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
-            pull.Store({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Store.InternalOrganisation,
-                value: internalOrganisationId,
-              },
-              include: { BillingProcess: x },
-              sorting: [{ roleType: m.Store.Name }],
-            }),
-            pull.Party({
-              objectId: this.internalOrganisationId.value,
-              select: {
-                CurrentPartyContactMechanisms: {
-                  include: {
-                    ContactMechanism: {
-                      PostalAddress_Country: x,
-                    },
-                  },
-                },
-              },
-            }),
-          ];
+            },
+          },
+        },
+      })
+    );
 
-          this.customersFilter = Filters.customersFilter(
-            m,
-            internalOrganisationId
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
+
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.stores = pullResult.collection<Store>(this.m.Store);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+
+    this.object.TakenBy = this.internalOrganisation;
+
+    const partyContactMechanisms: PartyContactMechanism[] =
+      pullResult.collection<PartyContactMechanism>(
+        this.m.Party.CurrentPartyContactMechanisms
+      );
+    this.shipFromAddresses = partyContactMechanisms
+      ?.filter(
+        (v: PartyContactMechanism) =>
+          v.ContactMechanism.strategy.cls === this.m.PostalAddress
       )
-      .subscribe((loaded) => {
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.stores = loaded.collection<Store>(m.Store);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+      ?.map((v: PartyContactMechanism) => v.ContactMechanism);
 
-        this.order = this.allors.context.create<SalesOrder>(m.SalesOrder);
-        this.order.TakenBy = this.internalOrganisation;
+    if (this.stores.length === 1) {
+      this.object.Store = this.stores[0];
+    }
 
-        const partyContactMechanisms: PartyContactMechanism[] =
-          loaded.collection<PartyContactMechanism>(
-            m.Party.CurrentPartyContactMechanisms
-          );
-        this.shipFromAddresses = partyContactMechanisms
-          ?.filter(
-            (v: PartyContactMechanism) =>
-              v.ContactMechanism.strategy.cls === m.PostalAddress
-          )
-          ?.map((v: PartyContactMechanism) => v.ContactMechanism);
+    if (this.object.ShipToCustomer) {
+      this.updateShipToCustomer(this.object.ShipToCustomer);
+    }
 
-        if (this.stores.length === 1) {
-          this.order.Store = this.stores[0];
-        }
+    if (this.object.BillToCustomer) {
+      this.updateBillToCustomer(this.object.BillToCustomer);
+    }
 
-        if (this.order.ShipToCustomer) {
-          this.updateShipToCustomer(this.order.ShipToCustomer);
-        }
+    if (this.object.BillToEndCustomer) {
+      this.updateBillToEndCustomer(this.object.BillToEndCustomer);
+    }
 
-        if (this.order.BillToCustomer) {
-          this.updateBillToCustomer(this.order.BillToCustomer);
-        }
+    if (this.object.ShipToEndCustomer) {
+      this.updateShipToEndCustomer(this.object.ShipToEndCustomer);
+    }
 
-        if (this.order.BillToEndCustomer) {
-          this.updateBillToEndCustomer(this.order.BillToEndCustomer);
-        }
-
-        if (this.order.ShipToEndCustomer) {
-          this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
-        }
-
-        this.previousShipToCustomer = this.order.ShipToCustomer;
-        this.previousShipToEndCustomer = this.order.ShipToEndCustomer;
-        this.previousBillToCustomer = this.order.BillToCustomer;
-        this.previousBillToEndCustomer = this.order.BillToEndCustomer;
-      });
+    this.previousShipToCustomer = this.object.ShipToCustomer;
+    this.previousShipToEndCustomer = this.object.ShipToEndCustomer;
+    this.previousBillToCustomer = this.object.BillToCustomer;
+    this.previousBillToEndCustomer = this.object.BillToEndCustomer;
   }
 
   public shipToCustomerAdded(party: Party): void {
@@ -237,7 +231,7 @@ export class SalesOrderCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.order.ShipToCustomer = party;
+    this.object.ShipToCustomer = party;
   }
 
   public billToCustomerAdded(party: Party): void {
@@ -248,7 +242,7 @@ export class SalesOrderCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.order.BillToCustomer = party;
+    this.object.BillToCustomer = party;
   }
 
   public shipToEndCustomerAdded(party: Party): void {
@@ -259,7 +253,7 @@ export class SalesOrderCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.order.ShipToEndCustomer = party;
+    this.object.ShipToEndCustomer = party;
   }
 
   public billToEndCustomerAdded(party: Party): void {
@@ -270,7 +264,7 @@ export class SalesOrderCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.order.BillToEndCustomer = party;
+    this.object.BillToEndCustomer = party;
   }
 
   public billToContactPersonAdded(person: Person): void {
@@ -278,12 +272,12 @@ export class SalesOrderCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToContacts.push(person);
-    this.order.BillToContactPerson = person;
+    this.object.BillToContactPerson = person;
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
@@ -291,12 +285,12 @@ export class SalesOrderCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToEndCustomerContacts.push(person);
-    this.order.BillToEndCustomerContactPerson = person;
+    this.object.BillToEndCustomerContactPerson = person;
   }
 
   public shipToContactPersonAdded(person: Person): void {
@@ -304,12 +298,12 @@ export class SalesOrderCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
-    this.order.ShipToContactPerson = person;
+    this.object.ShipToContactPerson = person;
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
@@ -317,20 +311,20 @@ export class SalesOrderCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToEndCustomerContacts.push(person);
-    this.order.ShipToEndCustomerContactPerson = person;
+    this.object.ShipToEndCustomerContactPerson = person;
   }
 
   public billToContactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.order.BillToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedBillToContactMechanism =
+    this.object.BillToCustomer.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedBillToContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -340,10 +334,10 @@ export class SalesOrderCreateFormComponent
     this.billToEndCustomerContactMechanisms.push(
       partyContactMechanism.ContactMechanism
     );
-    this.order.BillToEndCustomer.addPartyContactMechanism(
+    this.object.BillToEndCustomer.addPartyContactMechanism(
       partyContactMechanism
     );
-    this.order.AssignedBillToEndCustomerContactMechanism =
+    this.object.AssignedBillToEndCustomerContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -351,8 +345,8 @@ export class SalesOrderCreateFormComponent
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.order.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipToAddress =
+    this.object.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedShipToAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -362,10 +356,10 @@ export class SalesOrderCreateFormComponent
     this.shipToEndCustomerAddresses.push(
       partyContactMechanism.ContactMechanism
     );
-    this.order.ShipToEndCustomer.addPartyContactMechanism(
+    this.object.ShipToEndCustomer.addPartyContactMechanism(
       partyContactMechanism
     );
-    this.order.AssignedShipToEndCustomerAddress =
+    this.object.AssignedShipToEndCustomerAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -373,8 +367,8 @@ export class SalesOrderCreateFormComponent
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipFromAddresses.push(partyContactMechanism.ContactMechanism);
-    this.order.TakenBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipFromAddress =
+    this.object.TakenBy.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedShipFromAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -438,25 +432,25 @@ export class SalesOrderCreateFormComponent
       }),
     ];
 
-    this.allors.context.pull(pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((pullResult) => {
       if (
         this.previousShipToCustomer &&
-        this.order.ShipToCustomer !== this.previousShipToCustomer
+        this.object.ShipToCustomer !== this.previousShipToCustomer
       ) {
-        this.order.ShipToContactPerson = null;
+        this.object.ShipToContactPerson = null;
       }
-      this.previousShipToCustomer = this.order.ShipToCustomer;
+      this.previousShipToCustomer = this.object.ShipToCustomer;
 
       if (
-        this.order.ShipToCustomer != null &&
-        this.order.BillToCustomer == null
+        this.object.ShipToCustomer != null &&
+        this.object.BillToCustomer == null
       ) {
-        this.order.BillToCustomer = this.order.ShipToCustomer;
-        this.updateBillToCustomer(this.order.ShipToCustomer);
+        this.object.BillToCustomer = this.object.ShipToCustomer;
+        this.updateBillToCustomer(this.object.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
-        loaded.collection<PartyContactMechanism>(
+        pullResult.collection<PartyContactMechanism>(
           m.Party.CurrentPartyContactMechanisms
         );
       this.shipToAddresses = partyContactMechanisms
@@ -465,7 +459,9 @@ export class SalesOrderCreateFormComponent
             v.ContactMechanism.strategy.cls === m.PostalAddress
         )
         ?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      this.shipToContacts = pullResult.collection<Person>(
+        this.m.Party.CurrentContacts
+      );
 
       this.setDerivedInitialRoles();
     });
@@ -513,31 +509,33 @@ export class SalesOrderCreateFormComponent
       }),
     ];
 
-    this.allors.context.pull(pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((pullResult) => {
       if (
         this.previousBillToCustomer &&
-        this.order.BillToCustomer !== this.previousBillToCustomer
+        this.object.BillToCustomer !== this.previousBillToCustomer
       ) {
-        this.order.BillToContactPerson = null;
+        this.object.BillToContactPerson = null;
       }
-      this.previousBillToCustomer = this.order.BillToCustomer;
+      this.previousBillToCustomer = this.object.BillToCustomer;
 
       if (
-        this.order.BillToCustomer != null &&
-        this.order.ShipToCustomer == null
+        this.object.BillToCustomer != null &&
+        this.object.ShipToCustomer == null
       ) {
-        this.order.ShipToCustomer = this.order.BillToCustomer;
-        this.updateShipToCustomer(this.order.ShipToCustomer);
+        this.object.ShipToCustomer = this.object.BillToCustomer;
+        this.updateShipToCustomer(this.object.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
-        loaded.collection<PartyContactMechanism>(
+        pullResult.collection<PartyContactMechanism>(
           m.Party.CurrentPartyContactMechanisms
         );
       this.billToContactMechanisms = partyContactMechanisms?.map(
         (v: PartyContactMechanism) => v.ContactMechanism
       );
-      this.billToContacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      this.billToContacts = pullResult.collection<Person>(
+        this.m.Party.CurrentContacts
+      );
 
       this.setDerivedInitialRoles();
     });
@@ -585,31 +583,31 @@ export class SalesOrderCreateFormComponent
       }),
     ];
 
-    this.allors.context.pull(pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((pullResult) => {
       if (
         this.previousBillToEndCustomer &&
-        this.order.BillToEndCustomer !== this.previousBillToEndCustomer
+        this.object.BillToEndCustomer !== this.previousBillToEndCustomer
       ) {
-        this.order.BillToEndCustomerContactPerson = null;
+        this.object.BillToEndCustomerContactPerson = null;
       }
-      this.previousBillToEndCustomer = this.order.BillToEndCustomer;
+      this.previousBillToEndCustomer = this.object.BillToEndCustomer;
 
       if (
-        this.order.BillToEndCustomer != null &&
-        this.order.ShipToEndCustomer == null
+        this.object.BillToEndCustomer != null &&
+        this.object.ShipToEndCustomer == null
       ) {
-        this.order.ShipToEndCustomer = this.order.BillToEndCustomer;
-        this.updateShipToEndCustomer(this.order.ShipToEndCustomer);
+        this.object.ShipToEndCustomer = this.object.BillToEndCustomer;
+        this.updateShipToEndCustomer(this.object.ShipToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
-        loaded.collection<PartyContactMechanism>(
+        pullResult.collection<PartyContactMechanism>(
           m.Party.CurrentPartyContactMechanisms
         );
       this.billToEndCustomerContactMechanisms = partyContactMechanisms?.map(
         (v: PartyContactMechanism) => v.ContactMechanism
       );
-      this.billToEndCustomerContacts = loaded.collection<Person>(
+      this.billToEndCustomerContacts = pullResult.collection<Person>(
         m.Party.CurrentContacts
       );
 
@@ -659,26 +657,26 @@ export class SalesOrderCreateFormComponent
       }),
     ];
 
-    this.allors.context.pull(pulls).subscribe((loaded) => {
+    this.allors.context.pull(pulls).subscribe((pullResult) => {
       if (
         this.previousShipToEndCustomer &&
-        this.order.ShipToEndCustomer !== this.previousShipToEndCustomer
+        this.object.ShipToEndCustomer !== this.previousShipToEndCustomer
       ) {
-        this.order.ShipToEndCustomerContactPerson = null;
+        this.object.ShipToEndCustomerContactPerson = null;
       }
 
-      this.previousShipToEndCustomer = this.order.ShipToEndCustomer;
+      this.previousShipToEndCustomer = this.object.ShipToEndCustomer;
 
       if (
-        this.order.ShipToEndCustomer != null &&
-        this.order.BillToEndCustomer == null
+        this.object.ShipToEndCustomer != null &&
+        this.object.BillToEndCustomer == null
       ) {
-        this.order.BillToEndCustomer = this.order.ShipToEndCustomer;
-        this.updateBillToEndCustomer(this.order.BillToEndCustomer);
+        this.object.BillToEndCustomer = this.object.ShipToEndCustomer;
+        this.updateBillToEndCustomer(this.object.BillToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
-        loaded.collection<PartyContactMechanism>(
+        pullResult.collection<PartyContactMechanism>(
           m.Party.CurrentPartyContactMechanisms
         );
       this.shipToEndCustomerAddresses = partyContactMechanisms
@@ -687,7 +685,7 @@ export class SalesOrderCreateFormComponent
             v.ContactMechanism.strategy.cls === m.PostalAddress
         )
         ?.map((v: PartyContactMechanism) => v.ContactMechanism);
-      this.shipToEndCustomerContacts = loaded.collection<Person>(
+      this.shipToEndCustomerContacts = pullResult.collection<Person>(
         m.Party.CurrentContacts
       );
 
@@ -697,25 +695,25 @@ export class SalesOrderCreateFormComponent
 
   private setDerivedInitialRoles() {
     this.currencyInitialRole =
-      this.order.BillToCustomer?.PreferredCurrency ??
-      this.order.BillToCustomer?.Locale?.Country?.Currency ??
-      this.order.TakenBy?.PreferredCurrency;
+      this.object.BillToCustomer?.PreferredCurrency ??
+      this.object.BillToCustomer?.Locale?.Country?.Currency ??
+      this.object.TakenBy?.PreferredCurrency;
     this.takenByContactMechanismInitialRole =
-      this.order.TakenBy?.OrderAddress ??
-      this.order.TakenBy?.BillingAddress ??
-      this.order.TakenBy?.GeneralCorrespondence;
+      this.object.TakenBy?.OrderAddress ??
+      this.object.TakenBy?.BillingAddress ??
+      this.object.TakenBy?.GeneralCorrespondence;
     this.billToContactMechanismInitialRole =
-      this.order.BillToCustomer?.BillingAddress ??
-      this.order.BillToCustomer?.ShippingAddress ??
-      this.order.BillToCustomer?.GeneralCorrespondence;
+      this.object.BillToCustomer?.BillingAddress ??
+      this.object.BillToCustomer?.ShippingAddress ??
+      this.object.BillToCustomer?.GeneralCorrespondence;
     this.billToEndCustomerContactMechanismInitialRole =
-      this.order.BillToEndCustomer?.BillingAddress ??
-      this.order.BillToEndCustomer?.ShippingAddress ??
-      this.order.BillToEndCustomer?.GeneralCorrespondence;
+      this.object.BillToEndCustomer?.BillingAddress ??
+      this.object.BillToEndCustomer?.ShippingAddress ??
+      this.object.BillToEndCustomer?.GeneralCorrespondence;
     this.shipToEndCustomerAddressInitialRole =
-      this.order.ShipToEndCustomer?.ShippingAddress ??
-      this.order.ShipToEndCustomer?.GeneralCorrespondence;
-    this.shipFromAddressInitialRole = this.order.TakenBy?.ShippingAddress;
-    this.shipToAddressInitialRole = this.order.ShipToCustomer?.ShippingAddress;
+      this.object.ShipToEndCustomer?.ShippingAddress ??
+      this.object.ShipToEndCustomer?.GeneralCorrespondence;
+    this.shipFromAddressInitialRole = this.object.TakenBy?.ShippingAddress;
+    this.shipToAddressInitialRole = this.object.ShipToCustomer?.ShippingAddress;
   }
 }

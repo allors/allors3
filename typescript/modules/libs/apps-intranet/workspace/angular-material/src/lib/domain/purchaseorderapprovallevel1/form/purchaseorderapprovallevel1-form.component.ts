@@ -1,19 +1,8 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
-  PurchaseOrderApprovalLevel1,
-} from '@allors/default/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { PurchaseOrderApprovalLevel1 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -22,23 +11,14 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../actions/print/print.service';
+import { Action } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './purchaseorderapprovallevel1-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseOrderApprovalLevel1FormComponent
-  extends AllorsFormComponent<PurchaseOrderApprovalLevel1>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  title: string;
-  subTitle: string;
-
+export class PurchaseOrderApprovalLevel1FormComponent extends AllorsFormComponent<PurchaseOrderApprovalLevel1> {
   readonly m: M;
-
-  private subscription: Subscription;
-
-  purchaseOrderApproval: PurchaseOrderApprovalLevel1;
 
   print: Action;
 
@@ -56,45 +36,32 @@ export class PurchaseOrderApprovalLevel1FormComponent
     );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.PurchaseOrderApprovalLevel1({
-              objectId: this.data.id,
-              include: {
-                PurchaseOrder: {
-                  PrintDocument: x,
-                },
-              },
-            }),
-          ];
-
-          return this.allors.context.pull(pulls).pipe(map((loaded) => loaded));
+    if (this.editRequest) {
+      pulls.push(
+        p.PurchaseOrderApprovalLevel1({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            PurchaseOrder: {
+              PrintDocument: {},
+            },
+          },
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-        this.purchaseOrderApproval = loaded.object<PurchaseOrderApprovalLevel1>(
-          m.PurchaseOrderApprovalLevel1
-        );
+      );
+    }
 
-        this.title = this.purchaseOrderApproval.Title;
-      });
+    this.onPrePullInitialize(pulls);
   }
 
-  // TODO: KOEN
-  // approve(): void {
-  //   );
-  // }
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-  // TODO: KOEN
-  // reject(): void {
-  //   );
-  // }
+    this.onPostPullInitialize(pullResult);
+  }
 }

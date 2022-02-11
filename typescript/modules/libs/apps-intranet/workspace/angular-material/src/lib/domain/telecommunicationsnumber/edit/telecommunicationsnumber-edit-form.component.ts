@@ -1,17 +1,9 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Enumeration,
   TelecommunicationsNumber,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -21,76 +13,55 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-
 @Component({
-  templateUrl: './telecommunicationsnumber-form.component.html',
+  templateUrl: './telecommunicationsnumber-edit-form.component.html',
   providers: [ContextService],
 })
-export class TelecommunicationsNumberFormComponent
-  extends AllorsFormComponent<TelecommunicationsNumber>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class TelecommunicationsNumberFormComponent extends AllorsFormComponent<TelecommunicationsNumber> {
   readonly m: M;
-
-  contactMechanism: TelecommunicationsNumber;
   contactMechanismTypes: Enumeration[];
-  title: string;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm,
-    private internalOrganisationId: InternalOrganisationId
+    form: NgForm
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.ContactMechanism({
-              objectId: this.data.id,
-            }),
-            pull.ContactMechanismType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.ContactMechanismType.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: this.m.ContactMechanismType.Name }],
-            }),
-          ];
+    pulls.push(
+      p.ContactMechanismType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.ContactMechanismType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: this.m.ContactMechanismType.Name }],
+      })
+    );
 
-          return this.allors.context.pull(pulls);
+    if (this.editRequest) {
+      pulls.push(
+        p.TelecommunicationsNumber({
+          name: '_object',
+          objectId: this.editRequest.objectId,
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.contactMechanismTypes = loaded.collection<ContactMechanismType>(
-          m.ContactMechanismType
-        );
-        this.contactMechanism = loaded.object<TelecommunicationsNumber>(
-          m.ContactMechanism
-        );
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (this.contactMechanism.canWriteAreaCode) {
-          this.title = 'Edit Phone Number';
-        } else {
-          this.title = 'View Phone Number';
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
   }
 }

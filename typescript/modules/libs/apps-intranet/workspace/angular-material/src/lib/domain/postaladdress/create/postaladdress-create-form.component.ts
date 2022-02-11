@@ -1,17 +1,13 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  ContactMechanismPurpose,
+  Country,
+  Enumeration,
+  Party,
+  PartyContactMechanism,
   PostalAddress,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,21 +23,13 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './postaladdress-create-form.component.html',
   providers: [ContextService],
 })
-export class PostalAddressCreateFormComponent
-  extends AllorsFormComponent<PostalAddress>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PostalAddressCreateFormComponent extends AllorsFormComponent<PostalAddress> {
   readonly m: M;
 
-  public title = 'Add Postal Address';
-
-  contactMechanism: PostalAddress;
   countries: Country[];
   party: Party;
   contactMechanismPurposes: Enumeration[];
   partyContactMechanism: PartyContactMechanism;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -53,58 +41,52 @@ export class PostalAddressCreateFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.Party({
-              objectId: this.data.associationId,
-              include: { PartyContactMechanisms: x },
-            }),
-            pull.Country({
-              sorting: [{ roleType: m.Country.Name }],
-            }),
-            pull.ContactMechanismPurpose({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.ContactMechanismPurpose.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
-            }),
-          ];
+    pulls.push(
+      p.Country({
+        sorting: [{ roleType: m.Country.Name }],
+      }),
+      p.ContactMechanismPurpose({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.ContactMechanismPurpose.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: this.m.ContactMechanismPurpose.Name }],
+      })
+    );
 
-          return this.allors.context.pull(pulls);
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Party({
+          objectId: initializer.id,
+          include: { PartyContactMechanisms: {} },
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+      );
+    }
+  }
 
-        this.countries = loaded.collection<Country>(m.Country);
-        this.contactMechanismPurposes =
-          loaded.collection<ContactMechanismPurpose>(m.ContactMechanismPurpose);
-        this.party = loaded.object<Party>(m.Party);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.contactMechanism = this.allors.context.create<PostalAddress>(
-          m.PostalAddress
-        );
+    this.countries = pullResult.collection<Country>(this.m.Country);
+    this.contactMechanismPurposes =
+      pullResult.collection<ContactMechanismPurpose>(
+        this.m.ContactMechanismPurpose
+      );
+    this.party = pullResult.object<Party>(this.m.Party);
 
-        this.partyContactMechanism =
-          this.allors.context.create<PartyContactMechanism>(
-            m.PartyContactMechanism
-          );
-        this.partyContactMechanism.UseAsDefault = true;
-        this.partyContactMechanism.ContactMechanism = this.contactMechanism;
+    this.partyContactMechanism =
+      this.allors.context.create<PartyContactMechanism>(
+        this.m.PartyContactMechanism
+      );
+    this.partyContactMechanism.UseAsDefault = true;
+    this.partyContactMechanism.ContactMechanism = this.object;
 
-        this.party.addPartyContactMechanism(this.partyContactMechanism);
-      });
+    this.party.addPartyContactMechanism(this.partyContactMechanism);
   }
 }

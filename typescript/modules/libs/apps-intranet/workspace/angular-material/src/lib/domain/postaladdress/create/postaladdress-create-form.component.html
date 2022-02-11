@@ -1,4 +1,4 @@
-<div class="container-fluid" *ngIf="contactMechanism">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-select
       class="col-md"
@@ -13,7 +13,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.PostalAddress.Address1"
       label="Address line 1"
     ></a-mat-input>
@@ -22,7 +22,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.PostalAddress.Address2"
       label="Address line 2"
     ></a-mat-input>
@@ -31,7 +31,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.PostalAddress.Address3"
       label="Address line 3"
     ></a-mat-input>
@@ -40,19 +40,19 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.PostalAddress.Locality"
       label="City"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.PostalAddress.PostalCode"
       label="Postal code"
     ></a-mat-input>
     <a-mat-select
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.PostalAddress.Country"
       [options]="countries"
       display="Name"
@@ -62,7 +62,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.ContactMechanism.Description"
     ></a-mat-textarea>
   </div>

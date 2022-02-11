@@ -1,23 +1,32 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Facility,
   InternalOrganisation,
+  InventoryItem,
+  InvoiceItemType,
+  IrpfRegime,
+  NonSerialisedInventoryItem,
+  NonUnifiedPart,
+  Part,
+  Product,
+  SalesInvoice,
   SalesInvoiceItem,
+  SalesOrderItem,
+  SerialisedInventoryItem,
+  SerialisedItem,
+  SerialisedItemAvailability,
+  SupplierOffering,
+  UnifiedGood,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -28,15 +37,10 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './salesinvoiceitem-form.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceItemFormComponent
-  extends AllorsFormComponent<SalesInvoiceItem>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SalesInvoiceItemFormComponent extends AllorsFormComponent<SalesInvoiceItem> {
   readonly m: M;
 
-  title: string;
   invoice: SalesInvoice;
-  invoiceItem: SalesInvoiceItem;
   orderItem: SalesOrderItem;
   inventoryItems: InventoryItem[];
   vatRegimes: VatRegime[];
@@ -53,7 +57,6 @@ export class SalesInvoiceItemFormComponent
   serialisedItemAvailabilities: SerialisedItemAvailability[];
 
   private previousProduct;
-  private subscription: Subscription;
   parts: NonUnifiedPart[];
   partItemType: InvoiceItemType;
   supplierOffering: SupplierOffering;
@@ -78,165 +81,144 @@ export class SalesInvoiceItemFormComponent
       objectType: this.m.Good,
       roleTypes: [this.m.Good.Name],
     });
+
+    this.goodsFilter = Filters.goodsFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([this.refreshService.refresh$])
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-          const { id } = this.data;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      this.fetcher.warehouses,
+      p.SerialisedItemAvailability({}),
+      p.InvoiceItemType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.InvoiceItemType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.InvoiceItemType.Name }],
+      }),
+      p.IrpfRegime({
+        sorting: [{ roleType: m.IrpfRegime.Name }],
+      }),
+      p.SerialisedItemAvailability({})
+    );
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            this.fetcher.warehouses,
-            pull.SerialisedItemAvailability({}),
-            pull.InvoiceItemType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.InvoiceItemType.IsActive,
-                value: true,
+    if (this.editRequest) {
+      pulls.push(
+        p.SalesInvoiceItem({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            SalesInvoiceItemState: {},
+            SerialisedItem: {},
+            NextSerialisedItemAvailability: {},
+            Facility: {
+              Owner: {},
+            },
+            DerivedVatRegime: {
+              VatRates: {},
+            },
+            DerivedIrpfRegime: {
+              IrpfRates: {},
+            },
+          },
+        }),
+        p.SalesInvoiceItem({
+          objectId: this.editRequest.objectId,
+          select: {
+            SalesInvoiceWhereSalesInvoiceItem: {
+              include: {
+                SalesInvoiceItems: {},
+                DerivedVatRegime: {
+                  VatRates: {},
+                },
+                DerivedIrpfRegime: {
+                  IrpfRates: {},
+                },
               },
-              sorting: [{ roleType: m.InvoiceItemType.Name }],
-            }),
-            pull.IrpfRegime({
-              sorting: [{ roleType: m.IrpfRegime.Name }],
-            }),
-            pull.SerialisedItemAvailability({}),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.SalesInvoiceItem({
-                objectId: id,
-                include: {
-                  SalesInvoiceItemState: x,
-                  SerialisedItem: x,
-                  NextSerialisedItemAvailability: x,
-                  Facility: {
-                    Owner: x,
-                  },
-                  DerivedVatRegime: {
-                    VatRates: x,
-                  },
-                  DerivedIrpfRegime: {
-                    IrpfRates: x,
-                  },
-                },
-              }),
-              pull.SalesInvoiceItem({
-                objectId: id,
-                select: {
-                  SalesInvoiceWhereSalesInvoiceItem: {
-                    include: {
-                      SalesInvoiceItems: x,
-                      DerivedVatRegime: {
-                        VatRates: x,
-                      },
-                      DerivedIrpfRegime: {
-                        IrpfRates: x,
-                      },
-                    },
-                  },
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.SalesInvoice({
-                objectId: this.data.associationId,
-                include: {
-                  SalesInvoiceItems: x,
-                  DerivedVatRegime: {
-                    VatRates: x,
-                  },
-                  DerivedIrpfRegime: {
-                    IrpfRates: x,
-                  },
-                },
-              })
-            );
-          }
-
-          this.goodsFilter = Filters.goodsFilter(m);
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.invoiceItem = loaded.object<SalesInvoiceItem>(m.SalesInvoiceItem);
-        this.orderItem = loaded.object<SalesOrderItem>(m.SalesOrderItem);
-        this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.serialisedItemAvailabilities =
-          loaded.collection<SerialisedItemAvailability>(
-            m.SerialisedItemAvailability
-          );
-        this.facilities = this.fetcher.getWarehouses(loaded);
-        this.invoiceItemTypes = loaded.collection<InvoiceItemType>(
-          m.InvoiceItemType
-        );
-        this.productItemType = this.invoiceItemTypes?.find(
-          (v: InvoiceItemType) =>
-            v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad'
-        );
-        this.partItemType = this.invoiceItemTypes?.find(
-          (v: InvoiceItemType) =>
-            v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
-        );
-
-        const serialisedItemAvailabilities =
-          loaded.collection<SerialisedItemAvailability>(
-            m.SerialisedItemAvailability
-          );
-        this.inRent = serialisedItemAvailabilities?.find(
-          (v: SerialisedItemAvailability) =>
-            v.UniqueId === 'ec87f723-2284-4f5c-ba57-fcf328a0b738'
-        );
-
-        if (isCreate) {
-          this.title = 'Add sales invoice Item';
-          this.invoice = loaded.object<SalesInvoice>(m.SalesInvoice);
-          this.invoiceItem = this.allors.context.create<SalesInvoiceItem>(
-            m.SalesInvoiceItem
-          );
-          this.invoice.addSalesInvoiceItem(this.invoiceItem);
-          this.vatRegimeInitialRole = this.invoice.DerivedVatRegime;
-          this.irpfRegimeInitialRole = this.invoice.DerivedIrpfRegime;
-        } else {
-          this.title = 'Edit invoice Item';
-          this.invoice = this.invoiceItem.SalesInvoiceWhereSalesInvoiceItem;
-
-          this.previousProduct = this.invoiceItem.Product;
-          this.serialisedItem = this.invoiceItem.SerialisedItem;
-
-          if (this.invoiceItem.InvoiceItemType === this.productItemType) {
-            this.goodSelected(this.invoiceItem.Product);
-          }
-
-          if (this.invoiceItem.canWriteQuantity) {
-            this.title = 'Edit invoice Item';
-          } else {
-            this.title = 'View invoice Item';
-          }
-        }
-      });
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.SalesInvoice({
+          objectId: initializer.id,
+          include: {
+            SalesInvoiceItems: {},
+            DerivedVatRegime: {
+              VatRates: {},
+            },
+            DerivedIrpfRegime: {
+              IrpfRates: {},
+            },
+          },
+        })
+      );
+    }
   }
 
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.orderItem = pullResult.object<SalesOrderItem>(this.m.SalesOrderItem);
+    this.parts = pullResult.collection<NonUnifiedPart>(this.m.NonUnifiedPart);
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+    this.serialisedItemAvailabilities =
+      pullResult.collection<SerialisedItemAvailability>(
+        this.m.SerialisedItemAvailability
+      );
+    this.facilities = this.fetcher.getWarehouses(pullResult);
+    this.invoiceItemTypes = pullResult.collection<InvoiceItemType>(
+      this.m.InvoiceItemType
+    );
+    this.productItemType = this.invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad'
+    );
+    this.partItemType = this.invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
+    );
+
+    const serialisedItemAvailabilities =
+      pullResult.collection<SerialisedItemAvailability>(
+        this.m.SerialisedItemAvailability
+      );
+    this.inRent = serialisedItemAvailabilities?.find(
+      (v: SerialisedItemAvailability) =>
+        v.UniqueId === 'ec87f723-2284-4f5c-ba57-fcf328a0b738'
+    );
+
+    if (this.createRequest) {
+      this.invoice = pullResult.object<SalesInvoice>(this.m.SalesInvoice);
+      this.invoice.addSalesInvoiceItem(this.object);
+      this.vatRegimeInitialRole = this.invoice.DerivedVatRegime;
+      this.irpfRegimeInitialRole = this.invoice.DerivedIrpfRegime;
+    } else {
+      this.invoice = this.object.SalesInvoiceWhereSalesInvoiceItem;
+
+      this.previousProduct = this.object.Product;
+      this.serialisedItem = this.object.SerialisedItem;
+
+      if (this.object.InvoiceItemType === this.productItemType) {
+        this.goodSelected(this.object.Product);
+      }
+    }
+  }
   public goodSelected(object: any) {
     if (object) {
       this.refreshSerialisedItems(object as Product);
@@ -244,12 +226,12 @@ export class SalesInvoiceItemFormComponent
   }
 
   public serialisedItemSelected(serialisedItem: IObject): void {
-    const unifiedGood = this.invoiceItem.Product as UnifiedGood;
+    const unifiedGood = this.object.Product as UnifiedGood;
     this.serialisedItem = unifiedGood.SerialisedItems?.find(
       (v) => v === serialisedItem
     );
-    this.invoiceItem.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;
-    this.invoiceItem.Quantity = '1';
+    this.object.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;
+    this.object.Quantity = '1';
   }
 
   private refreshSerialisedItems(good: Product): void {
@@ -303,10 +285,10 @@ export class SalesInvoiceItemFormComponent
           v.SerialisedItemAvailability === this.inRent
       );
 
-      if (this.invoiceItem.Product !== this.previousProduct) {
-        this.invoiceItem.SerialisedItem = null;
+      if (this.object.Product !== this.previousProduct) {
+        this.object.SerialisedItem = null;
         this.serialisedItem = null;
-        this.previousProduct = this.invoiceItem.Product;
+        this.previousProduct = this.object.Product;
       }
     });
   }

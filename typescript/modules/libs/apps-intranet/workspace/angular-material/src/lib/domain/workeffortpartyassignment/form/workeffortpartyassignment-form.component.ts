@@ -56,6 +56,44 @@ export class WorkEffortPartyAssignmentFormComponent
     this.m = allors.metaPopulation as M;
   }
 
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
+    pulls.push(this.fetcher.internalOrganisation);
+
+    if (this.editRequest) {
+      pulls.push(
+        p.BasePrice({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Currency: {},
+          },
+        })
+      );
+    }
+
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push();
+    }
+  }
+
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
+
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+
+    this.object.FromDate = new Date();
+    this.object.PricedBy = this.internalOrganisation;
+  }
+
   public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;

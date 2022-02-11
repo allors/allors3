@@ -35,8 +35,7 @@ export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm,
-    private fetcher: FetcherService
+    form: NgForm
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;

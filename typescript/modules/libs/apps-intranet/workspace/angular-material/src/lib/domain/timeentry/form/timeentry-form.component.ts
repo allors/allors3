@@ -1,18 +1,17 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Party,
+  PartyRate,
+  RateType,
   TimeEntry,
+  TimeFrequency,
+  TimeSheet,
+  WorkEffort,
+  WorkEffortAssignmentRate,
+  WorkEffortPartyAssignment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -25,19 +24,11 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './timeentry-form.component.html',
   providers: [ContextService],
 })
-export class TimeEntryFormComponent
-  extends AllorsFormComponent<TimeEntry>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  title: string;
-  subTitle: string;
-
+export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
   readonly m: M;
 
   frequencies: TimeFrequency[];
 
-  private subscription: Subscription;
-  timeEntry: TimeEntry;
   timeSheet: TimeSheet;
   workers: Party[];
   selectedWorker: Party;
@@ -52,140 +43,115 @@ export class TimeEntryFormComponent
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm,
-    private snackBar: MatSnackBar
+    form: NgForm
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    const workEffortPartyAssignmentPullName = `${this.m.WorkEffortPartyAssignment.tag}`;
+    pulls.push(
+      p.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
+      p.TimeFrequency({
+        sorting: [{ roleType: this.m.TimeFrequency.Name }],
+      })
+    );
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-
-          let pulls = [
-            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
-            pull.TimeFrequency({
-              sorting: [{ roleType: this.m.TimeFrequency.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.TimeEntry({
-                objectId: this.data.id,
+    if (this.editRequest) {
+      pulls.push(
+        p.TimeEntry({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            WorkEffort: {},
+            TimeFrequency: {},
+            BillingFrequency: {},
+          },
+        }),
+        p.TimeEntry({
+          objectId: this.editRequest.objectId,
+          select: {
+            WorkEffort: {
+              WorkEffortPartyAssignmentsWhereAssignment: {
                 include: {
-                  WorkEffort: x,
-                  TimeFrequency: x,
-                  BillingFrequency: x,
+                  Party: {},
                 },
-              }),
-              pull.TimeEntry({
-                objectId: this.data.id,
-                select: {
-                  WorkEffort: {
-                    WorkEffortPartyAssignmentsWhereAssignment: {
-                      include: {
-                        Party: x,
-                      },
-                    },
-                  },
-                },
-              })
-            );
-          }
-
-          if (isCreate) {
-            pulls = [
-              ...pulls,
-              pull.WorkEffort({
-                objectId: this.data.associationId,
-              }),
-              pull.WorkEffort({
-                name: workEffortPartyAssignmentPullName,
-                objectId: this.data.associationId,
-                select: {
-                  WorkEffortPartyAssignmentsWhereAssignment: {
-                    include: {
-                      Party: x,
-                    },
-                  },
-                },
-              }),
-            ];
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+              },
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.rateTypes = loaded.collection<RateType>(m.RateType);
-        this.frequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
-        const hour = this.frequencies?.find(
-          (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.WorkEffort({
+          objectId: initializer.id,
+        }),
+        p.WorkEffort({
+          objectId: initializer.id,
+          select: {
+            WorkEffortPartyAssignmentsWhereAssignment: {
+              include: {
+                Party: {},
+              },
+            },
+          },
+        })
+      );
+    }
+  }
+
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.rateTypes = pullResult.collection<RateType>(this.m.RateType);
+    this.frequencies = pullResult.collection<TimeFrequency>(
+      this.m.TimeFrequency
+    );
+    const hour = this.frequencies?.find(
+      (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
+    );
+
+    if (this.createRequest) {
+      this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
+
+      this.object.WorkEffort = this.workEffort;
+      this.object.IsBillable = true;
+      this.object.BillingFrequency = hour;
+      this.object.TimeFrequency = hour;
+
+      const workEffortPartyAssignments =
+        pullResult.collection<WorkEffortPartyAssignment>(
+          this.m.WorkEffortPartyAssignment
         );
+      this.workers = Array.from(
+        new Set(workEffortPartyAssignments?.map((v) => v.Party)).values()
+      );
+    } else {
+      this.selectedWorker = this.object.Worker;
+      this.workEffort = this.object.WorkEffort;
 
-        if (isCreate) {
-          this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
+      const workEffortPartyAssignments =
+        pullResult.collection<WorkEffortPartyAssignment>(
+          this.m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment
+        );
+      this.workers = Array.from(
+        new Set(workEffortPartyAssignments?.map((v) => v.Party)).values()
+      );
 
-          this.title = 'Add Time Entry';
-          this.timeEntry = this.allors.context.create<TimeEntry>(m.TimeEntry);
-          this.timeEntry.WorkEffort = this.workEffort;
-          this.timeEntry.IsBillable = true;
-          this.timeEntry.BillingFrequency = hour;
-          this.timeEntry.TimeFrequency = hour;
-
-          const workEffortPartyAssignments =
-            loaded.collection<WorkEffortPartyAssignment>(
-              workEffortPartyAssignmentPullName
-            );
-          this.workers = Array.from(
-            new Set(workEffortPartyAssignments?.map((v) => v.Party)).values()
-          );
-        } else {
-          this.timeEntry = loaded.object<TimeEntry>(m.TimeEntry);
-          this.selectedWorker = this.timeEntry.Worker;
-          this.workEffort = this.timeEntry.WorkEffort;
-
-          const workEffortPartyAssignments =
-            loaded.collection<WorkEffortPartyAssignment>(
-              m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment
-            );
-          this.workers = Array.from(
-            new Set(workEffortPartyAssignments?.map((v) => v.Party)).values()
-          );
-
-          if (this.timeEntry.canWriteAssignedAmountOfTime) {
-            this.title = 'Edit Time Entry';
-          } else {
-            this.title = 'View Time Entry';
-          }
-        }
-
-        if (!isCreate) {
-          this.workerSelected(this.selectedWorker);
-        }
-      });
+      this.workerSelected(this.selectedWorker);
+    }
   }
 
   public findBillingRate(): void {
-    if (
-      this.selectedWorker &&
-      this.timeEntry.RateType &&
-      this.timeEntry.FromDate
-    ) {
+    if (this.selectedWorker && this.object.RateType && this.object.FromDate) {
       this.workerSelected(this.selectedWorker);
     }
   }
@@ -206,21 +172,16 @@ export class TimeEntryFormComponent
       }),
     ];
 
-    this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.timeSheet = loaded.object<TimeSheet>(m.Person.TimeSheetWhereWorker);
+    this.allors.context.pull(pulls).subscribe((pullResult) => {
+      this.timeSheet = pullResult.collection<TimeSheet>(
+        this.m.Person.TimeSheetWhereWorker
+      )[0];
     });
   }
 
-  public update(): void {
-    this.allors.context.push().subscribe(() => {
-      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
-  }
-
   public override save(): void {
-    if (!this.timeEntry.TimeSheetWhereTimeEntry) {
-      this.timeSheet.addTimeEntry(this.timeEntry);
+    if (!this.object.TimeSheetWhereTimeEntry) {
+      this.timeSheet.addTimeEntry(this.object);
     }
 
     super.save();

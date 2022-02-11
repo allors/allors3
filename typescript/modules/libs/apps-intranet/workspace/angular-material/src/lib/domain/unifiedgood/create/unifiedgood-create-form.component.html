@@ -1,4 +1,4 @@
-<div class="container-fluid" *ngIf="good">
+<div class="container-fluid" *ngIf="object">
   <div class="row pt-3">
     <a-mat-input
       class="col-md"
@@ -8,7 +8,7 @@
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="good"
+      [object]="object"
       [roleType]="m.UnifiedGood.Name"
     ></a-mat-input>
   </div>
@@ -16,14 +16,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="good"
+      [object]="object"
       [roleType]="m.UnifiedGood.ProductType"
       [options]="productTypes"
       display="Name"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="good"
+      [object]="object"
       [roleType]="m.UnifiedGood.InventoryItemKind"
       [options]="inventoryItemKinds"
       display="Name"

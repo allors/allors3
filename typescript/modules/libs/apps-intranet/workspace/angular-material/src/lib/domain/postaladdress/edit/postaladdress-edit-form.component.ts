@@ -1,17 +1,11 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Country,
+  Party,
+  PartyContactMechanism,
   PostalAddress,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -21,75 +15,54 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-
 @Component({
-  templateUrl: './postaladdress-form.component.html',
+  templateUrl: './postaladdress-edit-form.component.html',
   providers: [ContextService],
 })
-export class PostalAddressFormComponent
-  extends AllorsFormComponent<PostalAddress>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PostalAddressFormComponent extends AllorsFormComponent<PostalAddress> {
   readonly m: M;
-
-  contactMechanism: PostalAddress;
   countries: Country[];
-  title: string;
-
-  private subscription: Subscription;
-  party: Party;
   partyContactMechanism: PartyContactMechanism;
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm,
-    private internalOrganisationId: InternalOrganisationId
+    form: NgForm
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.ContactMechanism({
-              objectId: this.data.id,
-              include: {
-                PostalAddress_Country: x,
-              },
-            }),
-            pull.Country({
-              sorting: [{ roleType: m.Country.Name }],
-            }),
-          ];
+    pulls.push(
+      p.Country({
+        sorting: [{ roleType: m.Country.Name }],
+      })
+    );
 
-          return this.allors.context.pull(pulls);
+    if (this.editRequest) {
+      pulls.push(
+        p.PostalAddress({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Country: {},
+          },
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.countries = loaded.collection<Country>(m.Country);
-        this.contactMechanism = loaded.object<PostalAddress>(
-          m.ContactMechanism
-        );
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (this.contactMechanism.canWriteAddress1) {
-          this.title = 'Edit Postal Address';
-        } else {
-          this.title = 'View Postal Address';
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
   }
 }

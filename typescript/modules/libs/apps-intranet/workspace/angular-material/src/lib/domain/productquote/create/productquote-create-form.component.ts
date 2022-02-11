@@ -1,23 +1,27 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  CustomerRelationship,
   InternalOrganisation,
+  IrpfRegime,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
   ProductQuote,
+  RequestForQuote,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
@@ -28,15 +32,8 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './productquote-create-form.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteCreateFormComponent
-  extends AllorsFormComponent<ProductQuote>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class ProductQuoteCreateFormComponent extends AllorsFormComponent<ProductQuote> {
   readonly m: M;
-
-  title = 'Add Quote';
-
-  quote: ProductQuote;
   request: RequestForQuote;
   currencies: Currency[];
   contactMechanisms: ContactMechanism[] = [];
@@ -49,8 +46,6 @@ export class ProductQuoteCreateFormComponent
   addContactMechanism = false;
   addReceiver = false;
   internalOrganisation: InternalOrganisation;
-
-  private subscription: Subscription;
   private previousReceiver: Party;
 
   customersFilter: SearchFactory;
@@ -65,52 +60,47 @@ export class ProductQuoteCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(([, internalOrganisationId]) => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
-            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
-          ];
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
+      p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] })
+    );
 
-          this.customersFilter = Filters.customersFilter(
-            m,
-            internalOrganisationId
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.currencies = loaded.collection<Currency>(m.Currency);
+    this.onPostPullInitialize(pullResult);
 
-        this.quote = this.allors.context.create<ProductQuote>(m.ProductQuote);
-        this.quote.Issuer = this.internalOrganisation;
-        this.quote.IssueDate = new Date();
-        this.quote.ValidFromDate = new Date();
-      });
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+
+    this.object.Issuer = this.internalOrganisation;
+    this.object.IssueDate = new Date();
+    this.object.ValidFromDate = new Date();
   }
 
   get receiverIsPerson(): boolean {
     return (
-      !this.quote.Receiver || this.quote.Receiver.strategy.cls === this.m.Person
+      !this.object.Receiver ||
+      this.object.Receiver.strategy.cls === this.m.Person
     );
   }
 
@@ -128,7 +118,7 @@ export class ProductQuoteCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.quote.Receiver = party;
+    this.object.Receiver = party;
   }
 
   public personAdded(person: Person): void {
@@ -136,20 +126,20 @@ export class ProductQuoteCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.quote
+    organisationContactRelationship.Organisation = this.object
       .Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.contacts.push(person);
-    this.quote.ContactPerson = person;
+    this.object.ContactPerson = person;
   }
 
   public partyContactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.quote.Receiver.addPartyContactMechanism(partyContactMechanism);
-    this.quote.FullfillContactMechanism =
+    this.object.Receiver.addPartyContactMechanism(partyContactMechanism);
+    this.object.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -191,13 +181,13 @@ export class ProductQuoteCreateFormComponent
     this.allors.context.pull(pulls).subscribe((loaded) => {
       if (
         this.previousReceiver &&
-        this.quote.Receiver !== this.previousReceiver
+        this.object.Receiver !== this.previousReceiver
       ) {
-        this.quote.ContactPerson = null;
-        this.quote.FullfillContactMechanism = null;
+        this.object.ContactPerson = null;
+        this.object.FullfillContactMechanism = null;
       }
 
-      this.previousReceiver = this.quote.Receiver;
+      this.previousReceiver = this.object.Receiver;
 
       const partyContactMechanisms: PartyContactMechanism[] =
         loaded.collection<PartyContactMechanism>(
@@ -210,7 +200,7 @@ export class ProductQuoteCreateFormComponent
 
       const selectedParty = loaded.object<Party>('selectedParty');
       this.currencyInitialRole =
-        selectedParty.PreferredCurrency ?? this.quote.Issuer.PreferredCurrency;
+        selectedParty.PreferredCurrency ?? this.object.Issuer.PreferredCurrency;
     });
   }
 }

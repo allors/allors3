@@ -1,23 +1,23 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Enumeration,
+  Locale,
+  Organisation,
+  Ownership,
+  Part,
+  Party,
   SerialisedItem,
+  SerialisedItemAvailability,
+  SerialisedItemState,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -29,14 +29,8 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './serialiseditem-create-form.component.html',
   providers: [ContextService],
 })
-export class SerialisedItemCreateFormComponent
-  extends AllorsFormComponent<SerialisedItem>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SerialisedItemCreateFormComponent extends AllorsFormComponent<SerialisedItem> {
   readonly m: M;
-  serialisedItem: SerialisedItem;
-
-  public title = 'Add Serialised Asset';
 
   locales: Locale[];
   ownerships: Ownership[];
@@ -48,7 +42,6 @@ export class SerialisedItemCreateFormComponent
   itemPart: Part;
   selectedPart: Part;
 
-  private subscription: Subscription;
   serialisedItemAvailabilities: Enumeration[];
   serialisedgoodsFilter: SearchFactory;
   partiesFilter: SearchFactory;
@@ -62,92 +55,85 @@ export class SerialisedItemCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.partiesFilter = Filters.partiesFilter(this.m);
+    this.serialisedgoodsFilter = Filters.serialisedgoodsFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            this.fetcher.locales,
-            pull.Party({ objectId: this.data.associationId }),
-            pull.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
-            pull.Part({
-              name: 'forPart',
-              objectId: this.data.associationId,
-              include: {
-                SerialisedItems: x,
-              },
-            }),
-            pull.SerialisedItemState({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.SerialisedItemState.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
-            }),
-            pull.SerialisedItemAvailability({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.SerialisedItemAvailability.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      this.fetcher.locales,
+      p.Ownership({ sorting: [{ roleType: m.Ownership.Name }] }),
+      p.SerialisedItemState({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.SerialisedItemState.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.SerialisedInventoryItemState.Name }],
+      }),
+      p.SerialisedItemAvailability({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.SerialisedItemAvailability.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
+      })
+    );
 
-          this.partiesFilter = Filters.partiesFilter(m);
-          this.serialisedgoodsFilter = Filters.serialisedgoodsFilter(m);
-
-          return this.allors.context.pull(pulls);
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Party({ objectId: initializer.id }),
+        p.Part({
+          name: 'forPart',
+          objectId: initializer.id,
+          include: {
+            SerialisedItems: {},
+          },
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+      );
+    }
+  }
 
-        const internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        const externalOwner = loaded.object<Party>(m.Party);
-        this.owner = externalOwner || internalOrganisation;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.part = loaded.object<Part>('forPart');
+    const internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    const externalOwner = pullResult.object<Party>(this.m.Party);
+    this.owner = externalOwner || internalOrganisation;
 
-        this.serialisedItemStates = loaded.collection<SerialisedItemState>(
-          m.SerialisedItemState
-        );
-        this.serialisedItemAvailabilities =
-          loaded.collection<SerialisedItemAvailability>(
-            m.SerialisedItemAvailability
-          );
-        this.ownerships = loaded.collection<Ownership>(m.Ownership);
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
+    this.part = pullResult.object<Part>('forPart');
 
-        this.serialisedItem = this.allors.context.create<SerialisedItem>(
-          m.SerialisedItem
-        );
-        this.serialisedItem.AvailableForSale = false;
-        this.serialisedItem.OwnedBy = this.owner;
+    this.serialisedItemStates = pullResult.collection<SerialisedItemState>(
+      this.m.SerialisedItemState
+    );
+    this.serialisedItemAvailabilities =
+      pullResult.collection<SerialisedItemAvailability>(
+        this.m.SerialisedItemAvailability
+      );
+    this.ownerships = pullResult.collection<Ownership>(this.m.Ownership);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
 
-        if (this.part) {
-          this.partSelected(this.part);
-        }
-      });
+    this.object.AvailableForSale = false;
+    this.object.OwnedBy = this.owner;
+
+    if (this.part) {
+      this.partSelected(this.part);
+    }
   }
 
   public partSelected(obj: IObject): void {
     if (obj) {
       const part = obj as Part;
       this.selectedPart = part;
-      this.serialisedItem.Name = part.Name;
+      this.object.Name = part.Name;
 
       const m = this.m;
       const { pullBuilder: pull } = m;
@@ -164,7 +150,7 @@ export class SerialisedItemCreateFormComponent
 
       this.allors.context.pull(pulls).subscribe((loaded) => {
         this.selectedPart = loaded.object<Part>(m.Part);
-        this.serialisedItem.Name = this.selectedPart.Name;
+        this.object.Name = this.selectedPart.Name;
       });
     } else {
       this.selectedPart = undefined;
@@ -172,7 +158,7 @@ export class SerialisedItemCreateFormComponent
   }
 
   public override save(): void {
-    this.selectedPart.addSerialisedItem(this.serialisedItem);
+    this.selectedPart.addSerialisedItem(this.object);
 
     super.save();
   }

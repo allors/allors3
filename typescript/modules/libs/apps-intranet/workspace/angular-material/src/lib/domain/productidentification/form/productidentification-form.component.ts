@@ -1,18 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Good,
+  Part,
   ProductIdentification,
+  ProductIdentificationType,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -20,24 +14,17 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { RoleType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './productidentification-form.component.html',
   providers: [ContextService],
 })
-export class ProductIdentificationFormComponent
-  extends AllorsFormComponent<ProductIdentification>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class ProductIdentificationFormComponent extends AllorsFormComponent<ProductIdentification> {
   public m: M;
 
-  public title = 'Edit Good Identification';
-
   public container: IObject;
-  public object: ProductIdentification;
   public productIdentificationTypes: ProductIdentificationType[];
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -48,78 +35,56 @@ export class ProductIdentificationFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-          const cls = this.data.strategy?.cls;
-          const { associationRoleType } = this.data;
+    pulls.push(
+      p.ProductIdentificationType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.ProductIdentificationType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.ProductIdentificationType.Name }],
+      })
+    );
 
-          const pulls = [
-            pull.ProductIdentificationType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.ProductIdentificationType.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.ProductIdentificationType.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.ProductIdentification({
-                objectId: this.data.id,
-                include: {
-                  ProductIdentificationType: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Good({ objectId: this.data.associationId }),
-              pull.Part({ objectId: this.data.associationId })
-            );
-          }
-
-          return this.allors.context.pull(pulls).pipe(
-            map((loaded) => ({
-              loaded,
-              create: isCreate,
-              cls,
-              associationRoleType,
-            }))
-          );
+    if (this.editRequest) {
+      pulls.push(
+        p.ProductIdentification({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            ProductIdentificationType: {},
+          },
         })
-      )
-      .subscribe(({ loaded, create, cls, associationRoleType }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.container =
-          loaded.object<Good>(m.Good) || loaded.object<Part>(m.Part);
-        this.object = loaded.object<ProductIdentification>(
-          m.ProductIdentification
-        );
-        this.productIdentificationTypes =
-          loaded.collection<ProductIdentificationType>(
-            m.ProductIdentificationType
-          );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Good({ objectId: initializer.id }),
+        p.Part({ objectId: initializer.id })
+      );
+    }
+  }
 
-        if (create) {
-          this.title = 'Add Identification';
-          this.object = this.allors.context.create<ProductIdentification>(cls);
-          this.container.strategy.addCompositesRole(
-            associationRoleType,
-            this.object
-          );
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    if (this.createRequest) {
+      this.container =
+        pullResult.object<Good>(this.m.Good) ||
+        pullResult.object<Part>(this.m.Part);
+
+      this.container.strategy.addCompositesRole(
+        this.createRequest.initializer.propertyType as RoleType,
+        this.object
+      );
+    }
   }
 }

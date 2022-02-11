@@ -1,18 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
   InternalOrganisation,
+  Locale,
   ProductCategory,
+  Scope,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -28,20 +22,12 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './productcategory-form.component.html',
   providers: [ContextService],
 })
-export class ProductCategoryFormComponent
-  extends AllorsFormComponent<ProductCategory>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class ProductCategoryFormComponent extends AllorsFormComponent<ProductCategory> {
   public m: M;
-  public title: string;
-
-  public category: ProductCategory;
   public locales: Locale[];
   public categories: ProductCategory[];
   public scopes: Scope[];
   public internalOrganisation: InternalOrganisation;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -53,75 +39,52 @@ export class ProductCategoryFormComponent
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
   }
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+    pulls.push(
+      this.fetcher.locales,
+      this.fetcher.internalOrganisation,
+      p.Scope({}),
+      p.ProductCategory({
+        sorting: [{ roleType: m.ProductCategory.Name }],
+      })
+    );
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-
-          const pulls = [
-            this.fetcher.locales,
-            this.fetcher.internalOrganisation,
-            pull.Scope({}),
-            pull.ProductCategory({
-              sorting: [{ roleType: m.ProductCategory.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.ProductCategory({
-                objectId: this.data.id,
-                include: {
-                  CategoryImage: x,
-                  Children: x,
-                  LocalisedNames: {
-                    Locale: x,
-                  },
-                  LocalisedDescriptions: {
-                    Locale: x,
-                  },
-                },
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.ProductCategory({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            CategoryImage: {},
+            Children: {},
+            LocalisedNames: {
+              Locale: {},
+            },
+            LocalisedDescriptions: {
+              Locale: {},
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.category = loaded.object(m.ProductCategory);
-        this.categories = loaded.collection(m.ProductCategory);
-        this.scopes = loaded.collection(m.Scope);
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (isCreate) {
-          this.title = 'Add Category';
-          this.category = this.allors.context.create<ProductCategory>(
-            m.ProductCategory
-          );
-          this.category.InternalOrganisation = this.internalOrganisation;
-        } else {
-          if (this.category.canWriteCatScope) {
-            this.title = 'Edit Category';
-          } else {
-            this.title = 'View Category';
-          }
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
+
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.categories = pullResult.collection(this.m.ProductCategory);
+    this.scopes = pullResult.collection(this.m.Scope);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
   }
 }

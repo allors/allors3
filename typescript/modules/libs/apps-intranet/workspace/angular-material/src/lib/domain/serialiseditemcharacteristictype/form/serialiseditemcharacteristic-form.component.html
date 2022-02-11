@@ -1,13 +1,13 @@
-<div class="container-fluid" *ngIf="productCharacteristic">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="productCharacteristic"
+      [object]="object"
       [roleType]="m.SerialisedItemCharacteristicType.Name"
     ></a-mat-input>
     <a-mat-select
       class="col-md"
-      [object]="productCharacteristic"
+      [object]="object"
       [roleType]="m.SerialisedItemCharacteristicType.UnitOfMeasure"
       [options]="allUoms"
       display="Name"
@@ -17,12 +17,12 @@
   <div class="row">
     <a-mat-slidetoggle
       class="col-md"
-      [object]="productCharacteristic"
+      [object]="object"
       [roleType]="m.SerialisedItemCharacteristicType.IsActive"
     ></a-mat-slidetoggle>
     <a-mat-slidetoggle
       class="col-md"
-      [object]="productCharacteristic"
+      [object]="object"
       [roleType]="m.SerialisedItemCharacteristicType.IsPublic"
     ></a-mat-slidetoggle>
   </div>
@@ -38,7 +38,7 @@
         <div class="row">
           <a-mat-localised-text
             class="col-md"
-            [object]="productCharacteristic"
+            [object]="object"
             [roleType]="m.SerialisedItemCharacteristicType.LocalisedNames"
             [locale]="locale"
           ></a-mat-localised-text>

@@ -1,42 +1,40 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Carrier,
+  Currency,
+  Facility,
   InternalOrganisation,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
   PurchaseShipment,
+  ShipmentMethod,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
-import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'purchaseshipment-edit-form',
   templateUrl: './purchaseshipment-edit-form.component.html',
-  providers: [OldPanelService, ContextService],
+  providers: [ContextService],
 })
-export class PurchaseShipmentEditFormComponent
-  extends AllorsFormComponent<PurchaseShipment>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PurchaseShipmentEditFormComponent extends AllorsFormComponent<PurchaseShipment> {
   readonly m: M;
-
-  purchaseShipment: PurchaseShipment;
 
   currencies: Currency[];
   shipToAddresses: PostalAddress[] = [];
@@ -52,17 +50,14 @@ export class PurchaseShipmentEditFormComponent
   facilities: Facility[];
   selectedFacility: Facility;
   addFacility = false;
-
-  private subscription: Subscription;
-  private refresh$: BehaviorSubject<Date>;
   previousShipFromParty: Party;
 
   suppliersFilter: SearchFactory;
 
   get shipFromCustomerIsPerson(): boolean {
     return (
-      !this.purchaseShipment.ShipFromParty ||
-      this.purchaseShipment.ShipFromParty.strategy.cls === this.m.Person
+      !this.object.ShipFromParty ||
+      this.object.ShipFromParty.strategy.cls === this.m.Person
     );
   }
 
@@ -76,149 +71,108 @@ export class PurchaseShipmentEditFormComponent
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
 
-    panel.onPull = (pulls) => {
-      this.purchaseShipment = undefined;
-
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const id = this.panel.manager.id;
-
-        pulls.push(
-          this.fetcher.internalOrganisation,
-          pull.PurchaseShipment({
-            name: pullName,
-            objectId: id,
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.purchaseShipment = loaded.object<PurchaseShipment>(pullName);
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-      }
-    };
+    this.suppliersFilter = Filters.suppliersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Maximized
-    this.subscription = combineLatest([this.refresh$, this.panel.manager.on$])
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.purchaseShipment = undefined;
-
-          const m = this.m;
-          const { pullBuilder: pull } = m;
-          const x = {};
-          const id = this.panel.manager.id;
-
-          const pulls = [
-            pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
-            pull.InternalOrganisation({
-              objectId: this.internalOrganisationId.value,
-              select: {
-                CurrentPartyContactMechanisms: {
-                  include: {
-                    ContactMechanism: {
-                      PostalAddress_Country: x,
-                    },
-                  },
-                },
+    pulls.push(
+      p.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
+      p.InternalOrganisation({
+        objectId: this.internalOrganisationId.value,
+        select: {
+          CurrentPartyContactMechanisms: {
+            include: {
+              ContactMechanism: {
+                PostalAddress_Country: {},
               },
-            }),
-            pull.InternalOrganisation({
-              objectId: this.internalOrganisationId.value,
-              select: {
-                CurrentContacts: x,
-              },
-            }),
-            pull.ShipmentMethod({
-              sorting: [{ roleType: m.ShipmentMethod.Name }],
-            }),
-            pull.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
-            pull.Organisation({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Organisation.IsInternalOrganisation,
-                value: true,
-              },
-              sorting: [{ roleType: m.Organisation.DisplayName }],
-            }),
-            pull.PurchaseShipment({
-              objectId: id,
-              include: {
-                ShipFromParty: x,
-                ShipFromAddress: x,
-                ShipFromFacility: x,
-                ShipToParty: {
-                  PartyContactMechanisms: x,
-                },
-                ShipToContactPerson: x,
-                ShipToAddress: x,
-                ShipFromContactPerson: x,
-                Carrier: x,
-                ShipmentState: x,
-                ElectronicDocuments: x,
-              },
-            }),
-          ];
+            },
+          },
+        },
+      }),
+      p.InternalOrganisation({
+        objectId: this.internalOrganisationId.value,
+        select: {
+          CurrentContacts: {},
+        },
+      }),
+      p.ShipmentMethod({
+        sorting: [{ roleType: m.ShipmentMethod.Name }],
+      }),
+      p.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
+      p.Organisation({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        },
+        sorting: [{ roleType: m.Organisation.DisplayName }],
+      }),
+      p.PurchaseShipment({
+        objectId: this.editRequest.objectId,
+        include: {
+          ShipFromParty: {},
+          ShipFromAddress: {},
+          ShipFromFacility: {},
+          ShipToParty: {
+            PartyContactMechanisms: {},
+          },
+          ShipToContactPerson: {},
+          ShipToAddress: {},
+          ShipFromContactPerson: {},
+          Carrier: {},
+          ShipmentState: {},
+          ElectronicDocuments: {},
+        },
+      })
+    );
 
-          this.suppliersFilter = Filters.suppliersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
+
+    this.onPostPullInitialize(pullResult);
+
+    const partyContactMechanisms: PartyContactMechanism[] =
+      pullResult.collection<PartyContactMechanism>(
+        this.m.Party.CurrentPartyContactMechanisms
+      );
+    this.shipToAddresses = partyContactMechanisms
+      ?.filter(
+        (v: PartyContactMechanism) =>
+          v.ContactMechanism.strategy.cls === this.m.PostalAddress
       )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+      ?.map(
+        (v: PartyContactMechanism) => v.ContactMechanism
+      ) as PostalAddress[];
+    this.shipToContacts = pullResult.collection<Person>(
+      this.m.Party.CurrentContacts
+    );
 
-        const partyContactMechanisms: PartyContactMechanism[] =
-          loaded.collection<PartyContactMechanism>(
-            m.Party.CurrentPartyContactMechanisms
-          );
-        this.shipToAddresses = partyContactMechanisms
-          ?.filter(
-            (v: PartyContactMechanism) =>
-              v.ContactMechanism.strategy.cls === m.PostalAddress
-          )
-          ?.map(
-            (v: PartyContactMechanism) => v.ContactMechanism
-          ) as PostalAddress[];
-        this.shipToContacts = loaded.collection<Person>(
-          m.Party.CurrentContacts
-        );
+    this.selectedFacility = this.object.ShipToFacility;
 
-        this.purchaseShipment = loaded.object<PurchaseShipment>(
-          m.PurchaseShipment
-        );
-        this.selectedFacility = this.purchaseShipment.ShipToFacility;
+    this.facilities = pullResult.collection<Facility>(this.m.Facility);
+    this.shipmentMethods = pullResult.collection<ShipmentMethod>(
+      this.m.ShipmentMethod
+    );
+    this.carriers = pullResult.collection<Carrier>(this.m.Carrier);
 
-        this.facilities = loaded.collection<Facility>(m.Facility);
-        this.shipmentMethods = loaded.collection<ShipmentMethod>(
-          m.ShipmentMethod
-        );
-        this.carriers = loaded.collection<Carrier>(m.Carrier);
+    if (this.object.ShipFromParty) {
+      this.updateShipFromParty(this.object.ShipFromParty);
+    }
 
-        if (this.purchaseShipment.ShipFromParty) {
-          this.updateShipFromParty(this.purchaseShipment.ShipFromParty);
-        }
-
-        this.previousShipFromParty = this.purchaseShipment.ShipFromParty;
-      });
+    this.previousShipFromParty = this.object.ShipFromParty;
   }
 
   public override save(): void {
-    this.purchaseShipment.ShipToFacility = this.selectedFacility;
+    this.object.ShipToFacility = this.selectedFacility;
 
     super.save();
   }
@@ -233,25 +187,23 @@ export class PurchaseShipmentEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.purchaseShipment
+    organisationContactRelationship.Organisation = this.object
       .ShipFromParty as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipFromContacts.push(person);
-    this.purchaseShipment.ShipFromContactPerson = person;
+    this.object.ShipFromContactPerson = person;
   }
 
   public shipToAddressAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
-    this.purchaseShipment.ShipToParty.addPartyContactMechanism(
-      partyContactMechanism
-    );
+    this.object.ShipToParty.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
-    this.purchaseShipment.ShipToAddress = postalAddress;
+    this.object.ShipToAddress = postalAddress;
   }
 
   public supplierSelected(customer: IObject) {

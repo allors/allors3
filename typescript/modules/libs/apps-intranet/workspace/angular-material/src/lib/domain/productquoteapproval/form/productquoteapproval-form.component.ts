@@ -1,19 +1,8 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
-  ProductQuoteApproval,
-} from '@allors/default/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { ProductQuoteApproval } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -22,23 +11,14 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../actions/print/print.service';
+import { Action } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './productquoteapproval-form.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteApprovalFormComponent
-  extends AllorsFormComponent<ProductQuoteApproval>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  title: string;
-  subTitle: string;
-
+export class ProductQuoteApprovalFormComponent extends AllorsFormComponent<ProductQuoteApproval> {
   readonly m: M;
-
-  private subscription: Subscription;
-
-  productQuoteApproval: ProductQuoteApproval;
 
   print: Action;
 
@@ -53,72 +33,32 @@ export class ProductQuoteApprovalFormComponent
 
     this.print = printService.print(this.m.ProductQuoteApproval.ProductQuote);
   }
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
-
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.ProductQuoteApproval({
-              objectId: this.data.id,
-              include: {
-                ProductQuote: {
-                  PrintDocument: x,
-                },
-              },
-            }),
-          ];
-
-          return this.allors.context.pull(pulls).pipe(map((loaded) => loaded));
+    if (this.editRequest) {
+      pulls.push(
+        p.ProductQuoteApproval({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            ProductQuote: {
+              PrintDocument: {},
+            },
+          },
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-        this.productQuoteApproval = loaded.object<ProductQuoteApproval>(
-          m.ProductQuoteApproval
-        );
+      );
+    }
 
-        this.title = this.productQuoteApproval.Title;
-      });
+    this.onPrePullInitialize(pulls);
   }
 
-  approve(): void {
-    this.saveAndInvoke(() =>
-      this.allors.context.invoke(this.productQuoteApproval.Approve)
-    );
-  }
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-  reject(): void {
-    this.saveAndInvoke(() =>
-      this.allors.context.invoke(this.productQuoteApproval.Reject)
-    );
-  }
-
-  // TODO: KOEN
-  saveAndInvoke(methodCall: () => Observable<IResult>): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-
-    this.allors.context
-      .push()
-      .pipe(
-        switchMap(() => {
-          return this.allors.context.pull([
-            pull.ProductQuoteApproval({ objectId: this.data.id }),
-          ]);
-        }),
-        switchMap(() => {
-          this.allors.context.reset();
-          return methodCall();
-        })
-      )
-      .subscribe(() => {
-        this.dialogRef.close(this.productQuoteApproval);
-        this.refreshService.refresh();
-      }, this.errorService.errorHandler);
+    this.onPostPullInitialize(pullResult);
   }
 }

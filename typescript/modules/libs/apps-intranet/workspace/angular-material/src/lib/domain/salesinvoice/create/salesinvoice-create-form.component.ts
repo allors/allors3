@@ -1,23 +1,28 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  CustomerRelationship,
   InternalOrganisation,
+  IrpfRegime,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
   SalesInvoice,
+  SalesInvoiceType,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -29,14 +34,8 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './salesinvoice-create-form.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceCreateFormComponent
-  extends AllorsFormComponent<SalesInvoice>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SalesInvoiceCreateFormComponent extends AllorsFormComponent<SalesInvoice> {
   readonly m: M;
-  public title = 'Add Sales Invoice';
-
-  invoice: SalesInvoice;
   billToContactMechanisms: ContactMechanism[] = [];
   billToContacts: Person[] = [];
   billToEndCustomerContactMechanisms: ContactMechanism[] = [];
@@ -70,7 +69,6 @@ export class SalesInvoiceCreateFormComponent
   private previousShipToEndCustomer: Party;
   private previousBillToCustomer: Party;
   private previousBillToEndCustomer: Party;
-  private subscription: Subscription;
   salesInvoiceTypes: SalesInvoiceType[];
 
   customersFilter: SearchFactory;
@@ -83,29 +81,29 @@ export class SalesInvoiceCreateFormComponent
 
   get billToCustomerIsPerson(): boolean {
     return (
-      !this.invoice.BillToCustomer ||
-      this.invoice.BillToCustomer.strategy.cls === this.m.Person
+      !this.object.BillToCustomer ||
+      this.object.BillToCustomer.strategy.cls === this.m.Person
     );
   }
 
   get shipToCustomerIsPerson(): boolean {
     return (
-      !this.invoice.ShipToCustomer ||
-      this.invoice.ShipToCustomer.strategy.cls === this.m.Person
+      !this.object.ShipToCustomer ||
+      this.object.ShipToCustomer.strategy.cls === this.m.Person
     );
   }
 
   get billToEndCustomerIsPerson(): boolean {
     return (
-      !this.invoice.BillToEndCustomer ||
-      this.invoice.BillToEndCustomer.strategy.cls === this.m.Person
+      !this.object.BillToEndCustomer ||
+      this.object.BillToEndCustomer.strategy.cls === this.m.Person
     );
   }
 
   get shipToEndCustomerIsPerson(): boolean {
     return (
-      !this.invoice.ShipToEndCustomer ||
-      this.invoice.ShipToEndCustomer.strategy.cls === this.m.Person
+      !this.object.ShipToEndCustomer ||
+      this.object.ShipToEndCustomer.strategy.cls === this.m.Person
     );
   }
 
@@ -118,83 +116,79 @@ export class SalesInvoiceCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(([, internalOrganisationId]) => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.IsoCode }],
-            }),
-            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
-            pull.SalesInvoiceType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.SalesInvoiceType.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.SalesInvoiceType.Name }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
+      }),
+      p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
+      p.SalesInvoiceType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.SalesInvoiceType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.SalesInvoiceType.Name }],
+      })
+    );
 
-          this.customersFilter = Filters.customersFilter(
-            m,
-            internalOrganisationId
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.salesInvoiceTypes = loaded.collection<SalesInvoiceType>(
-          m.SalesInvoiceType
-        );
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.invoice = this.allors.context.create<SalesInvoice>(m.SalesInvoice);
-        this.invoice.BilledFrom = this.internalOrganisation;
-        this.invoice.AdvancePayment = '0';
+    this.onPostPullInitialize(pullResult);
 
-        if (this.invoice.BillToCustomer) {
-          this.updateBillToCustomer(this.invoice.BillToCustomer);
-        }
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.salesInvoiceTypes = pullResult.collection<SalesInvoiceType>(
+      this.m.SalesInvoiceType
+    );
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
 
-        if (this.invoice.BillToEndCustomer) {
-          this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
-        }
+    this.object.BilledFrom = this.internalOrganisation;
+    this.object.AdvancePayment = '0';
 
-        if (this.invoice.ShipToCustomer) {
-          this.updateShipToCustomer(this.invoice.ShipToCustomer);
-        }
+    if (this.object.BillToCustomer) {
+      this.updateBillToCustomer(this.object.BillToCustomer);
+    }
 
-        if (this.invoice.ShipToEndCustomer) {
-          this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
-        }
+    if (this.object.BillToEndCustomer) {
+      this.updateBillToEndCustomer(this.object.BillToEndCustomer);
+    }
 
-        this.previousShipToCustomer = this.invoice.ShipToCustomer;
-        this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
-        this.previousBillToCustomer = this.invoice.BillToCustomer;
-        this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
-      });
+    if (this.object.ShipToCustomer) {
+      this.updateShipToCustomer(this.object.ShipToCustomer);
+    }
+
+    if (this.object.ShipToEndCustomer) {
+      this.updateShipToEndCustomer(this.object.ShipToEndCustomer);
+    }
+
+    this.previousShipToCustomer = this.object.ShipToCustomer;
+    this.previousShipToEndCustomer = this.object.ShipToEndCustomer;
+    this.previousBillToCustomer = this.object.BillToCustomer;
+    this.previousBillToEndCustomer = this.object.BillToEndCustomer;
   }
 
   public shipToCustomerAdded(party: Party): void {
@@ -205,7 +199,7 @@ export class SalesInvoiceCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.ShipToCustomer = party;
+    this.object.ShipToCustomer = party;
   }
 
   public billToCustomerAdded(party: Party): void {
@@ -216,7 +210,7 @@ export class SalesInvoiceCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.BillToCustomer = party;
+    this.object.BillToCustomer = party;
   }
 
   public shipToEndCustomerAdded(party: Party): void {
@@ -227,7 +221,7 @@ export class SalesInvoiceCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.ShipToEndCustomer = party;
+    this.object.ShipToEndCustomer = party;
   }
 
   public billToEndCustomerAdded(party: Party): void {
@@ -238,7 +232,7 @@ export class SalesInvoiceCreateFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.BillToEndCustomer = party;
+    this.object.BillToEndCustomer = party;
   }
 
   public billToContactPersonAdded(person: Person): void {
@@ -246,12 +240,12 @@ export class SalesInvoiceCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .BillToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToContacts.push(person);
-    this.invoice.BillToContactPerson = person;
+    this.object.BillToContactPerson = person;
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
@@ -259,12 +253,12 @@ export class SalesInvoiceCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .BillToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToEndCustomerContacts.push(person);
-    this.invoice.BillToEndCustomerContactPerson = person;
+    this.object.BillToEndCustomerContactPerson = person;
   }
 
   public shipToContactPersonAdded(person: Person): void {
@@ -272,12 +266,12 @@ export class SalesInvoiceCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .ShipToCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
-    this.invoice.ShipToContactPerson = person;
+    this.object.ShipToContactPerson = person;
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
@@ -285,20 +279,20 @@ export class SalesInvoiceCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToEndCustomerContacts.push(person);
-    this.invoice.ShipToEndCustomerContactPerson = person;
+    this.object.ShipToEndCustomerContactPerson = person;
   }
 
   public billToContactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.invoice.BillToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedBillToContactMechanism =
+    this.object.BillToCustomer.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedBillToContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -308,10 +302,10 @@ export class SalesInvoiceCreateFormComponent
     this.billToEndCustomerContactMechanisms.push(
       partyContactMechanism.ContactMechanism
     );
-    this.invoice.BillToEndCustomer.addPartyContactMechanism(
+    this.object.BillToEndCustomer.addPartyContactMechanism(
       partyContactMechanism
     );
-    this.invoice.AssignedBillToEndCustomerContactMechanism =
+    this.object.AssignedBillToEndCustomerContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -319,8 +313,8 @@ export class SalesInvoiceCreateFormComponent
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.invoice.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedShipToAddress =
+    this.object.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedShipToAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -330,10 +324,10 @@ export class SalesInvoiceCreateFormComponent
     this.shipToEndCustomerAddresses.push(
       partyContactMechanism.ContactMechanism
     );
-    this.invoice.ShipToEndCustomer.addPartyContactMechanism(
+    this.object.ShipToEndCustomer.addPartyContactMechanism(
       partyContactMechanism
     );
-    this.invoice.AssignedShipToEndCustomerAddress =
+    this.object.AssignedShipToEndCustomerAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -401,19 +395,19 @@ export class SalesInvoiceCreateFormComponent
     this.allors.context.pull(pulls).subscribe((loaded) => {
       if (
         this.previousShipToCustomer &&
-        this.invoice.ShipToCustomer !== this.previousShipToCustomer
+        this.object.ShipToCustomer !== this.previousShipToCustomer
       ) {
-        this.invoice.ShipToContactPerson = null;
+        this.object.ShipToContactPerson = null;
       }
 
-      this.previousShipToCustomer = this.invoice.ShipToCustomer;
+      this.previousShipToCustomer = this.object.ShipToCustomer;
 
       if (
-        this.invoice.ShipToCustomer != null &&
-        this.invoice.BillToCustomer == null
+        this.object.ShipToCustomer != null &&
+        this.object.BillToCustomer == null
       ) {
-        this.invoice.BillToCustomer = this.invoice.ShipToCustomer;
-        this.updateBillToCustomer(this.invoice.ShipToCustomer);
+        this.object.BillToCustomer = this.object.ShipToCustomer;
+        this.updateBillToCustomer(this.object.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
@@ -472,19 +466,19 @@ export class SalesInvoiceCreateFormComponent
     this.allors.context.pull(pulls).subscribe((loaded) => {
       if (
         this.previousBillToCustomer &&
-        this.invoice.BillToCustomer !== this.previousBillToCustomer
+        this.object.BillToCustomer !== this.previousBillToCustomer
       ) {
-        this.invoice.BillToContactPerson = null;
+        this.object.BillToContactPerson = null;
       }
 
-      this.previousBillToCustomer = this.invoice.BillToCustomer;
+      this.previousBillToCustomer = this.object.BillToCustomer;
 
       if (
-        this.invoice.BillToCustomer != null &&
-        this.invoice.ShipToCustomer == null
+        this.object.BillToCustomer != null &&
+        this.object.ShipToCustomer == null
       ) {
-        this.invoice.ShipToCustomer = this.invoice.BillToCustomer;
-        this.updateShipToCustomer(this.invoice.ShipToCustomer);
+        this.object.ShipToCustomer = this.object.BillToCustomer;
+        this.updateShipToCustomer(this.object.ShipToCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
@@ -540,18 +534,18 @@ export class SalesInvoiceCreateFormComponent
     this.allors.context.pull(pulls).subscribe((loaded) => {
       if (
         this.previousBillToEndCustomer &&
-        this.invoice.BillToEndCustomer !== this.previousBillToEndCustomer
+        this.object.BillToEndCustomer !== this.previousBillToEndCustomer
       ) {
-        this.invoice.BillToEndCustomerContactPerson = null;
+        this.object.BillToEndCustomerContactPerson = null;
       }
-      this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
+      this.previousBillToEndCustomer = this.object.BillToEndCustomer;
 
       if (
-        this.invoice.BillToEndCustomer != null &&
-        this.invoice.ShipToEndCustomer == null
+        this.object.BillToEndCustomer != null &&
+        this.object.ShipToEndCustomer == null
       ) {
-        this.invoice.ShipToEndCustomer = this.invoice.BillToEndCustomer;
-        this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
+        this.object.ShipToEndCustomer = this.object.BillToEndCustomer;
+        this.updateShipToEndCustomer(this.object.ShipToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
@@ -609,19 +603,19 @@ export class SalesInvoiceCreateFormComponent
     this.allors.context.pull(pulls).subscribe((loaded) => {
       if (
         this.previousShipToEndCustomer &&
-        this.invoice.ShipToEndCustomer !== this.previousShipToEndCustomer
+        this.object.ShipToEndCustomer !== this.previousShipToEndCustomer
       ) {
-        this.invoice.ShipToEndCustomerContactPerson = null;
+        this.object.ShipToEndCustomerContactPerson = null;
       }
 
-      this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
+      this.previousShipToEndCustomer = this.object.ShipToEndCustomer;
 
       if (
-        this.invoice.ShipToEndCustomer != null &&
-        this.invoice.BillToEndCustomer == null
+        this.object.ShipToEndCustomer != null &&
+        this.object.BillToEndCustomer == null
       ) {
-        this.invoice.BillToEndCustomer = this.invoice.ShipToEndCustomer;
-        this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
+        this.object.BillToEndCustomer = this.object.ShipToEndCustomer;
+        this.updateBillToEndCustomer(this.object.BillToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
@@ -644,21 +638,20 @@ export class SalesInvoiceCreateFormComponent
 
   private setDerivedInitialRoles() {
     this.currencyInitialRole =
-      this.invoice.BillToCustomer?.PreferredCurrency ??
-      this.invoice.BillToCustomer?.Locale?.Country?.Currency ??
-      this.invoice.BilledFrom?.PreferredCurrency;
+      this.object.BillToCustomer?.PreferredCurrency ??
+      this.object.BillToCustomer?.Locale?.Country?.Currency ??
+      this.object.BilledFrom?.PreferredCurrency;
     this.billToContactMechanismInitialRole =
-      this.invoice.BillToCustomer?.BillingAddress ??
-      this.invoice.BillToCustomer?.ShippingAddress ??
-      this.invoice.BillToCustomer?.GeneralCorrespondence;
+      this.object.BillToCustomer?.BillingAddress ??
+      this.object.BillToCustomer?.ShippingAddress ??
+      this.object.BillToCustomer?.GeneralCorrespondence;
     this.billToEndCustomerContactMechanismInitialRole =
-      this.invoice.BillToEndCustomer?.BillingAddress ??
-      this.invoice.BillToEndCustomer?.ShippingAddress ??
-      this.invoice.BillToEndCustomer?.GeneralCorrespondence;
+      this.object.BillToEndCustomer?.BillingAddress ??
+      this.object.BillToEndCustomer?.ShippingAddress ??
+      this.object.BillToEndCustomer?.GeneralCorrespondence;
     this.shipToEndCustomerAddressInitialRole =
-      this.invoice.ShipToEndCustomer?.ShippingAddress ??
-      this.invoice.ShipToEndCustomer?.GeneralCorrespondence;
-    this.shipToAddressInitialRole =
-      this.invoice.ShipToCustomer?.ShippingAddress;
+      this.object.ShipToEndCustomer?.ShippingAddress ??
+      this.object.ShipToEndCustomer?.GeneralCorrespondence;
+    this.shipToAddressInitialRole = this.object.ShipToCustomer?.ShippingAddress;
   }
 }

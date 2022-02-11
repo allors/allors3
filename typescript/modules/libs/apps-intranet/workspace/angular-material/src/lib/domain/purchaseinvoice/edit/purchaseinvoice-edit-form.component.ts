@@ -1,42 +1,43 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  CustomerRelationship,
   InternalOrganisation,
+  IrpfRegime,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
   PurchaseInvoice,
+  PurchaseInvoiceType,
+  SupplierRelationship,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
-import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'purchaseinvoice-edit-form',
   templateUrl: './purchaseinvoice-edit-form.component.html',
-  providers: [ContextService, OldPanelService],
+  providers: [ContextService],
 })
-export class PurchaseInvoiceEditFormComponent
-  extends AllorsFormComponent<PurchaseInvoice>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<PurchaseInvoice> {
   readonly m: M;
-
-  invoice: PurchaseInvoice;
 
   currencies: Currency[];
   vatRegimes: VatRegime[];
@@ -72,8 +73,6 @@ export class PurchaseInvoiceEditFormComponent
   private previousShipToCustomer: Party;
   private previousBillToEndCustomer: Party;
   private previousShipToEndCustomer: Party;
-
-  private subscription: Subscription;
   internalOrganisation: InternalOrganisation;
 
   customersFilter: SearchFactory;
@@ -83,22 +82,22 @@ export class PurchaseInvoiceEditFormComponent
 
   get shipToCustomerIsPerson(): boolean {
     return (
-      !this.invoice.ShipToCustomer ||
-      this.invoice.ShipToCustomer.strategy.cls === this.m.Person
+      !this.object.ShipToCustomer ||
+      this.object.ShipToCustomer.strategy.cls === this.m.Person
     );
   }
 
   get billToEndCustomerIsPerson(): boolean {
     return (
-      !this.invoice.BillToEndCustomer ||
-      this.invoice.BillToEndCustomer.strategy.cls === this.m.Person
+      !this.object.BillToEndCustomer ||
+      this.object.BillToEndCustomer.strategy.cls === this.m.Person
     );
   }
 
   get shipToEndCustomerIsPerson(): boolean {
     return (
-      !this.invoice.ShipToEndCustomer ||
-      this.invoice.ShipToEndCustomer.strategy.cls === this.m.Person
+      !this.object.ShipToEndCustomer ||
+      this.object.ShipToEndCustomer.strategy.cls === this.m.Person
     );
   }
 
@@ -112,165 +111,114 @@ export class PurchaseInvoiceEditFormComponent
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
 
-    // Normal
-    const purchaseInvoicePullName = `${panel.name}_${this.m.PurchaseInvoice.tag}`;
-
-    panel.onPull = (pulls) => {
-      const m = this.m;
-      const { pullBuilder: pull } = m;
-      const x = {};
-
-      const { id } = this.panel.manager;
-
-      pulls.push(
-        pull.PurchaseInvoice({
-          name: purchaseInvoicePullName,
-          objectId: id,
-          include: {
-            PurchaseInvoiceItems: {
-              InvoiceItemType: x,
-            },
-            BilledFrom: x,
-            DerivedBilledFromContactMechanism: {
-              PostalAddress_Country: {},
-            },
-            BilledFromContactPerson: x,
-            BillToEndCustomer: x,
-            BillToEndCustomerContactPerson: x,
-            ShipToEndCustomer: x,
-            ShipToEndCustomerContactPerson: x,
-            ElectronicDocuments: x,
-            PurchaseInvoiceState: x,
-            CreatedBy: x,
-            LastModifiedBy: x,
-            DerivedVatRegime: {
-              VatRates: x,
-            },
-            DerivedBillToEndCustomerContactMechanism: {
-              PostalAddress_Country: {},
-            },
-            DerivedShipToEndCustomerAddress: {
-              Country: x,
-            },
-          },
-        })
-      );
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.invoice = loaded.object<PurchaseInvoice>(purchaseInvoicePullName);
-      }
-    };
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
+    this.employeeFilter = Filters.employeeFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
+    this.suppliersFilter = Filters.suppliersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Expanded
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.invoice = undefined;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.PurchaseInvoice({
+        objectId: this.editRequest.objectId,
+        include: {
+          BilledFrom: {},
+          AssignedVatRegime: {},
+          PurchaseInvoiceItems: {
+            InvoiceItemType: {},
+          },
+          DerivedBilledFromContactMechanism: {
+            PostalAddress_Country: {},
+          },
+          BilledFromContactPerson: {},
+          BillToEndCustomer: {},
+          BillToEndCustomerContactPerson: {},
+          ShipToEndCustomer: {},
+          ShipToEndCustomerContactPerson: {},
+          ElectronicDocuments: {},
+          PurchaseInvoiceState: {},
+          CreatedBy: {},
+          LastModifiedBy: {},
+          DerivedVatRegime: {
+            VatRates: {},
+          },
+          DerivedBillToEndCustomerContactMechanism: {
+            PostalAddress_Country: {},
+          },
+          DerivedShipToEndCustomerAddress: {
+            Country: {},
+          },
+        },
+      }),
+      p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
+      }),
+      p.PurchaseInvoiceType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.PurchaseInvoiceType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.PurchaseInvoiceType.Name }],
+      })
+    );
 
-          const id = this.panel.manager.id;
+    this.onPrePullInitialize(pulls);
+  }
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.PurchaseInvoice({
-              objectId: id,
-              include: {
-                BilledFrom: x,
-                BilledFromContactPerson: x,
-                DerivedBilledFromContactMechanism: x,
-                ShipToCustomer: x,
-                BillToEndCustomer: x,
-                DerivedBillToEndCustomerContactMechanism: x,
-                BillToEndCustomerContactPerson: x,
-                ShipToEndCustomer: x,
-                DerivedShipToEndCustomerAddress: x,
-                ShipToEndCustomerContactPerson: x,
-                PurchaseInvoiceState: x,
-                AssignedVatRegime: x,
-                DerivedVatRegime: x,
-              },
-            }),
-            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.IsoCode }],
-            }),
-            pull.PurchaseInvoiceType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.PurchaseInvoiceType.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.PurchaseInvoiceType.Name }],
-            }),
-          ];
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
 
-          this.customersFilter = Filters.customersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
-          this.employeeFilter = Filters.employeeFilter(
-            m,
-            this.internalOrganisationId.value
-          );
-          this.suppliersFilter = Filters.suppliersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
+    this.onPostPullInitialize(pullResult);
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.purchaseInvoiceTypes = pullResult.collection<PurchaseInvoiceType>(
+      this.m.PurchaseInvoiceType
+    );
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.purchaseInvoiceTypes = loaded.collection<PurchaseInvoiceType>(
-          m.PurchaseInvoiceType
-        );
+    if (this.object.BilledFrom) {
+      this.updateBilledFrom(this.object.BilledFrom);
+    }
 
-        this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
+    if (this.object.ShipToCustomer) {
+      this.updateShipToCustomer(this.object.ShipToCustomer);
+    }
 
-        if (this.invoice.BilledFrom) {
-          this.updateBilledFrom(this.invoice.BilledFrom);
-        }
+    if (this.object.BillToEndCustomer) {
+      this.updateBillToEndCustomer(this.object.BillToEndCustomer);
+    }
 
-        if (this.invoice.ShipToCustomer) {
-          this.updateShipToCustomer(this.invoice.ShipToCustomer);
-        }
+    if (this.object.ShipToEndCustomer) {
+      this.updateShipToEndCustomer(this.object.ShipToEndCustomer);
+    }
 
-        if (this.invoice.BillToEndCustomer) {
-          this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
-        }
-
-        if (this.invoice.ShipToEndCustomer) {
-          this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
-        }
-
-        this.previousBilledFrom = this.invoice.BilledFrom;
-        this.previousShipToCustomer = this.invoice.ShipToCustomer;
-        this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
-        this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
-      });
+    this.previousBilledFrom = this.object.BilledFrom;
+    this.previousShipToCustomer = this.object.ShipToCustomer;
+    this.previousBillToEndCustomer = this.object.BillToEndCustomer;
+    this.previousShipToEndCustomer = this.object.ShipToEndCustomer;
   }
 
   public billedFromAdded(organisation: Organisation): void {
@@ -281,7 +229,7 @@ export class PurchaseInvoiceEditFormComponent
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.BilledFrom = organisation;
+    this.object.BilledFrom = organisation;
   }
 
   public shipToCustomerAdded(party: Party): void {
@@ -292,7 +240,7 @@ export class PurchaseInvoiceEditFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.ShipToCustomer = party;
+    this.object.ShipToCustomer = party;
   }
 
   public billToEndCustomerAdded(party: Party): void {
@@ -303,7 +251,7 @@ export class PurchaseInvoiceEditFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.BillToEndCustomer = party;
+    this.object.BillToEndCustomer = party;
   }
 
   public shipToEndCustomerAdded(party: Party): void {
@@ -314,7 +262,7 @@ export class PurchaseInvoiceEditFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.invoice.ShipToEndCustomer = party;
+    this.object.ShipToEndCustomer = party;
   }
 
   public billedFromContactPersonAdded(person: Person): void {
@@ -322,12 +270,12 @@ export class PurchaseInvoiceEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billedFromContacts.push(person);
-    this.invoice.BilledFromContactPerson = person;
+    this.object.BilledFromContactPerson = person;
   }
 
   public shipToCustomerContactPersonAdded(person: Person): void {
@@ -335,12 +283,12 @@ export class PurchaseInvoiceEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .BilledFrom as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToCustomerContacts.push(person);
-    this.invoice.ShipToCustomerContactPerson = person;
+    this.object.ShipToCustomerContactPerson = person;
   }
 
   public billToEndCustomerContactPersonAdded(person: Person): void {
@@ -348,12 +296,12 @@ export class PurchaseInvoiceEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToEndCustomerContacts.push(person);
-    this.invoice.BillToEndCustomerContactPerson = person;
+    this.object.BillToEndCustomerContactPerson = person;
   }
 
   public shipToEndCustomerContactPersonAdded(person: Person): void {
@@ -361,12 +309,12 @@ export class PurchaseInvoiceEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.invoice
+    organisationContactRelationship.Organisation = this.object
       .ShipToEndCustomer as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToEndCustomerContacts.push(person);
-    this.invoice.ShipToEndCustomerContactPerson = person;
+    this.object.ShipToEndCustomerContactPerson = person;
   }
 
   public billedFromContactMechanismAdded(
@@ -375,8 +323,8 @@ export class PurchaseInvoiceEditFormComponent
     this.billedFromContactMechanisms.push(
       partyContactMechanism.ContactMechanism
     );
-    this.invoice.BilledFrom.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedBilledFromContactMechanism =
+    this.object.BilledFrom.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedBilledFromContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -384,8 +332,8 @@ export class PurchaseInvoiceEditFormComponent
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToCustomerAddresses.push(partyContactMechanism.ContactMechanism);
-    this.invoice.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
-    this.invoice.AssignedShipToCustomerAddress =
+    this.object.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedShipToCustomerAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -395,10 +343,10 @@ export class PurchaseInvoiceEditFormComponent
     this.billToEndCustomerContactMechanisms.push(
       partyContactMechanism.ContactMechanism
     );
-    this.invoice.BillToEndCustomer.addPartyContactMechanism(
+    this.object.BillToEndCustomer.addPartyContactMechanism(
       partyContactMechanism
     );
-    this.invoice.AssignedBillToEndCustomerContactMechanism =
+    this.object.AssignedBillToEndCustomerContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -408,10 +356,10 @@ export class PurchaseInvoiceEditFormComponent
     this.shipToEndCustomerAddresses.push(
       partyContactMechanism.ContactMechanism
     );
-    this.invoice.ShipToEndCustomer.addPartyContactMechanism(
+    this.object.ShipToEndCustomer.addPartyContactMechanism(
       partyContactMechanism
     );
-    this.invoice.AssignedShipToEndCustomerAddress =
+    this.object.AssignedShipToEndCustomerAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -475,10 +423,10 @@ export class PurchaseInvoiceEditFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.invoice.BilledFrom !== this.previousBilledFrom) {
-        this.invoice.AssignedBilledFromContactMechanism = null;
-        this.invoice.BilledFromContactPerson = null;
-        this.previousBilledFrom = this.invoice.BilledFrom;
+      if (this.object.BilledFrom !== this.previousBilledFrom) {
+        this.object.AssignedBilledFromContactMechanism = null;
+        this.object.BilledFromContactPerson = null;
+        this.previousBilledFrom = this.object.BilledFrom;
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
@@ -531,10 +479,10 @@ export class PurchaseInvoiceEditFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.invoice.ShipToCustomer !== this.previousShipToCustomer) {
-        this.invoice.AssignedShipToEndCustomerAddress = null;
-        this.invoice.ShipToCustomerContactPerson = null;
-        this.previousShipToCustomer = this.invoice.ShipToCustomer;
+      if (this.object.ShipToCustomer !== this.previousShipToCustomer) {
+        this.object.AssignedShipToEndCustomerAddress = null;
+        this.object.ShipToCustomerContactPerson = null;
+        this.previousShipToCustomer = this.object.ShipToCustomer;
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
@@ -578,18 +526,18 @@ export class PurchaseInvoiceEditFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.invoice.BillToEndCustomer !== this.previousBillToEndCustomer) {
-        this.invoice.AssignedBillToEndCustomerContactMechanism = null;
-        this.invoice.BillToEndCustomerContactPerson = null;
-        this.previousBillToEndCustomer = this.invoice.BillToEndCustomer;
+      if (this.object.BillToEndCustomer !== this.previousBillToEndCustomer) {
+        this.object.AssignedBillToEndCustomerContactMechanism = null;
+        this.object.BillToEndCustomerContactPerson = null;
+        this.previousBillToEndCustomer = this.object.BillToEndCustomer;
       }
 
       if (
-        this.invoice.BillToEndCustomer != null &&
-        this.invoice.ShipToEndCustomer == null
+        this.object.BillToEndCustomer != null &&
+        this.object.ShipToEndCustomer == null
       ) {
-        this.invoice.ShipToEndCustomer = this.invoice.BillToEndCustomer;
-        this.updateShipToEndCustomer(this.invoice.ShipToEndCustomer);
+        this.object.ShipToEndCustomer = this.object.BillToEndCustomer;
+        this.updateShipToEndCustomer(this.object.ShipToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =
@@ -636,18 +584,18 @@ export class PurchaseInvoiceEditFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.invoice.ShipToEndCustomer !== this.previousShipToEndCustomer) {
-        this.invoice.AssignedShipToEndCustomerAddress = null;
-        this.invoice.ShipToEndCustomerContactPerson = null;
-        this.previousShipToEndCustomer = this.invoice.ShipToEndCustomer;
+      if (this.object.ShipToEndCustomer !== this.previousShipToEndCustomer) {
+        this.object.AssignedShipToEndCustomerAddress = null;
+        this.object.ShipToEndCustomerContactPerson = null;
+        this.previousShipToEndCustomer = this.object.ShipToEndCustomer;
       }
 
       if (
-        this.invoice.ShipToEndCustomer != null &&
-        this.invoice.BillToEndCustomer == null
+        this.object.ShipToEndCustomer != null &&
+        this.object.BillToEndCustomer == null
       ) {
-        this.invoice.BillToEndCustomer = this.invoice.ShipToEndCustomer;
-        this.updateBillToEndCustomer(this.invoice.BillToEndCustomer);
+        this.object.BillToEndCustomer = this.object.ShipToEndCustomer;
+        this.updateBillToEndCustomer(this.object.BillToEndCustomer);
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =

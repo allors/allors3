@@ -1,18 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  DayOfWeek,
+  Organisation,
   RepeatingPurchaseInvoice,
+  TimeFrequency,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -26,20 +20,13 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './repeatingpurchaseinvoice-form.component.html',
   providers: [ContextService],
 })
-export class RepeatingPurchaseInvoiceFormComponent
-  extends AllorsFormComponent<RepeatingPurchaseInvoice>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class RepeatingPurchaseInvoiceFormComponent extends AllorsFormComponent<RepeatingPurchaseInvoice> {
   readonly m: M;
 
-  title: string;
-  repeatinginvoice: RepeatingPurchaseInvoice;
   frequencies: TimeFrequency[];
   daysOfWeek: DayOfWeek[];
   supplier: Organisation;
   internalOrganisations: Organisation[];
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -51,90 +38,65 @@ export class RepeatingPurchaseInvoiceFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-          const id = this.data.id;
+    pulls.push(
+      p.Organisation({
+        name: 'InternalOrganisations',
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        },
+      }),
+      p.TimeFrequency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.TimeFrequency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.TimeFrequency.Name }],
+      }),
+      p.DayOfWeek({})
+    );
 
-          const pulls = [
-            pull.Organisation({
-              name: 'InternalOrganisations',
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Organisation.IsInternalOrganisation,
-                value: true,
-              },
-            }),
-            pull.TimeFrequency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.TimeFrequency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.TimeFrequency.Name }],
-            }),
-            pull.DayOfWeek({}),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.RepeatingPurchaseInvoice({
-                objectId: id,
-                include: {
-                  Frequency: x,
-                  DayOfWeek: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Organisation({ objectId: this.data.associationId })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.RepeatingPurchaseInvoice({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Frequency: {},
+            DayOfWeek: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.supplier = loaded.object<Organisation>(m.Organisation);
-        this.repeatinginvoice = loaded.object<RepeatingPurchaseInvoice>(
-          m.RepeatingPurchaseInvoice
-        );
-        this.frequencies = loaded.collection<TimeFrequency>(m.TimeFrequency);
-        this.daysOfWeek = loaded.collection<DayOfWeek>(m.DayOfWeek);
-        this.internalOrganisations = loaded.collection<Organisation>(
-          'InternalOrganisations'
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(p.Organisation({ objectId: initializer.id }));
+    }
+  }
 
-        if (isCreate) {
-          this.title = 'Create Repeating Purchase Invoice';
-          this.repeatinginvoice =
-            this.allors.context.create<RepeatingPurchaseInvoice>(
-              m.RepeatingPurchaseInvoice
-            );
-          this.repeatinginvoice.Supplier = this.supplier;
-        } else {
-          if (this.repeatinginvoice.canWriteFrequency) {
-            this.title = 'Edit Repeating Purchase Invoice';
-          } else {
-            this.title = 'View Repeating Purchase Invoice';
-          }
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.supplier = pullResult.object<Organisation>(this.m.Organisation);
+    this.frequencies = pullResult.collection<TimeFrequency>(
+      this.m.TimeFrequency
+    );
+    this.daysOfWeek = pullResult.collection<DayOfWeek>(this.m.DayOfWeek);
+    this.internalOrganisations = pullResult.collection<Organisation>(
+      'InternalOrganisations'
+    );
+
+    if (this.createRequest) {
+      this.object.Supplier = this.supplier;
+    }
   }
 }

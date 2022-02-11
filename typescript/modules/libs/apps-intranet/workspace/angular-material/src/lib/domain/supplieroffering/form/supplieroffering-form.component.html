@@ -1,9 +1,9 @@
-<div class="container-fluid" *ngIf="supplierOffering">
+<div class="container-fluid" *ngIf="object">
   <div class="container-fluid">
     <div class="row">
       <a-mat-autocomplete
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.Supplier"
         [filter]="allSuppliersFilter.create(allors.context)"
         display="DisplayName"
@@ -14,12 +14,12 @@
     <div class="row">
       <a-mat-datepicker
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.FromDate"
       ></a-mat-datepicker>
       <a-mat-datepicker
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.ThroughDate"
       ></a-mat-datepicker>
     </div>
@@ -27,14 +27,14 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.Rating"
         [options]="ratingTypes"
         display="Name"
       ></a-mat-select>
       <a-mat-select
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.Preference"
         [options]="preferences"
         display="Name"
@@ -44,12 +44,12 @@
     <div class="row">
       <a-mat-input
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.SupplierProductName"
       ></a-mat-input>
       <a-mat-input
         class="col-myd"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.SupplierProductId"
       ></a-mat-input>
     </div>
@@ -57,13 +57,13 @@
     <div class="row">
       <a-mat-input
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.StandardLeadTime"
         label="Lead time days"
       ></a-mat-input>
       <a-mat-input
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.MinimalOrderQuantity"
       ></a-mat-input>
     </div>
@@ -71,7 +71,7 @@
     <div class="row">
       <a-mat-select
         class="col-md-6"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.UnitOfMeasure"
         [options]="unitsOfMeasure"
         display="Name"
@@ -81,12 +81,12 @@
     <div class="row">
       <a-mat-input
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.Price"
       ></a-mat-input>
       <a-mat-select
         class="col-md"
-        [object]="supplierOffering"
+        [object]="object"
         [roleType]="m.SupplierOffering.Currency"
         [options]="currencies"
         display="Name"

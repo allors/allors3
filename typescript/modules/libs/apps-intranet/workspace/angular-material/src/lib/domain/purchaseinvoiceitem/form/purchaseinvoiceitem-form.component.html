@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="invoiceItem">
-  <div class="row" *ngIf="!invoiceItem.strategy.isNew">
+<div class="container-fluid" *ngIf="object">
+  <div class="row" *ngIf="!object.strategy.isNew">
     <a-mat-static
       class="col-md"
-      [object]="invoiceItem"
+      [object]="object"
       [roleType]="m.PurchaseInvoiceItem.PurchaseInvoiceItemState"
       display="Name"
       label="Status"
@@ -11,43 +11,43 @@
 
   <div class="row">
     <a-mat-select
-      *ngIf="invoiceItem.strategy.isNew"
+      *ngIf="object.strategy.isNew"
       class="col-md"
-      [object]="invoiceItem"
+      [object]="object"
       [roleType]="m.PurchaseInvoiceItem.InvoiceItemType"
       [options]="invoiceItemTypes"
       display="Name"
     ></a-mat-select>
     <a-mat-static
-      *ngIf="!invoiceItem.strategy.isNew"
+      *ngIf="!object.strategy.isNew"
       class="col-md"
-      [object]="invoiceItem"
+      [object]="object"
       [roleType]="m.PurchaseInvoiceItem.InvoiceItemType"
       display="Name"
     ></a-mat-static>
   </div>
 
-  <div *ngIf="invoiceItem.InvoiceItemType">
+  <div *ngIf="object.InvoiceItemType">
     <div
       class="row"
       *ngIf="
-        invoiceItem.InvoiceItemType === serviceItemType ||
-        invoiceItem.InvoiceItemType === timeItemType
+        object.InvoiceItemType === serviceItemType ||
+        object.InvoiceItemType === timeItemType
       "
     >
       <a-mat-textarea
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Description"
       >
       </a-mat-textarea>
     </div>
 
-    <div class="row" *ngIf="invoiceItem.InvoiceItemType === productItemType">
+    <div class="row" *ngIf="object.InvoiceItemType === productItemType">
       <a-mat-autocomplete
         class="col-md"
-        *ngIf="invoiceItem.strategy.isNew"
-        [object]="invoiceItem"
+        *ngIf="object.strategy.isNew"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Part"
         display="Name"
         (changed)="goodSelected($event)"
@@ -55,15 +55,15 @@
       ></a-mat-autocomplete>
       <a-mat-static
         class="col-md"
-        *ngIf="!invoiceItem.strategy.isNew"
-        [object]="invoiceItem"
+        *ngIf="!object.strategy.isNew"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Part"
         display="Name"
       ></a-mat-static>
       <a-mat-select
         class="col-md"
-        *ngIf="invoiceItem.strategy.isNew"
-        [object]="invoiceItem"
+        *ngIf="object.strategy.isNew"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.SerialisedItem"
         [options]="serialisedItems"
         (selected)="serialisedItemSelected($event)"
@@ -71,18 +71,18 @@
       ></a-mat-select>
       <a-mat-static
         class="col-md"
-        *ngIf="!invoiceItem.strategy.isNew"
-        [object]="invoiceItem"
+        *ngIf="!object.strategy.isNew"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.SerialisedItem"
         display="DisplayName"
       ></a-mat-static>
     </div>
 
-    <div class="row" *ngIf="invoiceItem.InvoiceItemType === partItemType">
+    <div class="row" *ngIf="object.InvoiceItemType === partItemType">
       <a-mat-autocomplete
-        *ngIf="invoiceItem.strategy.isNew"
+        *ngIf="object.strategy.isNew"
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Part"
         display="Name"
         [filter]="partsFilter.create(allors.context)"
@@ -91,15 +91,15 @@
       </a-mat-autocomplete>
       <a-mat-static
         class="col-md"
-        *ngIf="!invoiceItem.strategy.isNew"
-        [object]="invoiceItem"
+        *ngIf="!object.strategy.isNew"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Part"
         display="Name"
       ></a-mat-static>
       <a-mat-select
         class="col-md"
-        *ngIf="invoiceItem.strategy.isNew && serialised"
-        [object]="invoiceItem"
+        *ngIf="object.strategy.isNew && serialised"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.SerialisedItem"
         [options]="serialisedItems"
         (selected)="serialisedItemSelected($event)"
@@ -107,14 +107,14 @@
       ></a-mat-select>
       <a-mat-static
         class="col-md"
-        *ngIf="!invoiceItem.strategy.isNew && serialised"
-        [object]="invoiceItem"
+        *ngIf="!object.strategy.isNew && serialised"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.SerialisedItem"
         display="DisplayName"
       ></a-mat-static>
       <a-mat-textarea
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Description"
         class="col-md-12"
       ></a-mat-textarea>
@@ -123,7 +123,7 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.DerivedVatRegime"
         [derivedInitialRole]="vatRegimeInitialRole"
         [assignedRoleType]="m.PurchaseInvoiceItem.AssignedVatRegime"
@@ -134,7 +134,7 @@
       <a-mat-select
         *ngIf="showIrpf"
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.DerivedIrpfRegime"
         [derivedInitialRole]="irpfRegimeInitialRole"
         [assignedRoleType]="m.PurchaseInvoiceItem.AssignedIrpfRegime"
@@ -147,12 +147,12 @@
     <div class="row">
       <a-mat-input
         class="col-md"
-        *ngIf="invoiceItem.InvoiceItemType === partItemType"
-        [object]="invoiceItem"
+        *ngIf="object.InvoiceItemType === partItemType"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Quantity"
       ></a-mat-input>
       <a-mat-static
-        *ngIf="invoiceItem.Part"
+        *ngIf="object.Part"
         class="col-md"
         [object]="supplierOffering"
         [roleType]="m.SupplierOffering.Price"
@@ -160,18 +160,18 @@
       ></a-mat-static>
       <a-mat-input
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.AssignedUnitPrice"
       >
       </a-mat-input>
       <a-mat-static
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.UnitVat"
       ></a-mat-static>
       <a-mat-static
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.TotalIncVat"
       >
       </a-mat-static>
@@ -186,7 +186,7 @@
       ></a-mat-static>
       <a-mat-textarea
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Comment"
         class="col-md-12"
       ></a-mat-textarea>
@@ -198,13 +198,13 @@
       ></a-mat-static>
       <a-mat-textarea
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.InternalComment"
         class="col-md-12"
       ></a-mat-textarea>
       <a-mat-textarea
         class="col-md"
-        [object]="invoiceItem"
+        [object]="object"
         [roleType]="m.PurchaseInvoiceItem.Message"
         class="col-md-12"
       ></a-mat-textarea>

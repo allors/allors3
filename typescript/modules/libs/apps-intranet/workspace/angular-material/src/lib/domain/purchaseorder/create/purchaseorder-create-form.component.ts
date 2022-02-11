@@ -1,23 +1,28 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  Facility,
   InternalOrganisation,
+  IrpfRegime,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
   PurchaseOrder,
+  SupplierRelationship,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -29,15 +34,8 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './purchaseorder-create-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseOrderCreateFormComponent
-  extends AllorsFormComponent<PurchaseOrder>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<PurchaseOrder> {
   readonly m: M;
-
-  title = 'Add Purchase Order';
-
-  order: PurchaseOrder;
   currencies: Currency[];
   takenViaContactMechanisms: ContactMechanism[] = [];
   takenViaContacts: Person[] = [];
@@ -64,8 +62,6 @@ export class PurchaseOrderCreateFormComponent
 
   private takenVia: Party;
 
-  private subscription: Subscription;
-
   suppliersFilter: SearchFactory;
   irpfRegimes: IrpfRegime[];
   currencyInitialRole: Currency;
@@ -83,69 +79,65 @@ export class PurchaseOrderCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.suppliersFilter = Filters.suppliersFilter(
+      this.m,
+      internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(([, internalOrganisationId]) => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.IrpfRegime({}),
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.IsoCode }],
-            }),
-            pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
-            pull.Organisation({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Organisation.IsInternalOrganisation,
-                value: true,
-              },
-              sorting: [{ roleType: m.Organisation.DisplayName }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.IrpfRegime({}),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
+      }),
+      p.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
+      p.Organisation({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        },
+        sorting: [{ roleType: m.Organisation.DisplayName }],
+      })
+    );
 
-          this.suppliersFilter = Filters.suppliersFilter(
-            m,
-            internalOrganisationId
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.order = this.allors.context.create<PurchaseOrder>(m.PurchaseOrder);
-        this.order.OrderedBy = this.internalOrganisation;
+    this.onPostPullInitialize(pullResult);
 
-        if (this.order.TakenViaSupplier) {
-          this.takenVia = this.order.TakenViaSupplier;
-          this.updateSupplier(this.takenVia);
-        }
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.facilities = pullResult.collection<Facility>(this.m.Facility);
 
-        if (this.order.OrderedBy) {
-          this.updateOrderedBy(this.order.OrderedBy);
-        }
-      });
+    this.object.OrderedBy = this.internalOrganisation;
+
+    if (this.object.TakenViaSupplier) {
+      this.takenVia = this.object.TakenViaSupplier;
+      this.updateSupplier(this.takenVia);
+    }
+
+    if (this.object.OrderedBy) {
+      this.updateOrderedBy(this.object.OrderedBy);
+    }
   }
 
   public supplierAdded(supplier: Organisation): void {
@@ -156,7 +148,7 @@ export class PurchaseOrderCreateFormComponent
     supplierRelationship.Supplier = supplier;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.order.TakenViaSupplier = supplier;
+    this.object.TakenViaSupplier = supplier;
     this.takenVia = supplier;
     this.supplierSelected(supplier);
   }
@@ -166,12 +158,12 @@ export class PurchaseOrderCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .TakenViaSupplier as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.takenViaContacts.push(person);
-    this.order.TakenViaContactPerson = person;
+    this.object.TakenViaContactPerson = person;
   }
 
   public takenViaContactMechanismAdded(
@@ -179,7 +171,7 @@ export class PurchaseOrderCreateFormComponent
   ): void {
     this.takenViaContactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.takenVia.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedTakenViaContactMechanism =
+    this.object.AssignedTakenViaContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -188,20 +180,20 @@ export class PurchaseOrderCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToContacts.push(person);
-    this.order.BillToContactPerson = person;
+    this.object.BillToContactPerson = person;
   }
 
   public billToContactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedBillToContactMechanism =
+    this.object.OrderedBy.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedBillToContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -210,20 +202,20 @@ export class PurchaseOrderCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
-    this.order.ShipToContactPerson = person;
+    this.object.ShipToContactPerson = person;
   }
 
   public shipToAddressAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipToAddress =
+    this.object.OrderedBy.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedShipToAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 

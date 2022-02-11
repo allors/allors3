@@ -1,4 +1,4 @@
-<div class="container-fluid" *ngIf="serialisedItem">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-static
       *ngIf="part"
@@ -10,7 +10,7 @@
     <a-mat-autocomplete
       *ngIf="!part"
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.PartAddItem"
       [filter]="serialisedgoodsFilter.create(allors.context)"
       display="Name"
@@ -19,7 +19,7 @@
     ></a-mat-autocomplete>
     <a-mat-input
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.Name"
     ></a-mat-input>
   </div>
@@ -27,7 +27,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.Description"
     ></a-mat-textarea>
   </div>
@@ -35,12 +35,12 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.SerialNumber"
     ></a-mat-input>
     <a-mat-select
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.SerialisedItemState"
       [options]="serialisedItemStates"
       display="Name"
@@ -50,7 +50,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.SerialisedItemAvailability"
       [options]="serialisedItemAvailabilities"
       display="Name"
@@ -60,14 +60,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.Ownership"
       [options]="ownerships"
       display="Name"
     ></a-mat-select>
     <a-mat-autocomplete
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.OwnedBy"
       [filter]="partiesFilter.create(allors.context)"
       display="DisplayName"
@@ -77,7 +77,7 @@
   <div class="row">
     <a-mat-autocomplete
       class="col-md-6"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.RentedBy"
       [filter]="partiesFilter.create(allors.context)"
       display="DisplayName"
@@ -87,12 +87,12 @@
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.LastServiceDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.NextServiceDate"
     ></a-mat-datepicker>
   </div>
@@ -100,19 +100,19 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.CustomerReferenceNumber"
     ></a-mat-input>
     <a-mat-slidetoggle
       class="col-md"
-      [object]="serialisedItem"
+      [object]="object"
       [roleType]="m.SerialisedItem.AvailableForSale"
     ></a-mat-slidetoggle>
   </div>
 
   <a-mat-file
     class="col-md-12"
-    [object]="serialisedItem"
+    [object]="object"
     [roleType]="m.SerialisedItem.PrimaryPhoto"
     accept="image/*"
   ></a-mat-file>

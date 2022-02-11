@@ -1,42 +1,40 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Enumeration,
+  Facility,
   InternalOrganisation,
+  Locale,
+  Organisation,
+  Ownership,
+  Part,
+  SerialisedInventoryItem,
   SerialisedItem,
+  SerialisedItemAvailability,
+  SerialisedItemState,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
-import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'serialiseditem-edit-form',
   templateUrl: './serialiseditem-edit-form.component.html',
-  providers: [OldPanelService, ContextService],
+  providers: [ContextService],
 })
-export class SerialisedItemEditFormComponent
-  extends AllorsFormComponent<SerialisedItem>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SerialisedItemEditFormComponent extends AllorsFormComponent<SerialisedItem> {
   readonly m: M;
-
-  serialisedItem: SerialisedItem;
 
   internalOrganisation: InternalOrganisation;
   locales: Locale[];
@@ -45,8 +43,6 @@ export class SerialisedItemEditFormComponent
   part: Part;
   currentSuppliers: Organisation[];
   currentFacility: Facility;
-
-  private subscription: Subscription;
   serialisedItemAvailabilities: Enumeration[];
   internalOrganisationsFilter: SearchFactory;
   partiesFilter: SearchFactory;
@@ -62,183 +58,142 @@ export class SerialisedItemEditFormComponent
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
 
-    panel.onPull = (pulls) => {
-      this.serialisedItem = undefined;
-
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const id = this.panel.manager.id;
-
-        pulls.push(
-          pull.SerialisedItem({
-            name: pullName,
-            objectId: id,
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.serialisedItem = loaded.object<SerialisedItem>(pullName);
-      }
-    };
+    this.internalOrganisationsFilter = Filters.internalOrganisationsFilter(
+      this.m
+    );
+    this.partiesFilter = Filters.partiesFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Maximized
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.serialisedItem = undefined;
+    pulls.push(
+      p.SerialisedItem({
+        objectId: this.editRequest.objectId,
+        include: {
+          SerialisedItemState: {},
+          SerialisedItemCharacteristics: {
+            SerialisedItemCharacteristicType: {
+              UnitOfMeasure: {},
+            },
+          },
+          LocalisedNames: {
+            Locale: {},
+          },
+          LocalisedDescriptions: {
+            Locale: {},
+          },
+          LocalisedComments: {
+            Locale: {},
+          },
+          LocalisedKeywords: {
+            Locale: {},
+          },
+          Ownership: {},
+          Buyer: {},
+          Seller: {},
+          OwnedBy: {},
+          RentedBy: {},
+          PrimaryPhoto: {},
+          SecondaryPhotos: {},
+          AdditionalPhotos: {},
+          PrivatePhotos: {},
+          PublicElectronicDocuments: {},
+          PrivateElectronicDocuments: {},
+          PublicLocalisedElectronicDocuments: {},
+          PrivateLocalisedElectronicDocuments: {},
+          PurchaseInvoice: {},
+          PurchaseOrder: {},
+          SuppliedBy: {},
+          AssignedSuppliedBy: {},
+        },
+      }),
+      this.fetcher.locales,
+      p.SerialisedItem({
+        objectId: this.editRequest.objectId,
+        select: {
+          PartWhereSerialisedItem: {
+            include: { SerialisedItems: {} },
+          },
+        },
+      }),
+      p.SerialisedItem({
+        objectId: this.editRequest.objectId,
+        select: {
+          SerialisedInventoryItemsWhereSerialisedItem: {
+            include: {
+              Facility: {},
+            },
+          },
+        },
+      }),
+      p.InternalOrganisation({
+        objectId: this.internalOrganisationId.value,
+        select: {
+          ObsoleteCurrentSuppliers: {},
+        },
+      }),
+      p.SerialisedItemState({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.SerialisedItemState.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.SerialisedItemState.Name }],
+      }),
+      p.SerialisedItemAvailability({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.SerialisedItemAvailability.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
+      }),
+      p.Ownership({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Ownership.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Ownership.Name }],
+      })
+    );
 
-          const m = this.m;
-          const { pullBuilder: pull } = m;
-          const x = {};
-          const id = this.panel.manager.id;
-
-          const pulls = [
-            pull.SerialisedItem({
-              objectId: id,
-              include: {
-                SerialisedItemState: x,
-                SerialisedItemCharacteristics: {
-                  SerialisedItemCharacteristicType: {
-                    UnitOfMeasure: x,
-                  },
-                },
-                LocalisedNames: {
-                  Locale: x,
-                },
-                LocalisedDescriptions: {
-                  Locale: x,
-                },
-                LocalisedComments: {
-                  Locale: x,
-                },
-                LocalisedKeywords: {
-                  Locale: x,
-                },
-                Ownership: x,
-                Buyer: x,
-                Seller: x,
-                OwnedBy: x,
-                RentedBy: x,
-                PrimaryPhoto: x,
-                SecondaryPhotos: x,
-                AdditionalPhotos: x,
-                PrivatePhotos: x,
-                PublicElectronicDocuments: x,
-                PrivateElectronicDocuments: x,
-                PublicLocalisedElectronicDocuments: x,
-                PrivateLocalisedElectronicDocuments: x,
-                PurchaseInvoice: x,
-                PurchaseOrder: x,
-                SuppliedBy: x,
-                AssignedSuppliedBy: x,
-              },
-            }),
-            this.fetcher.locales,
-            pull.SerialisedItem({
-              objectId: id,
-              select: {
-                PartWhereSerialisedItem: {
-                  include: { SerialisedItems: x },
-                },
-              },
-            }),
-            pull.SerialisedItem({
-              objectId: id,
-              select: {
-                SerialisedInventoryItemsWhereSerialisedItem: {
-                  include: {
-                    Facility: x,
-                  },
-                },
-              },
-            }),
-            pull.InternalOrganisation({
-              objectId: this.internalOrganisationId.value,
-              select: {
-                ObsoleteCurrentSuppliers: x,
-              },
-            }),
-            pull.SerialisedItemState({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.SerialisedItemState.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.SerialisedItemState.Name }],
-            }),
-            pull.SerialisedItemAvailability({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.SerialisedItemAvailability.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.SerialisedItemAvailability.Name }],
-            }),
-            pull.Ownership({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Ownership.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Ownership.Name }],
-            }),
-          ];
-
-          this.internalOrganisationsFilter =
-            Filters.internalOrganisationsFilter(m);
-          this.partiesFilter = Filters.partiesFilter(m);
-
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-
-        this.currentSuppliers = loaded.collection<Organisation>(
-          m.InternalOrganisation.ObsoleteCurrentSuppliers
-        );
-
-        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.serialisedItemStates = loaded.collection<SerialisedItemState>(
-          m.SerialisedItemState
-        );
-        this.serialisedItemAvailabilities =
-          loaded.collection<SerialisedItemAvailability>(
-            m.SerialisedItemAvailability
-          );
-        this.ownerships = loaded.collection<Ownership>(m.Ownership);
-        this.part = loaded.object<Part>(
-          m.SerialisedItem.PartWhereSerialisedItem
-        );
-
-        const serialisedInventoryItems =
-          loaded.collection<SerialisedInventoryItem>(
-            m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem
-          );
-        const inventoryItem = serialisedInventoryItems?.find(
-          (v) => v.Quantity === 1
-        );
-        if (inventoryItem) {
-          this.currentFacility = inventoryItem.Facility;
-        }
-      });
+    this.onPrePullInitialize(pulls);
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
+
+    this.onPostPullInitialize(pullResult);
+
+    this.currentSuppliers = pullResult.collection<Organisation>(
+      this.m.InternalOrganisation.ObsoleteCurrentSuppliers
+    );
+
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
+    this.serialisedItemStates = pullResult.collection<SerialisedItemState>(
+      this.m.SerialisedItemState
+    );
+    this.serialisedItemAvailabilities =
+      pullResult.collection<SerialisedItemAvailability>(
+        this.m.SerialisedItemAvailability
+      );
+    this.ownerships = pullResult.collection<Ownership>(this.m.Ownership);
+    this.part = pullResult.collection<Part>(
+      this.m.SerialisedItem.PartWhereSerialisedItem
+    )[0];
+
+    const serialisedInventoryItems =
+      pullResult.collection<SerialisedInventoryItem>(
+        this.m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem
+      );
+    const inventoryItem = serialisedInventoryItems?.find(
+      (v) => v.Quantity === 1
+    );
+    if (inventoryItem) {
+      this.currentFacility = inventoryItem.Facility;
     }
   }
 
@@ -246,27 +201,5 @@ export class SerialisedItemEditFormComponent
     if (part) {
       this.part = part;
     }
-  }
-
-  public save(): void {
-    // this.onSave();
-
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
-  }
-
-  public update(): void {
-    this.onSave();
-
-    this.allors.context.push().subscribe(() => {
-      this.snackBar.open('Successfully saved.', 'close', { duration: 5000 });
-      this.refreshService.refresh();
-    }, this.errorService.errorHandler);
-  }
-
-  private onSave() {
-    this.part.addSerialisedItem(this.serialisedItem);
   }
 }

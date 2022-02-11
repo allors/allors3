@@ -1,18 +1,14 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  IUnitOfMeasure,
+  Locale,
   SerialisedItemCharacteristicType,
+  Singleton,
+  TimeFrequency,
+  UnitOfMeasure,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -27,23 +23,13 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './serialiseditemcharacteristic-form.component.html',
   providers: [ContextService],
 })
-export class SerialisedItemCharacteristicFormComponent
-  extends AllorsFormComponent<SerialisedItemCharacteristicType>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  public title: string;
-  public subTitle: string;
-
+export class SerialisedItemCharacteristicFormComponent extends AllorsFormComponent<SerialisedItemCharacteristicType> {
   public m: M;
-
-  public productCharacteristic: SerialisedItemCharacteristicType;
 
   public singleton: Singleton;
   public uoms: IUnitOfMeasure[];
   public timeFrequencies: TimeFrequency[];
   public allUoms: IUnitOfMeasure[];
-
-  private subscription: Subscription;
   locales: Locale[];
 
   constructor(
@@ -57,97 +43,73 @@ export class SerialisedItemCharacteristicFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      this.fetcher.locales,
+      p.Singleton({
+        include: {
+          AdditionalLocales: {
+            Language: {},
+          },
+        },
+      }),
+      p.UnitOfMeasure({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.UnitOfMeasure.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.UnitOfMeasure.Name }],
+      }),
+      p.TimeFrequency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.TimeFrequency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.TimeFrequency.Name }],
+      })
+    );
 
-          const pulls = [
-            this.fetcher.locales,
-            pull.Singleton({
-              include: {
-                AdditionalLocales: {
-                  Language: x,
-                },
-              },
-            }),
-            pull.UnitOfMeasure({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.UnitOfMeasure.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.UnitOfMeasure.Name }],
-            }),
-            pull.TimeFrequency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.TimeFrequency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.TimeFrequency.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.SerialisedItemCharacteristicType({
-                objectId: this.data.id,
-                include: {
-                  LocalisedNames: {
-                    Locale: x,
-                  },
-                },
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.SerialisedItemCharacteristicType({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            LocalisedNames: {
+              Locale: {},
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.singleton = loaded.collection<Singleton>(m.Singleton)[0];
-        this.uoms = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        this.timeFrequencies = loaded.collection<TimeFrequency>(
-          m.TimeFrequency
-        );
-        this.allUoms = this.uoms
-          .concat(this.timeFrequencies)
-          .sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (isCreate) {
-          this.title = 'Add Product Characteristic';
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          this.productCharacteristic =
-            this.allors.context.create<SerialisedItemCharacteristicType>(
-              m.SerialisedItemCharacteristicType
-            );
-          this.productCharacteristic.IsActive = true;
-        } else {
-          this.productCharacteristic =
-            loaded.object<SerialisedItemCharacteristicType>(
-              m.SerialisedItemCharacteristicType
-            );
+    this.onPostPullInitialize(pullResult);
 
-          if (this.productCharacteristic.canWriteName) {
-            this.title = 'Edit Product Characteristic';
-          } else {
-            this.title = 'View Product Characteristic';
-          }
-        }
-      });
+    this.singleton = pullResult.collection<Singleton>(this.m.Singleton)[0];
+    this.uoms = pullResult.collection<UnitOfMeasure>(this.m.UnitOfMeasure);
+    this.timeFrequencies = pullResult.collection<TimeFrequency>(
+      this.m.TimeFrequency
+    );
+    this.allUoms = this.uoms
+      .concat(this.timeFrequencies)
+      .sort((a, b) => (a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0));
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
+
+    if (this.createRequest) {
+      this.object.IsActive = true;
+    }
   }
 }

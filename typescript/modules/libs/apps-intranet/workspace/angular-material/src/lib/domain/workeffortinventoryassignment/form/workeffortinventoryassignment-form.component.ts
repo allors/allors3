@@ -1,17 +1,17 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Facility,
   InternalOrganisation,
+  InventoryItem,
+  NonSerialisedInventoryItem,
+  NonSerialisedInventoryItemState,
+  Part,
+  SerialisedInventoryItem,
+  SerialisedInventoryItemState,
+  WorkEffort,
   WorkEffortInventoryAssignment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,14 +27,8 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './workeffortinventoryassignment-form.component.html',
   providers: [ContextService],
 })
-export class WorkEffortInventoryAssignmentFormComponent
-  extends AllorsFormComponent<WorkEffortInventoryAssignment>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class WorkEffortInventoryAssignmentFormComponent extends AllorsFormComponent<WorkEffortInventoryAssignment> {
   readonly m: M;
-
-  title: string;
-  workEffortInventoryAssignment: WorkEffortInventoryAssignment;
   parts: Part[];
   workEffort: WorkEffort;
   inventoryItems: InventoryItem[];
@@ -42,124 +36,91 @@ export class WorkEffortInventoryAssignmentFormComponent
   state: NonSerialisedInventoryItemState | SerialisedInventoryItemState;
   serialised: boolean;
 
-  private subscription: Subscription;
-
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private internalOrganisationId: InternalOrganisationId,
-    private snackBar: MatSnackBar
+    private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.InventoryItem({
+        sorting: [{ roleType: m.InventoryItem.DisplayName }],
+        include: {
+          Part: {
+            InventoryItemKind: {},
+          },
+          Facility: {},
+          SerialisedInventoryItem_SerialisedInventoryItemState: {},
+          NonSerialisedInventoryItem_NonSerialisedInventoryItemState: {},
+        },
+      }),
+      p.Organisation({
+        objectId: this.internalOrganisationId.value,
+        name: 'InternalOrganisation',
+        include: {
+          FacilitiesWhereOwner: {},
+        },
+      })
+    );
 
-          let pulls = [
-            pull.InventoryItem({
-              sorting: [{ roleType: m.InventoryItem.DisplayName }],
-              include: {
-                Part: {
-                  InventoryItemKind: x,
-                },
-                Facility: x,
-                SerialisedInventoryItem_SerialisedInventoryItemState: x,
-                NonSerialisedInventoryItem_NonSerialisedInventoryItemState: x,
+    if (this.editRequest) {
+      pulls.push(
+        p.WorkEffortInventoryAssignment({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Assignment: {},
+            InventoryItem: {
+              Part: {
+                InventoryItemKind: {},
               },
-            }),
-            pull.Organisation({
-              objectId: this.internalOrganisationId.value,
-              name: 'InternalOrganisation',
-              include: {
-                FacilitiesWhereOwner: x,
-              },
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.WorkEffortInventoryAssignment({
-                objectId: this.data.id,
-                include: {
-                  Assignment: x,
-                  InventoryItem: {
-                    Part: {
-                      InventoryItemKind: x,
-                    },
-                  },
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls = [
-              ...pulls,
-              pull.WorkEffort({
-                objectId: this.data.associationId,
-              }),
-            ];
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(
-          m.InternalOrganisation
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.WorkEffort({
+          objectId: initializer.id,
+        })
+      );
+    }
+  }
 
-        const inventoryItems = loaded.collection<InventoryItem>(
-          m.InventoryItem
-        );
-        this.inventoryItems = inventoryItems?.filter((v) =>
-          internalOrganisation.FacilitiesWhereOwner.includes(v.Facility)
-        );
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-        if (isCreate) {
-          this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
+    const internalOrganisation = pullResult.object<InternalOrganisation>(
+      this.m.InternalOrganisation
+    );
 
-          this.title = 'Add inventory assignment';
+    const inventoryItems = pullResult.collection<InventoryItem>(
+      this.m.InventoryItem
+    );
+    this.inventoryItems = inventoryItems?.filter((v) =>
+      internalOrganisation.FacilitiesWhereOwner.includes(v.Facility)
+    );
 
-          this.workEffortInventoryAssignment =
-            this.allors.context.create<WorkEffortInventoryAssignment>(
-              m.WorkEffortInventoryAssignment
-            );
-          this.workEffortInventoryAssignment.Assignment = this.workEffort;
-        } else {
-          this.workEffortInventoryAssignment =
-            loaded.object<WorkEffortInventoryAssignment>(
-              m.WorkEffortInventoryAssignment
-            );
-          this.workEffort = this.workEffortInventoryAssignment.Assignment;
-          this.inventoryItemSelected(
-            this.workEffortInventoryAssignment.InventoryItem
-          );
-
-          if (this.workEffortInventoryAssignment.canWriteInventoryItem) {
-            this.title = 'Edit inventory assignment';
-          } else {
-            this.title = 'View inventory assignment';
-          }
-        }
-      });
+    if (this.createRequest) {
+      this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
+      this.object.Assignment = this.workEffort;
+    } else {
+      this.workEffort = this.object.Assignment;
+      this.inventoryItemSelected(this.object.InventoryItem);
+    }
   }
 
   public inventoryItemSelected(inventoryItem: IObject): void {

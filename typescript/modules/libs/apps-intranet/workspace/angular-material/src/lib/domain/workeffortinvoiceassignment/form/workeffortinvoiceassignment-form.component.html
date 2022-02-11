@@ -1,21 +1,54 @@
-    <div class="container-fluid" *ngIf="workEffortInvoiceItem">
-      <div class="row" *ngIf="workEffortInvoiceItem.strategy.isNew">
-        <a-mat-select class="col-md" [object]="workEffortInvoiceItem" [roleType]="m.WorkEffortInvoiceItem.InvoiceItemType" [options]="invoiceItemTypes" display="Name"></a-mat-select>
-      </div>
+<div class="container-fluid" *ngIf="workEffortInvoiceItem">
+  <div class="row" *ngIf="workEffortInvoiceItem.strategy.isNew">
+    <a-mat-select
+      class="col-md"
+      [object]="workEffortInvoiceItem"
+      [roleType]="m.WorkEffortInvoiceItem.InvoiceItemType"
+      [options]="invoiceItemTypes"
+      display="Name"
+    ></a-mat-select>
+  </div>
 
-      <div *ngIf="workEffortInvoiceItem.InvoiceItemType">
-        <div class="row" *ngIf="!workEffortInvoiceItem.strategy.isNew">
-          <a-mat-select class="col-md" [object]="workEffortInvoiceItem" [roleType]="m.WorkEffortInvoiceItem.InvoiceItemType" [options]="invoiceItemTypes" display="Name"></a-mat-select>
-        </div>
-
-        <div class="row">
-          <a-mat-input class="col-md" [object]="workEffortInvoiceItem" [roleType]="m.WorkEffortInvoiceItem.Amount" [assignedRoleType]="m.WorkEffortInvoiceItem.AssignedAmount"> </a-mat-input>
-        </div>
-
-        <div class="row">
-          <a-mat-textarea class="col-md-12" [object]="workEffortInvoiceItem" [roleType]="m.WorkEffortInvoiceItem.Description"> </a-mat-textarea>
-          <a-mat-textarea class="col-md-12" [object]="workEffortInvoiceItem" [roleType]="m.WorkEffortInvoiceItem.Comment"> </a-mat-textarea>
-          <a-mat-textarea class="col-md-12" [object]="workEffortInvoiceItem" [roleType]="m.WorkEffortInvoiceItem.InternalComment"> </a-mat-textarea>
-        </div>
-      </div>
+  <div *ngIf="workEffortInvoiceItem.InvoiceItemType">
+    <div class="row" *ngIf="!workEffortInvoiceItem.strategy.isNew">
+      <a-mat-select
+        class="col-md"
+        [object]="workEffortInvoiceItem"
+        [roleType]="m.WorkEffortInvoiceItem.InvoiceItemType"
+        [options]="invoiceItemTypes"
+        display="Name"
+      ></a-mat-select>
     </div>
+
+    <div class="row">
+      <a-mat-input
+        class="col-md"
+        [object]="workEffortInvoiceItem"
+        [roleType]="m.WorkEffortInvoiceItem.Amount"
+        [assignedRoleType]="m.WorkEffortInvoiceItem.AssignedAmount"
+      >
+      </a-mat-input>
+    </div>
+
+    <div class="row">
+      <a-mat-textarea
+        class="col-md-12"
+        [object]="workEffortInvoiceItem"
+        [roleType]="m.WorkEffortInvoiceItem.Description"
+      >
+      </a-mat-textarea>
+      <a-mat-textarea
+        class="col-md-12"
+        [object]="workEffortInvoiceItem"
+        [roleType]="m.WorkEffortInvoiceItem.Comment"
+      >
+      </a-mat-textarea>
+      <a-mat-textarea
+        class="col-md-12"
+        [object]="workEffortInvoiceItem"
+        [roleType]="m.WorkEffortInvoiceItem.InternalComment"
+      >
+      </a-mat-textarea>
+    </div>
+  </div>
+</div>

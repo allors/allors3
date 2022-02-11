@@ -1,16 +1,22 @@
 <div class="container-fluid" *ngIf="object">
-    <div class="row">
-      <a-mat-textarea class="col-md" [object]="productQuoteApproval" [roleType]="m.ProductQuoteApproval.Comment"></a-mat-textarea>
-    </div>
+  <div class="row">
+    <a-mat-textarea
+      class="col-md"
+      [object]="object"
+      [roleType]="m.ProductQuoteApproval.Comment"
+    ></a-mat-textarea>
+  </div>
 
-    <div class="row">
-      <button mat-button type="button" (click)="print.execute(productQuoteApproval)"><mat-icon>cloud_download</mat-icon> Download Product Quote for Review</button>
-    </div>
+  <div class="row">
+    <button mat-button type="button" (click)="print.execute(object)">
+      <mat-icon>cloud_download</mat-icon> Download Product Quote for Review
+    </button>
+  </div>
 
   <!-- TODO: KOEN -->
-  <div mat-dialog-actions>
-    <button mat-button (click)="approve()" class="ml-2" color="primary" type="button" [disabled]="!productQuoteApproval.canExecuteApprove">APPROVE</button>
-    <button mat-button (click)="reject()" class="ml-2" color="primary" type="button" [disabled]="!productQuoteApproval.canExecuteReject">REJECT</button>
+  <!-- <div mat-dialog-actions>
+    <button mat-button (click)="approve()" class="ml-2" color="primary" type="button" [disabled]="!object.canExecuteApprove">APPROVE</button>
+    <button mat-button (click)="reject()" class="ml-2" color="primary" type="button" [disabled]="!object.canExecuteReject">REJECT</button>
     <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-  </div>
+  </div> -->
 </div>

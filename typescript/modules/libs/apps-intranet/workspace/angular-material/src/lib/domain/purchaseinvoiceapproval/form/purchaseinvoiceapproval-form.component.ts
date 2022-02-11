@@ -1,19 +1,8 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
-  PurchaseInvoiceApproval,
-} from '@allors/default/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { PurchaseInvoiceApproval } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -21,23 +10,14 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { PrintService } from '../../../actions/print/print.service';
+import { Action } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './purchaseinvoiceapproval-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceApprovalFormComponent
-  extends AllorsFormComponent<PurchaseInvoiceApproval>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  title: string;
-  subTitle: string;
-
+export class PurchaseInvoiceApprovalFormComponent extends AllorsFormComponent<PurchaseInvoiceApproval> {
   readonly m: M;
-
-  private subscription: Subscription;
-
-  purchaseInvoiceApproval: PurchaseInvoiceApproval;
 
   print: Action;
 
@@ -55,71 +35,32 @@ export class PurchaseInvoiceApprovalFormComponent
     );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.PurchaseInvoiceApproval({
-              objectId: this.data.id,
-              include: {
-                PurchaseInvoice: {
-                  PrintDocument: x,
-                },
-              },
-            }),
-          ];
-
-          return this.allors.context.pull(pulls).pipe(map((loaded) => loaded));
+    if (this.editRequest) {
+      pulls.push(
+        p.PurchaseInvoiceApproval({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            PurchaseInvoice: {
+              PrintDocument: {},
+            },
+          },
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-        this.purchaseInvoiceApproval = loaded.object<PurchaseInvoiceApproval>(
-          m.PurchaseInvoiceApproval
-        );
+      );
+    }
 
-        this.title = this.purchaseInvoiceApproval.Title;
-      });
+    this.onPrePullInitialize(pulls);
   }
 
-  approve(): void {
-    this.saveAndInvoke(() =>
-      this.allors.context.invoke(this.purchaseInvoiceApproval.Approve)
-    );
-  }
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-  reject(): void {
-    this.saveAndInvoke(() =>
-      this.allors.context.invoke(this.purchaseInvoiceApproval.Reject)
-    );
-  }
-
-  // TODO: KOEN
-  saveAndInvoke(methodCall: () => Observable<IResult>): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-
-    this.allors.context
-      .push()
-      .pipe(
-        switchMap(() => {
-          return this.allors.context.pull([
-            pull.PurchaseInvoiceApproval({ objectId: this.data.id }),
-          ]);
-        }),
-        switchMap(() => {
-          this.allors.context.reset();
-          return methodCall();
-        })
-      )
-      .subscribe(() => {
-        this.dialogRef.close(this.purchaseInvoiceApproval);
-        this.refreshService.refresh();
-      }, this.errorService.errorHandler);
+    this.onPostPullInitialize(pullResult);
   }
 }

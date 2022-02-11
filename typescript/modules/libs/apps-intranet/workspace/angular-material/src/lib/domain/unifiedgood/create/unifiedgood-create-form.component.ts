@@ -1,17 +1,13 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  InventoryItemKind,
+  ProductIdentificationType,
+  ProductNumber,
+  ProductType,
+  Settings,
   UnifiedGood,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,14 +23,8 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './unifiedgood-create-form.component.html',
   providers: [ContextService],
 })
-export class UnifiedGoodCreateFormComponent
-  extends AllorsFormComponent<UnifiedGood>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class UnifiedGoodCreateFormComponent extends AllorsFormComponent<UnifiedGood> {
   readonly m: M;
-  good: Good;
-
-  public title = 'Add Unified Good';
 
   productTypes: ProductType[];
   inventoryItemKinds: InventoryItemKind[];
@@ -42,8 +32,6 @@ export class UnifiedGoodCreateFormComponent
   productNumber: ProductNumber;
   settings: Settings;
   goodNumberType: ProductIdentificationType;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -55,50 +43,46 @@ export class UnifiedGoodCreateFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            this.fetcher.Settings,
-            pull.InventoryItemKind({}),
-            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.ProductIdentificationType({}),
-          ];
+    pulls.push(
+      this.fetcher.Settings,
+      p.InventoryItemKind({}),
+      p.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
+      p.ProductIdentificationType({})
+    );
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+    this.onPrePullInitialize(pulls);
+  }
 
-        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(
-          m.InventoryItemKind
-        );
-        this.productTypes = loaded.collection<ProductType>(m.ProductType);
-        this.goodIdentificationTypes =
-          loaded.collection<ProductIdentificationType>(
-            m.ProductIdentificationType
-          );
-        this.settings = this.fetcher.getSettings(loaded);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.goodNumberType = this.goodIdentificationTypes?.find(
-          (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
-        );
+    this.onPostPullInitialize(pullResult);
 
-        this.good = this.allors.context.create<UnifiedGood>(m.UnifiedGood);
+    this.inventoryItemKinds = pullResult.collection<InventoryItemKind>(
+      this.m.InventoryItemKind
+    );
+    this.productTypes = pullResult.collection<ProductType>(this.m.ProductType);
+    this.goodIdentificationTypes =
+      pullResult.collection<ProductIdentificationType>(
+        this.m.ProductIdentificationType
+      );
+    this.settings = this.fetcher.getSettings(pullResult);
 
-        if (!this.settings.UseProductNumberCounter) {
-          this.productNumber = this.allors.context.create<ProductNumber>(
-            m.ProductNumber
-          );
-          this.productNumber.ProductIdentificationType = this.goodNumberType;
+    this.goodNumberType = this.goodIdentificationTypes?.find(
+      (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
+    );
 
-          this.good.addProductIdentification(this.productNumber);
-        }
-      });
+    if (!this.settings.UseProductNumberCounter) {
+      this.productNumber = this.allors.context.create<ProductNumber>(
+        this.m.ProductNumber
+      );
+      this.productNumber.ProductIdentificationType = this.goodNumberType;
+
+      this.object.addProductIdentification(this.productNumber);
+    }
   }
 }

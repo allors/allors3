@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="request">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-static
       class="col"
-      [object]="request"
+      [object]="object"
       [roleType]="m.Request.RequestState"
       display="Name"
       label="Status"
@@ -14,7 +14,7 @@
       <div class="row">
         <a-mat-autocomplete
           class="col-md"
-          [object]="request"
+          [object]="object"
           [roleType]="m.Request.Originator"
           [filter]="customersFilter.create(allors.context)"
           display="DisplayName"
@@ -24,7 +24,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="!request.canWriteRequestItems"
+          [disabled]="!object.canWriteRequestItems"
           type="button"
           (click)="addOriginator = !addOriginator"
         >
@@ -52,7 +52,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="request"
+          [object]="object"
           [roleType]="m.Request.FullfillContactMechanism"
           [options]="contactMechanisms"
           display="DisplayName"
@@ -62,7 +62,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="!request.Originator || !request.canWriteRequestItems"
+          [disabled]="!object.Originator || !object.canWriteRequestItems"
           type="button"
           (click)="addContactMechanism = !addContactMechanism"
         >
@@ -72,7 +72,7 @@
       </div>
     </div>
     <div class="col-md-12">
-      <mat-card *ngIf="request.Originator && addContactMechanism">
+      <mat-card *ngIf="object.Originator && addContactMechanism">
         <mat-card-header>Add a new contact mechanism</mat-card-header>
         <mat-card-content>
           <party-contactmechanism
@@ -92,7 +92,7 @@
       <div class="row">
         <a-mat-select
           [disabled]="originatorIsPerson"
-          [object]="request"
+          [object]="object"
           [roleType]="m.Request.ContactPerson"
           [options]="contacts"
           display="DisplayName"
@@ -101,7 +101,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="originatorIsPerson || !request.canWriteRequestItems"
+          [disabled]="originatorIsPerson || !object.canWriteRequestItems"
           type="button"
           (click)="addContactPerson = !addContactPerson"
         >
@@ -111,7 +111,7 @@
       </div>
     </div>
     <div class="col-md-12">
-      <mat-card *ngIf="request.Originator && addContactPerson">
+      <mat-card *ngIf="object.Originator && addContactPerson">
         <mat-card-header>Add a new contact person</mat-card-header>
         <mat-card-content>
           <person-inline
@@ -127,23 +127,23 @@
   <div class="row">
     <a-mat-static
       class="col-md"
-      *ngIf="request.EmailAddress"
-      [object]="request"
+      *ngIf="object.EmailAddress"
+      [object]="object"
       [roleType]="m.Request.EmailAddress"
     ></a-mat-static>
     <div class="col-md">
       <div class="row">
         <a-mat-static
           class="col-md"
-          *ngIf="request.TelephoneCountryCode"
-          [object]="request"
+          *ngIf="object.TelephoneCountryCode"
+          [object]="object"
           [roleType]="m.Request.TelephoneCountryCode"
           label="Country code"
         ></a-mat-static>
         <a-mat-static
           class="col-md"
-          *ngIf="request.TelephoneNumber"
-          [object]="request"
+          *ngIf="object.TelephoneNumber"
+          [object]="object"
           [roleType]="m.Request.TelephoneNumber"
         ></a-mat-static>
       </div>
@@ -153,12 +153,12 @@
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="request"
+      [object]="object"
       [roleType]="m.Request.RequestDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="request"
+      [object]="object"
       [roleType]="m.Request.RequiredResponseDate"
     ></a-mat-datepicker>
   </div>
@@ -166,19 +166,19 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="request"
+      [object]="object"
       [roleType]="m.Request.Description"
       class="col-md"
     ></a-mat-textarea>
     <a-mat-textarea
       class="col-md"
-      [object]="request"
+      [object]="object"
       [roleType]="m.Request.Comment"
       class="col-md-12"
     ></a-mat-textarea>
     <a-mat-textarea
       class="col-md"
-      [object]="request"
+      [object]="object"
       [roleType]="m.Request.InternalComment"
       class="col-md-12"
     ></a-mat-textarea>

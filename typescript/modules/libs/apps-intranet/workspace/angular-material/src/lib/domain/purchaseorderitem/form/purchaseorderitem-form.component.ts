@@ -2,41 +2,47 @@ import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
   Pull,
   IPullResult,
-  PostCreatePullHandler,
+  And,
+  IObject,
 } from '@allors/system/workspace/domain';
 import {
-  BasePrice,
+  Facility,
   InternalOrganisation,
+  InventoryItem,
+  InvoiceItemType,
+  IrpfRegime,
+  NonSerialisedInventoryItem,
+  Part,
+  Product,
+  PurchaseOrder,
   PurchaseOrderItem,
+  SerialisedInventoryItem,
+  SerialisedItem,
+  SupplierOffering,
+  UnifiedGood,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
+import { isAfter, isBefore } from 'date-fns';
 
 @Component({
   templateUrl: './purchaseorderitem-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseOrderItemFormComponent
-  extends AllorsFormComponent<PurchaseOrderItem>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PurchaseOrderItemFormComponent extends AllorsFormComponent<PurchaseOrderItem> {
   readonly m: M;
-
-  title: string;
   order: PurchaseOrder;
-  orderItem: PurchaseOrderItem;
   inventoryItems: InventoryItem[];
   vatRegimes: VatRegime[];
   irpfRegimes: IrpfRegime[];
@@ -60,8 +66,6 @@ export class PurchaseOrderItemFormComponent
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
   irpfRegimeInitialRole: IrpfRegime;
-
-  private subscription: Subscription;
   partsFilter: SearchFactory;
 
   unifiedGoodsFilter: SearchFactory;
@@ -75,207 +79,188 @@ export class PurchaseOrderItemFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+    const { treeBuilder } = this.m;
+
+    this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(this.m, treeBuilder);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull, treeBuilder } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([this.refreshService.refresh$])
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-          const { id } = this.data;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.InvoiceItemType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.InvoiceItemType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.InvoiceItemType.Name }],
+      }),
+      p.IrpfRegime({
+        sorting: [{ roleType: m.IrpfRegime.Name }],
+      }),
+      p.Facility({
+        sorting: [{ roleType: m.Facility.Name }],
+      })
+    );
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.InvoiceItemType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.InvoiceItemType.IsActive,
-                value: true,
+    if (this.editRequest) {
+      pulls.push(
+        p.PurchaseOrderItem({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            InvoiceItemType: {},
+            PurchaseOrderItemState: {},
+            PurchaseOrderItemShipmentState: {},
+            PurchaseOrderItemPaymentState: {},
+            Part: {},
+            SerialisedItem: {},
+            StoredInFacility: {},
+            DerivedVatRegime: {
+              VatRates: {},
+            },
+            DerivedIrpfRegime: {
+              IrpfRates: {},
+            },
+          },
+        }),
+        p.PurchaseOrderItem({
+          objectId: this.editRequest.objectId,
+          select: {
+            PurchaseOrderWherePurchaseOrderItem: {
+              include: {
+                PurchaseOrderItems: {},
+                DerivedVatRegime: {
+                  VatRates: {},
+                },
+                DerivedIrpfRegime: {
+                  IrpfRates: {},
+                },
               },
-              sorting: [{ roleType: m.InvoiceItemType.Name }],
-            }),
-            pull.IrpfRegime({
-              sorting: [{ roleType: m.IrpfRegime.Name }],
-            }),
-            pull.Facility({
-              sorting: [{ roleType: m.Facility.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.PurchaseOrderItem({
-                objectId: id,
-                include: {
-                  InvoiceItemType: x,
-                  PurchaseOrderItemState: x,
-                  PurchaseOrderItemShipmentState: x,
-                  PurchaseOrderItemPaymentState: x,
-                  Part: x,
-                  SerialisedItem: x,
-                  StoredInFacility: x,
-                  DerivedVatRegime: {
-                    VatRates: x,
-                  },
-                  DerivedIrpfRegime: {
-                    IrpfRates: x,
-                  },
-                },
-              }),
-              pull.PurchaseOrderItem({
-                objectId: id,
-                select: {
-                  PurchaseOrderWherePurchaseOrderItem: {
-                    include: {
-                      PurchaseOrderItems: x,
-                      DerivedVatRegime: {
-                        VatRates: x,
-                      },
-                      DerivedIrpfRegime: {
-                        IrpfRates: x,
-                      },
-                    },
-                  },
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.PurchaseOrder({
-                objectId: this.data.associationId,
-                include: {
-                  PurchaseOrderItems: x,
-                  DerivedVatRegime: x,
-                  DerivedIrpfRegime: x,
-                  TakenViaSupplier: x,
-                },
-              })
-            );
-          }
-
-          this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(m, treeBuilder);
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+            },
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.orderItem = loaded.object<PurchaseOrderItem>(m.PurchaseOrderItem);
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.facilities = loaded.collection<Facility>(m.Facility);
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.PurchaseOrder({
+          objectId: initializer.id,
+          include: {
+            PurchaseOrderItems: {},
+            DerivedVatRegime: {},
+            DerivedIrpfRegime: {},
+            TakenViaSupplier: {},
+          },
+        })
+      );
+    }
+  }
 
-        this.invoiceItemTypes = loaded.collection<InvoiceItemType>(
-          m.InvoiceItemType
-        );
-        this.partItemType = this.invoiceItemTypes?.find(
-          (v: InvoiceItemType) =>
-            v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
-        );
-        this.productItemType = this.invoiceItemTypes?.find(
-          (v: InvoiceItemType) =>
-            v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad'
-        );
-        this.serviceItemType = this.invoiceItemTypes?.find(
-          (v: InvoiceItemType) =>
-            v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e'
-        );
-        this.timeItemType = this.invoiceItemTypes?.find(
-          (v: InvoiceItemType) =>
-            v.UniqueId === 'da178f93-234a-41ed-815c-819af8ca4e6f'
-        );
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-        this.partsFilter = new SearchFactory({
-          objectType: this.m.NonUnifiedPart,
-          roleTypes: [
-            this.m.NonUnifiedPart.Name,
-            this.m.NonUnifiedPart.SearchString,
-          ],
-          post: (predicate: And) => {
-            predicate.operands.push({
-              kind: 'ContainedIn',
-              propertyType: this.m.NonUnifiedPart.SupplierOfferingsWherePart,
-              extent: {
-                kind: 'Filter',
-                objectType: this.m.SupplierOffering,
-                predicate: {
-                  kind: 'And',
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+    this.facilities = pullResult.collection<Facility>(this.m.Facility);
+
+    this.invoiceItemTypes = pullResult.collection<InvoiceItemType>(
+      this.m.InvoiceItemType
+    );
+    this.partItemType = this.invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
+    );
+    this.productItemType = this.invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad'
+    );
+    this.serviceItemType = this.invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e'
+    );
+    this.timeItemType = this.invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === 'da178f93-234a-41ed-815c-819af8ca4e6f'
+    );
+
+    if (this.createRequest) {
+      this.order = pullResult.object<PurchaseOrder>(this.m.PurchaseOrder);
+      this.selectedFacility = this.order.StoredInFacility;
+      this.order.addPurchaseOrderItem(this.object);
+      this.vatRegimeInitialRole = this.order.DerivedVatRegime;
+      this.irpfRegimeInitialRole = this.order.DerivedIrpfRegime;
+    } else {
+      this.order = this.object.PurchaseOrderWherePurchaseOrderItem;
+      this.selectedFacility = this.object.StoredInFacility;
+
+      if (this.object.Part) {
+        this.unifiedGood = this.object.Part.strategy.cls === this.m.UnifiedGood;
+        this.nonUnifiedPart =
+          this.object.Part.strategy.cls === this.m.NonUnifiedPart;
+        this.updateFromPart(this.object.Part);
+      }
+    }
+
+    this.partsFilter = new SearchFactory({
+      objectType: this.m.NonUnifiedPart,
+      roleTypes: [
+        this.m.NonUnifiedPart.Name,
+        this.m.NonUnifiedPart.SearchString,
+      ],
+      post: (predicate: And) => {
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: this.m.NonUnifiedPart.SupplierOfferingsWherePart,
+          extent: {
+            kind: 'Filter',
+            objectType: this.m.SupplierOffering,
+            predicate: {
+              kind: 'And',
+              operands: [
+                {
+                  kind: 'Equals',
+                  propertyType: this.m.SupplierOffering.Supplier,
+                  object: this.order.TakenViaSupplier,
+                },
+                {
+                  kind: 'LessThan',
+                  roleType: this.m.SupplierOffering.FromDate,
+                  value: this.order.OrderDate,
+                },
+                {
+                  kind: 'Or',
                   operands: [
                     {
-                      kind: 'Equals',
-                      propertyType: m.SupplierOffering.Supplier,
-                      object: this.order.TakenViaSupplier,
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: this.m.SupplierOffering.ThroughDate,
+                      },
                     },
                     {
-                      kind: 'LessThan',
-                      roleType: m.SupplierOffering.FromDate,
+                      kind: 'GreaterThan',
+                      roleType: this.m.SupplierOffering.ThroughDate,
                       value: this.order.OrderDate,
-                    },
-                    {
-                      kind: 'Or',
-                      operands: [
-                        {
-                          kind: 'Not',
-                          operand: {
-                            kind: 'Exists',
-                            propertyType: m.SupplierOffering.ThroughDate,
-                          },
-                        },
-                        {
-                          kind: 'GreaterThan',
-                          roleType: m.SupplierOffering.ThroughDate,
-                          value: this.order.OrderDate,
-                        },
-                      ],
                     },
                   ],
                 },
-              },
-            });
+              ],
+            },
           },
         });
-
-        if (isCreate) {
-          this.title = 'Add Purchase Order Item';
-          this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
-          this.orderItem = this.allors.context.create<PurchaseOrderItem>(
-            m.PurchaseOrderItem
-          );
-          this.selectedFacility = this.order.StoredInFacility;
-          this.order.addPurchaseOrderItem(this.orderItem);
-          this.vatRegimeInitialRole = this.order.DerivedVatRegime;
-          this.irpfRegimeInitialRole = this.order.DerivedIrpfRegime;
-        } else {
-          this.order = this.orderItem.PurchaseOrderWherePurchaseOrderItem;
-          this.selectedFacility = this.orderItem.StoredInFacility;
-
-          if (this.orderItem.Part) {
-            this.unifiedGood =
-              this.orderItem.Part.strategy.cls === m.UnifiedGood;
-            this.nonUnifiedPart =
-              this.orderItem.Part.strategy.cls === m.NonUnifiedPart;
-            this.updateFromPart(this.orderItem.Part);
-          }
-
-          if (this.orderItem.canWriteQuantityOrdered) {
-            this.title = 'Edit Purchase Order Item';
-          } else {
-            this.title = 'View Purchase Order Item';
-          }
-        }
-      });
+      },
+    });
   }
 
   public goodSelected(unifiedGood: IObject): void {
@@ -290,16 +275,15 @@ export class PurchaseOrderItemFormComponent
       this.serialisedItem = this.part.SerialisedItems?.find(
         (v) => v === serialisedItem
       );
-      this.orderItem.QuantityOrdered = '1';
+      this.object.QuantityOrdered = '1';
     }
   }
 
   public partSelected(part: IObject): void {
     if (part) {
-      this.unifiedGood =
-        this.orderItem.Part.strategy.cls === this.m.UnifiedGood;
+      this.unifiedGood = this.object.Part.strategy.cls === this.m.UnifiedGood;
       this.nonUnifiedPart =
-        this.orderItem.Part.strategy.cls === this.m.NonUnifiedPart;
+        this.object.Part.strategy.cls === this.m.NonUnifiedPart;
 
       this.updateFromPart(part as Part);
     }
@@ -405,18 +389,18 @@ export class PurchaseOrderItemFormComponent
         m.Part.SerialisedItems
       );
 
-      if (this.orderItem.SerialisedItem) {
-        this.serialisedItems.push(this.orderItem.SerialisedItem);
+      if (this.object.SerialisedItem) {
+        this.serialisedItems.push(this.object.SerialisedItem);
       }
     });
   }
 
   private onSave() {
     if (
-      this.orderItem.InvoiceItemType !== this.partItemType &&
-      this.orderItem.InvoiceItemType !== this.partItemType
+      this.object.InvoiceItemType !== this.partItemType &&
+      this.object.InvoiceItemType !== this.partItemType
     ) {
-      this.orderItem.QuantityOrdered = '1';
+      this.object.QuantityOrdered = '1';
     }
   }
 }

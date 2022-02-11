@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="repeatinginvoice">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="repeatinginvoice"
+      [object]="object"
       [roleType]="m.RepeatingPurchaseInvoice.InternalOrganisation"
       [options]="internalOrganisations"
       display="Name"
@@ -12,14 +12,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="repeatinginvoice"
+      [object]="object"
       [roleType]="m.RepeatingPurchaseInvoice.Frequency"
       [options]="frequencies"
       display="Name"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="repeatinginvoice"
+      [object]="object"
       [roleType]="m.RepeatingPurchaseInvoice.DayOfWeek"
       [options]="daysOfWeek"
       display="Name"
@@ -29,12 +29,12 @@
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="repeatinginvoice"
+      [object]="object"
       [roleType]="m.RepeatingPurchaseInvoice.NextExecutionDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="repeatinginvoice"
+      [object]="object"
       [roleType]="m.RepeatingPurchaseInvoice.FinalExecutionDate"
     ></a-mat-datepicker>
   </div>

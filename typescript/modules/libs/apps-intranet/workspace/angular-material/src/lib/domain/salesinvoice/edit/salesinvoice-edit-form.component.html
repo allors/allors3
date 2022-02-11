@@ -1,10 +1,10 @@
-<mat-tab-group *ngIf="invoice">
+<mat-tab-group *ngIf="object">
   <mat-tab label="General">
     <div class="container-fluid">
       <div class="row">
         <a-mat-static
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.SalesInvoiceState"
           display="Name"
           label="Status"
@@ -16,7 +16,7 @@
           <div class="row">
             <a-mat-autocomplete
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.BillToCustomer"
               [filter]="customersFilter.create(allors.context)"
               display="DisplayName"
@@ -26,7 +26,7 @@
             <button
               mat-mini-fab
               color="accent"
-              [disabled]="!invoice.canWriteBillToCustomer"
+              [disabled]="!object.canWriteBillToCustomer"
               type="button"
               (click)="addBillToCustomer = !addBillToCustomer"
             >
@@ -54,7 +54,7 @@
           <div class="row">
             <a-mat-select
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.DerivedBillToContactMechanism"
               [assignedRoleType]="m.SalesInvoice.AssignedBillToContactMechanism"
               [options]="billToContactMechanisms"
@@ -65,8 +65,8 @@
               mat-mini-fab
               color="accent"
               [disabled]="
-                !invoice.BillToCustomer ||
-                !invoice.canWriteAssignedBillToContactMechanism
+                !object.BillToCustomer ||
+                !object.canWriteAssignedBillToContactMechanism
               "
               type="button"
               (click)="addBillToContactMechanism = !addBillToContactMechanism"
@@ -78,7 +78,7 @@
         </div>
         <div
           class="col-md-12"
-          *ngIf="invoice.BillToCustomer && addBillToContactMechanism"
+          *ngIf="object.BillToCustomer && addBillToContactMechanism"
         >
           <mat-card>
             <mat-card-header>Add a new ContactMechanism</mat-card-header>
@@ -100,7 +100,7 @@
             <a-mat-select
               class="col"
               [disabled]="billToCustomerIsPerson"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.BillToContactPerson"
               [options]="billToContacts"
               display="DisplayName"
@@ -111,7 +111,7 @@
               mat-mini-fab
               color="accent"
               [disabled]="
-                billToCustomerIsPerson || !invoice.canWriteBillToContactPerson
+                billToCustomerIsPerson || !object.canWriteBillToContactPerson
               "
               type="button"
               (click)="addBillToContactPerson = !addBillToContactPerson"
@@ -123,7 +123,7 @@
         </div>
         <div
           class="col-md-12"
-          *ngIf="invoice.BillToCustomer && addBillToContactPerson"
+          *ngIf="object.BillToCustomer && addBillToContactPerson"
         >
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
@@ -146,7 +146,7 @@
           <div class="row">
             <a-mat-autocomplete
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.ShipToCustomer"
               [filter]="customersFilter.create(allors.context)"
               display="DisplayName"
@@ -156,7 +156,7 @@
             <button
               mat-mini-fab
               color="accent"
-              [disabled]="!invoice.canWriteShipToCustomer"
+              [disabled]="!object.canWriteShipToCustomer"
               type="button"
               (click)="addShipToCustomer = !addShipToCustomer"
             >
@@ -184,7 +184,7 @@
           <div class="row">
             <a-mat-select
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.DerivedShipToAddress"
               [options]="shipToAddresses"
               [assignedRoleType]="m.SalesInvoice.AssignedShipToAddress"
@@ -195,8 +195,7 @@
               mat-mini-fab
               color="accent"
               [disabled]="
-                !invoice.ShipToCustomer ||
-                !invoice.canWriteAssignedShipToAddress
+                !object.ShipToCustomer || !object.canWriteAssignedShipToAddress
               "
               type="button"
               (click)="addShipToAddress = !addShipToAddress"
@@ -208,7 +207,7 @@
         </div>
         <div
           class="col-md-12 pb-3"
-          *ngIf="invoice.ShipToCustomer && addShipToAddress"
+          *ngIf="object.ShipToCustomer && addShipToAddress"
         >
           <mat-card>
             <mat-card-header>Add a new contact mechanism</mat-card-header>
@@ -227,7 +226,7 @@
             <a-mat-select
               class="col"
               [disabled]="shipToCustomerIsPerson"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.ShipToContactPerson"
               [options]="shipToContacts"
               display="DisplayName"
@@ -237,7 +236,7 @@
               mat-mini-fab
               color="accent"
               [disabled]="
-                shipToCustomerIsPerson || !invoice.canWriteShipToContactPerson
+                shipToCustomerIsPerson || !object.canWriteShipToContactPerson
               "
               type="button"
               (click)="addShipToContactPerson = !addShipToContactPerson"
@@ -249,7 +248,7 @@
         </div>
         <div
           class="col-md-12"
-          *ngIf="invoice.ShipToCustomer && addShipToContactPerson"
+          *ngIf="object.ShipToCustomer && addShipToContactPerson"
         >
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
@@ -272,7 +271,7 @@
           <div class="row">
             <a-mat-autocomplete
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.ShipToEndCustomer"
               [filter]="customersFilter.create(allors.context)"
               display="DisplayName"
@@ -282,7 +281,7 @@
             <button
               mat-mini-fab
               color="accent"
-              [disabled]="!invoice.canWriteShipToEndCustomer"
+              [disabled]="!object.canWriteShipToEndCustomer"
               type="button"
               (click)="addShipToEndCustomer = !addShipToEndCustomer"
             >
@@ -312,7 +311,7 @@
           <div class="row">
             <a-mat-select
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.DerivedShipToEndCustomerAddress"
               [assignedRoleType]="
                 m.SalesInvoice.AssignedShipToEndCustomerAddress
@@ -325,8 +324,8 @@
               mat-mini-fab
               color="accent"
               [disabled]="
-                !invoice.ShipToEndCustomer ||
-                !invoice.canWriteAssignedShipToEndCustomerAddress
+                !object.ShipToEndCustomer ||
+                !object.canWriteAssignedShipToEndCustomerAddress
               "
               type="button"
               (click)="
@@ -340,7 +339,7 @@
         </div>
         <div
           class="col-md-12 pb-3"
-          *ngIf="invoice.ShipToEndCustomer && addShipToEndCustomerAddress"
+          *ngIf="object.ShipToEndCustomer && addShipToEndCustomerAddress"
         >
           <mat-card>
             <mat-card-header>Add a new contact mechanism</mat-card-header>
@@ -362,7 +361,7 @@
             <a-mat-select
               class="col"
               [disabled]="shipToEndCustomerIsPerson"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.ShipToEndCustomerContactPerson"
               [options]="shipToEndCustomerContacts"
               display="DisplayName"
@@ -374,7 +373,7 @@
               color="accent"
               [disabled]="
                 shipToEndCustomerIsPerson ||
-                !invoice.canWriteShipToEndCustomerContactPerson
+                !object.canWriteShipToEndCustomerContactPerson
               "
               type="button"
               (click)="
@@ -393,7 +392,7 @@
         </div>
         <div
           class="col-md-12"
-          *ngIf="invoice.ShipToEndCustomer && addShipToEndCustomerContactPerson"
+          *ngIf="object.ShipToEndCustomer && addShipToEndCustomerContactPerson"
         >
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
@@ -416,7 +415,7 @@
           <div class="row">
             <a-mat-autocomplete
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.BillToEndCustomer"
               [filter]="customersFilter.create(allors.context)"
               display="DisplayName"
@@ -426,7 +425,7 @@
             <button
               mat-mini-fab
               color="accent"
-              [disabled]="!invoice.canWriteBillToEndCustomer"
+              [disabled]="!object.canWriteBillToEndCustomer"
               type="button"
               (click)="addBillToEndCustomer = !addBillToEndCustomer"
             >
@@ -456,7 +455,7 @@
           <div class="row">
             <a-mat-select
               class="col-md"
-              [object]="invoice"
+              [object]="object"
               [roleType]="
                 m.SalesInvoice.DerivedBillToEndCustomerContactMechanism
               "
@@ -471,8 +470,8 @@
               mat-mini-fab
               color="accent"
               [disabled]="
-                !invoice.BillToEndCustomer ||
-                !invoice.canWriteAssignedBillToEndCustomerContactMechanism
+                !object.BillToEndCustomer ||
+                !object.canWriteAssignedBillToEndCustomerContactMechanism
               "
               type="button"
               (click)="
@@ -492,7 +491,7 @@
         <div
           class="col-md-12 pb-3"
           *ngIf="
-            invoice.BillToEndCustomer && addBillToEndCustomerContactMechanism
+            object.BillToEndCustomer && addBillToEndCustomerContactMechanism
           "
         >
           <mat-card>
@@ -515,7 +514,7 @@
             <a-mat-select
               class="col"
               [disabled]="billToEndCustomerIsPerson"
-              [object]="invoice"
+              [object]="object"
               [roleType]="m.SalesInvoice.BillToEndCustomerContactPerson"
               [options]="billToEndCustomerContacts"
               display="DisplayName"
@@ -527,7 +526,7 @@
               color="accent"
               [disabled]="
                 billToEndCustomerIsPerson ||
-                !invoice.canWriteBillToEndCustomerContactPerson
+                !object.canWriteBillToEndCustomerContactPerson
               "
               type="button"
               (click)="
@@ -546,7 +545,7 @@
         </div>
         <div
           class="col-md-12"
-          *ngIf="invoice.BillToEndCustomer && addBillToEndCustomerContactPerson"
+          *ngIf="object.BillToEndCustomer && addBillToEndCustomerContactPerson"
         >
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
@@ -567,7 +566,7 @@
       <div class="row">
         <a-mat-select
           class="col-md-6"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.DerivedCurrency"
           [assignedRoleType]="m.SalesInvoice.AssignedCurrency"
           [options]="currencies"
@@ -577,7 +576,7 @@
         <a-mat-select
           *ngIf="!showIrpf"
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.DerivedVatRegime"
           [assignedRoleType]="m.SalesInvoice.AssignedVatRegime"
           [options]="vatRegimes"
@@ -589,7 +588,7 @@
       <div *ngIf="showIrpf" class="row">
         <a-mat-select
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.DerivedVatRegime"
           [assignedRoleType]="m.SalesInvoice.AssignedVatRegime"
           [options]="vatRegimes"
@@ -598,7 +597,7 @@
         ></a-mat-select>
         <a-mat-select
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.DerivedIrpfRegime"
           [assignedRoleType]="m.SalesInvoice.AssignedIrpfRegime"
           [options]="irpfRegimes"
@@ -610,7 +609,7 @@
       <div class="row">
         <a-mat-select
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.DerivedVatClause"
           [assignedRoleType]="m.SalesInvoice.AssignedVatClause"
           [options]="vatClauses"
@@ -622,13 +621,13 @@
       <div class="row">
         <a-mat-datepicker
           class="col-md-6"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.InvoiceDate"
         >
         </a-mat-datepicker>
         <a-mat-datepicker
           class="col-md-6"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.DueDate"
         >
         </a-mat-datepicker>
@@ -637,12 +636,12 @@
       <div class="row">
         <a-mat-input
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.AdvancePayment"
         ></a-mat-input>
         <a-mat-static
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.AmountPaid"
         ></a-mat-static>
       </div>
@@ -650,24 +649,24 @@
       <div class="row">
         <a-mat-input
           class="col-md"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.CustomerReference"
         >
         </a-mat-input>
         <a-mat-textarea
           class="col-md-12"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.Description"
         >
         </a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.Comment"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.InternalComment"
         >
         </a-mat-textarea>
@@ -680,7 +679,7 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="invoice"
+          [object]="object"
           [roleType]="m.SalesInvoice.ElectronicDocuments"
           accept="image/*"
         ></a-mat-files>

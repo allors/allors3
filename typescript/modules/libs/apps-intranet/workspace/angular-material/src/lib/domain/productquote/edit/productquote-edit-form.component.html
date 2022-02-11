@@ -1,17 +1,17 @@
-<mat-tab-group *ngIf="productQuote">
+<mat-tab-group *ngIf="object">
   <mat-tab label="General">
     <div class="container-fluid">
       <div class="row">
         <a-mat-static
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.Quote.QuoteState"
           display="Name"
           label="Status"
         ></a-mat-static>
         <a-mat-static
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.Request"
           display="RequestNumber"
         ></a-mat-static>
@@ -22,7 +22,7 @@
           <div class="row">
             <a-mat-autocomplete
               class="col-md"
-              [object]="productQuote"
+              [object]="object"
               [roleType]="m.Quote.Receiver"
               [filter]="customersFilter.create(allors.context)"
               display="DisplayName"
@@ -32,7 +32,7 @@
             <button
               mat-mini-fab
               color="accent"
-              [disabled]="!productQuote.canWriteQuoteItems"
+              [disabled]="!object.canWriteQuoteItems"
               type="button"
               (click)="addReceiver = !addReceiver"
             >
@@ -60,7 +60,7 @@
           <div class="row">
             <a-mat-select
               class="col"
-              [object]="productQuote"
+              [object]="object"
               [roleType]="m.ProductQuote.FullfillContactMechanism"
               [options]="contactMechanisms"
               display="DisplayName"
@@ -69,9 +69,7 @@
               mat-mini-fab
               color="accent"
               type="button"
-              [disabled]="
-                !productQuote.Receiver || !productQuote.canWriteQuoteItems
-              "
+              [disabled]="!object.Receiver || !object.canWriteQuoteItems"
               (click)="addContactMechanism = !addContactMechanism"
             >
               <mat-icon *ngIf="!addContactMechanism">add</mat-icon>
@@ -79,10 +77,7 @@
             </button>
           </div>
         </div>
-        <div
-          class="col-12"
-          *ngIf="productQuote.Receiver && addContactMechanism"
-        >
+        <div class="col-12" *ngIf="object.Receiver && addContactMechanism">
           <mat-card>
             <mat-card-header>Add a new contact mechanism</mat-card-header>
             <mat-card-content>
@@ -105,7 +100,7 @@
             <a-mat-select
               class="col"
               [disabled]="receiverIsPerson"
-              [object]="productQuote"
+              [object]="object"
               [roleType]="m.ProductQuote.ContactPerson"
               [options]="contacts"
               display="DisplayName"
@@ -114,7 +109,7 @@
               mat-mini-fab
               color="accent"
               type="button"
-              [disabled]="receiverIsPerson || !productQuote.canWriteQuoteItems"
+              [disabled]="receiverIsPerson || !object.canWriteQuoteItems"
               (click)="addContactPerson = !addContactPerson"
             >
               <mat-icon *ngIf="!addContactPerson">add</mat-icon>
@@ -122,7 +117,7 @@
             </button>
           </div>
         </div>
-        <div class="col-12" *ngIf="productQuote.Receiver && addContactPerson">
+        <div class="col-12" *ngIf="object.Receiver && addContactPerson">
           <mat-card>
             <mat-card-header>Add a new contact person</mat-card-header>
             <mat-card-content>
@@ -139,13 +134,13 @@
       <div class="row">
         <a-mat-datepicker
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.ValidFromDate"
         >
         </a-mat-datepicker>
         <a-mat-datepicker
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.ValidThroughDate"
         >
         </a-mat-datepicker>
@@ -154,13 +149,13 @@
       <div class="row">
         <a-mat-datepicker
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.IssueDate"
         >
         </a-mat-datepicker>
         <a-mat-datepicker
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.RequiredResponseDate"
         >
         </a-mat-datepicker>
@@ -169,7 +164,7 @@
       <div class="row">
         <a-mat-select
           class="col-md-6"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.DerivedCurrency"
           [assignedRoleType]="m.ProductQuote.AssignedCurrency"
           [options]="currencies"
@@ -179,7 +174,7 @@
         <a-mat-select
           *ngIf="!showIrpf"
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.DerivedVatRegime"
           [assignedRoleType]="m.ProductQuote.AssignedVatRegime"
           [options]="vatRegimes"
@@ -191,7 +186,7 @@
       <div *ngIf="showIrpf" class="row">
         <a-mat-select
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.DerivedVatRegime"
           [assignedRoleType]="m.ProductQuote.AssignedVatRegime"
           [options]="vatRegimes"
@@ -200,7 +195,7 @@
         ></a-mat-select>
         <a-mat-select
           class="col-md"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.DerivedIrpfRegime"
           [assignedRoleType]="m.ProductQuote.AssignedIrpfRegime"
           [options]="irpfRegimes"
@@ -212,19 +207,19 @@
       <div class="row">
         <a-mat-textarea
           class="col-md-12"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.Description"
         >
         </a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.Comment"
           label="Quote Comment"
         ></a-mat-textarea>
         <a-mat-textarea
           class="col-md-12"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.InternalComment"
           label="Quote Internal Comment"
         ></a-mat-textarea>
@@ -251,7 +246,7 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="productQuote"
+          [object]="object"
           [roleType]="m.ProductQuote.ElectronicDocuments"
           accept="image/*"
         ></a-mat-files>

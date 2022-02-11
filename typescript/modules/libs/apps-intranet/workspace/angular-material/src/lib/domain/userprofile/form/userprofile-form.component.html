@@ -1,4 +1,4 @@
-<div class="container-fluid" *ngIf="userProfile">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <mat-form-field class="col-md">
       <input
@@ -38,14 +38,14 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="userProfile"
+      [object]="object"
       [roleType]="m.UserProfile.DefaultInternalOrganization"
       [options]="internalOrganizations"
       display="PartyName"
     ></a-mat-select>
     <a-mat-select
       class="col-md"
-      [object]="userProfile"
+      [object]="object"
       [roleType]="m.UserProfile.DefaulLocale"
       [options]="supportedLocales"
       display="Name"

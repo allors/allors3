@@ -1,23 +1,21 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Currency,
+  Ordinal,
+  Part,
+  RatingType,
+  Settings,
   SupplierOffering,
+  UnitOfMeasure,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -29,21 +27,14 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './supplieroffering-form.component.html',
   providers: [ContextService],
 })
-export class SupplierOfferingFormComponent
-  extends AllorsFormComponent<SupplierOffering>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierOffering> {
   readonly m: M;
-
-  supplierOffering: SupplierOffering;
   part: Part;
   ratingTypes: RatingType[];
   preferences: Ordinal[];
   unitsOfMeasure: UnitOfMeasure[];
   currencies: Currency[];
   settings: Settings;
-
-  private subscription: Subscription;
   title: string;
 
   allSuppliersFilter: SearchFactory;
@@ -57,97 +48,73 @@ export class SupplierOfferingFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.allSuppliersFilter = Filters.allSuppliersFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      this.fetcher.Settings,
+      p.RatingType({ sorting: [{ roleType: m.RateType.Name }] }),
+      p.Ordinal({ sorting: [{ roleType: m.Ordinal.Name }] }),
+      p.UnitOfMeasure({
+        sorting: [{ roleType: m.UnitOfMeasure.Name }],
+      }),
+      p.Currency({ sorting: [{ roleType: m.Currency.Name }] })
+    );
 
-          let pulls = [
-            this.fetcher.Settings,
-            pull.RatingType({ sorting: [{ roleType: m.RateType.Name }] }),
-            pull.Ordinal({ sorting: [{ roleType: m.Ordinal.Name }] }),
-            pull.UnitOfMeasure({
-              sorting: [{ roleType: m.UnitOfMeasure.Name }],
-            }),
-            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
-          ];
-
-          if (isCreate) {
-            pulls = [
-              ...pulls,
-              pull.Part({
-                objectId: this.data.associationId,
-                include: {
-                  SuppliedBy: x,
-                },
-              }),
-            ];
-          }
-
-          if (!isCreate) {
-            pulls = [
-              ...pulls,
-              pull.SupplierOffering({
-                objectId: this.data.id,
-                include: {
-                  Part: x,
-                  Rating: x,
-                  Preference: x,
-                  Supplier: x,
-                  Currency: x,
-                  UnitOfMeasure: x,
-                },
-              }),
-            ];
-          }
-
-          this.allSuppliersFilter = Filters.allSuppliersFilter(m);
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.SupplierOffering({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Part: {},
+            Rating: {},
+            Preference: {},
+            Supplier: {},
+            Currency: {},
+            UnitOfMeasure: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.ratingTypes = loaded.collection<RatingType>(m.RatingType);
-        this.preferences = loaded.collection<Ordinal>(m.Ordinal);
-        this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-        this.settings = this.fetcher.getSettings(loaded);
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Part({
+          objectId: initializer.id,
+          include: {
+            SuppliedBy: {},
+          },
+        })
+      );
+    }
+  }
 
-        if (isCreate) {
-          this.title = 'Add supplier offering';
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          this.supplierOffering = this.allors.context.create<SupplierOffering>(
-            m.SupplierOffering
-          );
-          this.part = loaded.object<Part>(m.Part);
-          this.supplierOffering.Part = this.part;
-          this.supplierOffering.Currency = this.settings.PreferredCurrency;
-        } else {
-          this.supplierOffering = loaded.object<SupplierOffering>(
-            m.SupplierOffering
-          );
-          this.part = this.supplierOffering.Part;
+    this.ratingTypes = pullResult.collection<RatingType>(this.m.RatingType);
+    this.preferences = pullResult.collection<Ordinal>(this.m.Ordinal);
+    this.unitsOfMeasure = pullResult.collection<UnitOfMeasure>(
+      this.m.UnitOfMeasure
+    );
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.settings = this.fetcher.getSettings(pullResult);
 
-          if (this.supplierOffering.canWritePrice) {
-            this.title = 'Edit supplier offering';
-          } else {
-            this.title = 'View supplier offering';
-          }
-        }
-      });
+    if (this.create) {
+      this.part = pullResult.object<Part>(this.m.Part);
+      this.object.Part = this.part;
+      this.object.Currency = this.settings.PreferredCurrency;
+    } else {
+      this.part = this.object.Part;
+    }
   }
 }

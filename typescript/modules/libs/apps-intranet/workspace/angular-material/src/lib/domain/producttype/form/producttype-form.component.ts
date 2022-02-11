@@ -1,18 +1,10 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
   ProductType,
+  SerialisedItemCharacteristicType,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -25,20 +17,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './producttype-form.component.html',
   providers: [ContextService],
 })
-export class ProductTypeFormComponent
-  extends AllorsFormComponent<ProductType>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  public title: string;
-  public subTitle: string;
-
+export class ProductTypeFormComponent extends AllorsFormComponent<ProductType> {
   public m: M;
 
-  public productType: ProductType;
-
   public characteristics: SerialisedItemCharacteristicType[];
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -49,60 +31,41 @@ export class ProductTypeFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.SerialisedItemCharacteristicType({
+        sorting: [{ roleType: m.SerialisedItemCharacteristicType.Name }],
+      })
+    );
 
-          const pulls = [
-            pull.SerialisedItemCharacteristicType({
-              sorting: [{ roleType: m.SerialisedItemCharacteristicType.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.ProductType({
-                objectId: this.data.id,
-                include: {
-                  SerialisedItemCharacteristicTypes: x,
-                },
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.ProductType({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            SerialisedItemCharacteristicTypes: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.characteristics =
-          loaded.collection<SerialisedItemCharacteristicType>(
-            m.SerialisedItemCharacteristicType
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (isCreate) {
-          this.title = 'Add Product Type';
-          this.productType = this.allors.context.create<ProductType>(
-            m.ProductType
-          );
-        } else {
-          this.productType = loaded.object<ProductType>(m.ProductType);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          if (this.productType.canWriteName) {
-            this.title = 'Edit Product Type';
-          } else {
-            this.title = 'View Product Type';
-          }
-        }
-      });
+    this.onPostPullInitialize(pullResult);
+
+    this.characteristics =
+      pullResult.collection<SerialisedItemCharacteristicType>(
+        this.m.SerialisedItemCharacteristicType
+      );
   }
 }

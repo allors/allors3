@@ -1,41 +1,39 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  CustomerRelationship,
   InternalOrganisation,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  Quote,
   RequestForQuote,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
-import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'requestforquote-edit-form',
   templateUrl: './requestforquote-edit-form.component.html',
-  providers: [ContextService, OldPanelService],
+  providers: [ContextService],
 })
-export class RequestForQuoteEditFormComponent
-  extends AllorsFormComponent<RequestForQuote>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class RequestForQuoteEditFormComponent extends AllorsFormComponent<RequestForQuote> {
   readonly m: M;
 
-  request: RequestForQuote;
   quote: Quote;
   currencies: Currency[];
   contactMechanisms: ContactMechanism[] = [];
@@ -46,8 +44,6 @@ export class RequestForQuoteEditFormComponent
   addContactMechanism = false;
   addOriginator = false;
   previousOriginator: Party;
-
-  private subscription: Subscription;
 
   customersFilter: SearchFactory;
 
@@ -60,122 +56,67 @@ export class RequestForQuoteEditFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
-    panel.onPull = (pulls) => {
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const x = {};
 
-        pulls.push(
-          pull.RequestForQuote({
-            name: requestForQuotePullName,
-            objectId: this.panel.manager.id,
-            include: {
-              FullfillContactMechanism: {
-                PostalAddress_Country: x,
-              },
-              RequestItems: {
-                Product: x,
-              },
-              Originator: x,
-              ContactPerson: x,
-              RequestState: x,
-              DerivedCurrency: x,
-              CreatedBy: x,
-              LastModifiedBy: x,
-            },
-          }),
-          pull.RequestForQuote({
-            name: productQuotePullName,
-            objectId: this.panel.manager.id,
-            select: {
-              QuoteWhereRequest: x,
-            },
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.request = loaded.object<RequestForQuote>(requestForQuotePullName);
-        this.quote = loaded.object<Quote>(productQuotePullName);
-      }
-    };
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    // Maximized
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.request = undefined;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-          const m = this.m;
-          const { pullBuilder: pull } = m;
-          const x = {};
-          const id = this.panel.manager.id;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
+      p.RequestForQuote({
+        objectId: this.editRequest.objectId,
+        include: {
+          FullfillContactMechanism: {
+            PostalAddress_Country: {},
+          },
+          RequestItems: {
+            Product: {},
+          },
+          Originator: {},
+          ContactPerson: {},
+          RequestState: {},
+          DerivedCurrency: {},
+          CreatedBy: {},
+          LastModifiedBy: {},
+        },
+      }),
+      p.RequestForQuote({
+        objectId: this.editRequest.objectId,
+        select: {
+          QuoteWhereRequest: {},
+        },
+      })
+    );
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
-            pull.RequestForQuote({
-              objectId: id,
-              include: {
-                DerivedCurrency: x,
-                Originator: x,
-                ContactPerson: x,
-                RequestState: x,
-                FullfillContactMechanism: {
-                  PostalAddress_Country: x,
-                },
-              },
-            }),
-          ];
-
-          this.customersFilter = Filters.customersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
-
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.request = loaded.object<RequestForQuote>(this.m.RequestForQuote);
-        this.currencies = loaded.collection<Currency>(this.m.Currency);
-
-        if (this.request.Originator) {
-          this.previousOriginator = this.request.Originator;
-          this.update(this.request.Originator);
-        }
-      });
+    this.onPrePullInitialize(pulls);
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
+
+    this.onPostPullInitialize(pullResult);
+
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+
+    if (this.object.Originator) {
+      this.previousOriginator = this.object.Originator;
+      this.update(this.object.Originator);
     }
-  }
-
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
   }
 
   get originatorIsPerson(): boolean {
     return (
-      !this.request.Originator ||
-      this.request.Originator.strategy.cls === this.m.Person
+      !this.object.Originator ||
+      this.object.Originator.strategy.cls === this.m.Person
     );
   }
 
@@ -189,8 +130,8 @@ export class RequestForQuoteEditFormComponent
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.request.Originator.addPartyContactMechanism(partyContactMechanism);
-    this.request.FullfillContactMechanism =
+    this.object.Originator.addPartyContactMechanism(partyContactMechanism);
+    this.object.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -199,12 +140,12 @@ export class RequestForQuoteEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.request
+    organisationContactRelationship.Organisation = this.object
       .Originator as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.contacts.push(person);
-    this.request.ContactPerson = person;
+    this.object.ContactPerson = person;
   }
 
   public originatorAdded(party: Party): void {
@@ -215,7 +156,7 @@ export class RequestForQuoteEditFormComponent
     customerRelationship.Customer = party;
     customerRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.request.Originator = party;
+    this.object.Originator = party;
   }
 
   private update(party: Party) {
@@ -246,10 +187,10 @@ export class RequestForQuoteEditFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.request.Originator !== this.previousOriginator) {
-        this.request.FullfillContactMechanism = null;
-        this.request.ContactPerson = null;
-        this.previousOriginator = this.request.Originator;
+      if (this.object.Originator !== this.previousOriginator) {
+        this.object.FullfillContactMechanism = null;
+        this.object.ContactPerson = null;
+        this.previousOriginator = this.object.Originator;
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =

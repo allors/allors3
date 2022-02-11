@@ -1,17 +1,10 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Invoice,
+  PaymentApplication,
   Receipt,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -25,18 +18,11 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './receipt-form.component.html',
   providers: [ContextService],
 })
-export class ReceiptFormComponent
-  extends AllorsFormComponent<Receipt>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class ReceiptFormComponent extends AllorsFormComponent<Receipt> {
   readonly m: M;
 
-  receipt: Receipt;
   invoice: Invoice;
 
-  title: string;
-
-  private subscription: Subscription;
   paymentApplication: PaymentApplication;
 
   constructor(
@@ -48,68 +34,41 @@ export class ReceiptFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-
-          const pulls = [];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.Receipt({
-                objectId: this.data.id,
-                include: {
-                  PaymentApplications: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Invoice({
-                objectId: this.data.associationId,
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.Receipt({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            PaymentApplications: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.invoice = loaded.object<Invoice>(m.Invoice);
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (isCreate) {
-          this.title = 'Add Receipt';
-          this.paymentApplication =
-            this.allors.context.create<PaymentApplication>(
-              m.PaymentApplication
-            );
-          this.paymentApplication.Invoice = this.invoice;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          this.receipt = this.allors.context.create<Receipt>(m.Receipt);
-          this.receipt.addPaymentApplication(this.paymentApplication);
-        } else {
-          this.receipt = loaded.object<Receipt>(m.Receipt);
-          this.paymentApplication = this.receipt.PaymentApplications[0];
+    if (this.createRequest) {
+      this.paymentApplication = this.allors.context.create<PaymentApplication>(
+        this.m.PaymentApplication
+      );
 
-          if (this.receipt.canWriteAmount) {
-            this.title = 'Edit Receipt';
-          } else {
-            this.title = 'View Receipt';
-          }
-        }
-      });
+      this.object.addPaymentApplication(this.paymentApplication);
+    } else {
+      this.paymentApplication = this.object.PaymentApplications[0];
+    }
+
+    this.onPostPullInitialize(pullResult);
   }
 
   public override save(): void {

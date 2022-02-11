@@ -1,10 +1,10 @@
-<div class="container-fluid" *ngIf="purchaseShipment">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <div class="col-md">
       <div class="row">
         <a-mat-autocomplete
           class="col-md"
-          [object]="purchaseShipment"
+          [object]="object"
           [roleType]="m.PurchaseShipment.ShipFromParty"
           [filter]="suppliersFilter.create(allors.context)"
           display="DisplayName"
@@ -21,7 +21,7 @@
         <a-mat-select
           class="col"
           [disabled]="shipFromCustomerIsPerson"
-          [object]="purchaseShipment"
+          [object]="object"
           [roleType]="m.PurchaseShipment.ShipFromContactPerson"
           [options]="shipFromContacts"
           display="DisplayName"
@@ -31,8 +31,8 @@
           mat-mini-fab
           color="accent"
           [disabled]="
-            !purchaseShipment.ShipFromParty ||
-            !purchaseShipment.canWriteShipFromContactPerson ||
+            !object.ShipFromParty ||
+            !object.canWriteShipFromContactPerson ||
             shipFromCustomerIsPerson
           "
           type="button"
@@ -65,7 +65,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="purchaseShipment"
+          [object]="object"
           [roleType]="m.PurchaseShipment.ShipToAddress"
           [options]="shipToAddresses"
           display="DisplayName"
@@ -73,10 +73,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="
-            !purchaseShipment.ShipToParty ||
-            !purchaseShipment.canWriteShipToAddress
-          "
+          [disabled]="!object.ShipToParty || !object.canWriteShipToAddress"
           type="button"
           (click)="addShipToAddress = !addShipToAddress"
         >
@@ -85,10 +82,7 @@
         </button>
       </div>
     </div>
-    <div
-      class="col-md-12 pb-3"
-      *ngIf="purchaseShipment.ShipToParty && addShipToAddress"
-    >
+    <div class="col-md-12 pb-3" *ngIf="object.ShipToParty && addShipToAddress">
       <mat-card>
         <mat-card-header>Add a shipping address</mat-card-header>
         <mat-card-content>
@@ -105,7 +99,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="purchaseShipment"
+          [object]="object"
           [roleType]="m.PurchaseShipment.ShipToContactPerson"
           [options]="shipToContacts"
           display="DisplayName"
@@ -118,7 +112,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="purchaseShipment"
+      [object]="object"
       [roleType]="m.PurchaseShipment.ShipmentMethod"
       [options]="shipmentMethods"
       display="Name"
@@ -166,7 +160,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="purchaseShipment"
+      [object]="object"
       [roleType]="m.PurchaseShipment.Carrier"
       [options]="carriers"
       display="Name"
@@ -176,12 +170,12 @@
   <div class="row">
     <a-mat-datepicker
       class="col-md"
-      [object]="purchaseShipment"
+      [object]="object"
       [roleType]="m.PurchaseShipment.EstimatedShipDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
-      [object]="purchaseShipment"
+      [object]="object"
       [roleType]="m.PurchaseShipment.EstimatedArrivalDate"
     ></a-mat-datepicker>
   </div>
@@ -189,7 +183,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="purchaseShipment"
+      [object]="object"
       [roleType]="m.PurchaseShipment.HandlingInstruction"
     ></a-mat-textarea>
   </div>
@@ -199,7 +193,7 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="purchaseShipment"
+          [object]="object"
           [roleType]="m.PurchaseShipment.ElectronicDocuments"
           accept="image/*"
         ></a-mat-files>
@@ -210,7 +204,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="purchaseShipment"
+      [object]="object"
       [roleType]="m.PurchaseShipment.Comment"
     ></a-mat-textarea>
   </div>

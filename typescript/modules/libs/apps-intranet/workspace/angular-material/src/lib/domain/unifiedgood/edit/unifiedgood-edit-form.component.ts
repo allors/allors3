@@ -1,41 +1,41 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  Brand,
+  Facility,
+  InventoryItemKind,
+  Locale,
+  Model,
+  Organisation,
+  PriceComponent,
+  ProductCategory,
+  ProductIdentificationType,
+  ProductNumber,
+  ProductType,
+  Settings,
   UnifiedGood,
+  UnitOfMeasure,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'unifiedgood-edit-form',
   templateUrl: './unifiedgood-edit-form.component.html',
-  providers: [OldPanelService, ContextService],
+  providers: [ContextService],
 })
-export class UnifiedGoodEditFormComponent
-  extends AllorsFormComponent<UnifiedGood>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class UnifiedGoodEditFormComponent extends AllorsFormComponent<UnifiedGood> {
   readonly m: M;
-
-  good: UnifiedGood;
 
   facility: Facility;
   facilities: Facility[];
@@ -61,176 +61,142 @@ export class UnifiedGoodEditFormComponent
   settings: Settings;
   manufacturersFilter: SearchFactory;
 
-  private subscription: Subscription;
-  private refresh$: BehaviorSubject<Date>;
-
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private fetcher: FetcherService,
-    private snackBar: MatSnackBar
+    private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
 
-    panel.onPull = (pulls) => {
-      this.good = undefined;
-
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const id = this.panel.manager.id;
-
-        pulls.push(
-          pull.UnifiedGood({
-            name: pullName,
-            objectId: id,
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.good = loaded.object<UnifiedGood>(pullName);
-      }
-    };
+    this.manufacturersFilter = Filters.manufacturersFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Maximized
-    this.subscription = combineLatest(this.refresh$, this.panel.manager.on$)
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.good = undefined;
+    pulls.push(
+      this.fetcher.locales,
+      this.fetcher.Settings,
+      p.UnifiedGood({
+        objectId: this.editRequest.objectId,
+        include: {
+          PrimaryPhoto: {},
+          Photos: {},
+          PublicElectronicDocuments: {},
+          PrivateElectronicDocuments: {},
+          PublicLocalisedElectronicDocuments: {},
+          PrivateLocalisedElectronicDocuments: {},
+          ManufacturedBy: {},
+          SuppliedBy: {},
+          DefaultFacility: {},
+          SerialisedItemCharacteristics: {
+            LocalisedValues: {},
+            SerialisedItemCharacteristicType: {
+              UnitOfMeasure: {},
+              LocalisedNames: {},
+            },
+          },
+          ProductIdentifications: {
+            ProductIdentificationType: {},
+          },
+          Brand: {
+            Models: {},
+          },
+          Model: {},
+          LocalisedNames: {
+            Locale: {},
+          },
+          LocalisedDescriptions: {
+            Locale: {},
+          },
+          LocalisedComments: {
+            Locale: {},
+          },
+          LocalisedKeywords: {
+            Locale: {},
+          },
+        },
+      }),
+      p.UnitOfMeasure({}),
+      p.InventoryItemKind({}),
+      p.ProductIdentificationType({}),
+      p.Facility({}),
+      p.ProductIdentificationType({}),
+      p.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
+      p.ProductCategory({
+        sorting: [{ roleType: m.ProductCategory.Name }],
+      }),
+      p.Brand({
+        include: {
+          Models: {},
+        },
+        sorting: [{ roleType: m.Brand.Name }],
+      }),
+      p.UnifiedGood({
+        name: 'OriginalCategories',
+        objectId: this.editRequest.objectId,
+        select: {
+          ProductCategoriesWhereProduct: {
+            include: {
+              Products: {},
+            },
+          },
+        },
+      })
+    );
 
-          const m = this.m;
-          const { pullBuilder: pull } = m;
-          const x = {};
-          const id = this.panel.manager.id;
+    this.onPrePullInitialize(pulls);
+  }
 
-          const pulls = [
-            this.fetcher.locales,
-            this.fetcher.Settings,
-            pull.UnifiedGood({
-              objectId: id,
-              include: {
-                PrimaryPhoto: x,
-                Photos: x,
-                PublicElectronicDocuments: x,
-                PrivateElectronicDocuments: x,
-                PublicLocalisedElectronicDocuments: x,
-                PrivateLocalisedElectronicDocuments: x,
-                ManufacturedBy: x,
-                SuppliedBy: x,
-                DefaultFacility: x,
-                SerialisedItemCharacteristics: {
-                  LocalisedValues: x,
-                  SerialisedItemCharacteristicType: {
-                    UnitOfMeasure: x,
-                    LocalisedNames: x,
-                  },
-                },
-                ProductIdentifications: {
-                  ProductIdentificationType: x,
-                },
-                Brand: {
-                  Models: x,
-                },
-                Model: x,
-                LocalisedNames: {
-                  Locale: x,
-                },
-                LocalisedDescriptions: {
-                  Locale: x,
-                },
-                LocalisedComments: {
-                  Locale: x,
-                },
-                LocalisedKeywords: {
-                  Locale: x,
-                },
-              },
-            }),
-            pull.UnitOfMeasure({}),
-            pull.InventoryItemKind({}),
-            pull.ProductIdentificationType({}),
-            pull.Facility({}),
-            pull.ProductIdentificationType({}),
-            pull.ProductType({ sorting: [{ roleType: m.ProductType.Name }] }),
-            pull.ProductCategory({
-              sorting: [{ roleType: m.ProductCategory.Name }],
-            }),
-            pull.Brand({
-              include: {
-                Models: x,
-              },
-              sorting: [{ roleType: m.Brand.Name }],
-            }),
-            pull.UnifiedGood({
-              name: 'OriginalCategories',
-              objectId: id,
-              select: {
-                ProductCategoriesWhereProduct: {
-                  include: {
-                    Products: x,
-                  },
-                },
-              },
-            }),
-          ];
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          this.manufacturersFilter = Filters.manufacturersFilter(m);
+    this.onPostPullInitialize(pullResult);
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+    this.originalCategories =
+      pullResult.collection<ProductCategory>('OriginalCategories') ?? [];
+    this.selectedCategories = this.originalCategories;
 
-        this.good = loaded.object<UnifiedGood>(m.UnifiedGood);
-        this.originalCategories =
-          loaded.collection<ProductCategory>('OriginalCategories') ?? [];
-        this.selectedCategories = this.originalCategories;
+    this.inventoryItemKinds = pullResult.collection<InventoryItemKind>(
+      this.m.InventoryItemKind
+    );
+    this.productTypes = pullResult.collection<ProductType>(this.m.ProductType);
+    this.brands = pullResult.collection<Brand>(this.m.Brand);
+    this.locales = this.fetcher.getAdditionalLocales(pullResult);
+    this.facilities = pullResult.collection<Facility>(this.m.Facility);
+    this.unitsOfMeasure = pullResult.collection<UnitOfMeasure>(
+      this.m.UnitOfMeasure
+    );
+    this.settings = this.fetcher.getSettings(pullResult);
+    this.goodIdentificationTypes =
+      pullResult.collection<ProductIdentificationType>(
+        this.m.ProductIdentificationType
+      );
+    this.categories = pullResult.collection<ProductCategory>(
+      this.m.ProductCategory
+    );
 
-        this.inventoryItemKinds = loaded.collection<InventoryItemKind>(
-          m.InventoryItemKind
-        );
-        this.productTypes = loaded.collection<ProductType>(m.ProductType);
-        this.brands = loaded.collection<Brand>(m.Brand);
-        this.locales = this.fetcher.getAdditionalLocales(loaded);
-        this.facilities = loaded.collection<Facility>(m.Facility);
-        this.unitsOfMeasure = loaded.collection<UnitOfMeasure>(m.UnitOfMeasure);
-        this.settings = this.fetcher.getSettings(loaded);
-        this.goodIdentificationTypes =
-          loaded.collection<ProductIdentificationType>(
-            m.ProductIdentificationType
-          );
-        this.categories = loaded.collection<ProductCategory>(m.ProductCategory);
+    const goodNumberType = this.goodIdentificationTypes?.find(
+      (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
+    );
 
-        const goodNumberType = this.goodIdentificationTypes?.find(
-          (v) => v.UniqueId === 'b640630d-a556-4526-a2e5-60a84ab0db3f'
-        );
+    this.productNumber = this.object.ProductIdentifications?.find(
+      (v) => v.ProductIdentificationType === goodNumberType
+    );
 
-        this.productNumber = this.good.ProductIdentifications?.find(
-          (v) => v.ProductIdentificationType === goodNumberType
-        );
+    this.suppliers = this.object.SuppliedBy as Organisation[];
 
-        this.suppliers = this.good.SuppliedBy as Organisation[];
+    this.selectedBrand = this.object.Brand;
+    this.selectedModel = this.object.Model;
 
-        this.selectedBrand = this.good.Brand;
-        this.selectedModel = this.good.Model;
-
-        if (this.selectedBrand) {
-          this.brandSelected(this.selectedBrand);
-        }
-      });
+    if (this.selectedBrand) {
+      this.brandSelected(this.selectedBrand);
+    }
   }
 
   public brandAdded(brand: Brand): void {
@@ -277,7 +243,7 @@ export class UnifiedGoodEditFormComponent
 
   private onSave() {
     this.selectedCategories.forEach((category: ProductCategory) => {
-      category.addProduct(this.good);
+      category.addProduct(this.object);
 
       const index = this.originalCategories.indexOf(category);
       if (index > -1) {
@@ -286,10 +252,10 @@ export class UnifiedGoodEditFormComponent
     });
 
     this.originalCategories.forEach((category: ProductCategory) => {
-      category.removeProduct(this.good);
+      category.removeProduct(this.object);
     });
 
-    this.good.Brand = this.selectedBrand;
-    this.good.Model = this.selectedModel;
+    this.object.Brand = this.selectedBrand;
+    this.object.Model = this.selectedModel;
   }
 }

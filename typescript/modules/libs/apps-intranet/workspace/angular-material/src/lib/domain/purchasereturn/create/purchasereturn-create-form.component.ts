@@ -1,23 +1,24 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  Currency,
+  Facility,
   InternalOrganisation,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
   PurchaseReturn,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -29,15 +30,8 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './purchasereturn-create-form.component.html',
   providers: [ContextService],
 })
-export class PurchaseReturnCreateFormComponent
-  extends AllorsFormComponent<PurchaseReturn>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PurchaseReturnCreateFormComponent extends AllorsFormComponent<PurchaseReturn> {
   readonly m: M;
-
-  title = 'Add Purchase Return';
-
-  purchaseReturn: PurchaseReturn;
   currencies: Currency[];
   shipToAddresses: PostalAddress[] = [];
   shipToContacts: Person[] = [];
@@ -47,8 +41,6 @@ export class PurchaseReturnCreateFormComponent
 
   addShipToAddress = false;
   addShipToContactPerson = false;
-
-  private subscription: Subscription;
   facilities: Facility[];
 
   suppliersFilter: SearchFactory;
@@ -62,61 +54,55 @@ export class PurchaseReturnCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.suppliersFilter = Filters.suppliersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            this.fetcher.ownWarehouses,
-            pull.Organisation({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Organisation.IsInternalOrganisation,
-                value: true,
-              },
-              sorting: [{ roleType: m.Organisation.DisplayName }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      this.fetcher.ownWarehouses,
+      p.Organisation({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        },
+        sorting: [{ roleType: m.Organisation.DisplayName }],
+      })
+    );
 
-          this.suppliersFilter = Filters.suppliersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
+    this.onPrePullInitialize(pulls);
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.facilities = this.fetcher.getOwnWarehouses(loaded);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.context.create(this.createRequest.objectType);
 
-        this.purchaseReturn = this.allors.context.create<PurchaseReturn>(
-          m.PurchaseReturn
-        );
-        this.purchaseReturn.ShipFromParty = this.internalOrganisation;
+    this.onPostPullInitialize(pullResult);
 
-        if (this.facilities.length > 0) {
-          this.purchaseReturn.ShipFromFacility = this.facilities[0];
-        }
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.facilities = this.fetcher.getOwnWarehouses(pullResult);
 
-        if (this.purchaseReturn.ShipToParty) {
-          this.updateShipToParty(this.purchaseReturn.ShipToParty);
-        }
+    this.object.ShipFromParty = this.internalOrganisation;
 
-        if (this.purchaseReturn.ShipFromParty) {
-          this.updateShipFromParty(this.purchaseReturn.ShipFromParty);
-        }
-      });
+    if (this.facilities.length > 0) {
+      this.object.ShipFromFacility = this.facilities[0];
+    }
+
+    if (this.object.ShipToParty) {
+      this.updateShipToParty(this.object.ShipToParty);
+    }
+
+    if (this.object.ShipFromParty) {
+      this.updateShipFromParty(this.object.ShipFromParty);
+    }
   }
 
   public shipToContactPersonAdded(person: Person): void {
@@ -124,25 +110,23 @@ export class PurchaseReturnCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.purchaseReturn
+    organisationContactRelationship.Organisation = this.object
       .ShipToParty as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
-    this.purchaseReturn.ShipToContactPerson = person;
+    this.object.ShipToContactPerson = person;
   }
 
   public shipToAddressAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
-    this.purchaseReturn.ShipToParty.addPartyContactMechanism(
-      partyContactMechanism
-    );
+    this.object.ShipToParty.addPartyContactMechanism(partyContactMechanism);
 
     const postalAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
     this.shipToAddresses.push(postalAddress);
-    this.purchaseReturn.ShipToAddress = postalAddress;
+    this.object.ShipToAddress = postalAddress;
   }
 
   public supplierSelected(supplier: IObject) {

@@ -1,18 +1,18 @@
-<div class="container-fluid" *ngIf="contactMechanism">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.TelecommunicationsNumber.CountryCode"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.TelecommunicationsNumber.AreaCode"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.TelecommunicationsNumber.ContactNumber"
     ></a-mat-input>
   </div>
@@ -20,7 +20,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.TelecommunicationsNumber.ContactMechanismType"
       [options]="contactMechanismTypes"
       display="Name"
@@ -30,7 +30,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.ContactMechanism.Description"
     ></a-mat-textarea>
   </div>

@@ -1,11 +1,11 @@
-<div class="container-fluid" *ngIf="shipment">
+<div class="container-fluid" *ngIf="object">
   <div class="container-fluid">
     <div class="row">
       <div class="col-md">
         <div class="row">
           <a-mat-autocomplete
             class="col-md"
-            [object]="shipment"
+            [object]="object"
             [roleType]="m.PurchaseShipment.ShipFromParty"
             [filter]="suppliersFilter.create(allors.context)"
             display="DisplayName"
@@ -15,7 +15,7 @@
           <button
             mat-mini-fab
             color="accent"
-            [disabled]="!shipment.canWriteShipFromParty"
+            [disabled]="!object.canWriteShipFromParty"
             type="button"
             (click)="addSupplier = !addSupplier"
           >
@@ -43,7 +43,7 @@
         <div class="row">
           <a-mat-select
             class="col"
-            [object]="shipment"
+            [object]="object"
             [roleType]="m.PurchaseShipment.ShipFromContactPerson"
             [options]="shipFromContacts"
             display="DisplayName"
@@ -53,7 +53,7 @@
             mat-mini-fab
             color="accent"
             [disabled]="
-              !shipment.ShipFromParty || !shipment.canWriteShipFromContactPerson
+              !object.ShipFromParty || !object.canWriteShipFromContactPerson
             "
             type="button"
             (click)="addShipFromContactPerson = !addShipFromContactPerson"
@@ -85,7 +85,7 @@
         <div class="row">
           <a-mat-select
             class="col"
-            [object]="shipment"
+            [object]="object"
             [roleType]="m.PurchaseShipment.ShipToAddress"
             [options]="shipToAddresses"
             display="DisplayName"
@@ -94,7 +94,7 @@
           <button
             mat-mini-fab
             color="accent"
-            [disabled]="!shipment.canWriteShipToAddress"
+            [disabled]="!object.canWriteShipToAddress"
             type="button"
             (click)="addShipToAddress = !addShipToAddress"
           >
@@ -120,7 +120,7 @@
         <div class="row">
           <a-mat-select
             class="col"
-            [object]="shipment"
+            [object]="object"
             [roleType]="m.PurchaseShipment.ShipToContactPerson"
             [options]="shipToContacts"
             display="DisplayName"
@@ -129,7 +129,7 @@
           <button
             mat-mini-fab
             color="accent"
-            [disabled]="!shipment.canWriteShipToContactPerson"
+            [disabled]="!object.canWriteShipToContactPerson"
             type="button"
             (click)="addShipToContactPerson = !addShipToContactPerson"
           >

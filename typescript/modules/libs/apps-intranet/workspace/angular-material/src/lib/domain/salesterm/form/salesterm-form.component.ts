@@ -1,18 +1,12 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  SalesInvoice,
+  SalesOrder,
   SalesTerm,
+  TermType,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -20,24 +14,17 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { RoleType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './salesterm-form.component.html',
   providers: [ContextService],
 })
-export class SalesTermFormComponent
-  extends AllorsFormComponent<SalesTerm>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SalesTermFormComponent extends AllorsFormComponent<SalesTerm> {
   public m: M;
 
-  public title = 'Edit Term Type';
-
   public container: IObject;
-  public object: SalesTerm;
   public termTypes: TermType[];
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -48,77 +35,63 @@ export class SalesTermFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
-          const cls = this.data.strategy?.cls;
-          const { associationRoleType } = this.data;
+    pulls.push(
+      p.TermType({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.TermType.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.TermType.Name }],
+      })
+    );
 
-          const pulls = [
-            pull.TermType({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.TermType.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.TermType.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.SalesTerm({
-                objectId: this.data.id,
-                include: {
-                  TermType: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.SalesInvoice({ objectId: this.data.associationId }),
-              pull.SalesOrder({ objectId: this.data.associationId })
-            );
-          }
-
-          return this.allors.context.pull(pulls).pipe(
-            map((loaded) => ({
-              loaded,
-              create: isCreate,
-              cls,
-              associationRoleType,
-            }))
-          );
+    if (this.editRequest) {
+      pulls.push(
+        p.SalesTerm({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            TermType: {},
+          },
         })
-      )
-      .subscribe(({ loaded, create, cls, associationRoleType }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.container =
-          loaded.object<SalesInvoice>(m.SalesInvoice) ||
-          loaded.object<SalesOrder>(m.SalesOrder);
-        this.object = loaded.object<SalesTerm>(m.SalesTerm);
-        this.termTypes = loaded.collection<TermType>(m.TermType);
-        this.termTypes = this.termTypes?.filter(
-          (v) => v.strategy.cls.singularName === `${cls.singularName}Type`
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.SalesInvoice({ objectId: initializer.id }),
+        p.SalesOrder({ objectId: initializer.id })
+      );
+    }
+  }
 
-        if (create) {
-          this.title = 'Add Sales Term';
-          this.object = this.allors.context.create<SalesTerm>(cls);
-          this.container.strategy.addCompositesRole(
-            associationRoleType,
-            this.object
-          );
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.container =
+      pullResult.object<SalesInvoice>(this.m.SalesInvoice) ||
+      pullResult.object<SalesOrder>(this.m.SalesOrder);
+
+    this.termTypes = pullResult.collection<TermType>(this.m.TermType);
+
+    // TODO: KOEN
+    // this.termTypes = this.termTypes?.filter(
+    //   (v) => v.strategy.cls.singularName === `${cls.singularName}Type`
+    // );
+
+    if (this.createRequest) {
+      this.container.strategy.addCompositesRole(
+        this.createRequest.initializer.propertyType as RoleType,
+        this.object
+      );
+    }
   }
 }

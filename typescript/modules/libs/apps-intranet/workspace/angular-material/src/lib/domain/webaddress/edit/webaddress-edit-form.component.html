@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="contactMechanism">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.ElectronicAddress.ElectronicAddressString"
     ></a-mat-input>
   </div>
@@ -10,7 +10,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="contactMechanism"
+      [object]="object"
       [roleType]="m.ContactMechanism.Description"
     ></a-mat-textarea>
   </div>

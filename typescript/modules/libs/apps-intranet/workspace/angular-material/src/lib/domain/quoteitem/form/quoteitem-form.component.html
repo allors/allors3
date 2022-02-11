@@ -1,7 +1,7 @@
-<div class="container-fluid" *ngIf="quoteItem">
-  <div *ngIf="!quoteItem.strategy.isNew" class="row">
+<div class="container-fluid" *ngIf="object">
+  <div *ngIf="!object.strategy.isNew" class="row">
     <a-mat-static
-      [object]="quoteItem"
+      [object]="object"
       [roleType]="m.QuoteItem.QuoteItemState"
       display="Name"
       label="Status"
@@ -9,62 +9,61 @@
     ></a-mat-static>
   </div>
 
-  <div class="row" *ngIf="quoteItem.strategy.isNew">
+  <div class="row" *ngIf="object.strategy.isNew">
     <a-mat-select
       class="col-md"
-      [object]="quoteItem"
+      [object]="object"
       [roleType]="m.QuoteItem.InvoiceItemType"
       [options]="invoiceItemTypes"
       display="Name"
     ></a-mat-select>
   </div>
 
-  <div *ngIf="quoteItem.InvoiceItemType">
+  <div *ngIf="object.InvoiceItemType">
     <div
       class="row"
       *ngIf="
-        !quoteItem.strategy.isNew &&
-        quoteItem.InvoiceItemType !== productItemType
+        !object.strategy.isNew && object.InvoiceItemType !== productItemType
       "
     >
       <a-mat-select
         class="col-md"
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.InvoiceItemType"
         [options]="invoiceItemTypes"
         display="Name"
       ></a-mat-select>
     </div>
 
-    <div class="row" *ngIf="quoteItem.InvoiceItemType !== productItemType">
+    <div class="row" *ngIf="object.InvoiceItemType !== productItemType">
       <a-mat-input
         class="col-md"
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.Quantity"
         class="col-md"
       ></a-mat-input>
       <a-mat-input
         class="col-md"
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.AssignedUnitPrice"
         label="Unit Price"
       ></a-mat-input>
       <a-mat-static
         class="col-md"
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.UnitVat"
       ></a-mat-static>
       <a-mat-static
         class="col-md"
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.TotalIncVat"
       ></a-mat-static>
     </div>
 
-    <div *ngIf="quoteItem.InvoiceItemType === productItemType">
+    <div *ngIf="object.InvoiceItemType === productItemType">
       <div class="row">
         <a-mat-autocomplete
-          [object]="quoteItem"
+          [object]="object"
           [roleType]="m.QuoteItem.Product"
           display="Name"
           [filter]="goodsFilter.create(allors.context)"
@@ -73,33 +72,33 @@
         ></a-mat-autocomplete>
         <a-mat-select
           class="col-md"
-          [object]="quoteItem"
+          [object]="object"
           [roleType]="m.QuoteItem.SerialisedItem"
           [options]="serialisedItems"
           (selected)="serialisedItemSelected($event)"
           display="DisplayName"
         ></a-mat-select>
         <a-mat-static
-          [object]="quoteItem.SerialisedItem"
+          [object]="object.SerialisedItem"
           [roleType]="m.SerialisedItem.ExpectedSalesPrice"
         ></a-mat-static>
       </div>
 
       <div class="row">
         <a-mat-input
-          [object]="quoteItem"
+          [object]="object"
           [roleType]="m.QuoteItem.Quantity"
           class="col-md"
         ></a-mat-input>
         <a-mat-select
-          [object]="quoteItem"
+          [object]="object"
           [roleType]="m.QuoteItem.UnitOfMeasure"
           [options]="unitsOfMeasure"
           display="Name"
           class="col-md"
         ></a-mat-select>
         <a-mat-input
-          [object]="quoteItem"
+          [object]="object"
           [roleType]="m.QuoteItem.AssignedUnitPrice"
           label="Unit Price"
           class="col-md"
@@ -114,12 +113,12 @@
       <div class="row">
         <a-mat-static
           class="col-md"
-          [object]="quoteItem"
+          [object]="object"
           [roleType]="m.QuoteItem.UnitVat"
         ></a-mat-static>
         <a-mat-static
           class="col-md"
-          [object]="quoteItem"
+          [object]="object"
           [roleType]="m.QuoteItem.TotalIncVat"
         ></a-mat-static>
       </div>
@@ -128,7 +127,7 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.DerivedVatRegime"
         [assignedRoleType]="m.QuoteItem.AssignedVatRegime"
         [derivedInitialRole]="vatRegimeInitialRole"
@@ -139,7 +138,7 @@
       <a-mat-select
         *ngIf="showIrpf"
         class="col-md"
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.DerivedIrpfRegime"
         [assignedRoleType]="m.QuoteItem.AssignedIrpfRegime"
         [derivedInitialRole]="irpfRegimeInitialRole"
@@ -151,13 +150,13 @@
 
     <div class="row">
       <a-mat-datepicker
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.RequiredByDate"
         [disabled]="true"
         class="col-md"
       ></a-mat-datepicker>
       <a-mat-datepicker
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.EstimatedDeliveryDate"
         class="col-md"
       ></a-mat-datepicker>
@@ -165,17 +164,17 @@
 
     <div class="row">
       <a-mat-textarea
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.Details"
         class="col-md-12"
       ></a-mat-textarea>
       <a-mat-textarea
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.Comment"
         class="col-md-12"
       ></a-mat-textarea>
       <a-mat-textarea
-        [object]="quoteItem"
+        [object]="object"
         [roleType]="m.QuoteItem.InternalComment"
         class="col-md-12"
       ></a-mat-textarea>

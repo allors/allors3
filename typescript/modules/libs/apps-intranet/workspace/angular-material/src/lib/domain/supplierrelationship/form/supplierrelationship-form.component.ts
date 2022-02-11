@@ -1,17 +1,10 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
   InternalOrganisation,
+  Organisation,
   SupplierRelationship,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -27,19 +20,11 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
   templateUrl: './supplierrelationship-form.component.html',
   providers: [ContextService],
 })
-export class SupplierRelationshipFormComponent
-  extends AllorsFormComponent<SupplierRelationship>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class SupplierRelationshipFormComponent extends AllorsFormComponent<SupplierRelationship> {
   readonly m: M;
 
-  partyRelationship: SupplierRelationship;
   internalOrganisation: InternalOrganisation;
   organisation: Organisation;
-  title: string;
-  canSave: boolean;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -50,93 +35,37 @@ export class SupplierRelationshipFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
-
-    this.canSave = true;
   }
 
-  public canCreate(createData: ObjectData) {
-    if (createData.associationObjectType === this.m.Person) {
-      return false;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
+    if (this.editRequest) {
+      pulls.push(
+        p.SupplierRelationship({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            InternalOrganisation: {},
+            Supplier: {},
+            Parties: {},
+          },
+        })
+      );
     }
 
-    return true;
+    this.onPrePullInitialize(pulls);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    this.onPostPullInitialize(pullResult);
 
-          const pulls = [this.fetcher.internalOrganisation];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.SupplierRelationship({
-                objectId: this.data.id,
-                include: {
-                  InternalOrganisation: x,
-                  Parties: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.Organisation({
-                objectId: this.data.associationId,
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
-        })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
-
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.organisation = loaded.object<Organisation>(m.Organisation);
-
-        if (isCreate) {
-          if (this.organisation == null) {
-            this.canSave = false;
-            // this.dialogRef.close();
-          }
-
-          this.title = 'Add Supplier Relationship';
-
-          this.partyRelationship =
-            this.allors.context.create<SupplierRelationship>(
-              m.SupplierRelationship
-            );
-          this.partyRelationship.FromDate = new Date();
-          this.partyRelationship.Supplier = this.organisation;
-          this.partyRelationship.InternalOrganisation =
-            this.internalOrganisation;
-          this.partyRelationship.NeedsApproval = false;
-        } else {
-          this.partyRelationship = loaded.object<SupplierRelationship>(
-            m.SupplierRelationship
-          );
-
-          if (this.partyRelationship.canWriteFromDate) {
-            this.title = 'Edit Supplier Relationship';
-          } else {
-            this.title = 'View Supplier Relationship';
-          }
-        }
-      });
+    this.object.FromDate = new Date();
+    this.object.NeedsApproval = false;
   }
 }

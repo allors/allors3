@@ -1,23 +1,21 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  AssetAssignmentStatus,
+  Enumeration,
+  Organisation,
+  Party,
+  SerialisedItem,
+  WorkEffort,
   WorkEffortFixedAssetAssignment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -28,20 +26,12 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './workeffortfixedassetassignment-form.component.html',
   providers: [ContextService],
 })
-export class WorkEffortFixedAssetAssignmentFormComponent
-  extends AllorsFormComponent<WorkEffortFixedAssetAssignment>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class WorkEffortFixedAssetAssignmentFormComponent extends AllorsFormComponent<WorkEffortFixedAssetAssignment> {
   readonly m: M;
-
-  workEffortFixedAssetAssignment: WorkEffortFixedAssetAssignment;
   workEffort: WorkEffort;
   assignment: WorkEffort;
   serialisedItem: SerialisedItem;
   assetAssignmentStatuses: Enumeration[];
-  title: string;
-
-  private subscription: Subscription;
   serialisedItems: SerialisedItem[];
   externalCustomer: boolean;
 
@@ -56,121 +46,94 @@ export class WorkEffortFixedAssetAssignmentFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.serialisedItemsFilter = Filters.serialisedItemsFilter(this.m);
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.WorkEffort({
+        sorting: [{ roleType: m.WorkEffort.Name }],
+      }),
+      p.AssetAssignmentStatus({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.AssetAssignmentStatus.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.AssetAssignmentStatus.Name }],
+      })
+    );
 
-          const pulls = [
-            pull.WorkEffort({
-              sorting: [{ roleType: m.WorkEffort.Name }],
-            }),
-            pull.SerialisedItem({
-              objectId: this.data.associationId,
-              sorting: [{ roleType: m.SerialisedItem.Name }],
-            }),
-            pull.AssetAssignmentStatus({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.AssetAssignmentStatus.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.AssetAssignmentStatus.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.WorkEffortFixedAssetAssignment({
-                objectId: this.data.id,
-                include: {
-                  Assignment: x,
-                  FixedAsset: x,
-                  AssetAssignmentStatus: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.WorkEffort({
-                objectId: this.data.associationId,
-                include: { Customer: x },
-              })
-            );
-          }
-
-          this.serialisedItemsFilter = Filters.serialisedItemsFilter(m);
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.WorkEffortFixedAssetAssignment({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            Assignment: {},
+            FixedAsset: {},
+            AssetAssignmentStatus: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-        this.workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
-        this.serialisedItem = loaded.object<SerialisedItem>(m.SerialisedItem);
-        this.assetAssignmentStatuses = loaded.collection<AssetAssignmentStatus>(
-          m.AssetAssignmentStatus
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.SerialisedItem({
+          objectId: initializer.id,
+          sorting: [{ roleType: m.SerialisedItem.Name }],
+        }),
+        p.WorkEffort({
+          objectId: initializer.id,
+          include: { Customer: {} },
+        })
+      );
+    }
+  }
 
-        if (this.serialisedItem == null) {
-          const b2bCustomer = this.workEffort.Customer as Organisation;
-          this.externalCustomer =
-            b2bCustomer == null || !b2bCustomer.IsInternalOrganisation;
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          if (this.externalCustomer) {
-            this.updateSerialisedItems(this.workEffort.Customer);
-          }
-        }
+    this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
+    this.workEfforts = pullResult.collection<WorkEffort>(this.m.WorkEffort);
+    this.serialisedItem = pullResult.object<SerialisedItem>(
+      this.m.SerialisedItem
+    );
+    this.assetAssignmentStatuses = pullResult.collection<AssetAssignmentStatus>(
+      this.m.AssetAssignmentStatus
+    );
 
-        if (isCreate) {
-          this.title = 'Add Asset Assignment';
+    if (this.serialisedItem == null) {
+      const b2bCustomer = this.workEffort.Customer as Organisation;
+      this.externalCustomer =
+        b2bCustomer == null || !b2bCustomer.IsInternalOrganisation;
 
-          this.workEffortFixedAssetAssignment =
-            this.allors.context.create<WorkEffortFixedAssetAssignment>(
-              m.WorkEffortFixedAssetAssignment
-            );
+      if (this.externalCustomer) {
+        this.updateSerialisedItems(this.workEffort.Customer);
+      }
+    }
 
-          if (this.serialisedItem != null) {
-            this.workEffortFixedAssetAssignment.FixedAsset =
-              this.serialisedItem;
-          }
+    if (this.createRequest) {
+      if (this.serialisedItem != null) {
+        this.object.FixedAsset = this.serialisedItem;
+      }
 
-          if (
-            this.workEffort != null &&
-            this.workEffort.strategy.cls === m.WorkTask
-          ) {
-            this.assignment = this.workEffort as WorkEffort;
-            this.workEffortFixedAssetAssignment.Assignment = this.assignment;
-          }
-        } else {
-          this.workEffortFixedAssetAssignment =
-            loaded.object<WorkEffortFixedAssetAssignment>(
-              m.WorkEffortFixedAssetAssignment
-            );
-
-          if (this.workEffortFixedAssetAssignment.canWriteFromDate) {
-            this.title = 'Edit Asset Assignment';
-          } else {
-            this.title = 'View Asset Assignment';
-          }
-        }
-      });
+      if (
+        this.workEffort != null &&
+        this.workEffort.strategy.cls === this.m.WorkTask
+      ) {
+        this.assignment = this.workEffort as WorkEffort;
+        this.object.Assignment = this.assignment;
+      }
+    }
   }
 
   private updateSerialisedItems(customer: Party) {

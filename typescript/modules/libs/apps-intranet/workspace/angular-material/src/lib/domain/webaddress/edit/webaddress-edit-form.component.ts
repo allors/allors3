@@ -1,19 +1,8 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
-  WebAddress,
-} from '@allors/default/workspace/domain';
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { WebAddress } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -23,19 +12,11 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
-  templateUrl: './webaddress-form.component.html',
+  templateUrl: './webaddress-edit-form.component.html',
   providers: [ContextService],
 })
-export class WebAddressFormComponent
-  extends AllorsFormComponent<WebAddress>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class WebAddressFormComponent extends AllorsFormComponent<WebAddress> {
   readonly m: M;
-
-  contactMechanism: ElectronicAddress;
-  title: string;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -47,37 +28,27 @@ export class WebAddressFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.ContactMechanism({
-              objectId: this.data.id,
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
+    if (this.editRequest) {
+      pulls.push(
+        p.ContactMechanism({
+          name: '_object',
+          objectId: this.editRequest.objectId,
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.contactMechanism = loaded.object<ElectronicAddress>(
-          m.ContactMechanism
-        );
+    this.onPrePullInitialize(pulls);
+  }
 
-        if (this.contactMechanism.canWriteElectronicAddressString) {
-          this.title = 'Edit Web Address';
-        } else {
-          this.title = 'View Web Address';
-        }
-      });
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
+
+    this.onPostPullInitialize(pullResult);
   }
 }

@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="productType">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="productType"
+      [object]="object"
       [roleType]="m.ProductType.Name"
     ></a-mat-input>
   </div>
@@ -10,7 +10,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="productType"
+      [object]="object"
       [roleType]="m.ProductType.SerialisedItemCharacteristicTypes"
       [options]="characteristics"
       display="Name"

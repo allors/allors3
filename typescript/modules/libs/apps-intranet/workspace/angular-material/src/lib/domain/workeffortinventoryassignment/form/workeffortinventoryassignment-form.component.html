@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="workEffortInventoryAssignment">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="workEffortInventoryAssignment"
+      [object]="object"
       [roleType]="m.WorkEffortInventoryAssignment.InventoryItem"
       [options]="inventoryItems"
       (selected)="inventoryItemSelected($event)"
@@ -13,12 +13,12 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="workEffortInventoryAssignment"
+      [object]="object"
       [roleType]="m.WorkEffortInventoryAssignment.Quantity"
     ></a-mat-input>
     <a-mat-input
       class="col-md"
-      [object]="workEffortInventoryAssignment"
+      [object]="object"
       [roleType]="m.WorkEffortInventoryAssignment.AssignedBillableQuantity"
     ></a-mat-input>
   </div>
@@ -26,7 +26,7 @@
   <div class="row">
     <a-mat-static
       class="col-md"
-      [object]="workEffortInventoryAssignment.InventoryItem?.Facility"
+      [object]="object.InventoryItem?.Facility"
       [roleType]="m.Facility.Name"
     ></a-mat-static>
     <a-mat-static
@@ -40,12 +40,12 @@
   <div class="row">
     <a-mat-static
       class="col-md"
-      [object]="workEffortInventoryAssignment"
+      [object]="object"
       [roleType]="m.WorkEffortInventoryAssignment.UnitSellingPrice"
     ></a-mat-static>
     <a-mat-input
       class="col-md"
-      [object]="workEffortInventoryAssignment"
+      [object]="object"
       [roleType]="m.WorkEffortInventoryAssignment.AssignedUnitSellingPrice"
     ></a-mat-input>
   </div>
@@ -55,7 +55,7 @@
       <input
         type="number"
         matInput
-        [(ngModel)]="workEffortInventoryAssignment.TotalSellingPrice"
+        [(ngModel)]="object.TotalSellingPrice"
         name="totalSellingPrice"
         placeholder="Total selling price"
         readonly
@@ -63,15 +63,8 @@
     </mat-form-field>
     <a-mat-static
       class="col-md"
-      [object]="workEffortInventoryAssignment"
+      [object]="object"
       [roleType]="m.WorkEffortInventoryAssignment.CostOfGoodsSold"
     ></a-mat-static>
   </div>
 </div>
-
-<!-- TODO: KOEN -->
-<!-- <div mat-dialog-actions>
-    <button mat-button class="ml-2" color="primary" type="submit" [disabled]="!form.form.valid || !allors.context.hasChanges">SAVE & CLOSE</button>
-    <button mat-button (click)="update()" type="button" color="accent" [disabled]="!form.form.valid">SAVE</button>
-    <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-  </div> -->

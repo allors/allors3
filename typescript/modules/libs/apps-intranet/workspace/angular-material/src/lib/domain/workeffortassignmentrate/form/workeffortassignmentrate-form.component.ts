@@ -1,18 +1,13 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  RateType,
+  TimeFrequency,
+  WorkEffort,
   WorkEffortAssignmentRate,
+  WorkEffortPartyAssignment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -24,22 +19,13 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './workeffortassignmentrate-form.component.html',
   providers: [ContextService],
 })
-export class WorkEffortAssignmentRateFormComponent
-  extends AllorsFormComponent<WorkEffortAssignmentRate>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
-  title: string;
-  subTitle: string;
-
+export class WorkEffortAssignmentRateFormComponent extends AllorsFormComponent<WorkEffortAssignmentRate> {
   readonly m: M;
 
-  workEffortAssignmentRate: WorkEffortAssignmentRate;
   workEffort: WorkEffort;
   workEffortPartyAssignments: WorkEffortPartyAssignment[];
   timeFrequencies: TimeFrequency[];
   rateTypes: RateType[];
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -50,94 +36,73 @@ export class WorkEffortAssignmentRateFormComponent
     this.m = allors.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const isCreate = this.data.id == null;
+    pulls.push(
+      p.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
+      p.TimeFrequency({
+        sorting: [{ roleType: this.m.TimeFrequency.Name }],
+      })
+    );
 
-          const pulls = [
-            pull.RateType({ sorting: [{ roleType: this.m.RateType.Name }] }),
-            pull.TimeFrequency({
-              sorting: [{ roleType: this.m.TimeFrequency.Name }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.WorkEffortAssignmentRate({
-                objectId: this.data.id,
-                include: {
-                  RateType: x,
-                  Frequency: x,
-                  WorkEffortPartyAssignment: x,
-                  WorkEffort: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.WorkEffort({
-                objectId: this.data.associationId,
-                select: {
-                  WorkEffortPartyAssignmentsWhereAssignment: {
-                    include: {
-                      Party: x,
-                    },
-                  },
-                },
-              }),
-              pull.WorkEffort({
-                objectId: this.data.associationId,
-              })
-            );
-          }
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
+    if (this.editRequest) {
+      pulls.push(
+        p.WorkEffortAssignmentRate({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            RateType: {},
+            Frequency: {},
+            WorkEffortPartyAssignment: {},
+            WorkEffort: {},
+          },
         })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
+      );
+    }
 
-        this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-        this.workEffortPartyAssignments =
-          loaded.collection<WorkEffortPartyAssignment>(
-            m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment
-          );
-        this.rateTypes = loaded.collection<RateType>(m.RateType);
-        this.timeFrequencies = loaded.collection<TimeFrequency>(
-          m.TimeFrequency
-        );
-        const hour = this.timeFrequencies?.find(
-          (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
-        );
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.WorkEffort({
+          objectId: initializer.id,
+          select: {
+            WorkEffortPartyAssignmentsWhereAssignment: {
+              include: {
+                Party: {},
+              },
+            },
+          },
+        }),
+        p.WorkEffort({
+          objectId: initializer.id,
+        })
+      );
+    }
+  }
 
-        if (isCreate) {
-          this.title = 'Add Rate';
-          this.workEffortAssignmentRate =
-            this.allors.context.create<WorkEffortAssignmentRate>(
-              m.WorkEffortAssignmentRate
-            );
-          this.workEffortAssignmentRate.WorkEffort = this.workEffort;
-          this.workEffortAssignmentRate.Frequency = hour;
-        } else {
-          this.workEffortAssignmentRate =
-            loaded.object<WorkEffortAssignmentRate>(m.WorkEffortAssignmentRate);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-          if (this.workEffortAssignmentRate.canWriteRate) {
-            this.title = 'Edit Rate';
-          } else {
-            this.title = 'View Rate';
-          }
-        }
-      });
+    this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
+    this.workEffortPartyAssignments =
+      pullResult.collection<WorkEffortPartyAssignment>(
+        this.m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment
+      );
+    this.rateTypes = pullResult.collection<RateType>(this.m.RateType);
+    this.timeFrequencies = pullResult.collection<TimeFrequency>(
+      this.m.TimeFrequency
+    );
+    const hour = this.timeFrequencies?.find(
+      (v) => v.UniqueId === 'db14e5d5-5eaf-4ec8-b149-c558a28d99f5'
+    );
+
+    if (this.createRequest) {
+      this.object.WorkEffort = this.workEffort;
+      this.object.Frequency = hour;
+    }
   }
 }

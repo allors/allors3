@@ -1,42 +1,43 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  Facility,
   InternalOrganisation,
+  IrpfRegime,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  PostalAddress,
   PurchaseOrder,
+  SupplierRelationship,
+  VatRate,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
-import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'purchaseorder-edit-form',
   templateUrl: './purchaseorder-edit-form.component.html',
-  providers: [ContextService, OldPanelService],
+  providers: [ContextService],
 })
-export class PurchaseOrderEditFormComponent
-  extends AllorsFormComponent<PurchaseOrder>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class PurchaseOrderEditFormComponent extends AllorsFormComponent<PurchaseOrder> {
   readonly m: M;
-
-  order: PurchaseOrder;
   currencies: Currency[];
   takenViaContactMechanisms: ContactMechanism[] = [];
   takenViaContacts: Person[] = [];
@@ -64,8 +65,6 @@ export class PurchaseOrderEditFormComponent
 
   private takenVia: Party;
 
-  private subscription: Subscription;
-
   suppliersFilter: SearchFactory;
   irpfRegimes: IrpfRegime[];
   showIrpf: boolean;
@@ -80,130 +79,85 @@ export class PurchaseOrderEditFormComponent
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
 
-    panel.onPull = (pulls) => {
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-
-        pulls.push(
-          pull.PurchaseOrder({
-            name: purchaseOrderPullName,
-            objectId: this.panel.manager.id,
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.order = loaded.object<PurchaseOrder>(purchaseOrderPullName);
-      }
-    };
+    this.suppliersFilter = Filters.suppliersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull, treeBuilder: tree } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Expanded
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.order = undefined;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.PurchaseOrder({
+        objectId: this.editRequest.objectId,
+        include: {
+          OrderedBy: {},
+          StoredInFacility: {},
+          TakenViaSupplier: {},
+          DerivedTakenViaContactMechanism: {},
+          TakenViaContactPerson: {},
+          BillToContactPerson: {},
+          PurchaseOrderState: {},
+          PurchaseOrderShipmentState: {},
+          CreatedBy: {},
+          LastModifiedBy: {},
+          DerivedShipToAddress: {
+            Country: {},
+          },
+          DerivedBillToContactMechanism: {
+            PostalAddress_Country: {},
+          },
+          DerivedVatRegime: {
+            VatRates: {},
+          },
+        },
+      }),
+      p.IrpfRegime({}),
+      p.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
+      })
+    );
 
-          const id = this.panel.manager.id;
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.PurchaseOrder({
-              objectId: id,
-              include: {
-                OrderedBy: x,
-                StoredInFacility: x,
-                TakenViaSupplier: x,
-                DerivedTakenViaContactMechanism: x,
-                TakenViaContactPerson: x,
-                BillToContactPerson: x,
-                PurchaseOrderState: x,
-                PurchaseOrderShipmentState: x,
-                CreatedBy: x,
-                LastModifiedBy: x,
-                DerivedShipToAddress: {
-                  Country: x,
-                },
-                DerivedBillToContactMechanism: {
-                  PostalAddress_Country: x,
-                },
-                DerivedVatRegime: {
-                  VatRates: x,
-                },
-              },
-            }),
-            pull.IrpfRegime({}),
-            pull.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
-            pull.Currency({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Currency.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Currency.IsoCode }],
-            }),
-          ];
-
-          this.suppliersFilter = Filters.suppliersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
-
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-
-        this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.facilities = loaded.collection<Facility>(m.Facility);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-
-        if (this.order.TakenViaSupplier) {
-          this.takenVia = this.order.TakenViaSupplier;
-          this.updateSupplier(this.takenVia);
-        }
-
-        if (this.order.OrderedBy) {
-          this.updateOrderedBy(this.order.OrderedBy);
-        }
-
-        this.previousSupplier = this.order.TakenViaSupplier;
-      });
+    this.onPrePullInitialize(pulls);
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
+
+    this.onPostPullInitialize(pullResult);
+
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+    this.facilities = pullResult.collection<Facility>(this.m.Facility);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+
+    if (this.object.TakenViaSupplier) {
+      this.takenVia = this.object.TakenViaSupplier;
+      this.updateSupplier(this.takenVia);
     }
-  }
 
-  public save(): void {
-    this.allors.context.push().subscribe(() => {
-      this.refreshService.refresh();
-      this.panel.toggle();
-    }, this.errorService.errorHandler);
+    if (this.object.OrderedBy) {
+      this.updateOrderedBy(this.object.OrderedBy);
+    }
+
+    this.previousSupplier = this.object.TakenViaSupplier;
   }
 
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
-    this.order.StoredInFacility = facility;
+    this.object.StoredInFacility = facility;
   }
 
   public supplierAdded(organisation: Organisation): void {
@@ -214,7 +168,7 @@ export class PurchaseOrderEditFormComponent
     supplierRelationship.Supplier = organisation;
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
-    this.order.TakenViaSupplier = organisation;
+    this.object.TakenViaSupplier = organisation;
     this.takenVia = organisation;
   }
 
@@ -228,7 +182,7 @@ export class PurchaseOrderEditFormComponent
     organisationContactRelationship.Contact = person;
 
     this.takenViaContacts.push(person);
-    this.order.TakenViaContactPerson = person;
+    this.object.TakenViaContactPerson = person;
   }
 
   public takenViaContactMechanismAdded(
@@ -236,7 +190,7 @@ export class PurchaseOrderEditFormComponent
   ): void {
     this.takenViaContactMechanisms.push(partyContactMechanism.ContactMechanism);
     this.takenVia.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedTakenViaContactMechanism =
+    this.object.AssignedTakenViaContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -245,20 +199,20 @@ export class PurchaseOrderEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.billToContacts.push(person);
-    this.order.BillToContactPerson = person;
+    this.object.BillToContactPerson = person;
   }
 
   public billToContactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedBillToContactMechanism =
+    this.object.OrderedBy.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedBillToContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -267,20 +221,20 @@ export class PurchaseOrderEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.order
+    organisationContactRelationship.Organisation = this.object
       .OrderedBy as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.shipToContacts.push(person);
-    this.order.ShipToContactPerson = person;
+    this.object.ShipToContactPerson = person;
   }
 
   public shipToAddressAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.order.OrderedBy.addPartyContactMechanism(partyContactMechanism);
-    this.order.AssignedShipToAddress =
+    this.object.OrderedBy.addPartyContactMechanism(partyContactMechanism);
+    this.object.AssignedShipToAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
 
@@ -316,10 +270,10 @@ export class PurchaseOrderEditFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.order.TakenViaSupplier !== this.previousSupplier) {
-        this.order.AssignedTakenViaContactMechanism = null;
-        this.order.TakenViaContactPerson = null;
-        this.previousSupplier = this.order.TakenViaSupplier;
+      if (this.object.TakenViaSupplier !== this.previousSupplier) {
+        this.object.AssignedTakenViaContactMechanism = null;
+        this.object.TakenViaContactPerson = null;
+        this.previousSupplier = this.object.TakenViaSupplier;
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =

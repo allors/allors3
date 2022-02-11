@@ -1,42 +1,42 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
+  Currency,
+  CustomerRelationship,
   InternalOrganisation,
+  IrpfRegime,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
   ProductQuote,
+  RequestForQuote,
+  SalesOrder,
+  VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
-import { Filters } from '../../../../filters/filters';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   selector: 'productquote-edit-form',
   templateUrl: './productquote-edit-form.component.html',
-  providers: [ContextService, OldPanelService],
+  providers: [ContextService],
 })
-export class ProductQuoteEditFormComponent
-  extends AllorsFormComponent<ProductQuote>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class ProductQuoteEditFormComponent extends AllorsFormComponent<ProductQuote> {
   readonly m: M;
-
-  productQuote: ProductQuote;
   salesOrder: SalesOrder;
   request: RequestForQuote;
   currencies: Currency[];
@@ -49,7 +49,6 @@ export class ProductQuoteEditFormComponent
   addReceiver = false;
 
   private previousReceiver: Party;
-  private subscription: Subscription;
   vatRegimes: VatRegime[];
   irpfRegimes: IrpfRegime[];
 
@@ -58,8 +57,8 @@ export class ProductQuoteEditFormComponent
 
   get receiverIsPerson(): boolean {
     return (
-      !this.productQuote.Receiver ||
-      this.productQuote.Receiver.strategy.cls === this.m.Person
+      !this.object.Receiver ||
+      this.object.Receiver.strategy.cls === this.m.Person
     );
   }
 
@@ -67,122 +66,69 @@ export class ProductQuoteEditFormComponent
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
+    private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
 
-    // Collapsed
-    const productQuotePullName = `${panel.name}_${this.m.ProductQuote.tag}`;
-    const salesOrderPullName = `${panel.name}_${this.m.SalesOrder.tag}`;
-
-    panel.onPull = (pulls) => {
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const x = {};
-
-        pulls.push(
-          pull.ProductQuote({
-            name: productQuotePullName,
-            objectId: this.panel.manager.id,
-            include: {
-              QuoteItems: {
-                Product: x,
-                QuoteItemState: x,
-              },
-              Receiver: x,
-              ContactPerson: x,
-              QuoteState: x,
-              CreatedBy: x,
-              LastModifiedBy: x,
-              Request: x,
-              FullfillContactMechanism: {
-                PostalAddress_Country: x,
-              },
-            },
-          }),
-          pull.ProductQuote({
-            name: salesOrderPullName,
-            objectId: this.panel.manager.id,
-            select: {
-              SalesOrderWhereQuote: x,
-            },
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.productQuote = loaded.object<ProductQuote>(this.m.ProductQuote);
-        this.salesOrder = loaded.object<SalesOrder>(
-          this.m.ProductQuote.SalesOrderWhereQuote
-        );
-      }
-    };
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Expanded
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.productQuote = undefined;
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
+      p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
+      p.ProductQuote({
+        objectId: this.editRequest.objectId,
+        include: {
+          AssignedCurrency: {},
+          DerivedCurrency: {},
+          Receiver: {},
+          QuoteState: {},
+          Request: {},
+          DerivedVatRegime: {},
+          DerivedIrpfRegime: {},
+          ContactPerson: {},
+          QuoteItems: {
+            Product: {},
+            QuoteItemState: {},
+          },
+          CreatedBy: {},
+          LastModifiedBy: {},
+          FullfillContactMechanism: {
+            PostalAddress_Country: {},
+          },
+        },
+      })
+    );
 
-          const id = this.panel.manager.id;
+    this.onPrePullInitialize(pulls);
+  }
 
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
-            pull.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
-            pull.ProductQuote({
-              objectId: id,
-              include: {
-                AssignedCurrency: x,
-                DerivedCurrency: x,
-                Receiver: x,
-                FullfillContactMechanism: x,
-                QuoteState: x,
-                Request: x,
-                DerivedVatRegime: x,
-                DerivedIrpfRegime: x,
-                ContactPerson: x,
-              },
-            }),
-          ];
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
 
-          this.customersFilter = Filters.customersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
+    this.onPostPullInitialize(pullResult);
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
+    this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
+    this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
-        this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
-        this.irpfRegimes = loaded.collection<IrpfRegime>(m.IrpfRegime);
-        this.productQuote = loaded.object<ProductQuote>(m.ProductQuote);
-        this.currencies = loaded.collection<Currency>(m.Currency);
-
-        if (this.productQuote.Receiver) {
-          this.previousReceiver = this.productQuote.Receiver;
-          this.update(this.productQuote.Receiver);
-        }
-      });
+    if (this.object.Receiver) {
+      this.previousReceiver = this.object.Receiver;
+      this.update(this.object.Receiver);
+    }
   }
 
   public personAdded(person: Person): void {
@@ -190,20 +136,20 @@ export class ProductQuoteEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.productQuote
+    organisationContactRelationship.Organisation = this.object
       .Receiver as Organisation;
     organisationContactRelationship.Contact = person;
 
     this.contacts.push(person);
-    this.productQuote.ContactPerson = person;
+    this.object.ContactPerson = person;
   }
 
   public partyContactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.productQuote.Receiver.addPartyContactMechanism(partyContactMechanism);
-    this.productQuote.FullfillContactMechanism =
+    this.object.Receiver.addPartyContactMechanism(partyContactMechanism);
+    this.object.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -252,11 +198,11 @@ export class ProductQuoteEditFormComponent
     ];
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
-      if (this.productQuote.Receiver !== this.previousReceiver) {
-        this.productQuote.ContactPerson = null;
-        this.productQuote.FullfillContactMechanism = null;
+      if (this.object.Receiver !== this.previousReceiver) {
+        this.object.ContactPerson = null;
+        this.object.FullfillContactMechanism = null;
 
-        this.previousReceiver = this.productQuote.Receiver;
+        this.previousReceiver = this.object.Receiver;
       }
 
       const partyContactMechanisms: PartyContactMechanism[] =

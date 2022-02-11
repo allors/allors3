@@ -1,11 +1,11 @@
-<div class="container-fluid" *ngIf="purchaseReturn">
+<div class="container-fluid" *ngIf="object">
   <div class="container-fluid">
     <div class="row">
       <div class="col-md">
         <div class="row">
           <a-mat-autocomplete
             class="col-md"
-            [object]="purchaseReturn"
+            [object]="object"
             [roleType]="m.PurchaseReturn.ShipToParty"
             [filter]="suppliersFilter.create(allors.context)"
             display="DisplayName"
@@ -21,7 +21,7 @@
         <div class="row">
           <a-mat-select
             class="col"
-            [object]="purchaseReturn"
+            [object]="object"
             [roleType]="m.PurchaseReturn.ShipToAddress"
             [options]="shipToAddresses"
             display="DisplayName"
@@ -29,10 +29,7 @@
           <button
             mat-mini-fab
             color="accent"
-            [disabled]="
-              !purchaseReturn.ShipToParty ||
-              !purchaseReturn.canWriteShipToAddress
-            "
+            [disabled]="!object.ShipToParty || !object.canWriteShipToAddress"
             type="button"
             (click)="addShipToAddress = !addShipToAddress"
           >
@@ -43,7 +40,7 @@
       </div>
       <div
         class="col-md-12 pb-3"
-        *ngIf="purchaseReturn.ShipToParty && addShipToAddress"
+        *ngIf="object.ShipToParty && addShipToAddress"
       >
         <mat-card>
           <mat-card-header>Add a shipping address</mat-card-header>
@@ -61,7 +58,7 @@
         <div class="row">
           <a-mat-select
             class="col"
-            [object]="purchaseReturn"
+            [object]="object"
             [roleType]="m.PurchaseReturn.ShipToContactPerson"
             [options]="shipToContacts"
             display="DisplayName"
@@ -71,8 +68,7 @@
             mat-mini-fab
             color="accent"
             [disabled]="
-              !purchaseReturn.ShipToParty ||
-              !purchaseReturn.canWriteShipToContactPerson
+              !object.ShipToParty || !object.canWriteShipToContactPerson
             "
             type="button"
             (click)="addShipToContactPerson = !addShipToContactPerson"
@@ -101,7 +97,7 @@
     <div class="row">
       <a-mat-select
         class="col-md"
-        [object]="purchaseReturn"
+        [object]="object"
         [roleType]="m.PurchaseReturn.ShipToFacility"
         [options]="facilities"
         display="Name"
