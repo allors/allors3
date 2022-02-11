@@ -9,14 +9,14 @@ import {
   EditRoleService,
   OverviewService,
   SorterService,
-  Table,
-  TableRow,
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 import { Country } from '@allors/default/workspace/domain';
 import {
   ContextService,
   FilterService,
+  Table,
+  TableRow,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Filter,

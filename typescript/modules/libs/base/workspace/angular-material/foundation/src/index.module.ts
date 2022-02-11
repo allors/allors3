@@ -36,6 +36,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import {
+  AllorsFocusDirective,
+  AllorsBarcodeDirective,
+} from '@allors/base/workspace/angular/foundation';
+
+import {
   AllorsMaterialDialogComponent,
   AllorsMaterialPeriodSelectionToggleComponent,
   AllorsMaterialAssociationAutoCompleteComponent,
@@ -58,10 +63,15 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
+  AllorsMaterialTableComponent,
 } from './index';
 
 @NgModule({
   declarations: [
+    // Foundation
+    AllorsFocusDirective,
+    AllorsBarcodeDirective,
+    // Material Foundation
     AllorsMaterialDialogComponent,
     AllorsMaterialPeriodSelectionToggleComponent,
     AllorsMaterialAssociationAutoCompleteComponent,
@@ -84,6 +94,7 @@ import {
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
+    AllorsMaterialTableComponent,
   ],
   imports: [
     BrowserModule,

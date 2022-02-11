@@ -40,6 +40,11 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import {
+  // Config
+  DateConfig,
+  MediaConfig,
+  AuthenticationConfig,
+  // Services
   CreateService,
   DisplayService,
   EditService,
@@ -48,12 +53,6 @@ import {
   MetaService,
   WorkspaceService,
   ErrorService,
-  DateConfig,
-  MediaConfig,
-  AuthenticationConfig,
-  AuthenticationInterceptor,
-  AllorsFocusDirective,
-  AllorsBarcodeDirective,
   AuthenticationSessionStoreService,
   DateStaticService,
   AllorsBarcodeKeypressService,
@@ -67,15 +66,22 @@ import {
   MediaService,
   MediaLocalService,
   AllorsDialogService,
+  // Interceptors
+  AuthenticationInterceptor,
+  // Directives
+  AllorsFocusDirective,
+  AllorsBarcodeDirective,
   TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
+  // Services
   NavigationService,
   MenuService,
 } from '@allors/base/workspace/angular/application';
 
 import {
+  // Components
   AllorsMaterialDialogComponent,
   AllorsMaterialDialogService,
   AllorsMaterialPeriodSelectionToggleComponent,
@@ -99,10 +105,19 @@ import {
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
+  AllorsMaterialTableComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
+  // Services
   AllorsMaterialSideNavService,
+  AllorsMaterialErrorService,
+  AllorsMaterialSideNavSubjectService,
+  AllorsMaterialCreateService,
+  AllorsMaterialEditService,
+  SorterService,
+  IconService,
+  // Components
   AllorsMaterialErrorDialogComponent,
   AllorsMaterialFilterFieldDialogComponent,
   AllorsMaterialFilterFieldSearchComponent,
@@ -112,23 +127,23 @@ import {
   AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
-  AllorsMaterialTableComponent,
   FactoryFabComponent,
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
   AllorsMaterialDynamicViewDetailPanelComponent,
+  AllorsMaterialDynamicEditRelationPanelComponent,
+  AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicEditRelationshipPanelComponent,
   AllorsMaterialDynamicViewRelationshipPanelComponent,
-  AllorsMaterialErrorService,
-  AllorsMaterialSideNavSubjectService,
-  AllorsMaterialCreateService,
-  AllorsMaterialEditService,
-  SorterService,
-  IconService,
 } from '@allors/base/workspace/angular-material/application';
 
 import {
+  // Config
+  PrintConfig,
+  // Services
+  PrintService,
+  // Components
   InlineBrandComponent,
   BrandsOverviewComponent,
   CarrierListComponent,
@@ -246,8 +261,6 @@ import {
   WorkTaskOverviewComponent,
   WorkTaskOverviewPanelComponent,
   WorkTaskOverviewSummaryComponent,
-  PrintService,
-  PrintConfig,
 } from '@allors/apps-intranet/workspace/angular-material';
 
 import { routes, components as routeComponents } from './app.routes';
@@ -271,20 +284,14 @@ import { environment } from '../environments/environment';
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
-    // Allors Angular Base
+    // Base Foundation
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    // Allors Angular Material Base
+    TemplateHostDirective,
+    // Base Material Foundation
     AllorsMaterialAssociationAutoCompleteComponent,
-    AllorsMaterialDialogComponent,
-    AllorsMaterialPeriodSelectionToggleComponent,
-    AllorsMaterialErrorDialogComponent,
-    AllorsMaterialFilterComponent,
-    AllorsMaterialFilterFieldDialogComponent,
-    AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialMediaComponent,
-    AllorMediaPreviewComponent,
     AllorsMaterialCancelComponent,
+    AllorsMaterialDialogComponent,
     AllorsMaterialSaveComponent,
     AllorsMaterialAutocompleteComponent,
     AllorsMaterialCheckboxComponent,
@@ -303,18 +310,27 @@ import { environment } from '../environments/environment';
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
+    AllorsMaterialTableComponent,
+    // Base Material Application
+    AllorsMaterialErrorDialogComponent,
+    AllorsMaterialFilterFieldDialogComponent,
+    AllorsMaterialFilterFieldSearchComponent,
+    AllorsMaterialFilterComponent,
+    AllorsMaterialMediaComponent,
+    AllorMediaPreviewComponent,
     AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
-    AllorsMaterialTableComponent,
     FactoryFabComponent,
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
     AllorsMaterialDynamicViewDetailPanelComponent,
+    AllorsMaterialDynamicEditRelationPanelComponent,
+    AllorsMaterialDynamicViewRelationPanelComponent,
     AllorsMaterialDynamicEditRelationshipPanelComponent,
     AllorsMaterialDynamicViewRelationshipPanelComponent,
-    TemplateHostDirective,
     // Routed and dialog components
     ...routeComponents,
     ...dialogComponents,

@@ -10,6 +10,8 @@ import {
   ContextService,
   CreateService,
   FilterService,
+  Table,
+  TableRow,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Filter,
@@ -27,8 +29,6 @@ import {
   MethodService,
   OverviewService,
   SorterService,
-  Table,
-  TableRow,
 } from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {

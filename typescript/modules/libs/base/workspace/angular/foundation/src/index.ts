@@ -71,6 +71,12 @@ export * from './lib/state/session-state';
 export * from './lib/state/singleton-id';
 export * from './lib/state/user-id';
 
+export * from './lib/table/base-table';
+export * from './lib/table/column';
+export * from './lib/table/table';
+export * from './lib/table/table-config';
+export * from './lib/table/table-row';
+
 export * from './lib/template/template-host.directive';
 
 export * from './lib/workspace/workspace-service';

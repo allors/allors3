@@ -35,7 +35,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { AllorsMaterialDialogComponent } from '@allors/base/workspace/angular-material/foundation';
+import {} from '@allors/base/workspace/angular-material/foundation';
 
 import {
   AllorsFocusDirective,
@@ -51,6 +51,7 @@ import {
   AllorsMaterialChipsComponent,
   AllorsMaterialDatepickerComponent,
   AllorsMaterialDatetimepickerComponent,
+  AllorsMaterialDialogComponent,
   AllorsMaterialFileComponent,
   AllorsMaterialFilesComponent,
   AllorsMaterialInputComponent,
@@ -59,11 +60,12 @@ import {
   AllorsMaterialMarkdownComponent,
   AllorsMaterialRadioGroupComponent,
   AllorsMaterialSelectComponent,
+  AllorsMaterialPeriodSelectionToggleComponent,
   AllorsMaterialSliderComponent,
   AllorsMaterialSlideToggleComponent,
   AllorsMaterialStaticComponent,
   AllorsMaterialTextareaComponent,
-  AllorsMaterialPeriodSelectionToggleComponent,
+  AllorsMaterialTableComponent,
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
@@ -76,30 +78,24 @@ import {
   AllorsMaterialBarcodeEntryComponent,
   AllorsMaterialSideMenuComponent,
   AllorsMaterialSideNavToggleComponent,
-  AllorsMaterialTableComponent,
   FactoryFabComponent,
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
-  AllorsMaterialDynamicViewDetailPanelComponent,
   AllorsMaterialDynamicEditRelationPanelComponent,
-  AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicViewDetailPanelComponent,
+  AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicViewRelationshipPanelComponent,
 } from './index';
 
 @NgModule({
   declarations: [
+    // Foundation
     AllorsFocusDirective,
     AllorsBarcodeDirective,
-    AllorsMaterialDialogComponent,
+    // Material Foundation
     AllorsMaterialAssociationAutoCompleteComponent,
-    AllorsMaterialErrorDialogComponent,
-    AllorsMaterialFilterComponent,
-    AllorsMaterialFilterFieldDialogComponent,
-    AllorsMaterialFilterFieldSearchComponent,
-    AllorsMaterialMediaComponent,
-    AllorMediaPreviewComponent,
     AllorsMaterialCancelComponent,
     AllorsMaterialSaveComponent,
     AllorsMaterialAutocompleteComponent,
@@ -107,6 +103,7 @@ import {
     AllorsMaterialChipsComponent,
     AllorsMaterialDatepickerComponent,
     AllorsMaterialDatetimepickerComponent,
+    AllorsMaterialDialogComponent,
     AllorsMaterialFileComponent,
     AllorsMaterialFilesComponent,
     AllorsMaterialInputComponent,
@@ -119,20 +116,27 @@ import {
     AllorsMaterialSlideToggleComponent,
     AllorsMaterialStaticComponent,
     AllorsMaterialTextareaComponent,
+    AllorsMaterialPeriodSelectionToggleComponent,
+    AllorsMaterialTableComponent,
+    // Material Application
+    AllorsMaterialErrorDialogComponent,
+    AllorsMaterialFilterFieldDialogComponent,
+    AllorsMaterialFilterFieldSearchComponent,
+    AllorsMaterialFilterComponent,
+    AllorsMaterialMediaComponent,
+    AllorMediaPreviewComponent,
     AllorsMaterialBarcodeEntryComponent,
     AllorsMaterialSideMenuComponent,
     AllorsMaterialSideNavToggleComponent,
-    AllorsMaterialTableComponent,
     FactoryFabComponent,
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
-    AllorsMaterialDynamicViewDetailPanelComponent,
     AllorsMaterialDynamicEditRelationPanelComponent,
-    AllorsMaterialDynamicViewRelationPanelComponent,
     AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicViewDetailPanelComponent,
+    AllorsMaterialDynamicViewRelationPanelComponent,
     AllorsMaterialDynamicViewRelationshipPanelComponent,
-    AllorsMaterialPeriodSelectionToggleComponent,
   ],
   imports: [
     BrowserModule,

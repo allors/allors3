@@ -14,6 +14,8 @@ import {
   RefreshService,
   CreateService,
   FilterService,
+  TableRow,
+  Table,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
@@ -24,8 +26,6 @@ import {
   DeleteService,
   OverviewService,
   SorterService,
-  Table,
-  TableRow,
 } from '@allors/base/workspace/angular-material/application';
 
 interface Row extends TableRow {

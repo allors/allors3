@@ -13,6 +13,9 @@ import {
   RefreshService,
   WorkspaceService,
   DisplayService,
+  TableRow,
+  Table,
+  TableConfig,
 } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
@@ -21,11 +24,8 @@ import {
   PanelService,
   ObjectService,
 } from '@allors/base/workspace/angular/application';
-import { Table } from '../table/table';
-import { TableRow } from '../table/table-row';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
-import { TableConfig } from '../table/table-config';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import { IconService } from '../icon/icon.service';
 

@@ -25,3 +25,5 @@ export * from './lib/form/cancel.component';
 export * from './lib/form/save.component';
 
 export * from './lib/period/period-selection-toggle.component';
+
+export * from './lib/table/table.component';

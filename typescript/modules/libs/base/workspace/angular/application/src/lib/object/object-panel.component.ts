@@ -49,7 +49,7 @@ export abstract class AllorsObjectPanelComponent
 
   objectInfo: ObjectInfo;
 
-  private subscription: Subscription;
+  private panelSubscription: Subscription;
 
   constructor(
     public objectService: ObjectService,
@@ -67,7 +67,7 @@ export abstract class AllorsObjectPanelComponent
   }
 
   ngAfterViewInit(): void {
-    this.subscription = this.objectService.objectInfo$
+    this.panelSubscription = this.objectService.objectInfo$
       .pipe(
         tap((info) => {
           this.objectInfo = info;
@@ -81,8 +81,8 @@ export abstract class AllorsObjectPanelComponent
     this.panelService.unregister(this);
     this.sharedPullService.unregister(this);
 
-    if (this.subscription) {
-      this.subscription?.unsubscribe();
+    if (this.panelSubscription) {
+      this.panelSubscription?.unsubscribe();
     }
   }
 
