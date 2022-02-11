@@ -121,17 +121,10 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
   ngOnInit() {
     this.objectType = this.propertyType.objectType as Composite;
 
-    const primary = this.displayService.primary(this.objectType);
-
-    if (primary?.length > 0) {
-      this.display = [...primary];
-      const secondary = this.displayService.secondary(this.objectType);
-      if (secondary?.length > 0) {
-        this.display.push(...secondary);
-      }
-    } else {
-      this.display = [this.displayService.name(this.objectType)];
-    }
+    this.display = [
+      ...this.displayService.primary(this.objectType),
+      ...this.displayService.secondary(this.objectType),
+    ].reduce((acc, e) => (e && !acc.includes(e) ? [...acc, e] : acc), []);
 
     // const delete = this.deleteService.delete();
     // const edit = this.editRoleService.edit();
@@ -184,9 +177,13 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
       results: [
         {
           name: scope,
-          include: this.display.map((v) => {
-            return { propertyType: v };
-          }),
+          include: this.display
+            .filter((v) => v.objectType.isComposite)
+            .map((v) => {
+              return {
+                propertyType: v,
+              };
+            }),
         },
       ],
     };
@@ -206,6 +203,14 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
       for (const w of this.display) {
         if (w.objectType.isUnit) {
           row[w.name] = v.strategy.getUnitRole(w);
+        } else {
+          const role = v.strategy.getCompositeRole(w);
+          if (role) {
+            const roleName = this.displayService.name(role.strategy.cls);
+            row[w.name] = role.strategy.getUnitRole(roleName);
+          } else {
+            row[w.name] = '';
+          }
         }
       }
 

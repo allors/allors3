@@ -19,8 +19,9 @@ export class AppDisplayService implements DisplayService {
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
     this.nameByObjectType = new Map<Class, RoleType>([
-      [m.Person, m.Person.DomainFullName],
+      [m.HomeAddress, m.HomeAddress.Street],
       [m.Organisation, m.Organisation.Name],
+      [m.Person, m.Person.DomainFullName],
     ]);
 
     this.descriptionByObjectType = new Map<Class, RoleType>([]);
@@ -47,14 +48,14 @@ export class AppDisplayService implements DisplayService {
   }
 
   primary(objectType: Composite): RoleType[] {
-    return this.primaryByObjectType.get(objectType);
+    return this.primaryByObjectType.get(objectType) ?? [];
   }
 
   secondary(objectType: Composite): RoleType[] {
-    return this.secondaryByObjectType.get(objectType);
+    return this.secondaryByObjectType.get(objectType) ?? [];
   }
 
   tertiary(objectType: Composite): RoleType[] {
-    return this.tertiaryByObjectType.get(objectType);
+    return this.tertiaryByObjectType.get(objectType) ?? [];
   }
 }

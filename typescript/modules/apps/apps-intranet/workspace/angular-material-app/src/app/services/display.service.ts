@@ -41,14 +41,14 @@ export class AppDisplayService implements DisplayService {
   }
 
   primary(objectType: Composite): RoleType[] {
-    return this.primaryByObjectType.get(objectType);
+    return this.primaryByObjectType.get(objectType) ?? [];
   }
 
   secondary(objectType: Composite): RoleType[] {
-    return this.secondaryByObjectType.get(objectType);
+    return this.secondaryByObjectType.get(objectType) ?? [];
   }
 
   tertiary(objectType: Composite): RoleType[] {
-    return this.tertiaryByObjectType.get(objectType);
+    return this.tertiaryByObjectType.get(objectType) ?? [];
   }
 }
