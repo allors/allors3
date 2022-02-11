@@ -239,7 +239,9 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     this.table.total = this.filtered.length;
     this.table.data = this.filtered.map((v) => {
       const target = v.strategy.getCompositeRole(this.target);
-      const targetDisplay = this.displayService.display(target);
+      const targetName = target.strategy.getUnitRole(
+        this.displayService.name(target.strategy.cls)
+      );
 
       let from: string;
       let through: string;
@@ -254,7 +256,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
 
       return {
         object: v,
-        [this.target.name]: targetDisplay,
+        [this.target.name]: targetName,
         type: v.strategy.cls.singularName,
         from,
         through,

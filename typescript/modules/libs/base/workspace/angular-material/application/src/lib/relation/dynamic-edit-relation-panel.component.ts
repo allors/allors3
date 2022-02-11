@@ -16,8 +16,8 @@ import {
   Pull,
   Initializer,
   IObject,
-  And,
   Predicate,
+  Node,
 } from '@allors/system/workspace/domain';
 import {
   SharedPullService,
@@ -78,6 +78,8 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
 
   table: Table<TableRow>;
 
+  display: RoleType[];
+
   private subscription: Subscription;
 
   constructor(
@@ -119,6 +121,18 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
   ngOnInit() {
     this.objectType = this.propertyType.objectType as Composite;
 
+    const primary = this.displayService.primary(this.objectType);
+
+    if (primary?.length > 0) {
+      this.display = [...primary];
+      const secondary = this.displayService.secondary(this.objectType);
+      if (secondary?.length > 0) {
+        this.display.push(...secondary);
+      }
+    } else {
+      this.display = [this.displayService.name(this.objectType)];
+    }
+
     // const delete = this.deleteService.delete();
     // const edit = this.editRoleService.edit();
 
@@ -126,11 +140,13 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: [{ name: 'display', sort }],
+      columns: this.display.map((v) => {
+        return { name: v.name, sort };
+      }),
       // actions: [edit, delete],
       // defaultAction: this.edit,
       autoSort: true,
-      autoFilter: false,
+      autoFilter: true,
     };
 
     this.table = new Table(tableConfig);
@@ -139,14 +155,14 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
   }
 
   onPreScopedPull(pulls: Pull[], scope?: string) {
-    const and: And = { kind: 'And', operands: [] };
+    let predicate: Predicate;
 
     if (this.propertyType) {
       const propertyType = this.propertyType.isRoleType
         ? (this.propertyType as RoleType).associationType
         : (this.propertyType as AssociationType).roleType;
 
-      const predicate: Predicate = this.propertyType.isOne
+      predicate = this.propertyType.isOne
         ? {
             kind: 'Equals',
             propertyType,
@@ -157,17 +173,22 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
             propertyType,
             objectId: this.propertyId,
           };
-
-      and.operands.push(predicate);
     }
 
     const pull: Pull = {
       extent: {
         kind: 'Filter',
         objectType: this.objectType,
-        predicate: and,
+        predicate,
       },
-      results: [{ name: scope }],
+      results: [
+        {
+          name: scope,
+          include: this.display.map((v) => {
+            return { propertyType: v };
+          }),
+        },
+      ],
     };
 
     pulls.push(pull);
@@ -178,12 +199,17 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
 
     this.table.total = objects.length;
     this.table.data = objects.map((v) => {
-      const display = this.displayService.display(v);
-
-      return {
+      const row: TableRow = {
         object: v,
-        display,
-      } as TableRow;
+      };
+
+      for (const w of this.display) {
+        if (w.objectType.isUnit) {
+          row[w.name] = v.strategy.getUnitRole(w);
+        }
+      }
+
+      return row;
     });
   }
 
