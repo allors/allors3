@@ -1,42 +1,40 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
   InternalOrganisation,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  Priority,
+  WorkEffort,
+  WorkEffortPurpose,
+  WorkEffortState,
   WorkTask,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../../services/state/internal-organisation-id';
-import { Filters } from '../../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'worktask-edit-form',
   templateUrl: './worktask-edit-form.component.html',
-  providers: [OldPanelService, ContextService],
+  providers: [ContextService],
 })
-export class WorkTaskEditFormComponent
-  extends AllorsFormComponent<WorkTask>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
   readonly m: M;
-
-  workTask: WorkTask;
   party: Party;
   workEffortStates: WorkEffortState[];
   priorities: Priority[];
@@ -46,8 +44,6 @@ export class WorkTaskEditFormComponent
   contacts: Person[];
   addContactPerson = false;
   addContactMechanism: boolean;
-
-  private subscription: Subscription;
   workEfforts: WorkEffort[];
   customersFilter: SearchFactory;
   subContractorsFilter: SearchFactory;
@@ -62,136 +58,93 @@ export class WorkTaskEditFormComponent
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
 
-    panel.onPull = (pulls) => {
-      this.workTask = undefined;
-
-      if (this.panel.isCollapsed) {
-        const m = this.m;
-        const { pullBuilder: pull } = m;
-        const x = {};
-        const id = this.panel.manager.id;
-
-        pulls.push(
-          pull.WorkTask({
-            name: pullName,
-            objectId: id,
-            include: {
-              WorkEffortState: x,
-              FullfillContactMechanism: x,
-              ContactPerson: x,
-              CreatedBy: x,
-              PublicElectronicDocuments: x,
-              PrivateElectronicDocuments: x,
-            },
-          })
-        );
-      }
-    };
-
-    panel.onPulled = (loaded) => {
-      if (this.panel.isCollapsed) {
-        this.workTask = loaded.object<WorkTask>(pullName);
-      }
-    };
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
+    this.subContractorsFilter = Filters.subContractorsFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    // Maximized
-    this.subscription = this.panel.manager.on$
-      .pipe(
-        filter(() => {
-          return this.panel.isExpanded;
-        }),
-        switchMap(() => {
-          this.workTask = undefined;
+    pulls.push(
+      p.Organisation({
+        objectId: this.internalOrganisationId.value,
+        name: 'InternalOrganisation',
+        include: {
+          ActiveEmployees: {
+            CurrentPartyContactMechanisms: {
+              ContactMechanism: {},
+            },
+          },
+        },
+      }),
+      p.WorkTask({
+        objectId: this.editRequest.objectId,
+        include: {
+          WorkEffortState: {},
+          FullfillContactMechanism: {},
+          Priority: {},
+          WorkEffortPurposes: {},
+          Customer: {},
+          ExecutedBy: {},
+          ContactPerson: {},
+          CreatedBy: {},
+          PublicElectronicDocuments: {},
+          PrivateElectronicDocuments: {},
+        },
+      }),
+      p.Locale({
+        sorting: [{ roleType: m.Locale.Name }],
+      }),
+      p.WorkEffortState({
+        sorting: [{ roleType: m.WorkEffortState.Name }],
+      }),
+      p.Priority({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Priority.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Priority.Name }],
+      }),
+      p.WorkEffortPurpose({
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.WorkEffortPurpose.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.WorkEffortPurpose.Name }],
+      })
+    );
 
-          const m = this.m;
-          const { pullBuilder: pull } = m;
-          const x = {};
-          const id = this.panel.manager.id;
+    this.onPrePullInitialize(pulls);
+  }
 
-          const pulls = [
-            pull.Organisation({
-              objectId: this.internalOrganisationId.value,
-              name: 'InternalOrganisation',
-              include: {
-                ActiveEmployees: {
-                  CurrentPartyContactMechanisms: {
-                    ContactMechanism: x,
-                  },
-                },
-              },
-            }),
-            pull.WorkTask({
-              objectId: id,
-              include: {
-                WorkEffortState: x,
-                FullfillContactMechanism: x,
-                Priority: x,
-                WorkEffortPurposes: x,
-                Customer: x,
-                ExecutedBy: x,
-                ContactPerson: x,
-                CreatedBy: x,
-              },
-            }),
-            pull.Locale({
-              sorting: [{ roleType: m.Locale.Name }],
-            }),
-            pull.WorkEffortState({
-              sorting: [{ roleType: m.WorkEffortState.Name }],
-            }),
-            pull.Priority({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Priority.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Priority.Name }],
-            }),
-            pull.WorkEffortPurpose({
-              predicate: {
-                kind: 'Equals',
-                propertyType: this.m.WorkEffortPurpose.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.WorkEffortPurpose.Name }],
-            }),
-          ];
+  onPostPull(pullResult: IPullResult) {
+    this.object = pullResult.object('_object');
 
-          this.customersFilter = Filters.customersFilter(
-            m,
-            this.internalOrganisationId.value
-          );
-          this.subContractorsFilter = Filters.subContractorsFilter(
-            m,
-            this.internalOrganisationId.value
-          );
+    this.onPostPullInitialize(pullResult);
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+    const internalOrganisation = pullResult.object<InternalOrganisation>(
+      this.m.InternalOrganisation
+    );
+    this.employees = internalOrganisation.ActiveEmployees;
 
-        const internalOrganisation = loaded.object<InternalOrganisation>(
-          m.InternalOrganisation
-        );
-        this.employees = internalOrganisation.ActiveEmployees;
+    this.workEffortStates = pullResult.collection<WorkEffortState>(
+      this.m.WorkEffortState
+    );
+    this.priorities = pullResult.collection<Priority>(this.m.Priority);
+    this.workEffortPurposes = pullResult.collection<WorkEffortPurpose>(
+      this.m.WorkEffortPurpose
+    );
 
-        this.workTask = loaded.object<WorkTask>(m.WorkTask);
-        this.workEffortStates = loaded.collection<WorkEffortState>(
-          m.WorkEffortState
-        );
-        this.priorities = loaded.collection<Priority>(m.Priority);
-        this.workEffortPurposes = loaded.collection<WorkEffortPurpose>(
-          m.WorkEffortPurpose
-        );
-
-        this.updateCustomer(this.workTask.Customer);
-      });
+    this.updateCustomer(this.object.Customer);
   }
 
   public contactPersonAdded(contact: Person): void {
@@ -199,20 +152,20 @@ export class WorkTaskEditFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.workTask
+    organisationContactRelationship.Organisation = this.object
       .Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 
     this.contacts.push(contact);
-    this.workTask.ContactPerson = contact;
+    this.object.ContactPerson = contact;
   }
 
   public contactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.workTask.Customer.addPartyContactMechanism(partyContactMechanism);
-    this.workTask.FullfillContactMechanism =
+    this.object.Customer.addPartyContactMechanism(partyContactMechanism);
+    this.object.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 
@@ -261,7 +214,7 @@ export class WorkTaskEditFormComponent
       this.workEfforts = loaded.collection<WorkEffort>(
         m.Party.WorkEffortsWhereCustomer
       );
-      const indexMyself = this.workEfforts.indexOf(this.workTask, 0);
+      const indexMyself = this.workEfforts.indexOf(this.object, 0);
       if (indexMyself > -1) {
         this.workEfforts.splice(indexMyself, 1);
       }

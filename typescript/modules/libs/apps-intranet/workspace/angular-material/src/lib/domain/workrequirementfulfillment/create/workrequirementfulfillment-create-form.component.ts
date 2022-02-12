@@ -1,23 +1,19 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, And } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
-  InternalOrganisation,
+  FixedAsset,
+  RequirementState,
+  WorkEffort,
+  WorkRequirement,
   WorkRequirementFulfillment,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
@@ -25,20 +21,12 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './workrequirementfulfillment-create-form.component.html',
   providers: [ContextService],
 })
-export class WorkRequirementFulfillmentCreateFormComponent
-  extends AllorsFormComponent<WorkRequirementFulfillment>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class WorkRequirementFulfillmentCreateFormComponent extends AllorsFormComponent<WorkRequirementFulfillment> {
   readonly m: M;
-
-  public title = 'Add Work Requirement Fulfillment';
-  workRequirementFulfillment: WorkRequirementFulfillment;
   workEffort: WorkEffort;
   fixedAsset: FixedAsset;
   workRequirement: WorkRequirement;
   workRequirementsFilter: SearchFactory;
-
-  private subscription: Subscription;
 
   constructor(
     @Self() public allors: ContextService,
@@ -53,100 +41,56 @@ export class WorkRequirementFulfillmentCreateFormComponent
     const { m } = this;
     const { pullBuilder: p } = m;
 
-    pulls.push(this.fetcher.internalOrganisation);
+    pulls.push(p.RequirementState({}));
 
-    if (this.editRequest) {
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
       pulls.push(
-        p.BasePrice({
-          name: '_object',
-          objectId: this.editRequest.objectId,
+        p.WorkEffort({
+          objectId: initializer.id,
           include: {
-            Currency: {},
+            WorkEffortFixedAssetAssignmentsWhereAssignment: {
+              FixedAsset: {},
+            },
           },
         })
       );
     }
-
-    this.onPrePullInitialize(pulls);
   }
 
   onPostPull(pullResult: IPullResult) {
-    this.object = this.editRequest
-      ? pullResult.object('_object')
-      : this.context.create(this.createRequest.objectType);
+    this.object = this.context.create(this.createRequest.objectType);
 
-    this.onPostPullInitialize(pullResult);
+    const requirementStates = pullResult.collection<RequirementState>(
+      this.m.RequirementState
+    );
+    const requirementCreated = requirementStates?.find(
+      (v) => v.UniqueId === '7435eaa5-4739-4e48-8c6a-3e5645b69d9c'
+    );
 
-    this.internalOrganisation =
-      this.fetcher.getInternalOrganisation(pullResult);
+    this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
+    this.fixedAsset =
+      this.workEffort.WorkEffortFixedAssetAssignmentsWhereAssignment[0]?.FixedAsset;
 
-    this.object.FromDate = new Date();
-    this.object.PricedBy = this.internalOrganisation;
-  }
+    this.object.FullfillmentOf = this.workEffort;
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
-
-    this.subscription = combineLatest(this.refreshService.refresh$)
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.WorkEffort({
-              objectId: this.data.associationId,
-              include: {
-                WorkEffortFixedAssetAssignmentsWhereAssignment: {
-                  FixedAsset: x,
-                },
-              },
-            }),
-            pull.RequirementState({}),
-          ];
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded })));
-        })
-      )
-      .subscribe(({ loaded }) => {
-        this.allors.context.reset();
-
-        const requirementStates = loaded.collection<RequirementState>(
-          m.RequirementState
-        );
-        const requirementCreated = requirementStates?.find(
-          (v) => v.UniqueId === '7435eaa5-4739-4e48-8c6a-3e5645b69d9c'
-        );
-
-        this.workEffort = loaded.object<WorkEffort>(m.WorkEffort);
-        this.fixedAsset =
-          this.workEffort.WorkEffortFixedAssetAssignmentsWhereAssignment[0]?.FixedAsset;
-
-        this.workRequirementFulfillment =
-          this.allors.context.create<WorkRequirementFulfillment>(
-            m.WorkRequirementFulfillment
-          );
-        this.workRequirementFulfillment.FullfillmentOf = this.workEffort;
-
-        this.workRequirementsFilter = new SearchFactory({
-          objectType: this.m.WorkRequirement,
-          roleTypes: [this.m.WorkRequirement.Description],
-          post: (predicate: And) => {
-            predicate.operands.push(
-              {
-                kind: 'Equals',
-                propertyType: m.WorkRequirement.FixedAsset,
-                object: this.fixedAsset,
-              },
-              {
-                kind: 'Equals',
-                propertyType: m.WorkRequirement.RequirementState,
-                object: requirementCreated,
-              }
-            );
+    this.workRequirementsFilter = new SearchFactory({
+      objectType: this.m.WorkRequirement,
+      roleTypes: [this.m.WorkRequirement.Description],
+      post: (predicate: And) => {
+        predicate.operands.push(
+          {
+            kind: 'Equals',
+            propertyType: this.m.WorkRequirement.FixedAsset,
+            object: this.fixedAsset,
           },
-        });
-      });
+          {
+            kind: 'Equals',
+            propertyType: this.m.WorkRequirement.RequirementState,
+            object: requirementCreated,
+          }
+        );
+      },
+    });
   }
 }

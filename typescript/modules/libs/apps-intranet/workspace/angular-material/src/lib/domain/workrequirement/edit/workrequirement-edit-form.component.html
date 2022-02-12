@@ -1,10 +1,10 @@
-<div class="container-fluid" *ngIf="requirement">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <div class="col-md">
       <div class="row">
         <a-mat-autocomplete
           class="col-md"
-          [object]="requirement"
+          [object]="object"
           [roleType]="m.WorkRequirement.Originator"
           [filter]="customersFilter.create(allors.context)"
           display="DisplayName"
@@ -18,7 +18,7 @@
   <div class="row">
     <a-mat-select
       class="col-md"
-      [object]="requirement"
+      [object]="object"
       [roleType]="m.WorkRequirement.FixedAsset"
       [options]="serialisedItems"
       display="DisplayName"
@@ -28,7 +28,7 @@
   <div class="row">
     <a-mat-radio-group
       class="col-md"
-      [object]="requirement"
+      [object]="object"
       [roleType]="m.WorkRequirement.Priority"
       [options]="priorityOptions"
     ></a-mat-radio-group>
@@ -37,7 +37,7 @@
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="requirement"
+      [object]="object"
       [roleType]="m.WorkRequirement.Location"
     ></a-mat-input>
   </div>
@@ -45,7 +45,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md"
-      [object]="requirement"
+      [object]="object"
       [roleType]="m.WorkRequirement.Reason"
     ></a-mat-textarea>
   </div>
@@ -53,7 +53,7 @@
   <div class="row pt-3">
     <a-mat-files
       class="col-md-12"
-      [object]="requirement"
+      [object]="object"
       [roleType]="m.WorkRequirement.Pictures"
       accept="image/*"
     ></a-mat-files>
@@ -62,7 +62,7 @@
   <div class="row">
     <a-mat-slidetoggle
       class="col-md"
-      [object]="requirement"
+      [object]="object"
       [roleType]="m.WorkRequirement.UnOperable"
     ></a-mat-slidetoggle>
   </div>

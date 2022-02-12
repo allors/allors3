@@ -1,8 +1,8 @@
-<div class="container-fluid" *ngIf="workTask">
+<div class="container-fluid" *ngIf="object">
   <div class="row">
     <a-mat-input
       class="col-md"
-      [object]="workTask"
+      [object]="object"
       [roleType]="m.WorkTask.Name"
     ></a-mat-input>
   </div>
@@ -10,7 +10,7 @@
   <div class="row">
     <a-mat-autocomplete
       class="col-md"
-      [object]="workTask"
+      [object]="object"
       [roleType]="m.WorkTask.Customer"
       [filter]="organisationsFilter.create(allors.context)"
       (changed)="customerSelected($event)"
@@ -21,7 +21,7 @@
   <div class="row">
     <a-mat-autocomplete
       class="col-md"
-      [object]="workTask"
+      [object]="object"
       [roleType]="m.WorkTask.ExecutedBy"
       [filter]="subContractorsFilter.create(allors.context)"
       display="Name"
@@ -33,7 +33,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.FullfillContactMechanism"
           [options]="contactMechanisms"
           display="DisplayName"
@@ -41,7 +41,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="!workTask.Customer || !workTask.canWriteName"
+          [disabled]="!object.Customer || !object.canWriteName"
           type="button"
           (click)="addContactMechanism = !addContactMechanism"
         >
@@ -51,7 +51,7 @@
       </div>
     </div>
     <div class="col-md12">
-      <mat-card *ngIf="workTask.Customer && addContactMechanism">
+      <mat-card *ngIf="object.Customer && addContactMechanism">
         <mat-card-header>Add a new contact mechanism</mat-card-header>
         <mat-card-content>
           <party-contactmechanism
@@ -69,7 +69,7 @@
       <div class="row">
         <a-mat-select
           class="col"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.ContactPerson"
           [options]="contacts"
           display="DisplayName"
@@ -78,7 +78,7 @@
         <button
           mat-mini-fab
           color="accent"
-          [disabled]="!workTask.Customer || !workTask.canWriteName"
+          [disabled]="!object.Customer || !object.canWriteName"
           type="button"
           (click)="addContactPerson = !addContactPerson"
         >
@@ -87,7 +87,7 @@
         </button>
       </div>
     </div>
-    <div class="col-md-12" *ngIf="workTask.Customer && addContactPerson">
+    <div class="col-md-12" *ngIf="object.Customer && addContactPerson">
       <mat-card>
         <mat-card-header>Add a new person</mat-card-header>
         <mat-card-content>
@@ -104,7 +104,7 @@
   <div class="row">
     <a-mat-textarea
       class="col-md-12"
-      [object]="workTask"
+      [object]="object"
       [roleType]="m.WorkTask.Description"
     ></a-mat-textarea>
   </div>
@@ -112,7 +112,7 @@
   <div class="row">
     <a-mat-datetimepicker
       class="col-md"
-      [object]="workTask"
+      [object]="object"
       [roleType]="m.WorkTask.ScheduledStart"
     ></a-mat-datetimepicker>
   </div>
@@ -120,7 +120,7 @@
   <div class="row">
     <a-mat-datetimepicker
       class="col-md"
-      [object]="workTask"
+      [object]="object"
       [roleType]="m.WorkTask.ScheduledCompletion"
     ></a-mat-datetimepicker>
   </div>

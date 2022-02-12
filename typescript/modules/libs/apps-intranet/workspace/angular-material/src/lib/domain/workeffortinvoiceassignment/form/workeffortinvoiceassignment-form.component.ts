@@ -17,7 +17,6 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './workeffortinvoiceassignment-form.component.html',
@@ -34,8 +33,7 @@ export class WorkEffortInvoiceItemAssignmentFormComponent extends AllorsFormComp
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private fetcher: FetcherService,
-    private internalOrganisationId: InternalOrganisationId
+    private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -84,8 +82,6 @@ export class WorkEffortInvoiceItemAssignmentFormComponent extends AllorsFormComp
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    this.internalOrganisation =
-      this.fetcher.getInternalOrganisation(pullResult);
     this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
     this.invoiceItemTypes = pullResult.collection<InvoiceItemType>(
       this.m.InvoiceItemType

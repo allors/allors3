@@ -1,46 +1,38 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
   InternalOrganisation,
+  Organisation,
+  Party,
+  Priority,
+  SerialisedItem,
   WorkRequirement,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../..';
 import { Filters } from '../../../filters/filters';
+import { RadioGroupOption } from '@allors/base/workspace/angular-material/foundation';
 
 @Component({
   selector: 'workrequirement-create',
   templateUrl: './workrequirement-create-form.component.html',
-  providers: [OldPanelService, ContextService],
+  providers: [ContextService],
 })
-export class WorkRequirementCreateFormComponent
-  extends AllorsFormComponent<WorkRequirement>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class WorkRequirementCreateFormComponent extends AllorsFormComponent<WorkRequirement> {
   readonly m: M;
-  public title: string;
 
   internalOrganisation: InternalOrganisation;
   workTask: WorkRequirement;
   serialisedItems: SerialisedItem[];
-  private subscription: Subscription;
-  requirement: WorkRequirement;
   priorities: Priority[];
   priorityOptions: RadioGroupOption[];
   customer: Party;
@@ -55,158 +47,82 @@ export class WorkRequirementCreateFormComponent
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      internalOrganisationId.value
+    );
   }
 
   onPrePull(pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;
 
-    pulls.push(this.fetcher.internalOrganisation);
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Priority({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Priority.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Priority.DisplayOrder }],
+      })
+    );
 
-    if (this.editRequest) {
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
       pulls.push(
-        p.BasePrice({
-          name: '_object',
-          objectId: this.editRequest.objectId,
+        p.SerialisedItem({
+          objectId: initializer.id,
           include: {
-            Currency: {},
+            OwnedBy: {},
+            RentedBy: {},
           },
         })
       );
     }
-
-    const initializer = this.createRequest.initializer;
-    if (initializer) {
-      pulls.push();
-    }
   }
 
   onPostPull(pullResult: IPullResult) {
-    this.object = this.editRequest
-      ? pullResult.object('_object')
-      : this.context.create(this.createRequest.objectType);
-
-    this.onPostPullInitialize(pullResult);
+    this.object = this.context.create(this.createRequest.objectType);
 
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
+    this.priorities = pullResult.collection<Priority>(this.m.Priority);
+    this.priorityOptions = this.priorities.map((v) => {
+      return {
+        label: v.Name,
+        value: v,
+      };
+    });
 
-    this.object.FromDate = new Date();
-    this.object.PricedBy = this.internalOrganisation;
-  }
+    if (this.createRequest) {
+      this.object.ServicedBy = this.internalOrganisation as Organisation;
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
-
-    this.subscription = combineLatest([
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(([, internalOrganisationId]) => {
-          const isCreate = this.data.id == null;
-
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Priority({
-              predicate: {
-                kind: 'Equals',
-                propertyType: m.Priority.IsActive,
-                value: true,
-              },
-              sorting: [{ roleType: m.Priority.DisplayOrder }],
-            }),
-          ];
-
-          if (!isCreate) {
-            pulls.push(
-              pull.WorkRequirement({
-                objectId: this.data.id,
-                include: {
-                  Originator: x,
-                  Priority: x,
-                  FixedAsset: x,
-                  Pictures: x,
-                },
-              })
-            );
-          }
-
-          if (isCreate && this.data.associationId) {
-            pulls.push(
-              pull.SerialisedItem({
-                objectId: this.data.associationId,
-                include: {
-                  OwnedBy: x,
-                  RentedBy: x,
-                },
-              })
-            );
-          }
-
-          this.customersFilter = Filters.customersFilter(
-            m,
-            internalOrganisationId
-          );
-
-          return this.allors.context
-            .pull(pulls)
-            .pipe(map((loaded) => ({ loaded, isCreate })));
-        })
-      )
-      .subscribe(({ loaded, isCreate }) => {
-        this.allors.context.reset();
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.priorities = loaded.collection<Priority>(m.Priority);
-        this.priorityOptions = this.priorities.map((v) => {
-          return {
-            label: v.Name,
-            value: v,
-          };
-        });
-
-        if (isCreate) {
-          this.title = 'Add Work Requirement';
-          this.requirement = this.allors.context.create<WorkRequirement>(
-            m.WorkRequirement
-          );
-          this.requirement.ServicedBy = this
-            .internalOrganisation as Organisation;
-
-          const serialisedItem = loaded.object<SerialisedItem>(
-            m.SerialisedItem
-          );
-          if (serialisedItem !== undefined) {
-            if (
-              serialisedItem.OwnedBy != null &&
-              !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation
-            ) {
-              this.requirement.Originator = serialisedItem.OwnedBy;
-              this.updateOriginator(this.requirement.Originator);
-            } else if (
-              serialisedItem.RentedBy != null &&
-              !(<Organisation>serialisedItem.RentedBy).IsInternalOrganisation
-            ) {
-              this.requirement.Originator = serialisedItem.RentedBy;
-              this.updateOriginator(this.requirement.Originator);
-            }
-
-            this.requirement.FixedAsset = serialisedItem;
-          }
-        } else {
-          this.requirement = loaded.object<WorkRequirement>(m.WorkRequirement);
-          this.originatorSelected(this.requirement.Originator);
-
-          if (this.requirement.canWriteDescription) {
-            this.title = 'Edit Work Requirement';
-          } else {
-            this.title = 'View Work Requirement';
-          }
+      const serialisedItem = pullResult.object<SerialisedItem>(
+        this.m.SerialisedItem
+      );
+      if (serialisedItem !== undefined) {
+        if (
+          serialisedItem.OwnedBy != null &&
+          !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation
+        ) {
+          this.object.Originator = serialisedItem.OwnedBy;
+          this.updateOriginator(this.object.Originator);
+        } else if (
+          serialisedItem.RentedBy != null &&
+          !(<Organisation>serialisedItem.RentedBy).IsInternalOrganisation
+        ) {
+          this.object.Originator = serialisedItem.RentedBy;
+          this.updateOriginator(this.object.Originator);
         }
-      });
+
+        this.object.FixedAsset = serialisedItem;
+      }
+    } else {
+      this.originatorSelected(this.object.Originator);
+    }
   }
 
   public originatorSelected(party: IObject) {
@@ -258,6 +174,6 @@ export class WorkRequirementCreateFormComponent
   }
 
   private onSave() {
-    this.requirement.Description = `Work Requirement for: ${this.requirement.FixedAsset?.DisplayName}`;
+    this.object.Description = `Work Requirement for: ${this.object.FixedAsset?.DisplayName}`;
   }
 }

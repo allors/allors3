@@ -1,10 +1,10 @@
-<mat-tab-group *ngIf="workTask">
+<mat-tab-group *ngIf="object">
   <mat-tab label="General">
     <div class="container-fluid">
       <div class="row pt-3">
         <a-mat-select
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.WorkEffortState"
           [options]="workEffortStates"
           display="Name"
@@ -12,7 +12,7 @@
         ></a-mat-select>
         <a-mat-input
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.Name"
         ></a-mat-input>
       </div>
@@ -20,7 +20,7 @@
       <div class="row">
         <a-mat-textarea
           class="col-md-12"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.Description"
         ></a-mat-textarea>
       </div>
@@ -28,7 +28,7 @@
       <div class="row">
         <a-mat-autocomplete
           class="col-md-12"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.ExecutedBy"
           [filter]="subContractorsFilter.create(allors.context)"
           display="DisplayName"
@@ -38,7 +38,7 @@
       <div class="row">
         <a-mat-autocomplete
           class="col-md-12"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.Customer"
           [filter]="customersFilter.create(allors.context)"
           (changed)="customerSelected($event)"
@@ -51,7 +51,7 @@
           <div class="row">
             <a-mat-select
               class="col"
-              [object]="workTask"
+              [object]="object"
               [roleType]="m.WorkTask.FullfillContactMechanism"
               [options]="contactMechanisms"
               display="DisplayName"
@@ -59,7 +59,7 @@
             <button
               mat-mini-fab
               color="accent"
-              [disabled]="!workTask.Customer || !workTask.canWriteName"
+              [disabled]="!object.Customer || !object.canWriteName"
               type="button"
               (click)="addContactMechanism = !addContactMechanism"
             >
@@ -69,7 +69,7 @@
           </div>
         </div>
         <div class="col-md12">
-          <mat-card *ngIf="workTask.Customer && addContactMechanism">
+          <mat-card *ngIf="object.Customer && addContactMechanism">
             <mat-card-header>Add a new contact mechanism</mat-card-header>
             <mat-card-content>
               <party-contactmechanism
@@ -87,7 +87,7 @@
           <div class="row">
             <a-mat-select
               class="col"
-              [object]="workTask"
+              [object]="object"
               [roleType]="m.WorkTask.ContactPerson"
               [options]="contacts"
               display="DisplayName"
@@ -96,7 +96,7 @@
             <button
               mat-mini-fab
               color="accent"
-              [disabled]="!workTask.Customer || !workTask.canWriteName"
+              [disabled]="!object.Customer || !object.canWriteName"
               type="button"
               (click)="addContactPerson = !addContactPerson"
             >
@@ -105,7 +105,7 @@
             </button>
           </div>
         </div>
-        <div class="col-md-12" *ngIf="workTask.Customer && addContactPerson">
+        <div class="col-md-12" *ngIf="object.Customer && addContactPerson">
           <mat-card>
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
@@ -122,14 +122,14 @@
       <div class="row">
         <a-mat-select
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.Priority"
           [options]="priorities"
           display="Name"
         ></a-mat-select>
         <a-mat-select
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.WorkEffortPurposes"
           [options]="workEffortPurposes"
           display="Name"
@@ -140,12 +140,12 @@
       <div class="row">
         <a-mat-input
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.EstimatedHours"
         ></a-mat-input>
         <a-mat-input
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.ActualHours"
         ></a-mat-input>
       </div>
@@ -153,12 +153,12 @@
       <div class="row">
         <a-mat-datetimepicker
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.ScheduledStart"
         ></a-mat-datetimepicker>
         <a-mat-datetimepicker
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.ActualStart"
         ></a-mat-datetimepicker>
       </div>
@@ -166,12 +166,12 @@
       <div class="row">
         <a-mat-datetimepicker
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.ScheduledCompletion"
         ></a-mat-datetimepicker>
         <a-mat-datetimepicker
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.ActualCompletion"
         ></a-mat-datetimepicker>
       </div>
@@ -179,7 +179,7 @@
       <div class="row">
         <a-mat-textarea
           class="col-md-12"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.WorkDone"
         ></a-mat-textarea>
       </div>
@@ -187,7 +187,7 @@
       <div class="row">
         <a-mat-select
           class="col-md"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.Children"
           [options]="workEfforts"
           display="Name"
@@ -201,7 +201,7 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.PublicElectronicDocuments"
           accept="image/*"
         ></a-mat-files>
@@ -209,7 +209,7 @@
       <div class="row pt-3">
         <a-mat-files
           class="col-md-12"
-          [object]="workTask"
+          [object]="object"
           [roleType]="m.WorkTask.PrivateElectronicDocuments"
           accept="image/*"
         ></a-mat-files>

@@ -1,23 +1,25 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
-  EditIncludeHandler,
-  Node,
-  CreateOrEditPullHandler,
-  Pull,
-  IPullResult,
-  PostCreatePullHandler,
-} from '@allors/system/workspace/domain';
-import {
-  BasePrice,
+  ContactMechanism,
   InternalOrganisation,
+  Locale,
+  Organisation,
+  OrganisationContactRelationship,
+  Party,
+  PartyContactMechanism,
+  Person,
+  SerialisedItem,
+  WorkEffortFixedAssetAssignment,
   WorkTask,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
@@ -28,28 +30,16 @@ import { Filters } from '../../../filters/filters';
   templateUrl: './worktask-create-form.component.html',
   providers: [ContextService],
 })
-export class WorkTaskCreateFormComponent
-  extends AllorsFormComponent<WorkTask>
-  implements CreateOrEditPullHandler, EditIncludeHandler, PostCreatePullHandler
-{
+export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
   readonly m: M;
 
-  public title = 'Add Work Task';
-
-  add: boolean;
-  edit: boolean;
-
   internalOrganisation: InternalOrganisation;
-  workTask: WorkTask;
   contactMechanisms: ContactMechanism[];
   contacts: Person[];
   addContactPerson = false;
   addContactMechanism: boolean;
 
   locales: Locale[];
-
-  private subscription: Subscription;
-  private readonly refresh$: BehaviorSubject<Date>;
   organisationsFilter: SearchFactory;
   subContractorsFilter: SearchFactory;
   workEffortFixedAssetAssignment: WorkEffortFixedAssetAssignment;
@@ -58,77 +48,68 @@ export class WorkTaskCreateFormComponent
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private route: ActivatedRoute,
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.organisationsFilter = Filters.organisationsFilter(this.m);
+    this.subContractorsFilter = Filters.subContractorsFilter(
+      this.m,
+      this.internalOrganisationId.value
+    );
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPrePull(pulls: Pull[]): void {
+    const { m } = this;
+    const { pullBuilder: p } = m;
 
-    this.subscription = combineLatest([
-      this.route.url,
-      this.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            this.fetcher.internalOrganisation,
-            pull.Locale({
-              sorting: [{ roleType: m.Locale.Name }],
-            }),
-          ];
+    pulls.push(
+      this.fetcher.internalOrganisation,
+      p.Locale({
+        sorting: [{ roleType: m.Locale.Name }],
+      })
+    );
 
-          if (this.data.associationId) {
-            pulls.push(
-              pull.SerialisedItem({
-                objectId: this.data.associationId,
-              }),
-              pull.Party({
-                objectId: this.data.associationId,
-              })
-            );
-          }
-
-          this.organisationsFilter = Filters.organisationsFilter(m);
-          this.subContractorsFilter = Filters.subContractorsFilter(
-            m,
-            this.internalOrganisationId.value
-          );
-
-          return this.allors.context.pull(pulls);
+    const initializer = this.createRequest.initializer;
+    if (initializer) {
+      pulls.push(
+        p.SerialisedItem({
+          objectId: initializer.id,
+        }),
+        p.Party({
+          objectId: initializer.id,
         })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
+      );
+    }
+  }
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.locales = loaded.collection<Locale>(m.Locale);
+  onPostPull(pullResult: IPullResult) {
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
-        const fromSerialiseditem = loaded.object<SerialisedItem>(
-          m.SerialisedItem
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+    this.locales = pullResult.collection<Locale>(this.m.Locale);
+
+    const fromSerialiseditem = pullResult.object<SerialisedItem>(
+      this.m.SerialisedItem
+    );
+    const fromCustomer = pullResult.object<Party>(this.m.Party);
+
+    this.object.TakenBy = this.internalOrganisation as Organisation;
+    this.object.Customer = fromCustomer;
+
+    if (fromSerialiseditem != null) {
+      this.workEffortFixedAssetAssignment =
+        this.allors.context.create<WorkEffortFixedAssetAssignment>(
+          this.m.WorkEffortFixedAssetAssignment
         );
-        const fromCustomer = loaded.object<Party>(m.Party);
-
-        this.workTask = this.allors.context.create<WorkTask>(m.WorkTask);
-        this.workTask.TakenBy = this.internalOrganisation as Organisation;
-        this.workTask.Customer = fromCustomer;
-
-        if (fromSerialiseditem != null) {
-          this.workEffortFixedAssetAssignment =
-            this.allors.context.create<WorkEffortFixedAssetAssignment>(
-              m.WorkEffortFixedAssetAssignment
-            );
-          this.workEffortFixedAssetAssignment.Assignment = this.workTask;
-          this.workEffortFixedAssetAssignment.FixedAsset = fromSerialiseditem;
-        }
-      });
+      this.workEffortFixedAssetAssignment.Assignment = this.object;
+      this.workEffortFixedAssetAssignment.FixedAsset = fromSerialiseditem;
+    }
   }
 
   public customerSelected(customer: IObject) {
@@ -180,20 +161,20 @@ export class WorkTaskCreateFormComponent
       this.allors.context.create<OrganisationContactRelationship>(
         this.m.OrganisationContactRelationship
       );
-    organisationContactRelationship.Organisation = this.workTask
+    organisationContactRelationship.Organisation = this.object
       .Customer as Organisation;
     organisationContactRelationship.Contact = contact;
 
     this.contacts.push(contact);
-    this.workTask.ContactPerson = contact;
+    this.object.ContactPerson = contact;
   }
 
   public contactMechanismAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.workTask.Customer.addPartyContactMechanism(partyContactMechanism);
-    this.workTask.FullfillContactMechanism =
+    this.object.Customer.addPartyContactMechanism(partyContactMechanism);
+    this.object.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
 }
