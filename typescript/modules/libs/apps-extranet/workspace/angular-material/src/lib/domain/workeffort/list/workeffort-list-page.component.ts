@@ -13,6 +13,7 @@ import {
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 import {
+  Action,
   Filter,
   FilterField,
   FilterService,
@@ -23,7 +24,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  Action,
   AllorsListPageComponent,
 } from '@allors/base/workspace/angular/application';
 

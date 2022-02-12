@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { RoleType } from '@allors/system/workspace/meta';
-import { Action } from '@allors/base/workspace/angular/application';
+import { Action } from '@allors/base/workspace/angular/foundation';
 
 import { PrintAction } from './print-action';
 

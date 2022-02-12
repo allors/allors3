@@ -6,9 +6,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject } from 'rxjs';
 import { IObject } from '@allors/system/workspace/domain';
-import { Action } from '@allors/base/workspace/angular/application';
 import { Column } from './column';
 import { TableRow } from './table-row';
+import { Action } from '../action/action';
 
 export interface BaseTable {
   columns: Column[];

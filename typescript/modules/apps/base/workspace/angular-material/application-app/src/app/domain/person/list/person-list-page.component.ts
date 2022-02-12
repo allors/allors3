@@ -7,6 +7,7 @@ import { PageEvent } from '@angular/material/paginator';
 
 import { Person } from '@allors/default/workspace/domain';
 import {
+  Action,
   ContextService,
   Filter,
   FilterField,
@@ -18,7 +19,6 @@ import {
   Table,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  Action,
   AllorsListPageComponent,
   NavigationService,
 } from '@allors/base/workspace/angular/application';

@@ -1,3 +1,6 @@
+export * from './lib/action/action.service';
+export * from './lib/action/action';
+
 export * from './lib/component';
 
 export * from './lib/authentication/authentication-token-request';
@@ -54,6 +57,8 @@ export * from './lib/form/form.service';
 export * from './lib/form/form';
 
 export * from './lib/info/route-info.service';
+
+export * from './lib/link/link.service';
 
 export * from './lib/media/media.service';
 export * from './lib/media/media.config';

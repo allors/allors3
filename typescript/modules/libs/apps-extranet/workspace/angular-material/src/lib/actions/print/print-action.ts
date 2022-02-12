@@ -5,7 +5,7 @@ import { Printable } from '@allors/default/workspace/domain';
 import {
   Action,
   ActionTarget,
-} from '@allors/base/workspace/angular/application';
+} from '@allors/base/workspace/angular/foundation';
 
 import { PrintConfig } from './print.service';
 

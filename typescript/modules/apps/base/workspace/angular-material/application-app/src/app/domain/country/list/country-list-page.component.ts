@@ -19,6 +19,7 @@ import {
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
 import {
+  Action,
   Filter,
   FilterField,
   MediaService,
@@ -26,7 +27,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  Action,
   AllorsListPageComponent,
 } from '@allors/base/workspace/angular/application';
 

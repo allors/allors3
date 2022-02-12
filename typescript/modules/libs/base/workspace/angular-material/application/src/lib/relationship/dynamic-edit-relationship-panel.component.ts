@@ -10,6 +10,7 @@ import {
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import {
+  Action,
   SharedPullService,
   RefreshService,
   WorkspaceService,
@@ -19,7 +20,6 @@ import {
   TableConfig,
 } from '@allors/base/workspace/angular/foundation';
 import {
-  Action,
   NavigationService,
   AllorsEditRelationshipPanelComponent,
   PanelService,

@@ -9,9 +9,11 @@ import {
   SalesInvoice,
   FixedAsset,
 } from '@allors/default/workspace/domain';
-import { RefreshService } from '@allors/base/workspace/angular/foundation';
 import {
   Action,
+  RefreshService,
+} from '@allors/base/workspace/angular/foundation';
+import {
   AllorsViewSummaryPanelComponent,
   NavigationService,
   ObjectService,

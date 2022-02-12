@@ -72,6 +72,8 @@ import {
   AllorsFocusDirective,
   AllorsBarcodeDirective,
   TemplateHostDirective,
+  LinkService,
+  ActionService,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
@@ -280,6 +282,8 @@ import { AppDisplayService } from './services/display.service';
 
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
+import { AppLinkService } from './services/link.service';
+import { AppActionService } from './services/action.service';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -559,6 +563,8 @@ import { environment } from '../environments/environment';
     { provide: IconService, useClass: AppIconService },
     { provide: MetaService, useClass: AppMetaService },
     { provide: DisplayService, useClass: AppDisplayService },
+    { provide: LinkService, useClass: AppLinkService },
+    { provide: ActionService, useClass: AppActionService },
 
     ...environment.providers,
   ],

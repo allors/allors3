@@ -3,10 +3,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import { MethodType } from '@allors/system/workspace/meta';
 import {
+  Action,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import { Action } from '@allors/base/workspace/angular/application';
 import { MethodAction } from './method-action';
 import { MethodConfig } from './method-config';
 

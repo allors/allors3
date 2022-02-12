@@ -1,7 +1,3 @@
-export * from './lib/actions/action';
-export * from './lib/actions/action-result';
-export * from './lib/actions/action-target';
-
 export * from './lib/detail/edit-detail-panel.component';
 export * from './lib/detail/view-detail-panel.component';
 

@@ -4,13 +4,11 @@ import { MethodType } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
 import { Context } from '@allors/base/workspace/angular/foundation';
 import {
+  Action,
+  ActionTarget,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  Action,
-  ActionTarget,
-} from '@allors/base/workspace/angular/application';
 import { MethodConfig } from './method-config';
 
 export class MethodAction implements Action {

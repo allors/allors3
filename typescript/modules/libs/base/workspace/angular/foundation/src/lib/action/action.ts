@@ -1,6 +1,9 @@
 import { Observable } from 'rxjs';
-import { ActionTarget } from './action-target';
-import { ActionResult } from './action-result';
+import { IObject } from '@allors/system/workspace/domain';
+
+export type ActionResult = boolean;
+
+export type ActionTarget = IObject | IObject[];
 
 export interface Action {
   name: string;

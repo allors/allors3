@@ -5,10 +5,10 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
+  Action,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import { Action } from '@allors/base/workspace/angular/application';
 import { DeleteAction } from './delete-action';
 
 @Injectable({

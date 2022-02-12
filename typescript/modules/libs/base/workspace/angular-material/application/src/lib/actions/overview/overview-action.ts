@@ -2,8 +2,8 @@ import { Subject } from 'rxjs';
 import {
   Action,
   ActionTarget,
-  NavigationService,
-} from '@allors/base/workspace/angular/application';
+} from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 
 function objectTypeName(target: ActionTarget) {
   return Array.isArray(target)

@@ -6,13 +6,11 @@ import {
   Context,
 } from '@allors/base/workspace/angular/foundation';
 import {
+  Action,
+  ActionTarget,
   RefreshService,
   ErrorService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  Action,
-  ActionTarget,
-} from '@allors/base/workspace/angular/application';
 
 export class DeleteAction implements Action {
   name = 'delete';

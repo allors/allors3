@@ -1,6 +1,6 @@
 import { Sort, SortDirection } from '@angular/material/sort';
-import { Action } from '@allors/base/workspace/angular/application';
 import { Column } from './column';
+import { Action } from '../action/action';
 
 export interface TableConfig {
   columns?: (Partial<Column> | string)[];
