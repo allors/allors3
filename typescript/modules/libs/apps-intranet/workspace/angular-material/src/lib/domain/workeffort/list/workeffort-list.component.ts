@@ -1,33 +1,38 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { formatDistance } from 'date-fns';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
+import { And, Equals } from '@allors/system/workspace/domain';
 import { WorkEffort } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
   Filter,
+  FilterDefinition,
+  FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
-  ObjectService,
   RefreshService,
   Table,
   TableRow,
-  OverviewService,
-  angularFilterFromDefinition,
-  angularSorter,
-  FilterField,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  ObjectService,
+} from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  EditRoleService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
-import { And, Equals } from '@allors/system/workspace/domain';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
   object: WorkEffort;
@@ -67,6 +72,8 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
     public printService: PrintService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
@@ -75,7 +82,7 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -110,7 +117,7 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.WorkEffort);
+    this.filter = this.filterService.filter(m.WorkEffort);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
@@ -173,7 +180,7 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
               pull.WorkEffort({
                 predicate,
                 sorting: sort
-                  ? angularSorter(m.WorkEffort)?.create(sort)
+                  ? this.sorterService.sorter(m.WorkEffort)?.create(sort)
                   : null,
                 include: {
                   Customer: x,

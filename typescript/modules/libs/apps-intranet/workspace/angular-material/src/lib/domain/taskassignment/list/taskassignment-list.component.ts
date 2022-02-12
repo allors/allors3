@@ -1,32 +1,36 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { formatDistance } from 'date-fns';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
+import { And } from '@allors/system/workspace/domain';
 import { TaskAssignment } from '@allors/default/workspace/domain';
 import {
   Action,
-  EditService,
   Filter,
   FilterDefinition,
   FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
-  ObjectService,
   RefreshService,
   Table,
   TableRow,
   UserId,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { And } from '@allors/system/workspace/domain';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+import {
+  NavigationService,
+  ObjectService,
+} from '@allors/base/workspace/angular/application';
+import {
+  EditRoleService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
+import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
   object: TaskAssignment;
@@ -54,9 +58,11 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
     public workspaceService: WorkspaceService,
     public factoryService: ObjectService,
     public refreshService: RefreshService,
-    public editService: EditService,
+    public editRoleService: EditRoleService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     private userId: UserId,
     titleService: Title
   ) {
@@ -65,7 +71,7 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
 
     this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
-    this.edit = editService.edit(this.m.TaskAssignment.Task);
+    this.edit = editRoleService.edit(this.m.TaskAssignment.Task);
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -150,7 +156,6 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
             const pulls = [
               pull.TaskAssignment({
                 predicate,
-                // sorting: sorter.create(sort),
                 include: {
                   Task: {
                     WorkItem: x,

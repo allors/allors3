@@ -1,29 +1,32 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
+import { And } from '@allors/system/workspace/domain';
 import { Brand } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
-  EditService,
   Filter,
   FilterDefinition,
   FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
-  OverviewService,
   RefreshService,
-  Sorter,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  EditRoleService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { And } from '@allors/system/workspace/domain';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Brand;
@@ -51,10 +54,12 @@ export class BrandsOverviewComponent implements OnInit, OnDestroy {
 
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editService: EditService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -62,12 +67,12 @@ export class BrandsOverviewComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.edit = editService.edit();
+    this.edit = editRoleService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -92,8 +97,6 @@ export class BrandsOverviewComponent implements OnInit, OnDestroy {
 
     const filterDefinition = new FilterDefinition(predicate);
     this.filter = new Filter(filterDefinition);
-
-    const sorter = new Sorter({ name: m.Brand.Name });
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -133,7 +136,9 @@ export class BrandsOverviewComponent implements OnInit, OnDestroy {
             const pulls = [
               pull.Brand({
                 predicate,
-                sorting: sorter.create(sort),
+                sorting: sort
+                  ? this.sorterService.sorter(m.Brand)?.create(sort)
+                  : null,
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
@@ -147,7 +152,7 @@ export class BrandsOverviewComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<Brand>(m.Brand);
+        const objects = loaded.collection<Brand>(this.m.Brand);
         this.table.total = (loaded.value('Brands_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {

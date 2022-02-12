@@ -1,45 +1,48 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { formatDistance } from 'date-fns';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import {
-  Person,
-  Part,
-  ProductIdentificationType,
   Facility,
+  InternalOrganisation,
+  NonSerialisedInventoryItem,
   NonUnifiedPart,
   NonUnifiedPartBarcodePrint,
-  NonSerialisedInventoryItem,
-  InternalOrganisation,
+  Part,
+  Person,
+  ProductIdentificationType,
 } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
-  Filter,
-  MediaService,
-  NavigationService,
-  ObjectService,
-  RefreshService,
   ErrorService,
+  Filter,
+  FilterField,
+  FilterService,
+  MediaService,
+  RefreshService,
+  SingletonId,
   Table,
   TableRow,
   UserId,
-  OverviewService,
-  SingletonId,
-  FilterField,
-  angularSorter,
-  angularFilterFromDefinition,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  ObjectService,
+} from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
   object: Part;
@@ -91,6 +94,8 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId,
     private userId: UserId,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     titleService.setTitle(this.title);
@@ -100,7 +105,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
     this.print = printService.print();
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -130,7 +135,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.NonUnifiedPart);
+    this.filter = this.filterService.filter(m.NonUnifiedPart);
 
     this.subscription = combineLatest(
       this.refreshService.refresh$,
@@ -184,7 +189,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
               pull.NonUnifiedPart({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? angularSorter(m.NonUnifiedPart)?.create(sort)
+                  ? this.sorterService.sorter(m.NonUnifiedPart)?.create(sort)
                   : null,
                 include: {
                   PrimaryPhoto: x,
@@ -232,7 +237,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
         this.facilities = loaded.collection<Facility>(m.Facility);
         this.nonUnifiedPartBarcodePrint =
           loaded.object<NonUnifiedPartBarcodePrint>(
-            m.Singleton.NonUnifiedPartBarcodePrint
+            this.m.Singleton.NonUnifiedPartBarcodePrint
           );
 
         this.parts = loaded.collection<NonUnifiedPart>(m.NonUnifiedPart);
@@ -341,7 +346,7 @@ export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
 
         this.nonUnifiedPartBarcodePrint =
           loaded.object<NonUnifiedPartBarcodePrint>(
-            m.Singleton.NonUnifiedPartBarcodePrint
+            this.m.Singleton.NonUnifiedPartBarcodePrint
           );
 
         this.print.execute(this.nonUnifiedPartBarcodePrint);

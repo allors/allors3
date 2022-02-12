@@ -1,26 +1,33 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { formatDistance } from 'date-fns';
-
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { M } from '@allors/default/workspace/meta';
 import { Notification } from '@allors/default/workspace/domain';
 import {
-  Action,
-  Filter,
+  ContextService,
   FilterDefinition,
-  MediaService,
-  MethodService,
-  NavigationService,
-  ObjectService,
-  RefreshService,
+  FilterService,
   Table,
   TableRow,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { M } from '@allors/default/workspace/meta';
+import {
+  Action,
+  Filter,
+  MediaService,
+  RefreshService,
+} from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  ObjectService,
+} from '@allors/base/workspace/angular/application';
+import {
+  MethodService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { And } from '@allors/system/workspace/domain';
+import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
   object: Notification;
@@ -54,6 +61,8 @@ export class NotificationListComponent implements OnInit, OnDestroy {
     public navigation: NavigationService,
     public mediaService: MediaService,
     private userId: UserId,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;

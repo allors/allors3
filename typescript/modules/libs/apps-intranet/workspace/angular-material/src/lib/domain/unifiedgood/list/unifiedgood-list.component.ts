@@ -1,29 +1,33 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { formatDistance } from 'date-fns';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import { UnifiedGood } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
   Filter,
+  FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
-  ObjectService,
   RefreshService,
   Table,
   TableRow,
-  OverviewService,
-  angularFilterFromDefinition,
-  angularSorter,
-  FilterField,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  ObjectService,
+} from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
   object: UnifiedGood;
@@ -58,6 +62,8 @@ export class UnifiedGoodListComponent implements OnInit, OnDestroy {
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -65,7 +71,7 @@ export class UnifiedGoodListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -90,7 +96,7 @@ export class UnifiedGoodListComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = angularFilterFromDefinition(m.UnifiedGood);
+    this.filter = this.filterService.filter(m.UnifiedGood);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -131,7 +137,7 @@ export class UnifiedGoodListComponent implements OnInit, OnDestroy {
               pull.UnifiedGood({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? angularSorter(m.UnifiedGood)?.create(sort)
+                  ? this.sorterService.sorter(m.UnifiedGood)?.create(sort)
                   : null,
                 include: {
                   Photos: {},

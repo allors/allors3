@@ -1,45 +1,46 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { format, formatDistance } from 'date-fns';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
+import { And, Equals } from '@allors/system/workspace/domain';
 import {
-  Person,
-  InternalOrganisation,
-  SalesInvoice,
   Disbursement,
-  Receipt,
+  InternalOrganisation,
   PaymentApplication,
+  Person,
+  Receipt,
+  SalesInvoice,
 } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
+  ActionTarget,
+  AllorsDialogService,
   Filter,
+  FilterField,
+  FilterService,
   MediaService,
-  MethodService,
-  NavigationService,
   RefreshService,
   Table,
   TableRow,
   UserId,
-  OverviewService,
-  ActionTarget,
-  AllorsDialogService,
-  angularFilterFromDefinition,
-  angularSorter,
-  FilterField,
 } from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  MethodService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { And, Equals } from '@allors/system/workspace/domain';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
+import { format, formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
   object: SalesInvoice;
@@ -98,6 +99,8 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
     private internalOrganisationId: InternalOrganisationId,
     private userId: UserId,
     private fetcher: FetcherService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -133,7 +136,7 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
       { name: 'Reopen' }
     );
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -268,7 +271,7 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.SalesInvoice);
+    this.filter = this.filterService.filter(m.SalesInvoice);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
@@ -335,7 +338,7 @@ export class SalesInvoiceListComponent implements OnInit, OnDestroy {
               pull.SalesInvoice({
                 predicate,
                 sorting: sort
-                  ? angularSorter(m.SalesInvoice)?.create(sort)
+                  ? this.sorterService.sorter(m.SalesInvoice)?.create(sort)
                   : null,
                 include: {
                   PrintDocument: {

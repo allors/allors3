@@ -1,28 +1,30 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import { ProductType } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
-  EditService,
   Filter,
+  FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
   RefreshService,
   Table,
   TableRow,
-  OverviewService,
-  angularFilterFromDefinition,
-  angularSorter,
-  FilterField,
 } from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  EditRoleService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: ProductType;
@@ -49,10 +51,12 @@ export class ProductTypesOverviewComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editService: EditService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -60,12 +64,12 @@ export class ProductTypesOverviewComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.edit = editService.edit();
+    this.edit = editRoleService.edit();
     this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -84,7 +88,7 @@ export class ProductTypesOverviewComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.ProductType);
+    this.filter = this.filterService.filter(m.ProductType);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -125,7 +129,7 @@ export class ProductTypesOverviewComponent implements OnInit, OnDestroy {
               pull.ProductType({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? angularSorter(m.ProductType)?.create(sort)
+                  ? this.sorterService.sorter(m.ProductType)?.create(sort)
                   : null,
                 include: {
                   SerialisedItemCharacteristicTypes: x,

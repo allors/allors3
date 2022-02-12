@@ -1,39 +1,39 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { format, formatDistance } from 'date-fns';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
+import { And, Equals } from '@allors/system/workspace/domain';
 import {
-  Person,
-  Organisation,
   InternalOrganisation,
+  Person,
   Quote,
 } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
   Filter,
+  FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
   RefreshService,
   Table,
   TableRow,
   UserId,
-  OverviewService,
-  angularFilterFromDefinition,
-  angularSorter,
-  FilterField,
 } from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { PrintService } from '../../../actions/print/print.service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { And, Equals } from '@allors/system/workspace/domain';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
+import { format, formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
   object: Quote;
@@ -76,6 +76,8 @@ export class ProductQuoteListComponent implements OnInit, OnDestroy {
     private internalOrganisationId: InternalOrganisationId,
     private userId: UserId,
     private fetcher: FetcherService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -83,7 +85,7 @@ export class ProductQuoteListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -113,7 +115,7 @@ export class ProductQuoteListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.ProductQuote);
+    this.filter = this.filterService.filter(m.ProductQuote);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
@@ -180,7 +182,7 @@ export class ProductQuoteListComponent implements OnInit, OnDestroy {
               pull.Quote({
                 predicate,
                 sorting: sort
-                  ? angularSorter(m.ProductQuote)?.create(sort)
+                  ? this.sorterService.sorter(m.ProductQuote)?.create(sort)
                   : null,
                 include: {
                   PrintDocument: {

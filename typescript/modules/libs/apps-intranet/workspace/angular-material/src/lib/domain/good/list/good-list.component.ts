@@ -1,33 +1,37 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import {
-  NonUnifiedGood,
   Good,
+  NonUnifiedGood,
   ProductCategory,
   UnifiedGood,
 } from '@allors/default/workspace/domain';
 import {
   Action,
-  DeleteService,
   Filter,
+  FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
-  ObjectService,
   RefreshService,
   Table,
   TableRow,
-  OverviewService,
-  angularFilterFromDefinition,
-  angularSorter,
-  FilterField,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  ObjectService,
+} from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
 
 interface Row extends TableRow {
   object: Good;
@@ -60,6 +64,8 @@ export class GoodListComponent implements OnInit, OnDestroy {
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -67,7 +73,7 @@ export class GoodListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -91,7 +97,7 @@ export class GoodListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.Good);
+    this.filter = this.filterService.filter(m.Good);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -126,7 +132,9 @@ export class GoodListComponent implements OnInit, OnDestroy {
             const pulls = [
               pull.Good({
                 predicate: this.filter.definition.predicate,
-                sorting: sort ? angularSorter(m.Good)?.create(sort) : null,
+                sorting: sort
+                  ? this.sorterService.sorter(m.Good)?.create(sort)
+                  : null,
                 include: {
                   NonUnifiedGood_Part: x,
                   ProductIdentifications: {
@@ -139,7 +147,9 @@ export class GoodListComponent implements OnInit, OnDestroy {
               }),
               pull.Good({
                 predicate: this.filter.definition.predicate,
-                sorting: sort ? angularSorter(m.Good)?.create(sort) : null,
+                sorting: sort
+                  ? this.sorterService.sorter(m.Good)?.create(sort)
+                  : null,
                 select: {
                   ProductCategoriesWhereProduct: {
                     include: {

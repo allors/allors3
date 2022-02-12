@@ -1,33 +1,39 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { Subscription, combineLatest } from 'rxjs';
 import { switchMap, scan } from 'rxjs/operators';
-import { formatDistance } from 'date-fns';
+import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Title } from '@angular/platform-browser';
+import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
+import { And } from '@allors/system/workspace/domain';
 import {
-  ProductIdentificationType,
   Part,
+  ProductIdentificationType,
 } from '@allors/default/workspace/domain';
 import {
   Action,
-  angularFilterFromDefinition,
-  angularSorter,
-  DeleteService,
   Filter,
+  FilterDefinition,
   FilterField,
+  FilterService,
   MediaService,
-  NavigationService,
-  ObjectService,
-  OverviewService,
   RefreshService,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  ObjectService,
+} from '@allors/base/workspace/angular/application';
+import {
+  DeleteService,
+  EditRoleService,
+  OverviewService,
+  SorterService,
+} from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { Sort } from '@angular/material/sort';
-import { PageEvent } from '@angular/material/paginator';
-
+import { formatDistance } from 'date-fns';
 interface Row extends TableRow {
   object: Part;
   name: string;
@@ -65,6 +71,8 @@ export class PartListComponent implements OnInit, OnDestroy {
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    public filterService: FilterService,
+    public sorterService: SorterService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -72,7 +80,7 @@ export class PartListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete(allors.context);
+    this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
@@ -100,7 +108,7 @@ export class PartListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = angularFilterFromDefinition(m.Part);
+    this.filter = this.filterService.filter(m.Part);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -140,7 +148,9 @@ export class PartListComponent implements OnInit, OnDestroy {
             const pulls = [
               pull.Part({
                 predicate: this.filter.definition.predicate,
-                sorting: sort ? angularSorter(m.Part)?.create(sort) : null,
+                sorting: sort
+                  ? this.sorterService.sorter(m.Part)?.create(sort)
+                  : null,
                 include: {
                   Brand: x,
                   Model: x,
