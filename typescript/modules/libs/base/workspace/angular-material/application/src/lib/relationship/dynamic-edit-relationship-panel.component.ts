@@ -6,6 +6,7 @@ import {
   IPullResult,
   Pull,
   Initializer,
+  Node,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import {
@@ -38,13 +39,25 @@ interface Row extends TableRow {
   templateUrl: './dynamic-edit-relationship-panel.component.html',
 })
 export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsEditRelationshipPanelComponent {
-  private assignedAnchor: RoleType;
-
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
     // return this.panel.isExpanded;
   }
+
+  get panelId() {
+    return this.target.name;
+  }
+
+  get icon() {
+    return this.iconService.icon(this.objectType);
+  }
+
+  get titel() {
+    return this.target.pluralName;
+  }
+
+  private assignedAnchor: RoleType;
 
   @Input()
   get anchor(): RoleType {
@@ -68,10 +81,15 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     this.assignedAnchor = value;
   }
 
+  get initializer(): Initializer {
+    return { propertyType: this.anchor, id: this.objectInfo.id };
+  }
+
   @Input()
   target: RoleType;
 
   objectType: Composite;
+  targetObjectType: Composite;
 
   hasPeriod: boolean;
   periodSelection: PeriodSelection = PeriodSelection.Current;
@@ -83,21 +101,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   objects: IObject[];
   filtered: IObject[];
 
-  get panelId() {
-    return this.target.name;
-  }
-
-  get icon() {
-    return this.iconService.icon(this.objectType);
-  }
-
-  get titel() {
-    return this.target.pluralName;
-  }
-
-  get initializer(): Initializer {
-    return { propertyType: this.anchor, id: this.objectInfo.id };
-  }
+  display: RoleType[];
+  targetDisplay: RoleType[];
 
   constructor(
     objectService: ObjectService,
@@ -125,6 +130,17 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
 
   ngOnInit() {
     this.objectType = this.target.associationType.objectType as Composite;
+    this.targetObjectType = this.target.objectType as Composite;
+
+    this.display = this.displayService.primary(this.objectType);
+    const targetPrimaryDisplay = this.displayService.primary(
+      this.targetObjectType
+    );
+    this.targetDisplay =
+      targetPrimaryDisplay.length > 0
+        ? targetPrimaryDisplay
+        : [this.displayService.name(this.targetObjectType)];
+
     this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
 
     this.delete = this.deleteService.delete();
@@ -134,7 +150,9 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: [{ name: this.target.name, sort }],
+      columns: [...this.targetDisplay, ...this.display].map((v) => {
+        return { name: v.name, sort };
+      }),
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -156,6 +174,30 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   onPreScopedPull(pulls: Pull[], scope?: string) {
     const id = this.objectInfo.id;
 
+    const displayInclude: Node[] = this.display
+      .filter((v) => v.objectType.isComposite)
+      .map((v) => {
+        return {
+          propertyType: v,
+        };
+      });
+
+    const targetDisplyInclude: Node[] = this.targetDisplay
+      .filter((v) => v.objectType.isComposite)
+      .map((v) => {
+        return {
+          propertyType: v,
+        };
+      });
+
+    const include = [
+      ...displayInclude,
+      {
+        propertyType: this.target,
+        nodes: targetDisplyInclude,
+      },
+    ];
+
     const pull: Pull = {
       extent: {
         kind: 'Filter',
@@ -169,14 +211,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
       results: [
         {
           name: scope,
-          include: [
-            {
-              propertyType: this.anchor,
-            },
-            {
-              propertyType: this.target,
-            },
-          ],
+          include,
         },
       ],
     };
@@ -197,6 +232,10 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
       this.updateFilter();
       this.refreshTable();
     }
+  }
+
+  toggle() {
+    this.panelService.stopEdit().subscribe();
   }
 
   private updateFilter() {
@@ -231,34 +270,55 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     }
   }
 
-  toggle() {
-    this.panelService.stopEdit().subscribe();
-  }
-
   private refreshTable() {
     this.table.total = this.filtered.length;
-    this.table.data = this.filtered.map((v) => {
-      const target = v.strategy.getCompositeRole(this.target);
-      const targetDisplay = this.displayService.display(target);
 
-      let from: string;
-      let through: string;
+    this.table.data = this.filtered.map((v) => {
+      const row: TableRow = {
+        object: v,
+      };
+
+      const target = v.strategy.getCompositeRole(this.target);
+
+      for (const w of this.targetDisplay) {
+        if (w.objectType.isUnit) {
+          row[w.name] = target.strategy.getUnitRole(w);
+        } else {
+          const role = target.strategy.getCompositeRole(w);
+          if (role) {
+            const roleName = this.displayService.name(role.strategy.cls);
+            row[w.name] = role.strategy.getUnitRole(roleName);
+          } else {
+            row[w.name] = '';
+          }
+        }
+      }
+
+      for (const w of this.display) {
+        if (w.objectType.isUnit) {
+          row[w.name] = v.strategy.getUnitRole(w);
+        } else {
+          const role = v.strategy.getCompositeRole(w);
+          if (role) {
+            const roleName = this.displayService.name(role.strategy.cls);
+            row[w.name] = role.strategy.getUnitRole(roleName);
+          } else {
+            row[w.name] = '';
+          }
+        }
+      }
+
       if (this.hasPeriod) {
         const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
-        from = format(fromDate, 'dd-MM-yyyy');
+        row['from'] = format(fromDate, 'dd-MM-yyyy');
         const throughDate = v.strategy.getUnitRole(
           this.m.Period.ThroughDate
         ) as Date;
-        through = throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
+        row['through'] =
+          throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
       }
 
-      return {
-        object: v,
-        [this.target.name]: targetDisplay,
-        type: v.strategy.cls.singularName,
-        from,
-        through,
-      } as Row;
+      return row;
     });
   }
 }

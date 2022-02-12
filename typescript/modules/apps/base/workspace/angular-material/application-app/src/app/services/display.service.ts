@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IObject } from '@allors/system/workspace/domain';
-import { Class, RoleType } from '@allors/system/workspace/meta';
+import { Class, Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   DisplayService,
   WorkspaceService,
@@ -9,18 +9,53 @@ import { M } from '@allors/default/workspace/meta';
 
 @Injectable()
 export class AppDisplayService implements DisplayService {
-  roleTypeByClass: Map<Class, RoleType>;
+  nameByObjectType: Map<Composite, RoleType>;
+  descriptionByObjectType: Map<Composite, RoleType>;
+  primaryByObjectType: Map<Composite, RoleType[]>;
+  secondaryByObjectType: Map<Composite, RoleType[]>;
+  tertiaryByObjectType: Map<Composite, RoleType[]>;
 
   constructor(workspaceService: WorkspaceService) {
     const m = workspaceService.workspace.configuration.metaPopulation as M;
-    this.roleTypeByClass = new Map<Class, RoleType>([
-      [m.Person, m.Person.LastName],
+
+    this.nameByObjectType = new Map<Class, RoleType>([
+      [m.HomeAddress, m.HomeAddress.Street],
       [m.Organisation, m.Organisation.Name],
+      [m.Person, m.Person.DomainFullName],
     ]);
+
+    this.descriptionByObjectType = new Map<Class, RoleType>([]);
+
+    this.primaryByObjectType = new Map<Class, RoleType[]>([
+      [m.Person, [m.Person.FirstName, m.Person.LastName, m.Person.Address]],
+      [
+        m.Organisation,
+        [m.Organisation.Name, m.Organisation.Owner, m.Person.Address],
+      ],
+    ]);
+
+    this.secondaryByObjectType = new Map<Class, RoleType[]>([]);
+
+    this.tertiaryByObjectType = new Map<Class, RoleType[]>([]);
   }
 
-  display(obj: IObject): string {
-    const roleType = this.roleTypeByClass.get(obj.strategy.cls);
-    return obj.strategy.getUnitRole(roleType) as string;
+  name(objectType: Composite): RoleType {
+    return this.nameByObjectType.get(objectType);
+  }
+
+  desription(objectType: Composite): RoleType {
+    return this.nameByObjectType.get(objectType);
+  }
+
+  primary(objectType: Composite): RoleType[] {
+    return this.primaryByObjectType.get(objectType) ?? [];
+  }
+
+  secondary(objectType: Composite): RoleType[] {
+    return this.secondaryByObjectType.get(objectType) ?? [];
+  }
+
+  tertiary(objectType: Composite): RoleType[] {
+    return this.tertiaryByObjectType.get(objectType) ?? [];
   }
 }
