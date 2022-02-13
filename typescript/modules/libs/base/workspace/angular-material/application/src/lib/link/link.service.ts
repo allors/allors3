@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Composite } from '@allors/system/workspace/meta';
-import { Node } from '@allors/system/workspace/domain';
+import { LinkType } from './link-type';
 
 @Injectable()
 export abstract class LinkService {
-  abstract link(objectType: Composite): Node[];
+  abstract linkTypes(objectType: Composite): LinkType[];
 }

@@ -72,7 +72,6 @@ import {
   AllorsFocusDirective,
   AllorsBarcodeDirective,
   TemplateHostDirective,
-  LinkService,
   ActionService,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -111,6 +110,11 @@ import {
 } from '@allors/base/workspace/angular-material/foundation';
 
 import {
+  // Service
+  LinkService,
+} from '@allors/base/workspace/angular-material/application';
+
+import {
   // Services
   AllorsMaterialSideNavService,
   AllorsMaterialErrorService,
@@ -138,6 +142,7 @@ import {
   AllorsMaterialDynamicViewDetailPanelComponent,
   AllorsMaterialDynamicViewRelationPanelComponent,
   AllorsMaterialDynamicViewRelationshipPanelComponent,
+  AllorsMaterialDynamicSummaryPanelComponent,
 } from '@allors/base/workspace/angular-material/application';
 
 import { routes, components as routeComponents } from './app.routes';
@@ -212,6 +217,7 @@ import { AppActionService } from './services/action.service';
     AllorsMaterialDynamicViewDetailPanelComponent,
     AllorsMaterialDynamicViewRelationPanelComponent,
     AllorsMaterialDynamicViewRelationshipPanelComponent,
+    AllorsMaterialDynamicSummaryPanelComponent,
     TemplateHostDirective,
     // Routed and dialog components
     ...routeComponents,
