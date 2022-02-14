@@ -390,6 +390,7 @@ build_interface(interface) ::= <<
             {
                 SingularName = "$interface.SingularName$",
                 $if(interface.AssignedPluralName)$PluralName = "$interface.AssignedPluralName$",$endif$
+                $if(interface.AttributeByName.Relationship)$AssignedIsRelationship = true,$endif$
             };
 >>
 
@@ -399,6 +400,7 @@ build_class(class) ::= <<
 $if(!class.HasDatabaseOrigin)$                AssignedOrigin = Allors.Origin.$class.Origin$,$endif$
                 SingularName = "$class.SingularName$",
                 $if(class.AssignedPluralName)$PluralName = "$class.AssignedPluralName$",$endif$
+                $if(class.AttributeByName.Relationship)$AssignedIsRelationship = true,$endif$
                 $if(class.WorkspaceNames)$AssignedWorkspaceNames = new[] {$class.WorkspaceNames:{name|"$name$"}; separator=", "$},$endif$
             };
 >>
@@ -424,7 +426,6 @@ $if(property.WorkspaceNames)$		        AssignedWorkspaceNames = new[] {$property
 $if(property.AttributeByName.Multiplicity)$		        AssignedMultiplicity = Allors.Multiplicity.$property.AttributeByName.Multiplicity.Value$,$endif$
 $if(property.AttributeByName.Derived)$		        IsDerived = $property.AttributeByName.Derived.Value$,$endif$
 $if(property.AttributeByName.Indexed)$		        IsIndexed = $property.AttributeByName.Indexed.Value$,$endif$
-$if(property.AttributeByName.Relationship)$		        InRelationship = true,$endif$
                 RoleType =
                 {
                     ObjectType = meta.$property.Type.SingularName$,

@@ -101,10 +101,6 @@ namespace Allors.Meta.Generation.Model
             this.WorkspaceNames
                 .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.IsDerived && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
 
-        public IReadOnlyDictionary<string, IOrderedEnumerable<string>> WorkspaceInRelationshipsByWorkspaceName =>
-          this.WorkspaceNames
-              .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.InRelationship && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
-
         public IReadOnlyDictionary<string, IOrderedEnumerable<string>> WorkspaceRequiredTagsByWorkspaceName =>
             this.WorkspaceNames
                 .ToDictionary(v => v, v => this.RelationTypes.Where(w => w.RoleType.IsRequired && w.WorkspaceNames.Contains(v)).Select(w => w.Tag).OrderBy(w => w));
@@ -123,6 +119,10 @@ namespace Allors.Meta.Generation.Model
         public IReadOnlyDictionary<string, IOrderedEnumerable<CompositeModel>> WorkspaceCompositesByWorkspaceName =>
             this.WorkspaceNames
                 .ToDictionary(v => v, v => this.Composites.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<CompositeModel>> WorkspaceRelationshipsByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.Composites.Where(w => w.WorkspaceNames.Contains(v) && w.IsRelationship).OrderBy(w => w.Tag));
 
         public IReadOnlyDictionary<string, IOrderedEnumerable<InterfaceModel>> WorkspaceInterfacesByWorkspaceName =>
             this.WorkspaceNames

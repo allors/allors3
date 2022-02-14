@@ -19,7 +19,6 @@ export { CatalogueFormComponent } from './lib/domain/catalogue/form/catalogue-fo
 export { CataloguesListComponent } from './lib/domain/catalogue/list/catalogue-list.component';
 
 export { CommunicationEventListComponent } from './lib/domain/communicationevent/list/communicationevent-list.component';
-export { CommunicationEventOverviewPanelComponent } from './lib/domain/communicationevent/overview/panel/communicationevent-overview-panel.component';
 export { CommunicationEventWorkTaskComponent } from './lib/domain/communicationevent/worktask/communicationevent-worktask.component';
 
 export { ContactMechanismInlineComponent } from './lib/domain/contactmechanism/inline/contactmechanism-inline.component';
@@ -82,7 +81,7 @@ export { OrderAdjustmentOverviewPanelComponent } from './lib/domain/orderadjustm
 export { OrganisationCreateFormComponent } from './lib/domain/organisation/create/organisation-create-form.component';
 export { OrganisationInlineComponent } from './lib/domain/organisation/inline/organisation-inline.component';
 export { OrganisationListComponent } from './lib/domain/organisation/list/organisation-list.component';
-export { OrganisationOverviewComponent } from './lib/domain/organisation/overview/organisation-overview.component';
+export { OrganisationOverviewPageComponent } from './lib/domain/organisation/overview/organisation-overview-page.component';
 export { OrganisationEditFormComponent } from './lib/domain/organisation/edit/organisation-edit-form.component';
 export { OrganisationOverviewSummaryComponent } from './lib/domain/organisation/overview/summary/organisation-overview-summary.component';
 
@@ -108,7 +107,7 @@ export { PaymentOverviewPanelComponent } from './lib/domain/payment/overview/pan
 export { PersonCreateFormComponent } from './lib/domain/person/create/person-create-form.component';
 export { PersonInlineComponent } from './lib/domain/person/inline/person-inline.component';
 export { PersonListComponent } from './lib/domain/person/list/person-list.component';
-export { PersonOverviewComponent } from './lib/domain/person/overview/person-overview.component';
+export { PersonOverviewPageComponent } from './lib/domain/person/overview/person-overview-page.component';
 export { PersonEditFormComponent } from './lib/domain/person/edit/person-edit-form.component';
 export { PersonOverviewSummaryComponent } from './lib/domain/person/overview/summary/person-overview-summary.component';
 

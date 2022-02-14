@@ -49,6 +49,8 @@ namespace Allors.Meta.Generation.Model
 
         public ClassModel ExclusiveDatabaseClass => this.MetaModel.Map(this.Composite.ExclusiveDatabaseClass);
 
+        public bool IsRelationship => this.Composite.IsRelationship;
+
         // IComposite Extra
         public bool ExistDirectSupertypes => this.DirectSupertypes.Any();
 

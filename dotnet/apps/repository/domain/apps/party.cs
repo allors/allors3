@@ -58,15 +58,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         TelecommunicationsNumber OrderInquiriesFax { get; set; }
-
-        #region Allors
-        [Id("42ab0c4b-52b2-494e-b6a9-cacf55fb002e")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        PartyContactMechanism[] PartyContactMechanisms { get; set; }
-
+        
         #region Allors
         [Id("25068a0e-15f7-41bd-b16d-a7dd51ca9aa3")]
         #endregion

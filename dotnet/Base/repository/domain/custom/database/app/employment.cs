@@ -12,6 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("CE633852-D115-468E-A52F-22A777E27198")]
     #endregion
+    [Relationship]
     [Workspace(Default)]
     public partial class Employment : Period, Deletable
     {
@@ -31,7 +32,6 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Relationship]
         [Required]
         [Workspace(Default)]
         public Person Employee { get; set; }
@@ -41,7 +41,6 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Relationship]
         [Required]
         [Workspace(Default)]
         public Organisation Employer { get; set; }

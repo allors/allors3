@@ -12,6 +12,8 @@ namespace Allors.Database.Meta
 
     public abstract partial class Composite : ObjectType, ICompositeBase
     {
+        private readonly IMetaPopulationBase metaPopulation;
+
         private HashSet<IInterfaceBase> structuralDerivedDirectSupertypes;
         private HashSet<IInterfaceBase> structuralDerivedSupertypes;
 
@@ -22,15 +24,39 @@ namespace Allors.Database.Meta
 
         private HashSet<IMethodTypeBase> structuralDerivedMethodTypes;
 
-        private bool structuralDerivedIsRelationship;
+        private bool? assignedIsRelationship;
+        private bool isRelationship;
 
-        protected Composite(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag) => this.AssignedOrigin = Origin.Database;
+        protected Composite(IMetaPopulationBase metaPopulation, Guid id, string tag) : base(metaPopulation, id, tag)
+        {
+            this.metaPopulation = metaPopulation;
+            this.AssignedOrigin = Origin.Database;
+        }
 
         public override Origin Origin => this.AssignedOrigin;
 
         public Origin AssignedOrigin { get; set; }
 
-        public bool IsRelationship => this.structuralDerivedIsRelationship;
+        public bool? AssignedIsRelationship
+        {
+            get => this.assignedIsRelationship;
+
+            set
+            {
+                this.metaPopulation.AssertUnlocked();
+                this.assignedIsRelationship = value;
+                this.metaPopulation.Stale();
+            }
+        }
+
+        public bool IsRelationship
+        {
+            get
+            {
+                this.metaPopulation.Derive();
+                return this.isRelationship;
+            }
+        }
 
         public bool ExistExclusiveClass
         {
@@ -159,11 +185,8 @@ namespace Allors.Database.Meta
 
         public abstract void Bind(Dictionary<string, Type> typeByName);
 
-        /// <summary>
-        /// Derive is relationship.
-        /// </summary>
-        /// <param name="directSupertypes">The direct super types.</param>
-        public void StructuralDeriveIsRelationship() => this.structuralDerivedIsRelationship = this.RoleTypes.Any(v => v.RelationType.InRelationship);
+        public void DeriveIsRelationship() =>
+            this.isRelationship = this.assignedIsRelationship ?? this.Supertypes.Any(v => v.AssignedIsRelationship == true);
 
         /// <summary>
         /// Derive direct super type derivations.

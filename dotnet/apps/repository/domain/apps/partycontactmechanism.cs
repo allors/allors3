@@ -13,6 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("ca633037-ba1e-4304-9f2c-3353c287474b")]
     #endregion
+    [Relationship]
     public partial class PartyContactMechanism : Commentable, Auditable, Period, Deletable
     {
         #region inherited properties
@@ -38,13 +39,14 @@ namespace Allors.Repository
 
         #endregion
 
+        // TODO: Upgrade (was Party.PartyContactMechanisms)
         #region Allors
-        [Id("2ca2f403-67f8-49e6-9a62-4547d2cc83a1")]
+        [Id("42ab0c4b-52b2-494e-b6a9-cacf55fb002e")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public ContactMechanismPurpose[] ContactPurposes { get; set; }
+        public Party Party { get; set; }
 
         #region Allors
         [Id("afd94e13-db8e-45cd-8d6c-d9085054d71f")]
@@ -54,6 +56,14 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         public ContactMechanism ContactMechanism { get; set; }
+
+        #region Allors
+        [Id("2ca2f403-67f8-49e6-9a62-4547d2cc83a1")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        public ContactMechanismPurpose[] ContactPurposes { get; set; }
 
         #region Allors
         [Id("eb412c34-7127-4b37-8831-5280b9ed1885")]

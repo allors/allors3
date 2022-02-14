@@ -6,9 +6,9 @@ export class Lookup {
   m: Map<string, Multiplicity>;
   d: Set<string>;
   r: Set<string>;
-  rel: Set<string>;
   t: Map<string, string>;
   or: Map<string, string[]>;
+  rel: Set<string>;
 
   constructor(data: MetaData) {
     this.m = new Map();
@@ -30,7 +30,6 @@ export class Lookup {
 
     this.d = new Set(data.d ?? []);
     this.r = new Set(data.r ?? []);
-    this.rel = new Set(data.rel ?? []);
 
     this.t = new Map();
     if (data.t) {
@@ -45,5 +44,7 @@ export class Lookup {
         this.or.set(classTag, roleTypeTags);
       }
     }
+
+    this.rel = new Set(data.rel ?? []);
   }
 }

@@ -44,8 +44,6 @@ namespace Allors.Repository
 
         public TelecommunicationsNumber OrderInquiriesFax { get; set; }
 
-        public PartyContactMechanism[] PartyContactMechanisms { get; set; }
-
         public TelecommunicationsNumber ShippingInquiriesFax { get; set; }
 
         public TelecommunicationsNumber ShippingInquiriesPhone { get; set; }

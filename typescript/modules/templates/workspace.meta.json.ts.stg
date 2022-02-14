@@ -61,12 +61,12 @@ $meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_objectTy
   ],
   d: [$meta.WorkspaceDerivedTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
   r: [$meta.WorkspaceRequiredTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-  rel: [$meta.WorkspaceInRelationshipsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
   t:
   {
     $meta.WorkspaceMediaTagsByMediaTypeNameByWorkspaceName.(workspaceName):{mediaTypeName|'$mediaTypeName$': [$data_mediaType(mediaTypeName)$]}; separator=",\n"$
   },
   or: [$meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_overridden_required(objectType)$}; separator=""$],
+  rel: [$meta.WorkspaceRelationshipsByWorkspaceName.(workspaceName):{objectType|'$objectType.tag$'}; separator=","$],
 }
 
 >>

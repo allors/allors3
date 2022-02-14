@@ -8,7 +8,7 @@ namespace Allors.Repository.Attributes
 {
     using System;
 
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
     public class RelationshipAttribute : RepositoryAttribute
     {
         public RelationshipAttribute() { }

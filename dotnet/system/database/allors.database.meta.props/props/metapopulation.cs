@@ -406,12 +406,6 @@ namespace Allors.Database.Meta
                 {
                     composite.StructuralDeriveMethodTypes(sharedMethodTypeList, methodTypeByClass);
                 }
-
-                // Relationships
-                foreach (var type in this.Composites)
-                {
-                    type.StructuralDeriveIsRelationship();
-                }
             }
             finally
             {
@@ -473,6 +467,11 @@ namespace Allors.Database.Meta
                     foreach (var @interface in this.interfaces)
                     {
                         @interface.DeriveWorkspaceNames();
+                    }
+
+                    foreach (var composite in this.Composites)
+                    {
+                        composite.DeriveIsRelationship();
                     }
 
                     // MetaPopulation

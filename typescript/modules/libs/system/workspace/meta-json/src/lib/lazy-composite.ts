@@ -69,6 +69,7 @@ export abstract class LazyComposite implements InternalComposite {
     this.tag = t;
     this.singularName = s;
     this.origin = lookup.o.get(t) ?? Origin.Database;
+    this.isRelationship = lookup.rel.has(t) ?? false;
     metaPopulation.onNewComposite(this);
   }
 

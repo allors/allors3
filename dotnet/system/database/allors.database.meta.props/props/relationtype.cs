@@ -22,7 +22,6 @@ namespace Allors.Database.Meta
 
         private bool isDerived;
         private bool isIndexed;
-        private bool inRelationship;
 
         private string[] assignedWorkspaceNames;
         private string[] derivedWorkspaceNames;
@@ -128,18 +127,6 @@ namespace Allors.Database.Meta
             {
                 this.metaPopulation.AssertUnlocked();
                 this.isIndexed = value;
-                this.metaPopulation.Stale();
-            }
-        }
-
-        public bool InRelationship
-        {
-            get => this.inRelationship;
-
-            set
-            {
-                this.metaPopulation.AssertUnlocked();
-                this.inRelationship = value;
                 this.metaPopulation.Stale();
             }
         }

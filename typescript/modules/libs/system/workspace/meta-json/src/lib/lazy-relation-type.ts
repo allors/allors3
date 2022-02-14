@@ -23,7 +23,6 @@ export class LazyRelationType implements RelationType {
   multiplicity: Multiplicity;
   origin: Origin;
   isDerived: boolean;
-  inRelationship: boolean;
 
   associationType: AssociationType;
   roleType: RoleType;
@@ -47,7 +46,6 @@ export class LazyRelationType implements RelationType {
       : lookup.m.get(t) ?? Multiplicity.ManyToOne;
     this.origin = lookup.o.get(t) ?? Origin.Database;
     this.isDerived = lookup.d.has(t);
-    this.inRelationship = lookup.rel.has(t);
 
     this.metaPopulation.onNew(this);
 

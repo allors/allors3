@@ -5,7 +5,7 @@
         <a (click)="navigation.list(m.Organisation)" style="cursor: pointer"
           >Organisations</a
         >
-        / {{ organisation?.DisplayName }}
+        / {{ object?.DisplayName }}
       </div>
     </div>
   </div>
@@ -22,7 +22,14 @@
       >
         <organisation-edit-form></organisation-edit-form>
 
-        <communicationevent-overview-panel></communicationevent-overview-panel>
+        <a-mat-dyn-view-relationship-panel
+          [anchor]="m.CommunicationEvent.FromParty"
+          [target]="m.CommunicationEvent.InvolvedParties"
+        ></a-mat-dyn-view-relationship-panel>
+        <a-mat-dyn-edit-relationship-panel
+          [anchor]="m.CommunicationEvent.FromParty"
+          [target]="m.CommunicationEvent.InvolvedParties"
+        ></a-mat-dyn-edit-relationship-panel>
 
         <contactmechanism-overview-panel></contactmechanism-overview-panel>
 
