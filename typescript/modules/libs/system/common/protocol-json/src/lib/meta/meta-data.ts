@@ -29,7 +29,8 @@ export type ObjectTypeData = [
   directSupertypes?: string[],
   relationTypes?: RelationTypeData[],
   methodTypes?: MethodTypeData[],
-  pluralName?: string
+  pluralName?: string,
+  isRelationship?: boolean
 ];
 
 export interface MetaData {
