@@ -10,4 +10,19 @@
       </div>
     </mat-card-subtitle>
   </mat-card-header>
+
+  <mat-card-content *ngIf="links?.length > 0">
+    <div style="cursor: pointer" *ngFor="let link of links">
+      <div style="color: grey">{{ link.linkType.label }}</div>
+      <div (click)="navigate(link)">
+        {{ link.name }}
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="actions?.length > 0">
+    <button *ngFor="let action of actions" mat-button (click)="perform(action)">
+      {{ action.name }}
+    </button>
+  </mat-card-actions>
 </mat-card>

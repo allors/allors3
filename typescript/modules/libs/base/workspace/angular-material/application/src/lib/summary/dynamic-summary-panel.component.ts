@@ -19,6 +19,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsViewSummaryPanelComponent,
+  NavigationService,
   ObjectInfo,
   ObjectService,
   PanelService,
@@ -40,11 +41,12 @@ export class AllorsMaterialDynamicSummaryPanelComponent
   displayDescription: RoleType;
   linkTypes: LinkType[];
 
+  object: IObject;
   icon: string;
   name: string;
   description: string;
   links: Link[];
-  action: Action[];
+  actions: Action[];
 
   private subscription: Subscription;
 
@@ -55,7 +57,8 @@ export class AllorsMaterialDynamicSummaryPanelComponent
     refreshService: RefreshService,
     workspaceService: WorkspaceService,
     linkService: LinkService,
-    actionService: ActionService,
+    private actionService: ActionService,
+    private navigationService: NavigationService,
     private iconService: IconService,
     private displayService: DisplayService
   ) {
@@ -76,7 +79,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
           this.objectInfo = objectInfo;
           const { objectType } = objectInfo;
           this.linkTypes = linkService.linkTypes(objectType);
-          this.action = actionService.action(objectType);
+          this.actions = actionService.action(objectType);
           this.icon = iconService.icon(objectType);
           this.displayName = displayService.name(objectType);
           this.displayDescription = displayService.description(objectType);
@@ -103,12 +106,14 @@ export class AllorsMaterialDynamicSummaryPanelComponent
   }
 
   onPostScopedPull(pullResult: IPullResult, scope?: string): void {
-    const object = pullResult.object<IObject>(scope);
+    this.object = pullResult.object<IObject>(scope);
 
-    this.name = object.strategy.getUnitRole(this.displayName) as string;
-    this.description = object.strategy.getUnitRole(
-      this.displayDescription
-    ) as string;
+    this.name = this.displayName
+      ? (this.object.strategy.getUnitRole(this.displayName) as string)
+      : null;
+    this.description = this.displayDescription
+      ? (this.object.strategy.getUnitRole(this.displayDescription) as string)
+      : null;
 
     this.links = this.linkTypes
       .map((linkType) => {
@@ -116,17 +121,21 @@ export class AllorsMaterialDynamicSummaryPanelComponent
           .map((path) => {
             const leaf = leafPath(path);
             const leafObjectType = leaf.propertyType.objectType as Composite;
-            const targets = [...resolvePath(object, path)];
+            const targets = [...resolvePath(this.object, path)];
             return targets.map((target) => {
               const icon = this.iconService.icon(leafObjectType);
-              const name = target.strategy.getUnitRole(
-                this.displayService.name(leafObjectType)
-              ) as string;
-              const description = target.strategy.getUnitRole(
-                this.displayService.description(leafObjectType)
-              ) as string;
+              const nameDisplay = this.displayService.name(leafObjectType);
+              const name = nameDisplay
+                ? (target.strategy.getUnitRole(nameDisplay) as string)
+                : null;
+              const descriptionDisplay =
+                this.displayService.description(leafObjectType);
+              const description = descriptionDisplay
+                ? (target.strategy.getUnitRole(descriptionDisplay) as string)
+                : null;
               const link: Link = {
                 linkType,
+                target,
                 icon,
                 name,
                 description,
@@ -137,6 +146,14 @@ export class AllorsMaterialDynamicSummaryPanelComponent
           .reduce((acc, v) => acc.concat(v), []);
       })
       .reduce((acc, v) => acc.concat(v), []);
+  }
+
+  navigate(link: Link): void {
+    this.navigationService.overview(link.target);
+  }
+
+  perform(action: Action): void {
+    action.execute(this.object);
   }
 
   override ngOnDestroy(): void {

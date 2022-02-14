@@ -155,7 +155,6 @@ import {
 import { OrganisationSummaryPanelComponent } from './domain/organisation/summary/organisation-summary-panel.component';
 import { PersonInlineComponent } from './domain/person/inline/person-inline.component';
 import { PersonFormComponent } from './domain/person/form/person-form.component';
-import { PersonSummaryPanelComponent } from './domain/person/summary/person-summary-panel.component';
 import { AppFilterService } from './services/filter.service';
 import { AppSorterService } from './services/sorter.service';
 import { AppMenuService } from './services/menu.service';
@@ -227,7 +226,6 @@ import { AppActionService } from './services/action.service';
     OrganisationSummaryPanelComponent,
     PersonInlineComponent,
     PersonFormComponent,
-    PersonSummaryPanelComponent,
     // App
     AppComponent,
   ],
