@@ -28,13 +28,15 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
                 @this.PurchaseInvoice = @this.PurchaseInvoiceItemsWhereSerialisedItem
-                    .LastOrDefault(v => v.ExistInvoiceWhereValidInvoiceItem
+                    .Where(v => v.ExistInvoiceWhereValidInvoiceItem
                                         && v.ExistInvoiceItemType
                                         && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
                                             || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem))
                                         && (((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Transaction()).NotPaid)
                                             || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Transaction()).PartiallyPaid)
                                             || ((PurchaseInvoice)v.InvoiceWhereValidInvoiceItem).PurchaseInvoiceState.Equals(new PurchaseInvoiceStates(@this.Transaction()).Paid)))?
+                    .OrderBy(v => v.PurchaseInvoiceWherePurchaseInvoiceItem.InvoiceDate)
+                    .LastOrDefault()?
                     .PurchaseInvoiceWherePurchaseInvoiceItem;
             }
         }
