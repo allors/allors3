@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Diagrams</RootNamespace>
     <AssemblyName>Diagrams</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,7 +56,6 @@
     <None Include="Products\Products.cd" />
     <None Include="Products\Inventory Storage.cd" />
     <None Include="Products\Overview.cd" />
-    <None Include="Relation\ClassDiagram1.cd" />
     <None Include="Relation\Communication.cd" />
     <None Include="Relation\Relation.cd" />
     <None Include="Security\Security.cd" />

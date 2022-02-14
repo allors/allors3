@@ -18,18 +18,18 @@ export class AppDisplayService implements DisplayService {
   constructor(workspaceService: WorkspaceService) {
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
-    this.nameByObjectType = new Map<Class, RoleType>([
+    this.nameByObjectType = new Map<Composite, RoleType>([
       [m.Person, m.Person.LastName],
       [m.Organisation, m.Organisation.Name],
     ]);
 
-    this.descriptionByObjectType = new Map<Class, RoleType>([]);
+    this.descriptionByObjectType = new Map<Composite, RoleType>([]);
 
-    this.primaryByObjectType = new Map<Class, RoleType[]>([]);
+    this.primaryByObjectType = new Map<Composite, RoleType[]>([]);
 
-    this.secondaryByObjectType = new Map<Class, RoleType[]>([]);
+    this.secondaryByObjectType = new Map<Composite, RoleType[]>([]);
 
-    this.tertiaryByObjectType = new Map<Class, RoleType[]>([]);
+    this.tertiaryByObjectType = new Map<Composite, RoleType[]>([]);
   }
 
   name(objectType: Composite): RoleType {

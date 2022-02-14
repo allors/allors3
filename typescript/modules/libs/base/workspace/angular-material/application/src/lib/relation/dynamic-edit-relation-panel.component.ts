@@ -17,7 +17,6 @@ import {
   Initializer,
   IObject,
   Predicate,
-  Node,
 } from '@allors/system/workspace/domain';
 import {
   SharedPullService,
@@ -131,11 +130,17 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
 
     const sort = true;
 
+    const columns = (
+      this.objectType.isInterface ? [{ name: 'type', sort }] : []
+    ).concat(
+      this.display.map((v) => {
+        return { name: v.name, sort };
+      })
+    );
+
     const tableConfig: TableConfig = {
       selection: true,
-      columns: this.display.map((v) => {
-        return { name: v.name, sort };
-      }),
+      columns,
       // actions: [edit, delete],
       // defaultAction: this.edit,
       autoSort: true,
@@ -199,6 +204,10 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
       const row: TableRow = {
         object: v,
       };
+
+      if (this.objectType.isInterface) {
+        row['type'] = v.strategy.cls.singularName;
+      }
 
       for (const w of this.display) {
         if (w.objectType.isUnit) {

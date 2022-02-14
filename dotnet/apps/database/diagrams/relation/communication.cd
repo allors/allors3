@@ -1,23 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Interface Name="Allors.Domain.Party" Collapsed="true">
-    <Position X="8" Y="0.5" Width="1.5" />
+    <Position X="8.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AYAoGAABVAAQAoAQIJgGAACgoAkUAAAAAQIFBANAgEI=</HashCode>
+      <HashCode>wYAoGAAAAoAAAIAQgEgACAgAQIABAhARBZIEQANAogA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PartyContactMechanisms" />
-      <Property Name="CurrentPartyContactMechanisms" />
-      <Property Name="CommunicationEvents" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.CommunicationEvent" Collapsed="true">
-    <Position X="13.25" Y="0.5" Width="1.75" />
+    <Position X="14" Y="0.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AICAAEKAAACgAEAEAIBIAAIAQIgAQAACIACAgCAIAAQ=</HashCode>
+      <HashCode>AICIAAKAAACgAEAEAIBIQAIAQIgAAAACIACAiCAAAAQ=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ContactMechanisms" />
+      <Property Name="FromParty" />
+      <Property Name="ToParty" />
+      <Property Name="_InvolvedParties" />
+    </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.ContactMechanism">
     <Position X="7" Y="3.5" Width="1.75" />
@@ -29,22 +33,22 @@
       <Property Name="ContactMechanismType" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="Allors.Domain.ContactMechanismPurpose" Collapsed="true">
-    <Position X="0.5" Y="1" Width="2.25" />
+  <Interface Name="Allors.Domain.ContactMechanismPurpose">
+    <Position X="0.5" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.ContactMechanismType">
-    <Position X="9.75" Y="3.75" Width="2" />
+    <Position X="10.5" Y="3.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.PartyContactMechanism">
-    <Position X="3.75" Y="0.75" Width="2" />
+    <Position X="4.25" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAgAAAAAgAAABAAAAAAAAAAAAAABAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
@@ -72,6 +76,20 @@
     <Position X="4" Y="5.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>ACAAABAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.EmailAddress">
+    <Position X="6.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.WebAddress">
+    <Position X="8" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>

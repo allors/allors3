@@ -18,25 +18,40 @@ export class AppDisplayService implements DisplayService {
   constructor(workspaceService: WorkspaceService) {
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
-    this.nameByObjectType = new Map<Class, RoleType>([
-      [m.Person, m.Person.LastName],
+    this.nameByObjectType = new Map<Composite, RoleType>([
       [m.Organisation, m.Organisation.Name],
+      [m.Person, m.Person.DisplayName],
     ]);
 
-    this.descriptionByObjectType = new Map<Class, RoleType>([]);
+    this.descriptionByObjectType = new Map<Composite, RoleType>([]);
 
-    this.primaryByObjectType = new Map<Class, RoleType[]>([]);
+    this.primaryByObjectType = new Map<Composite, RoleType[]>([
+      [
+        m.CommunicationEvent,
+        [
+          m.CommunicationEvent.Description,
+          m.CommunicationEvent.InvolvedParties,
+          m.CommunicationEvent.CommunicationEventState,
+          m.CommunicationEvent.EventPurposes,
+        ],
+      ],
+      [
+        m.Person,
+        [m.Person.FirstName, m.Person.LastName, m.Person.DisplayEmail],
+      ],
+      [m.Organisation, [m.Organisation.Name]],
+    ]);
 
-    this.secondaryByObjectType = new Map<Class, RoleType[]>([]);
+    this.secondaryByObjectType = new Map<Composite, RoleType[]>([]);
 
-    this.tertiaryByObjectType = new Map<Class, RoleType[]>([]);
+    this.tertiaryByObjectType = new Map<Composite, RoleType[]>([]);
   }
 
   name(objectType: Composite): RoleType {
     return this.nameByObjectType.get(objectType);
   }
 
-  desription(objectType: Composite): RoleType {
+  description(objectType: Composite): RoleType {
     return this.nameByObjectType.get(objectType);
   }
 

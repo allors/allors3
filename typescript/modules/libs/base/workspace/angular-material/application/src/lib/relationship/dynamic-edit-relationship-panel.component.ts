@@ -150,9 +150,14 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: [...this.targetDisplay, ...this.display].map((v) => {
-        return { name: v.name, sort };
-      }),
+      columns: (this.objectType.isInterface
+        ? [{ name: 'type', sort }]
+        : []
+      ).concat(
+        [...this.targetDisplay, ...this.display].map((v) => {
+          return { name: v.name, sort };
+        })
+      ),
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -277,6 +282,10 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
       const row: TableRow = {
         object: v,
       };
+
+      if (this.objectType.isInterface) {
+        row['type'] = v.strategy.cls.singularName;
+      }
 
       const target = v.strategy.getCompositeRole(this.target);
 
