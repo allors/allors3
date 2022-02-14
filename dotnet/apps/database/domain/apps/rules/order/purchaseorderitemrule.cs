@@ -9,7 +9,6 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Derivations;
-    using Derivations;
     using Meta;
     using Derivations.Rules;
     using Resources;
@@ -56,7 +55,7 @@ namespace Allors.Database.Domain
                     validation.AddError(@this, this.M.PurchaseOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                 }
 
-                if (@this.ExistPart && @this.Part.InventoryItemKind.IsNonSerialised && @this.QuantityOrdered == 0)
+                if (@this.ExistPart && @this.Part.InventoryItemKind.IsNonSerialised && @this.QuantityOrdered <= 0)
                 {
                     validation.AddError(@this, this.M.PurchaseOrderItem.QuantityOrdered, ErrorMessages.InvalidQuantity);
                 }
