@@ -72,7 +72,6 @@ import {
   AllorsFocusDirective,
   AllorsBarcodeDirective,
   TemplateHostDirective,
-  LinkService,
   ActionService,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -119,6 +118,7 @@ import {
   AllorsMaterialEditService,
   SorterService,
   IconService,
+  LinkService,
   // Components
   AllorsMaterialErrorDialogComponent,
   AllorsMaterialFilterFieldDialogComponent,

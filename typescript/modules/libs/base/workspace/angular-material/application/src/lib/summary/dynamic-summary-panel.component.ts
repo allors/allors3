@@ -79,7 +79,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
           this.action = actionService.action(objectType);
           this.icon = iconService.icon(objectType);
           this.displayName = displayService.name(objectType);
-          this.displayDescription = displayService.desription(objectType);
+          this.displayDescription = displayService.description(objectType);
         }),
         tap(() => {
           this.refreshService.refresh();
@@ -123,7 +123,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
                 this.displayService.name(leafObjectType)
               ) as string;
               const description = target.strategy.getUnitRole(
-                this.displayService.desription(leafObjectType)
+                this.displayService.description(leafObjectType)
               ) as string;
               const link: Link = {
                 linkType,
