@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 export abstract class DisplayService {
   abstract name(objectType: Composite): RoleType;
 
-  abstract desription(objectType: Composite): RoleType;
+  abstract description(objectType: Composite): RoleType;
 
   abstract primary(objectType: Composite): RoleType[];
 

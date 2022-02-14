@@ -16,8 +16,12 @@ export * from './lib/api/push/ipush-result';
 export * from './lib/api/iresult';
 export * from './lib/api/result-error';
 
+// pointer
+export * from './lib/pointer/convert';
+export * from './lib/pointer/node';
+export * from './lib/pointer/path';
+
 // data
-export * from './lib/data/node';
 export * from './lib/data/select';
 export * from './lib/data/extent';
 export * from './lib/data/sort';

@@ -28,6 +28,9 @@ export * from './lib/filter/filter.component';
 
 export * from './lib/icon/icon.service';
 
+export * from './lib/link/link-type';
+export * from './lib/link/link.service';
+
 export * from './lib/media/preview/dialog.data';
 export * from './lib/media/preview/media-preview.component';
 export * from './lib/media/media.component';
@@ -52,3 +55,5 @@ export * from './lib/sidenav/side-nav-toggle.component';
 
 export * from './lib/sort/sorter.service';
 export * from './lib/sort/sorter';
+
+export * from './lib/summary/dynamic-summary-panel.component';

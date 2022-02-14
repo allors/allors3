@@ -36,7 +36,7 @@ export class AppDisplayService implements DisplayService {
     return this.nameByObjectType.get(objectType);
   }
 
-  desription(objectType: Composite): RoleType {
+  description(objectType: Composite): RoleType {
     return this.nameByObjectType.get(objectType);
   }
 

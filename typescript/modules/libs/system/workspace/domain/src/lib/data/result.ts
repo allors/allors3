@@ -1,5 +1,5 @@
 import { Select } from './select';
-import { Node } from './node';
+import { Node } from '../pointer/node';
 
 export interface Result {
   selectRef?: string;
