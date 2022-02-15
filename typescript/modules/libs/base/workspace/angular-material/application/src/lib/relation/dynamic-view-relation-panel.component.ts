@@ -20,7 +20,7 @@ import {
   IObject,
   IPullResult,
   Pull,
-  ScopedPullHandler,
+  SharedPullHandler,
 } from '@allors/system/workspace/domain';
 
 @Component({
@@ -29,7 +29,7 @@ import {
 })
 export class AllorsMaterialDynamicViewRelationPanelComponent
   extends AllorsViewRelationPanelComponent
-  implements ScopedPullHandler, OnInit
+  implements SharedPullHandler, OnInit
 {
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
@@ -74,14 +74,14 @@ export class AllorsMaterialDynamicViewRelationPanelComponent
     this.title = this.propertyType.pluralName;
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string): void {
+  onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const id = this.objectInfo.id;
 
     const pull: Pull = {
       objectId: id,
       results: [
         {
-          name: scope,
+          name: prefix,
           include: [
             {
               propertyType: this.propertyType,
@@ -94,8 +94,8 @@ export class AllorsMaterialDynamicViewRelationPanelComponent
     pulls.push(pull);
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
-    this.object = pullResult.object<IObject>(scope);
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
+    this.object = pullResult.object<IObject>(prefix);
 
     if (this.propertyType.isAssociationType) {
       this.properties = this.object.strategy.getCompositesAssociation(

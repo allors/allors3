@@ -37,12 +37,12 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     );
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string): void {
+  onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const pull: Pull = {
       objectId: this.objectInfo.id,
       results: [
         {
-          name: scope,
+          name: prefix,
         },
       ],
     };
@@ -50,8 +50,8 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     pulls.push(pull);
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
-    const object = pullResult.object<IObject>(scope);
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
+    const object = pullResult.object<IObject>(prefix);
 
     this.title = `${this.metaService.singularName(
       object.strategy.cls

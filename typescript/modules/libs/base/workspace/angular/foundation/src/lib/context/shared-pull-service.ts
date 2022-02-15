@@ -1,21 +1,21 @@
-import { ScopedPullHandler } from '@allors/system/workspace/domain';
+import { SharedPullHandler } from '@allors/system/workspace/domain';
 import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SharedPullService {
-  handlers: Set<ScopedPullHandler>;
+  handlers: Set<SharedPullHandler>;
 
   constructor() {
     this.handlers = new Set();
   }
 
-  register(pull: ScopedPullHandler) {
+  register(pull: SharedPullHandler) {
     this.handlers.add(pull);
   }
 
-  unregister(pull: ScopedPullHandler) {
+  unregister(pull: SharedPullHandler) {
     this.handlers.delete(pull);
   }
 }

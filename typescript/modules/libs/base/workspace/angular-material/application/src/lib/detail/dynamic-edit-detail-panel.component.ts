@@ -51,14 +51,14 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     );
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string): void {
-    pulls.push({ objectId: this.objectInfo.id, results: [{ name: scope }] });
+  onPreSharedPull(pulls: Pull[], prefix?: string): void {
+    pulls.push({ objectId: this.objectInfo.id, results: [{ name: prefix }] });
 
     this.subscribeTemplate();
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
-    const object = pullResult.object<IObject>(scope);
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
+    const object = pullResult.object<IObject>(prefix);
     this.title = `Edit ${object['Name']}`;
   }
 

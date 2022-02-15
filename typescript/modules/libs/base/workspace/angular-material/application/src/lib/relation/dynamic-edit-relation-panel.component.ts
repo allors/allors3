@@ -152,7 +152,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
     this.refreshService.refresh();
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string) {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     let predicate: Predicate;
 
     if (this.propertyType) {
@@ -181,7 +181,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
       },
       results: [
         {
-          name: scope,
+          name: prefix,
           include: this.display
             .filter((v) => v.objectType.isComposite)
             .map((v) => {
@@ -196,8 +196,8 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
     pulls.push(pull);
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string) {
-    const objects = pullResult.collection<IObject>(scope);
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
+    const objects = pullResult.collection<IObject>(prefix);
 
     this.table.total = objects.length;
     this.table.data = objects.map((v) => {

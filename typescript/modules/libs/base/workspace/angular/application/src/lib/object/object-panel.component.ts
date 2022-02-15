@@ -11,7 +11,7 @@ import { PanelService } from '../panel/panel.service';
 import {
   IPullResult,
   Pull,
-  ScopedPullHandler,
+  SharedPullHandler,
 } from '@allors/system/workspace/domain';
 import {
   AllorsComponent,
@@ -25,7 +25,7 @@ import { ObjectInfo } from './object-info';
 @Directive()
 export abstract class AllorsObjectPanelComponent
   extends AllorsComponent
-  implements Panel, ScopedPullHandler, AfterViewInit, OnDestroy
+  implements Panel, SharedPullHandler, AfterViewInit, OnDestroy
 {
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {
@@ -86,7 +86,7 @@ export abstract class AllorsObjectPanelComponent
     }
   }
 
-  abstract onPreScopedPull(pulls: Pull[], scope?: string): void;
+  abstract onPreSharedPull(pulls: Pull[], prefix?: string): void;
 
-  abstract onPostScopedPull(pullResult: IPullResult, scope?: string): void;
+  abstract onPostSharedPull(pullResult: IPullResult, prefix?: string): void;
 }

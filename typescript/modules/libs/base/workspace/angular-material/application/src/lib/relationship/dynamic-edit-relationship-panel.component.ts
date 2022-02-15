@@ -57,33 +57,12 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     return this.target.pluralName;
   }
 
-  private assignedAnchor: RoleType;
-
-  @Input()
-  get anchor(): RoleType {
-    if (this.assignedAnchor) {
-      return this.assignedAnchor;
-    }
-
-    if (this.target) {
-      const composite = this.target.associationType.objectType as Composite;
-      for (const roleType of composite.roleTypes) {
-        if (roleType !== this.target && roleType.relationType.inRelationship) {
-          return roleType;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  set anchor(value: RoleType) {
-    this.assignedAnchor = value;
-  }
-
   get initializer(): Initializer {
     return { propertyType: this.anchor, id: this.objectInfo.id };
   }
+
+  @Input()
+  anchor: RoleType;
 
   @Input()
   target: RoleType;
@@ -176,7 +155,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     this.table = new Table(tableConfig);
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string) {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     const id = this.objectInfo.id;
 
     const displayInclude: Node[] = this.display
@@ -215,7 +194,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
       },
       results: [
         {
-          name: scope,
+          name: prefix,
           include,
         },
       ],
@@ -224,8 +203,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     pulls.push(pull);
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string) {
-    this.objects = pullResult.collection<IObject>(scope) ?? [];
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
+    this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
     this.refreshTable();
   }

@@ -52,14 +52,14 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     );
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string) {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
 
-    const workTaskPullName = `${scope}_${m.WorkTask.tag}`;
-    const serviceEntryPullName = `${scope}_${m.ServiceEntry.tag}`;
-    const workEffortBillingPullName = `${scope}_${m.WorkEffortBilling.tag}`;
-    const fixedAssetPullName = `${scope}_${m.FixedAsset.tag}`;
+    const workTaskPullName = `${prefix}_${m.WorkTask.tag}`;
+    const serviceEntryPullName = `${prefix}_${m.ServiceEntry.tag}`;
+    const workEffortBillingPullName = `${prefix}_${m.WorkEffortBilling.tag}`;
+    const fixedAssetPullName = `${prefix}_${m.FixedAsset.tag}`;
 
     const id = this.objectInfo.id;
 
@@ -120,13 +120,13 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     );
   }
 
-  onPostScopedPull(loaded: IPullResult, scope?: string) {
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
-    const workTaskPullName = `${scope}_${m.WorkTask.tag}`;
-    const serviceEntryPullName = `${scope}_${m.ServiceEntry.tag}`;
-    const workEffortBillingPullName = `${scope}_${m.WorkEffortBilling.tag}`;
-    const fixedAssetPullName = `${scope}_${m.FixedAsset.tag}`;
+    const workTaskPullName = `${prefix}_${m.WorkTask.tag}`;
+    const serviceEntryPullName = `${prefix}_${m.ServiceEntry.tag}`;
+    const workEffortBillingPullName = `${prefix}_${m.WorkEffortBilling.tag}`;
+    const fixedAssetPullName = `${prefix}_${m.FixedAsset.tag}`;
 
     this.workTask = loaded.object<WorkTask>(workTaskPullName);
     this.assets = loaded.collection<FixedAsset>(fixedAssetPullName);

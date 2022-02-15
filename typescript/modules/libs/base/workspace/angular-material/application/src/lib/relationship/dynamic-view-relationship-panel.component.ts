@@ -15,7 +15,7 @@ import {
   IObject,
   IPullResult,
   Pull,
-  ScopedPullHandler,
+  SharedPullHandler,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
@@ -26,10 +26,8 @@ import { PeriodSelection } from '@allors/base/workspace/angular-material/foundat
 })
 export class AllorsMaterialDynamicViewRelationshipPanelComponent
   extends AllorsViewRelationshipPanelComponent
-  implements ScopedPullHandler, OnInit
+  implements SharedPullHandler, OnInit
 {
-  private assignedAnchor: RoleType;
-
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -37,26 +35,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   }
 
   @Input()
-  get anchor(): RoleType {
-    if (this.assignedAnchor) {
-      return this.assignedAnchor;
-    }
-
-    if (this.target) {
-      const composite = this.target.associationType.objectType as Composite;
-      for (const roleType of composite.roleTypes) {
-        if (roleType !== this.target && roleType.relationType.inRelationship) {
-          return roleType;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  set anchor(value: RoleType) {
-    this.assignedAnchor = value;
-  }
+  anchor: RoleType;
 
   @Input()
   target: RoleType;
@@ -100,7 +79,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     this.title = this.target.pluralName;
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string): void {
+  onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const id = this.objectInfo.id;
 
     const pull: Pull = {
@@ -115,7 +94,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
       },
       results: [
         {
-          name: scope,
+          name: prefix,
           include: [
             {
               propertyType: this.anchor,
@@ -131,8 +110,8 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     pulls.push(pull);
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
-    this.objects = pullResult.collection<IObject>(scope) ?? [];
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
+    this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
 
     if (this.hasPeriod) {

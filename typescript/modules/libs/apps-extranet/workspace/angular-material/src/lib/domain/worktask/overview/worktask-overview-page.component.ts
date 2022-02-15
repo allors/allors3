@@ -66,20 +66,20 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
     );
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string) {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     const m = this.workspaceService.workspace.configuration.metaPopulation as M;
     const { pullBuilder: p } = m;
 
     pulls.push(
       p.WorkTask({
-        name: scope,
+        name: prefix,
         objectId: this.objectInfo.id,
       })
     );
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string) {
-    this.object = pullResult.object(scope);
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
+    this.object = pullResult.object(prefix);
     const title = this.objectInfo.objectType.singularName;
     this.titleService.setTitle(title);
   }

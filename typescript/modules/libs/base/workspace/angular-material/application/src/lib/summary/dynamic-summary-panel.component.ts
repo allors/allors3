@@ -91,12 +91,12 @@ export class AllorsMaterialDynamicSummaryPanelComponent
       .subscribe();
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string): void {
+  onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const pull: Pull = {
       objectId: this.objectInfo.id,
       results: [
         {
-          name: scope,
+          name: prefix,
           include: this.linkTypes.reduce((a, e) => a.concat(e.tree), []),
         },
       ],
@@ -105,8 +105,8 @@ export class AllorsMaterialDynamicSummaryPanelComponent
     pulls.push(pull);
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string): void {
-    this.object = pullResult.object<IObject>(scope);
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
+    this.object = pullResult.object<IObject>(prefix);
 
     this.name = this.displayName
       ? (this.object.strategy.getUnitRole(this.displayName) as string)

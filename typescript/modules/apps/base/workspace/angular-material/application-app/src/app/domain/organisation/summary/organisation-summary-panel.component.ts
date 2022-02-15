@@ -38,14 +38,14 @@ export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelCom
     );
   }
 
-  onPreScopedPull(pulls: Pull[], scope?: string) {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     const {
       m: { pullBuilder: p },
     } = this;
 
     pulls.push(
       p.Organisation({
-        name: scope,
+        name: prefix,
         objectId: this.objectInfo.id,
         include: {
           Country: {},
@@ -54,7 +54,7 @@ export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelCom
     );
   }
 
-  onPostScopedPull(pullResult: IPullResult, scope?: string) {
-    this.organisation = pullResult.object<Organisation>(scope);
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
+    this.organisation = pullResult.object<Organisation>(prefix);
   }
 }

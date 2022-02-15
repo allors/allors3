@@ -17,11 +17,11 @@ export class PersonDisplayEmailRule implements IRule<Person> {
     this.objectType = m.Person;
     this.roleType = m.Person.DisplayEmail;
 
-    this.dependencies = [d(m.Person, (v) => v.PartyContactMechanisms)];
+    this.dependencies = [d(m.Person, (v) => v.CurrentPartyContactMechanisms)];
   }
 
   derive(person: Person) {
-    const emailAddresses = person.PartyContactMechanisms.filter(
+    const emailAddresses = person.CurrentPartyContactMechanisms.filter(
       (v) => v.ContactMechanism?.strategy.cls === this.m.EmailAddress
     )
       .map((v) => {

@@ -59,7 +59,7 @@ export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
           {
             name: 'contactmechanisms',
             select: {
-              PartyContactMechanisms: {},
+              PartyContactMechanismsWhereParty: {},
               CurrentPartyContactMechanisms: {
                 include: {
                   ContactMechanism: {
