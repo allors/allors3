@@ -14,7 +14,6 @@ import {
   Pull,
 } from '@allors/system/workspace/domain';
 import { C1, C2 } from '@allors/default/workspace/domain';
-import { applyRules } from '@allors/system/workspace/derivations';
 
 const BASE_URL = 'http://localhost:5000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';
@@ -46,10 +45,8 @@ export class Fixture {
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
+      rules: ruleBuilder(this.m),
     };
-
-    const rules = ruleBuilder(this.m);
-    applyRules(this.m, rules);
 
     return new DatabaseConnection(configuration, this.jsonClient);
   }

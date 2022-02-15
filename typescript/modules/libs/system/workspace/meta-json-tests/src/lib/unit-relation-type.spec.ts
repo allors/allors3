@@ -49,7 +49,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -113,7 +112,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Workspace);
       expect(relationType.isDerived).toBeTruthy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -163,7 +161,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -213,7 +210,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -265,7 +261,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -322,7 +317,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -379,7 +373,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -436,7 +429,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -486,7 +478,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -536,7 +527,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -586,7 +576,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -638,7 +627,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -695,7 +683,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;
@@ -752,7 +739,6 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
       expect(relationType.origin).toBe(Origin.Database);
       expect(relationType.isDerived).toBeFalsy();
-      expect(relationType.inRelationship).toBeFalsy();
       expect(relationType).not.toBeNull();
 
       expect(associationType).toBeDefined;

@@ -30,21 +30,14 @@ describe('Relationship in MetaPopulation', () => {
           ],
         ],
       ],
-      rel: ['20', '21'],
+      rel: ['11'],
     }) as M;
 
     const { Employment, Party } = metaPopulation;
-    const { Employer, Employee } = Employment;
 
     it('should have the relation with its defaults', () => {
       expect(Employment).toBeDefined();
       expect(Employment.isRelationship).toBeTruthy();
-
-      expect(Employer).toBeDefined;
-      expect(Employer.relationType.inRelationship).toBeTruthy;
-
-      expect(Employee).toBeDefined;
-      expect(Employee.relationType.inRelationship).toBeTruthy;
     });
   });
 });

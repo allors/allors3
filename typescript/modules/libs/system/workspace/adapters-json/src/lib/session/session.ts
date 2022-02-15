@@ -159,8 +159,6 @@ export class Session extends SystemSession {
       l: pulls.map((v) => pullToJson(v)),
     };
 
-    console.debug(pullRequest);
-
     const pullResponse = await this.database.client.pull(pullRequest);
     return await this.onPull(pullResponse);
   }

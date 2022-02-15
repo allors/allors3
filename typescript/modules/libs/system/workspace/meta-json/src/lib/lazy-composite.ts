@@ -160,16 +160,6 @@ export abstract class LazyComposite implements InternalComposite {
     }
   }
 
-  deriveIsRelationship(): void {
-    this.isRelationship = false;
-    for (const roleType of this.roleTypes) {
-      if (roleType.relationType.inRelationship) {
-        this.isRelationship = true;
-        break;
-      }
-    }
-  }
-
   *supertypeGenerator(): IterableIterator<InternalInterface> {
     if (this.supertypes) {
       yield* this.supertypes.values();

@@ -4,11 +4,9 @@ import {
   OrganisationDisplayNameRule,
   PersonDisplayNameRule,
 } from '@allors/core/workspace/derivations-custom';
-import '@allors/system/workspace/derivations';
 
 import { Fixture } from '../fixture';
 import '../matchers';
-import { derivationRules } from '@allors/system/workspace/derivations';
 
 let fixture: Fixture;
 
@@ -21,7 +19,7 @@ test('personDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
 
-  const rules = derivationRules(m).filter(
+  const rules = fixture.workspace.configuration.rules.filter(
     (v) => v instanceof PersonDisplayNameRule
   );
   session.activate(rules);
@@ -69,7 +67,7 @@ test('personDisplayNameNotActivated', async () => {
 test('organisationDisplayName', async () => {
   const { workspace, m } = fixture;
   const session = workspace.createSession();
-  const rules = derivationRules(m).filter(
+  const rules = fixture.workspace.configuration.rules.filter(
     (v) => v instanceof OrganisationDisplayNameRule
   );
   session.activate(rules);
