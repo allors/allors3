@@ -5,8 +5,15 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
+    private Target DemosSecurityMerge => _ => _
+        .Executes(() => DotNetRun(s => s
+            .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
+            .SetApplicationArguments(
+                $"{Paths.DotnetCoreDatabaseResourcesCore} {Paths.DemosSecurityDatabaseResources}")));
+
     private Target DemosSecurityGenerate => _ => _
         .After(Clean)
+        .DependsOn(DemosSecurityMerge)
         .Executes(() =>
         {
             DotNetRun(s => s

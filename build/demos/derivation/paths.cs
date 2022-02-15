@@ -7,4 +7,5 @@ public partial class Paths
     public AbsolutePath DemosDerivationDatabaseMetaGenerated => DemosDerivation / "Database/Meta/generated";
     public AbsolutePath DemosDerivationDatabaseGenerate => DemosDerivation / "Database/Generate/Generate.csproj";
     public AbsolutePath DemosDerivationDatabaseDomainTests => DemosDerivation / "Database/Domain.Tests/Domain.Tests.csproj";
+    public AbsolutePath DemosDerivationDatabaseResources => DemosDerivation / "Database/Resources";
 }
