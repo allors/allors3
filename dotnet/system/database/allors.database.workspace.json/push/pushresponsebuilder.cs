@@ -53,11 +53,15 @@ namespace Allors.Database.Protocol.Json
                                 return this.build(cls);
                             }
 
-                            // TODO: Add access error
-                            //pushResponse.AddAccessError(x);
+                            pushResponse.AddAccessError(x.w);
 
                             return null;
                         });
+
+                if (pushResponse.HasErrors)
+                {
+                    return pushResponse;
+                }
 
                 newIdByObject = objectByNewId.ToDictionary(v => v.Value, v => v.Key);
             }

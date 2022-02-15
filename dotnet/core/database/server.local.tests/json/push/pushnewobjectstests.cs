@@ -47,11 +47,8 @@ namespace Tests
             var api = new Api(this.Transaction, "Y");
             var pushResponse = api.Push(pushRequest);
 
-            this.Transaction.Rollback();
-
-            var x1 = (WorkspaceXObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
-
-            Assert.Null(x1);
+            Assert.True(pushResponse.HasErrors);
+            Assert.Null(pushResponse.n);
         }
 
         [Fact]
@@ -67,11 +64,8 @@ namespace Tests
             var api = new Api(this.Transaction, "None");
             var pushResponse = api.Push(pushRequest);
 
-            this.Transaction.Rollback();
-
-            var x1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
-
-            Assert.Null(x1);
+            Assert.True(pushResponse.HasErrors);
+            Assert.Null(pushResponse.n);
         }
 
         public void WorkspaceY1ObjectInWorkspaceNone()
@@ -86,11 +80,8 @@ namespace Tests
             var api = new Api(this.Transaction, "None");
             var pushResponse = api.Push(pushRequest);
 
-            this.Transaction.Rollback();
-
-            var y1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
-
-            Assert.Null(y1);
+            Assert.True(pushResponse.HasErrors);
+            Assert.Null(pushResponse.n);
         }
 
         [Fact]
@@ -106,11 +97,8 @@ namespace Tests
             var api = new Api(this.Transaction, "X");
             var pushResponse = api.Push(pushRequest);
 
-            this.Transaction.Rollback();
-
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
-
-            Assert.Null(none1);
+            Assert.True(pushResponse.HasErrors);
+            Assert.Null(pushResponse.n);
         }
 
         [Fact]
@@ -126,11 +114,8 @@ namespace Tests
             var api = new Api(this.Transaction, "Y");
             var pushResponse = api.Push(pushRequest);
 
-            this.Transaction.Rollback();
-
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
-
-            Assert.Null(none1);
+            Assert.True(pushResponse.HasErrors);
+            Assert.Null(pushResponse.n);
         }
 
         [Fact]
@@ -146,11 +131,8 @@ namespace Tests
             var api = new Api(this.Transaction, "None");
             var pushResponse = api.Push(pushRequest);
 
-            this.Transaction.Rollback();
-
-            var none1 = (WorkspaceNoneObject1)this.Transaction.Instantiate(pushResponse.n[0].d);
-
-            Assert.Null(none1);
+            Assert.True(pushResponse.HasErrors);
+            Assert.Null(pushResponse.n);
         }
     }
 }
