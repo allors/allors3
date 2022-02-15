@@ -76,11 +76,11 @@ namespace Allors.Database.Domain
         {
             var now = @this.Transaction().Now();
 
-            @this.CurrentPartyContactMechanisms = @this.PartyContactMechanisms
+            @this.CurrentPartyContactMechanisms = @this.PartyContactMechanismsWhereParty
                 .Where(v => v.FromDate <= now && (!v.ExistThroughDate || v.ThroughDate >= now))
                 .ToArray();
 
-            @this.InactivePartyContactMechanisms = @this.PartyContactMechanisms
+            @this.InactivePartyContactMechanisms = @this.PartyContactMechanismsWhereParty
                 .Except(@this.CurrentPartyContactMechanisms)
                 .ToArray();
 

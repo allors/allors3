@@ -71,11 +71,12 @@ namespace Allors.Database.Domain.Tests
             this.shipToContactMechanismMechelen = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
             this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(this.kiev).WithAddress1("Dnieper").Build();
             this.shipToCustomer = new OrganisationBuilder(this.Transaction).WithName("shipToCustomer").Build();
-            this.shipToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
-                                                            .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
-                                                            .WithUseAsDefault(true)
-                                                            .Build());
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(this.shipToCustomer)
+                .WithContactMechanism(this.shipToContactMechanismKiev)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
+                .WithUseAsDefault(true)
+                .Build();
 
             this.billToCustomer = new OrganisationBuilder(this.Transaction)
                 .WithName("billToCustomer")
@@ -83,11 +84,12 @@ namespace Allors.Database.Domain.Tests
 
                 .Build();
 
-            this.billToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
-                                                            .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
-                                                            .WithUseAsDefault(true)
-                                                            .Build());
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(this.billToCustomer)
+                .WithContactMechanism(this.shipToContactMechanismKiev)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
+                .WithUseAsDefault(true)
+                .Build();
 
             this.part = new NonUnifiedPartBuilder(this.Transaction)
                 .WithProductIdentification(new PartNumberBuilder(this.Transaction)
@@ -3711,11 +3713,12 @@ namespace Allors.Database.Domain.Tests
             this.shipToContactMechanismMechelen = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
             this.shipToContactMechanismKiev = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(this.kiev).WithAddress1("Dnieper").Build();
             this.shipToCustomer = new OrganisationBuilder(this.Transaction).WithName("shipToCustomer").Build();
-            this.shipToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
-                                                            .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
-                                                            .WithUseAsDefault(true)
-                                                            .Build());
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(this.shipToCustomer)
+                .WithContactMechanism(this.shipToContactMechanismKiev)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
+                .WithUseAsDefault(true)
+                .Build();
 
             this.billToCustomer = new OrganisationBuilder(this.Transaction)
                 .WithName("billToCustomer")
@@ -3723,11 +3726,12 @@ namespace Allors.Database.Domain.Tests
 
                 .Build();
 
-            this.billToCustomer.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
-                                                            .WithContactMechanism(this.shipToContactMechanismKiev)
-                                                            .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
-                                                            .WithUseAsDefault(true)
-                                                            .Build());
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(this.billToCustomer)
+                .WithContactMechanism(this.shipToContactMechanismKiev)
+                .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
+                .WithUseAsDefault(true)
+                .Build();
 
             this.part = new NonUnifiedPartBuilder(this.Transaction)
                 .WithProductIdentification(new PartNumberBuilder(this.Transaction)

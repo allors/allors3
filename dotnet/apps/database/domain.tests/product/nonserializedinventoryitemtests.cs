@@ -137,8 +137,8 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = this.CreateShipTo(mechelenAddress, contactMechanisms.ShippingAddress, true);
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(customer).WithContactMechanism(mechelenAddress).WithContactPurpose(contactMechanisms.ShippingAddress).WithUseAsDefault(true).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
             this.Transaction.Derive();
@@ -295,8 +295,8 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = this.CreateShipTo(mechelenAddress, contactMechanisms.ShippingAddress, true);
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(customer).WithContactMechanism(mechelenAddress).WithContactPurpose(contactMechanisms.ShippingAddress).WithUseAsDefault(true).Build();
             var internalOrganisation = this.InternalOrganisation;
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -498,9 +498,6 @@ namespace Allors.Database.Domain.Tests
                 .WithUnitOfMeasure(uom)
                 .WithPart(part)
                 .Build();
-
-        private PartyContactMechanism CreateShipTo(ContactMechanism mechanism, ContactMechanismPurpose purpose, bool isDefault)
-            => new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(mechanism).WithContactPurpose(purpose).WithUseAsDefault(isDefault).Build();
 
         private SalesOrder CreateSalesOrder(Party billTo, Party shipTo, DateTime deliveryDate)
             => new SalesOrderBuilder(this.Transaction).WithBillToCustomer(billTo).WithShipToCustomer(shipTo).WithDeliveryDate(deliveryDate).Build();

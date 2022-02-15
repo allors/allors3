@@ -111,22 +111,24 @@ namespace Allors.Database.Domain.Tests
         {
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+            var good2 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good2");
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var billToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var good1 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
-            var good2 = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good2");
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).WithPartyContactMechanism(billToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -215,19 +217,21 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var billToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).WithPartyContactMechanism(billToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -436,13 +440,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -537,13 +542,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -607,13 +613,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -691,13 +698,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -798,13 +806,15 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
             new CustomerRelationshipBuilder(this.Transaction)
                 .WithCustomer(customer)
                 .WithInternalOrganisation(this.InternalOrganisation)
@@ -889,13 +899,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
 
             var customerRelationship = new CustomerRelationshipBuilder(this.Transaction)
                 .WithCustomer(customer)
@@ -982,13 +993,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction)
                 .WithCustomer(customer)
@@ -1039,13 +1051,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -1458,12 +1471,11 @@ namespace Allors.Database.Domain.Tests
             var orderContact = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("orders@acme.com").Build();
 
             var orderFrom = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(internalOrganisation)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(orderContact)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).OrderAddress)
                 .Build();
-
-            internalOrganisation.AddPartyContactMechanism(orderFrom);
 
             this.Transaction.Derive();
 
@@ -1493,12 +1505,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingFrom = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(internalOrganisation)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(billingContact)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .Build();
-
-            internalOrganisation.AddPartyContactMechanism(billingFrom);
 
             this.Transaction.Derive();
 
@@ -2065,13 +2076,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+
+            var customer = new PersonBuilder(this.Transaction).WithFirstName("Koen").Build();
             var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -2138,13 +2150,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
+
+            var customer = new PersonBuilder(this.Transaction).WithFirstName("Koen").Build();
             var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithFirstName("Koen").WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).WithInternalOrganisation(this.InternalOrganisation).Build();
 
@@ -2194,22 +2207,25 @@ namespace Allors.Database.Domain.Tests
         {
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var baal = new CityBuilder(this.Transaction).WithName("Baal").Build();
+            var baalAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(baal).WithAddress1("Haverwerf 15").Build();
+
+            var person1 = new PersonBuilder(this.Transaction).WithLastName("person1").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(person1)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var baal = new CityBuilder(this.Transaction).WithName("Baal").Build();
-            var baalAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(baal).WithAddress1("Haverwerf 15").Build();
-            var shipToBaal = new PartyContactMechanismBuilder(this.Transaction)
+            var person2 = new PersonBuilder(this.Transaction).WithLastName("person2").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(person2)
                 .WithContactMechanism(baalAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var person1 = new PersonBuilder(this.Transaction).WithLastName("person1").WithPartyContactMechanism(shipToMechelen).Build();
-            var person2 = new PersonBuilder(this.Transaction).WithLastName("person2").WithPartyContactMechanism(shipToBaal).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(person1).WithInternalOrganisation(this.InternalOrganisation).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(person2).WithInternalOrganisation(this.InternalOrganisation).Build();

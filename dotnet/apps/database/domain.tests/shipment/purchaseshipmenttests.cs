@@ -166,12 +166,11 @@ namespace Allors.Database.Domain.Tests
             var shipToAddress = new PostalAddressBuilder(this.Transaction).WithAddress1("Haverwerf 15").WithPostalAddressBoundary(mechelen).Build();
 
             var shippingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(this.InternalOrganisation)
                 .WithContactMechanism(shipToAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            this.InternalOrganisation.AddPartyContactMechanism(shippingAddress);
 
             this.Transaction.Derive();
 

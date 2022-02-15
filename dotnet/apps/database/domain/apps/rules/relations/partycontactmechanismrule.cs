@@ -31,11 +31,11 @@ namespace Allors.Database.Domain
                     cycle.Validation.AssertExists(@this, this.M.PartyContactMechanism.ContactPurposes);
                 }
 
-                if (@this.UseAsDefault && @this.ExistPartyWherePartyContactMechanism && @this.ExistContactPurposes)
+                if (@this.UseAsDefault && @this.ExistParty && @this.ExistContactPurposes)
                 {
                     foreach (var contactMechanismPurpose in @this.ContactPurposes)
                     {
-                        foreach (var partyContactMechanismFromOrganisationWherePartyContactMechanism in @this.PartyWherePartyContactMechanism.PartyContactMechanisms.Where(v => v.ContactPurposes.Contains(contactMechanismPurpose)))
+                        foreach (var partyContactMechanismFromOrganisationWherePartyContactMechanism in @this.Party.PartyContactMechanismsWhereParty.Where(v => v.ContactPurposes.Contains(contactMechanismPurpose)))
                         {
                             if (!partyContactMechanismFromOrganisationWherePartyContactMechanism.Equals(@this))
                             {

@@ -31,23 +31,6 @@ namespace Allors.Database.Domain.TestPopulation
                 @this.WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithLocale(additionalLocale).WithText(faker.Lorem.Paragraph()).Build());
             }
 
-            @this.WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
-                .WithUseAsDefault(true)
-                .WithContactMechanism(emailAddress)
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).PersonalEmailAddress)
-                .Build())
-                .WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
-                .WithUseAsDefault(true)
-                .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Transaction).WithDefaults().Build())
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralPhoneNumber)
-                .Build())
-                .WithPartyContactMechanism(new PartyContactMechanismBuilder(@this.Transaction)
-                .WithUseAsDefault(true)
-                .WithContactMechanism(new PostalAddressBuilder(@this.Transaction).WithDefaults().Build())
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).GeneralCorrespondence)
-                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction).ShippingAddress)
-                .Build());
-
             return @this;
         }
     }

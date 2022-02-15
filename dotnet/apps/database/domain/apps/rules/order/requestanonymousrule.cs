@@ -31,23 +31,23 @@ namespace Allors.Database.Domain
                     @this.RequestState = new RequestStates(transaction).Submitted;
 
                     if (@this.ExistEmailAddress
-                        && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals(@this.EmailAddress)) == null)
+                        && @this.Originator.PartyContactMechanismsWhereParty.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals(@this.EmailAddress)) == null)
                     {
-                        @this.Originator.AddPartyContactMechanism(
-                            new PartyContactMechanismBuilder(transaction)
-                                .WithContactMechanism(new EmailAddressBuilder(transaction).WithElectronicAddressString(@this.EmailAddress).Build())
-                                .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralEmail)
-                                .Build());
+                        new PartyContactMechanismBuilder(transaction)
+                            .WithParty(@this.Originator)
+                            .WithContactMechanism(new EmailAddressBuilder(transaction).WithElectronicAddressString(@this.EmailAddress).Build())
+                            .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralEmail)
+                            .Build();
                     }
 
                     if (@this.ExistTelephoneNumber
-                        && @this.Originator.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals(@this.TelephoneNumber)) == null)
+                        && @this.Originator.PartyContactMechanismsWhereParty.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals(@this.TelephoneNumber)) == null)
                     {
-                        @this.Originator.AddPartyContactMechanism(
-                            new PartyContactMechanismBuilder(transaction)
-                                .WithContactMechanism(new TelecommunicationsNumberBuilder(transaction).WithContactNumber(@this.TelephoneNumber).WithCountryCode(@this.TelephoneCountryCode).Build())
-                                .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralPhoneNumber)
-                                .Build());
+                        new PartyContactMechanismBuilder(transaction)
+                            .WithParty(@this.Originator)
+                            .WithContactMechanism(new TelecommunicationsNumberBuilder(transaction).WithContactNumber(@this.TelephoneNumber).WithCountryCode(@this.TelephoneCountryCode).Build())
+                            .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralPhoneNumber)
+                            .Build();
                     }
                 }
             }

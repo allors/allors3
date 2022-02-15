@@ -71,13 +71,14 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
 
-            var billToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").WithPartyContactMechanism(billToMechelen).Build();
             var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
             new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 

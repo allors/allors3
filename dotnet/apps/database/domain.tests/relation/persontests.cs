@@ -124,8 +124,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var contactMechanism1 = new TelecommunicationsNumberBuilder(this.Transaction).WithAreaCode("111").WithContactNumber("222").Build();
-            var partyContactMechanism1 = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(contactMechanism1).Build();
-            organisation1.AddPartyContactMechanism(partyContactMechanism1);
+            var partyContactMechanism1 = new PartyContactMechanismBuilder(this.Transaction).WithParty(organisation1).WithContactMechanism(contactMechanism1).Build();
 
             this.Transaction.Derive();
 
@@ -147,8 +146,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var contactMechanism2 = new TelecommunicationsNumberBuilder(this.Transaction).WithAreaCode("222").WithContactNumber("333").Build();
-            var partyContactMechanism2 = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(contactMechanism2).Build();
-            organisation2.AddPartyContactMechanism(partyContactMechanism2);
+            var partyContactMechanism2 = new PartyContactMechanismBuilder(this.Transaction).WithParty(organisation2).WithContactMechanism(contactMechanism2).Build();
 
             this.Transaction.Derive();
 
@@ -275,8 +273,7 @@ namespace Allors.Database.Domain.Tests
             var contact = new PersonBuilder(this.Transaction).Build();
             new OrganisationContactRelationshipBuilder(this.Transaction).WithOrganisation(organisation).WithContact(contact).Build();
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build()).Build();
-            organisation.AddPartyContactMechanism(partyContactMechanism);
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithParty(organisation).WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build()).Build();
 
             this.Derive();
 
@@ -293,8 +290,7 @@ namespace Allors.Database.Domain.Tests
             var contact = new PersonBuilder(this.Transaction).Build();
             new OrganisationContactRelationshipBuilder(this.Transaction).WithOrganisation(organisation).WithContact(contact).Build();
 
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build()).Build();
-            organisation.AddPartyContactMechanism(partyContactMechanism);
+            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithParty(organisation).WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build()).Build();
 
             this.Derive();
 

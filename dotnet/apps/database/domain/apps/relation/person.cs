@@ -12,7 +12,7 @@ namespace Allors.Database.Domain
     {
         public PrefetchPolicy PrefetchPolicy => new PrefetchPolicyBuilder()
             .WithRule(this.M.Person.OrganisationContactRelationshipsWhereContact)
-            .WithRule(this.M.Person.PartyContactMechanisms)
+            .WithRule(this.M.Person.PartyContactMechanismsWhereParty)
             .WithRule(this.M.Person.TimeSheetWhereWorker)
             .WithRule(this.M.Person.EmploymentsWhereEmployee)
             .Build();
@@ -151,7 +151,7 @@ namespace Allors.Database.Domain
                 deletable.Delete();
             }
 
-            foreach (var deletable in this.PartyContactMechanisms)
+            foreach (var deletable in this.PartyContactMechanismsWhereParty)
             {
                 var contactmechanism = deletable.ContactMechanism;
 

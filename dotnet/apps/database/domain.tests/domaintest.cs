@@ -174,21 +174,20 @@ namespace Allors.Database.Domain.Tests
                                 .Build())
                 .Build();
 
-            this.InternalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(this.Transaction)
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(InternalOrganisation)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(postalAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).GeneralCorrespondence)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
-                .Build());
+                .Build();
 
-            var facility = new FacilityBuilder(this.Transaction)
+            singleton.Settings.DefaultFacility = new FacilityBuilder(this.Transaction)
                 .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
                 .WithName("facility")
                 .WithOwner(this.InternalOrganisation)
                 .Build();
-
-            singleton.Settings.DefaultFacility = facility;
 
             var collectionMethod = new PaymentMethods(this.Transaction).Extent().FirstOrDefault();
 

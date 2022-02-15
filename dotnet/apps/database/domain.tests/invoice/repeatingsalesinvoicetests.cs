@@ -36,12 +36,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            customer.AddPartyContactMechanism(billingAddress);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -98,12 +97,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            customer.AddPartyContactMechanism(billingAddress);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -154,12 +152,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            customer.AddPartyContactMechanism(billingAddress);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -213,12 +210,12 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            customer.AddPartyContactMechanism(billingAddress);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -269,12 +266,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            customer.AddPartyContactMechanism(billingAddress);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -326,12 +322,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            customer.AddPartyContactMechanism(billingAddress);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -383,12 +378,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            customer.AddPartyContactMechanism(billingAddress);
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
@@ -439,12 +433,11 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var billingAddress = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(homeAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            customer.AddPartyContactMechanism(billingAddress);
 
             var mayFourteen2018 = new DateTime(2018, 5, 14, 12, 0, 0, DateTimeKind.Utc);
             var timeShift = mayFourteen2018 - DateTime.UtcNow;

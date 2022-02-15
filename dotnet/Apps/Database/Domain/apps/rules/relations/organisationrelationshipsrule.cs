@@ -33,9 +33,9 @@ namespace Allors.Database.Domain
                 m.InternalOrganisation.AssociationPattern(v => v.SubContractorRelationshipsWhereContractor),
                 m.SubContractorRelationship.RolePattern(v => v.FromDate, v => v.Contractor),
                 m.SubContractorRelationship.RolePattern(v => v.ThroughDate, v => v.Contractor),
-                m.Organisation.RolePattern(v => v.PartyContactMechanisms),
-                m.PartyContactMechanism.RolePattern(v => v.FromDate,v => v.PartyWherePartyContactMechanism, m.Organisation),
-                m.PartyContactMechanism.RolePattern(v => v.ThroughDate,v => v.PartyWherePartyContactMechanism, m.Organisation),
+                m.Party.AssociationPattern(v => v.PartyContactMechanismsWhereParty, m.Organisation),
+                m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.Party.Party, m.Organisation),
+                m.PartyContactMechanism.RolePattern(v => v.ThroughDate,v => v.Party.Party, m.Organisation),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

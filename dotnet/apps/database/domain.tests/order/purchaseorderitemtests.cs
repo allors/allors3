@@ -35,14 +35,13 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
 
-            var supplierContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(this.supplier)
                 .WithContactMechanism(takenViaContactMechanism)
                 .WithUseAsDefault(true)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .Build();
-
-            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            this.supplier.AddPartyContactMechanism(supplierContactMechanism);
 
             new SupplierRelationshipBuilder(this.Transaction).WithSupplier(this.supplier).Build();
 
@@ -1111,14 +1110,13 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
 
-            var supplierContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(this.supplier)
                 .WithContactMechanism(takenViaContactMechanism)
                 .WithUseAsDefault(true)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .Build();
-
-            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            this.supplier.AddPartyContactMechanism(supplierContactMechanism);
 
             new SupplierRelationshipBuilder(this.Transaction).WithSupplier(this.supplier).Build();
 

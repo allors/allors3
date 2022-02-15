@@ -40,8 +40,8 @@ namespace Allors.Database.Domain.Tests
         public void GivenPartyContactMechanism_WhenPartyIsDeleted_ThenPartyContactMechanismIsDeleted()
         {
             var contactMechanism = new TelecommunicationsNumberBuilder(this.Transaction).WithAreaCode("0495").WithContactNumber("493499").WithDescription("cellphone").Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(contactMechanism).Build();
-            var party = new PersonBuilder(this.Transaction).WithLastName("party").WithPartyContactMechanism(partyContactMechanism).Build();
+            var party = new PersonBuilder(this.Transaction).WithLastName("party").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(party).WithContactMechanism(contactMechanism).Build();
 
             this.Transaction.Derive();
             var countBefore = this.Transaction.Extent<PartyContactMechanism>().Count;
@@ -96,19 +96,19 @@ namespace Allors.Database.Domain.Tests
         {
             var party = new PersonBuilder(this.Transaction).Build();
             var partyContactMechanism1 = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
-            party.AddPartyContactMechanism(partyContactMechanism1);
             this.Derive();
 
             var partyContactMechanism2 = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
-            party.AddPartyContactMechanism(partyContactMechanism2);
             this.Derive();
 
             Assert.False(partyContactMechanism1.UseAsDefault);

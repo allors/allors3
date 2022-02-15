@@ -288,26 +288,30 @@ namespace Allors.Database.Domain
                     .WithElectronicAddressString(emailAddress)
                     .Build();
 
-                internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(transaction)
+                new PartyContactMechanismBuilder(transaction)
+                    .WithParty(internalOrganisation)
                     .WithUseAsDefault(true)
                     .WithContactMechanism(email)
                     .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralEmail)
-                    .Build());
+                    .Build();
+                ;
             }
 
-            internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(transaction)
+            new PartyContactMechanismBuilder(transaction)
+                .WithParty(internalOrganisation)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(postalAddress1)
                 .WithContactPurpose(new ContactMechanismPurposes(transaction).RegisteredOffice)
                 .WithContactPurpose(new ContactMechanismPurposes(transaction).GeneralCorrespondence)
                 .WithContactPurpose(new ContactMechanismPurposes(transaction).BillingAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(transaction).ShippingAddress)
-                .Build());
-            internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(transaction)
+                .Build();
+            new PartyContactMechanismBuilder(transaction)
+                .WithParty(internalOrganisation)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(webSite)
                 .WithContactPurpose(new ContactMechanismPurposes(transaction).InternetAddress)
-                .Build());
+                .Build();
 
             TelecommunicationsNumber phoneNumber1 = null;
             if (!string.IsNullOrEmpty(phone1))
@@ -321,11 +325,12 @@ namespace Allors.Database.Domain
 
             if (phoneNumber1 != null)
             {
-                internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(transaction)
+                new PartyContactMechanismBuilder(transaction)
+                    .WithParty(internalOrganisation)
                     .WithUseAsDefault(true)
                     .WithContactMechanism(phoneNumber1)
                     .WithContactPurpose(phone1Purpose)
-                    .Build());
+                    .Build();
             }
 
             TelecommunicationsNumber phoneNumber2 = null;
@@ -340,11 +345,12 @@ namespace Allors.Database.Domain
 
             if (phoneNumber2 != null)
             {
-                internalOrganisation.AddPartyContactMechanism(new PartyContactMechanismBuilder(transaction)
+                new PartyContactMechanismBuilder(transaction)
+                    .WithParty(internalOrganisation)
                     .WithUseAsDefault(true)
                     .WithContactMechanism(phoneNumber2)
                     .WithContactPurpose(phone2Purpose)
-                    .Build());
+                    .Build();
             }
 
             if (!string.IsNullOrWhiteSpace(logo))

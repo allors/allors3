@@ -87,11 +87,11 @@ namespace Allors.Database.Domain.Tests
         {
             var party = new PersonBuilder(this.Transaction).Build();
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
-            party.AddPartyContactMechanism(partyContactMechanism);
             this.Derive();
 
             Assert.Equal(partyContactMechanism.ContactMechanism, party.BillingAddress);
@@ -102,11 +102,11 @@ namespace Allors.Database.Domain.Tests
         {
             var party = new PersonBuilder(this.Transaction).Build();
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
-            party.AddPartyContactMechanism(partyContactMechanism);
             this.Derive();
 
             partyContactMechanism.AddContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress);
@@ -166,11 +166,11 @@ namespace Allors.Database.Domain.Tests
         {
             var party = new PersonBuilder(this.Transaction).Build();
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
-            party.AddPartyContactMechanism(partyContactMechanism);
             this.Derive();
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);
@@ -181,12 +181,12 @@ namespace Allors.Database.Domain.Tests
         {
             var party = new PersonBuilder(this.Transaction).Build();
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .WithFromDate(this.Transaction.Now().AddDays(1))
                 .Build();
-            party.AddPartyContactMechanism(partyContactMechanism);
             this.Derive();
 
             Assert.DoesNotContain(partyContactMechanism, party.CurrentPartyContactMechanisms);
@@ -202,11 +202,11 @@ namespace Allors.Database.Domain.Tests
         {
             var party = new PersonBuilder(this.Transaction).Build();
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(party)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).SalesOffice)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).Build())
                 .WithUseAsDefault(true)
                 .Build();
-            party.AddPartyContactMechanism(partyContactMechanism);
             this.Derive();
 
             Assert.Contains(partyContactMechanism, party.CurrentPartyContactMechanisms);

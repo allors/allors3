@@ -48,6 +48,8 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var customer = new OrganisationBuilder(@this.Transaction()).WithDefaults().Build();
 
+            CreatePartyContactMechanisms(customer);
+
             new CustomerRelationshipBuilder(@this.Transaction())
                 .WithCustomer(customer)
                 .WithInternalOrganisation(@this)
@@ -73,6 +75,8 @@ namespace Allors.Database.Domain.TestPopulation
         {
             var customer = new PersonBuilder(@this.Transaction()).WithDefaults().Build();
 
+            CreatePartyContactMechanisms(customer);
+
             new CustomerRelationshipBuilder(@this.Transaction())
                 .WithCustomer(customer)
                 .WithInternalOrganisation(@this)
@@ -90,6 +94,8 @@ namespace Allors.Database.Domain.TestPopulation
         public static Organisation CreateSupplier(this Organisation @this, Faker faker)
         {
             var supplier = new OrganisationBuilder(@this.Transaction()).WithDefaults().Build();
+
+            CreatePartyContactMechanisms(supplier);
 
             new SupplierRelationshipBuilder(@this.Transaction())
                 .WithSupplier(supplier)
@@ -109,6 +115,8 @@ namespace Allors.Database.Domain.TestPopulation
         public static Organisation CreateSubContractor(this Organisation @this, Faker faker)
         {
             var subContractor = new OrganisationBuilder(@this.Transaction()).WithDefaults().Build();
+
+            CreatePartyContactMechanisms(subContractor);
 
             new SubContractorRelationshipBuilder(@this.Transaction())
                 .WithSubContractor(subContractor)
@@ -375,6 +383,49 @@ namespace Allors.Database.Domain.TestPopulation
             @this.Transaction().Derive();
 
             return quote;
+        }
+
+        private static void CreatePartyContactMechanisms(Party @this)
+        {
+            new PartyContactMechanismBuilder(@this.Transaction())
+                .WithParty(@this)
+                .WithUseAsDefault(true)
+                .WithContactMechanism(new PostalAddressBuilder(@this.Transaction()).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).GeneralCorrespondence)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).ShippingAddress)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).HeadQuarters)
+                .Build();
+
+            new PartyContactMechanismBuilder(@this.Transaction())
+                .WithParty(@this)
+                .WithUseAsDefault(true)
+                .WithContactMechanism(new EmailAddressBuilder(@this.Transaction()).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).GeneralEmail)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).BillingAddress)
+                .Build();
+
+            new PartyContactMechanismBuilder(@this.Transaction())
+                .WithParty(@this)
+                .WithUseAsDefault(true)
+                .WithContactMechanism(new WebAddressBuilder(@this.Transaction()).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).InternetAddress)
+                .Build();
+
+            new PartyContactMechanismBuilder(@this.Transaction())
+                .WithParty(@this)
+                .WithUseAsDefault(true)
+                .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Transaction()).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).GeneralPhoneNumber)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).BillingInquiriesPhone)
+                .Build();
+
+            new PartyContactMechanismBuilder(@this.Transaction())
+                .WithParty(@this)
+                .WithUseAsDefault(true)
+                .WithContactMechanism(new TelecommunicationsNumberBuilder(@this.Transaction()).WithDefaults().Build())
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).OrderInquiriesPhone)
+                .WithContactPurpose(new ContactMechanismPurposes(@this.Transaction()).ShippingInquiriesPhone)
+                .Build();
         }
     }
 }

@@ -19,12 +19,12 @@ namespace Allors.Database.Domain.Tests
             var personalEmailAddress = new ContactMechanismPurposes(this.Transaction).PersonalEmailAddress;
 
             var originatorEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("originator@allors.com").Build();
-            var originatorContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
+            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(originator).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
 
             var addresseeEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("addressee@allors.com").Build();
-            var addresseeContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
+            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(addressee).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
 
             var communication = new EmailCommunicationBuilder(this.Transaction)
                 .WithOwner(this.Administrator)
@@ -50,12 +50,12 @@ namespace Allors.Database.Domain.Tests
             var personalEmailAddress = new ContactMechanismPurposes(this.Transaction).PersonalEmailAddress;
 
             var originatorEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("originator@allors.com").Build();
-            var originatorContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
+            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(originator).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
 
             var addresseeEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("addressee@allors.com").Build();
-            var addresseeContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
+            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(addressee).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -84,12 +84,12 @@ namespace Allors.Database.Domain.Tests
             var personalEmailAddress = new ContactMechanismPurposes(this.Transaction).PersonalEmailAddress;
 
             var originatorEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("originator@allors.com").Build();
-            var originatorContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").WithPartyContactMechanism(originatorContact).Build();
+            var originator = new PersonBuilder(this.Transaction).WithLastName("originator").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(originator).WithContactMechanism(originatorEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
 
             var addresseeEmail = new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("addressee@allors.com").Build();
-            var addresseeContact = new PartyContactMechanismBuilder(this.Transaction).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
-            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").WithPartyContactMechanism(addresseeContact).Build();
+            var addressee = new PersonBuilder(this.Transaction).WithLastName("addressee").Build();
+            new PartyContactMechanismBuilder(this.Transaction).WithParty(addressee).WithContactMechanism(addresseeEmail).WithContactPurpose(personalEmailAddress).WithUseAsDefault(true).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();

@@ -100,7 +100,7 @@ namespace Allors.Database.Domain.Tests
             request.Originator = customer;
             this.Derive();
 
-            Assert.NotNull(customer.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals("emailaddress")));
+            Assert.NotNull(customer.PartyContactMechanismsWhereParty.Where(v => v.ContactMechanism.GetType().Name == typeof(EmailAddress).Name).FirstOrDefault(v => ((EmailAddress)v.ContactMechanism).ElectronicAddressString.Equals("emailaddress")));
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace Allors.Database.Domain.Tests
             request.Originator = customer;
             this.Derive();
 
-            Assert.NotNull(customer.PartyContactMechanisms.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals("phone")));
+            Assert.NotNull(customer.PartyContactMechanismsWhereParty.Where(v => v.ContactMechanism.GetType().Name == typeof(TelecommunicationsNumber).Name).FirstOrDefault(v => ((TelecommunicationsNumber)v.ContactMechanism).ContactNumber.Equals("phone")));
         }
     }
 

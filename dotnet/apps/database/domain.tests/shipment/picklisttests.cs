@@ -35,15 +35,15 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen)
                 .WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var customer = new PersonBuilder(this.Transaction).WithLastName("person1")
-                .WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer)
                 .Build();
@@ -167,15 +167,15 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen)
                 .WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var customer = new PersonBuilder(this.Transaction).WithLastName("person1")
-                .WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer)
                 .Build();
@@ -286,16 +286,16 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen)
                 .WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("person1")
-                .WithPartyContactMechanism(shipToMechelen).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer)
                 .Build();
@@ -390,15 +390,16 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen)
                 .WithAddress1("Haverwerf").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
-            var customer = new PersonBuilder(this.Transaction).WithLastName("person1")
-                .WithPartyContactMechanism(shipToMechelen).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer)
                 .Build();
 
@@ -525,13 +526,14 @@ namespace Allors.Database.Domain.Tests
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var shipToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).ShippingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new PersonBuilder(this.Transaction).WithLastName("customer").WithPartyContactMechanism(shipToMechelen).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
 
             this.Transaction.Derive();

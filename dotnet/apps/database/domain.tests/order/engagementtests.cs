@@ -18,13 +18,14 @@ namespace Allors.Database.Domain.Tests
         {
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var billToContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
-            var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+
+            var customer = new OrganisationBuilder(this.Transaction).WithName("customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(billToContactMechanism)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new OrganisationBuilder(this.Transaction).WithName("customer").WithPartyContactMechanism(partyContactMechanism).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -60,12 +61,12 @@ namespace Allors.Database.Domain.Tests
             var billToParty = this.InternalOrganisation.ActiveCustomers.ElementAt(0);
 
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(billToParty)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(new PostalAddressBuilder(this.Transaction).Build())
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .Build();
 
-            billToParty.AddPartyContactMechanism(partyContactMechanism);
             this.Derive();
 
             var engagement = new EngagementBuilder(this.Transaction).Build();
@@ -83,12 +84,11 @@ namespace Allors.Database.Domain.Tests
             var placingParty = this.InternalOrganisation.ActiveCustomers.ElementAt(0);
 
             var partyContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(placingParty)
                 .WithUseAsDefault(true)
                 .WithContactMechanism(new PostalAddressBuilder(this.Transaction).Build())
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).OrderAddress)
                 .Build();
-
-            placingParty.AddPartyContactMechanism(partyContactMechanism);
             this.Derive();
 
             var engagement = new EngagementBuilder(this.Transaction).Build();

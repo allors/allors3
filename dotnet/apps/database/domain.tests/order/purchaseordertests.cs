@@ -46,11 +46,11 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
             var supplierContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(supplier)
                 .WithContactMechanism(takenViaContactMechanism)
                 .WithUseAsDefault(true)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).OrderAddress)
                 .Build();
-            supplier.AddPartyContactMechanism(supplierContactMechanism);
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -99,11 +99,11 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             ContactMechanism takenViaContactMechanism = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
             var supplierContactMechanism = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(supplier)
                 .WithContactMechanism(takenViaContactMechanism)
                 .WithUseAsDefault(true)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).OrderAddress)
                 .Build();
-            supplier.AddPartyContactMechanism(supplierContactMechanism);
 
             var order = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)

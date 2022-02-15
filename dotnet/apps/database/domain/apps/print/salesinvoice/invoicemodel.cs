@@ -44,7 +44,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
             this.PaymentNetDays = invoice.PaymentNetDays;
 
             string TakenByCountry = null;
-            if (invoice.BilledFrom.PartyContactMechanisms?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(transaction).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
+            if (invoice.BilledFrom.PartyContactMechanismsWhereParty?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(transaction).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
             {
                 TakenByCountry = registeredOffice.Country.IsoCode;
             }

@@ -17,13 +17,12 @@ namespace Allors.Database.Domain
         public OrganisationSyncContactRelationshipsRule(MetaPopulation m) : base(m, new Guid("9a950f76-9a7a-447b-b208-b01adc09b64d")) =>
             this.Patterns = new Pattern[]
             {
-                m.Organisation.RolePattern(v => v.PartyContactMechanisms),
                 m.Organisation.AssociationPattern(v => v.OrganisationContactRelationshipsWhereOrganisation),
                 m.OrganisationContactRelationship.RolePattern(v => v.FromDate, v => v.Organisation),
                 m.OrganisationContactRelationship.RolePattern(v => v.ThroughDate, v => v.Organisation),
-                m.Organisation.RolePattern(v => v.PartyContactMechanisms),
-                m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.PartyWherePartyContactMechanism, m.Organisation),
-                m.PartyContactMechanism.RolePattern(v => v.ThroughDate, v => v.PartyWherePartyContactMechanism, m.Organisation),
+                m.Party.AssociationPattern(v => v.PartyContactMechanismsWhereParty, m.Organisation),
+                m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.Party.Party, m.Organisation),
+                m.PartyContactMechanism.RolePattern(v => v.ThroughDate, v => v.Party.Party, m.Organisation),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -34,7 +33,7 @@ namespace Allors.Database.Domain
             {
                 transaction.Prefetch(@this.PrefetchPolicy);
 
-                var partyContactMechanisms = @this.PartyContactMechanisms?.ToArray();
+                var partyContactMechanisms = @this.PartyContactMechanismsWhereParty?.ToArray();
                 foreach (var organisationContactRelationship in @this.OrganisationContactRelationshipsWhereOrganisation)
                 {
                     organisationContactRelationship.Contact?.Sync(partyContactMechanisms);

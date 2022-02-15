@@ -36,9 +36,9 @@ namespace Allors.Database.Domain.Tests.Print
             var shippingAddress = this.CreatePostalAddress("Shipping Address", "123 Street", "Dock D1", northville, postalCode);
             var phone = new TelecommunicationsNumberBuilder(this.Transaction).WithCountryCode("1").WithAreaCode("616").WithContactNumber("774-2000").Build();
 
-            customer.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.BillingAddress, billingAddress));
-            customer.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.ShippingAddress, shippingAddress));
-            customerContact.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.GeneralPhoneNumber, phone));
+            this.CreatePartyContactMechanism(customer, purposes.BillingAddress, billingAddress);
+            this.CreatePartyContactMechanism(customer, purposes.ShippingAddress, shippingAddress);
+            this.CreatePartyContactMechanism(customerContact, purposes.GeneralPhoneNumber, phone);
 
             //// Work Effort Data
             var salesPerson = new PersonBuilder(this.Transaction).WithFirstName("Sales").WithLastName("Person").Build();
@@ -139,8 +139,9 @@ namespace Allors.Database.Domain.Tests.Print
                 .WithPostalAddressBoundary(city.State.Country)
                 .Build();
 
-        private PartyContactMechanism CreatePartyContactMechanism(ContactMechanismPurpose purpose, ContactMechanism mechanism) =>
+        private PartyContactMechanism CreatePartyContactMechanism(Party party, ContactMechanismPurpose purpose, ContactMechanism mechanism) =>
             new PartyContactMechanismBuilder(this.Transaction)
+            .WithParty(party)
             .WithContactPurpose(purpose)
             .WithContactMechanism(mechanism)
             .WithUseAsDefault(true)

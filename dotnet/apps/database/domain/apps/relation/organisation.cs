@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
                     .WithRule(this.M.Organisation.InvoiceSequence)
                     .WithRule(this.M.Organisation.ContactsUserGroup)
                     .WithRule(this.M.Organisation.OrganisationContactRelationshipsWhereOrganisation, organisationContactRelationshipPrefetch)
-                    .WithRule(this.M.Organisation.PartyContactMechanisms, partyContactMechanismePrefetch)
+                    .WithRule(this.M.Organisation.PartyContactMechanismsWhereParty, partyContactMechanismePrefetch)
                     .WithRule(this.M.Organisation.CurrentContacts)
                     .Build();
             }
@@ -168,7 +168,7 @@ namespace Allors.Database.Domain
                     deletable.Delete();
                 }
 
-                foreach (var deletable in this.PartyContactMechanisms)
+                foreach (var deletable in this.PartyContactMechanismsWhereParty)
                 {
                     var contactmechanism = deletable.ContactMechanism;
 

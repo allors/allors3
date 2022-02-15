@@ -201,9 +201,9 @@ namespace Allors.Database.Domain.Tests
             var shippingAddress = this.CreatePostalAddress("Shipping Address", "123 Street", "Dock D1", northville, postalCode);
             var phone = new TelecommunicationsNumberBuilder(this.Transaction).WithCountryCode("1").WithAreaCode("616").WithContactNumber("774-2000").Build();
 
-            customer.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.BillingAddress, billingAddress));
-            customer.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.ShippingAddress, shippingAddress));
-            customerContact.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.GeneralPhoneNumber, phone));
+            this.CreatePartyContactMechanism(customer, purposes.BillingAddress, billingAddress);
+            this.CreatePartyContactMechanism(customer, purposes.ShippingAddress, shippingAddress);
+            this.CreatePartyContactMechanism(customerContact, purposes.GeneralPhoneNumber, phone);
 
             //// Work Effort Data
             var salesPerson = new PersonBuilder(this.Transaction).WithFirstName("Sales").WithLastName("Person").Build();
@@ -272,9 +272,9 @@ namespace Allors.Database.Domain.Tests
             var shippingAddress = this.CreatePostalAddress("Shipping Address", "123 Street", "Dock D1", northville, postalCode);
             var phone = new TelecommunicationsNumberBuilder(this.Transaction).WithCountryCode("1").WithAreaCode("616").WithContactNumber("774-2000").Build();
 
-            customer.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.BillingAddress, billingAddress));
-            customer.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.ShippingAddress, shippingAddress));
-            customerContact.AddPartyContactMechanism(this.CreatePartyContactMechanism(purposes.GeneralPhoneNumber, phone));
+            this.CreatePartyContactMechanism(customer, purposes.BillingAddress, billingAddress);
+            this.CreatePartyContactMechanism(customer, purposes.ShippingAddress, shippingAddress);
+            this.CreatePartyContactMechanism(customerContact, purposes.GeneralPhoneNumber, phone);
 
             //// Work Effort Data
             var salesPerson = new PersonBuilder(this.Transaction).WithFirstName("Sales").WithLastName("Person").Build();
@@ -417,13 +417,13 @@ namespace Allors.Database.Domain.Tests
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
             var mechelenAddress = new PostalAddressBuilder(this.Transaction).WithPostalAddressBoundary(mechelen).WithAddress1("Haverwerf 15").Build();
 
-            var billToMechelen = new PartyContactMechanismBuilder(this.Transaction)
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(mechelenAddress)
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").WithPartyContactMechanism(billToMechelen).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(organisation).Build();
 
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
@@ -569,13 +569,14 @@ namespace Allors.Database.Domain.Tests
         {
             var organisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
 
-            var customerEmail = new PartyContactMechanismBuilder(this.Transaction)
+            var customer = new PersonBuilder(this.Transaction).WithLastName("Customer").Build();
+            new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("customer@acme.com").Build())
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
 
-            var customer = new PersonBuilder(this.Transaction).WithLastName("Customer").WithPartyContactMechanism(customerEmail).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(organisation).Build();
 
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
@@ -661,13 +662,13 @@ namespace Allors.Database.Domain.Tests
         {
             var organisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
 
+            var customer = new PersonBuilder(this.Transaction).WithLastName("Customer").Build();
             var customerEmail = new PartyContactMechanismBuilder(this.Transaction)
+                .WithParty(customer)
                 .WithContactMechanism(new EmailAddressBuilder(this.Transaction).WithElectronicAddressString("customer@acme.com").Build())
                 .WithContactPurpose(new ContactMechanismPurposes(this.Transaction).BillingAddress)
                 .WithUseAsDefault(true)
                 .Build();
-
-            var customer = new PersonBuilder(this.Transaction).WithLastName("Customer").WithPartyContactMechanism(customerEmail).Build();
             new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(organisation).Build();
 
             var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
@@ -758,8 +759,9 @@ namespace Allors.Database.Domain.Tests
                 .WithPostalAddressBoundary(city.State.Country)
                 .Build();
 
-        private PartyContactMechanism CreatePartyContactMechanism(ContactMechanismPurpose purpose, ContactMechanism mechanism) =>
+        private PartyContactMechanism CreatePartyContactMechanism(Party party, ContactMechanismPurpose purpose, ContactMechanism mechanism) =>
             new PartyContactMechanismBuilder(this.Transaction)
+            .WithParty(party)
             .WithContactPurpose(purpose)
             .WithContactMechanism(mechanism)
             .WithUseAsDefault(true)
