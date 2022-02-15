@@ -12,7 +12,7 @@ import {
   MethodService,
   NavigationService,
   ObjectData,
-  ObjectService,
+  ScopedService,
   OldPanelService,
   RefreshService,
   Table,
@@ -66,7 +66,7 @@ export class PurchaseOrderOverviewPanelComponent {
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: OldPanelService,
-    public objectService: ObjectService,
+    public objectService: ScopedService,
     public methodService: MethodService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

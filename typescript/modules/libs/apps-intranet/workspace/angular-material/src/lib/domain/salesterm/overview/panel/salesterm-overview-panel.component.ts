@@ -13,7 +13,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  ObjectService,
+  ScopedService,
   OldPanelService,
   RefreshService,
   Table,
@@ -65,7 +65,7 @@ export class SalesTermOverviewPanelComponent {
 
   constructor(
     @Self() public panel: OldPanelService,
-    public objectService: ObjectService,
+    public objectService: ScopedService,
     public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,

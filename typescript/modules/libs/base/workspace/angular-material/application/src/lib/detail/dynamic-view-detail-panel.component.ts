@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {
   AllorsViewDetailPanelComponent,
-  ObjectService,
+  ScopedService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -21,7 +21,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
   description: string;
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,

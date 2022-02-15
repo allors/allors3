@@ -5,7 +5,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { Panel, PanelKind, PanelMode } from '../panel/panel';
-import { ObjectService } from './object.service';
+import { ScopedService } from './scoped.service';
 import { Subscription, tap } from 'rxjs';
 import { PanelService } from '../panel/panel.service';
 import {
@@ -20,10 +20,10 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { ObjectInfo } from './object-info';
+import { Scoped } from './scoped';
 
 @Directive()
-export abstract class AllorsObjectPanelComponent
+export abstract class AllorsScopedPanelComponent
   extends AllorsComponent
   implements Panel, SharedPullHandler, AfterViewInit, OnDestroy
 {
@@ -47,12 +47,12 @@ export abstract class AllorsObjectPanelComponent
 
   panelEnabled: boolean;
 
-  objectInfo: ObjectInfo;
+  objectInfo: Scoped;
 
   private panelSubscription: Subscription;
 
   constructor(
-    public objectService: ObjectService,
+    public objectService: ScopedService,
     public panelService: PanelService,
     public sharedPullService: SharedPullService,
     public refreshService: RefreshService,
@@ -67,7 +67,7 @@ export abstract class AllorsObjectPanelComponent
   }
 
   ngAfterViewInit(): void {
-    this.panelSubscription = this.objectService.objectInfo$
+    this.panelSubscription = this.objectService.scoped$
       .pipe(
         tap((info) => {
           this.objectInfo = info;

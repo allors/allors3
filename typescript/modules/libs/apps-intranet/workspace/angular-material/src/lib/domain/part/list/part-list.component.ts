@@ -24,7 +24,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  ObjectService,
+  ScopedService,
 } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
@@ -65,7 +65,7 @@ export class PartListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ObjectService,
+    public factoryService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,

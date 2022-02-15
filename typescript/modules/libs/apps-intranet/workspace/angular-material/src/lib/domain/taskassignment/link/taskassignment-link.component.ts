@@ -6,7 +6,7 @@ import { M } from '@allors/default/workspace/meta';
 import { Task } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  ObjectService,
+  ScopedService,
   RefreshService,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
@@ -40,7 +40,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ObjectService,
+    public factoryService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId

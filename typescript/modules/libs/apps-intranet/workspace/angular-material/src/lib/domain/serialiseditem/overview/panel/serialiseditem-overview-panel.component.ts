@@ -7,7 +7,7 @@ import {
   DeleteService,
   NavigationService,
   ObjectData,
-  ObjectService,
+  ScopedService,
   OldPanelService,
   RefreshService,
   Table,
@@ -55,7 +55,7 @@ export class SerialisedItemOverviewPanelComponent implements OnInit {
     @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
 
-    public factoryService: ObjectService,
+    public factoryService: ScopedService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,
     public overviewService: OverviewService,

@@ -16,7 +16,7 @@ import {
 import {
   AllorsViewSummaryPanelComponent,
   NavigationService,
-  ObjectService,
+  ScopedService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
@@ -36,7 +36,7 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
   printForWorker: Action;
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     private workspaceService: WorkspaceService,

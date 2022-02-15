@@ -6,7 +6,7 @@ import { Person } from '@allors/default/workspace/domain';
 import {
   Action,
   EditService,
-  ObjectService,
+  ScopedService,
   RefreshService,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
@@ -27,7 +27,7 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ObjectService,
+    public factoryService: ScopedService,
     public refreshService: RefreshService,
     public editService: EditService,
     private userId: UserId

@@ -20,8 +20,8 @@ import {
 import {
   AllorsViewSummaryPanelComponent,
   NavigationService,
-  ObjectInfo,
-  ObjectService,
+  Scoped,
+  ScopedService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import { LinkType } from '../link/link-type';
@@ -51,7 +51,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
   private subscription: Subscription;
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -72,7 +72,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
 
     sharedPullService.register(this);
 
-    this.subscription = this.objectService.objectInfo$
+    this.subscription = this.objectService.scoped$
       .pipe(
         pipe(delay(1)),
         tap((objectInfo) => {

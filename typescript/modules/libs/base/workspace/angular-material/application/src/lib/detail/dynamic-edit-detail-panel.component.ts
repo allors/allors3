@@ -1,7 +1,7 @@
 import { Component, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import {
   PanelService,
-  ObjectService,
+  ScopedService,
   AllorsEditDetailPanelComponent,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -35,7 +35,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
   private savedSubscription: Subscription;
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,

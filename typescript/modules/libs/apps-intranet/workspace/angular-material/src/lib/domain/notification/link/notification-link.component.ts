@@ -5,7 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import { Notification, Person } from '@allors/default/workspace/domain';
 import {
   NavigationService,
-  ObjectService,
+  ScopedService,
   RefreshService,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
@@ -40,7 +40,7 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ObjectService,
+    public factoryService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId

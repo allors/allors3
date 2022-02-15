@@ -23,7 +23,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  ObjectService,
+  ScopedService,
 } from '@allors/base/workspace/angular/application';
 import {
   EditRoleService,
@@ -56,7 +56,7 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     public workspaceService: WorkspaceService,
-    public factoryService: ObjectService,
+    public factoryService: ScopedService,
     public refreshService: RefreshService,
     public editRoleService: EditRoleService,
     public navigation: NavigationService,

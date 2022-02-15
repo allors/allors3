@@ -5,14 +5,14 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { PropertyType } from '@allors/system/workspace/meta';
 import { Directive } from '@angular/core';
-import { AllorsObjectPanelComponent } from '../object/object-panel.component';
-import { ObjectService } from '../object/object.service';
+import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
+import { ScopedService } from '../scoped/scoped.service';
 import { PanelService } from '../panel/panel.service';
 import { RelationPanel } from './relation-panel';
 
 @Directive()
 export abstract class AllorsEditRelationPanelComponent
-  extends AllorsObjectPanelComponent
+  extends AllorsScopedPanelComponent
   implements RelationPanel
 {
   override dataAllorsKind = 'edit-relation-panel';
@@ -24,7 +24,7 @@ export abstract class AllorsEditRelationPanelComponent
   abstract propertyType: PropertyType;
 
   constructor(
-    itemPageService: ObjectService,
+    itemPageService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,

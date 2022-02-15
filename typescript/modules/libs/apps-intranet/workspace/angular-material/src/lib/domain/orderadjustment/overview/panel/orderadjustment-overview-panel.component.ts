@@ -14,7 +14,7 @@ import {
   EditService,
   NavigationService,
   ObjectData,
-  ObjectService,
+  ScopedService,
   OldPanelService,
   RefreshService,
   Table,
@@ -77,7 +77,7 @@ export class OrderAdjustmentOverviewPanelComponent {
   constructor(
     @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
-    public objectService: ObjectService,
+    public objectService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public editService: EditService,

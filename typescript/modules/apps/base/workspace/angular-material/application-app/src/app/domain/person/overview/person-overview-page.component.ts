@@ -12,7 +12,7 @@ import {
   NavigationService,
   NavigationActivatedRoute,
   PanelService,
-  ObjectService,
+  ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
@@ -21,7 +21,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 @Component({
   templateUrl: './person-overview-page.component.html',
   providers: [
-    ObjectService,
+    ScopedService,
     {
       provide: PanelService,
       useClass: AllorsMaterialPanelService,
@@ -32,7 +32,7 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
   object: Person;
 
   constructor(
-    @Self() objectService: ObjectService,
+    @Self() objectService: ScopedService,
     @Self() private panelService: PanelService,
     public navigation: NavigationService,
     private titleService: Title,
@@ -43,7 +43,7 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
   ) {
     super(objectService, sharedPullService, refreshService, workspaceService);
 
-    this.objectService.objectInfo$ = combineLatest([
+    this.objectService.scoped$ = combineLatest([
       route.url,
       route.queryParams,
     ]).pipe(

@@ -7,7 +7,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsViewSummaryPanelComponent,
-  ObjectService,
+  ScopedService,
   NavigationService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
@@ -22,7 +22,7 @@ export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelCom
   contactKindsText: string;
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,

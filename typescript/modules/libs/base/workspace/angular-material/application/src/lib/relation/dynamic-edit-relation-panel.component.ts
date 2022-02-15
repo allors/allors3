@@ -31,7 +31,7 @@ import {
   NavigationService,
   AllorsEditRelationPanelComponent,
   PanelService,
-  ObjectService,
+  ScopedService,
 } from '@allors/base/workspace/angular/application';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
@@ -82,7 +82,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
   private subscription: Subscription;
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -104,7 +104,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
     panelService.register(this);
     sharedPullService.register(this);
 
-    this.subscription = this.objectService.objectInfo$
+    this.subscription = this.objectService.scoped$
       .pipe(
         pipe(delay(1)),
         tap((object) => {

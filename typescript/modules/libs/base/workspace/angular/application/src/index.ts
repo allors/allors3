@@ -12,9 +12,9 @@ export * from './lib/menu/menu.service';
 export * from './lib/navigation/navigation.service';
 export * from './lib/navigation/navigation-activated-route';
 
-export * from './lib/object/object-info';
-export * from './lib/object/object.service';
-export * from './lib/object/object-panel.component';
+export * from './lib/scoped/scoped';
+export * from './lib/scoped/scoped.service';
+export * from './lib/scoped/scoped-panel.component';
 
 export * from './lib/overview/overview-page.component';
 

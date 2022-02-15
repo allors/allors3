@@ -14,7 +14,7 @@ import {
   AllorsOverviewPageComponent,
   NavigationActivatedRoute,
   NavigationService,
-  ObjectService,
+  ScopedService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
@@ -24,7 +24,7 @@ import { M } from '@allors/default/workspace/meta';
 @Component({
   templateUrl: './worktask-overview-page.component.html',
   providers: [
-    ObjectService,
+    ScopedService,
     {
       provide: PanelService,
       useClass: AllorsMaterialPanelService,
@@ -35,7 +35,7 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
   object: WorkTask;
 
   constructor(
-    @Self() objectService: ObjectService,
+    @Self() objectService: ScopedService,
     @Self() private panelService: PanelService,
     public navigation: NavigationService,
     private titleService: Title,
@@ -46,7 +46,7 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
   ) {
     super(objectService, sharedPullService, refreshService, workspaceService);
 
-    this.objectService.objectInfo$ = combineLatest([
+    this.objectService.scoped$ = combineLatest([
       route.url,
       route.queryParams,
     ]).pipe(

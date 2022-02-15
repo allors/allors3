@@ -17,8 +17,8 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { ObjectService } from '../object/object.service';
-import { ObjectInfo } from '../object/object-info';
+import { ScopedService } from '../scoped/scoped.service';
+import { Scoped } from '../scoped/scoped';
 
 @Directive()
 export abstract class AllorsOverviewPageComponent
@@ -37,12 +37,12 @@ export abstract class AllorsOverviewPageComponent
 
   m: M;
 
-  objectInfo: ObjectInfo;
+  objectInfo: Scoped;
 
   private subscription: Subscription;
 
   constructor(
-    public objectService: ObjectService,
+    public objectService: ScopedService,
     public sharedPullService: SharedPullService,
     public refreshService: RefreshService,
     workspaceService: WorkspaceService
@@ -55,7 +55,7 @@ export abstract class AllorsOverviewPageComponent
   }
 
   ngAfterViewInit(): void {
-    this.subscription = this.objectService.objectInfo$
+    this.subscription = this.objectService.scoped$
       .pipe(
         tap((info) => {
           this.objectInfo = info;

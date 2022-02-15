@@ -20,7 +20,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  ObjectService,
+  ScopedService,
 } from '@allors/base/workspace/angular/application';
 import {
   MethodService,
@@ -55,7 +55,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ObjectService,
+    public factoryService: ScopedService,
     public refreshService: RefreshService,
     public methodService: MethodService,
     public navigation: NavigationService,

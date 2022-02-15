@@ -4,12 +4,12 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
-import { AllorsObjectPanelComponent } from '../object/object-panel.component';
-import { ObjectService } from '../object/object.service';
+import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
+import { ScopedService } from '../scoped/scoped.service';
 import { PanelService } from '../panel/panel.service';
 
 @Directive()
-export abstract class AllorsViewSummaryPanelComponent extends AllorsObjectPanelComponent {
+export abstract class AllorsViewSummaryPanelComponent extends AllorsScopedPanelComponent {
   override dataAllorsKind = 'view-summary-panel';
 
   panelId = 'ItemSummary';
@@ -19,7 +19,7 @@ export abstract class AllorsViewSummaryPanelComponent extends AllorsObjectPanelC
   readonly panelMode = 'View';
 
   constructor(
-    itemPageService: ObjectService,
+    itemPageService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,

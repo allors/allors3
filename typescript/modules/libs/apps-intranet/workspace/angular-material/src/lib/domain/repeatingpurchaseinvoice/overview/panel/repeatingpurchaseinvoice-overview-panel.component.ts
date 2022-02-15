@@ -15,7 +15,7 @@ import {
   MethodService,
   NavigationService,
   ObjectData,
-  ObjectService,
+  ScopedService,
   OldPanelService,
   RefreshService,
   Table,
@@ -61,7 +61,7 @@ export class RepeatingPurchaseInvoiceOverviewPanelComponent {
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: OldPanelService,
-    public objectService: ObjectService,
+    public objectService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,

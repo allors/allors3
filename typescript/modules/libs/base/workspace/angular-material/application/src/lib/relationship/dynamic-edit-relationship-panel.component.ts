@@ -23,7 +23,7 @@ import {
   NavigationService,
   AllorsEditRelationshipPanelComponent,
   PanelService,
-  ObjectService,
+  ScopedService,
 } from '@allors/base/workspace/angular/application';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
@@ -84,7 +84,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   targetDisplay: RoleType[];
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,

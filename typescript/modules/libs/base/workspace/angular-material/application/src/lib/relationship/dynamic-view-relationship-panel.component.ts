@@ -2,7 +2,7 @@ import { Component, OnInit, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   AllorsViewRelationshipPanelComponent,
-  ObjectService,
+  ScopedService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -56,7 +56,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   filtered: IObject[];
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,

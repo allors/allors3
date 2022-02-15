@@ -5,12 +5,12 @@ import {
   SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { AllorsObjectPanelComponent } from '../object/object-panel.component';
-import { ObjectService } from '../object/object.service';
+import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
+import { ScopedService } from '../scoped/scoped.service';
 import { PanelService } from '../panel/panel.service';
 
 @Directive()
-export abstract class AllorsEditDetailPanelComponent extends AllorsObjectPanelComponent {
+export abstract class AllorsEditDetailPanelComponent extends AllorsScopedPanelComponent {
   override dataAllorsKind = 'edit-detail-panel';
 
   panelId = 'Detail';
@@ -20,7 +20,7 @@ export abstract class AllorsEditDetailPanelComponent extends AllorsObjectPanelCo
   readonly panelKind = 'Detail';
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,

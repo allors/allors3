@@ -7,7 +7,7 @@ import {
   DeleteService,
   EditService,
   ObjectData,
-  ObjectService,
+  ScopedService,
   OldPanelService,
   RefreshService,
   Table,
@@ -52,7 +52,7 @@ export class ProductIdentificationsPanelComponent implements OnInit {
   constructor(
     @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
-    public objectService: ObjectService,
+    public objectService: ScopedService,
     public refreshService: RefreshService,
     public editService: EditService,
     public deleteService: DeleteService

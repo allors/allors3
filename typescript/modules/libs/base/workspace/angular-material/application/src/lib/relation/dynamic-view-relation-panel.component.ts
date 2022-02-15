@@ -7,7 +7,7 @@ import {
 } from '@allors/system/workspace/meta';
 import {
   AllorsViewRelationPanelComponent,
-  ObjectService,
+  ScopedService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
 import {
@@ -53,7 +53,7 @@ export class AllorsMaterialDynamicViewRelationPanelComponent
   properties: IObject[];
 
   constructor(
-    objectService: ObjectService,
+    objectService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
