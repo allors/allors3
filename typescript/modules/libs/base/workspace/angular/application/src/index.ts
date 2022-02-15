@@ -16,6 +16,10 @@ export * from './lib/scoped/scoped';
 export * from './lib/scoped/scoped.service';
 export * from './lib/scoped/scoped-panel.component';
 
+export * from './lib/object/edit-object-panel.component';
+export * from './lib/object/view-object-panel.component';
+export * from './lib/object/object-panel';
+
 export * from './lib/overview/overview-page.component';
 
 export * from './lib/panel/panel';

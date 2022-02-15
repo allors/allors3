@@ -35,6 +35,9 @@ export * from './lib/media/preview/dialog.data';
 export * from './lib/media/preview/media-preview.component';
 export * from './lib/media/media.component';
 
+export * from './lib/object/dynamic-edit-object-panel.component';
+export * from './lib/object/dynamic-view-object-panel.component';
+
 export * from './lib/page/create/dynamic-create.component';
 export * from './lib/page/edit/dynamic-edit.component';
 
