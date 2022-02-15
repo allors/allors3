@@ -3,15 +3,15 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Update="XDomainErrors.designer.cs">
+    <Compile Update="DomainErrors.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XDomainErrors.resx</DependentUpon>
+      <DependentUpon>DomainErrors.resx</DependentUpon>
     </Compile>
-    <Compile Update="XErrorMessages.designer.cs">
+    <Compile Update="ErrorMessages.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>XErrorMessages.resx</DependentUpon>
+      <DependentUpon>ErrorMessages.resx</DependentUpon>
     </Compile>
     <Compile Update="WorkspaceResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -20,13 +20,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="XDomainErrors.resx">
+    <EmbeddedResource Update="DomainErrors.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>XDomainErrors.designer.cs</LastGenOutput>
+      <LastGenOutput>DomainErrors.designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="XErrorMessages.resx">
+    <EmbeddedResource Update="ErrorMessages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>XErrorMessages.designer.cs</LastGenOutput>
+      <LastGenOutput>ErrorMessages.designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
