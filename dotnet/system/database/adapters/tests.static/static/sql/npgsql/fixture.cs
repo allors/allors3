@@ -10,6 +10,13 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
     public class Fixture<T>
     {
+
+        static Fixture()
+        {
+            // TODO: replace timestamp with timestamp with time zone
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
+
         public Fixture()
         {
             var database = typeof(T).Name;
