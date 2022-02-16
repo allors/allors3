@@ -20,8 +20,8 @@ import { M } from '@allors/default/workspace/meta';
 import { CustomerShipment, SalesOrder } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'customershipment-overview-summary',
-  templateUrl: './customershipment-overview-summary.component.html',
+  selector: 'customershipment-summary-panel',
+  templateUrl: './customershipment-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -30,7 +30,7 @@ import { CustomerShipment, SalesOrder } from '@allors/default/workspace/domain';
     },
   ],
 })
-export class CustomerShipmentOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class CustomerShipmentSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   shipment: CustomerShipment;
@@ -55,10 +55,12 @@ export class CustomerShipmentOverviewSummaryComponent extends AllorsViewSummaryP
       m: { pullBuilder: p },
     } = this;
 
+    const id = this.scoped.id;
+
     pulls.push(
       p.Shipment({
         name: prefix,
-        objectId: this.scoped.id,
+        objectId: id,
         include: {
           ShipmentItems: {
             Good: {},
@@ -78,7 +80,7 @@ export class CustomerShipmentOverviewSummaryComponent extends AllorsViewSummaryP
       }),
       p.Shipment({
         name: `${prefix}2`,
-        objectId: this.scoped.id,
+        objectId: id,
         select: {
           ShipmentItems: {
             OrderShipmentsWhereShipmentItem: {

@@ -27,7 +27,7 @@ export { CustomerRelationshipFormComponent } from './lib/domain/customerrelation
 export { CustomerShipmentCreateFormComponent } from './lib/domain/customershipment/create/customershipment-create-form.component';
 export { CustomerShipmentOverviewComponent } from './lib/domain/customershipment/overview/customershipment-overview.component';
 export { CustomerShipmentEditFormComponent } from './lib/domain/customershipment/edit/customershipment-edit-form.component';
-export { CustomerShipmentOverviewSummaryComponent } from './lib/domain/customershipment/summary/customershipment-overview-summary.component';
+export { CustomerShipmentSummaryPanelComponent } from './lib/domain/customershipment/summary/customershipment-summary-panel.component';
 
 export { DisbursementFormComponent } from './lib/domain/disbursement/form/disbursement-form.component';
 
@@ -62,13 +62,13 @@ export { NonSerialisedInventoryItemComponent } from './lib/domain/nonserialisedi
 export { NonUnifiedGoodCreateFormComponent } from './lib/domain/nonunifiedgood/create/nonunifiedgood-create-form.component';
 export { NonUnifiedGoodOverviewComponent } from './lib/domain/nonunifiedgood/overview/nonunifiedgood-overview.component';
 export { NonUnifiedGoodEditFormComponent } from './lib/domain/nonunifiedgood/edit/nonunifiedgood-edit-form.component';
-export { NonUnifiedGoodOverviewSummaryComponent } from './lib/domain/nonunifiedgood/overview/summary/nonunifiedgood-overview-summary.component';
+export { NonUnifiedGoodOverviewSummaryComponent } from './lib/domain/nonunifiedgood/summary/nonunifiedgood-overview-summary.component';
 
 export { NonUnifiedPartCreateFormComponent } from './lib/domain/nonunifiedpart/create/nonunifiedpart-create-form.component';
 export { NonUnifiedPartListComponent } from './lib/domain/nonunifiedpart/list/nonunifiedpart-list.component';
 export { NonUnifiedPartOverviewComponent } from './lib/domain/nonunifiedpart/overview/nonunifiedpart-overview.component';
 export { NonUnifiedPartEditFormComponent } from './lib/domain/nonunifiedpart/edit/nonunifiedpart-edit-form.component';
-export { NonUnifiedPartOverviewSummaryComponent } from './lib/domain/nonunifiedpart/overview/summary/nonunifiedpart-overview-summary.component';
+export { NonUnifiedPartOverviewSummaryComponent } from './lib/domain/nonunifiedpart/summary/nonunifiedpart-overview-summary.component';
 
 export { NotificationLinkComponent } from './lib/domain/notification/link/notification-link.component';
 export { NotificationListComponent } from './lib/domain/notification/list/notification-list.component';
@@ -81,7 +81,7 @@ export { OrganisationInlineComponent } from './lib/domain/organisation/inline/or
 export { OrganisationListComponent } from './lib/domain/organisation/list/organisation-list.component';
 export { OrganisationOverviewPageComponent } from './lib/domain/organisation/overview/organisation-overview-page.component';
 export { OrganisationEditFormComponent } from './lib/domain/organisation/edit/organisation-edit-form.component';
-export { OrganisationOverviewSummaryComponent } from './lib/domain/organisation/overview/summary/organisation-overview-summary.component';
+export { OrganisationOverviewSummaryComponent } from './lib/domain/organisation/summary/organisation-overview-summary.component';
 
 export { OrganisationContactRelationshipFormComponent } from './lib/domain/organisationcontactrelationship/form/organisationcontactrelationship-form.component';
 
@@ -107,7 +107,7 @@ export { PersonInlineComponent } from './lib/domain/person/inline/person-inline.
 export { PersonListComponent } from './lib/domain/person/list/person-list.component';
 export { PersonOverviewPageComponent } from './lib/domain/person/overview/person-overview-page.component';
 export { PersonEditFormComponent } from './lib/domain/person/edit/person-edit-form.component';
-export { PersonOverviewSummaryComponent } from './lib/domain/person/overview/summary/person-overview-summary.component';
+export { PersonOverviewSummaryComponent } from './lib/domain/person/summary/person-overview-summary.component';
 
 export { PhoneCommunicationFormComponent } from './lib/domain/phonecommunication/form/phonecommunication-form.component';
 
@@ -190,7 +190,7 @@ export { RequestForQuoteListComponent } from './lib/domain/requestforquote/list/
 export { RequestForQuoteOverviewComponent } from './lib/domain/requestforquote/overview/requestforquote-overview.component';
 export { RequestForQuoteEditFormComponent } from './lib/domain/requestforquote/edit/requestforquote-edit-form.component';
 export { RequestForQuoteOverviewPanelComponent } from './lib/domain/requestforquote/overview/panel/requestforquote-overview-panel.component';
-export { RequestForQuoteOverviewSummaryComponent } from './lib/domain/requestforquote/overview/summary/requestforquote-overview-summary.component';
+export { RequestForQuoteOverviewSummaryComponent } from './lib/domain/requestforquote/summary/requestforquote-overview-summary.component';
 
 export { RequestItemFormComponent } from './lib/domain/requestitem/form/requestitem-form.component';
 export { RequestItemOverviewPanelComponent } from './lib/domain/requestitem/overview/panel/requestitem-overview-panel.component';
@@ -225,7 +225,7 @@ export { SerialisedItemListComponent } from './lib/domain/serialiseditem/list/se
 export { SerialisedItemOverviewComponent } from './lib/domain/serialiseditem/overview/serialiseditem-overview.component';
 export { SerialisedItemEditFormComponent } from './lib/domain/serialiseditem/edit/serialiseditem-edit-form.component';
 export { SerialisedItemOverviewPanelComponent } from './lib/domain/serialiseditem/overview/panel/serialiseditem-overview-panel.component';
-export { SerialisedItemOverviewSummaryComponent } from './lib/domain/serialiseditem/overview/summary/serialiseditem-overview-summary.component';
+export { SerialisedItemOverviewSummaryComponent } from './lib/domain/serialiseditem/summary/serialiseditem-overview-summary.component';
 
 export { SerialisedItemCharacteristicFormComponent } from './lib/domain/serialiseditemcharacteristictype/form/serialiseditemcharacteristic-form.component';
 export { SerialisedItemCharacteristicListComponent } from './lib/domain/serialiseditemcharacteristictype/list/serialiseditemcharacteristic-list.component';
@@ -256,7 +256,7 @@ export { UnifiedGoodCreateFormComponent } from './lib/domain/unifiedgood/create/
 export { UnifiedGoodListComponent } from './lib/domain/unifiedgood/list/unifiedgood-list.component';
 export { UnifiedGoodOverviewComponent } from './lib/domain/unifiedgood/overview/unifiedgood-overview.component';
 export { UnifiedGoodEditFormComponent } from './lib/domain/unifiedgood/edit/unifiedgood-edit-form.component';
-export { UnifiedGoodOverviewSummaryComponent } from './lib/domain/unifiedgood/overview/summary/unifiedgood-overview-summary.component';
+export { UnifiedGoodOverviewSummaryComponent } from './lib/domain/unifiedgood/summary/unifiedgood-overview-summary.component';
 
 export { UserProfileFormComponent } from './lib/domain/userprofile/form/userprofile-form.component';
 export { UserProfileLinkComponent } from './lib/domain/userprofile/link/userprofile-link.component';
@@ -291,7 +291,7 @@ export { WorkRequirementListComponent } from './lib/domain/workrequirement/list/
 export { WorkRequirementOverviewComponent } from './lib/domain/workrequirement/overview/workrequirement-overview.component';
 export { WorkRequirementEditFormComponent } from './lib/domain/workrequirement/edit/workrequirement-edit-form.component';
 export { WorkRequirementOverviewPanelComponent } from './lib/domain/workrequirement/overview/panel/workrequirement-overview-panel.component';
-export { WorkRequirementOverviewSummaryComponent } from './lib/domain/workrequirement/overview/summary/workrequirement-overview-summary.component';
+export { WorkRequirementOverviewSummaryComponent } from './lib/domain/workrequirement/summary/workrequirement-overview-summary.component';
 
 export { WorkRequirementFulfillmentCreateFormComponent } from './lib/domain/workrequirementfulfillment/create/workrequirementfulfillment-create-form.component';
 export { WorkRequirementFulfillmentOverviewPanelComponent } from './lib/domain/workrequirementfulfillment/overview/panel/workrequirementfulfillment-overview-panel.component';
