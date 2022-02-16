@@ -61,7 +61,7 @@ export class NonSerialisedInventoryItemComponent implements OnInit {
   constructor(
     @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
-    public objectService: ScopedService,
+    public scopedService: ScopedService,
     public factoryService: ScopedService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

@@ -34,3 +34,24 @@ export function toPaths(tree: Node[]): Path[] {
 
   return paths;
 }
+
+function toNodeRecursive(parent: Node, path: Path): Node {
+  const node: Node = {
+    propertyType: path.propertyType,
+    ofType: path.ofType,
+  };
+
+  if (parent) {
+    parent.nodes = [node];
+  }
+
+  if (path.next) {
+    toNodeRecursive(node, path.next);
+  }
+
+  return node;
+}
+
+export function toNode(path: Path): Node {
+  return toNodeRecursive(null, path);
+}

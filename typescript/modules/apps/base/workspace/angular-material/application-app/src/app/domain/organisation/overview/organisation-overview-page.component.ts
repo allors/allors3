@@ -17,6 +17,7 @@ import {
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './organisation-overview-page.component.html',
@@ -29,21 +30,24 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
   ],
 })
 export class OrganisationOverviewPageComponent extends AllorsOverviewPageComponent {
+  m: M;
+
   object: Organisation;
 
   constructor(
-    @Self() objectService: ScopedService,
+    @Self() scopedService: ScopedService,
     @Self() private panelService: PanelService,
     public navigation: NavigationService,
-    private titleService: Title,
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
     route: ActivatedRoute
   ) {
-    super(objectService, sharedPullService, refreshService, workspaceService);
+    super(scopedService, sharedPullService, refreshService);
 
-    this.objectService.scoped$ = combineLatest([
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
+
+    this.scopedService.scoped$ = combineLatest([
       route.url,
       route.queryParams,
     ]).pipe(
@@ -71,14 +75,12 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
     pulls.push(
       p.Organisation({
         name: prefix,
-        objectId: this.objectInfo.id,
+        objectId: this.scoped.id,
       })
     );
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.object = pullResult.object(prefix);
-    const title = this.objectInfo.objectType.singularName;
-    this.titleService.setTitle(title);
   }
 }

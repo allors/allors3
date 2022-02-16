@@ -62,7 +62,7 @@ export class RepeatingSalesInvoiceOverviewPanelComponent {
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: OldPanelService,
-    public objectService: ScopedService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public methodService: MethodService,

@@ -16,7 +16,6 @@ export * from './lib/barcode/barcode-keypress.service.core';
 
 export * from './lib/context/context-service';
 export * from './lib/context/context';
-export * from './lib/context/shared-pull-service';
 
 export * from './lib/create/create-request';
 export * from './lib/create/create.service';
@@ -58,6 +57,8 @@ export * from './lib/form/form';
 
 export * from './lib/info/route-info.service';
 
+export * from './lib/invoke/invoke.service';
+
 export * from './lib/media/media.service';
 export * from './lib/media/media.config';
 export * from './lib/media/media-local.service';
@@ -69,6 +70,8 @@ export * from './lib/refresh/refresh-behavior-subject.service';
 
 export * from './lib/search/search-factory';
 export * from './lib/search/search-options';
+
+export * from './lib/shared/shared-pull-service';
 
 export * from './lib/state/session-state';
 export * from './lib/state/singleton-id';

@@ -35,7 +35,7 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
   object: WorkTask;
 
   constructor(
-    @Self() objectService: ScopedService,
+    @Self() scopedService: ScopedService,
     @Self() private panelService: PanelService,
     public navigation: NavigationService,
     private titleService: Title,
@@ -44,9 +44,9 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
     private workspaceService: WorkspaceService,
     route: ActivatedRoute
   ) {
-    super(objectService, sharedPullService, refreshService, workspaceService);
+    super(scopedService, sharedPullService, refreshService, workspaceService);
 
-    this.objectService.scoped$ = combineLatest([
+    this.scopedService.scoped$ = combineLatest([
       route.url,
       route.queryParams,
     ]).pipe(
@@ -73,14 +73,14 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
     pulls.push(
       p.WorkTask({
         name: prefix,
-        objectId: this.objectInfo.id,
+        objectId: this.scoped.id,
       })
     );
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.object = pullResult.object(prefix);
-    const title = this.objectInfo.objectType.singularName;
+    const title = this.scoped.objectType.singularName;
     this.titleService.setTitle(title);
   }
 }

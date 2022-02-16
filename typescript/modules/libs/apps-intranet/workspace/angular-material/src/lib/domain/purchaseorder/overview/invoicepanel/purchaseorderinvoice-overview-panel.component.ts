@@ -79,7 +79,7 @@ export class PurchaseOrderInvoiceOverviewPanelComponent {
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: OldPanelService,
-    public objectService: ScopedService,
+    public scopedService: ScopedService,
     public factoryService: ScopedService,
     public methodService: MethodService,
     public refreshService: RefreshService,

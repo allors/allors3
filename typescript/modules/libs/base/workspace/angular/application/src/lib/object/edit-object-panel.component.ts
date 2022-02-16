@@ -9,6 +9,7 @@ import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
 import { ScopedService } from '../scoped/scoped.service';
 import { PanelService } from '../panel/panel.service';
 import { ObjectPanel } from './object-panel';
+import { Path } from '@allors/system/workspace/domain';
 
 @Directive()
 export abstract class AllorsEditObjectPanelComponent
@@ -23,7 +24,7 @@ export abstract class AllorsEditObjectPanelComponent
 
   abstract anchor: RoleType;
 
-  abstract target: RoleType;
+  abstract target: Path;
 
   constructor(
     itemPageService: ScopedService,

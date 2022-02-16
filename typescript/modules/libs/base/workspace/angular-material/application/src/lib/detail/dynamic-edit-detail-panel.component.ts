@@ -35,7 +35,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
   private savedSubscription: Subscription;
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -43,7 +43,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     private formService: FormService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -52,7 +52,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
-    pulls.push({ objectId: this.objectInfo.id, results: [{ name: prefix }] });
+    pulls.push({ objectId: this.scoped.id, results: [{ name: prefix }] });
 
     this.subscribeTemplate();
   }
@@ -86,13 +86,13 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
       viewContainerRef.clear();
 
       const componentRef = viewContainerRef.createComponent<AllorsForm>(
-        this.formService.editForm(this.objectInfo.objectType)
+        this.formService.editForm(this.scoped.objectType)
       );
 
       this.form = componentRef.instance;
       this.form.edit({
         kind: 'EditRequest',
-        objectId: this.objectInfo.id,
+        objectId: this.scoped.id,
       });
 
       this.cancelledSubscription = this.form.cancelled

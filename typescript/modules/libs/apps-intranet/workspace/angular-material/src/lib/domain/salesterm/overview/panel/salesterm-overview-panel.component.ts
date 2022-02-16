@@ -65,7 +65,7 @@ export class SalesTermOverviewPanelComponent {
 
   constructor(
     @Self() public panel: OldPanelService,
-    public objectService: ScopedService,
+    public scopedService: ScopedService,
     public workspaceService: WorkspaceService,
 
     public refreshService: RefreshService,

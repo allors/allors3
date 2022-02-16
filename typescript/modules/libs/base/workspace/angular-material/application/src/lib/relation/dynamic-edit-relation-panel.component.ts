@@ -65,7 +65,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
   }
 
   get initializer(): Initializer {
-    return { propertyType: this.propertyType, id: this.objectInfo.id };
+    return { propertyType: this.propertyType, id: this.scoped.id };
   }
 
   @Input()
@@ -82,7 +82,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
   private subscription: Subscription;
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -94,7 +94,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
     private displayService: DisplayService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -104,7 +104,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
     panelService.register(this);
     sharedPullService.register(this);
 
-    this.subscription = this.objectService.scoped$
+    this.subscription = this.scopedService.scoped$
       .pipe(
         pipe(delay(1)),
         tap((object) => {

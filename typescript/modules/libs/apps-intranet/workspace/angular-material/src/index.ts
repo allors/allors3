@@ -19,17 +19,15 @@ export { CatalogueFormComponent } from './lib/domain/catalogue/form/catalogue-fo
 export { CataloguesListComponent } from './lib/domain/catalogue/list/catalogue-list.component';
 
 export { CommunicationEventListComponent } from './lib/domain/communicationevent/list/communicationevent-list.component';
-export { CommunicationEventWorkTaskComponent } from './lib/domain/communicationevent/worktask/communicationevent-worktask.component';
 
 export { ContactMechanismInlineComponent } from './lib/domain/contactmechanism/inline/contactmechanism-inline.component';
-export { ContactMechanismOverviewPanelComponent } from './lib/domain/contactmechanism/overview/panel/contactmechanism-overview-panel.component';
 
 export { CustomerRelationshipFormComponent } from './lib/domain/customerrelationship/form/customerrelationship-form.component';
 
 export { CustomerShipmentCreateFormComponent } from './lib/domain/customershipment/create/customershipment-create-form.component';
 export { CustomerShipmentOverviewComponent } from './lib/domain/customershipment/overview/customershipment-overview.component';
 export { CustomerShipmentEditFormComponent } from './lib/domain/customershipment/edit/customershipment-edit-form.component';
-export { CustomerShipmentOverviewSummaryComponent } from './lib/domain/customershipment/overview/summary/customershipment-overview-summary.component';
+export { CustomerShipmentOverviewSummaryComponent } from './lib/domain/customershipment/summary/customershipment-overview-summary.component';
 
 export { DisbursementFormComponent } from './lib/domain/disbursement/form/disbursement-form.component';
 

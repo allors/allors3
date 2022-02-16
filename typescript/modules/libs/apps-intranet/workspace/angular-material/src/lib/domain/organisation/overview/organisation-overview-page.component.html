@@ -16,10 +16,7 @@
         <organisation-overview-summary></organisation-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <organisation-edit-form></organisation-edit-form>
 
         <a-mat-dyn-view-relationship-panel
@@ -31,7 +28,22 @@
           [target]="m.CommunicationEvent.InvolvedParties"
         ></a-mat-dyn-edit-relationship-panel>
 
-        <contactmechanism-overview-panel></contactmechanism-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.CommunicationEvent.FromParty"
+          [target]="
+            path.Party({
+              CurrentPartyContactMechanisms: { ContactMechanism: {} }
+            })
+          "
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.CommunicationEvent.FromParty"
+          [target]="
+            path.Party({
+              CurrentPartyContactMechanisms: { ContactMechanism: {} }
+            })
+          "
+        ></a-mat-dyn-edit-object-panel>
 
         <partycontactmechanism-overview-panel></partycontactmechanism-overview-panel>
 

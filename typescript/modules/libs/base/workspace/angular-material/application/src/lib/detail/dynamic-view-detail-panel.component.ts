@@ -21,7 +21,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
   description: string;
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -29,7 +29,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     private metaService: MetaService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -39,7 +39,7 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const pull: Pull = {
-      objectId: this.objectInfo.id,
+      objectId: this.scoped.id,
       results: [
         {
           name: prefix,

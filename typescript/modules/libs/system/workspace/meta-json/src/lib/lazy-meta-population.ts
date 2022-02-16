@@ -6,6 +6,7 @@ import { InternalInterface } from './internal/internal-interface';
 import { InternalClass } from './internal/internal-class';
 import { InternalComposite } from './internal/internal-composite';
 
+import { LazyPathBuilder } from './builders/lazy-path-builder';
 import { LazyTreeBuilder } from './builders/lazy-tree-builder';
 import { LazySelectBuilder } from './builders/lazy-select-builder';
 import { LazyPullBuilder } from './builders/lazy-pull-builder';
@@ -73,6 +74,8 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
     this.composites.forEach((v) => v.derivePropertyTypeByPropertyName());
     this.classes.forEach((v) => v.deriveOverridden(lookup));
     this.composites.forEach((v) => v.deriveDependencies());
+
+    this['pathBuilder'] = new LazyPathBuilder(this);
 
     this['treeBuilder'] = new LazyTreeBuilder(this);
 

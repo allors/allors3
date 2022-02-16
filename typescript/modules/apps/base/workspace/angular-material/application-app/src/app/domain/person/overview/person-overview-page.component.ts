@@ -17,6 +17,7 @@ import {
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './person-overview-page.component.html',
@@ -29,10 +30,11 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
   ],
 })
 export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
+  m: M;
   object: Person;
 
   constructor(
-    @Self() objectService: ScopedService,
+    @Self() scopedService: ScopedService,
     @Self() private panelService: PanelService,
     public navigation: NavigationService,
     private titleService: Title,
@@ -41,9 +43,11 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
     workspaceService: WorkspaceService,
     route: ActivatedRoute
   ) {
-    super(objectService, sharedPullService, refreshService, workspaceService);
+    super(scopedService, sharedPullService, refreshService);
 
-    this.objectService.scoped$ = combineLatest([
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
+
+    this.scopedService.scoped$ = combineLatest([
       route.url,
       route.queryParams,
     ]).pipe(
@@ -71,7 +75,7 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
     pulls.push(
       p.Organisation({
         name: prefix,
-        objectId: this.objectInfo.id,
+        objectId: this.scoped.id,
       })
     );
   }

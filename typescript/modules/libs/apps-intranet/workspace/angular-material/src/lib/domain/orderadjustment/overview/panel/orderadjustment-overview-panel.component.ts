@@ -77,7 +77,7 @@ export class OrderAdjustmentOverviewPanelComponent {
   constructor(
     @Self() public panel: OldPanelService,
     public workspaceService: WorkspaceService,
-    public objectService: ScopedService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     public editService: EditService,

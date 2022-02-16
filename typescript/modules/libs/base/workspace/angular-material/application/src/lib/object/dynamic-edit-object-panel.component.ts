@@ -7,6 +7,8 @@ import {
   Pull,
   Initializer,
   Node,
+  Path,
+  leafPath,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import {
@@ -46,45 +48,44 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
   }
 
   get panelId() {
-    return this.target.name;
+    return `${this.tag}`;
   }
-
   get icon() {
-    return this.iconService.icon(this.objectType);
+    return this.iconService.icon(this.targetObjectType);
   }
 
   get titel() {
-    return this.target.pluralName;
+    return this.targetObjectType.pluralName;
   }
 
   get initializer(): Initializer {
-    return { propertyType: this.anchor, id: this.objectInfo.id };
+    return { propertyType: this.anchor, id: this.scoped.id };
   }
 
   @Input()
   anchor: RoleType;
 
   @Input()
-  target: RoleType;
+  target: Path;
 
-  objectType: Composite;
+  leaf: Path;
   targetObjectType: Composite;
+  tag: string;
 
-  hasPeriod: boolean;
-  periodSelection: PeriodSelection = PeriodSelection.Current;
+  title: string;
+  description: string;
 
   table: Table<Row>;
   delete: Action;
   edit: Action;
 
   objects: IObject[];
-  filtered: IObject[];
 
   display: RoleType[];
   targetDisplay: RoleType[];
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -96,7 +97,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
     private displayService: DisplayService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -108,10 +109,10 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
   }
 
   ngOnInit() {
-    this.objectType = this.target.associationType.objectType as Composite;
-    this.targetObjectType = this.target.objectType as Composite;
+    this.leaf = leafPath(this.target);
+    this.targetObjectType = this.leaf.propertyType.objectType as Composite;
 
-    this.display = this.displayService.primary(this.objectType);
+    this.display = this.displayService.primary(this.targetObjectType);
     const targetPrimaryDisplay = this.displayService.primary(
       this.targetObjectType
     );
@@ -120,8 +121,6 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
         ? targetPrimaryDisplay
         : [this.displayService.name(this.targetObjectType)];
 
-    this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
-
     this.delete = this.deleteService.delete();
     this.edit = this.editRoleService.edit();
 
@@ -129,7 +128,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: (this.objectType.isInterface
+      columns: (this.targetObjectType.isInterface
         ? [{ name: 'type', sort }]
         : []
       ).concat(
@@ -143,20 +142,11 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
       autoFilter: true,
     };
 
-    if (this.hasPeriod) {
-      tableConfig.columns.push(
-        ...[
-          { name: 'from', sort },
-          { name: 'through', sort },
-        ]
-      );
-    }
-
     this.table = new Table(tableConfig);
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
-    const id = this.objectInfo.id;
+    const id = this.scoped.id;
 
     const displayInclude: Node[] = this.display
       .filter((v) => v.objectType.isComposite)
@@ -185,7 +175,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
     const pull: Pull = {
       extent: {
         kind: 'Filter',
-        objectType: this.objectType,
+        objectType: this.targetObjectType,
         predicate: {
           kind: 'Equals',
           propertyType: this.anchor,
@@ -195,7 +185,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
       results: [
         {
           name: prefix,
-          include,
+          // include,
         },
       ],
     };
@@ -205,68 +195,27 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.objects = pullResult.collection<IObject>(prefix) ?? [];
-    this.updateFilter();
     this.refreshTable();
-  }
-
-  onPeriodSelectionChange(newPeriodSelection: PeriodSelection) {
-    this.periodSelection = newPeriodSelection;
-
-    if (this.objects != null) {
-      this.updateFilter();
-      this.refreshTable();
-    }
   }
 
   toggle() {
     this.panelService.stopEdit().subscribe();
   }
 
-  private updateFilter() {
-    if (!this.hasPeriod) {
-      this.filtered = this.objects;
-      return;
-    }
-
-    const now = new Date(Date.now());
-    switch (this.periodSelection) {
-      case PeriodSelection.Current:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate < now && v.ThroughDate > now;
-          } else {
-            return v.FromDate < now;
-          }
-        });
-        break;
-      case PeriodSelection.Inactive:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate > now || v.ThroughDate < now;
-          } else {
-            return v.FromDate > now;
-          }
-        });
-        break;
-      default:
-        this.filtered = this.objects;
-        break;
-    }
-  }
-
   private refreshTable() {
-    this.table.total = this.filtered.length;
+    this.table.total = this.objects.length;
 
-    this.table.data = this.filtered.map((v) => {
+    this.table.data = this.objects.map((v) => {
       const row: TableRow = {
         object: v,
       };
 
-      if (this.objectType.isInterface) {
+      if (this.targetObjectType.isInterface) {
         row['type'] = v.strategy.cls.singularName;
       }
 
-      const target = v.strategy.getCompositeRole(this.target);
+      // const target = v.strategy.getCompositeRole(this.target);
+      const target = v;
 
       for (const w of this.targetDisplay) {
         if (w.objectType.isUnit) {
@@ -294,16 +243,6 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
             row[w.name] = '';
           }
         }
-      }
-
-      if (this.hasPeriod) {
-        const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
-        row['from'] = format(fromDate, 'dd-MM-yyyy');
-        const throughDate = v.strategy.getUnitRole(
-          this.m.Period.ThroughDate
-        ) as Date;
-        row['through'] =
-          throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
       }
 
       return row;

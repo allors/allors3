@@ -20,14 +20,14 @@ export abstract class AllorsEditDetailPanelComponent extends AllorsScopedPanelCo
   readonly panelKind = 'Detail';
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,

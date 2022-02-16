@@ -58,7 +58,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   }
 
   get initializer(): Initializer {
-    return { propertyType: this.anchor, id: this.objectInfo.id };
+    return { propertyType: this.anchor, id: this.scoped.id };
   }
 
   @Input()
@@ -84,7 +84,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   targetDisplay: RoleType[];
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -96,7 +96,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     private displayService: DisplayService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -156,7 +156,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
-    const id = this.objectInfo.id;
+    const id = this.scoped.id;
 
     const displayInclude: Node[] = this.display
       .filter((v) => v.objectType.isComposite)

@@ -29,15 +29,13 @@ export abstract class AllorsScopedPanelComponent
 {
   @HostBinding('attr.data-allors-id')
   get dataAllorsId() {
-    return this.objectInfo?.id;
+    return this.scoped?.id;
   }
 
   @HostBinding('attr.data-allors-objecttype')
   get dataAllorsObjectType() {
-    return this.objectInfo?.objectType?.tag;
+    return this.scoped?.objectType?.tag;
   }
-
-  m: M;
 
   abstract panelId: string;
 
@@ -47,30 +45,27 @@ export abstract class AllorsScopedPanelComponent
 
   panelEnabled: boolean;
 
-  objectInfo: Scoped;
+  scoped: Scoped;
 
   private panelSubscription: Subscription;
 
   constructor(
-    public objectService: ScopedService,
+    public scopedService: ScopedService,
     public panelService: PanelService,
     public sharedPullService: SharedPullService,
-    public refreshService: RefreshService,
-    workspaceService: WorkspaceService
+    public refreshService: RefreshService
   ) {
     super();
-
-    this.m = workspaceService.workspace.configuration.metaPopulation as M;
 
     panelService.register(this);
     this.sharedPullService.register(this);
   }
 
   ngAfterViewInit(): void {
-    this.panelSubscription = this.objectService.scoped$
+    this.panelSubscription = this.scopedService.scoped$
       .pipe(
         tap((info) => {
-          this.objectInfo = info;
+          this.scoped = info;
           this.refreshService.refresh();
         })
       )

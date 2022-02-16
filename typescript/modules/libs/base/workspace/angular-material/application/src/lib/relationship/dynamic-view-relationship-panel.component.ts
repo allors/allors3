@@ -56,7 +56,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   filtered: IObject[];
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -64,7 +64,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     private diplayService: DisplayService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -80,7 +80,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
-    const id = this.objectInfo.id;
+    const id = this.scoped.id;
 
     const pull: Pull = {
       extent: {

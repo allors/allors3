@@ -66,7 +66,7 @@ export class PurchaseOrderOverviewPanelComponent {
   constructor(
     @Self() public allors: ContextService,
     @Self() public panel: OldPanelService,
-    public objectService: ScopedService,
+    public scopedService: ScopedService,
     public methodService: MethodService,
     public refreshService: RefreshService,
     public navigationService: NavigationService,

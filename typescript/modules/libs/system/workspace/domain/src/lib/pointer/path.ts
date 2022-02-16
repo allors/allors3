@@ -106,3 +106,15 @@ export function leafPath(path: Path): Path {
 
   return next;
 }
+
+export function tagPath(path: Path): string {
+  let tag: string;
+
+  let next = path;
+  while (next.next) {
+    tag = `${tag ? `_${tag}` : tag}${next.propertyType.relationType.tag}`;
+    next = next.next;
+  }
+
+  return tag;
+}

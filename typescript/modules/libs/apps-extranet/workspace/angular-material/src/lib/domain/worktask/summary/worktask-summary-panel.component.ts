@@ -36,7 +36,7 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
   printForWorker: Action;
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     private workspaceService: WorkspaceService,
@@ -44,7 +44,7 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     public navigation: NavigationService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -61,7 +61,7 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     const workEffortBillingPullName = `${prefix}_${m.WorkEffortBilling.tag}`;
     const fixedAssetPullName = `${prefix}_${m.FixedAsset.tag}`;
 
-    const id = this.objectInfo.id;
+    const id = this.scoped.id;
 
     pulls.push(
       p.WorkTask({

@@ -51,7 +51,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
   private subscription: Subscription;
 
   constructor(
-    objectService: ScopedService,
+    scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
@@ -63,7 +63,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
     private displayService: DisplayService
   ) {
     super(
-      objectService,
+      scopedService,
       panelService,
       sharedPullService,
       refreshService,
@@ -72,12 +72,12 @@ export class AllorsMaterialDynamicSummaryPanelComponent
 
     sharedPullService.register(this);
 
-    this.subscription = this.objectService.scoped$
+    this.subscription = this.scopedService.scoped$
       .pipe(
         pipe(delay(1)),
-        tap((objectInfo) => {
-          this.objectInfo = objectInfo;
-          const { objectType } = objectInfo;
+        tap((scoped) => {
+          this.scoped = scoped;
+          const { objectType } = scoped;
           this.linkTypes = linkService.linkTypes(objectType);
           this.actions = actionService.action(objectType);
           this.icon = iconService.icon(objectType);
@@ -93,7 +93,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
     const pull: Pull = {
-      objectId: this.objectInfo.id,
+      objectId: this.scoped.id,
       results: [
         {
           name: prefix,
