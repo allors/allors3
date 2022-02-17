@@ -11,6 +11,7 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'a-mat-dyn-view-detail-panel',
@@ -25,16 +26,9 @@ export class AllorsMaterialDynamicViewDetailPanelComponent extends AllorsViewDet
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
-    workspaceService: WorkspaceService,
     private metaService: MetaService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {

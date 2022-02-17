@@ -29,6 +29,7 @@ import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import { IconService } from '../icon/icon.service';
+import { M } from '@allors/default/workspace/meta';
 
 interface Row extends TableRow {
   object: IObject;
@@ -67,6 +68,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   @Input()
   target: RoleType;
 
+  m: M;
+
   objectType: Composite;
   targetObjectType: Composite;
 
@@ -95,13 +98,8 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     private iconService: IconService,
     private displayService: DisplayService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
 
     panelService.register(this);
     sharedPullService.register(this);

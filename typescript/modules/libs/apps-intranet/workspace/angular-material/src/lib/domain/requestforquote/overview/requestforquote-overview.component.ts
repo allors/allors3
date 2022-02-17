@@ -1,130 +1,75 @@
-import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  Injector,
-} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { combineLatest, delay, map, switchMap } from 'rxjs';
+import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { M } from '@allors/default/workspace/meta';
-import { RequestForQuote, Quote } from '@allors/default/workspace/domain';
+import { ActivatedRoute } from '@angular/router';
+import { RequestForQuote } from '@allors/default/workspace/domain';
 import {
-  NavigationActivatedRoute,
-  NavigationService,
-  OldPanelManagerService,
   RefreshService,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import {
+  NavigationService,
+  NavigationActivatedRoute,
+  PanelService,
+  ScopedService,
+  AllorsOverviewPageComponent,
+} from '@allors/base/workspace/angular/application';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './requestforquote-overview.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [
+    ScopedService,
+    {
+      provide: PanelService,
+      useClass: AllorsMaterialPanelService,
+    },
+  ],
 })
-export class RequestForQuoteOverviewComponent
-  implements AfterViewInit, OnDestroy
-{
-  title = 'Request For Quote';
-
-  public requestForQuote: RequestForQuote;
-  public quote: Quote;
-
-  subscription: Subscription;
+export class RequestForQuoteOverviewComponent extends AllorsOverviewPageComponent {
   m: M;
 
+  public requestForQuote: RequestForQuote;
+
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panelManager: OldPanelManagerService,
-    public workspaceService: WorkspaceService,
-    public refreshService: RefreshService,
+    @Self() scopedService: ScopedService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private route: ActivatedRoute,
-    public injector: Injector,
-    private internalOrganisationId: InternalOrganisationId,
-    titleService: Title
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
-
-    titleService.setTitle(this.title);
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService
+    );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    this.subscription = combineLatest(
-      this.route.url,
-      this.route.queryParams,
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.panelManager.id = navRoute.id();
-          this.panelManager.objectType = m.RequestForQuote;
-          this.panelManager.expanded = navRoute.panel();
+    const id = this.scoped.id;
 
-          this.panelManager.on();
-
-          const pulls = [
-            pull.RequestForQuote({
-              objectId: this.panelManager.id,
-              include: {
-                FullfillContactMechanism: {
-                  PostalAddress_Country: x,
-                },
-                RequestItems: {
-                  Product: x,
-                },
-                Originator: x,
-                ContactPerson: x,
-                RequestState: x,
-                DerivedCurrency: x,
-                CreatedBy: x,
-                LastModifiedBy: x,
-              },
-            }),
-            pull.RequestForQuote({
-              objectId: this.panelManager.id,
-              select: {
-                QuoteWhereRequest: x,
-              },
-            }),
-          ];
-
-          this.panelManager.onPull(pulls);
-
-          return this.panelManager.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.panelManager.context.reset();
-
-        this.panelManager.onPulled(loaded);
-
-        this.requestForQuote = loaded.object<RequestForQuote>(
-          this.m.RequestForQuote
-        );
-        this.quote = loaded.object<Quote>(
-          this.m.RequestForQuote.QuoteWhereRequest
-        );
-      });
+    pulls.push(
+      p.RequestForQuote({
+        name: prefix,
+        objectId: id,
+      })
+    );
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
+    this.requestForQuote = loaded.object<RequestForQuote>(prefix);
   }
 }

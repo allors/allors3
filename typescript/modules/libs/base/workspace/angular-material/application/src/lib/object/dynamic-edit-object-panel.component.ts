@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { Component, HostBinding, Input } from '@angular/core';
 import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
@@ -10,7 +9,6 @@ import {
   Path,
   leafPath,
 } from '@allors/system/workspace/domain';
-import { Period } from '@allors/default/workspace/domain';
 import {
   Action,
   SharedPullService,
@@ -29,7 +27,6 @@ import {
 } from '@allors/base/workspace/angular/application';
 import { DeleteService } from '../actions/delete/delete.service';
 import { EditRoleService } from '../actions/edit-role/edit-role.service';
-import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import { IconService } from '../icon/icon.service';
 
 interface Row extends TableRow {
@@ -51,11 +48,11 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
     return `${this.tag}`;
   }
   get icon() {
-    return this.iconService.icon(this.targetObjectType);
+    return this.iconService.icon(this.objectType);
   }
 
   get titel() {
-    return this.targetObjectType.pluralName;
+    return this.objectType.pluralName;
   }
 
   get initializer(): Initializer {
@@ -69,7 +66,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
   target: Path;
 
   leaf: Path;
-  targetObjectType: Composite;
+  objectType: Composite;
   tag: string;
 
   title: string;
@@ -96,13 +93,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
     private iconService: IconService,
     private displayService: DisplayService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
 
     panelService.register(this);
     sharedPullService.register(this);
@@ -110,16 +101,14 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
 
   ngOnInit() {
     this.leaf = leafPath(this.target);
-    this.targetObjectType = this.leaf.propertyType.objectType as Composite;
+    this.objectType = this.leaf.propertyType.objectType as Composite;
 
-    this.display = this.displayService.primary(this.targetObjectType);
-    const targetPrimaryDisplay = this.displayService.primary(
-      this.targetObjectType
-    );
+    this.display = this.displayService.primary(this.objectType);
+    const targetPrimaryDisplay = this.displayService.primary(this.objectType);
     this.targetDisplay =
       targetPrimaryDisplay.length > 0
         ? targetPrimaryDisplay
-        : [this.displayService.name(this.targetObjectType)];
+        : [this.displayService.name(this.objectType)];
 
     this.delete = this.deleteService.delete();
     this.edit = this.editRoleService.edit();
@@ -128,7 +117,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: (this.targetObjectType.isInterface
+      columns: (this.objectType.isInterface
         ? [{ name: 'type', sort }]
         : []
       ).concat(
@@ -175,7 +164,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
     const pull: Pull = {
       extent: {
         kind: 'Filter',
-        objectType: this.targetObjectType,
+        objectType: this.objectType,
         predicate: {
           kind: 'Equals',
           propertyType: this.anchor,
@@ -210,7 +199,7 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
         object: v,
       };
 
-      if (this.targetObjectType.isInterface) {
+      if (this.objectType.isInterface) {
         row['type'] = v.strategy.cls.singularName;
       }
 

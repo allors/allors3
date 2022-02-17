@@ -28,9 +28,11 @@
         ></a-mat-dyn-edit-relation-panel>
 
         <a-mat-dyn-view-relationship-panel
+          [anchor]="m.Employment.Employee"
           [target]="m.Employment.Employer"
         ></a-mat-dyn-view-relationship-panel>
         <a-mat-dyn-edit-relationship-panel
+          [anchor]="m.Employment.Employee"
           [target]="m.Employment.Employer"
         ></a-mat-dyn-edit-relationship-panel>
       </div>

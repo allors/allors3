@@ -1,133 +1,95 @@
-import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  Injector,
-} from '@angular/core';
+import { Component, Self } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Title } from '@angular/platform-browser';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { M } from '@allors/default/workspace/meta';
 import {
-  Good,
-  ProductQuote,
-  SalesOrder,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationActivatedRoute,
-  NavigationService,
-  OldPanelManagerService,
   RefreshService,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import {
+  NavigationService,
+  PanelService,
+  ScopedService,
+  AllorsOverviewPageComponent,
+} from '@allors/base/workspace/angular/application';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
+import { ProductQuote, SalesOrder } from '@allors/default/workspace/domain';
 
 @Component({
   templateUrl: './productquote-overview.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [
+    ScopedService,
+    {
+      provide: PanelService,
+      useClass: AllorsMaterialPanelService,
+    },
+  ],
 })
-export class ProductQuoteOverviewComponent implements AfterViewInit, OnDestroy {
-  title = 'Quote';
-
-  public productQuote: ProductQuote;
-  public goods: Good[] = [];
-  public salesOrder: SalesOrder;
-
-  subscription: Subscription;
+export class ProductQuoteOverviewComponent extends AllorsOverviewPageComponent {
   m: M;
+  productQuote: ProductQuote;
+  salesOrder: SalesOrder;
 
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panelManager: OldPanelManagerService,
-    public workspaceService: WorkspaceService,
-    public refreshService: RefreshService,
+    @Self() scopedService: ScopedService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private route: ActivatedRoute,
-    private internalOrganisationId: InternalOrganisationId,
-    public injector: Injector,
-    titleService: Title
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService
+    );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    this.subscription = combineLatest(
-      this.route.url,
-      this.route.queryParams,
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.panelManager.id = navRoute.id();
-          this.panelManager.objectType = m.ProductQuote;
-          this.panelManager.expanded = navRoute.panel();
+    const id = this.scoped.id;
 
-          this.panelManager.on();
-
-          const pulls = [
-            pull.ProductQuote({
-              objectId: this.panelManager.id,
-              include: {
-                QuoteItems: {
-                  Product: x,
-                  QuoteItemState: x,
-                },
-                Receiver: x,
-                ContactPerson: x,
-                QuoteState: x,
-                CreatedBy: x,
-                LastModifiedBy: x,
-                Request: x,
-                FullfillContactMechanism: {
-                  PostalAddress_Country: x,
-                },
-              },
-            }),
-            pull.ProductQuote({
-              objectId: this.panelManager.id,
-              select: {
-                SalesOrderWhereQuote: x,
-              },
-            }),
-          ];
-
-          this.panelManager.onPull(pulls);
-
-          return this.panelManager.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.panelManager.context.reset();
-
-        this.panelManager.onPulled(loaded);
-
-        this.productQuote = loaded.object<ProductQuote>(m.ProductQuote);
-        this.goods = loaded.collection<Good>(m.Good);
-        this.salesOrder = loaded.object<SalesOrder>(
-          m.ProductQuote.SalesOrderWhereQuote
-        );
-      });
+    pulls.push(
+      p.ProductQuote({
+        name: prefix,
+        objectId: id,
+        include: {
+          QuoteItems: {
+            Product: {},
+            QuoteItemState: {},
+          },
+          Receiver: {},
+          ContactPerson: {},
+          QuoteState: {},
+          CreatedBy: {},
+          LastModifiedBy: {},
+          Request: {},
+          FullfillContactMechanism: {
+            PostalAddress_Country: {},
+          },
+        },
+      }),
+      p.ProductQuote({
+        name: `${prefix}_salesOrder`,
+        objectId: id,
+        select: {
+          SalesOrderWhereQuote: {},
+        },
+      })
+    );
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
+    this.productQuote = loaded.object<ProductQuote>(prefix);
+    this.salesOrder = loaded.object<SalesOrder>(`${prefix}_salesOrder`);
   }
 }

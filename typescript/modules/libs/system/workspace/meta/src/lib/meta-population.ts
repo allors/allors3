@@ -11,6 +11,7 @@ import { Dependency } from './dependency';
 export interface MetaPopulation {
   readonly kind: 'MetaPopulation';
   metaObjectByTag: Map<string, MetaObject>;
+  objectTypeByUppercaseName: Map<string, MetaObject>;
   units: Set<Unit>;
   interfaces: Set<Interface>;
   classes: Set<Class>;

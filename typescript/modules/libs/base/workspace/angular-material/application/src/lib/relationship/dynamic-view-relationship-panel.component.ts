@@ -19,6 +19,7 @@ import {
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'a-mat-dyn-view-relationship-panel',
@@ -46,6 +47,8 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     return `${this.target.name}`;
   }
 
+  m: M;
+
   title: string;
   description: string;
 
@@ -63,13 +66,9 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     workspaceService: WorkspaceService,
     private diplayService: DisplayService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
+
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   ngOnInit() {

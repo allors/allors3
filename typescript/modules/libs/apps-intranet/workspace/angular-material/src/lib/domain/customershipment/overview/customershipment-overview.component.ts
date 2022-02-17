@@ -1,133 +1,88 @@
+import { combineLatest, delay, map, switchMap } from 'rxjs';
+import { Component, Self } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { CustomerShipment } from '@allors/default/workspace/domain';
 import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  Injector,
-} from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { M } from '@allors/default/workspace/meta';
-import {
-  Good,
-  CustomerShipment,
-  ShipmentItem,
-  SalesInvoice,
-  BillingProcess,
-  SerialisedInventoryItemState,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationService,
   RefreshService,
-  OldPanelManagerService,
-  NavigationActivatedRoute,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { ActivatedRoute } from '@angular/router';
+import {
+  NavigationService,
+  NavigationActivatedRoute,
+  PanelService,
+  ScopedService,
+  AllorsOverviewPageComponent,
+} from '@allors/base/workspace/angular/application';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './customershipment-overview.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [
+    ScopedService,
+    {
+      provide: PanelService,
+      useClass: AllorsMaterialPanelService,
+    },
+  ],
 })
-export class CustomerShipmentOverviewComponent
-  implements AfterViewInit, OnDestroy
-{
-  title = 'Customer Shipment';
-
-  public shipment: CustomerShipment;
-  public orderItems: ShipmentItem[] = [];
-  public goods: Good[] = [];
-  public salesInvoice: SalesInvoice;
-  public billingProcesses: BillingProcess[];
-  public billingForOrderItems: BillingProcess;
-  public selectedSerialisedInventoryState: string;
-  public inventoryItemStates: SerialisedInventoryItemState[];
-
-  subscription: Subscription;
+export class CustomerShipmentOverviewComponent extends AllorsOverviewPageComponent {
   m: M;
+  shipment: CustomerShipment;
 
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panelManager: OldPanelManagerService,
-    public workspaceService: WorkspaceService,
-    public refreshService: RefreshService,
+    @Self() scopedService: ScopedService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private route: ActivatedRoute,
-    public injector: Injector,
-    private internalOrganisationId: InternalOrganisationId,
-    titleService: Title
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    titleService.setTitle(this.title);
-
-    this.allors.context.name = this.constructor.name;
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService
+    );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    this.subscription = combineLatest([
-      this.route.url,
-      this.route.queryParams,
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$,
-    ])
-      .pipe(
-        switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.panelManager.id = navRoute.id();
-          this.panelManager.objectType = m.Shipment;
-          this.panelManager.expanded = navRoute.panel();
+    const id = this.scoped.id;
 
-          this.panelManager.on();
-
-          const pulls = [
-            pull.Shipment({
-              objectId: this.panelManager.id,
-              include: {
-                ShipmentItems: {
-                  Good: x,
-                },
-                ShipFromParty: x,
-                ShipFromAddress: x,
-                ShipToParty: x,
-                ShipToContactPerson: x,
-                ShipmentState: x,
-                CreatedBy: x,
-                LastModifiedBy: x,
-                ShipToAddress: {
-                  Country: x,
-                },
-              },
-            }),
-          ];
-
-          this.panelManager.onPull(pulls);
-
-          return this.panelManager.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.panelManager.context.reset();
-
-        this.panelManager.onPulled(loaded);
-
-        this.shipment = loaded.object<CustomerShipment>(m.Shipment);
-      });
+    pulls.push(
+      p.Shipment({
+        name: prefix,
+        objectId: id,
+        include: {
+          ShipmentItems: {
+            Good: {},
+          },
+          ShipFromParty: {},
+          ShipFromAddress: {},
+          ShipToParty: {},
+          ShipToContactPerson: {},
+          ShipmentState: {},
+          CreatedBy: {},
+          LastModifiedBy: {},
+          ShipToAddress: {
+            Country: {},
+          },
+        },
+      })
+    );
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
+    this.shipment = loaded.object<CustomerShipment>(prefix);
   }
 }

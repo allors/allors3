@@ -30,6 +30,7 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
   readonly kind = 'MetaPopulation';
   readonly _ = {};
   metaObjectByTag: Map<string, MetaObject> = new Map();
+  objectTypeByUppercaseName: Map<string, MetaObject> = new Map();
   units: Set<Unit>;
   interfaces: Set<InternalInterface>;
   classes: Set<InternalClass>;
@@ -97,6 +98,10 @@ export class LazyMetaPopulation implements InternalMetaPopulation {
   onNewObjectType(objectType: ObjectType) {
     this.onNew(objectType);
     (this as Record<string, unknown>)[objectType.singularName] = objectType;
+    this.objectTypeByUppercaseName.set(
+      objectType.singularName.toUpperCase(),
+      objectType
+    );
   }
   onNewComposite(objectType: InternalComposite) {
     this.onNewObjectType(objectType);

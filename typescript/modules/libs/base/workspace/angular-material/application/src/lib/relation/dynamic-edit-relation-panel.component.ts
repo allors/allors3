@@ -93,13 +93,7 @@ export class AllorsMaterialDynamicEditRelationPanelComponent
     private iconService: IconService,
     private displayService: DisplayService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
 
     panelService.register(this);
     sharedPullService.register(this);

@@ -29,15 +29,8 @@ export abstract class AllorsViewRelationshipPanelComponent
     itemPageService: ScopedService,
     panelService: PanelService,
     onShareService: SharedPullService,
-    refreshService: RefreshService,
-    workspaceService: WorkspaceService
+    refreshService: RefreshService
   ) {
-    super(
-      itemPageService,
-      panelService,
-      onShareService,
-      refreshService,
-      workspaceService
-    );
+    super(itemPageService, panelService, onShareService, refreshService);
   }
 }

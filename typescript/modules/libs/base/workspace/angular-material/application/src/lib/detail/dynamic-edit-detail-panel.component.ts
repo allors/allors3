@@ -14,6 +14,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { map, Subscription, tap } from 'rxjs';
 import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'a-mat-dyn-edit-detail-panel',
@@ -39,16 +40,9 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
-    workspaceService: WorkspaceService,
     private formService: FormService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {

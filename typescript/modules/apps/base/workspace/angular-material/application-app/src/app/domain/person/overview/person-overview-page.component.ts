@@ -1,7 +1,7 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+
+import { tags } from '@allors/default/workspace/meta';
 import { Person } from '@allors/default/workspace/domain';
 import {
   RefreshService,
@@ -10,7 +10,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
@@ -35,36 +34,23 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
 
   constructor(
     @Self() scopedService: ScopedService,
-    @Self() private panelService: PanelService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private titleService: Title,
-    refreshService: RefreshService,
     sharedPullService: SharedPullService,
-    workspaceService: WorkspaceService,
-    route: ActivatedRoute
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    super(scopedService, sharedPullService, refreshService);
-
-    this.m = workspaceService.workspace.configuration.metaPopulation as M;
-
-    this.scopedService.scoped$ = combineLatest([
-      route.url,
-      route.queryParams,
-    ]).pipe(
-      delay(1),
-      map(() => new NavigationActivatedRoute(route)),
-      switchMap((navRoute) => {
-        return this.panelService
-          .startEdit(navRoute.panel())
-          .pipe(map(() => navRoute));
-      }),
-      map((navRoute) => {
-        return {
-          objectType: this.m.Person,
-          id: navRoute.id(),
-        };
-      })
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService,
+      tags.Person
     );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

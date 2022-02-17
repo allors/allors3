@@ -32,42 +32,31 @@ import { M } from '@allors/default/workspace/meta';
   ],
 })
 export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
+  m: M;
   object: WorkTask;
 
   constructor(
     @Self() scopedService: ScopedService,
-    @Self() private panelService: PanelService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private titleService: Title,
-    refreshService: RefreshService,
     sharedPullService: SharedPullService,
-    private workspaceService: WorkspaceService,
-    route: ActivatedRoute
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    super(scopedService, sharedPullService, refreshService, workspaceService);
-
-    this.scopedService.scoped$ = combineLatest([
-      route.url,
-      route.queryParams,
-    ]).pipe(
-      delay(1),
-      map(() => new NavigationActivatedRoute(route)),
-      switchMap((navRoute) => {
-        return this.panelService
-          .startEdit(navRoute.panel())
-          .pipe(map(() => navRoute));
-      }),
-      map((navRoute) => {
-        return {
-          objectType: this.m.Organisation,
-          id: navRoute.id(),
-        };
-      })
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService
     );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
-    const m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    const { m } = this;
     const { pullBuilder: p } = m;
 
     pulls.push(
@@ -80,7 +69,5 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.object = pullResult.object(prefix);
-    const title = this.scoped.objectType.singularName;
-    this.titleService.setTitle(title);
   }
 }

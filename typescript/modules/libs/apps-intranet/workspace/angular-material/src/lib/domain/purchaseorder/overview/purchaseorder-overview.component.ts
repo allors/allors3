@@ -1,114 +1,80 @@
-import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  Injector,
-} from '@angular/core';
+import { combineLatest, delay, map, switchMap } from 'rxjs';
+import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
-
-import { M } from '@allors/default/workspace/meta';
+import { PurchaseOrder } from '@allors/default/workspace/domain';
 import {
-  PurchaseOrder,
-  PurchaseOrderItem,
-} from '@allors/default/workspace/domain';
-import {
-  NavigationActivatedRoute,
-  NavigationService,
-  OldPanelManagerService,
   RefreshService,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import {
+  NavigationService,
+  NavigationActivatedRoute,
+  PanelService,
+  ScopedService,
+  AllorsOverviewPageComponent,
+} from '@allors/base/workspace/angular/application';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './purchaseorder-overview.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [
+    ScopedService,
+    {
+      provide: PanelService,
+      useClass: AllorsMaterialPanelService,
+    },
+  ],
 })
-export class PurchaseOrderOverviewComponent
-  implements AfterViewInit, OnDestroy
-{
-  title = 'Purchase Order';
-
-  public order: PurchaseOrder;
-  public orderItems: PurchaseOrderItem[] = [];
-
-  subscription: Subscription;
+export class PurchaseOrderOverviewComponent extends AllorsOverviewPageComponent {
   m: M;
 
+  public order: PurchaseOrder;
+
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panelManager: OldPanelManagerService,
-    public workspaceService: WorkspaceService,
-    public refreshService: RefreshService,
+    @Self() scopedService: ScopedService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private route: ActivatedRoute,
-    public injector: Injector,
-    private internalOrganisationId: InternalOrganisationId,
-    titleService: Title
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService
+    );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    this.subscription = combineLatest(
-      this.route.url,
-      this.route.queryParams,
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.panelManager.id = navRoute.id();
-          this.panelManager.objectType = m.PurchaseOrder;
-          this.panelManager.expanded = navRoute.panel();
+    const id = this.scoped.id;
 
-          this.panelManager.on();
-
-          const pulls = [
-            pull.PurchaseOrder({
-              objectId: this.panelManager.id,
-              include: {
-                PurchaseOrderItems: {
-                  InvoiceItemType: x,
-                },
-              },
-            }),
-          ];
-
-          this.panelManager.onPull(pulls);
-
-          return this.panelManager.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.panelManager.context.reset();
-
-        this.panelManager.onPulled(loaded);
-
-        this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
-        this.orderItems = this.order.PurchaseOrderItems;
-      });
+    pulls.push(
+      p.PurchaseOrder({
+        name: prefix,
+        objectId: id,
+        include: {
+          PurchaseOrderItems: {
+            InvoiceItemType: {},
+          },
+        },
+      })
+    );
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
+    this.order = loaded.object<PurchaseOrder>(prefix);
   }
 }

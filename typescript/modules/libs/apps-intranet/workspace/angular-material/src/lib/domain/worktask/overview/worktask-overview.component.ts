@@ -1,100 +1,75 @@
-import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  Injector,
-} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { combineLatest, delay, map, switchMap } from 'rxjs';
+import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { M } from '@allors/default/workspace/meta';
-import { WorkTask } from '@allors/default/workspace/domain';
+import { ActivatedRoute } from '@angular/router';
+import { Good, UnifiedGood, WorkTask } from '@allors/default/workspace/domain';
 import {
-  NavigationActivatedRoute,
-  NavigationService,
-  OldPanelManagerService,
   RefreshService,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import {
+  NavigationService,
+  NavigationActivatedRoute,
+  PanelService,
+  ScopedService,
+  AllorsOverviewPageComponent,
+} from '@allors/base/workspace/angular/application';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './worktask-overview.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [
+    ScopedService,
+    {
+      provide: PanelService,
+      useClass: AllorsMaterialPanelService,
+    },
+  ],
 })
-export class WorkTaskOverviewComponent implements AfterViewInit, OnDestroy {
+export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
   readonly m: M;
-  title = 'WorkTask';
 
   workTask: WorkTask;
 
-  subscription: Subscription;
-
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panelManager: OldPanelManagerService,
-    public workspaceService: WorkspaceService,
-    public refreshService: RefreshService,
-    public navigationService: NavigationService,
-    private route: ActivatedRoute,
-    public injector: Injector,
-    private internalOrganistationId: InternalOrganisationId,
-    titleService: Title
+    @Self() scopedService: ScopedService,
+    @Self() panelService: PanelService,
+    public navigation: NavigationService,
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService
+    );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    this.subscription = combineLatest(
-      this.route.url,
-      this.route.queryParams,
-      this.refreshService.refresh$,
-      this.internalOrganistationId.observable$
-    )
-      .pipe(
-        switchMap(([, ,]) => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.panelManager.objectType = m.WorkTask;
-          this.panelManager.id = navRoute.id();
-          this.panelManager.expanded = navRoute.panel();
+    const id = this.scoped.id;
 
-          this.panelManager.on();
-
-          const pulls = [
-            pull.WorkTask({
-              objectId: this.panelManager.id,
-            }),
-          ];
-
-          this.panelManager.onPull(pulls);
-
-          return this.panelManager.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.panelManager.context.reset();
-        this.panelManager.onPulled(loaded);
-
-        this.workTask = loaded.object<WorkTask>(m.WorkTask);
-      });
+    pulls.push(
+      p.WorkTask({
+        name: prefix,
+        objectId: id,
+      })
+    );
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
+    this.workTask = loaded.object<WorkTask>(prefix);
   }
 }

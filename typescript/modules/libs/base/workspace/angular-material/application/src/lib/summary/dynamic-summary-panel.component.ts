@@ -62,13 +62,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
     private iconService: IconService,
     private displayService: DisplayService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
 
     sharedPullService.register(this);
 

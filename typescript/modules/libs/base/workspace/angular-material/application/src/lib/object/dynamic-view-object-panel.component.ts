@@ -67,13 +67,7 @@ export class AllorsMaterialDynamicViewObjectPanelComponent
     workspaceService: WorkspaceService,
     private diplayService: DisplayService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
   }
 
   ngOnInit() {

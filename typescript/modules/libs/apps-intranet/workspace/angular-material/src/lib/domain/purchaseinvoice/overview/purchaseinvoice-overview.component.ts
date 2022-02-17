@@ -1,132 +1,100 @@
-import {
-  Component,
-  Self,
-  AfterViewInit,
-  OnDestroy,
-  Injector,
-} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { combineLatest, delay, map, switchMap } from 'rxjs';
+import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-import { M } from '@allors/default/workspace/meta';
+import { ActivatedRoute } from '@angular/router';
 import {
-  PurchaseOrder,
   PurchaseInvoice,
+  PurchaseOrder,
 } from '@allors/default/workspace/domain';
 import {
-  NavigationActivatedRoute,
-  NavigationService,
-  OldPanelManagerService,
   RefreshService,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  ContextService,
+  SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import {
+  NavigationService,
+  NavigationActivatedRoute,
+  PanelService,
+  ScopedService,
+  AllorsOverviewPageComponent,
+} from '@allors/base/workspace/angular/application';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './purchaseinvoice-overview.component.html',
-  providers: [OldPanelManagerService, ContextService],
+  providers: [
+    ScopedService,
+    {
+      provide: PanelService,
+      useClass: AllorsMaterialPanelService,
+    },
+  ],
 })
-export class PurchaseInvoiceOverviewComponent
-  implements AfterViewInit, OnDestroy
-{
-  title = 'Purchase Invoice';
+export class PurchaseInvoiceOverviewComponent extends AllorsOverviewPageComponent {
+  m: M;
 
   order: PurchaseOrder;
   invoice: PurchaseInvoice;
 
-  subscription: Subscription;
-  m: M;
-
   constructor(
-    @Self() public allors: ContextService,
-    @Self() public panelManager: OldPanelManagerService,
-    public workspaceService: WorkspaceService,
-    public refreshService: RefreshService,
+    @Self() scopedService: ScopedService,
+    @Self() panelService: PanelService,
     public navigation: NavigationService,
-    private route: ActivatedRoute,
-    private internalOrganisationId: InternalOrganisationId,
-    public injector: Injector,
-    titleService: Title
+    sharedPullService: SharedPullService,
+    refreshService: RefreshService,
+    route: ActivatedRoute,
+    workspaceService: WorkspaceService
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      route,
+      workspaceService
+    );
+    this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
-  public ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    this.subscription = combineLatest(
-      this.route.url,
-      this.route.queryParams,
-      this.refreshService.refresh$,
-      this.internalOrganisationId.observable$
-    )
-      .pipe(
-        switchMap(() => {
-          const navRoute = new NavigationActivatedRoute(this.route);
-          this.panelManager.id = navRoute.id();
-          this.panelManager.objectType = m.PurchaseInvoice;
-          this.panelManager.expanded = navRoute.panel();
+    const id = this.scoped.id;
 
-          const { id } = this.panelManager;
-
-          this.panelManager.on();
-
-          const pulls = [
-            pull.PurchaseInvoice({
-              objectId: id,
-              include: {
-                PurchaseInvoiceItems: {
-                  InvoiceItemType: x,
-                },
-                BilledFrom: x,
-                BilledFromContactPerson: x,
-                BillToEndCustomer: x,
-                BillToEndCustomerContactPerson: x,
-                ShipToEndCustomer: x,
-                ShipToEndCustomerContactPerson: x,
-                PurchaseInvoiceState: x,
-                CreatedBy: x,
-                LastModifiedBy: x,
-                PurchaseOrders: x,
-                DerivedBillToEndCustomerContactMechanism: {
-                  PostalAddress_Country: {},
-                },
-                DerivedShipToEndCustomerAddress: {
-                  Country: x,
-                },
-              },
-            }),
-          ];
-
-          this.panelManager.onPull(pulls);
-
-          return this.panelManager.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.panelManager.context.reset();
-
-        this.panelManager.onPulled(loaded);
-
-        this.order = loaded.object<PurchaseOrder>(m.PurchaseOrder);
-        this.invoice = loaded.object<PurchaseInvoice>(m.PurchaseInvoice);
-      });
+    pulls.push(
+      p.PurchaseInvoice({
+        name: prefix,
+        objectId: id,
+        include: {
+          PurchaseInvoiceItems: {
+            InvoiceItemType: {},
+          },
+          BilledFrom: {},
+          BilledFromContactPerson: {},
+          BillToEndCustomer: {},
+          BillToEndCustomerContactPerson: {},
+          ShipToEndCustomer: {},
+          ShipToEndCustomerContactPerson: {},
+          PurchaseInvoiceState: {},
+          CreatedBy: {},
+          LastModifiedBy: {},
+          PurchaseOrders: {},
+          DerivedBillToEndCustomerContactMechanism: {
+            PostalAddress_Country: {},
+          },
+          DerivedShipToEndCustomerAddress: {
+            Country: {},
+          },
+        },
+      })
+    );
   }
 
-  public ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
+    this.invoice = loaded.object<PurchaseInvoice>(prefix);
   }
 }

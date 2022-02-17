@@ -9,6 +9,12 @@ export class NavigationActivatedRoute {
     return id != null ? parseInt(id) : null;
   }
 
+  composite(): string | null {
+    const url = this.activatedRoute.snapshot.url;
+    const path = url[url.length - 2].path;
+    return path;
+  }
+
   panel(): string | null {
     const queryParamMap = this.activatedRoute.snapshot.queryParamMap;
     return queryParamMap.get('panel');

@@ -22,15 +22,8 @@ export abstract class AllorsViewDetailPanelComponent extends AllorsScopedPanelCo
     scopedService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
-    refreshService: RefreshService,
-    workspaceService: WorkspaceService
+    refreshService: RefreshService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
   }
 }
