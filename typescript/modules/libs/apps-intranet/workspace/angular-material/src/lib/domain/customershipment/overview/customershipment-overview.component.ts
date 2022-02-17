@@ -1,4 +1,3 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CustomerShipment } from '@allors/default/workspace/domain';
@@ -9,14 +8,13 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import { M } from '@allors/default/workspace/meta';
+import { M, PathBuilder } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './customershipment-overview.component.html',
@@ -30,6 +28,7 @@ import { M } from '@allors/default/workspace/meta';
 })
 export class CustomerShipmentOverviewComponent extends AllorsOverviewPageComponent {
   m: M;
+  p: PathBuilder;
   shipment: CustomerShipment;
 
   constructor(
@@ -50,6 +49,7 @@ export class CustomerShipmentOverviewComponent extends AllorsOverviewPageCompone
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.p = this.m.pathBuilder;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

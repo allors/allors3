@@ -26,11 +26,11 @@ For more information visit http://www.allors.com/legal
   <generation template="index" output="index.ts"/>
   <generation template="m" output="m.g.ts"/>
   <generation template="tags" output="tags.g.ts"/>
-  <generation template="pathBuilder" output="pathBuilder.g.ts"/>
-  <generation template="treeBuilder" output="treeBuilder.g.ts"/>
-  <generation template="selectBuilder" output="selectBuilder.g.ts"/>
-  <generation template="resultBuilder" output="resultBuilder.g.ts"/>
-  <generation template="pullBuilder" output="pullBuilder.g.ts"/>
+  <generation template="pathBuilder" output="PathBuilder.g.ts"/>
+  <generation template="treeBuilder" output="TreeBuilder.g.ts"/>
+  <generation template="selectBuilder" output="SelectBuilder.g.ts"/>
+  <generation template="resultBuilder" output="ResultBuilder.g.ts"/>
+  <generation template="pullBuilder" output="PullBuilder.g.ts"/>
 </generations>
 >>
 
@@ -39,11 +39,11 @@ index(meta, workspaceName) ::= <<
 
 export * from './m.g';
 export * from './tags.g';
-export * from './pathBuilder.g';
-export * from './treeBuilder.g';
-export * from './selectBuilder.g';
-export * from './resultBuilder.g';
-export * from './pullBuilder.g';
+export * from './PathBuilder.g';
+export * from './TreeBuilder.g';
+export * from './SelectBuilder.g';
+export * from './ResultBuilder.g';
+export * from './PullBuilder.g';
 >>
 
 m(meta, workspaceName) ::= <<
@@ -164,6 +164,7 @@ pathBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { Path } from '@allors/system/workspace/domain';
+import { Composite } from '@allors/system/workspace/meta';
 
 export interface PathBuilder {
 $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite.name$(path: Path$composite.name$): Path;}; separator="\n\n"$
@@ -174,12 +175,14 @@ $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$pathComposi
 
 pathComposite(composite) ::= <<
 export interface Path$composite.SingularName$$if(composite.WorkspaceSubtypesByWorkspaceName.(workspaceName))$ extends $endif$$composite.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|SubPath$subtype$}; separator=", "$ {
+  ofType?: Composite;
 $composite.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role.Name$?: Path$role.ObjectType.Name$ | Path;}; separator="\n"$
 
 $composite.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association.Name$?: Path$association.ObjectType.Name$ | Path;}; separator="\n"$
 }
 
 export interface SubPath$composite.SingularName$ {
+  ofType?: Composite;
 $composite.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $composite.Name$_$role.Name$?: Path$role.ObjectType.Name$ | Path;}; separator="\n"$
 
 $composite.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $composite.Name$_$association.Name$?: Path$association.ObjectType.Name$ | Path;}; separator="\n"$
@@ -192,6 +195,7 @@ treeBuilder(meta, workspaceName) ::= <<
 // tslint:disable:no-empty-interface
 // tslint:disable:no-consecutive-blank-lines
 import { Node } from '@allors/system/workspace/domain';
+import { Composite } from '@allors/system/workspace/meta';
 
 export interface TreeBuilder {
 $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|   $composite.name$(tree: Tree$composite.name$): Node[];}; separator="\n\n"$
@@ -202,12 +206,14 @@ $meta.WorkspaceCompositesByWorkspaceName.(workspaceName):{composite|$treeComposi
 
 treeComposite(composite) ::= <<
 export interface Tree$composite.SingularName$$if(composite.WorkspaceSubtypesByWorkspaceName.(workspaceName))$ extends $endif$$composite.WorkspaceSubtypesByWorkspaceName.(workspaceName):{subtype|SubTree$subtype$}; separator=", "$ {
+  ofType?: Composite;
 $composite.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $role.Name$?: Tree$role.ObjectType.Name$ | Node[];}; separator="\n"$
 
 $composite.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $association.Name$?: Tree$association.ObjectType.Name$ | Node[];}; separator="\n"$
 }
 
 export interface SubTree$composite.SingularName$ {
+  ofType?: Composite;
 $composite.WorkspaceCompositeRoleTypesByWorkspaceName.(workspaceName):{role|    $composite.Name$_$role.Name$?: Tree$role.ObjectType.Name$ | Node[];}; separator="\n"$
 
 $composite.WorkspaceAssociationTypesByWorkspaceName.(workspaceName):{association|    $composite.Name$_$association.Name$?: Tree$association.ObjectType.Name$ | Node[];}; separator="\n"$

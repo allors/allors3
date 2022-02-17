@@ -16,32 +16,34 @@
         <unifiedgood-overview-summary></unifiedgood-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <unifiedgood-edit-form></unifiedgood-edit-form>
 
-        <productidentification-panel
+        <!-- <productidentification-panel
           [roleType]="m.Good.ProductIdentifications"
-        ></productidentification-panel>
+        ></productidentification-panel> -->
 
-        <nonserialisedinventoryitem-overview-panel
-          *ngIf="serialised === false"
-        ></nonserialisedinventoryitem-overview-panel>
+        <a-mat-dyn-view-object-panel
+          *ngIf="!serialised"
+          [target]="nonSerialisedInventoryItemPath"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          *ngIf="!serialised"
+          [target]="nonSerialisedInventoryItemPath"
+        ></a-mat-dyn-edit-object-panel>
 
-        <serialisedinventoryitem-overview-panel
+        <!-- <serialisedinventoryitem-overview-panel
           *ngIf="serialised === true"
         ></serialisedinventoryitem-overview-panel>
 
         <serialiseditem-overview-panel
           *ngIf="serialised === true"
-        ></serialiseditem-overview-panel>
+        ></serialiseditem-overview-panel> -->
 
         <!--"m.Pricecomopnent.product"-->
-        <pricecomponent-overview-panel></pricecomponent-overview-panel>
+        <!-- <pricecomponent-overview-panel></pricecomponent-overview-panel>
 
-        <supplieroffering-overview-panel></supplieroffering-overview-panel>
+        <supplieroffering-overview-panel></supplieroffering-overview-panel> -->
       </div>
     </div>
   </div>

@@ -43,13 +43,7 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     refreshService: RefreshService,
     public navigation: NavigationService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

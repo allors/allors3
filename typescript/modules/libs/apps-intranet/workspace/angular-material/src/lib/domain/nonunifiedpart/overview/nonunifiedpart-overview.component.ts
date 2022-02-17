@@ -1,4 +1,3 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NonUnifiedPart, Part } from '@allors/default/workspace/domain';
@@ -9,14 +8,13 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import { M } from '@allors/default/workspace/meta';
+import { M, PathBuilder } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './nonunifiedpart-overview.component.html',
@@ -30,8 +28,11 @@ import { M } from '@allors/default/workspace/meta';
 })
 export class NonUnifiedPartOverviewComponent extends AllorsOverviewPageComponent {
   m: M;
+
   part: Part;
   serialised: boolean;
+
+  nonSerialisedInventoryItemPath: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -51,6 +52,14 @@ export class NonUnifiedPartOverviewComponent extends AllorsOverviewPageComponent
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { m } = this;
+    const { pathBuilder: p } = this.m;
+
+    this.nonSerialisedInventoryItemPath = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.NonSerialisedInventoryItem,
+      },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

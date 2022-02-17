@@ -35,11 +35,30 @@ export class AppDisplayService implements DisplayService {
           m.CommunicationEvent.EventPurposes,
         ],
       ],
+      [m.Organisation, [m.Organisation.Name]],
       [
         m.Person,
         [m.Person.FirstName, m.Person.LastName, m.Person.DisplayEmail],
       ],
-      [m.Organisation, [m.Organisation.Name]],
+      [
+        m.NonSerialisedInventoryItem,
+        [
+          m.NonSerialisedInventoryItem.Facility,
+          m.NonSerialisedInventoryItem.Part,
+          m.NonSerialisedInventoryItem.UnitOfMeasure,
+          m.NonSerialisedInventoryItem.PartLocation,
+          m.NonSerialisedInventoryItem.QuantityOnHand,
+          m.NonSerialisedInventoryItem.AvailableToPromise,
+        ],
+      ],
+      [
+        m.ShipmentItem,
+        [
+          m.ShipmentItem.ShipmentItemState,
+          m.ShipmentItem.Good,
+          m.ShipmentItem.Part,
+        ],
+      ],
     ]);
 
     this.secondaryByObjectType = new Map<Composite, RoleType[]>([]);

@@ -1,6 +1,4 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Organisation } from '@allors/default/workspace/domain';
 import {
@@ -10,15 +8,13 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import { M, tags } from '@allors/default/workspace/meta';
-import { Composite } from '@allors/system/workspace/meta';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './organisation-overview-page.component.html',

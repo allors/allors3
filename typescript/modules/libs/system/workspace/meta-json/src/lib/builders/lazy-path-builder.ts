@@ -16,10 +16,12 @@ export class LazyPathBuilder {
               return value != null
                 ? {
                     propertyType,
+                    ofType: this['ofType'],
                     next: this[propertyType.objectType.singularName](value),
                   }
                 : {
                     propertyType,
+                    ofType: this['ofType'],
                   };
             })
           : undefined;

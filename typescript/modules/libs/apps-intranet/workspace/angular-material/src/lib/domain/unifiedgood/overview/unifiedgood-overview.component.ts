@@ -15,7 +15,7 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 
@@ -35,6 +35,8 @@ export class UnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
   good: Good;
   serialised: boolean;
 
+  nonSerialisedInventoryItemPath: Path;
+
   constructor(
     @Self() scopedService: ScopedService,
     @Self() panelService: PanelService,
@@ -53,6 +55,14 @@ export class UnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { m } = this;
+    const { pathBuilder: p } = this.m;
+
+    this.nonSerialisedInventoryItemPath = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.NonSerialisedInventoryItem,
+      },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
