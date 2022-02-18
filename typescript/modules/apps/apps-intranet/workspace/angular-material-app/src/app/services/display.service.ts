@@ -46,6 +46,10 @@ export class AppDisplayService implements DisplayService {
           m.NonSerialisedInventoryItem.AvailableToPromise,
         ],
       ],
+      [
+        m.OrderAdjustment,
+        [m.OrderAdjustment.Amount, m.OrderAdjustment.Percentage],
+      ],
       [m.Organisation, [m.Organisation.Name]],
       [
         m.PartyContactMechanism,
@@ -66,7 +70,74 @@ export class AppDisplayService implements DisplayService {
       ],
       [m.PriceComponent, [m.PriceComponent.Price]],
       [m.ProductIdentification, [m.ProductIdentification.Identification]],
-
+      [
+        m.ProductQuote,
+        [
+          m.ProductQuote.QuoteNumber,
+          m.ProductQuote.Receiver,
+          m.ProductQuote.QuoteState,
+        ],
+      ],
+      [
+        m.PurchaseOrder,
+        [
+          m.PurchaseOrder.OrderNumber,
+          m.PurchaseOrder.Description,
+          m.PurchaseOrder.CustomerReference,
+          m.PurchaseOrder.TotalExVat,
+          m.PurchaseOrder.PurchaseOrderState,
+          m.PurchaseOrder.PurchaseOrderShipmentState,
+          m.PurchaseOrder.PurchaseOrderPaymentState,
+        ],
+      ],
+      [
+        m.QuoteItem,
+        [
+          m.QuoteItem.Product,
+          m.QuoteItem.SerialisedItem,
+          m.QuoteItem.QuoteItemState,
+          m.QuoteItem.Quantity,
+          m.QuoteItem.UnitPrice,
+          m.QuoteItem.TotalExVat,
+        ],
+      ],
+      [
+        m.RepeatingPurchaseInvoice,
+        [
+          m.RepeatingPurchaseInvoice.InternalOrganisation,
+          m.RepeatingPurchaseInvoice.Frequency,
+          m.RepeatingPurchaseInvoice.DayOfWeek,
+          m.RepeatingPurchaseInvoice.PreviousExecutionDate,
+          m.RepeatingPurchaseInvoice.NextExecutionDate,
+          m.RepeatingPurchaseInvoice.FinalExecutionDate,
+        ],
+      ],
+      [
+        m.RequestForQuote,
+        [
+          m.RequestForQuote.RequestNumber,
+          m.RequestForQuote.Originator,
+          m.RequestForQuote.RequestState,
+        ],
+      ],
+      [
+        m.SalesInvoice,
+        [
+          m.SalesInvoice.InvoiceNumber,
+          m.SalesInvoice.BillToCustomer,
+          m.SalesInvoice.TotalExVat,
+          m.SalesInvoice.SalesInvoiceState,
+        ],
+      ],
+      [
+        m.SalesOrder,
+        [
+          m.SalesOrder.OrderNumber,
+          m.SalesOrder.BillToCustomer,
+          m.SalesOrder.TotalExVat,
+          m.SalesOrder.SalesOrderState,
+        ],
+      ],
       [
         m.SerialisedInventoryItem,
         [

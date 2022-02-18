@@ -16,19 +16,21 @@
         <purchaseinvoice-overview-summary></purchaseinvoice-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <purchaseinvoice-edit-form></purchaseinvoice-edit-form>
 
-        <purchaseinvoiceitem-overview-panel></purchaseinvoiceitem-overview-panel>
+        <!-- <purchaseinvoiceitem-overview-panel></purchaseinvoiceitem-overview-panel> -->
 
-        <orderadjustment-overview-panel></orderadjustment-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.OrderAdjustment.InvoiceWhereOrderAdjustment"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.OrderAdjustment.InvoiceWhereOrderAdjustment"
+        ></a-mat-dyn-edit-object-panel>
 
-        <purchaseorderinvoice-overview-panel></purchaseorderinvoice-overview-panel>
+        <!-- <purchaseorderinvoice-overview-panel></purchaseorderinvoice-overview-panel>
 
-        <payment-overview-panel></payment-overview-panel>
+        <payment-overview-panel></payment-overview-panel> -->
       </div>
     </div>
   </div>

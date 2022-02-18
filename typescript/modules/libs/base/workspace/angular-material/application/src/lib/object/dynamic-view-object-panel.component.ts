@@ -44,7 +44,7 @@ export class AllorsMaterialDynamicViewObjectPanelComponent
   }
 
   @Input()
-  anchor: RoleType | RoleType[];
+  anchor: PropertyType | PropertyType[];
 
   @Input()
   target: PropertyType | Path | (PropertyType | Path)[];

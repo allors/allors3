@@ -33,6 +33,10 @@ export class SerialisedItemOverviewComponent extends AllorsOverviewPageComponent
 
   workEffortTarget: Path;
   workrequirementfulfillmentTarget: Path;
+  salesInvoiceTarget: Path;
+  salesOrderTarget: Path;
+  quoteTarget: Path;
+  requestTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -63,6 +67,30 @@ export class SerialisedItemOverviewComponent extends AllorsOverviewPageComponent
     this.workrequirementfulfillmentTarget = p.FixedAsset({
       WorkRequirementsWhereFixedAsset: {
         WorkRequirementFulfillmentWhereFullfilledBy: {},
+      },
+    });
+
+    this.salesInvoiceTarget = p.SerialisedItem({
+      SalesInvoiceItemsWhereSerialisedItem: {
+        SalesInvoiceWhereSalesInvoiceItem: {},
+      },
+    });
+
+    this.salesOrderTarget = p.SerialisedItem({
+      SalesOrderItemsWhereSerialisedItem: {
+        SalesOrderWhereSalesOrderItem: {},
+      },
+    });
+
+    this.quoteTarget = p.SerialisedItem({
+      QuoteItemsWhereSerialisedItem: {
+        QuoteWhereQuoteItem: {},
+      },
+    });
+
+    this.requestTarget = p.SerialisedItem({
+      RequestItemsWhereSerialisedItem: {
+        RequestWhereRequestItem: {},
       },
     });
   }

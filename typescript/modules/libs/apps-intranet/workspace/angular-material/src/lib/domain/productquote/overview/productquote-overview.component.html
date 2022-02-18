@@ -16,15 +16,22 @@
         <productquote-overview-summary></productquote-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <productquote-edit-form></productquote-edit-form>
 
-        <quoteitem-overview-panel></quoteitem-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.QuoteItem.QuoteWhereQuoteItem"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.QuoteItem.QuoteWhereQuoteItem"
+        ></a-mat-dyn-edit-object-panel>
 
-        <orderadjustment-overview-panel></orderadjustment-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.OrderAdjustment.QuoteWhereOrderAdjustment"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.OrderAdjustment.QuoteWhereOrderAdjustment"
+        ></a-mat-dyn-edit-object-panel>
       </div>
     </div>
   </div>

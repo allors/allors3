@@ -22,7 +22,7 @@ export abstract class AllorsViewObjectPanelComponent
 
   readonly panelKind = 'Object';
 
-  abstract anchor: RoleType | RoleType[];
+  abstract anchor: PropertyType | PropertyType[];
 
   abstract target: PropertyType | Path | (PropertyType | Path)[];
 

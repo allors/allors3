@@ -59,12 +59,18 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
     return this.objectType.pluralName;
   }
 
-  get initializer(): Initializer {
-    return { propertyType: this.anchor, id: this.scoped.id };
+  get initializer(): Initializer[] {
+    if (Array.isArray(this.anchor)) {
+      return this.anchor.map((v) => {
+        return { propertyType: v, id: this.scoped.id };
+      });
+    } else {
+      return [{ propertyType: this.anchor, id: this.scoped.id }];
+    }
   }
 
   @Input()
-  anchor: RoleType | RoleType[];
+  anchor: PropertyType | PropertyType[];
 
   @Input()
   target: PropertyType | Path | (PropertyType | Path)[];

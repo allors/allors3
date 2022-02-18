@@ -1,8 +1,9 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { Organisation } from '@allors/default/workspace/domain';
+import {
+  Organisation,
+  SupplierOffering,
+} from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -10,15 +11,14 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import { M, PathBuilder } from '@allors/default/workspace/meta';
-import { PropertyType, RoleType } from '@allors/system/workspace/meta';
+import { M } from '@allors/default/workspace/meta';
+import { PropertyType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './organisation-overview-page.component.html',
@@ -33,6 +33,7 @@ import { PropertyType, RoleType } from '@allors/system/workspace/meta';
 export class OrganisationOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
   object: Organisation;
+  supplierOfferings: SupplierOffering[];
 
   contactMechanismTarget: Path;
   serialisedItemTarget: PropertyType[];
@@ -77,11 +78,15 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
       p.Organisation({
         name: prefix,
         objectId: this.scoped.id,
+        include: {
+          SupplierOfferingsWhereSupplier: {},
+        },
       })
     );
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.object = pullResult.object(prefix);
+    this.supplierOfferings = this.object.SupplierOfferingsWhereSupplier;
   }
 }

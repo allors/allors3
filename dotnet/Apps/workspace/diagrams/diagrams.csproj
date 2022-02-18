@@ -45,6 +45,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="panel\QuoteItem.cd" />
+    <None Include="panel\OrderAdjustment.cd" />
+    <None Include="panel\RepeatingPurchaseInvoice.cd" />
+    <None Include="panel\PurchaseOrder.cd" />
+    <None Include="panel\Request.cd" />
+    <None Include="panel\Quote.cd" />
+    <None Include="panel\SalesOrder.cd" />
+    <None Include="panel\SalesInvoice.cd" />
     <None Include="panel\WorkRequirementFulfillment.cd" />
     <None Include="panel\PartyRate.cd" />
     <None Include="panel\PartyRelationship.cd" />

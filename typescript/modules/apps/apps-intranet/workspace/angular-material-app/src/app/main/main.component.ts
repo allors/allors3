@@ -6,15 +6,11 @@ import { Subscription } from 'rxjs';
 
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { Organisation } from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 import {
   AllorsMaterialSideNavService,
-  angularSingularName,
-  angularIcon,
-  angularList,
-  angularMenu,
   SideMenuItem,
-} from '@allors/base/workspace/angular/foundation';
-import { M } from '@allors/default/workspace/meta';
+} from '@allors/base/workspace/angular-material/application';
 
 @Component({
   styleUrls: ['main.component.scss'],

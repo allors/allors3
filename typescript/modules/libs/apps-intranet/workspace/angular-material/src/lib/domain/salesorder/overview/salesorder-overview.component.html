@@ -16,17 +16,19 @@
         <salesorder-overview-summary></salesorder-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <salesorder-edit-form></salesorder-edit-form>
 
-        <salesorderitem-overview-panel></salesorderitem-overview-panel>
+        <!-- <salesorderitem-overview-panel></salesorderitem-overview-panel> -->
 
-        <orderadjustment-overview-panel></orderadjustment-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.OrderAdjustment.OrderWhereOrderAdjustment"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.OrderAdjustment.OrderWhereOrderAdjustment"
+        ></a-mat-dyn-edit-object-panel>
 
-        <salesterm-overview-panel></salesterm-overview-panel>
+        <!-- <salesterm-overview-panel></salesterm-overview-panel> -->
       </div>
     </div>
   </div>

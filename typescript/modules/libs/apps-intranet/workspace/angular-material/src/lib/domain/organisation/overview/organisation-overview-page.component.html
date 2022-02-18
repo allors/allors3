@@ -73,19 +73,51 @@
           [anchor]="m.WorkEffort.Customer"
         ></a-mat-dyn-edit-object-panel>
 
-        <!-- <salesinvoice-overview-panel></salesinvoice-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.SalesInvoice.BillToCustomer"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.SalesInvoice.BillToCustomer"
+        ></a-mat-dyn-edit-object-panel>
 
-        <salesorder-overview-panel></salesorder-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.SalesOrder.BillToCustomer"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.SalesOrder.BillToCustomer"
+        ></a-mat-dyn-edit-object-panel>
 
-        <productquote-overview-panel></productquote-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.Quote.Receiver"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.Quote.Receiver"
+        ></a-mat-dyn-edit-object-panel>
 
-        <requestforquote-overview-panel></requestforquote-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.Request.Originator"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.Request.Originator"
+        ></a-mat-dyn-edit-object-panel>
 
-        <div *ngIf="supplierOfferings && supplierOfferings.length > 0">
-          <purchaseorder-overview-panel></purchaseorder-overview-panel>
+        <a-mat-dyn-view-object-panel
+          *ngIf="supplierOfferings?.length > 0"
+          [anchor]="m.PurchaseOrder.TakenViaSupplier"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          *ngIf="supplierOfferings?.length > 0"
+          [anchor]="m.PurchaseOrder.TakenViaSupplier"
+        ></a-mat-dyn-edit-object-panel>
 
-          <repeatingpurchaseinvoice-overview-panel></repeatingpurchaseinvoice-overview-panel>
-        </div> -->
+        <a-mat-dyn-view-object-panel
+          *ngIf="supplierOfferings?.length > 0"
+          [anchor]="m.RepeatingPurchaseInvoice.Supplier"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          *ngIf="supplierOfferings?.length > 0"
+          [anchor]="m.RepeatingPurchaseInvoice.Supplier"
+        ></a-mat-dyn-edit-object-panel>
       </div>
     </div>
   </div>
