@@ -1,8 +1,8 @@
 import { Path } from '@allors/system/workspace/domain';
-import { RoleType } from '@allors/system/workspace/meta';
+import { PropertyType, RoleType } from '@allors/system/workspace/meta';
 
 export interface ObjectPanel {
-  anchor: RoleType;
+  anchor: RoleType | RoleType[];
 
-  target: Path;
+  target: PropertyType | Path | (PropertyType | Path)[];
 }

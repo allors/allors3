@@ -1,8 +1,6 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { SalesInvoice, SerialisedItem } from '@allors/default/workspace/domain';
+import { SerialisedItem } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -10,12 +8,11 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 
@@ -33,6 +30,9 @@ export class SerialisedItemOverviewComponent extends AllorsOverviewPageComponent
   readonly m: M;
 
   serialisedItem: SerialisedItem;
+
+  workEffortTarget: Path;
+  workrequirementfulfillmentTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -52,6 +52,19 @@ export class SerialisedItemOverviewComponent extends AllorsOverviewPageComponent
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { pathBuilder: p } = this.m;
+
+    this.workEffortTarget = p.FixedAsset({
+      WorkEffortFixedAssetAssignmentsWhereFixedAsset: {
+        Assignment: {},
+      },
+    });
+
+    this.workrequirementfulfillmentTarget = p.FixedAsset({
+      WorkRequirementsWhereFixedAsset: {
+        WorkRequirementFulfillmentWhereFullfilledBy: {},
+      },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

@@ -1,5 +1,9 @@
 import { Component, HostBinding, Input } from '@angular/core';
-import { Composite, RoleType } from '@allors/system/workspace/meta';
+import {
+  Composite,
+  PropertyType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
@@ -60,10 +64,10 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
   }
 
   @Input()
-  anchor: RoleType;
+  anchor: RoleType | RoleType[];
 
   @Input()
-  target: Path;
+  target: PropertyType | Path | (PropertyType | Path)[];
 
   leaf: Path;
   objectType: Composite;

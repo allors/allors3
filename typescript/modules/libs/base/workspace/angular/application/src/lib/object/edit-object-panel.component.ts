@@ -3,7 +3,7 @@ import {
   RefreshService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { RoleType } from '@allors/system/workspace/meta';
+import { PropertyType, RoleType } from '@allors/system/workspace/meta';
 import { Directive } from '@angular/core';
 import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
 import { ScopedService } from '../scoped/scoped.service';
@@ -22,9 +22,9 @@ export abstract class AllorsEditObjectPanelComponent
 
   readonly panelKind = 'Object';
 
-  abstract anchor: RoleType;
+  abstract anchor: RoleType | RoleType[];
 
-  abstract target: Path;
+  abstract target: PropertyType | Path | (PropertyType | Path)[];
 
   constructor(
     itemPageService: ScopedService,

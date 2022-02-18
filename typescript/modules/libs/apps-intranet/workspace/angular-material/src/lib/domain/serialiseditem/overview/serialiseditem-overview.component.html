@@ -2,9 +2,8 @@
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
       <div class="col">
-        <a (click)="navigationService.list(m.SerialisedItem)"
-          >Serialised Assets</a
-        >/ {{ serialisedItem?.DisplayName }}
+        <a (click)="navigation.list(m.SerialisedItem)">Serialised Assets</a>/
+        {{ serialisedItem?.DisplayName }}
       </div>
     </div>
   </div>
@@ -15,25 +14,37 @@
         <serialiseditem-overview-summary></serialiseditem-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <serialiseditem-edit-form></serialiseditem-edit-form>
 
-        <serialisedinventoryitem-overview-panel></serialisedinventoryitem-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.SerialisedInventoryItem.SerialisedItem"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.SerialisedInventoryItem.SerialisedItem"
+        ></a-mat-dyn-edit-object-panel>
 
-        <worktask-overview-panel></worktask-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [target]="workEffortTarget"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="workEffortTarget"
+        ></a-mat-dyn-edit-object-panel>
 
-        <workrequirementfulfillment-overview-panel></workrequirementfulfillment-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [target]="workrequirementfulfillmentTarget"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="workrequirementfulfillmentTarget"
+        ></a-mat-dyn-edit-object-panel>
 
-        <salesinvoice-overview-panel></salesinvoice-overview-panel>
+        <!-- <salesinvoice-overview-panel></salesinvoice-overview-panel>
 
         <salesorder-overview-panel></salesorder-overview-panel>
 
         <productquote-overview-panel></productquote-overview-panel>
 
-        <requestforquote-overview-panel></requestforquote-overview-panel>
+        <requestforquote-overview-panel></requestforquote-overview-panel> -->
       </div>
     </div>
   </div>

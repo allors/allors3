@@ -19,34 +19,53 @@
       <div class="col-md-8 align-self-stretch">
         <nonunifiedpart-edit-form></nonunifiedpart-edit-form>
 
-        <!-- <productidentification-panel
-          [roleType]="m.Part.ProductIdentifications"
-        ></productidentification-panel>
-
-        <nonserialisedinventoryitem-overview-panel
-          *ngIf="serialised === false"
-        ></nonserialisedinventoryitem-overview-panel> -->
+        <a-mat-dyn-view-object-panel
+          [target]="m.Part.ProductIdentifications"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="m.Part.ProductIdentifications"
+        ></a-mat-dyn-edit-object-panel>
 
         <a-mat-dyn-view-object-panel
           *ngIf="!serialised"
-          [target]="nonSerialisedInventoryItemPath"
+          [target]="nonSerialisedInventoryItemTarget"
         ></a-mat-dyn-view-object-panel>
         <a-mat-dyn-edit-object-panel
           *ngIf="!serialised"
-          [target]="nonSerialisedInventoryItemPath"
+          [target]="nonSerialisedInventoryItemTarget"
         ></a-mat-dyn-edit-object-panel>
 
-        <!-- <serialisedinventoryitem-overview-panel
-          *ngIf="serialised === true"
-        ></serialisedinventoryitem-overview-panel>
+        <a-mat-dyn-view-object-panel
+          *ngIf="!!serialised"
+          [target]="serialisedInventoryItemTarget"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          *ngIf="!!serialised"
+          [target]="serialisedInventoryItemTarget"
+        ></a-mat-dyn-edit-object-panel>
 
-        <serialiseditem-overview-panel
-          *ngIf="serialised === true"
-        ></serialiseditem-overview-panel>
+        <a-mat-dyn-view-object-panel
+          *ngIf="!!serialised"
+          [target]="m.Part.SerialisedItems"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          *ngIf="!!serialised"
+          [target]="m.Part.SerialisedItems"
+        ></a-mat-dyn-edit-object-panel>
 
-        <pricecomponent-overview-panel></pricecomponent-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [target]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-edit-object-panel>
 
-        <supplieroffering-overview-panel></supplieroffering-overview-panel> -->
+        <a-mat-dyn-view-object-panel
+          [target]="m.Part.SupplierOfferingsWherePart"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="m.Part.SupplierOfferingsWherePart"
+        ></a-mat-dyn-edit-object-panel>
       </div>
     </div>
   </div>

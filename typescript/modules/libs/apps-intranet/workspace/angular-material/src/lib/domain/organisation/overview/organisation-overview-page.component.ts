@@ -15,9 +15,10 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M, PathBuilder } from '@allors/default/workspace/meta';
+import { PropertyType, RoleType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './organisation-overview-page.component.html',
@@ -31,8 +32,10 @@ import { M, PathBuilder } from '@allors/default/workspace/meta';
 })
 export class OrganisationOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
-  path: PathBuilder;
   object: Organisation;
+
+  contactMechanismTarget: Path;
+  serialisedItemTarget: PropertyType[];
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -52,6 +55,17 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { m } = this;
+    const { pathBuilder: p } = this.m;
+
+    this.contactMechanismTarget = p.Party({
+      CurrentPartyContactMechanisms: { ContactMechanism: {} },
+    });
+
+    this.serialisedItemTarget = [
+      m.Party.SerialisedItemsWhereOwnedBy,
+      m.Party.SerialisedItemsWhereRentedBy,
+    ];
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

@@ -92,12 +92,8 @@ export { PartCategoryListComponent } from './lib/domain/partcategory/list/partca
 export { PartyInlineComponent } from './lib/domain/party/inline/party-inline.component';
 
 export { PartyContactmechanismFormComponent } from './lib/domain/partycontactmechanism/form/partycontactmechanism-form.component';
-export { PartyContactMechanismOverviewPanelComponent } from './lib/domain/partycontactmechanism/overview/panel/partycontactmechanism-overview-panel.component';
 
 export { PartyRateFormComponent } from './lib/domain/partyrate/form/partyrate-form.component';
-export { PartyRateOverviewPanelComponent } from './lib/domain/partyrate/overview/panel/partyrate-overview-panel.component';
-
-export { PartyRelationshipOverviewPanelComponent } from './lib/domain/partyrelationship/overview/panel/partyrelationship-overview-panel.component';
 
 export { PaymentOverviewPanelComponent } from './lib/domain/payment/overview/panel/payment-overview-panel.component';
 
@@ -120,13 +116,10 @@ export { PostalAddressCreateFormComponent } from './lib/domain/postaladdress/cre
 export { PostalAddressFormComponent } from './lib/domain/postaladdress/edit/postaladdress-edit-form.component';
 export { PartyContactMechanismPostalAddressInlineComponent } from './lib/domain/postaladdress/inline/postaladdress-inline.component';
 
-export { PriceComponentOverviewPanelComponent } from './lib/domain/pricecomponent/overview/panel/pricecomponent-overview-panel.component';
-
 export { ProductCategoryFormComponent } from './lib/domain/productcategory/form/productcategory-form.component';
 export { ProductCategoryListComponent } from './lib/domain/productcategory/list/productcategory-list.component';
 
 export { ProductIdentificationFormComponent } from './lib/domain/productidentification/form/productidentification-form.component';
-export { ProductIdentificationsPanelComponent } from './lib/domain/productidentification/overview/panel/productidentification-panel.component';
 
 export { ProductQuoteCreateFormComponent } from './lib/domain/productquote/create/productquote-create-form.component';
 export { ProductQuoteListComponent } from './lib/domain/productquote/list/productquote-list.component';
@@ -217,13 +210,10 @@ export { SalesOrderItemOverviewPanelComponent } from './lib/domain/salesorderite
 export { SalesTermFormComponent } from './lib/domain/salesterm/form/salesterm-form.component';
 export { SalesTermOverviewPanelComponent } from './lib/domain/salesterm/overview/panel/salesterm-overview-panel.component';
 
-export { SerialisedInventoryItemComponent } from './lib/domain/serialisedinventoryitem/overview/panel/serialisedinventoryitem-overview-panel.component';
-
 export { SerialisedItemCreateFormComponent } from './lib/domain/serialiseditem/create/serialiseditem-create-form.component';
 export { SerialisedItemListComponent } from './lib/domain/serialiseditem/list/serialiseditem-list.component';
 export { SerialisedItemOverviewComponent } from './lib/domain/serialiseditem/overview/serialiseditem-overview.component';
 export { SerialisedItemEditFormComponent } from './lib/domain/serialiseditem/edit/serialiseditem-edit-form.component';
-export { SerialisedItemOverviewPanelComponent } from './lib/domain/serialiseditem/overview/panel/serialiseditem-overview-panel.component';
 export { SerialisedItemOverviewSummaryComponent } from './lib/domain/serialiseditem/summary/serialiseditem-overview-summary.component';
 
 export { SerialisedItemCharacteristicFormComponent } from './lib/domain/serialiseditemcharacteristictype/form/serialiseditemcharacteristic-form.component';
@@ -236,7 +226,6 @@ export { ShipmentItemFormComponent } from './lib/domain/shipmentitem/form/shipme
 export { SubContractorRelationshipFormComponent } from './lib/domain/subcontractorrelationship/form/subcontractorrelationship-form.component';
 
 export { SupplierOfferingFormComponent } from './lib/domain/supplieroffering/form/supplieroffering-form.component';
-export { SupplierOfferingOverviewPanelComponent } from './lib/domain/supplieroffering/overview/panel/supplieroffering-overview-panel.component';
 
 export { SupplierRelationshipFormComponent } from './lib/domain/supplierrelationship/form/supplierrelationship-form.component';
 
@@ -292,10 +281,8 @@ export { WorkRequirementOverviewPanelComponent } from './lib/domain/workrequirem
 export { WorkRequirementOverviewSummaryComponent } from './lib/domain/workrequirement/summary/workrequirement-overview-summary.component';
 
 export { WorkRequirementFulfillmentCreateFormComponent } from './lib/domain/workrequirementfulfillment/create/workrequirementfulfillment-create-form.component';
-export { WorkRequirementFulfillmentOverviewPanelComponent } from './lib/domain/workrequirementfulfillment/overview/panel/workrequirementfulfillment-overview-panel.component';
 
 export { WorkTaskCreateFormComponent } from './lib/domain/worktask/create/worktask-create-form.component';
 export { WorkTaskOverviewComponent } from './lib/domain/worktask/overview/worktask-overview.component';
 export { WorkTaskEditFormComponent } from './lib/domain/worktask/edit/worktask-edit-form.component';
-export { WorkTaskOverviewPanelComponent } from './lib/domain/worktask/overview/panel/worktask-overview-panel.component';
 export { WorkTaskOverviewSummaryComponent } from './lib/domain/worktask/summary/worktask-overview-summary.component';

@@ -16,17 +16,22 @@
         <nonunifiedgood-overview-summary></nonunifiedgood-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <nonunifiedgood-edit-form></nonunifiedgood-edit-form>
 
-        <productidentification-panel
-          [roleType]="m.Good.ProductIdentifications"
-        ></productidentification-panel>
+        <a-mat-dyn-view-object-panel
+          [target]="m.Good.ProductIdentifications"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="m.Good.ProductIdentifications"
+        ></a-mat-dyn-edit-object-panel>
 
-        <pricecomponent-overview-panel></pricecomponent-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [target]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-edit-object-panel>
       </div>
     </div>
   </div>

@@ -1,6 +1,4 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Good } from '@allors/default/workspace/domain';
 import {
@@ -10,7 +8,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
@@ -35,7 +32,8 @@ export class UnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
   good: Good;
   serialised: boolean;
 
-  nonSerialisedInventoryItemPath: Path;
+  nonSerialisedInventoryItemTarget: Path;
+  serialisedInventoryItemTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -58,9 +56,15 @@ export class UnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
     const { m } = this;
     const { pathBuilder: p } = this.m;
 
-    this.nonSerialisedInventoryItemPath = p.NonUnifiedPart({
+    this.nonSerialisedInventoryItemTarget = p.NonUnifiedPart({
       InventoryItemsWherePart: {
         ofType: m.NonSerialisedInventoryItem,
+      },
+    });
+
+    this.serialisedInventoryItemTarget = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.SerialisedInventoryItem,
       },
     });
   }

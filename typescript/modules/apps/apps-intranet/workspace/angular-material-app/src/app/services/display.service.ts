@@ -35,11 +35,6 @@ export class AppDisplayService implements DisplayService {
           m.CommunicationEvent.EventPurposes,
         ],
       ],
-      [m.Organisation, [m.Organisation.Name]],
-      [
-        m.Person,
-        [m.Person.FirstName, m.Person.LastName, m.Person.DisplayEmail],
-      ],
       [
         m.NonSerialisedInventoryItem,
         [
@@ -51,6 +46,48 @@ export class AppDisplayService implements DisplayService {
           m.NonSerialisedInventoryItem.AvailableToPromise,
         ],
       ],
+      [m.Organisation, [m.Organisation.Name]],
+      [
+        m.PartyContactMechanism,
+        [
+          m.PartyContactMechanism.Party,
+          m.PartyContactMechanism.ContactPurposes,
+          m.PartyContactMechanism.ContactMechanism,
+        ],
+      ],
+      [
+        m.PartyRate,
+        [m.PartyRate.RateType, m.PartyRate.Rate, m.PartyRate.Frequency],
+      ],
+      [m.PartyRelationship, [m.PartyRelationship.Parties]],
+      [
+        m.Person,
+        [m.Person.FirstName, m.Person.LastName, m.Person.DisplayEmail],
+      ],
+      [m.PriceComponent, [m.PriceComponent.Price]],
+      [m.ProductIdentification, [m.ProductIdentification.Identification]],
+
+      [
+        m.SerialisedInventoryItem,
+        [
+          m.SerialisedInventoryItem.Facility,
+          m.SerialisedInventoryItem.SerialisedItem,
+          m.SerialisedInventoryItem.Part,
+          m.SerialisedInventoryItem.Quantity,
+          m.SerialisedInventoryItem.SerialisedInventoryItemState,
+        ],
+      ],
+      [
+        m.SerialisedItem,
+        [
+          m.SerialisedItem.ItemNumber,
+          m.SerialisedItem.DisplayName,
+          m.SerialisedItem.SerialisedItemAvailability,
+          m.SerialisedItem.AvailableForSale,
+          m.SerialisedItem.Ownership,
+          m.SerialisedItem.OwnedBy,
+        ],
+      ],
       [
         m.ShipmentItem,
         [
@@ -59,9 +96,44 @@ export class AppDisplayService implements DisplayService {
           m.ShipmentItem.Part,
         ],
       ],
+      [
+        m.SupplierOffering,
+        [
+          m.SupplierOffering.Supplier,
+          m.SupplierOffering.Price,
+          m.SupplierOffering.UnitOfMeasure,
+        ],
+      ],
+      [
+        m.WorkRequirementFulfillment,
+        [
+          m.WorkRequirementFulfillment.WorkEffortNumber,
+          m.WorkRequirementFulfillment.WorkEffortName,
+          m.WorkRequirementFulfillment.WorkRequirementNumber,
+          m.WorkRequirementFulfillment.WorkRequirementDescription,
+        ],
+      ],
+      [
+        m.WorkTask,
+        [
+          m.WorkTask.WorkEffortNumber,
+          m.WorkTask.Customer,
+          m.WorkTask.WorkEffortState,
+          m.WorkTask.TotalCost,
+        ],
+      ],
     ]);
 
-    this.secondaryByObjectType = new Map<Composite, RoleType[]>([]);
+    this.secondaryByObjectType = new Map<Composite, RoleType[]>([
+      [
+        m.WorkRequirementFulfillment,
+        [
+          m.WorkRequirementFulfillment.FullfillmentOf,
+          m.WorkRequirementFulfillment.FullfilledBy,
+          m.WorkRequirementFulfillment.FixedAsset,
+        ],
+      ],
+    ]);
 
     this.tertiaryByObjectType = new Map<Composite, RoleType[]>([]);
   }

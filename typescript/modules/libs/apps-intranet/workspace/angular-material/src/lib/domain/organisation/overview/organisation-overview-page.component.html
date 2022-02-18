@@ -30,32 +30,50 @@
 
         <a-mat-dyn-view-object-panel
           [anchor]="m.CommunicationEvent.FromParty"
-          [target]="
-            path.Party({
-              CurrentPartyContactMechanisms: { ContactMechanism: {} }
-            })
-          "
+          [target]="contactMechanismTarget"
         ></a-mat-dyn-view-object-panel>
         <a-mat-dyn-edit-object-panel
           [anchor]="m.CommunicationEvent.FromParty"
-          [target]="
-            path.Party({
-              CurrentPartyContactMechanisms: { ContactMechanism: {} }
-            })
-          "
+          [target]="contactMechanismTarget"
         ></a-mat-dyn-edit-object-panel>
 
-        <partycontactmechanism-overview-panel></partycontactmechanism-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.PartyContactMechanism.Party"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.PartyContactMechanism.Party"
+        ></a-mat-dyn-edit-object-panel>
 
-        <partyrelationship-overview-panel></partyrelationship-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.PartyRelationship.Parties"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.PartyRelationship.Parties"
+        ></a-mat-dyn-edit-object-panel>
 
-        <serialiseditem-overview-panel></serialiseditem-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [target]="serialisedItemTarget"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [target]="serialisedItemTarget"
+        ></a-mat-dyn-edit-object-panel>
 
-        <partyrate-overview-panel></partyrate-overview-panel>
+        // TODO: Flip Party-PartyRates relation
+        <!-- <a-mat-dyn-view-object-panel
+          [anchor]="m.PartyRate.Party"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.PartyRate.Party"
+        ></a-mat-dyn-edit-object-panel> -->
 
-        <worktask-overview-panel></worktask-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.WorkEffort.Customer"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.WorkEffort.Customer"
+        ></a-mat-dyn-edit-object-panel>
 
-        <salesinvoice-overview-panel></salesinvoice-overview-panel>
+        <!-- <salesinvoice-overview-panel></salesinvoice-overview-panel>
 
         <salesorder-overview-panel></salesorder-overview-panel>
 
@@ -67,7 +85,7 @@
           <purchaseorder-overview-panel></purchaseorder-overview-panel>
 
           <repeatingpurchaseinvoice-overview-panel></repeatingpurchaseinvoice-overview-panel>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

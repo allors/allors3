@@ -2,7 +2,7 @@
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
       <div class="col">
-        <a (click)="navigationService.list(m.WorkEffort)">WorkEfforts</a>/
+        <a (click)="navigation.list(m.WorkEffort)">WorkEfforts</a>/
         {{ workTask?.Name }}
       </div>
     </div>
@@ -14,13 +14,10 @@
         <worktask-overview-summary></worktask-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <worktask-edit-form></worktask-edit-form>
 
-        <workeffortpartyassignment-overview-panel></workeffortpartyassignment-overview-panel>
+        <!-- <workeffortpartyassignment-overview-panel></workeffortpartyassignment-overview-panel>
 
         <workeffortfixedassetassignment-overview-panel></workeffortfixedassetassignment-overview-panel>
 
@@ -32,11 +29,16 @@
 
         <workeffortinvoiceitemeassignment-overview-panel></workeffortinvoiceitemeassignment-overview-panel>
 
-        <workeffortpurchaseorderitemassignment-overview-panel></workeffortpurchaseorderitemassignment-overview-panel>
+        <workeffortpurchaseorderitemassignment-overview-panel></workeffortpurchaseorderitemassignment-overview-panel> -->
 
-        <workrequirementfulfillment-overview-panel></workrequirementfulfillment-overview-panel>
+        <a-mat-dyn-view-object-panel
+          [anchor]="m.WorkRequirementFulfillment.FullfillmentOf"
+        ></a-mat-dyn-view-object-panel>
+        <a-mat-dyn-edit-object-panel
+          [anchor]="m.WorkRequirementFulfillment.FullfillmentOf"
+        ></a-mat-dyn-edit-object-panel>
 
-        <workeffort-overview-panel></workeffort-overview-panel>
+        <!-- <workeffort-overview-panel></workeffort-overview-panel> -->
       </div>
     </div>
   </div>

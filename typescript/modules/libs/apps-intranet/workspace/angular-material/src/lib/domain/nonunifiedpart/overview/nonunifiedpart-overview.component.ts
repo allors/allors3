@@ -14,7 +14,7 @@ import {
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import { M, PathBuilder } from '@allors/default/workspace/meta';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   templateUrl: './nonunifiedpart-overview.component.html',
@@ -32,7 +32,8 @@ export class NonUnifiedPartOverviewComponent extends AllorsOverviewPageComponent
   part: Part;
   serialised: boolean;
 
-  nonSerialisedInventoryItemPath: Path;
+  nonSerialisedInventoryItemTarget: Path;
+  serialisedInventoryItemTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -55,9 +56,15 @@ export class NonUnifiedPartOverviewComponent extends AllorsOverviewPageComponent
     const { m } = this;
     const { pathBuilder: p } = this.m;
 
-    this.nonSerialisedInventoryItemPath = p.NonUnifiedPart({
+    this.nonSerialisedInventoryItemTarget = p.NonUnifiedPart({
       InventoryItemsWherePart: {
         ofType: m.NonSerialisedInventoryItem,
+      },
+    });
+
+    this.serialisedInventoryItemTarget = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.SerialisedInventoryItem,
       },
     });
   }
