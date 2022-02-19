@@ -111,7 +111,7 @@ import {
 
 import {
   // Service
-  LinkService,
+  HyperlinkService,
 } from '@allors/base/workspace/angular-material/application';
 
 import {
@@ -167,7 +167,7 @@ import { AppDisplayService } from './services/display.service';
 
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
-import { AppLinkService } from './services/link.service';
+import { AppHyperlinkService } from './services/hyperlink.service';
 import { AppActionService } from './services/action.service';
 
 @NgModule({
@@ -334,7 +334,7 @@ import { AppActionService } from './services/action.service';
     { provide: IconService, useClass: AppIconService },
     { provide: MetaService, useClass: AppMetaService },
     { provide: DisplayService, useClass: AppDisplayService },
-    { provide: LinkService, useClass: AppLinkService },
+    { provide: HyperlinkService, useClass: AppHyperlinkService },
     { provide: ActionService, useClass: AppActionService },
 
     ...environment.providers,

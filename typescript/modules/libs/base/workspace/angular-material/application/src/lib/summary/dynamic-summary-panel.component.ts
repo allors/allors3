@@ -24,10 +24,10 @@ import {
   ScopedService,
   PanelService,
 } from '@allors/base/workspace/angular/application';
-import { LinkType } from '../link/link-type';
-import { LinkService } from '../link/link.service';
+import { HyperlinkType } from '../hyperlink/hyperlink-type';
+import { HyperlinkService } from '../hyperlink/hyperlink.service';
 import { IconService } from '../icon/icon.service';
-import { Link } from '../link/link';
+import { Hyperlink } from '../hyperlink/hyperlink';
 
 @Component({
   selector: 'a-mat-dyn-summary-panel',
@@ -39,13 +39,13 @@ export class AllorsMaterialDynamicSummaryPanelComponent
 {
   displayName: RoleType;
   displayDescription: RoleType;
-  linkTypes: LinkType[];
+  linkTypes: HyperlinkType[];
 
   object: IObject;
   icon: string;
   name: string;
   description: string;
-  links: Link[];
+  links: Hyperlink[];
   actions: Action[];
 
   private subscription: Subscription;
@@ -56,7 +56,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService,
-    linkService: LinkService,
+    linkService: HyperlinkService,
     private actionService: ActionService,
     private navigationService: NavigationService,
     private iconService: IconService,
@@ -127,7 +127,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
               const description = descriptionDisplay
                 ? (target.strategy.getUnitRole(descriptionDisplay) as string)
                 : null;
-              const link: Link = {
+              const link: Hyperlink = {
                 linkType,
                 target,
                 icon,
@@ -142,7 +142,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
       .reduce((acc, v) => acc.concat(v), []);
   }
 
-  navigate(link: Link): void {
+  navigate(link: Hyperlink): void {
     this.navigationService.overview(link.target);
   }
 

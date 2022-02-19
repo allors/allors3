@@ -26,10 +26,10 @@ export * from './lib/filter/field/dialog.component';
 export * from './lib/filter/field/search.component';
 export * from './lib/filter/filter.component';
 
-export * from './lib/icon/icon.service';
+export * from './lib/hyperlink/hyperlink-type';
+export * from './lib/hyperlink/hyperlink.service';
 
-export * from './lib/link/link-type';
-export * from './lib/link/link.service';
+export * from './lib/icon/icon.service';
 
 export * from './lib/media/preview/dialog.data';
 export * from './lib/media/preview/media-preview.component';

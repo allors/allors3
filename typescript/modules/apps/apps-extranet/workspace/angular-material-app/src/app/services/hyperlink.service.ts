@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import {
-  LinkService,
+  HyperlinkService,
   LinkType,
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
@@ -17,7 +17,7 @@ function create(tree: Node[], label?: string): LinkType {
 }
 
 @Injectable()
-export class AppLinkService implements LinkService {
+export class AppHyperlinkService implements HyperlinkService {
   linkTypesByObjectType: Map<Composite, LinkType[]>;
 
   constructor(workspaceService: WorkspaceService) {

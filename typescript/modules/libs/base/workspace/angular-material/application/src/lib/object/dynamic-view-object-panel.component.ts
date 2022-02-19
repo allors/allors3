@@ -71,33 +71,31 @@ export class AllorsMaterialDynamicViewObjectPanelComponent
   }
 
   ngOnInit() {
-    this.leaf = leafPath(this.target);
-    this.objectType = this.leaf.propertyType.objectType as Composite;
-    this.title = this.objectType.pluralName;
+    // this.leaf = leafPath(this.target);
+    // this.objectType = this.leaf.propertyType.objectType as Composite;
+    // this.title = this.objectType.pluralName;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
-    const id = this.scoped.id;
-
-    const pull: Pull = {
-      extent: {
-        kind: 'Filter',
-        objectType: this.objectType,
-        predicate: {
-          kind: 'Equals',
-          propertyType: this.anchor,
-          value: id,
-        },
-      },
-      results: [
-        {
-          name: prefix,
-          include: [toNode(this.target)],
-        },
-      ],
-    };
-
-    pulls.push(pull);
+    // const id = this.scoped.id;
+    // const pull: Pull = {
+    //   extent: {
+    //     kind: 'Filter',
+    //     objectType: this.objectType,
+    //     predicate: {
+    //       kind: 'Equals',
+    //       propertyType: this.anchor,
+    //       value: id,
+    //     },
+    //   },
+    //   results: [
+    //     {
+    //       name: prefix,
+    //       include: [toNode(this.target)],
+    //     },
+    //   ],
+    // };
+    // pulls.push(pull);
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string): void {

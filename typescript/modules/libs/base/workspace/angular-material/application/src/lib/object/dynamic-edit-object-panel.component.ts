@@ -110,86 +110,76 @@ export class AllorsMaterialDynamicEditObjectPanelComponent extends AllorsEditObj
   }
 
   ngOnInit() {
-    this.leaf = leafPath(this.target);
-    this.objectType = this.leaf.propertyType.objectType as Composite;
-
-    this.display = this.displayService.primary(this.objectType);
-    const targetPrimaryDisplay = this.displayService.primary(this.objectType);
-    this.targetDisplay =
-      targetPrimaryDisplay.length > 0
-        ? targetPrimaryDisplay
-        : [this.displayService.name(this.objectType)];
-
-    this.delete = this.deleteService.delete();
-    this.edit = this.editRoleService.edit();
-
-    const sort = true;
-
-    const tableConfig: TableConfig = {
-      selection: true,
-      columns: (this.objectType.isInterface
-        ? [{ name: 'type', sort }]
-        : []
-      ).concat(
-        [...this.targetDisplay, ...this.display].map((v) => {
-          return { name: v.name, sort };
-        })
-      ),
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
-      autoSort: true,
-      autoFilter: true,
-    };
-
-    this.table = new Table(tableConfig);
+    // this.leaf = leafPath(this.target);
+    // this.objectType = this.leaf.propertyType.objectType as Composite;
+    // this.display = this.displayService.primary(this.objectType);
+    // const targetPrimaryDisplay = this.displayService.primary(this.objectType);
+    // this.targetDisplay =
+    //   targetPrimaryDisplay.length > 0
+    //     ? targetPrimaryDisplay
+    //     : [this.displayService.name(this.objectType)];
+    // this.delete = this.deleteService.delete();
+    // this.edit = this.editRoleService.edit();
+    // const sort = true;
+    // const tableConfig: TableConfig = {
+    //   selection: true,
+    //   columns: (this.objectType.isInterface
+    //     ? [{ name: 'type', sort }]
+    //     : []
+    //   ).concat(
+    //     [...this.targetDisplay, ...this.display].map((v) => {
+    //       return { name: v.name, sort };
+    //     })
+    //   ),
+    //   actions: [this.edit, this.delete],
+    //   defaultAction: this.edit,
+    //   autoSort: true,
+    //   autoFilter: true,
+    // };
+    // this.table = new Table(tableConfig);
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
-    const id = this.scoped.id;
-
-    const displayInclude: Node[] = this.display
-      .filter((v) => v.objectType.isComposite)
-      .map((v) => {
-        return {
-          propertyType: v,
-        };
-      });
-
-    const targetDisplyInclude: Node[] = this.targetDisplay
-      .filter((v) => v.objectType.isComposite)
-      .map((v) => {
-        return {
-          propertyType: v,
-        };
-      });
-
-    const include = [
-      ...displayInclude,
-      {
-        propertyType: this.target,
-        nodes: targetDisplyInclude,
-      },
-    ];
-
-    const pull: Pull = {
-      extent: {
-        kind: 'Filter',
-        objectType: this.objectType,
-        predicate: {
-          kind: 'Equals',
-          propertyType: this.anchor,
-          value: id,
-        },
-      },
-      results: [
-        {
-          name: prefix,
-          // include,
-        },
-      ],
-    };
-
-    pulls.push(pull);
+    // const id = this.scoped.id;
+    // const displayInclude: Node[] = this.display
+    //   .filter((v) => v.objectType.isComposite)
+    //   .map((v) => {
+    //     return {
+    //       propertyType: v,
+    //     };
+    //   });
+    // const targetDisplyInclude: Node[] = this.targetDisplay
+    //   .filter((v) => v.objectType.isComposite)
+    //   .map((v) => {
+    //     return {
+    //       propertyType: v,
+    //     };
+    //   });
+    // const include = [
+    //   ...displayInclude,
+    //   {
+    //     propertyType: this.target,
+    //     nodes: targetDisplyInclude,
+    //   },
+    // ];
+    // const pull: Pull = {
+    //   extent: {
+    //     kind: 'Filter',
+    //     objectType: this.objectType,
+    //     predicate: {
+    //       kind: 'Equals',
+    //       propertyType: this.anchor,
+    //       value: id,
+    //     },
+    //   },
+    //   results: [
+    //     {
+    //       name: prefix,
+    //       // include,
+    //     },
+    //   ],
+    // };
+    // pulls.push(pull);
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
