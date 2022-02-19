@@ -21,7 +21,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  AllorsEditRelationshipPanelComponent,
+  AllorsEditExtentPanelComponent,
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
@@ -36,18 +36,18 @@ interface Row extends TableRow {
 }
 
 @Component({
-  selector: 'a-mat-dyn-edit-relationship-panel',
-  templateUrl: './dynamic-edit-relationship-panel.component.html',
+  selector: 'a-mat-dyn-edit-extent-panel',
+  templateUrl: './dynamic-edit-extent-panel.component.html',
 })
-export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsEditRelationshipPanelComponent {
+export class AllorsMaterialDynamicEditLinkPanelComponent extends AllorsEditExtentPanelComponent {
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
     // return this.panel.isExpanded;
   }
 
-  get panelId() {
-    return this.target.name;
+  get hasPeriod(): boolean {
+    return this.objectType.supertypes.has(this.m.Period);
   }
 
   get icon() {
@@ -55,25 +55,15 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   }
 
   get titel() {
-    return this.target.pluralName;
+    return this.include.pluralName;
   }
 
   get initializer(): Initializer {
-    return { propertyType: this.anchor, id: this.scoped.id };
+    return { propertyType: this.init, id: this.scoped.id };
   }
-
-  @Input()
-  anchor: RoleType;
-
-  @Input()
-  target: RoleType;
 
   m: M;
 
-  objectType: Composite;
-  targetObjectType: Composite;
-
-  hasPeriod: boolean;
   periodSelection: PeriodSelection = PeriodSelection.Current;
 
   table: Table<Row>;
@@ -106,19 +96,15 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   }
 
   ngOnInit() {
-    this.objectType = this.target.associationType.objectType as Composite;
-    this.targetObjectType = this.target.objectType as Composite;
-
     this.display = this.displayService.primary(this.objectType);
-    const targetPrimaryDisplay = this.displayService.primary(
-      this.targetObjectType
-    );
+
+    const targetObjectType = this.include.objectType as Composite;
+    const targetPrimaryDisplay = this.displayService.primary(targetObjectType);
+
     this.targetDisplay =
       targetPrimaryDisplay.length > 0
         ? targetPrimaryDisplay
-        : [this.displayService.name(this.targetObjectType)];
-
-    this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
+        : [this.displayService.name(targetObjectType)];
 
     this.delete = this.deleteService.delete();
     this.edit = this.editRoleService.edit();
@@ -175,7 +161,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
     const include = [
       ...displayInclude,
       {
-        propertyType: this.target,
+        propertyType: this.include,
         nodes: targetDisplyInclude,
       },
     ];
@@ -186,7 +172,7 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
         objectType: this.objectType,
         predicate: {
           kind: 'Equals',
-          propertyType: this.anchor,
+          propertyType: this.init,
           value: id,
         },
       },
@@ -253,58 +239,51 @@ export class AllorsMaterialDynamicEditRelationshipPanelComponent extends AllorsE
   }
 
   private refreshTable() {
-    this.table.total = this.filtered.length;
-
-    this.table.data = this.filtered.map((v) => {
-      const row: TableRow = {
-        object: v,
-      };
-
-      if (this.objectType.isInterface) {
-        row['type'] = v.strategy.cls.singularName;
-      }
-
-      const target = v.strategy.getCompositeRole(this.target);
-
-      for (const w of this.targetDisplay) {
-        if (w.objectType.isUnit) {
-          row[w.name] = target.strategy.getUnitRole(w);
-        } else {
-          const role = target.strategy.getCompositeRole(w);
-          if (role) {
-            const roleName = this.displayService.name(role.strategy.cls);
-            row[w.name] = role.strategy.getUnitRole(roleName);
-          } else {
-            row[w.name] = '';
-          }
-        }
-      }
-
-      for (const w of this.display) {
-        if (w.objectType.isUnit) {
-          row[w.name] = v.strategy.getUnitRole(w);
-        } else {
-          const role = v.strategy.getCompositeRole(w);
-          if (role) {
-            const roleName = this.displayService.name(role.strategy.cls);
-            row[w.name] = role.strategy.getUnitRole(roleName);
-          } else {
-            row[w.name] = '';
-          }
-        }
-      }
-
-      if (this.hasPeriod) {
-        const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
-        row['from'] = format(fromDate, 'dd-MM-yyyy');
-        const throughDate = v.strategy.getUnitRole(
-          this.m.Period.ThroughDate
-        ) as Date;
-        row['through'] =
-          throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
-      }
-
-      return row;
-    });
+    // this.table.total = this.filtered.length;
+    // this.table.data = this.filtered.map((v) => {
+    //   const row: TableRow = {
+    //     object: v,
+    //   };
+    //   if (this.objectType.isInterface) {
+    //     row['type'] = v.strategy.cls.singularName;
+    //   }
+    //   const target = v.strategy.getCompositeRole(this.target);
+    //   for (const w of this.targetDisplay) {
+    //     if (w.objectType.isUnit) {
+    //       row[w.name] = target.strategy.getUnitRole(w);
+    //     } else {
+    //       const role = target.strategy.getCompositeRole(w);
+    //       if (role) {
+    //         const roleName = this.displayService.name(role.strategy.cls);
+    //         row[w.name] = role.strategy.getUnitRole(roleName);
+    //       } else {
+    //         row[w.name] = '';
+    //       }
+    //     }
+    //   }
+    //   for (const w of this.display) {
+    //     if (w.objectType.isUnit) {
+    //       row[w.name] = v.strategy.getUnitRole(w);
+    //     } else {
+    //       const role = v.strategy.getCompositeRole(w);
+    //       if (role) {
+    //         const roleName = this.displayService.name(role.strategy.cls);
+    //         row[w.name] = role.strategy.getUnitRole(roleName);
+    //       } else {
+    //         row[w.name] = '';
+    //       }
+    //     }
+    //   }
+    //   if (this.hasPeriod) {
+    //     const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
+    //     row['from'] = format(fromDate, 'dd-MM-yyyy');
+    //     const throughDate = v.strategy.getUnitRole(
+    //       this.m.Period.ThroughDate
+    //     ) as Date;
+    //     row['through'] =
+    //       throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
+    //   }
+    //   return row;
+    // });
   }
 }

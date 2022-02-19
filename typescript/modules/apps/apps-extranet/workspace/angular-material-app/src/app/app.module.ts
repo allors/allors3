@@ -133,14 +133,10 @@ import {
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
-  AllorsMaterialDynamicEditObjectPanelComponent,
-  AllorsMaterialDynamicEditRelationPanelComponent,
-  AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicEditLinkPanelComponent,
   AllorsMaterialDynamicSummaryPanelComponent,
   AllorsMaterialDynamicViewDetailPanelComponent,
-  AllorsMaterialDynamicViewObjectPanelComponent,
-  AllorsMaterialDynamicViewRelationPanelComponent,
-  AllorsMaterialDynamicViewRelationshipPanelComponent,
+  AllorsMaterialDynamicViewLinkPanelComponent,
 } from '@allors/base/workspace/angular-material/application';
 
 import {
@@ -217,14 +213,10 @@ import { AppActionService } from './services/action.service';
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
-    AllorsMaterialDynamicEditObjectPanelComponent,
-    AllorsMaterialDynamicEditRelationPanelComponent,
-    AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicEditLinkPanelComponent,
     AllorsMaterialDynamicSummaryPanelComponent,
     AllorsMaterialDynamicViewDetailPanelComponent,
-    AllorsMaterialDynamicViewObjectPanelComponent,
-    AllorsMaterialDynamicViewRelationPanelComponent,
-    AllorsMaterialDynamicViewRelationshipPanelComponent,
+    AllorsMaterialDynamicViewLinkPanelComponent,
     // Routed and dialog components
     ...routeComponents,
     ...dialogComponents,

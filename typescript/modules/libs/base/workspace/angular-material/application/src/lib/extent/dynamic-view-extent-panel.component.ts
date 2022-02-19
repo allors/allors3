@@ -1,9 +1,12 @@
 import { Component, OnInit, HostBinding, Input } from '@angular/core';
-import { Composite, RoleType } from '@allors/system/workspace/meta';
+import { Composite, PropertyType } from '@allors/system/workspace/meta';
 import {
-  AllorsViewRelationshipPanelComponent,
+  AllorsViewExtentPanelComponent,
   ScopedService,
   PanelService,
+  ExtentSelectType,
+  ExtentInitType,
+  ExtentIncludeType,
 } from '@allors/base/workspace/angular/application';
 import {
   WorkspaceService,
@@ -14,6 +17,8 @@ import {
 import {
   IObject,
   IPullResult,
+  Path,
+  pathObjectType,
   Pull,
   SharedPullHandler,
 } from '@allors/system/workspace/domain';
@@ -22,29 +27,17 @@ import { PeriodSelection } from '@allors/base/workspace/angular-material/foundat
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  selector: 'a-mat-dyn-view-relationship-panel',
-  templateUrl: './dynamic-view-relationship-panel.component.html',
+  selector: 'a-mat-dyn-view-extent-panel',
+  templateUrl: './dynamic-view-extent-panel.component.html',
 })
-export class AllorsMaterialDynamicViewRelationshipPanelComponent
-  extends AllorsViewRelationshipPanelComponent
+export class AllorsMaterialDynamicViewLinkPanelComponent
+  extends AllorsViewExtentPanelComponent
   implements SharedPullHandler, OnInit
 {
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
     // return this.panel.isExpanded;
-  }
-
-  @Input()
-  anchor: RoleType;
-
-  @Input()
-  target: RoleType;
-
-  objectType: Composite;
-
-  get panelId() {
-    return `${this.target.name}`;
   }
 
   m: M;
@@ -72,10 +65,9 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
   }
 
   ngOnInit() {
-    this.objectType = this.target.associationType.objectType as Composite;
     this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
 
-    this.title = this.target.pluralName;
+    this.title = this.include?.pluralName ?? this.objectType.pluralName;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string): void {
@@ -87,7 +79,7 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
         objectType: this.objectType,
         predicate: {
           kind: 'Equals',
-          propertyType: this.anchor,
+          propertyType: this.init,
           value: id,
         },
       },
@@ -96,10 +88,10 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
           name: prefix,
           include: [
             {
-              propertyType: this.anchor,
+              propertyType: this.init,
             },
             {
-              propertyType: this.target,
+              propertyType: this.include,
             },
           ],
         },
@@ -116,11 +108,11 @@ export class AllorsMaterialDynamicViewRelationshipPanelComponent
     if (this.hasPeriod) {
       this.description = `${this.filtered.length} current and ${
         this.objects.length - this.filtered.length
-      } inactive ${this.target.pluralName.toLowerCase()}`;
+      } inactive ${this.include.pluralName.toLowerCase()}`;
     } else {
       this.description = `${
         this.objects.length
-      } ${this.target.pluralName.toLowerCase()}`;
+      } ${this.include.pluralName.toLowerCase()}`;
     }
   }
 

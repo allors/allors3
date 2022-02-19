@@ -82,14 +82,10 @@ import {
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
-  AllorsMaterialDynamicEditObjectPanelComponent,
-  AllorsMaterialDynamicEditRelationPanelComponent,
-  AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicEditLinkPanelComponent,
   AllorsMaterialDynamicSummaryPanelComponent,
   AllorsMaterialDynamicViewDetailPanelComponent,
-  AllorsMaterialDynamicViewObjectPanelComponent,
-  AllorsMaterialDynamicViewRelationPanelComponent,
-  AllorsMaterialDynamicViewRelationshipPanelComponent,
+  AllorsMaterialDynamicViewLinkPanelComponent,
 } from './index';
 
 @NgModule({
@@ -135,14 +131,10 @@ import {
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
-    AllorsMaterialDynamicEditObjectPanelComponent,
-    AllorsMaterialDynamicEditRelationPanelComponent,
-    AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicEditLinkPanelComponent,
     AllorsMaterialDynamicSummaryPanelComponent,
     AllorsMaterialDynamicViewDetailPanelComponent,
-    AllorsMaterialDynamicViewObjectPanelComponent,
-    AllorsMaterialDynamicViewRelationPanelComponent,
-    AllorsMaterialDynamicViewRelationshipPanelComponent,
+    AllorsMaterialDynamicViewLinkPanelComponent,
   ],
   imports: [
     BrowserModule,

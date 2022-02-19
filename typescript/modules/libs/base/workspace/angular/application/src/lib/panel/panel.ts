@@ -1,11 +1,6 @@
 export type PanelMode = 'Edit' | 'View';
 
-export type PanelKind =
-  | 'Summary'
-  | 'Detail'
-  | 'Relation'
-  | 'Relationship'
-  | 'Object';
+export type PanelKind = 'Summary' | 'Detail' | 'Extent';
 
 export interface Panel {
   panelMode: PanelMode;

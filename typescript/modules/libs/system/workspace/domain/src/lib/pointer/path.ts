@@ -88,7 +88,11 @@ function resolveRecursive(
   }
 }
 
-export function resolvePath(
+export function isPath(path: unknown): path is Path {
+  return (path as Path).propertyType !== undefined;
+}
+
+export function pathResolve(
   obj: IObject,
   path: Path,
   skipMissing?: boolean
@@ -98,7 +102,7 @@ export function resolvePath(
   return results;
 }
 
-export function leafPath(path: Path): Path {
+export function pathLeaf(path: Path): Path {
   let next = path;
   while (next.next) {
     next = next.next;
@@ -107,7 +111,12 @@ export function leafPath(path: Path): Path {
   return next;
 }
 
-export function tagPath(path: Path): string {
+export function pathObjectType(path: Path): Composite {
+  const leaf = pathLeaf(path);
+  return leaf.ofType ?? (leaf.propertyType.objectType as Composite);
+}
+
+export function pathTag(path: Path): string {
   let tag: string;
 
   let next = path;

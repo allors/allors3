@@ -1,27 +1,17 @@
 import {
   SharedPullService,
   RefreshService,
-  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { PropertyType } from '@allors/system/workspace/meta';
 import { Directive } from '@angular/core';
-import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
 import { ScopedService } from '../scoped/scoped.service';
 import { PanelService } from '../panel/panel.service';
-import { RelationPanel } from './relation-panel';
+import { AllorsExtentPanelComponent } from './extent-panel.component';
 
 @Directive()
-export abstract class AllorsEditRelationPanelComponent
-  extends AllorsScopedPanelComponent
-  implements RelationPanel
-{
-  override dataAllorsKind = 'edit-relation-panel';
+export abstract class AllorsEditExtentPanelComponent extends AllorsExtentPanelComponent {
+  override dataAllorsKind = 'edit-extent-panel';
 
   readonly panelMode = 'Edit';
-
-  readonly panelKind = 'Relation';
-
-  abstract propertyType: PropertyType;
 
   constructor(
     itemPageService: ScopedService,

@@ -4,10 +4,10 @@ import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
-  leafPath,
+  pathLeaf,
   Pull,
-  resolveNode,
-  resolvePath,
+  nodeResolve,
+  pathResolve,
 } from '@allors/system/workspace/domain';
 import {
   Action,
@@ -113,9 +113,9 @@ export class AllorsMaterialDynamicSummaryPanelComponent
       .map((linkType) => {
         return linkType.paths
           .map((path) => {
-            const leaf = leafPath(path);
+            const leaf = pathLeaf(path);
             const leafObjectType = leaf.propertyType.objectType as Composite;
-            const targets = [...resolvePath(this.object, path)];
+            const targets = [...pathResolve(this.object, path)];
             return targets.map((target) => {
               const icon = this.iconService.icon(leafObjectType);
               const nameDisplay = this.displayService.name(leafObjectType);

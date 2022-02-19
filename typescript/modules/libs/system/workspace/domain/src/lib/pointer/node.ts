@@ -92,7 +92,7 @@ function resolveRecursive(
   }
 }
 
-export function resolveNode(
+export function nodeResolve(
   obj: IObject,
   node: Node,
   skipMissing?: boolean

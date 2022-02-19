@@ -20,21 +20,21 @@
         <a-mat-dyn-view-detail-panel></a-mat-dyn-view-detail-panel>
         <a-mat-dyn-edit-detail-panel></a-mat-dyn-edit-detail-panel>
 
-        <a-mat-dyn-view-relation-panel
-          [propertyType]="m.Organisation.Shareholders"
-        ></a-mat-dyn-view-relation-panel>
-        <a-mat-dyn-edit-relation-panel
-          [propertyType]="m.Organisation.Shareholders"
-        ></a-mat-dyn-edit-relation-panel>
+        <a-mat-dyn-view-extent-panel
+          [select]="m.Organisation.Shareholders"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [select]="m.Organisation.Shareholders"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-relationship-panel
-          [anchor]="m.Employment.Employer"
-          [target]="m.Employment.Employee"
-        ></a-mat-dyn-view-relationship-panel>
-        <a-mat-dyn-edit-relationship-panel
-          [anchor]="m.Employment.Employer"
-          [target]="m.Employment.Employee"
-        ></a-mat-dyn-edit-relationship-panel>
+        <a-mat-dyn-view-extent-panel
+          [include]="m.Employment.Employee"
+          [init]="m.Employment.Employer"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [include]="m.Employment.Employee"
+          [init]="m.Employment.Employer"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>
