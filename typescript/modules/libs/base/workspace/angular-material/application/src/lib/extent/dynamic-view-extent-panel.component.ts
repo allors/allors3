@@ -1,36 +1,36 @@
-import { Component, OnInit, HostBinding, Input } from '@angular/core';
-import { Composite, PropertyType } from '@allors/system/workspace/meta';
-import {
-  AllorsViewExtentPanelComponent,
-  ScopedService,
-  PanelService,
-  ExtentSelectType,
-  ExtentInitType,
-  ExtentIncludeType,
-} from '@allors/base/workspace/angular/application';
-import {
-  WorkspaceService,
-  SharedPullService,
-  RefreshService,
-  DisplayService,
-} from '@allors/base/workspace/angular/foundation';
+import { Component, HostBinding, OnInit } from '@angular/core';
+import { Composite, humanize, RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
-  Path,
-  pathObjectType,
   Pull,
+  Node,
+  isPath,
+  toNode,
   SharedPullHandler,
+  selectLeaf,
+  pathLeaf,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
-import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
+import {
+  SharedPullService,
+  RefreshService,
+  WorkspaceService,
+  DisplayService,
+} from '@allors/base/workspace/angular/foundation';
+import {
+  PanelService,
+  ScopedService,
+  AllorsViewExtentPanelComponent,
+} from '@allors/base/workspace/angular/application';
 import { M } from '@allors/default/workspace/meta';
+import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 
 @Component({
   selector: 'a-mat-dyn-view-extent-panel',
   templateUrl: './dynamic-view-extent-panel.component.html',
 })
-export class AllorsMaterialDynamicViewLinkPanelComponent
+export class AllorsMaterialDynamicViewExtentPanelComponent
   extends AllorsViewExtentPanelComponent
   implements SharedPullHandler, OnInit
 {
@@ -40,16 +40,21 @@ export class AllorsMaterialDynamicViewLinkPanelComponent
     // return this.panel.isExpanded;
   }
 
+  get hasPeriod(): boolean {
+    return this.objectType.supertypes.has(this.m.Period);
+  }
+
   m: M;
 
-  title: string;
-  description: string;
-
-  hasPeriod: boolean;
   periodSelection: PeriodSelection = PeriodSelection.Current;
 
   objects: IObject[];
   filtered: IObject[];
+
+  display: RoleType[];
+  includeDisplay: RoleType[];
+
+  description: string;
 
   constructor(
     scopedService: ScopedService,
@@ -57,7 +62,7 @@ export class AllorsMaterialDynamicViewLinkPanelComponent
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService,
-    private diplayService: DisplayService
+    private displayService: DisplayService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
 
@@ -65,35 +70,63 @@ export class AllorsMaterialDynamicViewLinkPanelComponent
   }
 
   ngOnInit() {
-    this.hasPeriod = this.objectType.supertypes.has(this.m.Period);
+    this.display = this.displayService.primary(this.objectType);
 
-    this.title = this.include?.pluralName ?? this.objectType.pluralName;
+    if (this.include) {
+      const includeObjectType = this.include.objectType as Composite;
+      const includePrimaryDisplay =
+        this.displayService.primary(includeObjectType);
+
+      this.includeDisplay =
+        includePrimaryDisplay.length > 0
+          ? includePrimaryDisplay
+          : [this.displayService.name(includeObjectType)];
+    } else {
+      this.includeDisplay = [];
+    }
   }
 
-  onPreSharedPull(pulls: Pull[], prefix?: string): void {
+  onPreSharedPull(pulls: Pull[], prefix?: string) {
     const id = this.scoped.id;
 
+    const select: Node = isPath(this.select)
+      ? toNode(this.select)
+      : { propertyType: this.select };
+
+    const displayInclude: Node[] = this.display
+      .filter((v) => v.objectType.isComposite)
+      .map((v) => {
+        return {
+          propertyType: v,
+        };
+      });
+
+    const includeDisplyInclude: Node[] = this.includeDisplay
+      .filter((v) => v.objectType.isComposite)
+      .map((v) => {
+        return {
+          propertyType: v,
+        };
+      });
+
+    const include = [...displayInclude];
+
+    if (this.include) {
+      include.concat({
+        propertyType: this.include,
+        nodes: includeDisplyInclude,
+      });
+    }
+
+    const leaf = selectLeaf(select);
+    leaf.include = include;
+
     const pull: Pull = {
-      extent: {
-        kind: 'Filter',
-        objectType: this.objectType,
-        predicate: {
-          kind: 'Equals',
-          propertyType: this.init,
-          value: id,
-        },
-      },
+      objectId: id,
       results: [
         {
           name: prefix,
-          include: [
-            {
-              propertyType: this.init,
-            },
-            {
-              propertyType: this.include,
-            },
-          ],
+          select,
         },
       ],
     };
@@ -101,18 +134,28 @@ export class AllorsMaterialDynamicViewLinkPanelComponent
     pulls.push(pull);
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
+  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
+
+    const itemName = this.include
+      ? this.include.pluralName
+      : this.objectType.pluralName;
 
     if (this.hasPeriod) {
       this.description = `${this.filtered.length} current and ${
         this.objects.length - this.filtered.length
-      } inactive ${this.include.pluralName.toLowerCase()}`;
+      } inactive ${itemName}`;
     } else {
-      this.description = `${
-        this.objects.length
-      } ${this.include.pluralName.toLowerCase()}`;
+      this.description = `${this.objects.length} ${itemName}`;
+    }
+  }
+
+  onPeriodSelectionChange(newPeriodSelection: PeriodSelection) {
+    this.periodSelection = newPeriodSelection;
+
+    if (this.objects != null) {
+      this.updateFilter();
     }
   }
 

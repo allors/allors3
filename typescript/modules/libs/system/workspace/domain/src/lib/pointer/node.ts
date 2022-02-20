@@ -101,3 +101,19 @@ export function nodeResolve(
   resolveRecursive(obj, node, results, skipMissing);
   return results;
 }
+
+function resolveLeafs(node: Node, results: Set<Node>): void {
+  if (node.nodes.length > 0) {
+    for (const child of node.nodes) {
+      resolveLeafs(child, results);
+    }
+  } else {
+    results.add(this);
+  }
+}
+
+export function nodeLeafs(node: Node): Set<Node> {
+  const results: Set<Node> = new Set();
+  resolveLeafs(node, results);
+  return results;
+}

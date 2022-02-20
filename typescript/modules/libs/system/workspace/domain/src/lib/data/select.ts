@@ -8,3 +8,11 @@ export interface Select {
 
   include?: Node[];
 }
+
+export function selectLeaf(select: Select): Select {
+  if (select.next) {
+    return selectLeaf(select.next);
+  }
+
+  return select;
+}

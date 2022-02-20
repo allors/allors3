@@ -1,7 +1,18 @@
 import { Directive, Input } from '@angular/core';
 
-import { Composite, PropertyType } from '@allors/system/workspace/meta';
-import { isPath, Path, pathObjectType } from '@allors/system/workspace/domain';
+import {
+  AssociationType,
+  Composite,
+  humanize,
+  PropertyType,
+  RoleType,
+} from '@allors/system/workspace/meta';
+import {
+  isPath,
+  Path,
+  pathLeaf,
+  pathObjectType,
+} from '@allors/system/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -20,8 +31,28 @@ export type ExtentIncludeType = PropertyType;
 export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelComponent {
   readonly panelKind = 'Extent';
 
+  protected assignedSelect: ExtentSelectType;
+
+  protected assignedTitle: string;
+
   @Input()
-  select: ExtentSelectType;
+  get select(): ExtentSelectType {
+    if (this.assignedSelect) {
+      return this.assignedSelect;
+    } else if (this.init) {
+      if (this.init.isRoleType) {
+        return (this.init as RoleType).associationType;
+      } else {
+        return (this.init as AssociationType).roleType;
+      }
+    }
+
+    return null;
+  }
+
+  set select(value: ExtentSelectType) {
+    this.assignedSelect = value;
+  }
 
   @Input()
   init: ExtentInitType;
@@ -29,8 +60,32 @@ export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelCompon
   @Input()
   include: ExtentIncludeType;
 
+  get title() {
+    if (this.assignedTitle) {
+      return this.assignedTitle;
+    }
+
+    let title: string;
+    if (this.include) {
+      title = this.include.pluralName;
+    } else {
+      if (isPath(this.select)) {
+        title = pathLeaf(this.select).propertyType.pluralName;
+      } else {
+        title = this.select.pluralName;
+      }
+    }
+
+    return humanize(title);
+  }
+
+  set title(value: string) {
+    this.assignedTitle = value;
+  }
+
   get panelId() {
-    return this.include.name;
+    // TODO:
+    return this.objectType?.tag;
   }
 
   get objectType(): Composite {
