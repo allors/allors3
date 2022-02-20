@@ -15,7 +15,7 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
   templateUrl: './webaddress-edit-form.component.html',
   providers: [ContextService],
 })
-export class WebAddressFormComponent extends AllorsFormComponent<WebAddress> {
+export class WebAddressEditFormComponent extends AllorsFormComponent<WebAddress> {
   readonly m: M;
 
   constructor(

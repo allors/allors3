@@ -14,7 +14,7 @@ function objectTypeName(target: ActionTarget) {
 export class OverviewAction implements Action {
   name = 'overview';
 
-  constructor(private navigationService: NavigationService) {}
+  constructor(private navigation: NavigationService) {}
 
   result = new Subject<boolean>();
 
@@ -28,10 +28,10 @@ export class OverviewAction implements Action {
   execute = (target: ActionTarget) => {
     if (Array.isArray(target)) {
       if (target.length > 0) {
-        this.navigationService.overview(target[0]);
+        this.navigation.overview(target[0]);
       }
     } else {
-      this.navigationService.overview(target);
+      this.navigation.overview(target);
     }
 
     this.result.next(true);

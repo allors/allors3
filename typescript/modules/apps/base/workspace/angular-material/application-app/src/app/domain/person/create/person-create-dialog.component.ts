@@ -36,7 +36,7 @@ export class PersonCreateDialogComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     @Inject(MAT_DIALOG_DATA) public data: CreateRequest,
     public dialogRef: MatDialogRef<PersonCreateDialogComponent>,
-    public navigationService: NavigationService,
+    public navigation: NavigationService,
     public refreshService: RefreshService,
     private route: ActivatedRoute,
     private errorService: ErrorService

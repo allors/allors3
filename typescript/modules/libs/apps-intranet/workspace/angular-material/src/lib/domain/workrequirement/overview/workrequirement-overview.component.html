@@ -2,9 +2,8 @@
   <div class="a-breadcrumb container-fluid mat-elevation-z4">
     <div class="row">
       <div class="col">
-        <a (click)="navigationService.list(m.WorkRequirement)"
-          >WorkRequirements</a
-        >/ {{ requirement?.Description }}
+        <a (click)="navigation.list(m.WorkRequirement)">WorkRequirements</a>/
+        {{ requirement?.Description }}
       </div>
     </div>
   </div>
@@ -15,10 +14,7 @@
         <workrequirement-overview-summary></workrequirement-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <workrequirement-edit-form></workrequirement-edit-form>
       </div>
     </div>

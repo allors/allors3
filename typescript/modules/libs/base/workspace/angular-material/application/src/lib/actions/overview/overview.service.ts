@@ -7,9 +7,9 @@ import { OverviewAction } from './overview-action';
   providedIn: 'root',
 })
 export class OverviewService {
-  constructor(private navigationService: NavigationService) {}
+  constructor(private navigation: NavigationService) {}
 
   overview(): Action {
-    return new OverviewAction(this.navigationService);
+    return new OverviewAction(this.navigation);
   }
 }

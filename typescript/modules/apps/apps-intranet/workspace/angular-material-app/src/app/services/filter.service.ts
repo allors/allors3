@@ -616,7 +616,7 @@ export class AppFilterService implements FilterService {
             },
             {
               kind: 'ContainedIn',
-              propertyType: m.Party.PartyContactMechanisms,
+              propertyType: m.Party.PartyContactMechanismsWhereParty,
               extent: {
                 kind: 'Filter',
                 objectType: m.PartyContactMechanism,
@@ -637,7 +637,7 @@ export class AppFilterService implements FilterService {
             },
             {
               kind: 'ContainedIn',
-              propertyType: m.Party.PartyContactMechanisms,
+              propertyType: m.Party.PartyContactMechanismsWhereParty,
               extent: {
                 kind: 'Filter',
                 objectType: m.PartyContactMechanism,
@@ -781,7 +781,7 @@ export class AppFilterService implements FilterService {
             },
             {
               kind: 'ContainedIn',
-              propertyType: m.Party.PartyContactMechanisms,
+              propertyType: m.Party.PartyContactMechanismsWhereParty,
               extent: {
                 kind: 'Filter',
                 objectType: m.PartyContactMechanism,
@@ -802,7 +802,7 @@ export class AppFilterService implements FilterService {
             },
             {
               kind: 'ContainedIn',
-              propertyType: m.Party.PartyContactMechanisms,
+              propertyType: m.Party.PartyContactMechanismsWhereParty,
               extent: {
                 kind: 'Filter',
                 objectType: m.PartyContactMechanism,

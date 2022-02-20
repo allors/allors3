@@ -164,7 +164,7 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.object.Customer.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.Customer;
     this.object.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -182,7 +182,7 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

@@ -58,7 +58,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
     workspaceService: WorkspaceService,
     linkService: HyperlinkService,
     private actionService: ActionService,
-    private navigationService: NavigationService,
+    private navigation: NavigationService,
     private iconService: IconService,
     private displayService: DisplayService
   ) {
@@ -143,7 +143,7 @@ export class AllorsMaterialDynamicSummaryPanelComponent
   }
 
   navigate(link: Hyperlink): void {
-    this.navigationService.overview(link.target);
+    this.navigation.overview(link.target);
   }
 
   perform(action: Action): void {

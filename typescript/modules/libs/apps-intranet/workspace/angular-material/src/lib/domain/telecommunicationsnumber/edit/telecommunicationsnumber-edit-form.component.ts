@@ -17,7 +17,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './telecommunicationsnumber-edit-form.component.html',
   providers: [ContextService],
 })
-export class TelecommunicationsNumberFormComponent extends AllorsFormComponent<TelecommunicationsNumber> {
+export class TelecommunicationsNumberEditFormComponent extends AllorsFormComponent<TelecommunicationsNumber> {
   readonly m: M;
   contactMechanismTypes: Enumeration[];
 

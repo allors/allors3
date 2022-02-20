@@ -19,7 +19,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './postaladdress-edit-form.component.html',
   providers: [ContextService],
 })
-export class PostalAddressFormComponent extends AllorsFormComponent<PostalAddress> {
+export class PostalAddressEditFormComponent extends AllorsFormComponent<PostalAddress> {
   readonly m: M;
   countries: Country[];
   partyContactMechanism: PartyContactMechanism;

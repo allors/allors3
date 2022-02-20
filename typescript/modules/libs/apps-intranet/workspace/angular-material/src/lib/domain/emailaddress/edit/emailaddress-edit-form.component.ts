@@ -14,7 +14,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
   templateUrl: './emailaddress-edit-form.component.html',
   providers: [ContextService],
 })
-export class EmailAddressFormComponent extends AllorsFormComponent<EmailAddress> {
+export class EmailAddressEditFormComponent extends AllorsFormComponent<EmailAddress> {
   readonly m: M;
 
   constructor(

@@ -89,7 +89,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService,
-    public navigationService: NavigationService,
+    public navigation: NavigationService,
     public deleteService: DeleteService,
     public editRoleService: EditRoleService,
     private iconService: IconService,

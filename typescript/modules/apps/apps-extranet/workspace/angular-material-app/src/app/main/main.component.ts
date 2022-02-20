@@ -40,7 +40,7 @@ export class MainComponent implements OnInit, OnDestroy {
     private router: Router,
     private sideNavService: AllorsMaterialSideNavService,
     private menuService: MenuService,
-    private navigationService: NavigationService,
+    private navigation: NavigationService,
     private iconService: IconService,
     private metaService: MetaService
   ) {
@@ -54,7 +54,7 @@ export class MainComponent implements OnInit, OnDestroy {
       const sideMenuItem: SideMenuItem = {
         icon: menuItem.icon ?? this.iconService.icon(objectType),
         title: menuItem.title ?? this.metaService.pluralName(objectType),
-        link: menuItem.link ?? this.navigationService.listUrl(objectType),
+        link: menuItem.link ?? this.navigation.listUrl(objectType),
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
@@ -66,8 +66,7 @@ export class MainComponent implements OnInit, OnDestroy {
                 childMenuItem.title ??
                 this.metaService.pluralName(childObjectType),
               link:
-                childMenuItem.link ??
-                this.navigationService.listUrl(childObjectType),
+                childMenuItem.link ?? this.navigation.listUrl(childObjectType),
             };
           }),
       };

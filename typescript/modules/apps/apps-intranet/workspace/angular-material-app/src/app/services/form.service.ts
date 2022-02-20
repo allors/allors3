@@ -7,40 +7,349 @@ import {
 
 import { Injectable } from '@angular/core';
 import {
+  BasepriceFormComponent,
+  BrandFormComponent,
+  CarrierFormComponent,
+  CatalogueFormComponent,
+  CustomerRelationshipFormComponent,
+  CustomerShipmentCreateFormComponent,
+  CustomerShipmentEditFormComponent,
+  DisbursementFormComponent,
+  EmailAddressCreateFormComponent,
+  EmailCommunicationFormComponent,
+  EmploymentFormComponent,
+  ExchangeRateFormComponent,
+  FaceToFaceCommunicationFormComponent,
+  InventoryItemTransactionFormComponent,
+  LetterCorrespondenceFormComponent,
+  NonSerialisedInventoryItemFormComponent,
+  NonUnifiedGoodCreateFormComponent,
+  NonUnifiedGoodEditFormComponent,
+  NonUnifiedPartCreateFormComponent,
+  NonUnifiedPartEditFormComponent,
+  OrderAdjustmentFormComponent,
+  OrganisationContactRelationshipFormComponent,
+  OrganisationCreateFormComponent,
+  OrganisationEditFormComponent,
+  PartCategoryFormComponent,
+  PartyContactmechanismFormComponent,
+  PartyRateFormComponent,
+  PersonCreateFormComponent,
+  PersonEditFormComponent,
+  PhoneCommunicationFormComponent,
+  PositionTypeFormComponent,
+  PositionTypeRateFormComponent,
+  PostalAddressCreateFormComponent,
+  ProductCategoryFormComponent,
+  ProductIdentificationFormComponent,
+  ProductQuoteApprovalFormComponent,
+  ProductQuoteCreateFormComponent,
+  ProductQuoteEditFormComponent,
+  ProductTypeFormComponent,
+  PurchaseInvoiceApprovalFormComponent,
+  PurchaseInvoiceCreateFormComponent,
+  PurchaseInvoiceEditFormComponent,
+  PurchaseInvoiceItemFormComponent,
+  PurchaseOrderApprovalLevel1FormComponent,
+  PurchaseOrderApprovalLevel2FormComponent,
+  PurchaseOrderCreateFormComponent,
+  PurchaseOrderEditFormComponent,
+  PurchaseOrderItemFormComponent,
+  PurchaseReturnCreateFormComponent,
+  PurchaseShipmentCreateFormComponent,
+  PurchaseShipmentEditFormComponent,
+  QuoteItemFormComponent,
+  ReceiptFormComponent,
+  RepeatingPurchaseInvoiceFormComponent,
+  RepeatingSalesInvoiceFormComponent,
+  RequestForQuoteCreateFormComponent,
+  RequestForQuoteEditFormComponent,
+  RequestItemFormComponent,
+  SalesInvoiceCreateFormComponent,
+  SalesInvoiceEditFormComponent,
+  SalesInvoiceItemFormComponent,
+  SalesOrderCreateFormComponent,
+  SalesOrderEditFormComponent,
+  SalesOrderItemFormComponent,
+  SalesTermFormComponent,
+  SerialisedItemCharacteristicFormComponent,
+  SerialisedItemCreateFormComponent,
+  SerialisedItemEditFormComponent,
+  ShipmentItemFormComponent,
+  SubContractorRelationshipFormComponent,
+  SupplierOfferingFormComponent,
+  SupplierRelationshipFormComponent,
+  TelecommunicationsNumberCreateFormComponent,
+  TimeEntryFormComponent,
+  UnifiedGoodCreateFormComponent,
+  UnifiedGoodEditFormComponent,
+  UserProfileFormComponent,
+  WebAddressCreateFormComponent,
+  WorkEffortAssignmentRateFormComponent,
+  WorkEffortFixedAssetAssignmentFormComponent,
+  WorkEffortInventoryAssignmentFormComponent,
+  WorkEffortInvoiceItemAssignmentFormComponent,
+  WorkEffortPartyAssignmentFormComponent,
+  WorkRequirementCreateFormComponent,
+  WorkRequirementEditFormComponent,
+  WorkRequirementFulfillmentCreateFormComponent,
   WorkTaskCreateFormComponent,
   WorkTaskEditFormComponent,
 } from '@allors/apps-intranet/workspace/angular-material';
+import { EmailAddressEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/emailaddress/edit/emailaddress-edit-form.component';
+import { PostalAddressEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/postaladdress/edit/postaladdress-edit-form.component';
+import { TelecommunicationsNumberEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/telecommunicationsnumber/edit/telecommunicationsnumber-edit-form.component';
+import { WebAddressEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/webaddress/edit/webaddress-edit-form.component';
 
 @Injectable()
 export class AppFormService implements FormService {
-  m: M;
+  createFormByObjectType: Map<Composite, unknown>;
+  editFormByObjectType: Map<Composite, unknown>;
+  formByObjectType: Map<Composite, unknown>;
 
   constructor(workspaceService: WorkspaceService) {
-    this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const m = workspaceService.workspace.configuration.metaPopulation as M;
+
+    this.createFormByObjectType = new Map<Composite, unknown>([
+      [m.CustomerShipment, CustomerShipmentCreateFormComponent],
+      [m.EmailAddress, EmailAddressCreateFormComponent],
+      [m.NonUnifiedGood, NonUnifiedGoodCreateFormComponent],
+      [m.NonUnifiedPart, NonUnifiedPartCreateFormComponent],
+      [m.Organisation, OrganisationCreateFormComponent],
+      [m.Person, PersonCreateFormComponent],
+      [m.PostalAddress, PostalAddressCreateFormComponent],
+      [m.ProductQuote, ProductQuoteCreateFormComponent],
+      [m.PurchaseInvoice, PurchaseInvoiceCreateFormComponent],
+      [m.PurchaseOrder, PurchaseOrderCreateFormComponent],
+      [m.PurchaseReturn, PurchaseReturnCreateFormComponent],
+      [m.PurchaseShipment, PurchaseShipmentCreateFormComponent],
+      [m.RequestForQuote, RequestForQuoteCreateFormComponent],
+      [m.SalesInvoice, SalesInvoiceCreateFormComponent],
+      [m.SalesOrder, SalesOrderCreateFormComponent],
+      [m.SerialisedItem, SerialisedItemCreateFormComponent],
+      [m.TelecommunicationsNumber, TelecommunicationsNumberCreateFormComponent],
+      [m.UnifiedGood, UnifiedGoodCreateFormComponent],
+      [m.WebAddress, WebAddressCreateFormComponent],
+      [m.WorkRequirement, WorkRequirementCreateFormComponent],
+      [
+        m.WorkRequirementFulfillment,
+        WorkRequirementFulfillmentCreateFormComponent,
+      ],
+      [m.WorkTask, WorkTaskCreateFormComponent],
+    ]);
+
+    this.editFormByObjectType = new Map<Composite, unknown>([
+      [m.CustomerShipment, CustomerShipmentEditFormComponent],
+      [m.EmailAddress, EmailAddressEditFormComponent],
+      [m.NonUnifiedGood, NonUnifiedGoodEditFormComponent],
+      [m.NonUnifiedPart, NonUnifiedPartEditFormComponent],
+      [m.Organisation, OrganisationEditFormComponent],
+      [m.Person, PersonEditFormComponent],
+      [m.PostalAddress, PostalAddressEditFormComponent],
+      [m.ProductQuote, ProductQuoteEditFormComponent],
+      [m.PurchaseInvoice, PurchaseInvoiceEditFormComponent],
+      [m.PurchaseOrder, PurchaseOrderEditFormComponent],
+      // TODO:
+      // [m.PurchaseReturn, PurchaseReturnEditFormComponent],
+      [m.PurchaseShipment, PurchaseShipmentEditFormComponent],
+      [m.RequestForQuote, RequestForQuoteEditFormComponent],
+      [m.SalesInvoice, SalesInvoiceEditFormComponent],
+      [m.SalesOrder, SalesOrderEditFormComponent],
+      [m.SerialisedItem, SerialisedItemEditFormComponent],
+      [m.TelecommunicationsNumber, TelecommunicationsNumberEditFormComponent],
+      [m.UnifiedGood, UnifiedGoodEditFormComponent],
+      [m.WebAddress, WebAddressEditFormComponent],
+      [m.WorkRequirement, WorkRequirementEditFormComponent],
+      // TODO:
+      // [
+      //   m.WorkRequirementFulfillment,
+      //   WorkRequirementFulfillmentEditFormComponent,
+      // ],
+      [m.WorkTask, WorkTaskEditFormComponent],
+    ]);
+
+    this.formByObjectType = new Map<Composite, unknown>([
+      [m.BasePrice, BasepriceFormComponent],
+      [m.Brand, BrandFormComponent],
+      [m.Carrier, CarrierFormComponent],
+      [m.Catalogue, CatalogueFormComponent],
+      [m.CustomerRelationship, CustomerRelationshipFormComponent],
+      [m.Disbursement, DisbursementFormComponent],
+      [m.EmailCommunication, EmailCommunicationFormComponent],
+      [m.Employment, EmploymentFormComponent],
+      [m.ExchangeRate, ExchangeRateFormComponent],
+      [m.FaceToFaceCommunication, FaceToFaceCommunicationFormComponent],
+      [m.InventoryItemTransaction, InventoryItemTransactionFormComponent],
+      [m.LetterCorrespondence, LetterCorrespondenceFormComponent],
+      [m.NonSerialisedInventoryItem, NonSerialisedInventoryItemFormComponent],
+      [m.OrderAdjustment, OrderAdjustmentFormComponent],
+      [
+        m.OrganisationContactRelationship,
+        OrganisationContactRelationshipFormComponent,
+      ],
+      [m.PartCategory, PartCategoryFormComponent],
+      [m.PartyContactMechanism, PartyContactmechanismFormComponent],
+      [m.PartyRate, PartyRateFormComponent],
+      [m.PhoneCommunication, PhoneCommunicationFormComponent],
+      [m.PositionType, PositionTypeFormComponent],
+      [m.PositionTypeRate, PositionTypeRateFormComponent],
+      [m.ProductCategory, ProductCategoryFormComponent],
+      [m.ProductIdentification, ProductIdentificationFormComponent],
+      [m.ProductQuoteApproval, ProductQuoteApprovalFormComponent],
+      [m.ProductType, ProductTypeFormComponent],
+      [m.PurchaseInvoiceApproval, PurchaseInvoiceApprovalFormComponent],
+      [m.PurchaseInvoiceItem, PurchaseInvoiceItemFormComponent],
+      [m.PurchaseOrderApprovalLevel1, PurchaseOrderApprovalLevel1FormComponent],
+      [m.PurchaseOrderApprovalLevel2, PurchaseOrderApprovalLevel2FormComponent],
+      [m.PurchaseOrderItem, PurchaseOrderItemFormComponent],
+      [m.QuoteItem, QuoteItemFormComponent],
+      [m.Receipt, ReceiptFormComponent],
+      [m.RepeatingPurchaseInvoice, RepeatingPurchaseInvoiceFormComponent],
+      [m.RepeatingSalesInvoice, RepeatingSalesInvoiceFormComponent],
+      [m.RequestItem, RequestItemFormComponent],
+      [m.SalesInvoiceItem, SalesInvoiceItemFormComponent],
+      [m.SalesOrderItem, SalesOrderItemFormComponent],
+      [m.SalesTerm, SalesTermFormComponent],
+      [
+        m.SerialisedItemCharacteristic,
+        SerialisedItemCharacteristicFormComponent,
+      ],
+      [m.ShipmentItem, ShipmentItemFormComponent],
+      [m.SubContractorRelationship, SubContractorRelationshipFormComponent],
+      [m.SupplierOffering, SupplierOfferingFormComponent],
+      [m.SupplierRelationship, SupplierRelationshipFormComponent],
+      [m.TimeEntry, TimeEntryFormComponent],
+      [m.UserProfile, UserProfileFormComponent],
+      [m.WorkEffortAssignmentRate, WorkEffortAssignmentRateFormComponent],
+      [m.WorkEffortFixedAsset, WorkEffortFixedAssetAssignmentFormComponent],
+      [
+        m.WorkEffortInventoryAssignment,
+        WorkEffortInventoryAssignmentFormComponent,
+      ],
+      [
+        m.WorkEffortInvoiceItemAssignment,
+        WorkEffortInvoiceItemAssignmentFormComponent,
+      ],
+      [m.WorkEffortPartyAssignment, WorkEffortPartyAssignmentFormComponent],
+    ]);
   }
 
-  createForm(composite: Composite) {
-    switch (composite.tag) {
-      // Objects
-      case tags.WorkTask:
-        return WorkTaskCreateFormComponent;
-    }
-
-    return this.editForm(composite);
+  createForm(objectType: Composite) {
+    return (
+      this.createFormByObjectType.get(objectType) ??
+      this.formByObjectType.get(objectType)
+    );
   }
 
-  editForm(composite: Composite) {
-    switch (composite.tag) {
-      // Objects
-      case tags.WorkTask:
-        return WorkTaskEditFormComponent;
-    }
-
-    return null;
+  editForm(objectType: Composite) {
+    return (
+      this.editFormByObjectType.get(objectType) ??
+      this.formByObjectType.get(objectType)
+    );
   }
 }
 
-export const components: any[] = [
+export const createComponents: any[] = [
+  CustomerShipmentCreateFormComponent,
+  EmailAddressCreateFormComponent,
+  NonUnifiedGoodCreateFormComponent,
+  NonUnifiedPartCreateFormComponent,
+  OrganisationCreateFormComponent,
+  PersonCreateFormComponent,
+  PostalAddressCreateFormComponent,
+  ProductQuoteCreateFormComponent,
+  PurchaseInvoiceCreateFormComponent,
+  PurchaseOrderCreateFormComponent,
+  PurchaseReturnCreateFormComponent,
+  PurchaseShipmentCreateFormComponent,
+  RequestForQuoteCreateFormComponent,
+  SalesInvoiceCreateFormComponent,
+  SalesOrderCreateFormComponent,
+  SerialisedItemCreateFormComponent,
+  TelecommunicationsNumberCreateFormComponent,
+  UnifiedGoodCreateFormComponent,
+  WebAddressCreateFormComponent,
+  WorkRequirementCreateFormComponent,
+  WorkRequirementFulfillmentCreateFormComponent,
   WorkTaskCreateFormComponent,
+];
+
+export const editComponents: any[] = [
+  CustomerShipmentEditFormComponent,
+  EmailAddressEditFormComponent,
+  NonUnifiedGoodEditFormComponent,
+  NonUnifiedPartEditFormComponent,
+  OrganisationEditFormComponent,
+  PersonEditFormComponent,
+  PostalAddressEditFormComponent,
+  ProductQuoteEditFormComponent,
+  PurchaseInvoiceEditFormComponent,
+  PurchaseOrderEditFormComponent,
+  // TODO:
+  // PurchaseReturnEditFormComponent,
+  PurchaseShipmentEditFormComponent,
+  RequestForQuoteEditFormComponent,
+  SalesInvoiceEditFormComponent,
+  SalesOrderEditFormComponent,
+  SerialisedItemEditFormComponent,
+  TelecommunicationsNumberEditFormComponent,
+  UnifiedGoodEditFormComponent,
+  WebAddressEditFormComponent,
+  WorkRequirementEditFormComponent,
+  // TODO:
+  // WorkRequirementFulfillmentEditFormComponent,
   WorkTaskEditFormComponent,
+];
+
+export const components: any[] = [
+  BasepriceFormComponent,
+  BrandFormComponent,
+  CarrierFormComponent,
+  CatalogueFormComponent,
+  CustomerRelationshipFormComponent,
+  DisbursementFormComponent,
+  EmailCommunicationFormComponent,
+  EmploymentFormComponent,
+  ExchangeRateFormComponent,
+  FaceToFaceCommunicationFormComponent,
+  InventoryItemTransactionFormComponent,
+  LetterCorrespondenceFormComponent,
+  NonSerialisedInventoryItemFormComponent,
+  OrderAdjustmentFormComponent,
+  OrganisationContactRelationshipFormComponent,
+  PartCategoryFormComponent,
+  PartyContactmechanismFormComponent,
+  PartyRateFormComponent,
+  PhoneCommunicationFormComponent,
+  PositionTypeFormComponent,
+  PositionTypeRateFormComponent,
+  ProductCategoryFormComponent,
+  ProductIdentificationFormComponent,
+  ProductQuoteApprovalFormComponent,
+  ProductTypeFormComponent,
+  PurchaseInvoiceApprovalFormComponent,
+  PurchaseInvoiceItemFormComponent,
+  PurchaseOrderApprovalLevel1FormComponent,
+  PurchaseOrderApprovalLevel2FormComponent,
+  PurchaseOrderItemFormComponent,
+  QuoteItemFormComponent,
+  ReceiptFormComponent,
+  RepeatingPurchaseInvoiceFormComponent,
+  RepeatingSalesInvoiceFormComponent,
+  RequestItemFormComponent,
+  SalesInvoiceItemFormComponent,
+  SalesOrderItemFormComponent,
+  SalesTermFormComponent,
+  SerialisedItemCharacteristicFormComponent,
+  ShipmentItemFormComponent,
+  SubContractorRelationshipFormComponent,
+  SupplierOfferingFormComponent,
+  SupplierRelationshipFormComponent,
+  TimeEntryFormComponent,
+  UserProfileFormComponent,
+  WorkEffortAssignmentRateFormComponent,
+  WorkEffortFixedAssetAssignmentFormComponent,
+  WorkEffortInventoryAssignmentFormComponent,
+  WorkEffortInvoiceItemAssignmentFormComponent,
+  WorkEffortPartyAssignmentFormComponent,
 ];
