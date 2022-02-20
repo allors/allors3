@@ -5,12 +5,14 @@ import { switchMap } from 'rxjs/operators';
 import { M } from '@allors/default/workspace/meta';
 import { Task } from '@allors/default/workspace/domain';
 import {
-  NavigationService,
-  ScopedService,
   RefreshService,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import {
+  NavigationService,
+  ScopedService,
+} from '@allors/base/workspace/angular/application';
 
 @Component({
   selector: 'taskassignment-link',
@@ -40,7 +42,7 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ScopedService,
+    public scoedService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId

@@ -94,8 +94,6 @@ export { PartyContactmechanismFormComponent } from './lib/domain/partycontactmec
 
 export { PartyRateFormComponent } from './lib/domain/partyrate/form/partyrate-form.component';
 
-export { PaymentOverviewPanelComponent } from './lib/domain/payment/overview/panel/payment-overview-panel.component';
-
 export { PersonCreateFormComponent } from './lib/domain/person/create/person-create-form.component';
 export { PersonInlineComponent } from './lib/domain/person/inline/person-inline.component';
 export { PersonListComponent } from './lib/domain/person/list/person-list.component';
@@ -140,13 +138,11 @@ export { PurchasInvoiceOverviewSummaryComponent } from './lib/domain/purchaseinv
 export { PurchaseInvoiceApprovalFormComponent } from './lib/domain/purchaseinvoiceapproval/form/purchaseinvoiceapproval-form.component';
 
 export { PurchaseInvoiceItemFormComponent } from './lib/domain/purchaseinvoiceitem/form/purchaseinvoiceitem-form.component';
-export { PurchaseInvoiceItemOverviewPanelComponent } from './lib/domain/purchaseinvoiceitem/overview/panel/purchaseinvoiceitem-overview-panel.component';
 
 export { PurchaseOrderCreateFormComponent } from './lib/domain/purchaseorder/create/purchaseorder-create-form.component';
 export { PurchaseOrderListComponent } from './lib/domain/purchaseorder/list/purchaseorder-list.component';
 export { PurchaseOrderOverviewComponent } from './lib/domain/purchaseorder/overview/purchaseorder-overview.component';
 export { PurchaseOrderEditFormComponent } from './lib/domain/purchaseorder/edit/purchaseorder-edit-form.component';
-export { PurchaseOrderInvoiceOverviewPanelComponent } from './lib/domain/purchaseorder/overview/invoicepanel/purchaseorderinvoice-overview-panel.component';
 export { PurchaseOrderOverviewSummaryComponent } from './lib/domain/purchaseorder/summary/purchaseorder-overview-summary.component';
 
 export { PurchaseOrderApprovalLevel1FormComponent } from './lib/domain/purchaseorderapprovallevel1/form/purchaseorderapprovallevel1-form.component';
@@ -154,7 +150,6 @@ export { PurchaseOrderApprovalLevel1FormComponent } from './lib/domain/purchaseo
 export { PurchaseOrderApprovalLevel2FormComponent } from './lib/domain/purchaseorderapprovallevel2/form/purchaseorderapprovallevel2-form.component';
 
 export { PurchaseOrderItemFormComponent } from './lib/domain/purchaseorderitem/form/purchaseorderitem-form.component';
-export { PurchaseOrderItemOverviewPanelComponent } from './lib/domain/purchaseorderitem/overview/panel/purchaseorderitem-overview-panel.component';
 
 export { PurchaseReturnCreateFormComponent } from './lib/domain/purchasereturn/create/purchasereturn-create-form.component';
 
@@ -170,7 +165,6 @@ export { ReceiptFormComponent } from './lib/domain/receipt/form/receipt-form.com
 export { RepeatingPurchaseInvoiceFormComponent } from './lib/domain/repeatingpurchaseinvoice/form/repeatingpurchaseinvoice-form.component';
 
 export { RepeatingSalesInvoiceFormComponent } from './lib/domain/repeatingsalesinvoice/form/repeatingsalesinvoice-form.component';
-export { RepeatingSalesInvoiceOverviewPanelComponent } from './lib/domain/repeatingsalesinvoice/overview/panel/repeatingsalesinvoice-overview-panel.component';
 
 export { RequestForQuoteCreateFormComponent } from './lib/domain/requestforquote/create/requestforquote-create-form.component';
 export { RequestForQuoteListComponent } from './lib/domain/requestforquote/list/requestforquote-list.component';
@@ -179,7 +173,6 @@ export { RequestForQuoteEditFormComponent } from './lib/domain/requestforquote/e
 export { RequestForQuoteOverviewSummaryComponent } from './lib/domain/requestforquote/summary/requestforquote-overview-summary.component';
 
 export { RequestItemFormComponent } from './lib/domain/requestitem/form/requestitem-form.component';
-export { RequestItemOverviewPanelComponent } from './lib/domain/requestitem/overview/panel/requestitem-overview-panel.component';
 
 export { SalesInvoiceCreateFormComponent } from './lib/domain/salesinvoice/create/salesinvoice-create-form.component';
 export { SalesInvoiceListComponent } from './lib/domain/salesinvoice/list/salesinvoice-list.component';
@@ -188,7 +181,6 @@ export { SalesInvoiceEditFormComponent } from './lib/domain/salesinvoice/edit/sa
 export { SalesInvoiceOverviewSummaryComponent } from './lib/domain/salesinvoice/summary/salesinvoice-overview-summary.component';
 
 export { SalesInvoiceItemFormComponent } from './lib/domain/salesinvoiceitem/form/salesinvoiceitem-form.component';
-export { SalesInvoiceItemOverviewPanelComponent } from './lib/domain/salesinvoiceitem/overview/panel/salesinvoiceitem-overview-panel.component';
 
 export { SalesOrderCreateFormComponent } from './lib/domain/salesorder/create/salesorder-create-form.component';
 export { SalesOrderListComponent } from './lib/domain/salesorder/list/salesorder-list.component';
@@ -197,10 +189,8 @@ export { SalesOrderEditFormComponent } from './lib/domain/salesorder/edit/saleso
 export { SalesOrderOverviewSummaryComponent } from './lib/domain/salesorder/summary/salesorder-overview-summary.component';
 
 export { SalesOrderItemFormComponent } from './lib/domain/salesorderitem/form/salesorderitem-form.component';
-export { SalesOrderItemOverviewPanelComponent } from './lib/domain/salesorderitem/overview/panel/salesorderitem-overview-panel.component';
 
 export { SalesTermFormComponent } from './lib/domain/salesterm/form/salesterm-form.component';
-export { SalesTermOverviewPanelComponent } from './lib/domain/salesterm/overview/panel/salesterm-overview-panel.component';
 
 export { SerialisedItemCreateFormComponent } from './lib/domain/serialiseditem/create/serialiseditem-create-form.component';
 export { SerialisedItemListComponent } from './lib/domain/serialiseditem/list/serialiseditem-list.component';
@@ -229,7 +219,6 @@ export { TelecommunicationsNumberFormComponent } from './lib/domain/telecommunic
 export { PartyContactMechanismTelecommunicationsNumberInlineComponent } from './lib/domain/telecommunicationsnumber/inline/telecommunicationsnumber-inline.component';
 
 export { TimeEntryFormComponent } from './lib/domain/timeentry/form/timeentry-form.component';
-export { TimeEntryOverviewPanelComponent } from './lib/domain/timeentry/overview/panel/timeentry-overview-panel.component';
 
 export { UnifiedGoodCreateFormComponent } from './lib/domain/unifiedgood/create/unifiedgood-create-form.component';
 export { UnifiedGoodListComponent } from './lib/domain/unifiedgood/list/unifiedgood-list.component';
@@ -245,31 +234,23 @@ export { WebAddressFormComponent } from './lib/domain/webaddress/edit/webaddress
 export { InlineWebAddressComponent } from './lib/domain/webaddress/inline/webaddress-inline.component';
 
 export { WorkEffortListComponent } from './lib/domain/workeffort/list/workeffort-list.component';
-export { WorkEffortOverviewPanelComponent } from './lib/domain/workeffort/overview/panel/workeffort-overview-panel.component';
 
 export { WorkEffortAssignmentRateFormComponent } from './lib/domain/workeffortassignmentrate/form/workeffortassignmentrate-form.component';
-export { WorkEffortAssignmentRateOverviewPanelComponent } from './lib/domain/workeffortassignmentrate/overview/panel/workeffortassignmentrate-overview-panel.component';
 
 export { WorkEffortFixedAssetAssignmentFormComponent } from './lib/domain/workeffortfixedassetassignment/form/workeffortfixedassetassignment-form.component';
-export { WorkEffortFAAssignmentOverviewPanelComponent } from './lib/domain/workeffortfixedassetassignment/overview/panel/workeffortfixedassetassignment-overview-panel.component';
 
 export { WorkEffortInventoryAssignmentFormComponent } from './lib/domain/workeffortinventoryassignment/form/workeffortinventoryassignment-form.component';
-export { WorkEffortInventoryAssignmentOverviewPanelComponent } from './lib/domain/workeffortinventoryassignment/overview/panel/workeffortinventoryassignment-overview-panel.component';
 
 export { WorkEffortInvoiceItemAssignmentFormComponent } from './lib/domain/workeffortinvoiceassignment/form/workeffortinvoiceassignment-form.component';
-export { WorkEffortInvoiceItemAssignmentOverviewPanelComponent } from './lib/domain/workeffortinvoiceassignment/overview/panel/workeffortinvoiceassignment-overview-panel.component';
 
 export { WorkEffortPartyAssignmentFormComponent } from './lib/domain/workeffortpartyassignment/form/workeffortpartyassignment-form.component';
-export { WorkEffortPartyAssignmentOverviewPanelComponent } from './lib/domain/workeffortpartyassignment/overview/panel/workeffortpartyassignment-overview-panel.component';
 
 export { WorkEffortPurchaseOrderItemAssignmentFormComponent } from './lib/domain/workeffortpoiassignment/form/workeffortpoiassignment-form.component';
-export { WorkEffortPOIAssignmentOverviewPanelComponent } from './lib/domain/workeffortpoiassignment/overview/panel/workeffortpoiassignment-overview-panel.component';
 
 export { WorkRequirementCreateFormComponent } from './lib/domain/workrequirement/create/workrequirement-create-form.component';
 export { WorkRequirementListComponent } from './lib/domain/workrequirement/list/workrequirement-list.component';
 export { WorkRequirementOverviewComponent } from './lib/domain/workrequirement/overview/workrequirement-overview.component';
 export { WorkRequirementEditFormComponent } from './lib/domain/workrequirement/edit/workrequirement-edit-form.component';
-export { WorkRequirementOverviewPanelComponent } from './lib/domain/workrequirement/overview/panel/workrequirement-overview-panel.component';
 export { WorkRequirementOverviewSummaryComponent } from './lib/domain/workrequirement/summary/workrequirement-overview-summary.component';
 
 export { WorkRequirementFulfillmentCreateFormComponent } from './lib/domain/workrequirementfulfillment/create/workrequirementfulfillment-create-form.component';

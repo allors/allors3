@@ -19,20 +19,33 @@
       <div class="col-md-8 align-self-stretch">
         <salesinvoice-edit-form></salesinvoice-edit-form>
 
-        <!-- <salesinvoiceitem-overview-panel></salesinvoiceitem-overview-panel> -->
+        <a-mat-dyn-view-extent-panel
+          [init]="m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.OrderAdjustment.InvoiceWhereOrderAdjustment"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.OrderAdjustment.InvoiceWhereOrderAdjustment"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.OrderAdjustment.InvoiceWhereOrderAdjustment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.OrderAdjustment.InvoiceWhereOrderAdjustment"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <!-- <salesterm-overview-panel></salesterm-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.RepeatingSalesInvoice.Source"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.RepeatingSalesInvoice.Source"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <repeatingsalesinvoice-overview-panel></repeatingsalesinvoice-overview-panel>
-
-        <payment-overview-panel></payment-overview-panel> -->
+        <a-mat-dyn-view-extent-panel
+          [select]="paymentTarget"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [select]="paymentTarget"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

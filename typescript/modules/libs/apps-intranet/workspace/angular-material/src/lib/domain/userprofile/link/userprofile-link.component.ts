@@ -6,12 +6,13 @@ import { Person } from '@allors/default/workspace/domain';
 import {
   Action,
   EditService,
-  ScopedService,
   RefreshService,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
+import { ScopedService } from '@allors/base/workspace/angular/application';
+import { EditRoleService } from '@allors/base/workspace/angular-material/application';
 
 @Component({
   selector: 'userprofile-link',
@@ -27,12 +28,12 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ScopedService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
-    public editService: EditService,
+    public editRoleService: EditRoleService,
     private userId: UserId
   ) {
-    this.edit = editService.edit();
+    this.edit = editRoleService.edit();
 
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;

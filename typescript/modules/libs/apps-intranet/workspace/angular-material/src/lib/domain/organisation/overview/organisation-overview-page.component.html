@@ -19,105 +19,106 @@
       <div class="col-md-8 align-self-stretch">
         <organisation-edit-form></organisation-edit-form>
 
-        <a-mat-dyn-view-relationship-panel
-          [anchor]="m.CommunicationEvent.FromParty"
-          [target]="m.CommunicationEvent.InvolvedParties"
-        ></a-mat-dyn-view-relationship-panel>
-        <a-mat-dyn-edit-relationship-panel
-          [anchor]="m.CommunicationEvent.FromParty"
-          [target]="m.CommunicationEvent.InvolvedParties"
-        ></a-mat-dyn-edit-relationship-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.CommunicationEvent.FromParty"
+          [include]="m.CommunicationEvent.InvolvedParties"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.CommunicationEvent.FromParty"
+          [include]="m.CommunicationEvent.InvolvedParties"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.CommunicationEvent.FromParty"
-          [target]="contactMechanismTarget"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.CommunicationEvent.FromParty"
-          [target]="contactMechanismTarget"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.CommunicationEvent.FromParty"
+          [select]="contactMechanismTarget"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.CommunicationEvent.FromParty"
+          [select]="contactMechanismTarget"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.PartyContactMechanism.Party"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.PartyContactMechanism.Party"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.PartyContactMechanism.Party"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.PartyContactMechanism.Party"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.PartyRelationship.Parties"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.PartyRelationship.Parties"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.PartyRelationship.Parties"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.PartyRelationship.Parties"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [target]="serialisedItemTarget"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [target]="serialisedItemTarget"
-        ></a-mat-dyn-edit-object-panel>
+        // TODO: Allow [] for select
+        <!-- <a-mat-dyn-view-extent-panel
+          [select]="serialisedItemTarget"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [select]="serialisedItemTarget"
+        ></a-mat-dyn-edit-extent-panel> -->
 
         // TODO: Flip Party-PartyRates relation
-        <!-- <a-mat-dyn-view-object-panel
-          [anchor]="m.PartyRate.Party"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.PartyRate.Party"
-        ></a-mat-dyn-edit-object-panel> -->
+        <!-- <a-mat-dyn-view-extent-panel
+          [init]="m.PartyRate.Party"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.PartyRate.Party"
+        ></a-mat-dyn-edit-extent-panel> -->
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.WorkEffort.Customer"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.WorkEffort.Customer"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkEffort.Customer"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkEffort.Customer"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.SalesInvoice.BillToCustomer"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.SalesInvoice.BillToCustomer"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.SalesInvoice.BillToCustomer"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesInvoice.BillToCustomer"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.SalesOrder.BillToCustomer"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.SalesOrder.BillToCustomer"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.SalesOrder.BillToCustomer"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesOrder.BillToCustomer"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.Quote.Receiver"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.Quote.Receiver"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.Quote.Receiver"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.Quote.Receiver"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.Request.Originator"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.Request.Originator"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.Request.Originator"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.Request.Originator"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
+        <a-mat-dyn-view-extent-panel
           *ngIf="supplierOfferings?.length > 0"
-          [anchor]="m.PurchaseOrder.TakenViaSupplier"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
+          [init]="m.PurchaseOrder.TakenViaSupplier"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
           *ngIf="supplierOfferings?.length > 0"
-          [anchor]="m.PurchaseOrder.TakenViaSupplier"
-        ></a-mat-dyn-edit-object-panel>
+          [init]="m.PurchaseOrder.TakenViaSupplier"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
+        <a-mat-dyn-view-extent-panel
           *ngIf="supplierOfferings?.length > 0"
-          [anchor]="m.RepeatingPurchaseInvoice.Supplier"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
+          [init]="m.RepeatingPurchaseInvoice.Supplier"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
           *ngIf="supplierOfferings?.length > 0"
-          [anchor]="m.RepeatingPurchaseInvoice.Supplier"
-        ></a-mat-dyn-edit-object-panel>
+          [init]="m.RepeatingPurchaseInvoice.Supplier"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

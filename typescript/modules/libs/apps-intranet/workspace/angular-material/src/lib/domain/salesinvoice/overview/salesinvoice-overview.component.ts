@@ -15,7 +15,7 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 
@@ -32,7 +32,9 @@ import { M } from '@allors/default/workspace/meta';
 export class SalesInvoiceOverviewComponent extends AllorsOverviewPageComponent {
   m: M;
 
-  public invoice: SalesInvoice;
+  invoice: SalesInvoice;
+
+  paymentTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -52,6 +54,11 @@ export class SalesInvoiceOverviewComponent extends AllorsOverviewPageComponent {
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { pathBuilder: p } = this.m;
+
+    this.paymentTarget = p.Invoice({
+      PaymentApplicationsWhereInvoice: { PaymentWherePaymentApplication: {} },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

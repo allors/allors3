@@ -16,13 +16,15 @@
         <requestforquote-overview-summary></requestforquote-overview-summary>
       </div>
 
-      <div
-        class="col-md-8 align-self-stretch"
-        [ngClass]="panelManager.panelContainerClass"
-      >
+      <div class="col-md-8 align-self-stretch">
         <requestforquote-edit-form></requestforquote-edit-form>
 
-        <requestitem-overview-panel></requestitem-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.RequestItem.RequestWhereRequestItem"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.RequestItem.RequestWhereRequestItem"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

@@ -19,19 +19,19 @@
       <div class="col-md-8 align-self-stretch">
         <productquote-edit-form></productquote-edit-form>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.QuoteItem.QuoteWhereQuoteItem"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.QuoteItem.QuoteWhereQuoteItem"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.QuoteItem.QuoteWhereQuoteItem"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.QuoteItem.QuoteWhereQuoteItem"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.OrderAdjustment.QuoteWhereOrderAdjustment"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.OrderAdjustment.QuoteWhereOrderAdjustment"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.OrderAdjustment.QuoteWhereOrderAdjustment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.OrderAdjustment.QuoteWhereOrderAdjustment"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

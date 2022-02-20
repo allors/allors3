@@ -20,14 +20,14 @@
       <div class="col-md-8 align-self-stretch">
         <customershipment-edit-form></customershipment-edit-form>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.CustomerShipment.ShipmentItems"
-          [target]="p.Shipment({ ShipmentItems: {} })"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.CustomerShipment.ShipmentItems"
-          [target]="p.Shipment({ ShipmentItems: {} })"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.CustomerShipment.ShipmentItems"
+          [include]="p.Shipment({ ShipmentItems: {} })"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.CustomerShipment.ShipmentItems"
+          [include]="p.Shipment({ ShipmentItems: {} })"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

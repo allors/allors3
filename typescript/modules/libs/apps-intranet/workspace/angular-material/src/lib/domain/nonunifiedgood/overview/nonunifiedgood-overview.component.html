@@ -19,19 +19,19 @@
       <div class="col-md-8 align-self-stretch">
         <nonunifiedgood-edit-form></nonunifiedgood-edit-form>
 
-        <a-mat-dyn-view-object-panel
-          [target]="m.Good.ProductIdentifications"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [target]="m.Good.ProductIdentifications"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [include]="m.Good.ProductIdentifications"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [include]="m.Good.ProductIdentifications"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [target]="m.Product.PriceComponentsWhereProduct"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [target]="m.Product.PriceComponentsWhereProduct"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [include]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [include]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

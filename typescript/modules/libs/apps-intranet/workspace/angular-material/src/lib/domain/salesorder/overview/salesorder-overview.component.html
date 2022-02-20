@@ -19,16 +19,26 @@
       <div class="col-md-8 align-self-stretch">
         <salesorder-edit-form></salesorder-edit-form>
 
-        <!-- <salesorderitem-overview-panel></salesorderitem-overview-panel> -->
+        <a-mat-dyn-view-extent-panel
+          [init]="m.SalesOrderItem.SalesOrderWhereSalesOrderItem"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesOrderItem.SalesOrderWhereSalesOrderItem"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.OrderAdjustment.OrderWhereOrderAdjustment"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.OrderAdjustment.OrderWhereOrderAdjustment"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.OrderAdjustment.OrderWhereOrderAdjustment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.OrderAdjustment.OrderWhereOrderAdjustment"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <!-- <salesterm-overview-panel></salesterm-overview-panel> -->
+        <a-mat-dyn-view-extent-panel
+          [init]="m.SalesTerm.OrderWhereSalesTerm"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesTerm.OrderWhereSalesTerm"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

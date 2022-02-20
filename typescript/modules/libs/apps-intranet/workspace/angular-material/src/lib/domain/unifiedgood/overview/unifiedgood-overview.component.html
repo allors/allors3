@@ -19,53 +19,53 @@
       <div class="col-md-8 align-self-stretch">
         <unifiedgood-edit-form></unifiedgood-edit-form>
 
-        <a-mat-dyn-view-object-panel
-          [target]="m.Good.ProductIdentifications"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [target]="m.Good.ProductIdentifications"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [include]="m.Good.ProductIdentifications"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [include]="m.Good.ProductIdentifications"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
+        <a-mat-dyn-view-extent-panel
           *ngIf="!serialised"
-          [target]="nonSerialisedInventoryItemTarget"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
+          [select]="nonSerialisedInventoryItemTarget"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
           *ngIf="!serialised"
-          [target]="nonSerialisedInventoryItemTarget"
-        ></a-mat-dyn-edit-object-panel>
+          [select]="nonSerialisedInventoryItemTarget"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
+        <a-mat-dyn-view-extent-panel
           *ngIf="!!serialised"
-          [target]="serialisedInventoryItemTarget"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
+          [select]="serialisedInventoryItemTarget"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
           *ngIf="!!serialised"
-          [target]="serialisedInventoryItemTarget"
-        ></a-mat-dyn-edit-object-panel>
+          [select]="serialisedInventoryItemTarget"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
+        <a-mat-dyn-view-extent-panel
           *ngIf="!!serialised"
-          [target]="m.Part.SerialisedItems"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
+          [include]="m.Part.SerialisedItems"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
           *ngIf="!!serialised"
-          [target]="m.Part.SerialisedItems"
-        ></a-mat-dyn-edit-object-panel>
+          [include]="m.Part.SerialisedItems"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [target]="m.Product.PriceComponentsWhereProduct"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [target]="m.Product.PriceComponentsWhereProduct"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [include]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [include]="m.Product.PriceComponentsWhereProduct"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [target]="m.Part.SupplierOfferingsWherePart"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [target]="m.Part.SupplierOfferingsWherePart"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [include]="m.Part.SupplierOfferingsWherePart"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [include]="m.Part.SupplierOfferingsWherePart"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

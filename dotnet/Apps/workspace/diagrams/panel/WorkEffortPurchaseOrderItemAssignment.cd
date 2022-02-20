@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Allors.Domain.WorkEffortPurchaseOrderItemAssignment" Collapsed="true">
+    <Position X="1" Y="1" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAgAAABAAAAQAAAABAAAAAACAAgAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Assignment" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.WorkEffort" Collapsed="true">
+    <Position X="6.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEJBgGAAoIgAAEFBAQMACQRgBAQQAwACBAAmQIAkIA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

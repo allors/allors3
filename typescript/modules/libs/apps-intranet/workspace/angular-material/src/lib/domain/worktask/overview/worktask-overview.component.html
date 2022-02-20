@@ -17,28 +17,70 @@
       <div class="col-md-8 align-self-stretch">
         <worktask-edit-form></worktask-edit-form>
 
-        <!-- <workeffortpartyassignment-overview-panel></workeffortpartyassignment-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkEffortPartyAssignment.Assignment"
+          [include]="m.WorkEffortPartyAssignment.Party"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkEffortPartyAssignment.Assignment"
+          [include]="m.WorkEffortPartyAssignment.Party"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <workeffortfixedassetassignment-overview-panel></workeffortfixedassetassignment-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkEffortFixedAssetAssignment.Assignment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkEffortFixedAssetAssignment.Assignment"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <workeffortassignmentrate-overview-panel></workeffortassignmentrate-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkEffortAssignmentRate.WorkEffort"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkEffortAssignmentRate.WorkEffort"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <workeffortinventoryassignment-overview-panel></workeffortinventoryassignment-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkEffortInventoryAssignment.Assignment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkEffortInventoryAssignment.Assignment"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <timeentry-overview-panel></timeentry-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.ServiceEntry.WorkEffort"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.ServiceEntry.WorkEffort"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <workeffortinvoiceitemeassignment-overview-panel></workeffortinvoiceitemeassignment-overview-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkEffortInvoiceItemAssignment.Assignment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkEffortInvoiceItemAssignment.Assignment"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <workeffortpurchaseorderitemassignment-overview-panel></workeffortpurchaseorderitemassignment-overview-panel> -->
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkEffortPurchaseOrderItemAssignment.Assignment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkEffortPurchaseOrderItemAssignment.Assignment"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-object-panel
-          [anchor]="m.WorkRequirementFulfillment.FullfillmentOf"
-        ></a-mat-dyn-view-object-panel>
-        <a-mat-dyn-edit-object-panel
-          [anchor]="m.WorkRequirementFulfillment.FullfillmentOf"
-        ></a-mat-dyn-edit-object-panel>
+        <a-mat-dyn-view-extent-panel
+          [init]="m.WorkRequirementFulfillment.FullfillmentOf"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.WorkRequirementFulfillment.FullfillmentOf"
+        ></a-mat-dyn-edit-extent-panel>
 
-        <!-- <workeffort-overview-panel></workeffort-overview-panel> -->
+        <a-mat-dyn-view-extent-panel
+          [select]="m.WorkEffort.Children"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [select]="m.WorkEffort.Children"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

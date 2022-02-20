@@ -18,9 +18,10 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
+import { PropertyType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './purchaseinvoice-overview.component.html',
@@ -37,6 +38,8 @@ export class PurchaseInvoiceOverviewComponent extends AllorsOverviewPageComponen
 
   order: PurchaseOrder;
   invoice: PurchaseInvoice;
+
+  paymentTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -56,6 +59,11 @@ export class PurchaseInvoiceOverviewComponent extends AllorsOverviewPageComponen
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { pathBuilder: p } = this.m;
+
+    this.paymentTarget = p.Invoice({
+      PaymentApplicationsWhereInvoice: { PaymentWherePaymentApplication: {} },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -69,27 +77,6 @@ export class PurchaseInvoiceOverviewComponent extends AllorsOverviewPageComponen
       p.PurchaseInvoice({
         name: prefix,
         objectId: id,
-        include: {
-          PurchaseInvoiceItems: {
-            InvoiceItemType: {},
-          },
-          BilledFrom: {},
-          BilledFromContactPerson: {},
-          BillToEndCustomer: {},
-          BillToEndCustomerContactPerson: {},
-          ShipToEndCustomer: {},
-          ShipToEndCustomerContactPerson: {},
-          PurchaseInvoiceState: {},
-          CreatedBy: {},
-          LastModifiedBy: {},
-          PurchaseOrders: {},
-          DerivedBillToEndCustomerContactMechanism: {
-            PostalAddress_Country: {},
-          },
-          DerivedShipToEndCustomerAddress: {
-            Country: {},
-          },
-        },
       })
     );
   }

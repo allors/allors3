@@ -45,14 +45,24 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="panel\Payment.cd" />
     <None Include="panel\QuoteItem.cd" />
     <None Include="panel\OrderAdjustment.cd" />
+    <None Include="panel\RepeatingSalesInvoice.cd" />
     <None Include="panel\RepeatingPurchaseInvoice.cd" />
     <None Include="panel\PurchaseOrder.cd" />
     <None Include="panel\Request.cd" />
     <None Include="panel\Quote.cd" />
+    <None Include="panel\SalesTerm..cd" />
     <None Include="panel\SalesOrder.cd" />
     <None Include="panel\SalesInvoice.cd" />
+    <None Include="panel\ServiceEntry.cd" />
+    <None Include="panel\WorkEffortPartyAssignment.cd" />
+    <None Include="panel\WorkEffortFixedAssetAssignment.cd" />
+    <None Include="panel\WorkEffortAssignmentRate.cd" />
+    <None Include="panel\WorkEffortInventoryAssignment.cd" />
+    <None Include="panel\WorkEffortInvoiceItemAssignment.cd" />
+    <None Include="panel\WorkEffortPurchaseOrderItemAssignment.cd" />
     <None Include="panel\WorkRequirementFulfillment.cd" />
     <None Include="panel\PartyRate.cd" />
     <None Include="panel\PartyRelationship.cd" />
@@ -62,7 +72,7 @@
     <None Include="panel\SerialisedItem.cd" />
     <None Include="panel\InventoryItem.cd" />
     <None Include="panel\ProductIdentification.cd" />
-    <None Include="panel\WorkTask.cd" />
+    <None Include="panel\WorkEffort.cd" />
     <None Include="Temp.cd" />
   </ItemGroup>
   <ItemGroup />
