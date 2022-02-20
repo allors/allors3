@@ -1,5 +1,5 @@
 <mat-card *ngIf="serialisedItem">
-  <mat-card-header (click)="panel.manager.toggle('detail')" style="cursor: pointer">
+  <mat-card-header>
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">business</mat-icon>
     </div>
@@ -33,49 +33,77 @@
       </div>
     </div>
 
-    <div *ngIf="serialisedItem.OwnedBy" (click)="navigation.overview(serialisedItem.OwnedBy)" style="cursor: pointer">
+    <div
+      *ngIf="serialisedItem.OwnedBy"
+      (click)="navigation.overview(serialisedItem.OwnedBy)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Owned by</div>
         {{ serialisedItem.OwnedBy.DisplayName }}
       </div>
     </div>
 
-    <div *ngIf="serialisedItem.RentedBy" (click)="navigation.overview(serialisedItem.RentedBy)" style="cursor: pointer">
+    <div
+      *ngIf="serialisedItem.RentedBy"
+      (click)="navigation.overview(serialisedItem.RentedBy)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Rented by</div>
         {{ serialisedItem.RentedBy.DisplayName }}
       </div>
     </div>
 
-    <div *ngIf="request" (click)="navigation.overview(request)" style="cursor: pointer">
+    <div
+      *ngIf="request"
+      (click)="navigation.overview(request)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Latest Request</div>
         {{ request.RequestNumber }}
       </div>
     </div>
 
-    <div *ngIf="quote" (click)="navigation.overview(quote)" style="cursor: pointer">
+    <div
+      *ngIf="quote"
+      (click)="navigation.overview(quote)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Latest Quote</div>
         {{ quote.QuoteNumber }}
       </div>
     </div>
 
-    <div *ngIf="order" (click)="navigation.overview(order)" style="cursor: pointer">
+    <div
+      *ngIf="order"
+      (click)="navigation.overview(order)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Latest Order</div>
         {{ order.OrderNumber }}
       </div>
     </div>
 
-    <div *ngIf="shipment" (click)="navigation.overview(shipment)" style="cursor: pointer">
+    <div
+      *ngIf="shipment"
+      (click)="navigation.overview(shipment)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Latest Shipment</div>
         {{ shipment.ShipmentNumber }}
       </div>
     </div>
 
-    <div *ngIf="invoice" (click)="navigation.overview(invoice)" style="cursor: pointer">
+    <div
+      *ngIf="invoice"
+      (click)="navigation.overview(invoice)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Latest Invoice</div>
         {{ invoice.InvoiceNumber }}

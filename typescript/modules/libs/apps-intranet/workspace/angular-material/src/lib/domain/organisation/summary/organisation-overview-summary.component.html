@@ -1,5 +1,5 @@
 <mat-card *ngIf="organisation">
-  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer">
+  <mat-card-header>
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">business</mat-icon>
     </div>
@@ -15,7 +15,11 @@
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ organisation.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ organisation.LastModifiedBy?.DisplayName }}</div>
+      <div>
+        last modified:
+        {{ organisation.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
+        {{ organisation.LastModifiedBy?.DisplayName }}
+      </div>
     </mat-card-subtitle>
   </mat-card-header>
 </mat-card>

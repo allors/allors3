@@ -1,5 +1,5 @@
 <mat-card *ngIf="good">
-  <mat-card-header (click)="panel.manager.toggle('detail')" style="cursor: pointer">
+  <mat-card-header>
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">business</mat-icon>
     </div>
@@ -17,7 +17,11 @@
   </mat-card-header>
 
   <mat-card-content>
-    <div *ngIf="good.Part" (click)="navigation.overview(good.Part)" style="cursor: pointer">
+    <div
+      *ngIf="good.Part"
+      (click)="navigation.overview(good.Part)"
+      style="cursor: pointer"
+    >
       <div style="color: grey">Part</div>
       <div>
         {{ good.Part.Name }}

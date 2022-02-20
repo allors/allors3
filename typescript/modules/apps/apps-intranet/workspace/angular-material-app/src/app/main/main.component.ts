@@ -1,14 +1,20 @@
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { Component, ViewChild, OnDestroy, OnInit, Self } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
-
-import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { Organisation } from '@allors/default/workspace/domain';
-import { M } from '@allors/default/workspace/meta';
+import {
+  ContextService,
+  MetaService,
+} from '@allors/base/workspace/angular/foundation';
+import {
+  MenuService,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 import {
   AllorsMaterialSideNavService,
+  IconService,
   SideMenuItem,
 } from '@allors/base/workspace/angular-material/application';
 
@@ -32,35 +38,36 @@ export class MainComponent implements OnInit, OnDestroy {
   constructor(
     @Self() private allors: ContextService,
     private router: Router,
-    private sideNavService: AllorsMaterialSideNavService
+    private sideNavService: AllorsMaterialSideNavService,
+    private menuService: MenuService,
+    private navigationService: NavigationService,
+    private iconService: IconService,
+    private metaService: MetaService
   ) {
     this.allors.context.name = this.constructor.name;
   }
 
   public ngOnInit(): void {
-    const { context } = this.allors;
-    const m = context.configuration.metaPopulation as M;
-    angularMenu(m).forEach((menuItem) => {
+    this.menuService.menu().forEach((menuItem) => {
       const objectType = menuItem.objectType;
 
       const sideMenuItem: SideMenuItem = {
-        icon: menuItem.icon ?? angularIcon(objectType),
-        title:
-          menuItem.title ??
-          angularSingularName(objectType) ??
-          objectType?.pluralName,
-        link: menuItem.link ?? angularList(objectType),
+        icon: menuItem.icon ?? this.iconService.icon(objectType),
+        title: menuItem.title ?? this.metaService.pluralName(objectType),
+        link: menuItem.link ?? this.navigationService.listUrl(objectType),
         children:
           menuItem.children &&
           menuItem.children.map((childMenuItem) => {
             const childObjectType = childMenuItem.objectType;
             return {
-              icon: childMenuItem.icon ?? angularIcon(childObjectType),
+              icon:
+                childMenuItem.icon ?? this.iconService.icon(childObjectType),
               title:
                 childMenuItem.title ??
-                angularSingularName(childObjectType) ??
-                childObjectType?.pluralName,
-              link: childMenuItem.link ?? angularList(childObjectType),
+                this.metaService.pluralName(childObjectType),
+              link:
+                childMenuItem.link ??
+                this.navigationService.listUrl(childObjectType),
             };
           }),
       };

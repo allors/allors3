@@ -78,14 +78,10 @@ import {
   AllorsMaterialDynamicCreateComponent,
   AllorsMaterialDynamicEditComponent,
   AllorsMaterialDynamicEditDetailPanelComponent,
-  AllorsMaterialDynamicEditObjectPanelComponent,
-  AllorsMaterialDynamicEditRelationPanelComponent,
-  AllorsMaterialDynamicEditRelationshipPanelComponent,
+  AllorsMaterialDynamicEditExtentPanelComponent,
   AllorsMaterialDynamicSummaryPanelComponent,
   AllorsMaterialDynamicViewDetailPanelComponent,
-  AllorsMaterialDynamicViewObjectPanelComponent,
-  AllorsMaterialDynamicViewRelationPanelComponent,
-  AllorsMaterialDynamicViewRelationshipPanelComponent,
+  AllorsMaterialDynamicViewExtentPanelComponent,
 } from '@allors/base/workspace/angular-material/application';
 
 // Extranet
@@ -139,14 +135,10 @@ import {
     AllorsMaterialDynamicCreateComponent,
     AllorsMaterialDynamicEditComponent,
     AllorsMaterialDynamicEditDetailPanelComponent,
-    AllorsMaterialDynamicEditObjectPanelComponent,
-    AllorsMaterialDynamicEditRelationPanelComponent,
-    AllorsMaterialDynamicEditRelationshipPanelComponent,
+    AllorsMaterialDynamicEditExtentPanelComponent,
     AllorsMaterialDynamicSummaryPanelComponent,
     AllorsMaterialDynamicViewDetailPanelComponent,
-    AllorsMaterialDynamicViewObjectPanelComponent,
-    AllorsMaterialDynamicViewRelationPanelComponent,
-    AllorsMaterialDynamicViewRelationshipPanelComponent,
+    AllorsMaterialDynamicViewExtentPanelComponent,
     // Extranet Material
     WorkEffortListPageComponent,
     WorkTaskCreateFormComponent,

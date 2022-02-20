@@ -13,6 +13,7 @@ import {
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsViewSummaryPanelComponent,
+  NavigationService,
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
@@ -64,6 +65,7 @@ export class WorkRequirementOverviewSummaryComponent extends AllorsViewSummaryPa
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
+    public navigation: NavigationService,
     private snackBar: MatSnackBar,
     private invokeService: InvokeService,
     private errorService: ErrorService

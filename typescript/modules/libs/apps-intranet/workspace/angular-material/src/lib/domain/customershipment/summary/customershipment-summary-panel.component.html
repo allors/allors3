@@ -1,5 +1,5 @@
 <mat-card *ngIf="shipment">
-  <mat-card-header (click)="panel.manager.toggle('edit')" style="cursor: pointer">
+  <mat-card-header>
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">local_shipping</mat-icon>
     </div>
@@ -12,7 +12,11 @@
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ shipment.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ shipment.LastModifiedBy?.DisplayName }}</div>
+      <div>
+        last modified:
+        {{ shipment.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
+        {{ shipment.LastModifiedBy?.DisplayName }}
+      </div>
     </mat-card-subtitle>
   </mat-card-header>
 
@@ -28,10 +32,36 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="shipment.canExecuteCancel" mat-button (click)="cancel()">Cancel</button>
-    <button *ngIf="shipment.ShipmentItems && shipment.canExecuteHold" mat-button (click)="hold()">Hold</button>
-    <button *ngIf="shipment.ShipmentItems && shipment.canExecuteContinue" mat-button (click)="continue()">Continue</button>
-    <button *ngIf="shipment.ShipmentItems && shipment.canExecutePick" mat-button (click)="pick()">Pick</button>
-    <button *ngIf="shipment.ShipmentItems && shipment.canExecuteShip" mat-button (click)="ship()">Ship</button>
+    <button *ngIf="shipment.canExecuteCancel" mat-button (click)="cancel()">
+      Cancel
+    </button>
+    <button
+      *ngIf="shipment.ShipmentItems && shipment.canExecuteHold"
+      mat-button
+      (click)="hold()"
+    >
+      Hold
+    </button>
+    <button
+      *ngIf="shipment.ShipmentItems && shipment.canExecuteContinue"
+      mat-button
+      (click)="continue()"
+    >
+      Continue
+    </button>
+    <button
+      *ngIf="shipment.ShipmentItems && shipment.canExecutePick"
+      mat-button
+      (click)="pick()"
+    >
+      Pick
+    </button>
+    <button
+      *ngIf="shipment.ShipmentItems && shipment.canExecuteShip"
+      mat-button
+      (click)="ship()"
+    >
+      Ship
+    </button>
   </mat-card-actions>
 </mat-card>

@@ -68,7 +68,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
 
-    public factoryService: ScopedService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,

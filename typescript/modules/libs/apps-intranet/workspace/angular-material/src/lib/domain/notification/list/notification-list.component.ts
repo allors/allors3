@@ -55,7 +55,7 @@ export class NotificationListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public factoryService: ScopedService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public methodService: MethodService,
     public navigation: NavigationService,

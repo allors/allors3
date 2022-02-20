@@ -13,6 +13,7 @@ import {
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsViewSummaryPanelComponent,
+  NavigationService,
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
@@ -57,7 +58,8 @@ export class ProductQuoteOverviewSummaryComponent extends AllorsViewSummaryPanel
     workspaceService: WorkspaceService,
     private snackBar: MatSnackBar,
     private invokeService: InvokeService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    public navigation: NavigationService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;

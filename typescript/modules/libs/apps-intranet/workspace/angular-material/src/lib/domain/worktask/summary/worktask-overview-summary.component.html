@@ -1,9 +1,11 @@
 <mat-card *ngIf="workTask">
-  <mat-card-header (click)="panel.manager.toggle('detail')" style="cursor: pointer">
+  <mat-card-header>
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">business</mat-icon>
     </div>
-    <mat-card-title>{{ workTask.WorkEffortNumber }} {{ workTask.Name }}</mat-card-title>
+    <mat-card-title
+      >{{ workTask.WorkEffortNumber }} {{ workTask.Name }}</mat-card-title
+    >
     <mat-card-subtitle>
       <div>
         {{ workTask.WorkEffortState.Name }}
@@ -11,33 +13,52 @@
     </mat-card-subtitle>
 
     <mat-card-subtitle>
-      <div>last modified: {{ workTask.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by {{ workTask.LastModifiedBy?.DisplayName }}</div>
+      <div>
+        last modified:
+        {{ workTask.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
+        {{ workTask.LastModifiedBy?.DisplayName }}
+      </div>
     </mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
-    <div (click)="navigation.overview(workTask.Customer)" style="cursor: pointer">
+    <div
+      (click)="navigation.overview(workTask.Customer)"
+      style="cursor: pointer"
+    >
       <div style="color: grey">Customer</div>
       <div>
         {{ workTask.Customer?.DisplayName }}
       </div>
     </div>
 
-    <div *ngFor="let asset of assets" (click)="navigation.overview(asset)" style="cursor: pointer">
+    <div
+      *ngFor="let asset of assets"
+      (click)="navigation.overview(asset)"
+      style="cursor: pointer"
+    >
       <div style="color: grey">Equipment</div>
       <div>
         {{ asset.DisplayName }}
       </div>
     </div>
 
-    <div *ngIf="parent" (click)="navigation.overview(parent)" style="cursor: pointer">
+    <div
+      *ngIf="parent"
+      (click)="navigation.overview(parent)"
+      style="cursor: pointer"
+    >
       <div>
         <div style="color: grey">Parent</div>
         {{ parent.Name }}
       </div>
     </div>
 
-    <div *ngFor="let salesInvoice of salesInvoices" (click)="navigation.overview(salesInvoice)" style="cursor: pointer">
+    <div
+      *ngFor="let salesInvoice of salesInvoices"
+      (click)="navigation.overview(salesInvoice)"
+      style="cursor: pointer"
+    >
       <div style="color: grey">Invoice</div>
       <div>
         {{ salesInvoice.InvoiceNumber }}
@@ -46,12 +67,26 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="workTask.canExecuteCancel" mat-button (click)="cancel()">Cancel</button>
-    <button *ngIf="workTask.canExecuteReopen" mat-button (click)="reopen()">Reopen</button>
-    <button *ngIf="workTask.canExecuteComplete" mat-button (click)="complete()">Complete</button>
-    <button *ngIf="workTask.canExecuteInvoice" mat-button (click)="invoice()">Invoice</button>
-    <button *ngIf="workTask.canExecuteRevise" mat-button (click)="revise()">Revise</button>
-    <button mat-button type="button" (click)="printForWorker.execute(workTask)">Print internal</button>
-    <button mat-button type="button" (click)="print.execute(workTask)">Print</button>
+    <button *ngIf="workTask.canExecuteCancel" mat-button (click)="cancel()">
+      Cancel
+    </button>
+    <button *ngIf="workTask.canExecuteReopen" mat-button (click)="reopen()">
+      Reopen
+    </button>
+    <button *ngIf="workTask.canExecuteComplete" mat-button (click)="complete()">
+      Complete
+    </button>
+    <button *ngIf="workTask.canExecuteInvoice" mat-button (click)="invoice()">
+      Invoice
+    </button>
+    <button *ngIf="workTask.canExecuteRevise" mat-button (click)="revise()">
+      Revise
+    </button>
+    <button mat-button type="button" (click)="printForWorker.execute(workTask)">
+      Print internal
+    </button>
+    <button mat-button type="button" (click)="print.execute(workTask)">
+      Print
+    </button>
   </mat-card-actions>
 </mat-card>

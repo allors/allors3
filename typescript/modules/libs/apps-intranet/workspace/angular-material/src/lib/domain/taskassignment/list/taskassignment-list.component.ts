@@ -56,7 +56,7 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     public workspaceService: WorkspaceService,
-    public factoryService: ScopedService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public editRoleService: EditRoleService,
     public navigation: NavigationService,
