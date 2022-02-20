@@ -3,12 +3,12 @@ import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 
 import { AppClient } from './app.client';
 import { Configuration } from '@allors/system/workspace/domain';
-import { ruleBuilder } from '@allors/apps-extranet/workspace/derivations';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { data } from '@allors/default/workspace/meta-json';
 import { M } from '@allors/default/workspace/meta';
+import { ruleBuilder } from '@allors/default/workspace/derivations';
 import { AppContext } from './app.context';
 
 export function config(

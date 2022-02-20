@@ -7,11 +7,11 @@ import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  Action,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../actions/print/print.service';
-import { Action } from '@allors/base/workspace/angular/application';
 
 @Component({
   templateUrl: './purchaseorderapprovallevel1-form.component.html',

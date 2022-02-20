@@ -323,7 +323,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.object.BillToCustomer.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.BillToCustomer;
     this.object.AssignedBillToContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -334,9 +334,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
     this.billToEndCustomerContactMechanisms.push(
       partyContactMechanism.ContactMechanism
     );
-    this.object.BillToEndCustomer.addPartyContactMechanism(
-      partyContactMechanism
-    );
+    partyContactMechanism.Party = this.object.BillToEndCustomer;
     this.object.AssignedBillToEndCustomerContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -345,7 +343,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.object.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.ShipToCustomer;
     this.object.AssignedShipToAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
@@ -356,9 +354,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
     this.shipToEndCustomerAddresses.push(
       partyContactMechanism.ContactMechanism
     );
-    this.object.ShipToEndCustomer.addPartyContactMechanism(
-      partyContactMechanism
-    );
+    partyContactMechanism.Party = this.object.ShipToEndCustomer;
     this.object.AssignedShipToEndCustomerAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
@@ -367,7 +363,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipFromAddresses.push(partyContactMechanism.ContactMechanism);
-    this.object.TakenBy.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.TakenBy;
     this.object.AssignedShipFromAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
@@ -399,7 +395,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -476,7 +472,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -550,7 +546,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -624,7 +620,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

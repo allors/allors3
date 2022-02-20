@@ -189,7 +189,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.takenViaContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.takenVia.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.takenVia;
     this.object.AssignedTakenViaContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -211,7 +211,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.billToContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.object.OrderedBy.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.OrderedBy;
     this.object.AssignedBillToContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -233,7 +233,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.object.OrderedBy.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.OrderedBy;
     this.object.AssignedShipToAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
@@ -251,7 +251,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
       pull.Party({
         object: supplier,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -298,7 +298,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
       pull.Party({
         object: organisation,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

@@ -142,7 +142,7 @@ export class PersonListComponent implements OnInit, OnDestroy {
                 include: {
                   Salutation: x,
                   Picture: x,
-                  PartyContactMechanisms: {
+                  PartyContactMechanismsWhereParty: {
                     ContactMechanism: {
                       PostalAddress_Country: x,
                     },

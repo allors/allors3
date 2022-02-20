@@ -21,16 +21,17 @@ export class PartyDisplayPhoneRule implements IRule<Party> {
     this.roleType = m.Party.DisplayPhone;
 
     this.dependencies = [
-      d(m.Party, (v) => v.PartyContactMechanisms),
+      d(m.Party, (v) => v.CurrentPartyContactMechanisms),
       d(m.PartyContactMechanism, (v) => v.ContactMechanism),
     ];
   }
 
   derive(party: Party) {
-    const telecommunicationsNumbers = party.PartyContactMechanisms.filter(
-      (v) =>
-        v.ContactMechanism?.strategy.cls === this.m.TelecommunicationsNumber
-    );
+    const telecommunicationsNumbers =
+      party.CurrentPartyContactMechanisms.filter(
+        (v) =>
+          v.ContactMechanism?.strategy.cls === this.m.TelecommunicationsNumber
+      );
 
     if (telecommunicationsNumbers.length > 0) {
       return telecommunicationsNumbers

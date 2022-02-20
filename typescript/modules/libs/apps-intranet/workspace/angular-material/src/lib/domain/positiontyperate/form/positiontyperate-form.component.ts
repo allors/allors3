@@ -102,7 +102,7 @@ export class PositionTypeRateFormComponent extends AllorsFormComponent<PositionT
   public override save(): void {
     if (this.selectedPositionTypes != null) {
       this.selectedPositionTypes.forEach((positionType: PositionType) => {
-        positionType.PositionTypeRate = this.positionTypeRate;
+        positionType.PositionTypeRate = this.object;
 
         const index = this.originalPositionTypes.indexOf(positionType);
         if (index > -1) {

@@ -149,7 +149,7 @@ export class CustomerShipmentCreateFormComponent extends AllorsFormComponent<Cus
   public shipToAddressAdded(
     partyContactMechanism: PartyContactMechanism
   ): void {
-    this.object.ShipToParty.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.ShipToParty;
 
     const postalAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
@@ -163,7 +163,7 @@ export class CustomerShipmentCreateFormComponent extends AllorsFormComponent<Cus
     this.shipFromAddresses.push(
       partyContactMechanism.ContactMechanism as PostalAddress
     );
-    this.object.ShipFromParty.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.ShipFromParty;
     this.object.ShipFromAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }

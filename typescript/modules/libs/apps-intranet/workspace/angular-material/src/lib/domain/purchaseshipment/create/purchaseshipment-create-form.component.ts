@@ -159,7 +159,7 @@ export class PurchaseShipmentCreateFormComponent extends AllorsFormComponent<Pur
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToAddresses.push(partyContactMechanism.ContactMechanism);
-    this.object.ShipToParty.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.ShipToParty;
     this.object.ShipToAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
@@ -177,7 +177,7 @@ export class PurchaseShipmentCreateFormComponent extends AllorsFormComponent<Pur
       pull.Party({
         object: supplier,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -211,7 +211,7 @@ export class PurchaseShipmentCreateFormComponent extends AllorsFormComponent<Pur
       pull.Party({
         object: organisation,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

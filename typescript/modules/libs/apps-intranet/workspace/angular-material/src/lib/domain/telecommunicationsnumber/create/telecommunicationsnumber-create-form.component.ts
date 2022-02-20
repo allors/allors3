@@ -69,7 +69,7 @@ export class TelecommunicationsNumberCreateFormComponent extends AllorsFormCompo
       pulls.push(
         p.Party({
           objectId: initializer.id,
-          include: { PartyContactMechanisms: {} },
+          include: { PartyContactMechanismsWhereParty: {} },
         })
       );
     }
@@ -95,7 +95,6 @@ export class TelecommunicationsNumberCreateFormComponent extends AllorsFormCompo
 
     this.partyContactMechanism.UseAsDefault = true;
     this.partyContactMechanism.ContactMechanism = this.object;
-
-    this.party.addPartyContactMechanism(this.partyContactMechanism);
+    this.partyContactMechanism.Party = this.party;
   }
 }

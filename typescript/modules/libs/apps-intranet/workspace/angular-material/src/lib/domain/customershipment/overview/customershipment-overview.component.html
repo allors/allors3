@@ -21,12 +21,10 @@
         <customershipment-edit-form></customershipment-edit-form>
 
         <a-mat-dyn-view-extent-panel
-          [init]="m.CustomerShipment.ShipmentItems"
-          [include]="p.Shipment({ ShipmentItems: {} })"
+          [init]="m.ShipmentItem.ShipmentWhereShipmentItem"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          [init]="m.CustomerShipment.ShipmentItems"
-          [include]="p.Shipment({ ShipmentItems: {} })"
+          [init]="m.ShipmentItem.ShipmentWhereShipmentItem"
         ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>

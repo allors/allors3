@@ -97,7 +97,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
           objectId: this.editRequest.objectId,
           include: {
             FromParty: {
-              PartyContactMechanisms: {
+              PartyContactMechanismsWhereParty: {
                 ContactMechanism: {},
               },
               CurrentPartyContactMechanisms: {
@@ -105,7 +105,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
               },
             },
             ToParty: {
-              PartyContactMechanisms: {
+              PartyContactMechanismsWhereParty: {
                 ContactMechanism: {},
               },
               CurrentPartyContactMechanisms: {
@@ -232,7 +232,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
 
   public fromEmailAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.object.FromParty) {
-      this.object.FromParty.addPartyContactMechanism(partyContactMechanism);
+      partyContactMechanism.Party = this.object.FromParty;
     }
 
     const emailAddress = partyContactMechanism.ContactMechanism as EmailAddress;
@@ -243,7 +243,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
 
   public toEmailAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.object.ToParty) {
-      this.object.ToParty.addPartyContactMechanism(partyContactMechanism);
+      partyContactMechanism.Party = this.object.ToParty;
     }
 
     const emailAddress = partyContactMechanism.ContactMechanism as EmailAddress;
@@ -298,7 +298,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
       pull.Party({
         objectId: party.id,
         select: {
-          PartyContactMechanisms: {
+          PartyContactMechanismsWhereParty: {
             include: {
               ContactMechanism: {
                 ContactMechanismType: x,
@@ -312,7 +312,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] =
         loaded.collection<PartyContactMechanism>(
-          m.Party.PartyContactMechanisms
+          m.Party.PartyContactMechanismsWhereParty
         );
       this.fromEmails = partyContactMechanisms
         ?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)
@@ -335,7 +335,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
       pull.Party({
         objectId: party.id,
         select: {
-          PartyContactMechanisms: {
+          PartyContactMechanismsWhereParty: {
             include: {
               ContactMechanism: {
                 ContactMechanismType: x,
@@ -349,7 +349,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] =
         loaded.collection<PartyContactMechanism>(
-          m.Party.PartyContactMechanisms
+          m.Party.PartyContactMechanismsWhereParty
         );
       this.toEmails = partyContactMechanisms
         ?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)

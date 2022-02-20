@@ -323,7 +323,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
     this.billedFromContactMechanisms.push(
       partyContactMechanism.ContactMechanism
     );
-    this.object.BilledFrom.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.BilledFrom;
     this.object.AssignedBilledFromContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -332,7 +332,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.shipToCustomerAddresses.push(partyContactMechanism.ContactMechanism);
-    this.object.ShipToCustomer.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.ShipToCustomer;
     this.object.AssignedShipToCustomerAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
@@ -343,9 +343,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
     this.billToEndCustomerContactMechanisms.push(
       partyContactMechanism.ContactMechanism
     );
-    this.object.BillToEndCustomer.addPartyContactMechanism(
-      partyContactMechanism
-    );
+    partyContactMechanism.Party = this.object.BillToEndCustomer;
     this.object.AssignedBillToEndCustomerContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -356,9 +354,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
     this.shipToEndCustomerAddresses.push(
       partyContactMechanism.ContactMechanism
     );
-    this.object.ShipToEndCustomer.addPartyContactMechanism(
-      partyContactMechanism
-    );
+    partyContactMechanism.Party = this.object.ShipToEndCustomer;
     this.object.AssignedShipToEndCustomerAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;
   }
@@ -396,7 +392,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
       pull.Organisation({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -454,7 +450,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -507,7 +503,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {
@@ -565,7 +561,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

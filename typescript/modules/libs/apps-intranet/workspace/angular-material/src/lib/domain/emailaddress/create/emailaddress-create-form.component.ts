@@ -60,7 +60,7 @@ export class EmailAddressCreateFormComponent extends AllorsFormComponent<EmailAd
         p.Party({
           objectId: initializer.id,
           include: {
-            PartyContactMechanisms: {},
+            PartyContactMechanismsWhereParty: {},
           },
         })
       );
@@ -84,6 +84,6 @@ export class EmailAddressCreateFormComponent extends AllorsFormComponent<EmailAd
     this.partyContactMechanism.UseAsDefault = true;
     this.partyContactMechanism.ContactMechanism = this.object;
 
-    this.party.addPartyContactMechanism(this.partyContactMechanism);
+    this.partyContactMechanism.Party = this.party;
   }
 }

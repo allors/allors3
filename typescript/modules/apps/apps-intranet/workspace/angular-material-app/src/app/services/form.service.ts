@@ -90,6 +90,7 @@ import {
   WorkEffortInventoryAssignmentFormComponent,
   WorkEffortInvoiceItemAssignmentFormComponent,
   WorkEffortPartyAssignmentFormComponent,
+  WorkEffortPurchaseOrderItemAssignmentFormComponent,
   WorkRequirementCreateFormComponent,
   WorkRequirementEditFormComponent,
   WorkRequirementFulfillmentCreateFormComponent,
@@ -221,7 +222,10 @@ export class AppFormService implements FormService {
       [m.TimeEntry, TimeEntryFormComponent],
       [m.UserProfile, UserProfileFormComponent],
       [m.WorkEffortAssignmentRate, WorkEffortAssignmentRateFormComponent],
-      [m.WorkEffortFixedAsset, WorkEffortFixedAssetAssignmentFormComponent],
+      [
+        m.WorkEffortFixedAssetAssignment,
+        WorkEffortFixedAssetAssignmentFormComponent,
+      ],
       [
         m.WorkEffortInventoryAssignment,
         WorkEffortInventoryAssignmentFormComponent,
@@ -231,6 +235,10 @@ export class AppFormService implements FormService {
         WorkEffortInvoiceItemAssignmentFormComponent,
       ],
       [m.WorkEffortPartyAssignment, WorkEffortPartyAssignmentFormComponent],
+      [
+        m.WorkEffortPurchaseOrderItemAssignment,
+        WorkEffortPurchaseOrderItemAssignmentFormComponent,
+      ],
     ]);
   }
 
@@ -352,4 +360,5 @@ export const components: any[] = [
   WorkEffortInventoryAssignmentFormComponent,
   WorkEffortInvoiceItemAssignmentFormComponent,
   WorkEffortPartyAssignmentFormComponent,
+  WorkEffortPurchaseOrderItemAssignmentFormComponent,
 ];

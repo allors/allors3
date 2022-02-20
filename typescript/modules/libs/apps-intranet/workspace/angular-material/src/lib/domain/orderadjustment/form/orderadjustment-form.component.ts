@@ -24,7 +24,6 @@ export class OrderAdjustmentFormComponent extends AllorsFormComponent<OrderAdjus
   public m: M;
 
   public container: IObject;
-  public object: OrderAdjustment;
 
   constructor(
     @Self() public allors: ContextService,

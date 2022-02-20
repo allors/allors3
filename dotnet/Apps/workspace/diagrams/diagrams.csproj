@@ -45,6 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="panel\Shipment.cd" />
     <None Include="panel\Payment.cd" />
     <None Include="panel\QuoteItem.cd" />
     <None Include="panel\OrderAdjustment.cd" />

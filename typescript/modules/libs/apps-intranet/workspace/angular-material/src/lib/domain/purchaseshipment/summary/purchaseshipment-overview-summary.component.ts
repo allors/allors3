@@ -101,7 +101,7 @@ export class PurchaseShipmentOverviewSummaryComponent extends AllorsViewSummaryP
           ShipmentItems: {
             OrderShipmentsWhereShipmentItem: {
               OrderItem: {
-                OrderWhereValidOrderItem: x,
+                OrderWhereValidOrderItem: {},
               },
             },
           },

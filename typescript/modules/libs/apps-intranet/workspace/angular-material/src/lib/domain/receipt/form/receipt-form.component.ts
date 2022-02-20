@@ -72,8 +72,7 @@ export class ReceiptFormComponent extends AllorsFormComponent<Receipt> {
   }
 
   public override save(): void {
-    this.paymentApplication.AmountApplied = this.receipt.Amount;
-
+    this.paymentApplication.AmountApplied = this.object.Amount;
     super.save();
   }
 }

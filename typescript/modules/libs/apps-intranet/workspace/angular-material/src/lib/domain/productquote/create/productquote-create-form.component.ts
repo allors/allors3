@@ -138,7 +138,7 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.contactMechanisms.push(partyContactMechanism.ContactMechanism);
-    this.object.Receiver.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.object.Receiver;
     this.object.FullfillContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -152,7 +152,7 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
       pull.Party({
         object: party,
         select: {
-          PartyContactMechanisms: x,
+          PartyContactMechanismsWhereParty: x,
           CurrentPartyContactMechanisms: {
             include: {
               ContactMechanism: {

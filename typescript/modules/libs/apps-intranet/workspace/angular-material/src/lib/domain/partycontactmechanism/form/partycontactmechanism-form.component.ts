@@ -67,7 +67,7 @@ export class PartyContactmechanismFormComponent extends AllorsFormComponent<Part
         p.PartyContactMechanism({
           objectId: this.editRequest.objectId,
           select: {
-            PartyWherePartyContactMechanism: {
+            Party: {
               include: {
                 CurrentPartyContactMechanisms: {
                   ContactMechanism: {},
@@ -141,7 +141,7 @@ export class PartyContactmechanismFormComponent extends AllorsFormComponent<Part
     if (this.createRequest) {
       this.object.FromDate = new Date();
       this.object.UseAsDefault = true;
-      this.party.addPartyContactMechanism(this.object);
+      this.object.Party = this.party;
     }
   }
 }

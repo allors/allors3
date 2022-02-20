@@ -105,7 +105,7 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
       p.Person({
         objectId: this.editRequest.objectId,
         select: {
-          PartyContactMechanisms: {
+          PartyContactMechanismsWhereParty: {
             include: {
               ContactMechanism: {
                 ContactMechanismType: {},
@@ -134,7 +134,7 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
 
     const partyContactMechanisms: PartyContactMechanism[] =
       pullResult.collection<PartyContactMechanism>(
-        this.m.Party.PartyContactMechanisms
+        this.m.Party.PartyContactMechanismsWhereParty
       );
     this.emailAddresses =
       partyContactMechanisms
@@ -159,7 +159,7 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
         );
       partyContactMechanism.ContactMechanism = emailAddress;
 
-      this.object.addPartyContactMechanism(partyContactMechanism);
+      partyContactMechanism.Party = this.object;
       this.emailAddresses.push(this.object.UserEmail);
     }
   }

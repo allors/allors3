@@ -160,7 +160,7 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
                 include: {
                   CustomerRelationshipsWhereCustomer: x,
                   SupplierRelationshipsWhereSupplier: x,
-                  PartyContactMechanisms: {
+                  PartyContactMechanismsWhereParty: {
                     ContactMechanism: {
                       PostalAddress_Country: x,
                     },

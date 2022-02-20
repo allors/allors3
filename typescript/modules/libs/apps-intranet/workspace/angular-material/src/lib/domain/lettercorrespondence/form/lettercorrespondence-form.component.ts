@@ -98,7 +98,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
           objectId: this.editRequest.objectId,
           include: {
             FromParty: {
-              PartyContactMechanisms: {
+              PartyContactMechanismsWhereParty: {
                 ContactMechanism: {},
               },
               CurrentPartyContactMechanisms: {
@@ -106,7 +106,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
               },
             },
             ToParty: {
-              PartyContactMechanisms: {
+              PartyContactMechanismsWhereParty: {
                 ContactMechanism: {},
               },
               CurrentPartyContactMechanisms: {
@@ -229,7 +229,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
 
   public fromAddressAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.object.FromParty) {
-      this.object.FromParty.addPartyContactMechanism(partyContactMechanism);
+      partyContactMechanism.Party = this.object.FromParty;
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
@@ -240,7 +240,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
 
   public toAddressAdded(partyContactMechanism: PartyContactMechanism): void {
     if (this.object.ToParty) {
-      this.object.ToParty.addPartyContactMechanism(partyContactMechanism);
+      partyContactMechanism.Party = this.object.ToParty;
     }
 
     const address = partyContactMechanism.ContactMechanism as PostalAddress;
@@ -295,7 +295,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
       pull.Party({
         objectId: party.id,
         select: {
-          PartyContactMechanisms: {
+          PartyContactMechanismsWhereParty: {
             include: {
               ContactMechanism: {
                 ContactMechanismType: x,
@@ -310,7 +310,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] =
         loaded.collection<PartyContactMechanism>(
-          m.Party.PartyContactMechanisms
+          m.Party.PartyContactMechanismsWhereParty
         );
       this.fromPostalAddresses = partyContactMechanisms
         ?.filter(
@@ -335,7 +335,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
       pull.Party({
         objectId: party.id,
         select: {
-          PartyContactMechanisms: {
+          PartyContactMechanismsWhereParty: {
             include: {
               ContactMechanism: {
                 ContactMechanismType: x,
@@ -349,7 +349,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] =
         loaded.collection<PartyContactMechanism>(
-          m.Party.PartyContactMechanisms
+          m.Party.PartyContactMechanismsWhereParty
         );
       this.toPostalAddresses = partyContactMechanisms
         ?.filter(
@@ -359,7 +359,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
     });
   }
   public addressAdded(partyContactMechanism: PartyContactMechanism): void {
-    this.party.addPartyContactMechanism(partyContactMechanism);
+    partyContactMechanism.Party = this.party;
 
     const postalAddress =
       partyContactMechanism.ContactMechanism as PostalAddress;

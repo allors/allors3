@@ -94,7 +94,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
           objectId: this.editRequest.objectId,
           include: {
             FromParty: {
-              PartyContactMechanisms: {
+              PartyContactMechanismsWhereParty: {
                 ContactMechanism: {},
               },
               CurrentPartyContactMechanisms: {
@@ -102,7 +102,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
               },
             },
             ToParty: {
-              PartyContactMechanisms: {
+              PartyContactMechanismsWhereParty: {
                 ContactMechanism: {},
               },
               CurrentPartyContactMechanisms: {
@@ -219,7 +219,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
     partyContactMechanism: PartyContactMechanism
   ): void {
     if (this.object.FromParty) {
-      this.object.FromParty.addPartyContactMechanism(partyContactMechanism);
+      partyContactMechanism.Party = this.object.FromParty;
     }
 
     const phonenumber =
@@ -233,7 +233,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
     partyContactMechanism: PartyContactMechanism
   ): void {
     if (this.object.ToParty) {
-      this.object.ToParty.addPartyContactMechanism(partyContactMechanism);
+      partyContactMechanism.Party = this.object.ToParty;
     }
 
     const phonenumber =
@@ -289,7 +289,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
       pull.Party({
         objectId: party.id,
         select: {
-          PartyContactMechanisms: {
+          PartyContactMechanismsWhereParty: {
             include: {
               ContactMechanism: {
                 ContactMechanismType: x,
@@ -303,7 +303,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] =
         loaded.collection<PartyContactMechanism>(
-          m.Party.PartyContactMechanisms
+          m.Party.PartyContactMechanismsWhereParty
         );
       this.fromPhonenumbers = partyContactMechanisms
         ?.filter(
@@ -329,7 +329,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
       pull.Party({
         objectId: party.id,
         select: {
-          PartyContactMechanisms: {
+          PartyContactMechanismsWhereParty: {
             include: {
               ContactMechanism: {
                 ContactMechanismType: x,
@@ -343,7 +343,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const partyContactMechanisms: PartyContactMechanism[] =
         loaded.collection<PartyContactMechanism>(
-          m.Party.PartyContactMechanisms
+          m.Party.PartyContactMechanismsWhereParty
         );
       this.toPhonenumbers = partyContactMechanisms
         ?.filter(
