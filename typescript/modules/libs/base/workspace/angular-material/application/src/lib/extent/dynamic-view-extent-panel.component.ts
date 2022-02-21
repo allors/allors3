@@ -74,13 +74,7 @@ export class AllorsMaterialDynamicViewExtentPanelComponent
 
     if (this.include) {
       const includeObjectType = this.include.objectType as Composite;
-      const includePrimaryDisplay =
-        this.displayService.primary(includeObjectType);
-
-      this.includeDisplay =
-        includePrimaryDisplay.length > 0
-          ? includePrimaryDisplay
-          : [this.displayService.name(includeObjectType)];
+      this.includeDisplay = this.displayService.primary(includeObjectType);
     } else {
       this.includeDisplay = [];
     }
@@ -89,46 +83,40 @@ export class AllorsMaterialDynamicViewExtentPanelComponent
   onPreSharedPull(pulls: Pull[], prefix?: string) {
     const id = this.scoped.id;
 
-    const select: Node = isPath(this.select)
-      ? toNode(this.select)
-      : { propertyType: this.select };
-
     const displayInclude: Node[] = this.display
-      .filter((v) => v.objectType.isComposite)
+      ?.filter((v) => v.objectType.isComposite)
       .map((v) => {
         return {
           propertyType: v,
         };
       });
 
-    const includeDisplyInclude: Node[] = this.includeDisplay
-      .filter((v) => v.objectType.isComposite)
-      .map((v) => {
-        return {
-          propertyType: v,
-        };
-      });
+    const include = displayInclude ? [...displayInclude] : [];
 
-    const include = [...displayInclude];
-
-    if (this.include) {
+    if (this.includeDisplay?.length > 0) {
       include.concat({
         propertyType: this.include,
-        nodes: includeDisplyInclude,
+        nodes: this.includeDisplay
+          .filter((v) => v.objectType.isComposite)
+          .map((v) => {
+            return {
+              propertyType: v,
+            };
+          }),
       });
     }
 
-    const leaf = selectLeaf(select);
-    leaf.include = include;
-
     const pull: Pull = {
       objectId: id,
-      results: [
-        {
+      results: this.selectAsPaths.map((v) => {
+        const select = toNode(v);
+        const leaf = selectLeaf(select);
+        leaf.include = include;
+        return {
           name: prefix,
           select,
-        },
-      ],
+        };
+      }),
     };
 
     pulls.push(pull);

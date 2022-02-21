@@ -93,6 +93,7 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
         sorting: [{ roleType: m.Salutation.Name }],
       }),
       p.Person({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           PreferredCurrency: {},

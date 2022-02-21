@@ -21,10 +21,10 @@
         <a-mat-dyn-edit-detail-panel></a-mat-dyn-edit-detail-panel>
 
         <a-mat-dyn-view-extent-panel
-          [include]="m.Good.ProductIdentifications"
+          [select]="m.Good.ProductIdentifications"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          [include]="m.Good.ProductIdentifications"
+          [select]="m.Good.ProductIdentifications"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
@@ -47,25 +47,25 @@
 
         <a-mat-dyn-view-extent-panel
           *ngIf="!!serialised"
-          [include]="m.Part.SerialisedItems"
+          [select]="m.Part.SerialisedItems"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           *ngIf="!!serialised"
-          [include]="m.Part.SerialisedItems"
+          [select]="m.Part.SerialisedItems"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          [include]="m.Product.PriceComponentsWhereProduct"
+          [select]="m.Product.PriceComponentsWhereProduct"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          [include]="m.Product.PriceComponentsWhereProduct"
+          [select]="m.Product.PriceComponentsWhereProduct"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          [include]="m.Part.SupplierOfferingsWherePart"
+          [select]="m.Part.SupplierOfferingsWherePart"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          [include]="m.Part.SupplierOfferingsWherePart"
+          [select]="m.Part.SupplierOfferingsWherePart"
         ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
