@@ -5,13 +5,11 @@ import { switchMap } from 'rxjs/operators';
 import { Person } from '@allors/default/workspace/domain';
 import {
   Action,
-  EditService,
   RefreshService,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { ScopedService } from '@allors/base/workspace/angular/application';
 import { EditRoleService } from '@allors/base/workspace/angular-material/application';
 
 @Component({
@@ -28,7 +26,6 @@ export class UserProfileLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public editRoleService: EditRoleService,
     private userId: UserId

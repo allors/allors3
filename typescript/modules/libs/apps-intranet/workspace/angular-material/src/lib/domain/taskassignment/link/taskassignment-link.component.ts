@@ -9,10 +9,7 @@ import {
   UserId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 
 @Component({
   selector: 'taskassignment-link',
@@ -42,7 +39,6 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public scoedService: ScopedService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId
