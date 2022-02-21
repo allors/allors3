@@ -1,28 +1,25 @@
 import { Component, Self } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Title } from '@angular/platform-browser';
-import { combineLatest } from 'rxjs';
-import { delay, map, switchMap } from 'rxjs/operators';
 
-import { WorkTask } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
 } from '@allors/base/workspace/angular/foundation';
+
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import {
-  AllorsOverviewPageComponent,
-  NavigationActivatedRoute,
+  AllorsViewSummaryPanelComponent,
   NavigationService,
-  ScopedService,
   PanelService,
+  ScopedService,
 } from '@allors/base/workspace/angular/application';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
+import { NonUnifiedGood } from '@allors/default/workspace/domain';
 
 @Component({
-  templateUrl: './worktask-overview-page.component.html',
+  selector: 'nonunifiedgood-summary-panel',
+  templateUrl: './nonunifiedgood-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -31,43 +28,48 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class WorkTaskOverviewPageComponent extends AllorsOverviewPageComponent {
+export class NonUnifiedGoodSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
-  object: WorkTask;
+
+  good: NonUnifiedGood;
 
   constructor(
     @Self() scopedService: ScopedService,
     @Self() panelService: PanelService,
-    public navigation: NavigationService,
-    sharedPullService: SharedPullService,
     refreshService: RefreshService,
-    route: ActivatedRoute,
-    workspaceService: WorkspaceService
+    sharedPullService: SharedPullService,
+    workspaceService: WorkspaceService,
+    public navigation: NavigationService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      route,
-      workspaceService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
-    const { m } = this;
-    const { pullBuilder: p } = m;
+    const {
+      m: { pullBuilder: p },
+    } = this;
+
+    const id = this.scoped.id;
 
     pulls.push(
-      p.WorkTask({
+      p.NonUnifiedGood({
         name: prefix,
-        objectId: this.scoped.id,
+        objectId: id,
+        include: {
+          ProductIdentifications: {
+            ProductIdentificationType: {},
+          },
+          Part: {
+            Brand: {},
+            Model: {},
+          },
+        },
       })
     );
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix?: string) {
-    this.object = pullResult.object(prefix);
+  onPostSharedPull(loaded: IPullResult, prefix?: string) {
+    this.good = loaded.object<NonUnifiedGood>(prefix);
   }
 }

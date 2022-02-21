@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import {
   WorkEffortListPageComponent,
-  WorkTaskOverviewComponent,
+  WorkTaskOverviewPageComponent,
 } from '@allors/apps-extranet/workspace/angular-material';
 
 import { AuthorizationService } from './auth/authorization.service';
@@ -29,7 +29,7 @@ export const routes: Routes = [
         path: 'workefforts',
         children: [
           { path: 'workefforts', component: WorkEffortListPageComponent },
-          { path: 'worktask/:id', component: WorkTaskOverviewComponent },
+          { path: 'worktask/:id', component: WorkTaskOverviewPageComponent },
         ],
       },
     ],
@@ -42,5 +42,5 @@ export const components: any[] = [
   MainComponent,
   DashboardComponent,
   WorkEffortListPageComponent,
-  WorkTaskOverviewComponent,
+  WorkTaskOverviewPageComponent,
 ];

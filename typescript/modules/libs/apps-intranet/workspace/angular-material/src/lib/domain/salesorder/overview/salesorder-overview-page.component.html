@@ -1,0 +1,45 @@
+<div class="a-main">
+  <div class="a-breadcrumb container-fluid mat-elevation-z4">
+    <div class="row">
+      <div class="col">
+        <a (click)="navigation.list(m.SalesOrder)" style="cursor: pointer"
+          >SalesOrders</a
+        >
+        / {{ order?.OrderNumber }}
+      </div>
+    </div>
+  </div>
+
+  <div class="a-overview container">
+    <div class="a-content row">
+      <div class="col-md-4 mb-3">
+        <salesorder-summary-panel></salesorder-summary-panel>
+      </div>
+
+      <div class="col-md-8 align-self-stretch">
+        <salesorder-edit-form></salesorder-edit-form>
+
+        <a-mat-dyn-view-extent-panel
+          [init]="m.SalesOrderItem.SalesOrderWhereSalesOrderItem"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesOrderItem.SalesOrderWhereSalesOrderItem"
+        ></a-mat-dyn-edit-extent-panel>
+
+        <a-mat-dyn-view-extent-panel
+          [init]="m.OrderAdjustment.OrderWhereOrderAdjustment"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.OrderAdjustment.OrderWhereOrderAdjustment"
+        ></a-mat-dyn-edit-extent-panel>
+
+        <a-mat-dyn-view-extent-panel
+          [init]="m.SalesTerm.OrderWhereSalesTerm"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesTerm.OrderWhereSalesTerm"
+        ></a-mat-dyn-edit-extent-panel>
+      </div>
+    </div>
+  </div>
+</div>
