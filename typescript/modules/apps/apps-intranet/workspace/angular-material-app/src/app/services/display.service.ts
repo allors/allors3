@@ -1,15 +1,10 @@
 import { Injectable } from '@angular/core';
-import { IObject } from '@allors/system/workspace/domain';
-import { Class, Composite, RoleType } from '@allors/system/workspace/meta';
+import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   DisplayService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { SerialisedItemCharacteristicType } from '../../../../../../../libs/apps-extranet/workspace/domain/src/lib/generated/SerialisedItemCharacteristicType.g';
-import { TelecommunicationsNumber } from '../../../../../../../libs/apps-intranet/workspace/domain/src/lib/generated/TelecommunicationsNumber.g';
-import { Bank } from '../../../../../../../libs/apps-intranet/workspace/meta/src/lib/generated/m.g';
-import { name_c1A } from '../../../../../../../libs/system/workspace/adapters-json-tests/src/lib/fixture';
 
 @Injectable()
 export class AppDisplayService implements DisplayService {
