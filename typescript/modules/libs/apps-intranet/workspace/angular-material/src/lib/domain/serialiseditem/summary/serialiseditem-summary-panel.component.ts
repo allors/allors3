@@ -41,8 +41,8 @@ import {
 } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'serialiseditem-overview-summary',
-  templateUrl: './serialiseditem-overview-summary.component.html',
+  selector: 'serialiseditem-summary-panel',
+  templateUrl: './serialiseditem-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -51,7 +51,7 @@ import {
     },
   ],
 })
-export class SerialisedItemOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class SerialisedItemSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   serialisedItem: SerialisedItem;

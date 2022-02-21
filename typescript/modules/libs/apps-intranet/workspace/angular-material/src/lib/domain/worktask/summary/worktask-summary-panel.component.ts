@@ -42,8 +42,8 @@ import {
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
-  selector: 'worktask-overview-summary',
-  templateUrl: './worktask-overview-summary.component.html',
+  selector: 'worktask-summary-panel',
+  templateUrl: './worktask-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -52,7 +52,7 @@ import { PrintService } from '../../../actions/print/print.service';
     },
   ],
 })
-export class WorkTaskOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class WorkTaskSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   workTask: WorkTask;

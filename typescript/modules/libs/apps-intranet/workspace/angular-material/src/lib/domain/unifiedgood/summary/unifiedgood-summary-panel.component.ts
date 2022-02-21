@@ -17,8 +17,8 @@ import { M } from '@allors/default/workspace/meta';
 import { UnifiedGood } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'unifiedgood-overview-summary',
-  templateUrl: './unifiedgood-overview-summary.component.html',
+  selector: 'unifiedgood-summary-panel',
+  templateUrl: './unifiedgood-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -27,7 +27,7 @@ import { UnifiedGood } from '@allors/default/workspace/domain';
     },
   ],
 })
-export class UnifiedGoodOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class UnifiedGoodSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   good: UnifiedGood;

@@ -196,7 +196,7 @@ export { SerialisedItemCreateFormComponent } from './lib/domain/serialiseditem/c
 export { SerialisedItemEditFormComponent } from './lib/domain/serialiseditem/edit/serialiseditem-edit-form.component';
 export { SerialisedItemListComponent } from './lib/domain/serialiseditem/list/serialiseditem-list.component';
 export { SerialisedItemOverviewComponent } from './lib/domain/serialiseditem/overview/serialiseditem-overview.component';
-export { SerialisedItemOverviewSummaryComponent } from './lib/domain/serialiseditem/summary/serialiseditem-overview-summary.component';
+export { SerialisedItemSummaryPanelComponent } from './lib/domain/serialiseditem/summary/serialiseditem-summary-panel.component';
 
 export { SerialisedItemCharacteristicFormComponent } from './lib/domain/serialiseditemcharacteristictype/form/serialiseditemcharacteristic-form.component';
 export { SerialisedItemCharacteristicListComponent } from './lib/domain/serialiseditemcharacteristictype/list/serialiseditemcharacteristic-list.component';
@@ -224,7 +224,7 @@ export { UnifiedGoodCreateFormComponent } from './lib/domain/unifiedgood/create/
 export { UnifiedGoodEditFormComponent } from './lib/domain/unifiedgood/edit/unifiedgood-edit-form.component';
 export { UnifiedGoodListComponent } from './lib/domain/unifiedgood/list/unifiedgood-list.component';
 export { UnifiedGoodOverviewComponent } from './lib/domain/unifiedgood/overview/unifiedgood-overview.component';
-export { UnifiedGoodOverviewSummaryComponent } from './lib/domain/unifiedgood/summary/unifiedgood-overview-summary.component';
+export { UnifiedGoodSummaryPanelComponent } from './lib/domain/unifiedgood/summary/unifiedgood-summary-panel.component';
 
 export { UserProfileFormComponent } from './lib/domain/userprofile/form/userprofile-form.component';
 export { UserProfileLinkComponent } from './lib/domain/userprofile/link/userprofile-link.component';
@@ -251,11 +251,11 @@ export { WorkRequirementCreateFormComponent } from './lib/domain/workrequirement
 export { WorkRequirementEditFormComponent } from './lib/domain/workrequirement/edit/workrequirement-edit-form.component';
 export { WorkRequirementListComponent } from './lib/domain/workrequirement/list/workrequirement-list.component';
 export { WorkRequirementOverviewComponent } from './lib/domain/workrequirement/overview/workrequirement-overview.component';
-export { WorkRequirementOverviewSummaryComponent } from './lib/domain/workrequirement/summary/workrequirement-overview-summary.component';
+export { WorkRequirementSummaryPanelComponent } from './lib/domain/workrequirement/summary/workrequirement-summary-panel.component';
 
 export { WorkRequirementFulfillmentCreateFormComponent } from './lib/domain/workrequirementfulfillment/create/workrequirementfulfillment-create-form.component';
 
 export { WorkTaskCreateFormComponent } from './lib/domain/worktask/create/worktask-create-form.component';
 export { WorkTaskEditFormComponent } from './lib/domain/worktask/edit/worktask-edit-form.component';
 export { WorkTaskOverviewComponent } from './lib/domain/worktask/overview/worktask-overview.component';
-export { WorkTaskOverviewSummaryComponent } from './lib/domain/worktask/summary/worktask-overview-summary.component';
+export { WorkTaskSummaryPanelComponent } from './lib/domain/worktask/summary/worktask-summary-panel.component';

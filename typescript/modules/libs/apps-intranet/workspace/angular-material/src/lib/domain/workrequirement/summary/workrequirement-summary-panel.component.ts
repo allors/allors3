@@ -43,8 +43,8 @@ import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'workrequirement-overview-summary',
-  templateUrl: './workrequirement-overview-summary.component.html',
+  selector: 'workrequirement-summary-panel',
+  templateUrl: './workrequirement-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -53,7 +53,7 @@ import { PrintService } from '../../../actions/print/print.service';
     },
   ],
 })
-export class WorkRequirementOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class WorkRequirementSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   requirement: WorkRequirement;
