@@ -21,7 +21,7 @@ import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
 import { ScopedService } from '../scoped/scoped.service';
 import { PanelService } from '../panel/panel.service';
 
-export type ExtentSelectType = PropertyType | Path;
+export type ExtentSelectType = PropertyType | Path | (PropertyType | Path)[];
 
 export type ExtentInitType = PropertyType;
 
@@ -54,6 +54,24 @@ export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelCompon
     this.assignedSelect = value;
   }
 
+  protected get selectAsPaths(): Path[] {
+    if (this.select == null) {
+      return [];
+    }
+
+    if (Array.isArray(this.select)) {
+      return this.select.map((v) =>
+        isPath(v) ? v : ({ propertyType: v } as Path)
+      );
+    } else {
+      if (isPath(this.select)) {
+        return [this.select];
+      } else {
+        return [{ propertyType: this.select }];
+      }
+    }
+  }
+
   @Input()
   init: ExtentInitType;
 
@@ -69,11 +87,7 @@ export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelCompon
     if (this.include) {
       title = this.include.pluralName;
     } else {
-      if (isPath(this.select)) {
-        title = pathLeaf(this.select).propertyType.pluralName;
-      } else {
-        title = this.select.pluralName;
-      }
+      title = pathLeaf(this.selectAsPaths[0]).propertyType.pluralName;
     }
 
     return humanize(title);
@@ -89,11 +103,9 @@ export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelCompon
   }
 
   get objectType(): Composite {
-    if (isPath(this.select)) {
-      return pathObjectType(this.select);
-    } else {
-      return this.select.objectType as Composite;
-    }
+    const path = this.selectAsPaths[0];
+    const objecType = pathObjectType(path);
+    return objecType;
   }
 
   constructor(

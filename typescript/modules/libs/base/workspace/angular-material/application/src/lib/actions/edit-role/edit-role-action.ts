@@ -21,7 +21,7 @@ export class EditRoleAction implements Action {
     private roleType?: RoleType
   ) {}
 
-  resolve(target: ActionTarget) {
+  resolve(target: ActionTarget): IObject {
     let editObject = target as IObject;
 
     if (this.roleType) {
@@ -37,9 +37,12 @@ export class EditRoleAction implements Action {
   }
 
   execute(target: ActionTarget) {
+    const resolved = this.resolve(target);
+
     const request: EditRequest = {
       kind: 'EditRequest',
-      objectId: this.resolve(target).id,
+      objectId: resolved.id,
+      objectType: resolved.strategy.cls,
     };
 
     this.editService.edit(request).subscribe(() => {

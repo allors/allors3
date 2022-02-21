@@ -1,30 +1,35 @@
+import { Path } from '@allors/system/workspace/domain';
 import { MetaPopulation } from '@allors/system/workspace/meta';
 
 export class LazyPathBuilder {
   constructor(metaPopulation: MetaPopulation) {
     for (const composite of metaPopulation.composites) {
       this[composite.singularName] = (obj) => {
-        if (Array.isArray(obj)) {
-          return obj;
+        const entry = Object.entries(obj).find(([k]) => k !== 'ofType');
+
+        if (!entry) {
+          return null;
         }
 
-        const entries = Object.entries(obj);
-        return entries.length > 0
-          ? entries.map(([key, value]) => {
-              const propertyType =
-                composite.propertyTypeByPropertyName.get(key);
-              return value != null
-                ? {
-                    propertyType,
-                    ofType: this['ofType'],
-                    next: this[propertyType.objectType.singularName](value),
-                  }
-                : {
-                    propertyType,
-                    ofType: this['ofType'],
-                  };
-            })
-          : undefined;
+        const [key, value] = entry;
+        const propertyType = composite.propertyTypeByPropertyName.get(key);
+        const builder = this[propertyType.objectType.singularName];
+
+        const path: Path = {
+          propertyType,
+        };
+
+        const ofType = this['ofType'];
+        if (ofType) {
+          path.ofType = ofType;
+        }
+
+        const next = builder(value);
+        if (next) {
+          path.next = next;
+        }
+
+        return path;
       };
     }
   }

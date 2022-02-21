@@ -3,6 +3,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import {
   AssociationType,
   Composite,
+  humanize,
   RoleType,
 } from '@allors/system/workspace/meta';
 import {
@@ -66,7 +67,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
   }
 
   get hasPeriod(): boolean {
-    return this.objectType.supertypes.has(this.m.Period);
+    return this.objectType?.supertypes.has(this.m.Period);
   }
 
   m: M;
@@ -107,13 +108,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
     if (this.include) {
       const includeObjectType = this.include.objectType as Composite;
-      const includePrimaryDisplay =
-        this.displayService.primary(includeObjectType);
-
-      this.includeDisplay =
-        includePrimaryDisplay.length > 0
-          ? includePrimaryDisplay
-          : [this.displayService.name(includeObjectType)];
+      this.includeDisplay = this.displayService.primary(includeObjectType);
     } else {
       this.includeDisplay = [];
     }
@@ -154,23 +149,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
   onPreSharedPull(pulls: Pull[], prefix?: string) {
     const id = this.scoped.id;
 
-    const select: Node = isPath(this.select)
-      ? toNode(this.select)
-      : { propertyType: this.select };
-
-    if (!this.display) {
-      console.debug('No display name');
-    }
-
     const displayInclude: Node[] = this.display
-      ?.filter((v) => v.objectType.isComposite)
-      .map((v) => {
-        return {
-          propertyType: v,
-        };
-      });
-
-    const includeDisplayInclude: Node[] = this.includeDisplay
       ?.filter((v) => v.objectType.isComposite)
       .map((v) => {
         return {
@@ -180,24 +159,30 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
     const include = displayInclude ? [...displayInclude] : [];
 
-    if (this.include) {
+    if (this.includeDisplay?.length > 0) {
       include.concat({
         propertyType: this.include,
-        nodes: includeDisplayInclude,
+        nodes: this.includeDisplay
+          .filter((v) => v.objectType.isComposite)
+          .map((v) => {
+            return {
+              propertyType: v,
+            };
+          }),
       });
     }
 
-    const leaf = selectLeaf(select);
-    leaf.include = include;
-
     const pull: Pull = {
       objectId: id,
-      results: [
-        {
+      results: this.selectAsPaths.map((v) => {
+        const select = toNode(v);
+        const leaf = selectLeaf(select);
+        leaf.include = include;
+        return {
           name: prefix,
           select,
-        },
-      ],
+        };
+      }),
     };
 
     pulls.push(pull);
@@ -261,7 +246,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
         object: v,
       };
       if (this.objectType.isInterface) {
-        row['type'] = v.strategy.cls.singularName;
+        row['type'] = humanize(v.strategy.cls.singularName);
       }
 
       if (this.include) {
@@ -287,12 +272,26 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
         if (w.objectType.isUnit) {
           row[w.name] = v.strategy.getUnitRole(w);
         } else {
-          const role = v.strategy.getCompositeRole(w);
-          if (role) {
-            const roleName = this.displayService.name(role.strategy.cls);
-            row[w.name] = role.strategy.getUnitRole(roleName);
+          if (w.isOne) {
+            const composite = v.strategy.getCompositeRole(w);
+            if (composite) {
+              const roleName = this.displayService.name(composite.strategy.cls);
+              row[w.name] = composite.strategy.getUnitRole(roleName);
+            } else {
+              row[w.name] = '';
+            }
           } else {
-            row[w.name] = '';
+            const composites = v.strategy.getCompositesRole(w);
+            if (composites.length > 0) {
+              row[w.name] = composites
+                .map((v) => {
+                  const display = this.displayService.name(v.strategy.cls);
+                  return v.strategy.getUnitRole(display);
+                })
+                .join(', ');
+            } else {
+              row[w.name] = '';
+            }
           }
         }
       }
