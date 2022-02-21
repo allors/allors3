@@ -38,8 +38,8 @@ import {
 } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'salesinvoice-overview-summary',
-  templateUrl: './salesinvoice-overview-summary.component.html',
+  selector: 'salesinvoice-summary-panel',
+  templateUrl: './salesinvoice-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -48,7 +48,7 @@ import {
     },
   ],
 })
-export class SalesInvoiceOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   invoice: SalesInvoice;

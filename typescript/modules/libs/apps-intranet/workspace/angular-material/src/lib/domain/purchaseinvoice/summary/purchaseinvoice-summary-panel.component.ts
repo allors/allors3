@@ -34,8 +34,8 @@ import {
 } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'purchaseinvoice-overview-summary',
-  templateUrl: './purchaseinvoice-overview-summary.component.html',
+  selector: 'purchaseinvoice-summary-panel',
+  templateUrl: './purchaseinvoice-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -44,7 +44,7 @@ import {
     },
   ],
 })
-export class PurchasInvoiceOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class PurchasInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   orders: PurchaseOrder[];

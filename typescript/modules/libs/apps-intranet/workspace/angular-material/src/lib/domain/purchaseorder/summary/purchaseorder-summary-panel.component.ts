@@ -36,8 +36,8 @@ import {
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
-  selector: 'purchaseorder-overview-summary',
-  templateUrl: './purchaseorder-overview-summary.component.html',
+  selector: 'purchaseorder-summary-panel',
+  templateUrl: './purchaseorder-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -46,7 +46,7 @@ import { PrintService } from '../../../actions/print/print.service';
     },
   ],
 })
-export class PurchaseOrderOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class PurchaseOrderSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   order: PurchaseOrder;

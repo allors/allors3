@@ -35,8 +35,8 @@ import {
 } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'requestforquote-overview-summary',
-  templateUrl: './requestforquote-overview-summary.component.html',
+  selector: 'requestforquote-summary-panel',
+  templateUrl: './requestforquote-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -45,7 +45,7 @@ import {
     },
   ],
 })
-export class RequestForQuoteOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class RequestForQuoteSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   requestForQuote: RequestForQuote;

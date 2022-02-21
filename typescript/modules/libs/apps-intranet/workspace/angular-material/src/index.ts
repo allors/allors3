@@ -133,7 +133,7 @@ export { PurchaseInvoiceCreateFormComponent } from './lib/domain/purchaseinvoice
 export { PurchaseInvoiceEditFormComponent } from './lib/domain/purchaseinvoice/edit/purchaseinvoice-edit-form.component';
 export { PurchaseInvoiceListComponent } from './lib/domain/purchaseinvoice/list/purchaseinvoice-list.component';
 export { PurchaseInvoiceOverviewComponent } from './lib/domain/purchaseinvoice/overview/purchaseinvoice-overview.component';
-export { PurchasInvoiceOverviewSummaryComponent } from './lib/domain/purchaseinvoice/summary/purchaseinvoice-overview-summary.component';
+export { PurchasInvoiceSummaryPanelComponent } from './lib/domain/purchaseinvoice/summary/purchaseinvoice-summary-panel.component';
 
 export { PurchaseInvoiceApprovalFormComponent } from './lib/domain/purchaseinvoiceapproval/form/purchaseinvoiceapproval-form.component';
 
@@ -143,7 +143,7 @@ export { PurchaseOrderCreateFormComponent } from './lib/domain/purchaseorder/cre
 export { PurchaseOrderEditFormComponent } from './lib/domain/purchaseorder/edit/purchaseorder-edit-form.component';
 export { PurchaseOrderListComponent } from './lib/domain/purchaseorder/list/purchaseorder-list.component';
 export { PurchaseOrderOverviewComponent } from './lib/domain/purchaseorder/overview/purchaseorder-overview.component';
-export { PurchaseOrderOverviewSummaryComponent } from './lib/domain/purchaseorder/summary/purchaseorder-overview-summary.component';
+export { PurchaseOrderSummaryPanelComponent } from './lib/domain/purchaseorder/summary/purchaseorder-summary-panel.component';
 
 export { PurchaseOrderApprovalLevel1FormComponent } from './lib/domain/purchaseorderapprovallevel1/form/purchaseorderapprovallevel1-form.component';
 
@@ -156,7 +156,7 @@ export { PurchaseReturnCreateFormComponent } from './lib/domain/purchasereturn/c
 export { PurchaseShipmentCreateFormComponent } from './lib/domain/purchaseshipment/create/purchaseshipment-create-form.component';
 export { PurchaseShipmentEditFormComponent } from './lib/domain/purchaseshipment/edit/purchaseshipment-edit-form.component';
 export { PurchaseShipmentOverviewComponent } from './lib/domain/purchaseshipment/overview/purchaseshipment-overview.component';
-export { PurchaseShipmentOverviewSummaryComponent } from './lib/domain/purchaseshipment/summary/purchaseshipment-overview-summary.component';
+export { PurchaseShipmentSummaryPanelComponent } from './lib/domain/purchaseshipment/summary/purchaseshipment-summary-panel.component';
 
 export { QuoteItemFormComponent } from './lib/domain/quoteitem/form/quoteitem-form.component';
 
@@ -170,7 +170,7 @@ export { RequestForQuoteCreateFormComponent } from './lib/domain/requestforquote
 export { RequestForQuoteEditFormComponent } from './lib/domain/requestforquote/edit/requestforquote-edit-form.component';
 export { RequestForQuoteListComponent } from './lib/domain/requestforquote/list/requestforquote-list.component';
 export { RequestForQuoteOverviewComponent } from './lib/domain/requestforquote/overview/requestforquote-overview.component';
-export { RequestForQuoteOverviewSummaryComponent } from './lib/domain/requestforquote/summary/requestforquote-overview-summary.component';
+export { RequestForQuoteSummaryPanelComponent } from './lib/domain/requestforquote/summary/requestforquote-summary-panel.component';
 
 export { RequestItemFormComponent } from './lib/domain/requestitem/form/requestitem-form.component';
 
@@ -178,7 +178,7 @@ export { SalesInvoiceCreateFormComponent } from './lib/domain/salesinvoice/creat
 export { SalesInvoiceEditFormComponent } from './lib/domain/salesinvoice/edit/salesinvoice-edit-form.component';
 export { SalesInvoiceListComponent } from './lib/domain/salesinvoice/list/salesinvoice-list.component';
 export { SalesInvoiceOverviewComponent } from './lib/domain/salesinvoice/overview/salesinvoice-overview.component';
-export { SalesInvoiceOverviewSummaryComponent } from './lib/domain/salesinvoice/summary/salesinvoice-overview-summary.component';
+export { SalesInvoiceSummaryPanelComponent } from './lib/domain/salesinvoice/summary/salesinvoice-summary-panel.component';
 
 export { SalesInvoiceItemFormComponent } from './lib/domain/salesinvoiceitem/form/salesinvoiceitem-form.component';
 
@@ -186,7 +186,7 @@ export { SalesOrderCreateFormComponent } from './lib/domain/salesorder/create/sa
 export { SalesOrderEditFormComponent } from './lib/domain/salesorder/edit/salesorder-edit-form.component';
 export { SalesOrderListComponent } from './lib/domain/salesorder/list/salesorder-list.component';
 export { SalesOrderOverviewComponent } from './lib/domain/salesorder/overview/salesorder-overview.component';
-export { SalesOrderOverviewSummaryComponent } from './lib/domain/salesorder/summary/salesorder-overview-summary.component';
+export { SalesOrderSummaryPanelComponent } from './lib/domain/salesorder/summary/salesorder-summary-panel.component';
 
 export { SalesOrderItemFormComponent } from './lib/domain/salesorderitem/form/salesorderitem-form.component';
 
