@@ -6,7 +6,12 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { CommunicationEvent } from '@allors/default/workspace/domain';
+import {
+  Good,
+  NonUnifiedGood,
+  ProductCategory,
+  UnifiedGood,
+} from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -17,38 +22,35 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  NavigationService,
+  ScopedService,
+} from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  EditRoleService,
+  OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { format, formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: CommunicationEvent;
+  object: Good;
   name: string;
-  type: string;
-  state: string;
-  subject: string;
-  involved: string;
-  started: string;
-  ended: string;
-  lastModifiedDate: string;
+  id: string;
+  categories: string;
+  qoh: string;
 }
 
 @Component({
-  templateUrl: './communicationevent-list.component.html',
+  templateUrl: './good-list-page.component.html',
   providers: [ContextService],
 })
-export class CommunicationEventListComponent implements OnInit, OnDestroy {
-  public title = 'Communications';
+export class GoodListPageComponent implements OnInit, OnDestroy {
+  public title = 'Goods';
 
   table: Table<Row>;
 
   delete: Action;
-  edit: Action;
 
   private subscription: Subscription;
   filter: Filter;
@@ -56,10 +58,10 @@ export class CommunicationEventListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
+    public overviewService: OverviewService,
     public deleteService: DeleteService,
-    public editRoleService: EditRoleService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
@@ -71,11 +73,6 @@ export class CommunicationEventListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.edit = editRoleService.edit();
-    this.edit.result.subscribe(() => {
-      this.table.selection.clear();
-    });
-
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -84,26 +81,23 @@ export class CommunicationEventListComponent implements OnInit, OnDestroy {
     this.table = new Table({
       selection: true,
       columns: [
-        { name: 'type' },
-        { name: 'state' },
-        { name: 'subject', sort: true },
-        { name: 'involved' },
-        { name: 'started' },
-        { name: 'ended' },
-        { name: 'lastModifiedDate', sort: true },
+        { name: 'name', sort: true },
+        { name: 'id' },
+        { name: 'categories' },
+        { name: 'qoh' },
       ],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      actions: [overviewService.overview(), this.delete],
+      defaultAction: overviewService.overview(),
       pageSize: 50,
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.CommunicationEvent);
+    this.filter = this.filterService.filter(m.Good);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -117,20 +111,15 @@ export class CommunicationEventListComponent implements OnInit, OnDestroy {
             [previousRefresh, previousFilterFields],
             [refresh, filterFields, sort, pageEvent]
           ) => {
-            pageEvent =
+            return [
+              refresh,
+              filterFields,
+              sort,
               previousRefresh !== refresh ||
               filterFields !== previousFilterFields
-                ? {
-                    ...pageEvent,
-                    pageIndex: 0,
-                  }
-                : pageEvent;
-
-            if (pageEvent.pageIndex === 0) {
-              this.table.pageIndex = 0;
-            }
-
-            return [refresh, filterFields, sort, pageEvent];
+                ? Object.assign({ pageIndex: 0 }, pageEvent)
+                : pageEvent,
+            ];
           }
         ),
         switchMap(
@@ -141,20 +130,34 @@ export class CommunicationEventListComponent implements OnInit, OnDestroy {
             PageEvent
           ]) => {
             const pulls = [
-              pull.CommunicationEvent({
+              pull.Good({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService
-                      .sorter(m.CommunicationEvent)
-                      ?.create(sort)
+                  ? this.sorterService.sorter(m.Good)?.create(sort)
                   : null,
                 include: {
-                  CommunicationEventState: x,
-                  InvolvedParties: x,
+                  NonUnifiedGood_Part: x,
+                  ProductIdentifications: {
+                    ProductIdentificationType: x,
+                  },
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
+              }),
+              pull.Good({
+                predicate: this.filter.definition.predicate,
+                sorting: sort
+                  ? this.sorterService.sorter(m.Good)?.create(sort)
+                  : null,
+                select: {
+                  ProductCategoriesWhereProduct: {
+                    include: {
+                      Products: x,
+                      PrimaryAncestors: x,
+                    },
+                  },
+                },
               }),
             ];
 
@@ -164,25 +167,32 @@ export class CommunicationEventListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        const communicationEvents = loaded.collection<CommunicationEvent>(
-          m.CommunicationEvent
+
+        const goods = loaded.collection<Good>(m.Good);
+        const productCategories = loaded.collection<ProductCategory>(
+          m.Good.ProductCategoriesWhereProduct
         );
-        this.table.total = (loaded.value('CommunicationEvents_total') ??
+
+        this.table.total = (loaded.value('NonUnifiedGoods_total') ??
           0) as number;
-        this.table.data = communicationEvents?.map((v) => {
+        this.table.data = goods?.map((v) => {
           return {
             object: v,
-            type: v.strategy.cls.singularName,
-            state: v.CommunicationEventState && v.CommunicationEventState.Name,
-            subject: v.Subject,
-            involved: v.InvolvedParties?.map((w) => w.DisplayName).join(', '),
-            started:
-              v.ActualStart && format(new Date(v.ActualStart), 'dd-MM-yyyy'),
-            ended: v.ActualEnd && format(new Date(v.ActualEnd), 'dd-MM-yyyy'),
-            lastModifiedDate: formatDistance(
-              new Date(v.LastModifiedDate),
-              new Date()
-            ),
+            name: v.Name,
+            id: v.ProductIdentifications?.find(
+              (p) =>
+                p.ProductIdentificationType.UniqueId ===
+                'b640630d-a556-4526-a2e5-60a84ab0db3f'
+            ).Identification,
+            categories: productCategories
+              ?.filter((w) => w.Products.includes(v))
+              ?.map((w) => w.DisplayName)
+              .join(', '),
+            // qoh: v.Part && v.Part.QuantityOnHand
+            qoh:
+              ((v as NonUnifiedGood).Part &&
+                (v as NonUnifiedGood).Part.QuantityOnHand) ||
+              (v as UnifiedGood).QuantityOnHand,
           } as Row;
         });
       });

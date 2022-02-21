@@ -6,48 +6,48 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { Person } from '@allors/default/workspace/domain';
+import { And } from '@allors/system/workspace/domain';
+import { TaskAssignment } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
+  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
   RefreshService,
   Table,
   TableRow,
+  UserId,
+  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
 import {
-  DeleteService,
-  OverviewService,
+  EditRoleService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: Person;
-  name: string;
-  email: string;
-  phone: string;
-  isCustomer: string;
-  lastModifiedDate: string;
+  object: TaskAssignment;
+  title: string;
+  dateCreated: string;
 }
 
 @Component({
-  templateUrl: './person-list.component.html',
+  templateUrl: './taskassignment-list-page.component.html',
   providers: [ContextService],
 })
-export class PersonListComponent implements OnInit, OnDestroy {
-  public title = 'People';
+export class TaskAssignmentListPageComponent implements OnInit, OnDestroy {
+  public title = 'Tasks';
 
   table: Table<Row>;
 
-  delete: Action;
+  edit: Action;
 
   private subscription: Subscription;
   filter: Filter;
@@ -55,48 +55,68 @@ export class PersonListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
+    public workspaceService: WorkspaceService,
     public scopedService: ScopedService,
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
-    public deleteService: DeleteService,
+    public editRoleService: EditRoleService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
     public sorterService: SorterService,
+    private userId: UserId,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
 
-    this.delete = deleteService.delete();
-    this.delete.result.subscribe(() => {
+    this.edit = editRoleService.edit(this.m.TaskAssignment.Task);
+    this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'name', sort: true },
-        { name: 'email' },
-        { name: 'phone' },
-        'isCustomer',
-        { name: 'lastModifiedDate', sort: true },
-      ],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      columns: ['title', 'dateCreated'],
+      actions: [this.edit],
+      defaultAction: this.edit,
       pageSize: 50,
-      initialSort: 'name',
+      initialSort: 'dateCreated',
     });
   }
 
   public ngOnInit(): void {
     const m = this.m;
-    const { pullBuilder: pull } = m;
+    const { pullBuilder: pull, treeBuilder: tree } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.Person);
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        {
+          kind: 'Equals',
+          propertyType: m.TaskAssignment.User,
+          value: this.userId.value,
+        },
+        {
+          kind: 'ContainedIn',
+          propertyType: m.TaskAssignment.Task,
+          extent: {
+            kind: 'Filter',
+            objectType: m.Task,
+            predicate: {
+              kind: 'Like',
+              roleType: m.Task.Title,
+              parameter: 'title',
+            },
+          },
+        },
+      ],
+    };
+
+    const filterDefinition = new FilterDefinition(predicate);
+    this.filter = new Filter(filterDefinition);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -127,26 +147,20 @@ export class PersonListComponent implements OnInit, OnDestroy {
           }
         ),
         switchMap(
-          ([, filterFields, sort, pageEvent]: [
+          ([, filterFields, , pageEvent]: [
             Date,
             FilterField[],
             Sort,
             PageEvent
           ]) => {
             const pulls = [
-              pull.Person({
-                predicate: this.filter.definition.predicate,
-                sorting: sort
-                  ? this.sorterService.sorter(m.Person)?.create(sort)
-                  : null,
+              pull.TaskAssignment({
+                predicate,
                 include: {
-                  Salutation: x,
-                  Picture: x,
-                  PartyContactMechanismsWhereParty: {
-                    ContactMechanism: {
-                      PostalAddress_Country: x,
-                    },
+                  Task: {
+                    WorkItem: x,
                   },
+                  User: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -160,19 +174,17 @@ export class PersonListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-
-        const people = loaded.collection<Person>(m.Person);
-        this.table.total = (loaded.value('People_total') ?? 0) as number;
-        this.table.data = people?.map((v) => {
+        const taskAssignments = loaded.collection<TaskAssignment>(
+          m.TaskAssignment
+        );
+        this.table.total = (loaded.value('TaskAssignments_total') ??
+          0) as number;
+        this.table.data = taskAssignments?.map((v) => {
           return {
             object: v,
-            name: v.DisplayName,
-            email: v.DisplayEmail,
-            phone: v.DisplayPhone,
-            isCustomer:
-              v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
-            lastModifiedDate: formatDistance(
-              new Date(v.LastModifiedDate),
+            title: v.Task.Title,
+            dateCreated: formatDistance(
+              new Date(v.Task.DateCreated),
               new Date()
             ),
           } as Row;

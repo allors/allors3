@@ -56,10 +56,10 @@ interface Row extends TableRow {
   lastModifiedDate: string;
 }
 @Component({
-  templateUrl: './purchaseinvoice-list.component.html',
+  templateUrl: './purchaseinvoice-list-page.component.html',
   providers: [ContextService],
 })
-export class PurchaseInvoiceListComponent implements OnInit, OnDestroy {
+export class PurchaseInvoiceListPageComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Purchase Invoices';

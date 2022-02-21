@@ -6,23 +6,19 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { And, Equals } from '@allors/system/workspace/domain';
-import { WorkRequirement } from '@allors/default/workspace/domain';
+import { Carrier } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
-  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
   RefreshService,
   Table,
   TableRow,
+  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
   EditRoleService,
@@ -30,26 +26,18 @@ import {
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: WorkRequirement;
-  number: string;
-  state: string;
-  priority: string;
-  originator: string;
-  equipment: string;
-  location: string;
-  lastModifiedDate: string;
+  object: Carrier;
+  name: string;
 }
 
 @Component({
-  templateUrl: './workrequirement-list.component.html',
+  templateUrl: './carrier-list-page.component.html',
   providers: [ContextService],
 })
-export class WorkRequirementListComponent implements OnInit, OnDestroy {
-  public title = 'Work Requirements';
+export class CarrierListPageComponent implements OnInit, OnDestroy {
+  public title = 'Carriers';
 
   table: Table<Row>;
 
@@ -62,22 +50,26 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-
-    public scopedService: ScopedService,
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
+    public mediaService: MediaService,
     public filterService: FilterService,
     public sorterService: SorterService,
-    private internalOrganisationId: InternalOrganisationId,
-    public mediaService: MediaService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+
+    this.edit = editRoleService.edit();
+    this.edit.result.subscribe(() => {
+      this.table.selection.clear();
+    });
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
@@ -86,54 +78,30 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'number', sort: true },
-        { name: 'state', sort: true },
-        { name: 'priority', sort: true },
-        { name: 'originator', sort: true },
-        { name: 'equipment', sort: true },
-        { name: 'location', sort: true },
-        { name: 'lastModifiedDate', sort: true },
-      ],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      columns: [{ name: 'name', sort: true }],
+      actions: [this.edit, this.delete],
+      defaultAction: this.edit,
       pageSize: 50,
-      initialSort: 'number',
-      initialSortDirection: 'desc',
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
-    const x = {};
 
-    this.filter = this.filterService.filter(m.WorkRequirement);
-
-    const internalOrganisationPredicate: Equals = {
-      kind: 'Equals',
-      propertyType: m.WorkRequirement.ServicedBy,
-    };
-    const predicate: And = {
-      kind: 'And',
-      operands: [
-        internalOrganisationPredicate,
-        this.filter.definition.predicate,
-      ],
-    };
+    this.filter = this.filterService.filter(m.Carrier);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
       this.filter.fields$,
       this.table.sort$,
       this.table.pager$,
-      this.internalOrganisationId.observable$,
     ])
       .pipe(
         scan(
           (
             [previousRefresh, previousFilterFields],
-            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+            [refresh, filterFields, sort, pageEvent]
           ) => {
             pageEvent =
               previousRefresh !== refresh ||
@@ -148,30 +116,21 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
               this.table.pageIndex = 0;
             }
 
-            return [
-              refresh,
-              filterFields,
-              sort,
-              pageEvent,
-              internalOrganisationId,
-            ];
+            return [refresh, filterFields, sort, pageEvent];
           }
         ),
         switchMap(
-          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+          ([, filterFields, sort, pageEvent]: [
             Date,
             FilterField[],
             Sort,
-            PageEvent,
-            number
+            PageEvent
           ]) => {
-            internalOrganisationPredicate.value = internalOrganisationId;
-
             const pulls = [
-              pull.WorkRequirement({
-                predicate,
+              pull.Carrier({
+                predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.WorkRequirement)?.create(sort)
+                  ? this.sorterService.sorter(m.Carrier)?.create(sort)
                   : null,
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -185,21 +144,13 @@ export class WorkRequirementListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        const objects = loaded.collection<WorkRequirement>(m.WorkRequirement);
-        this.table.total = loaded.value('Requirements_total') as number;
+
+        const objects = loaded.collection<Carrier>(m.Carrier);
+        this.table.total = (loaded.value('Carriers_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,
-            number: v.RequirementNumber,
-            state: v.RequirementStateName,
-            priority: v.PriorityName,
-            originator: v.OriginatorName,
-            equipment: v.FixedAssetName,
-            location: v.Location,
-            lastModifiedDate: formatDistance(
-              new Date(v.LastModifiedDate),
-              new Date()
-            ),
+            name: `${v.Name}`,
           } as Row;
         });
       });

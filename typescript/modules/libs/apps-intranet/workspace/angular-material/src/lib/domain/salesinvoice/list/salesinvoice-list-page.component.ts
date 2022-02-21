@@ -58,10 +58,10 @@ interface Row extends TableRow {
 }
 
 @Component({
-  templateUrl: './salesinvoice-list.component.html',
+  templateUrl: './salesinvoice-list-page.component.html',
   providers: [ContextService],
 })
-export class SalesInvoiceListComponent implements OnInit, OnDestroy {
+export class SalesInvoiceListPageComponent implements OnInit, OnDestroy {
   readonly m: M;
 
   public title = 'Sales Invoices';

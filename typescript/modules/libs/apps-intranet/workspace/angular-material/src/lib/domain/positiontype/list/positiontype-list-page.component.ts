@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { SerialisedItem } from '@allors/default/workspace/domain';
+import { PositionType } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -17,38 +17,31 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
+  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 interface Row extends TableRow {
-  object: SerialisedItem;
-  id: string;
-  name: string;
-  categories: string;
-  availability: string;
-  ownership: string;
-  suppliedBy: string;
-  ownedBy: string;
-  rentedBy: string;
+  object: PositionType;
+  title: string;
+  description: string;
 }
 
 @Component({
-  templateUrl: './serialiseditem-list.component.html',
+  templateUrl: './positiontype-list-page.component.html',
   providers: [ContextService],
 })
-export class SerialisedItemListComponent implements OnInit, OnDestroy {
-  public title = 'Serialised Assets';
+export class PositionTypesListPageComponent implements OnInit, OnDestroy {
+  public title = 'Position Types';
 
   table: Table<Row>;
 
+  edit: Action;
   delete: Action;
 
   private subscription: Subscription;
@@ -57,9 +50,9 @@ export class SerialisedItemListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
@@ -72,6 +65,11 @@ export class SerialisedItemListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
+    this.edit = editRoleService.edit();
+    this.edit.result.subscribe(() => {
+      this.table.selection.clear();
+    });
+
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -79,29 +77,19 @@ export class SerialisedItemListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'id', sort: true },
-        { name: 'name', sort: true },
-        { name: 'categories', sort: true },
-        { name: 'availability', sort: true },
-        { name: 'ownership', sort: true },
-        { name: 'suppliedBy', sort: true },
-        { name: 'ownedBy', sort: true },
-        { name: 'rentedBy', sort: true },
-      ],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      columns: [{ name: 'title', sort: true }, { name: 'description' }],
+      actions: [this.edit, this.delete],
+      defaultAction: this.edit,
       pageSize: 50,
-      initialSort: 'id',
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.SerialisedItem);
+    this.filter = this.filterService.filter(m.PositionType);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -139,11 +127,14 @@ export class SerialisedItemListComponent implements OnInit, OnDestroy {
             PageEvent
           ]) => {
             const pulls = [
-              pull.SerialisedItem({
+              pull.PositionType({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Brand)?.create(sort)
+                  ? this.sorterService.sorter(m.PositionType)?.create(sort)
                   : null,
+                include: {
+                  PositionTypeRate: x,
+                },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
@@ -157,21 +148,13 @@ export class SerialisedItemListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<SerialisedItem>(m.SerialisedItem);
-
-        this.table.total = (loaded.value('SerialisedItems_total') ??
-          0) as number;
+        const objects = loaded.collection<PositionType>(m.PositionType);
+        this.table.total = (loaded.value('PositionTypes_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,
-            id: v.ItemNumber,
-            name: v.Name,
-            categories: v.ProductCategoriesDisplayName,
-            availability: v.SerialisedItemAvailabilityName,
-            ownership: v.OwnershipName,
-            suppliedBy: v.SuppliedByPartyName,
-            ownedBy: v.OwnedByPartyName,
-            rentedBy: v.RentedByPartyName,
+            title: v.Title,
+            description: v.Description,
           } as Row;
         });
       });

@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { Carrier } from '@allors/default/workspace/domain';
+import { Person } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -16,32 +16,37 @@ import {
   RefreshService,
   Table,
   TableRow,
-  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  NavigationService,
+  ScopedService,
+} from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: Carrier;
+  object: Person;
   name: string;
+  email: string;
+  phone: string;
+  isCustomer: string;
+  lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './carrier-list.component.html',
+  templateUrl: './person-list-page.component.html',
   providers: [ContextService],
 })
-export class CarrierListComponent implements OnInit, OnDestroy {
-  public title = 'Carriers';
+export class PersonListPageComponent implements OnInit, OnDestroy {
+  public title = 'People';
 
   table: Table<Row>;
 
-  edit: Action;
   delete: Action;
 
   private subscription: Subscription;
@@ -50,10 +55,9 @@ export class CarrierListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public workspaceService: WorkspaceService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
@@ -64,12 +68,7 @@ export class CarrierListComponent implements OnInit, OnDestroy {
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
-
-    this.edit = editRoleService.edit();
-    this.edit.result.subscribe(() => {
-      this.table.selection.clear();
-    });
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
@@ -78,18 +77,26 @@ export class CarrierListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      columns: [
+        { name: 'name', sort: true },
+        { name: 'email' },
+        { name: 'phone' },
+        'isCustomer',
+        { name: 'lastModifiedDate', sort: true },
+      ],
+      actions: [overviewService.overview(), this.delete],
+      defaultAction: overviewService.overview(),
       pageSize: 50,
+      initialSort: 'name',
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
+    const x = {};
 
-    this.filter = this.filterService.filter(m.Carrier);
+    this.filter = this.filterService.filter(m.Person);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -127,11 +134,20 @@ export class CarrierListComponent implements OnInit, OnDestroy {
             PageEvent
           ]) => {
             const pulls = [
-              pull.Carrier({
+              pull.Person({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Carrier)?.create(sort)
+                  ? this.sorterService.sorter(m.Person)?.create(sort)
                   : null,
+                include: {
+                  Salutation: x,
+                  Picture: x,
+                  PartyContactMechanismsWhereParty: {
+                    ContactMechanism: {
+                      PostalAddress_Country: x,
+                    },
+                  },
+                },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
@@ -145,12 +161,20 @@ export class CarrierListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<Carrier>(m.Carrier);
-        this.table.total = (loaded.value('Carriers_total') ?? 0) as number;
-        this.table.data = objects?.map((v) => {
+        const people = loaded.collection<Person>(m.Person);
+        this.table.total = (loaded.value('People_total') ?? 0) as number;
+        this.table.data = people?.map((v) => {
           return {
             object: v,
-            name: `${v.Name}`,
+            name: v.DisplayName,
+            email: v.DisplayEmail,
+            phone: v.DisplayPhone,
+            isCustomer:
+              v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

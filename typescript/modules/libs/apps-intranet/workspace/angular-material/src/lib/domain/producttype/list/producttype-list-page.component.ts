@@ -6,8 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { And, Equals } from '@allors/system/workspace/domain';
-import { Catalogue } from '@allors/default/workspace/domain';
+import { ProductType } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -26,21 +25,18 @@ import {
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
-  object: Catalogue;
+  object: ProductType;
   name: string;
-  description: string;
-  scope: string;
 }
 
 @Component({
-  templateUrl: './catalogue-list.component.html',
+  templateUrl: './producttype-list-page.component.html',
   providers: [ContextService],
 })
-export class CataloguesListComponent implements OnInit, OnDestroy {
-  public title = 'Catalogues';
+export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
+  public title = 'Product Types';
 
   table: Table<Row>;
 
@@ -53,17 +49,14 @@ export class CataloguesListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    private internalOrganisationId: InternalOrganisationId,
     public filterService: FilterService,
     public sorterService: SorterService,
-
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -83,11 +76,7 @@ export class CataloguesListComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [
-        { name: 'name', sort: true },
-        { name: 'description', sort: true },
-        { name: 'scope', sort: true },
-      ],
+      columns: [{ name: 'name', sort: true }],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
@@ -99,32 +88,19 @@ export class CataloguesListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.Catalogue);
-
-    const internalOrganisationPredicate: Equals = {
-      kind: 'Equals',
-      propertyType: m.Catalogue.InternalOrganisation,
-    };
-    const predicate: And = {
-      kind: 'And',
-      operands: [
-        internalOrganisationPredicate,
-        this.filter.definition.predicate,
-      ],
-    };
+    this.filter = this.filterService.filter(m.ProductType);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
       this.filter.fields$,
       this.table.sort$,
       this.table.pager$,
-      this.internalOrganisationId.observable$,
     ])
       .pipe(
         scan(
           (
             [previousRefresh, previousFilterFields],
-            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+            [refresh, filterFields, sort, pageEvent]
           ) => {
             pageEvent =
               previousRefresh !== refresh ||
@@ -139,35 +115,24 @@ export class CataloguesListComponent implements OnInit, OnDestroy {
               this.table.pageIndex = 0;
             }
 
-            return [
-              refresh,
-              filterFields,
-              sort,
-              pageEvent,
-              internalOrganisationId,
-            ];
+            return [refresh, filterFields, sort, pageEvent];
           }
         ),
         switchMap(
-          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+          ([, filterFields, sort, pageEvent]: [
             Date,
             FilterField[],
             Sort,
-            PageEvent,
-            number
+            PageEvent
           ]) => {
-            internalOrganisationPredicate.value = internalOrganisationId;
-
             const pulls = [
-              pull.Catalogue({
-                predicate: predicate,
+              pull.ProductType({
+                predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Catalogue)?.create(sort)
+                  ? this.sorterService.sorter(m.ProductType)?.create(sort)
                   : null,
                 include: {
-                  CatalogueImage: x,
-                  ProductCategories: x,
-                  CatScope: x,
+                  SerialisedItemCharacteristicTypes: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -182,14 +147,12 @@ export class CataloguesListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<Catalogue>(m.Catalogue);
-        this.table.total = (loaded.value('Catalogues_total') ?? 0) as number;
+        const objects = loaded.collection<ProductType>(m.ProductType);
+        this.table.total = (loaded.value('ProductTypes_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: `${v.Name}`,
-            description: `${v.Description || ''}`,
-            scope: v.CatScope.Name,
           } as Row;
         });
       });

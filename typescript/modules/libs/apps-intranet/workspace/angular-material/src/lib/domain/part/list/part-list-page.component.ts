@@ -6,10 +6,15 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { ExchangeRate } from '@allors/default/workspace/domain';
+import { And } from '@allors/system/workspace/domain';
+import {
+  Part,
+  ProductIdentificationType,
+} from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
+  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
@@ -17,7 +22,10 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  NavigationService,
+  ScopedService,
+} from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
   EditRoleService,
@@ -25,21 +33,25 @@ import {
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { format } from 'date-fns';
+import { formatDistance } from 'date-fns';
 interface Row extends TableRow {
-  object: ExchangeRate;
-  validFrom: string;
-  from: string;
-  to: string;
-  rate: string;
+  object: Part;
+  name: string;
+  partNo: string;
+  type: string;
+  qoh: string;
+  brand: string;
+  model: string;
+  kind: string;
+  lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './exchangerate-list.component.html',
+  templateUrl: './part-list-page.component.html',
   providers: [ContextService],
 })
-export class ExchangeRateListComponent implements OnInit, OnDestroy {
-  public title = 'Exchange Rates';
+export class PartListPageComponent implements OnInit, OnDestroy {
+  public title = 'Parts';
 
   table: Table<Row>;
 
@@ -47,14 +59,15 @@ export class ExchangeRateListComponent implements OnInit, OnDestroy {
   delete: Action;
 
   private subscription: Subscription;
+  goodIdentificationTypes: ProductIdentificationType[];
   filter: Filter;
   m: M;
 
   constructor(
     @Self() public allors: ContextService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
@@ -63,14 +76,9 @@ export class ExchangeRateListComponent implements OnInit, OnDestroy {
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
     titleService.setTitle(this.title);
 
-    this.edit = editRoleService.edit();
-    this.edit.result.subscribe(() => {
-      this.table.selection.clear();
-    });
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
@@ -80,16 +88,18 @@ export class ExchangeRateListComponent implements OnInit, OnDestroy {
     this.table = new Table({
       selection: true,
       columns: [
-        { name: 'validFrom', sort: true },
-        { name: 'from', sort: true },
-        { name: 'to', sort: true },
-        { name: 'rate' },
+        { name: 'name', sort: true },
+        { name: 'partNo', sort: true },
+        { name: 'type', sort: true },
+        { name: 'qoh' },
+        { name: 'brand', sort: true },
+        { name: 'model', sort: true },
+        { name: 'kind', sort: true },
+        { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      actions: [overviewService.overview(), this.delete],
+      defaultAction: overviewService.overview(),
       pageSize: 50,
-      initialSort: 'validFrom',
-      initialSortDirection: 'desc',
     });
   }
 
@@ -98,7 +108,7 @@ export class ExchangeRateListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.ExchangeRate);
+    this.filter = this.filterService.filter(m.Part);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -136,19 +146,27 @@ export class ExchangeRateListComponent implements OnInit, OnDestroy {
             PageEvent
           ]) => {
             const pulls = [
-              pull.ExchangeRate({
+              pull.Part({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.ExchangeRate)?.create(sort)
+                  ? this.sorterService.sorter(m.Part)?.create(sort)
                   : null,
                 include: {
-                  FromCurrency: x,
-                  ToCurrency: x,
+                  Brand: x,
+                  Model: x,
+                  ProductType: x,
+                  PrimaryPhoto: x,
+                  InventoryItemKind: x,
+                  ProductIdentifications: {
+                    ProductIdentificationType: x,
+                  },
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
               }),
+              pull.ProductIdentificationType({}),
+              pull.BasePrice({}),
             ];
 
             return this.allors.context.pull(pulls);
@@ -158,15 +176,39 @@ export class ExchangeRateListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<ExchangeRate>(m.ExchangeRate);
-        this.table.total = (loaded.value('ExchangeRates_total') ?? 0) as number;
-        this.table.data = objects?.map((v) => {
+        const parts = loaded.collection<Part>(m.Part);
+        this.goodIdentificationTypes =
+          loaded.collection<ProductIdentificationType>(
+            m.ProductIdentificationType
+          );
+        const partNumberType = this.goodIdentificationTypes?.find(
+          (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
+        );
+
+        const partNumberByPart = parts?.reduce((map, object) => {
+          map[object.id] = object.ProductIdentifications?.filter(
+            (v) => v.ProductIdentificationType === partNumberType
+          )?.map((w) => w.Identification);
+          return map;
+        }, {});
+
+        this.table.total = (loaded.value('NonUnifiedParts_total') ??
+          0) as number;
+
+        this.table.data = parts?.map((v) => {
           return {
             object: v,
-            validFrom: format(new Date(v.ValidFrom), 'dd-MM-yyyy'),
-            from: v.FromCurrency.Name,
-            to: v.ToCurrency.Name,
-            rate: v.Rate,
+            name: v.Name,
+            partNo: partNumberByPart[v.id][0],
+            qoh: v.QuantityOnHand,
+            type: v.ProductType ? v.ProductType.Name : '',
+            brand: v.Brand ? v.Brand.Name : '',
+            model: v.Model ? v.Model.Name : '',
+            kind: v.InventoryItemKind.Name,
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

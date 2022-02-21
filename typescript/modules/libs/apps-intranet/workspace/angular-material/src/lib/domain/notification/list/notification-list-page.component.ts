@@ -37,10 +37,10 @@ interface Row extends TableRow {
 }
 
 @Component({
-  templateUrl: './notification-list.component.html',
+  templateUrl: './notification-list-page.component.html',
   providers: [ContextService],
 })
-export class NotificationListComponent implements OnInit, OnDestroy {
+export class NotificationListPageComponent implements OnInit, OnDestroy {
   public title = 'Notifications';
 
   table: Table<Row>;

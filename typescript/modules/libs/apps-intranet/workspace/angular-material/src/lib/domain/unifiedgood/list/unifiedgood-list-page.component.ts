@@ -40,10 +40,10 @@ interface Row extends TableRow {
 }
 
 @Component({
-  templateUrl: './unifiedgood-list.component.html',
+  templateUrl: './unifiedgood-list-page.component.html',
   providers: [ContextService],
 })
-export class UnifiedGoodListComponent implements OnInit, OnDestroy {
+export class UnifiedGoodListPageComponent implements OnInit, OnDestroy {
   public title = 'Unified Goods';
 
   table: Table<Row>;

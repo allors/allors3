@@ -6,12 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import {
-  Good,
-  NonUnifiedGood,
-  ProductCategory,
-  UnifiedGood,
-} from '@allors/default/workspace/domain';
+import { CommunicationEvent } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -22,35 +17,38 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  OverviewService,
+  EditRoleService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { format, formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: Good;
+  object: CommunicationEvent;
   name: string;
-  id: string;
-  categories: string;
-  qoh: string;
+  type: string;
+  state: string;
+  subject: string;
+  involved: string;
+  started: string;
+  ended: string;
+  lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './good-list.component.html',
+  templateUrl: './communicationevent-list-page.component.html',
   providers: [ContextService],
 })
-export class GoodListComponent implements OnInit, OnDestroy {
-  public title = 'Goods';
+export class CommunicationEventListPageComponent implements OnInit, OnDestroy {
+  public title = 'Communications';
 
   table: Table<Row>;
 
   delete: Action;
+  edit: Action;
 
   private subscription: Subscription;
   filter: Filter;
@@ -58,10 +56,10 @@ export class GoodListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public scopedService: ScopedService,
+
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
     public deleteService: DeleteService,
+    public editRoleService: EditRoleService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
@@ -73,6 +71,11 @@ export class GoodListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
+    this.edit = editRoleService.edit();
+    this.edit.result.subscribe(() => {
+      this.table.selection.clear();
+    });
+
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -81,23 +84,26 @@ export class GoodListComponent implements OnInit, OnDestroy {
     this.table = new Table({
       selection: true,
       columns: [
-        { name: 'name', sort: true },
-        { name: 'id' },
-        { name: 'categories' },
-        { name: 'qoh' },
+        { name: 'type' },
+        { name: 'state' },
+        { name: 'subject', sort: true },
+        { name: 'involved' },
+        { name: 'started' },
+        { name: 'ended' },
+        { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      actions: [this.edit, this.delete],
+      defaultAction: this.edit,
       pageSize: 50,
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.Good);
+    this.filter = this.filterService.filter(m.CommunicationEvent);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -111,15 +117,20 @@ export class GoodListComponent implements OnInit, OnDestroy {
             [previousRefresh, previousFilterFields],
             [refresh, filterFields, sort, pageEvent]
           ) => {
-            return [
-              refresh,
-              filterFields,
-              sort,
+            pageEvent =
               previousRefresh !== refresh ||
               filterFields !== previousFilterFields
-                ? Object.assign({ pageIndex: 0 }, pageEvent)
-                : pageEvent,
-            ];
+                ? {
+                    ...pageEvent,
+                    pageIndex: 0,
+                  }
+                : pageEvent;
+
+            if (pageEvent.pageIndex === 0) {
+              this.table.pageIndex = 0;
+            }
+
+            return [refresh, filterFields, sort, pageEvent];
           }
         ),
         switchMap(
@@ -130,34 +141,20 @@ export class GoodListComponent implements OnInit, OnDestroy {
             PageEvent
           ]) => {
             const pulls = [
-              pull.Good({
+              pull.CommunicationEvent({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Good)?.create(sort)
+                  ? this.sorterService
+                      .sorter(m.CommunicationEvent)
+                      ?.create(sort)
                   : null,
                 include: {
-                  NonUnifiedGood_Part: x,
-                  ProductIdentifications: {
-                    ProductIdentificationType: x,
-                  },
+                  CommunicationEventState: x,
+                  InvolvedParties: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
-              }),
-              pull.Good({
-                predicate: this.filter.definition.predicate,
-                sorting: sort
-                  ? this.sorterService.sorter(m.Good)?.create(sort)
-                  : null,
-                select: {
-                  ProductCategoriesWhereProduct: {
-                    include: {
-                      Products: x,
-                      PrimaryAncestors: x,
-                    },
-                  },
-                },
               }),
             ];
 
@@ -167,32 +164,25 @@ export class GoodListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-
-        const goods = loaded.collection<Good>(m.Good);
-        const productCategories = loaded.collection<ProductCategory>(
-          m.Good.ProductCategoriesWhereProduct
+        const communicationEvents = loaded.collection<CommunicationEvent>(
+          m.CommunicationEvent
         );
-
-        this.table.total = (loaded.value('NonUnifiedGoods_total') ??
+        this.table.total = (loaded.value('CommunicationEvents_total') ??
           0) as number;
-        this.table.data = goods?.map((v) => {
+        this.table.data = communicationEvents?.map((v) => {
           return {
             object: v,
-            name: v.Name,
-            id: v.ProductIdentifications?.find(
-              (p) =>
-                p.ProductIdentificationType.UniqueId ===
-                'b640630d-a556-4526-a2e5-60a84ab0db3f'
-            ).Identification,
-            categories: productCategories
-              ?.filter((w) => w.Products.includes(v))
-              ?.map((w) => w.DisplayName)
-              .join(', '),
-            // qoh: v.Part && v.Part.QuantityOnHand
-            qoh:
-              ((v as NonUnifiedGood).Part &&
-                (v as NonUnifiedGood).Part.QuantityOnHand) ||
-              (v as UnifiedGood).QuantityOnHand,
+            type: v.strategy.cls.singularName,
+            state: v.CommunicationEventState && v.CommunicationEventState.Name,
+            subject: v.Subject,
+            involved: v.InvolvedParties?.map((w) => w.DisplayName).join(', '),
+            started:
+              v.ActualStart && format(new Date(v.ActualStart), 'dd-MM-yyyy'),
+            ended: v.ActualEnd && format(new Date(v.ActualEnd), 'dd-MM-yyyy'),
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
           } as Row;
         });
       });

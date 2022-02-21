@@ -46,10 +46,10 @@ interface Row extends TableRow {
 }
 
 @Component({
-  templateUrl: './productquote-list.component.html',
+  templateUrl: './productquote-list-page.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteListComponent implements OnInit, OnDestroy {
+export class ProductQuoteListPageComponent implements OnInit, OnDestroy {
   public title = 'Quotes';
 
   table: Table<Row>;

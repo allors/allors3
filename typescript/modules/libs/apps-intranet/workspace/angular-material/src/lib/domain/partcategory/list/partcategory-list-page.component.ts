@@ -38,10 +38,10 @@ interface Row extends TableRow {
 }
 
 @Component({
-  templateUrl: './partcategory-list.component.html',
+  templateUrl: './partcategory-list-page.component.html',
   providers: [ContextService],
 })
-export class PartCategoryListComponent implements OnInit, OnDestroy {
+export class PartCategoryListPageComponent implements OnInit, OnDestroy {
   public title = 'Part Categories';
 
   table: Table<Row>;

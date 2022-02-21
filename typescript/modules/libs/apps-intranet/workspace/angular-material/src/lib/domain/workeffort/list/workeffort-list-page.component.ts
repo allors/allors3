@@ -7,57 +7,56 @@ import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import { And, Equals } from '@allors/system/workspace/domain';
-import {
-  InternalOrganisation,
-  Person,
-  Request,
-} from '@allors/default/workspace/domain';
+import { WorkEffort } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
+  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
   RefreshService,
   Table,
   TableRow,
-  UserId,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  NavigationService,
+  ScopedService,
+} from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
+  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { PrintService } from '../../../actions/print/print.service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { FetcherService } from '../../../services/fetcher/fetcher-service';
-import { format, formatDistance } from 'date-fns';
+import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: Request;
+  object: WorkEffort;
   number: string;
-  from: string;
+  name: string;
+  type: string;
   state: string;
-  description: string;
-  responseRequired: string;
+  customer: string;
+  equipment: string;
+  worker: string;
+  executedBy: string;
   lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './requestforquote-list.component.html',
+  templateUrl: './workeffort-list-page.component.html',
   providers: [ContextService],
 })
-export class RequestForQuoteListComponent implements OnInit, OnDestroy {
-  public title = 'Requests';
-
-  delete: Action;
+export class WorkEffortListPageComponent implements OnInit, OnDestroy {
+  public title = 'Work Orders';
 
   table: Table<Row>;
 
-  user: Person;
-  internalOrganisation: InternalOrganisation;
-  canCreate: boolean;
+  delete: Action;
 
   private subscription: Subscription;
   filter: Filter;
@@ -65,16 +64,17 @@ export class RequestForQuoteListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
+
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,
+    public printService: PrintService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    private internalOrganisationId: InternalOrganisationId,
-    private userId: UserId,
-    private fetcher: FetcherService,
     public filterService: FilterService,
     public sorterService: SorterService,
+    private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -91,13 +91,20 @@ export class RequestForQuoteListComponent implements OnInit, OnDestroy {
       selection: true,
       columns: [
         { name: 'number', sort: true },
-        { name: 'from' },
+        { name: 'name', sort: true },
+        { name: 'type', sort: false },
         { name: 'state' },
-        { name: 'description', sort: true },
-        { name: 'responseRequired', sort: true },
+        { name: 'customer' },
+        { name: 'executedBy' },
+        { name: 'equipment' },
+        { name: 'worker' },
         { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [overviewService.overview(), this.delete],
+      actions: [
+        overviewService.overview(),
+        this.printService.print(),
+        this.delete,
+      ],
       defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
@@ -105,16 +112,16 @@ export class RequestForQuoteListComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.RequestForQuote);
+    this.filter = this.filterService.filter(m.WorkEffort);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
-      propertyType: m.Request.Recipient,
+      propertyType: m.WorkEffort.TakenBy,
     };
     const predicate: And = {
       kind: 'And',
@@ -170,18 +177,25 @@ export class RequestForQuoteListComponent implements OnInit, OnDestroy {
             internalOrganisationPredicate.value = internalOrganisationId;
 
             const pulls = [
-              this.fetcher.internalOrganisation,
-              pull.Person({
-                objectId: this.userId.value,
-              }),
-              pull.Request({
+              pull.WorkEffort({
                 predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.RequestForQuote)?.create(sort)
+                  ? this.sorterService.sorter(m.WorkEffort)?.create(sort)
                   : null,
                 include: {
-                  Originator: x,
-                  RequestState: x,
+                  Customer: x,
+                  ExecutedBy: x,
+                  PrintDocument: {
+                    Media: x,
+                  },
+                  WorkEffortState: x,
+                  WorkEffortPurposes: x,
+                  WorkEffortFixedAssetAssignmentsWhereAssignment: {
+                    FixedAsset: x,
+                  },
+                  WorkEffortPartyAssignmentsWhereAssignment: {
+                    Party: x,
+                  },
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -195,27 +209,29 @@ export class RequestForQuoteListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.user = loaded.object<Person>(m.Person);
-
-        this.canCreate = this.internalOrganisation.canExecuteCreateRequest;
-
-        const requests = loaded.collection<Request>(m.Request);
-        this.table.total = (loaded.value('Requests_total') ?? 0) as number;
-        this.table.data = requests
-          ?.filter((v) => v.canReadRequestNumber)
+        const workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
+        this.table.total = loaded.value('WorkEfforts_total') as number;
+        this.table.data = workEfforts
+          ?.filter((v) => v.canReadWorkEffortNumber)
           ?.map((v) => {
             return {
               object: v,
-              number: `${v.RequestNumber}`,
-              from: v.Originator && v.Originator.DisplayName,
-              state: `${v.RequestState && v.RequestState.Name}`,
-              description: `${v.Description || ''}`,
-              responseRequired:
-                v.RequiredResponseDate &&
-                format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),
+              number: v.WorkEffortNumber,
+              name: v.Name,
+              type: v.strategy.cls.singularName,
+              state: v.WorkEffortState ? v.WorkEffortState.Name : '',
+              customer: v.Customer ? v.Customer.DisplayName : '',
+              executedBy: v.ExecutedBy ? v.ExecutedBy.DisplayName : '',
+              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment
+                ? v.WorkEffortFixedAssetAssignmentsWhereAssignment?.map(
+                    (w) => w.FixedAsset.DisplayName
+                  ).join(', ')
+                : '',
+              worker: v.WorkEffortPartyAssignmentsWhereAssignment
+                ? v.WorkEffortPartyAssignmentsWhereAssignment?.map(
+                    (w) => w.Party.DisplayName
+                  ).join(', ')
+                : '',
               lastModifiedDate: formatDistance(
                 new Date(v.LastModifiedDate),
                 new Date()

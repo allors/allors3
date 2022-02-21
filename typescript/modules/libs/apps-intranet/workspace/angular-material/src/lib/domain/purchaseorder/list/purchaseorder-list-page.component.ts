@@ -7,7 +7,11 @@ import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import { And, Equals } from '@allors/system/workspace/domain';
-import { WorkEffort } from '@allors/default/workspace/domain';
+import {
+  InternalOrganisation,
+  Person,
+  PurchaseOrder,
+} from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -18,63 +22,73 @@ import {
   RefreshService,
   Table,
   TableRow,
+  UserId,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
   EditRoleService,
+  MethodService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { PrintService } from '../../../actions/print/print.service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: WorkEffort;
+  object: PurchaseOrder;
   number: string;
-  name: string;
-  type: string;
+  supplier: string;
   state: string;
-  customer: string;
-  equipment: string;
-  worker: string;
-  executedBy: string;
+  shipmentState: string;
+  customerReference: string;
+  invoice: string;
+  currency: string;
+  totalExVat: string;
+  totalIncVat: string;
   lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './workeffort-list.component.html',
+  templateUrl: './purchaseorder-list-page.component.html',
   providers: [ContextService],
 })
-export class WorkEffortListComponent implements OnInit, OnDestroy {
-  public title = 'Work Orders';
+export class PurchaseOrderListPageComponent implements OnInit, OnDestroy {
+  public title = 'Purchase Orders';
+
+  m: M;
 
   table: Table<Row>;
 
   delete: Action;
+  print: Action;
+  ship: Action;
+  invoice: Action;
+
+  user: Person;
+  internalOrganisation: InternalOrganisation;
+  canCreate: boolean;
 
   private subscription: Subscription;
   filter: Filter;
-  m: M;
 
   constructor(
     @Self() public allors: ContextService,
-
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public deleteService: DeleteService,
     public printService: PrintService,
+    public methodService: MethodService,
+    public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
+    private internalOrganisationId: InternalOrganisationId,
+    private userId: UserId,
+    private fetcher: FetcherService,
     public filterService: FilterService,
     public sorterService: SorterService,
-    private internalOrganisationId: InternalOrganisationId,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -82,29 +96,29 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
+    this.print = printService.print();
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
 
+    this.m = this.allors.context.configuration.metaPopulation as M;
+
     this.table = new Table({
       selection: true,
       columns: [
         { name: 'number', sort: true },
-        { name: 'name', sort: true },
-        { name: 'type', sort: false },
+        { name: 'supplier' },
         { name: 'state' },
-        { name: 'customer' },
-        { name: 'executedBy' },
-        { name: 'equipment' },
-        { name: 'worker' },
+        { name: 'shipmentState' },
+        { name: 'customerReference', sort: true },
+        { name: 'invoice' },
+        { name: 'currency' },
+        { name: 'totalExVat', sort: true },
+        { name: 'totalIncVat', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [
-        overviewService.overview(),
-        this.printService.print(),
-        this.delete,
-      ],
+      actions: [overviewService.overview(), this.delete, this.print],
       defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
@@ -112,17 +126,18 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.WorkEffort);
+    this.filter = this.filterService.filter(m.PurchaseOrder);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
-      propertyType: m.WorkEffort.TakenBy,
+      propertyType: m.PurchaseOrder.OrderedBy,
     };
+
     const predicate: And = {
       kind: 'And',
       operands: [
@@ -177,25 +192,24 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
             internalOrganisationPredicate.value = internalOrganisationId;
 
             const pulls = [
-              pull.WorkEffort({
+              this.fetcher.internalOrganisation,
+              pull.Person({
+                objectId: this.userId.value,
+              }),
+              pull.PurchaseOrder({
                 predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.WorkEffort)?.create(sort)
+                  ? this.sorterService.sorter(m.PurchaseOrder)?.create(sort)
                   : null,
                 include: {
-                  Customer: x,
-                  ExecutedBy: x,
                   PrintDocument: {
                     Media: x,
                   },
-                  WorkEffortState: x,
-                  WorkEffortPurposes: x,
-                  WorkEffortFixedAssetAssignmentsWhereAssignment: {
-                    FixedAsset: x,
-                  },
-                  WorkEffortPartyAssignmentsWhereAssignment: {
-                    Party: x,
-                  },
+                  TakenViaSupplier: x,
+                  PurchaseOrderState: x,
+                  PurchaseOrderShipmentState: x,
+                  PurchaseInvoicesWherePurchaseOrder: x,
+                  DerivedCurrency: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -209,29 +223,36 @@ export class WorkEffortListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        const workEfforts = loaded.collection<WorkEffort>(m.WorkEffort);
-        this.table.total = loaded.value('WorkEfforts_total') as number;
-        this.table.data = workEfforts
-          ?.filter((v) => v.canReadWorkEffortNumber)
+
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
+        this.user = loaded.object<Person>(m.Person);
+
+        this.canCreate =
+          this.internalOrganisation.canExecuteCreatePurchaseOrder;
+
+        const orders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
+        this.table.total = (loaded.value('PurchaseOrders_total') ??
+          0) as number;
+        this.table.data = orders
+          ?.filter((v) => v.canReadOrderNumber)
           ?.map((v) => {
             return {
               object: v,
-              number: v.WorkEffortNumber,
-              name: v.Name,
-              type: v.strategy.cls.singularName,
-              state: v.WorkEffortState ? v.WorkEffortState.Name : '',
-              customer: v.Customer ? v.Customer.DisplayName : '',
-              executedBy: v.ExecutedBy ? v.ExecutedBy.DisplayName : '',
-              equipment: v.WorkEffortFixedAssetAssignmentsWhereAssignment
-                ? v.WorkEffortFixedAssetAssignmentsWhereAssignment?.map(
-                    (w) => w.FixedAsset.DisplayName
-                  ).join(', ')
-                : '',
-              worker: v.WorkEffortPartyAssignmentsWhereAssignment
-                ? v.WorkEffortPartyAssignmentsWhereAssignment?.map(
-                    (w) => w.Party.DisplayName
-                  ).join(', ')
-                : '',
+              number: `${v.OrderNumber}`,
+              supplier: v.TakenViaSupplier && v.TakenViaSupplier.DisplayName,
+              state: `${v.PurchaseOrderState && v.PurchaseOrderState.Name}`,
+              shipmentState: `${
+                v.PurchaseOrderShipmentState &&
+                v.PurchaseOrderShipmentState.Name
+              }`,
+              customerReference: `${v.Description || ''}`,
+              invoice: v.PurchaseInvoicesWherePurchaseOrder?.map(
+                (w) => w.InvoiceNumber
+              ).join(', '),
+              currency: `${v.DerivedCurrency && v.DerivedCurrency.IsoCode}`,
+              totalExVat: v.TotalExVat,
+              totalIncVat: v.TotalIncVat,
               lastModifiedDate: formatDistance(
                 new Date(v.LastModifiedDate),
                 new Date()

@@ -7,7 +7,11 @@ import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import { And, Equals } from '@allors/system/workspace/domain';
-import { ProductCategory } from '@allors/default/workspace/domain';
+import {
+  InternalOrganisation,
+  Person,
+  Request,
+} from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -17,36 +21,43 @@ import {
   RefreshService,
   Table,
   TableRow,
+  UserId,
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { format, formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: ProductCategory;
-  name: string;
-  primaryParent: string;
-  secondaryParents: string;
-  scope: string;
+  object: Request;
+  number: string;
+  from: string;
+  state: string;
+  description: string;
+  responseRequired: string;
+  lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './productcategory-list.component.html',
+  templateUrl: './requestforquote-list-page.component.html',
   providers: [ContextService],
 })
-export class ProductCategoryListComponent implements OnInit, OnDestroy {
-  public title = 'Categories';
+export class RequestForQuoteListPageComponent implements OnInit, OnDestroy {
+  public title = 'Requests';
+
+  delete: Action;
 
   table: Table<Row>;
 
-  edit: Action;
-  delete: Action;
+  user: Person;
+  internalOrganisation: InternalOrganisation;
+  canCreate: boolean;
 
   private subscription: Subscription;
   filter: Filter;
@@ -56,11 +67,12 @@ export class ProductCategoryListComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     private internalOrganisationId: InternalOrganisationId,
+    private userId: UserId,
+    private fetcher: FetcherService,
     public filterService: FilterService,
     public sorterService: SorterService,
     titleService: Title
@@ -70,11 +82,6 @@ export class ProductCategoryListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.edit = editRoleService.edit();
-    this.edit.result.subscribe(() => {
-      this.table.selection.clear();
-    });
-
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -83,14 +90,18 @@ export class ProductCategoryListComponent implements OnInit, OnDestroy {
     this.table = new Table({
       selection: true,
       columns: [
-        { name: 'name', sort: true },
-        { name: 'primaryParent', sort: true },
-        { name: 'secondaryParents', sort: true },
-        { name: 'scope', sort: true },
+        { name: 'number', sort: true },
+        { name: 'from' },
+        { name: 'state' },
+        { name: 'description', sort: true },
+        { name: 'responseRequired', sort: true },
+        { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      actions: [overviewService.overview(), this.delete],
+      defaultAction: overviewService.overview(),
       pageSize: 50,
+      initialSort: 'number',
+      initialSortDirection: 'desc',
     });
   }
 
@@ -99,11 +110,11 @@ export class ProductCategoryListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.ProductCategory);
+    this.filter = this.filterService.filter(m.RequestForQuote);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
-      propertyType: m.ProductCategory.InternalOrganisation,
+      propertyType: m.Request.Recipient,
     };
     const predicate: And = {
       kind: 'And',
@@ -159,22 +170,18 @@ export class ProductCategoryListComponent implements OnInit, OnDestroy {
             internalOrganisationPredicate.value = internalOrganisationId;
 
             const pulls = [
-              pull.ProductCategory({
-                predicate: predicate,
+              this.fetcher.internalOrganisation,
+              pull.Person({
+                objectId: this.userId.value,
+              }),
+              pull.Request({
+                predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.ProductCategory)?.create(sort)
+                  ? this.sorterService.sorter(m.RequestForQuote)?.create(sort)
                   : null,
                 include: {
-                  CategoryImage: x,
-                  LocalisedNames: x,
-                  LocalisedDescriptions: x,
-                  CatScope: x,
-                  PrimaryParent: {
-                    PrimaryAncestors: x,
-                  },
-                  SecondaryParents: {
-                    PrimaryAncestors: x,
-                  },
+                  Originator: x,
+                  RequestState: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -189,20 +196,32 @@ export class ProductCategoryListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.table.total = (loaded.value('ProductCategories_total') ??
-          0) as number;
-        this.table.data = objects?.map((v) => {
-          return {
-            object: v,
-            name: v.Name,
-            primaryParent: v.PrimaryParent && v.PrimaryParent.DisplayName,
-            secondaryParents: v.SecondaryParents?.map(
-              (w) => w.DisplayName
-            ).join(', '),
-            scope: v.CatScope.Name,
-          } as Row;
-        });
+        this.internalOrganisation =
+          this.fetcher.getInternalOrganisation(loaded);
+        this.user = loaded.object<Person>(m.Person);
+
+        this.canCreate = this.internalOrganisation.canExecuteCreateRequest;
+
+        const requests = loaded.collection<Request>(m.Request);
+        this.table.total = (loaded.value('Requests_total') ?? 0) as number;
+        this.table.data = requests
+          ?.filter((v) => v.canReadRequestNumber)
+          ?.map((v) => {
+            return {
+              object: v,
+              number: `${v.RequestNumber}`,
+              from: v.Originator && v.Originator.DisplayName,
+              state: `${v.RequestState && v.RequestState.Name}`,
+              description: `${v.Description || ''}`,
+              responseRequired:
+                v.RequiredResponseDate &&
+                format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),
+              lastModifiedDate: formatDistance(
+                new Date(v.LastModifiedDate),
+                new Date()
+              ),
+            } as Row;
+          });
       });
   }
 

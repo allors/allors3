@@ -6,48 +6,46 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { And } from '@allors/system/workspace/domain';
-import { TaskAssignment } from '@allors/default/workspace/domain';
+import { SerialisedItemCharacteristicType } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
-  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
   RefreshService,
   Table,
   TableRow,
-  UserId,
-  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
-import {
+  DeleteService,
   EditRoleService,
+  OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: TaskAssignment;
-  title: string;
-  dateCreated: string;
+  object: SerialisedItemCharacteristicType;
+  name: string;
+  uom: string;
+  active: boolean;
 }
 
 @Component({
-  templateUrl: './taskassignment-list.component.html',
+  templateUrl: './serialiseditemcharacteristic-list-page.component.html',
   providers: [ContextService],
 })
-export class TaskAssignmentListComponent implements OnInit, OnDestroy {
-  public title = 'Tasks';
+export class SerialisedItemCharacteristicListPageComponent
+  implements OnInit, OnDestroy
+{
+  public title = 'Product Characteristics';
 
   table: Table<Row>;
 
   edit: Action;
+  delete: Action;
 
   private subscription: Subscription;
   filter: Filter;
@@ -55,68 +53,49 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public workspaceService: WorkspaceService,
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
+    public overviewService: OverviewService,
     public editRoleService: EditRoleService,
+    public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
     public sorterService: SorterService,
-    private userId: UserId,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
-    this.m = this.workspaceService.workspace.configuration.metaPopulation as M;
+    this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.edit = editRoleService.edit(this.m.TaskAssignment.Task);
+    this.edit = editRoleService.edit();
     this.edit.result.subscribe(() => {
+      this.table.selection.clear();
+    });
+
+    this.delete = deleteService.delete();
+    this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
 
     this.table = new Table({
       selection: true,
-      columns: ['title', 'dateCreated'],
-      actions: [this.edit],
+      columns: [
+        { name: 'name', sort: true },
+        { name: 'uom', sort: true },
+        { name: 'active', sort: true },
+      ],
+      actions: [this.edit, this.delete],
       defaultAction: this.edit,
-      pageSize: 50,
-      initialSort: 'dateCreated',
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     const m = this.m;
-    const { pullBuilder: pull, treeBuilder: tree } = m;
+    const { pullBuilder: pull } = m;
     const x = {};
 
-    const predicate: And = {
-      kind: 'And',
-      operands: [
-        {
-          kind: 'Equals',
-          propertyType: m.TaskAssignment.User,
-          value: this.userId.value,
-        },
-        {
-          kind: 'ContainedIn',
-          propertyType: m.TaskAssignment.Task,
-          extent: {
-            kind: 'Filter',
-            objectType: m.Task,
-            predicate: {
-              kind: 'Like',
-              roleType: m.Task.Title,
-              parameter: 'title',
-            },
-          },
-        },
-      ],
-    };
-
-    const filterDefinition = new FilterDefinition(predicate);
-    this.filter = new Filter(filterDefinition);
+    this.filter = this.filterService.filter(m.SerialisedItemCharacteristic);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -147,20 +126,20 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
           }
         ),
         switchMap(
-          ([, filterFields, , pageEvent]: [
+          ([, filterFields, sort, pageEvent]: [
             Date,
             FilterField[],
             Sort,
             PageEvent
           ]) => {
             const pulls = [
-              pull.TaskAssignment({
-                predicate,
+              pull.SerialisedItemCharacteristicType({
+                predicate: this.filter.definition.predicate,
+                sorting: sort
+                  ? this.sorterService.sorter(m.Brand)?.create(sort)
+                  : null,
                 include: {
-                  Task: {
-                    WorkItem: x,
-                  },
-                  User: x,
+                  UnitOfMeasure: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -174,19 +153,19 @@ export class TaskAssignmentListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        const taskAssignments = loaded.collection<TaskAssignment>(
-          m.TaskAssignment
+
+        const objects = loaded.collection<SerialisedItemCharacteristicType>(
+          m.SerialisedItemCharacteristicType
         );
-        this.table.total = (loaded.value('TaskAssignments_total') ??
-          0) as number;
-        this.table.data = taskAssignments?.map((v) => {
+        this.table.total = (loaded.value(
+          'SerialisedItemCharacteristicTypes_total'
+        ) ?? 0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
-            title: v.Task.Title,
-            dateCreated: formatDistance(
-              new Date(v.Task.DateCreated),
-              new Date()
-            ),
+            name: `${v.Name}`,
+            uom: v.UnitOfMeasure ? v.UnitOfMeasure.Name : '',
+            active: v.IsActive,
           } as Row;
         });
       });

@@ -6,15 +6,11 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { And } from '@allors/system/workspace/domain';
-import {
-  InternalOrganisation,
-  Organisation,
-} from '@allors/default/workspace/domain';
+import { And, Equals } from '@allors/system/workspace/domain';
+import { ProductCategory } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
-  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
@@ -22,60 +18,49 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
   EditRoleService,
-  MethodService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { FetcherService } from '../../../..';
-import { formatDistance } from 'date-fns';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 interface Row extends TableRow {
-  object: Organisation;
+  object: ProductCategory;
   name: string;
-  street: string;
-  locality: string;
-  country: string;
-  phone: string;
-  isCustomer: string;
-  isSupplier: string;
-  lastModifiedDate: string;
+  primaryParent: string;
+  secondaryParents: string;
+  scope: string;
 }
 
 @Component({
-  templateUrl: './organisation-list.component.html',
+  templateUrl: './productcategory-list-page.component.html',
   providers: [ContextService],
 })
-export class OrganisationListComponent implements OnInit, OnDestroy {
-  public title = 'Organisations';
+export class ProductCategoryListPageComponent implements OnInit, OnDestroy {
+  public title = 'Categories';
 
   table: Table<Row>;
 
+  edit: Action;
   delete: Action;
 
   private subscription: Subscription;
-  internalOrganisation: InternalOrganisation;
   filter: Filter;
   m: M;
 
   constructor(
     @Self() public allors: ContextService,
-
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
-    public methodService: MethodService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    private fetcher: FetcherService,
+    private internalOrganisationId: InternalOrganisationId,
     public filterService: FilterService,
     public sorterService: SorterService,
     titleService: Title
@@ -84,6 +69,11 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
     titleService.setTitle(this.title);
 
     this.m = this.allors.context.configuration.metaPopulation as M;
+
+    this.edit = editRoleService.edit();
+    this.edit.result.subscribe(() => {
+      this.table.selection.clear();
+    });
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
@@ -94,38 +84,47 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       selection: true,
       columns: [
         { name: 'name', sort: true },
-        'street',
-        'locality',
-        'country',
-        'phone',
-        'isCustomer',
-        'isSupplier',
-        { name: 'lastModifiedDate', sort: true },
+        { name: 'primaryParent', sort: true },
+        { name: 'secondaryParents', sort: true },
+        { name: 'scope', sort: true },
       ],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      actions: [this.edit, this.delete],
+      defaultAction: this.edit,
       pageSize: 50,
     });
   }
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.Organisation);
+    this.filter = this.filterService.filter(m.ProductCategory);
+
+    const internalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.ProductCategory.InternalOrganisation,
+    };
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        internalOrganisationPredicate,
+        this.filter.definition.predicate,
+      ],
+    };
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
       this.filter.fields$,
       this.table.sort$,
       this.table.pager$,
+      this.internalOrganisationId.observable$,
     ])
       .pipe(
         scan(
           (
             [previousRefresh, previousFilterFields],
-            [refresh, filterFields, sort, pageEvent]
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
           ) => {
             pageEvent =
               previousRefresh !== refresh ||
@@ -140,30 +139,41 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
               this.table.pageIndex = 0;
             }
 
-            return [refresh, filterFields, sort, pageEvent];
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
         ),
         switchMap(
-          ([, filterFields, sort, pageEvent]: [
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
             Date,
             FilterField[],
             Sort,
-            PageEvent
+            PageEvent,
+            number
           ]) => {
+            internalOrganisationPredicate.value = internalOrganisationId;
+
             const pulls = [
-              this.fetcher.internalOrganisation,
-              pull.Organisation({
-                predicate: this.filter.definition.predicate,
+              pull.ProductCategory({
+                predicate: predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Organisation)?.create(sort)
+                  ? this.sorterService.sorter(m.ProductCategory)?.create(sort)
                   : null,
                 include: {
-                  CustomerRelationshipsWhereCustomer: x,
-                  SupplierRelationshipsWhereSupplier: x,
-                  PartyContactMechanismsWhereParty: {
-                    ContactMechanism: {
-                      PostalAddress_Country: x,
-                    },
+                  CategoryImage: x,
+                  LocalisedNames: x,
+                  LocalisedDescriptions: x,
+                  CatScope: x,
+                  PrimaryParent: {
+                    PrimaryAncestors: x,
+                  },
+                  SecondaryParents: {
+                    PrimaryAncestors: x,
                   },
                 },
                 arguments: this.filter.parameters(filterFields),
@@ -179,27 +189,18 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        const organisations = loaded.collection<Organisation>(m.Organisation);
-
-        this.table.total = (loaded.value('Organisations_total') ?? 0) as number;
-        this.table.data = organisations?.map((v) => {
+        const objects = loaded.collection<ProductCategory>(m.ProductCategory);
+        this.table.total = (loaded.value('ProductCategories_total') ??
+          0) as number;
+        this.table.data = objects?.map((v) => {
           return {
             object: v,
-            name: v.DisplayName,
-            street: v.DisplayAddress,
-            locality: v.DisplayAddress2,
-            country: v.DisplayAddress3,
-            phone: v.DisplayPhone,
-            isCustomer:
-              v.CustomerRelationshipsWhereCustomer.length > 0 ? 'Yes' : 'No',
-            isSupplier:
-              v.SupplierRelationshipsWhereSupplier.length > 0 ? 'Yes' : 'No',
-            lastModifiedDate: formatDistance(
-              new Date(v.LastModifiedDate),
-              new Date()
-            ),
+            name: v.Name,
+            primaryParent: v.PrimaryParent && v.PrimaryParent.DisplayName,
+            secondaryParents: v.SecondaryParents?.map(
+              (w) => w.DisplayName
+            ).join(', '),
+            scope: v.CatScope.Name,
           } as Row;
         });
       });

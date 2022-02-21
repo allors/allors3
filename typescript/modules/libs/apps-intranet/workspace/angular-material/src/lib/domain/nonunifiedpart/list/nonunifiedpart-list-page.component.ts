@@ -58,10 +58,10 @@ interface Row extends TableRow {
 }
 
 @Component({
-  templateUrl: './nonunifiedpart-list.component.html',
+  templateUrl: './nonunifiedpart-list-page.component.html',
   providers: [ContextService],
 })
-export class NonUnifiedPartListComponent implements OnInit, OnDestroy {
+export class NonUnifiedPartListPageComponent implements OnInit, OnDestroy {
   public title = 'Parts';
 
   table: Table<Row>;

@@ -6,8 +6,10 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { And, Equals } from '@allors/system/workspace/domain';
-import { Shipment } from '@allors/default/workspace/domain';
+import {
+  PositionType,
+  PositionTypeRate,
+} from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -21,82 +23,81 @@ import {
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  MethodService,
+  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { PrintService } from '../../../actions/print/print.service';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { formatDistance } from 'date-fns';
+import { format } from 'date-fns';
 
 interface Row extends TableRow {
-  object: Shipment;
-  number: string;
+  object: PositionTypeRate;
+  positionType: string;
+  rateType: string;
   from: string;
-  to: string;
-  state: string;
-  lastModifiedDate: string;
+  through: string;
+  rate: string;
+  frequency: string;
 }
 
 @Component({
-  templateUrl: './shipment-list.component.html',
+  templateUrl: './positiontyperate-list-page.component.html',
   providers: [ContextService],
 })
-export class ShipmentListComponent implements OnInit, OnDestroy {
-  public title = 'Shipments';
-
-  m: M;
+export class PositionTypeRateListPageComponent implements OnInit, OnDestroy {
+  public title = 'Position Type Rates';
 
   table: Table<Row>;
 
+  edit: Action;
   delete: Action;
 
   private subscription: Subscription;
+  positionTypes: PositionType[];
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: ContextService,
-
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public printService: PrintService,
-    public methodService: MethodService,
+    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
-    private internalOrganisationId: InternalOrganisationId,
     public filterService: FilterService,
     public sorterService: SorterService,
     titleService: Title
   ) {
+    this.allors.context.name = this.constructor.name;
     titleService.setTitle(this.title);
 
-    this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
+
+    this.edit = editRoleService.edit();
+    this.edit.result.subscribe(() => {
+      this.table.selection.clear();
+    });
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.m = this.allors.context.configuration.metaPopulation as M;
-
     const sort = true;
     this.table = new Table({
       selection: true,
       columns: [
-        { name: 'number', sort },
+        { name: 'positionType' },
+        { name: 'rateType' },
         { name: 'from', sort },
-        { name: 'to', sort },
-        { name: 'state', sort },
-        { name: 'lastModifiedDate', sort: true },
+        { name: 'through', sort },
+        { name: 'rate', sort },
+        { name: 'frequency' },
       ],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      actions: [this.edit, this.delete],
+      defaultAction: this.edit,
       pageSize: 50,
-      initialSort: 'number',
-      initialSortDirection: 'desc',
     });
   }
 
@@ -105,43 +106,19 @@ export class ShipmentListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.Shipment);
+    this.filter = this.filterService.filter(m.PositionTypeRate);
 
-    const fromInternalOrganisationPredicate: Equals = {
-      kind: 'Equals',
-      propertyType: m.Shipment.ShipFromParty,
-    };
-    const toInternalOrganisationPredicate: Equals = {
-      kind: 'Equals',
-      propertyType: m.Shipment.ShipToParty,
-    };
-
-    const predicate: And = {
-      kind: 'And',
-      operands: [
-        {
-          kind: 'Or',
-          operands: [
-            fromInternalOrganisationPredicate,
-            toInternalOrganisationPredicate,
-          ],
-        },
-        this.filter.definition.predicate,
-      ],
-    };
-
-    this.subscription = combineLatest(
+    this.subscription = combineLatest([
       this.refreshService.refresh$,
       this.filter.fields$,
       this.table.sort$,
       this.table.pager$,
-      this.internalOrganisationId.observable$
-    )
+    ])
       .pipe(
         scan(
           (
             [previousRefresh, previousFilterFields],
-            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
+            [refresh, filterFields, sort, pageEvent]
           ) => {
             pageEvent =
               previousRefresh !== refresh ||
@@ -156,40 +133,34 @@ export class ShipmentListComponent implements OnInit, OnDestroy {
               this.table.pageIndex = 0;
             }
 
-            return [
-              refresh,
-              filterFields,
-              sort,
-              pageEvent,
-              internalOrganisationId,
-            ];
+            return [refresh, filterFields, sort, pageEvent];
           }
         ),
         switchMap(
-          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
+          ([, filterFields, sort, pageEvent]: [
             Date,
             FilterField[],
             Sort,
-            PageEvent,
-            number
+            PageEvent
           ]) => {
-            fromInternalOrganisationPredicate.value = internalOrganisationId;
-            toInternalOrganisationPredicate.value = internalOrganisationId;
-
             const pulls = [
-              pull.Shipment({
-                predicate,
+              pull.PositionTypeRate({
+                predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.Shipment)?.create(sort)
+                  ? this.sorterService.sorter(m.PositionTypeRate)?.create(sort)
                   : null,
                 include: {
-                  ShipToParty: x,
-                  ShipFromParty: x,
-                  ShipmentState: x,
+                  Frequency: x,
+                  RateType: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
+              }),
+              pull.PositionType({
+                include: {
+                  PositionTypeRate: x,
+                },
               }),
             ];
 
@@ -199,19 +170,27 @@ export class ShipmentListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-        const objects = loaded.collection<Shipment>(m.Shipment);
-        this.table.total = (loaded.value('Shipments_total') ?? 0) as number;
+
+        this.positionTypes = loaded.collection<PositionType>(m.PositionType);
+        const objects = loaded.collection<PositionTypeRate>(m.PositionTypeRate);
+
+        this.table.total = (loaded.value('PositionTypeRates_total') ??
+          0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,
-            number: `${v.ShipmentNumber}`,
-            from: v.ShipFromParty.DisplayName,
-            to: v.ShipToParty.DisplayName,
-            state: `${v.ShipmentState && v.ShipmentState.Name}`,
-            lastModifiedDate: formatDistance(
-              new Date(v.LastModifiedDate),
-              new Date()
-            ),
+            positionType: this.positionTypes
+              ?.filter((p) => p.PositionTypeRate === v)
+              ?.map((p) => p.Title)
+              .join(', '),
+            rateType: v.RateType.Name,
+            from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
+            through:
+              v.ThroughDate != null
+                ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
+                : '',
+            rate: v.Rate,
+            frequency: v.Frequency.Name,
           } as Row;
         });
       });

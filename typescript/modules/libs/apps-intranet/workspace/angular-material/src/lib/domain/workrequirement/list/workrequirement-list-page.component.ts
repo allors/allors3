@@ -7,82 +7,71 @@ import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import { And, Equals } from '@allors/system/workspace/domain';
-import {
-  InternalOrganisation,
-  Person,
-  SalesOrder,
-} from '@allors/default/workspace/domain';
+import { WorkRequirement } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
+  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
   RefreshService,
   Table,
   TableRow,
-  UserId,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  NavigationService,
+  ScopedService,
+} from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  MethodService,
+  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { PrintService } from '../../../actions/print/print.service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
-import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: SalesOrder;
+  object: WorkRequirement;
   number: string;
-  shipToCustomer: string;
   state: string;
-  customerReference: string;
+  priority: string;
+  originator: string;
+  equipment: string;
+  location: string;
   lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './salesorder-list.component.html',
+  templateUrl: './workrequirement-list-page.component.html',
   providers: [ContextService],
 })
-export class SalesOrderListComponent implements OnInit, OnDestroy {
-  public title = 'Sales Orders';
-
-  m: M;
+export class WorkRequirementListPageComponent implements OnInit, OnDestroy {
+  public title = 'Work Requirements';
 
   table: Table<Row>;
 
+  edit: Action;
   delete: Action;
-  print: Action;
-  ship: Action;
-  invoice: Action;
-
-  user: Person;
-  internalOrganisation: InternalOrganisation;
-  canCreate: boolean;
 
   private subscription: Subscription;
   filter: Filter;
+  m: M;
 
   constructor(
     @Self() public allors: ContextService,
 
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public printService: PrintService,
-    public methodService: MethodService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
-    public mediaService: MediaService,
-    private internalOrganisationId: InternalOrganisationId,
-    private userId: UserId,
-    private fetcher: FetcherService,
     public filterService: FilterService,
     public sorterService: SorterService,
+    private internalOrganisationId: InternalOrganisationId,
+    public mediaService: MediaService,
     titleService: Title
   ) {
     this.allors.context.name = this.constructor.name;
@@ -95,33 +84,18 @@ export class SalesOrderListComponent implements OnInit, OnDestroy {
       this.table.selection.clear();
     });
 
-    this.print = printService.print();
-    this.ship = methodService.create(allors.context, this.m.SalesOrder.Ship, {
-      name: 'Ship',
-    });
-    this.invoice = methodService.create(
-      allors.context,
-      this.m.SalesOrder.Invoice,
-      { name: 'Invoice' }
-    );
-
     this.table = new Table({
       selection: true,
       columns: [
         { name: 'number', sort: true },
-        { name: 'shipToCustomer' },
-        { name: 'state' },
-        { name: 'invoice' },
-        { name: 'customerReference', sort: true },
+        { name: 'state', sort: true },
+        { name: 'priority', sort: true },
+        { name: 'originator', sort: true },
+        { name: 'equipment', sort: true },
+        { name: 'location', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [
-        overviewService.overview(),
-        this.print,
-        this.delete,
-        this.ship,
-        this.invoice,
-      ],
+      actions: [overviewService.overview(), this.delete],
       defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
@@ -129,16 +103,16 @@ export class SalesOrderListComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.SalesOrder);
+    this.filter = this.filterService.filter(m.WorkRequirement);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
-      propertyType: m.SalesOrder.TakenBy,
+      propertyType: m.WorkRequirement.ServicedBy,
     };
     const predicate: And = {
       kind: 'And',
@@ -194,23 +168,11 @@ export class SalesOrderListComponent implements OnInit, OnDestroy {
             internalOrganisationPredicate.value = internalOrganisationId;
 
             const pulls = [
-              this.fetcher.internalOrganisation,
-              pull.Person({
-                objectId: this.userId.value,
-              }),
-              pull.SalesOrder({
+              pull.WorkRequirement({
                 predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.SalesOrder)?.create(sort)
+                  ? this.sorterService.sorter(m.WorkRequirement)?.create(sort)
                   : null,
-                include: {
-                  PrintDocument: {
-                    Media: x,
-                  },
-                  ShipToCustomer: x,
-                  SalesOrderState: x,
-                  SalesInvoicesWhereSalesOrder: x,
-                },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
@@ -223,33 +185,23 @@ export class SalesOrderListComponent implements OnInit, OnDestroy {
       )
       .subscribe((loaded) => {
         this.allors.context.reset();
-
-        this.internalOrganisation =
-          this.fetcher.getInternalOrganisation(loaded);
-        this.user = loaded.object<Person>(m.Person);
-
-        this.canCreate = this.internalOrganisation.canExecuteCreateSalesOrder;
-
-        const requests = loaded.collection<SalesOrder>(m.SalesOrder);
-        this.table.total = (loaded.value('SalesOrders_total') ?? 0) as number;
-        this.table.data = requests
-          ?.filter((v) => v.canReadOrderNumber)
-          ?.map((v) => {
-            return {
-              object: v,
-              number: `${v.OrderNumber}`,
-              shipToCustomer: v.ShipToCustomer && v.ShipToCustomer.DisplayName,
-              state: `${v.SalesOrderState && v.SalesOrderState.Name}`,
-              invoice: v.SalesInvoicesWhereSalesOrder?.map(
-                (w) => w.InvoiceNumber
-              ).join(', '),
-              customerReference: `${v.Description || ''}`,
-              lastModifiedDate: formatDistance(
-                new Date(v.LastModifiedDate),
-                new Date()
-              ),
-            } as Row;
-          });
+        const objects = loaded.collection<WorkRequirement>(m.WorkRequirement);
+        this.table.total = loaded.value('Requirements_total') as number;
+        this.table.data = objects?.map((v) => {
+          return {
+            object: v,
+            number: v.RequirementNumber,
+            state: v.RequirementStateName,
+            priority: v.PriorityName,
+            originator: v.OriginatorName,
+            equipment: v.FixedAssetName,
+            location: v.Location,
+            lastModifiedDate: formatDistance(
+              new Date(v.LastModifiedDate),
+              new Date()
+            ),
+          } as Row;
+        });
       });
   }
 

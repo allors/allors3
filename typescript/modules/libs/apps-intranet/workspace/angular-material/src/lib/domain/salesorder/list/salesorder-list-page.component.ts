@@ -10,12 +10,11 @@ import { And, Equals } from '@allors/system/workspace/domain';
 import {
   InternalOrganisation,
   Person,
-  PurchaseOrder,
+  SalesOrder,
 } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
-  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
@@ -27,7 +26,6 @@ import {
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  EditRoleService,
   MethodService,
   OverviewService,
   SorterService,
@@ -39,25 +37,20 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: PurchaseOrder;
+  object: SalesOrder;
   number: string;
-  supplier: string;
+  shipToCustomer: string;
   state: string;
-  shipmentState: string;
   customerReference: string;
-  invoice: string;
-  currency: string;
-  totalExVat: string;
-  totalIncVat: string;
   lastModifiedDate: string;
 }
 
 @Component({
-  templateUrl: './purchaseorder-list.component.html',
+  templateUrl: './salesorder-list-page.component.html',
   providers: [ContextService],
 })
-export class PurchaseOrderListComponent implements OnInit, OnDestroy {
-  public title = 'Purchase Orders';
+export class SalesOrderListPageComponent implements OnInit, OnDestroy {
+  public title = 'Sales Orders';
 
   m: M;
 
@@ -77,6 +70,7 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
+
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public printService: PrintService,
@@ -96,29 +90,38 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.print = printService.print();
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
     });
 
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    this.print = printService.print();
+    this.ship = methodService.create(allors.context, this.m.SalesOrder.Ship, {
+      name: 'Ship',
+    });
+    this.invoice = methodService.create(
+      allors.context,
+      this.m.SalesOrder.Invoice,
+      { name: 'Invoice' }
+    );
 
     this.table = new Table({
       selection: true,
       columns: [
         { name: 'number', sort: true },
-        { name: 'supplier' },
+        { name: 'shipToCustomer' },
         { name: 'state' },
-        { name: 'shipmentState' },
-        { name: 'customerReference', sort: true },
         { name: 'invoice' },
-        { name: 'currency' },
-        { name: 'totalExVat', sort: true },
-        { name: 'totalIncVat', sort: true },
+        { name: 'customerReference', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
-      actions: [overviewService.overview(), this.delete, this.print],
+      actions: [
+        overviewService.overview(),
+        this.print,
+        this.delete,
+        this.ship,
+        this.invoice,
+      ],
       defaultAction: overviewService.overview(),
       pageSize: 50,
       initialSort: 'number',
@@ -131,13 +134,12 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.PurchaseOrder);
+    this.filter = this.filterService.filter(m.SalesOrder);
 
     const internalOrganisationPredicate: Equals = {
       kind: 'Equals',
-      propertyType: m.PurchaseOrder.OrderedBy,
+      propertyType: m.SalesOrder.TakenBy,
     };
-
     const predicate: And = {
       kind: 'And',
       operands: [
@@ -196,20 +198,18 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
               pull.Person({
                 objectId: this.userId.value,
               }),
-              pull.PurchaseOrder({
+              pull.SalesOrder({
                 predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.PurchaseOrder)?.create(sort)
+                  ? this.sorterService.sorter(m.SalesOrder)?.create(sort)
                   : null,
                 include: {
                   PrintDocument: {
                     Media: x,
                   },
-                  TakenViaSupplier: x,
-                  PurchaseOrderState: x,
-                  PurchaseOrderShipmentState: x,
-                  PurchaseInvoicesWherePurchaseOrder: x,
-                  DerivedCurrency: x,
+                  ShipToCustomer: x,
+                  SalesOrderState: x,
+                  SalesInvoicesWhereSalesOrder: x,
                 },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -228,31 +228,22 @@ export class PurchaseOrderListComponent implements OnInit, OnDestroy {
           this.fetcher.getInternalOrganisation(loaded);
         this.user = loaded.object<Person>(m.Person);
 
-        this.canCreate =
-          this.internalOrganisation.canExecuteCreatePurchaseOrder;
+        this.canCreate = this.internalOrganisation.canExecuteCreateSalesOrder;
 
-        const orders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
-        this.table.total = (loaded.value('PurchaseOrders_total') ??
-          0) as number;
-        this.table.data = orders
+        const requests = loaded.collection<SalesOrder>(m.SalesOrder);
+        this.table.total = (loaded.value('SalesOrders_total') ?? 0) as number;
+        this.table.data = requests
           ?.filter((v) => v.canReadOrderNumber)
           ?.map((v) => {
             return {
               object: v,
               number: `${v.OrderNumber}`,
-              supplier: v.TakenViaSupplier && v.TakenViaSupplier.DisplayName,
-              state: `${v.PurchaseOrderState && v.PurchaseOrderState.Name}`,
-              shipmentState: `${
-                v.PurchaseOrderShipmentState &&
-                v.PurchaseOrderShipmentState.Name
-              }`,
-              customerReference: `${v.Description || ''}`,
-              invoice: v.PurchaseInvoicesWherePurchaseOrder?.map(
+              shipToCustomer: v.ShipToCustomer && v.ShipToCustomer.DisplayName,
+              state: `${v.SalesOrderState && v.SalesOrderState.Name}`,
+              invoice: v.SalesInvoicesWhereSalesOrder?.map(
                 (w) => w.InvoiceNumber
               ).join(', '),
-              currency: `${v.DerivedCurrency && v.DerivedCurrency.IsoCode}`,
-              totalExVat: v.TotalExVat,
-              totalIncVat: v.TotalIncVat,
+              customerReference: `${v.Description || ''}`,
               lastModifiedDate: formatDistance(
                 new Date(v.LastModifiedDate),
                 new Date()

@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { ProductType } from '@allors/default/workspace/domain';
+import { SerialisedItem } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -17,30 +17,38 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  NavigationService,
+  ScopedService,
+} from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 interface Row extends TableRow {
-  object: ProductType;
+  object: SerialisedItem;
+  id: string;
   name: string;
+  categories: string;
+  availability: string;
+  ownership: string;
+  suppliedBy: string;
+  ownedBy: string;
+  rentedBy: string;
 }
 
 @Component({
-  templateUrl: './producttype-list.component.html',
+  templateUrl: './serialiseditem-list-page.component.html',
   providers: [ContextService],
 })
-export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
-  public title = 'Product Types';
+export class SerialisedItemListPageComponent implements OnInit, OnDestroy {
+  public title = 'Serialised Assets';
 
   table: Table<Row>;
 
-  edit: Action;
   delete: Action;
 
   private subscription: Subscription;
@@ -49,9 +57,9 @@ export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
+    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
-    public editRoleService: EditRoleService,
     public deleteService: DeleteService,
     public navigation: NavigationService,
     public mediaService: MediaService,
@@ -64,11 +72,6 @@ export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
 
     this.m = this.allors.context.configuration.metaPopulation as M;
 
-    this.edit = editRoleService.edit();
-    this.edit.result.subscribe(() => {
-      this.table.selection.clear();
-    });
-
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {
       this.table.selection.clear();
@@ -76,19 +79,29 @@ export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }],
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      columns: [
+        { name: 'id', sort: true },
+        { name: 'name', sort: true },
+        { name: 'categories', sort: true },
+        { name: 'availability', sort: true },
+        { name: 'ownership', sort: true },
+        { name: 'suppliedBy', sort: true },
+        { name: 'ownedBy', sort: true },
+        { name: 'rentedBy', sort: true },
+      ],
+      actions: [overviewService.overview(), this.delete],
+      defaultAction: overviewService.overview(),
       pageSize: 50,
+      initialSort: 'id',
     });
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
 
-    this.filter = this.filterService.filter(m.ProductType);
+    this.filter = this.filterService.filter(m.SerialisedItem);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
@@ -126,14 +139,11 @@ export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
             PageEvent
           ]) => {
             const pulls = [
-              pull.ProductType({
+              pull.SerialisedItem({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.ProductType)?.create(sort)
+                  ? this.sorterService.sorter(m.Brand)?.create(sort)
                   : null,
-                include: {
-                  SerialisedItemCharacteristicTypes: x,
-                },
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
@@ -147,12 +157,21 @@ export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<ProductType>(m.ProductType);
-        this.table.total = (loaded.value('ProductTypes_total') ?? 0) as number;
+        const objects = loaded.collection<SerialisedItem>(m.SerialisedItem);
+
+        this.table.total = (loaded.value('SerialisedItems_total') ??
+          0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,
-            name: `${v.Name}`,
+            id: v.ItemNumber,
+            name: v.Name,
+            categories: v.ProductCategoriesDisplayName,
+            availability: v.SerialisedItemAvailabilityName,
+            ownership: v.OwnershipName,
+            suppliedBy: v.SuppliedByPartyName,
+            ownedBy: v.OwnedByPartyName,
+            rentedBy: v.RentedByPartyName,
           } as Row;
         });
       });
