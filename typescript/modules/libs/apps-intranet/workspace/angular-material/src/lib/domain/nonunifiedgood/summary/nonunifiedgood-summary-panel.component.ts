@@ -28,7 +28,7 @@ import { NonUnifiedGood } from '@allors/default/workspace/domain';
     },
   ],
 })
-export class NonUnifiedGoodSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class NonUnifiedGoodSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   good: NonUnifiedGood;

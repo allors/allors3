@@ -1,6 +1,6 @@
 import { Component, Self } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PurchaseShipment } from '@allors/default/workspace/domain';
+import { Good } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -12,12 +12,12 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import { M, PathBuilder } from '@allors/default/workspace/meta';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './purchaseshipment-overview.component.html',
+  templateUrl: './unifiedgood-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -26,11 +26,14 @@ import { M, PathBuilder } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class PurchaseShipmentOverviewComponent extends AllorsOverviewPageComponent {
+export class UnifiedGoodOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
-  p: PathBuilder;
 
-  public shipment: PurchaseShipment;
+  good: Good;
+  serialised: boolean;
+
+  nonSerialisedInventoryItemTarget: Path;
+  serialisedInventoryItemTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -50,7 +53,20 @@ export class PurchaseShipmentOverviewComponent extends AllorsOverviewPageCompone
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
-    this.p = this.m.pathBuilder;
+    const { m } = this;
+    const { pathBuilder: p } = this.m;
+
+    this.nonSerialisedInventoryItemTarget = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.NonSerialisedInventoryItem,
+      },
+    });
+
+    this.serialisedInventoryItemTarget = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.SerialisedInventoryItem,
+      },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -61,14 +77,20 @@ export class PurchaseShipmentOverviewComponent extends AllorsOverviewPageCompone
     const id = this.scoped.id;
 
     pulls.push(
-      p.Shipment({
+      p.UnifiedGood({
         name: prefix,
         objectId: id,
+        include: {
+          InventoryItemKind: {},
+        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.shipment = loaded.object<PurchaseShipment>(prefix);
+    const unifiedGood = loaded.object<UnifiedGood>(prefix);
+    this.serialised =
+      unifiedGood.InventoryItemKind.UniqueId ===
+      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
   }
 }

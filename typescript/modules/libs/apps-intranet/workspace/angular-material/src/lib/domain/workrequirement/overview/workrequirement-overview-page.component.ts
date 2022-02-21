@@ -1,5 +1,8 @@
+import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { WorkRequirement } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -7,6 +10,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
+  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
@@ -14,10 +18,9 @@ import {
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
-import { ProductQuote, SalesOrder } from '@allors/default/workspace/domain';
 
 @Component({
-  templateUrl: './productquote-overview.component.html',
+  templateUrl: './workrequirement-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -26,10 +29,10 @@ import { ProductQuote, SalesOrder } from '@allors/default/workspace/domain';
     },
   ],
 })
-export class ProductQuoteOverviewComponent extends AllorsOverviewPageComponent {
-  m: M;
-  productQuote: ProductQuote;
-  salesOrder: SalesOrder;
+export class WorkRequirementOverviewPageComponent extends AllorsOverviewPageComponent {
+  readonly m: M;
+
+  requirement: WorkRequirement;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -59,37 +62,14 @@ export class ProductQuoteOverviewComponent extends AllorsOverviewPageComponent {
     const id = this.scoped.id;
 
     pulls.push(
-      p.ProductQuote({
+      p.WorkRequirement({
         name: prefix,
         objectId: id,
-        include: {
-          QuoteItems: {
-            Product: {},
-            QuoteItemState: {},
-          },
-          Receiver: {},
-          ContactPerson: {},
-          QuoteState: {},
-          CreatedBy: {},
-          LastModifiedBy: {},
-          Request: {},
-          FullfillContactMechanism: {
-            PostalAddress_Country: {},
-          },
-        },
-      }),
-      p.ProductQuote({
-        name: `${prefix}_salesOrder`,
-        objectId: id,
-        select: {
-          SalesOrderWhereQuote: {},
-        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.productQuote = loaded.object<ProductQuote>(prefix);
-    this.salesOrder = loaded.object<SalesOrder>(`${prefix}_salesOrder`);
+    this.requirement = loaded.object<WorkRequirement>(prefix);
   }
 }

@@ -44,7 +44,7 @@ interface Row extends TableRow {
   templateUrl: './positiontyperate-list.component.html',
   providers: [ContextService],
 })
-export class PositionTypeRatesOverviewComponent implements OnInit, OnDestroy {
+export class PositionTypeRateListComponent implements OnInit, OnDestroy {
   public title = 'Position Type Rates';
 
   table: Table<Row>;

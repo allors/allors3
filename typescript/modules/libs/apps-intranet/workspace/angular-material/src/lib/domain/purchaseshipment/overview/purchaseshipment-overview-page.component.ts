@@ -1,8 +1,6 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { SalesInvoice, SalesOrder } from '@allors/default/workspace/domain';
+import { PurchaseShipment } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -10,17 +8,16 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import { M } from '@allors/default/workspace/meta';
+import { M, PathBuilder } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './salesorder-overview.component.html',
+  templateUrl: './purchaseshipment-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -29,10 +26,11 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class SalesOrderOverviewComponent extends AllorsOverviewPageComponent {
+export class PurchaseShipmentOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
+  p: PathBuilder;
 
-  order: SalesOrder;
+  public shipment: PurchaseShipment;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -52,6 +50,7 @@ export class SalesOrderOverviewComponent extends AllorsOverviewPageComponent {
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.p = this.m.pathBuilder;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -62,7 +61,7 @@ export class SalesOrderOverviewComponent extends AllorsOverviewPageComponent {
     const id = this.scoped.id;
 
     pulls.push(
-      p.SalesOrder({
+      p.Shipment({
         name: prefix,
         objectId: id,
       })
@@ -70,6 +69,6 @@ export class SalesOrderOverviewComponent extends AllorsOverviewPageComponent {
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.order = loaded.object<SalesOrder>(prefix);
+    this.shipment = loaded.object<PurchaseShipment>(prefix);
   }
 }

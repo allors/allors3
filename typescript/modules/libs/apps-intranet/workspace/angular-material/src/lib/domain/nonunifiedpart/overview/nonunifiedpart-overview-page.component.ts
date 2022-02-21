@@ -1,8 +1,6 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { RequestForQuote } from '@allors/default/workspace/domain';
+import { NonUnifiedPart, Part } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -10,17 +8,16 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './requestforquote-overview.component.html',
+  templateUrl: './nonunifiedpart-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -29,10 +26,14 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class RequestForQuoteOverviewComponent extends AllorsOverviewPageComponent {
+export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
 
-  public requestForQuote: RequestForQuote;
+  part: Part;
+  serialised: boolean;
+
+  nonSerialisedInventoryItemTarget: Path;
+  serialisedInventoryItemTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -52,6 +53,20 @@ export class RequestForQuoteOverviewComponent extends AllorsOverviewPageComponen
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { m } = this;
+    const { pathBuilder: p } = this.m;
+
+    this.nonSerialisedInventoryItemTarget = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.NonSerialisedInventoryItem,
+      },
+    });
+
+    this.serialisedInventoryItemTarget = p.NonUnifiedPart({
+      InventoryItemsWherePart: {
+        ofType: m.SerialisedInventoryItem,
+      },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -62,14 +77,20 @@ export class RequestForQuoteOverviewComponent extends AllorsOverviewPageComponen
     const id = this.scoped.id;
 
     pulls.push(
-      p.RequestForQuote({
+      p.NonUnifiedPart({
         name: prefix,
         objectId: id,
+        include: {
+          InventoryItemKind: {},
+        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.requestForQuote = loaded.object<RequestForQuote>(prefix);
+    const part = loaded.object<NonUnifiedPart>(prefix);
+    this.serialised =
+      part.InventoryItemKind.UniqueId ===
+      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
   }
 }

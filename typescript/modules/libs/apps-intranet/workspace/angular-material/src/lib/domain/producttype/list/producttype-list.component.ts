@@ -35,7 +35,7 @@ interface Row extends TableRow {
   templateUrl: './producttype-list.component.html',
   providers: [ContextService],
 })
-export class ProductTypesOverviewComponent implements OnInit, OnDestroy {
+export class ProductTypesOverviewPageComponent implements OnInit, OnDestroy {
   public title = 'Product Types';
 
   table: Table<Row>;

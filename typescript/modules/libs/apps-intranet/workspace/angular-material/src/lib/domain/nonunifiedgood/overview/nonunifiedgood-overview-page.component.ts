@@ -1,4 +1,3 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Good, NonUnifiedGood } from '@allors/default/workspace/domain';
@@ -9,7 +8,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
@@ -19,7 +17,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './nonunifiedgood-overview.component.html',
+  templateUrl: './nonunifiedgood-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -28,7 +26,7 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class NonUnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
+export class NonUnifiedGoodOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
   good: Good;
 

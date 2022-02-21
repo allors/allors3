@@ -2,7 +2,7 @@ import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { WorkRequirement } from '@allors/default/workspace/domain';
+import { RequestForQuote } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -20,7 +20,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './workrequirement-overview.component.html',
+  templateUrl: './requestforquote-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -29,10 +29,10 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class WorkRequirementOverviewComponent extends AllorsOverviewPageComponent {
-  readonly m: M;
+export class RequestForQuoteOverviewPageComponent extends AllorsOverviewPageComponent {
+  m: M;
 
-  requirement: WorkRequirement;
+  public requestForQuote: RequestForQuote;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -62,7 +62,7 @@ export class WorkRequirementOverviewComponent extends AllorsOverviewPageComponen
     const id = this.scoped.id;
 
     pulls.push(
-      p.WorkRequirement({
+      p.RequestForQuote({
         name: prefix,
         objectId: id,
       })
@@ -70,6 +70,6 @@ export class WorkRequirementOverviewComponent extends AllorsOverviewPageComponen
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.requirement = loaded.object<WorkRequirement>(prefix);
+    this.requestForQuote = loaded.object<RequestForQuote>(prefix);
   }
 }

@@ -2,7 +2,7 @@ import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { PurchaseOrder } from '@allors/default/workspace/domain';
+import { SalesInvoice, SalesOrder } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -20,7 +20,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './purchaseorder-overview.component.html',
+  templateUrl: './salesorder-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -29,10 +29,10 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class PurchaseOrderOverviewComponent extends AllorsOverviewPageComponent {
+export class SalesOrderOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
 
-  public order: PurchaseOrder;
+  order: SalesOrder;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -62,19 +62,14 @@ export class PurchaseOrderOverviewComponent extends AllorsOverviewPageComponent 
     const id = this.scoped.id;
 
     pulls.push(
-      p.PurchaseOrder({
+      p.SalesOrder({
         name: prefix,
         objectId: id,
-        include: {
-          PurchaseOrderItems: {
-            InvoiceItemType: {},
-          },
-        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.order = loaded.object<PurchaseOrder>(prefix);
+    this.order = loaded.object<SalesOrder>(prefix);
   }
 }

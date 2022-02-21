@@ -1,11 +1,5 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import {
-  PurchaseInvoice,
-  PurchaseOrder,
-} from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -13,18 +7,17 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
-import { PropertyType } from '@allors/system/workspace/meta';
+import { ProductQuote, SalesOrder } from '@allors/default/workspace/domain';
 
 @Component({
-  templateUrl: './purchaseinvoice-overview.component.html',
+  templateUrl: './productquote-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -33,13 +26,10 @@ import { PropertyType } from '@allors/system/workspace/meta';
     },
   ],
 })
-export class PurchaseInvoiceOverviewComponent extends AllorsOverviewPageComponent {
+export class ProductQuoteOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
-
-  order: PurchaseOrder;
-  invoice: PurchaseInvoice;
-
-  paymentTarget: Path;
+  productQuote: ProductQuote;
+  salesOrder: SalesOrder;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -59,11 +49,6 @@ export class PurchaseInvoiceOverviewComponent extends AllorsOverviewPageComponen
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
-    const { pathBuilder: p } = this.m;
-
-    this.paymentTarget = p.Invoice({
-      PaymentApplicationsWhereInvoice: { PaymentWherePaymentApplication: {} },
-    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -74,14 +59,37 @@ export class PurchaseInvoiceOverviewComponent extends AllorsOverviewPageComponen
     const id = this.scoped.id;
 
     pulls.push(
-      p.PurchaseInvoice({
+      p.ProductQuote({
         name: prefix,
         objectId: id,
+        include: {
+          QuoteItems: {
+            Product: {},
+            QuoteItemState: {},
+          },
+          Receiver: {},
+          ContactPerson: {},
+          QuoteState: {},
+          CreatedBy: {},
+          LastModifiedBy: {},
+          Request: {},
+          FullfillContactMechanism: {
+            PostalAddress_Country: {},
+          },
+        },
+      }),
+      p.ProductQuote({
+        name: `${prefix}_salesOrder`,
+        objectId: id,
+        select: {
+          SalesOrderWhereQuote: {},
+        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.invoice = loaded.object<PurchaseInvoice>(prefix);
+    this.productQuote = loaded.object<ProductQuote>(prefix);
+    this.salesOrder = loaded.object<SalesOrder>(`${prefix}_salesOrder`);
   }
 }

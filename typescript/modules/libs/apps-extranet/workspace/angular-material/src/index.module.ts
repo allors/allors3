@@ -89,7 +89,7 @@ import {
   WorkEffortListPageComponent,
   WorkTaskCreateFormComponent,
   WorkTaskEditFormComponent,
-  WorkTaskOverviewComponent,
+  WorkTaskOverviewPageComponent,
   WorkTaskSummaryPanel,
 } from './index';
 
@@ -143,7 +143,7 @@ import {
     WorkEffortListPageComponent,
     WorkTaskCreateFormComponent,
     WorkTaskEditFormComponent,
-    WorkTaskOverviewComponent,
+    WorkTaskOverviewPageComponent,
     WorkTaskSummaryPanel,
   ],
   imports: [

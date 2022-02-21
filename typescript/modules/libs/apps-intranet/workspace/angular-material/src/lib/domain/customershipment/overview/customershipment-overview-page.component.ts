@@ -17,7 +17,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 import { M, PathBuilder } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './customershipment-overview.component.html',
+  templateUrl: './customershipment-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -26,7 +26,7 @@ import { M, PathBuilder } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class CustomerShipmentOverviewComponent extends AllorsOverviewPageComponent {
+export class CustomerShipmentOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
   p: PathBuilder;
   shipment: CustomerShipment;

@@ -36,7 +36,7 @@ interface Row extends TableRow {
   templateUrl: './positiontype-list.component.html',
   providers: [ContextService],
 })
-export class PositionTypesOverviewComponent implements OnInit, OnDestroy {
+export class PositionTypesListComponent implements OnInit, OnDestroy {
   public title = 'Position Types';
 
   table: Table<Row>;

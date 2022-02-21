@@ -1,6 +1,8 @@
+import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { Good } from '@allors/default/workspace/domain';
+import { PurchaseOrder } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -8,16 +10,17 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
+  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './unifiedgood-overview.component.html',
+  templateUrl: './purchaseorder-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -26,14 +29,10 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class UnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
+export class PurchaseOrderOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
 
-  good: Good;
-  serialised: boolean;
-
-  nonSerialisedInventoryItemTarget: Path;
-  serialisedInventoryItemTarget: Path;
+  public order: PurchaseOrder;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -53,20 +52,6 @@ export class UnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
-    const { m } = this;
-    const { pathBuilder: p } = this.m;
-
-    this.nonSerialisedInventoryItemTarget = p.NonUnifiedPart({
-      InventoryItemsWherePart: {
-        ofType: m.NonSerialisedInventoryItem,
-      },
-    });
-
-    this.serialisedInventoryItemTarget = p.NonUnifiedPart({
-      InventoryItemsWherePart: {
-        ofType: m.SerialisedInventoryItem,
-      },
-    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -77,20 +62,19 @@ export class UnifiedGoodOverviewComponent extends AllorsOverviewPageComponent {
     const id = this.scoped.id;
 
     pulls.push(
-      p.UnifiedGood({
+      p.PurchaseOrder({
         name: prefix,
         objectId: id,
         include: {
-          InventoryItemKind: {},
+          PurchaseOrderItems: {
+            InvoiceItemType: {},
+          },
         },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    const unifiedGood = loaded.object<UnifiedGood>(prefix);
-    this.serialised =
-      unifiedGood.InventoryItemKind.UniqueId ===
-      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+    this.order = loaded.object<PurchaseOrder>(prefix);
   }
 }

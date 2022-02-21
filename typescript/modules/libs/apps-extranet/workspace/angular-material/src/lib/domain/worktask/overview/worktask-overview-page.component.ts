@@ -31,7 +31,7 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
+export class WorkTaskOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
   object: WorkTask;
 

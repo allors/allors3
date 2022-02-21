@@ -143,7 +143,7 @@ import {
   // Components
   WorkEffortListPageComponent,
   WorkTaskCreateFormComponent,
-  WorkTaskOverviewComponent,
+  WorkTaskOverviewPageComponent,
   WorkTaskEditFormComponent,
   WorkTaskSummaryPanel,
 } from '@allors/apps-extranet/workspace/angular-material';
@@ -224,7 +224,7 @@ import { AppActionService } from './services/action.service';
     // Non routed and non dialog components
     WorkEffortListPageComponent,
     WorkTaskCreateFormComponent,
-    WorkTaskOverviewComponent,
+    WorkTaskOverviewPageComponent,
     WorkTaskEditFormComponent,
     WorkTaskSummaryPanel,
     // App

@@ -2,7 +2,10 @@ import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { Good, UnifiedGood, WorkTask } from '@allors/default/workspace/domain';
+import {
+  PurchaseInvoice,
+  PurchaseOrder,
+} from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -15,12 +18,13 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
+import { PropertyType } from '@allors/system/workspace/meta';
 
 @Component({
-  templateUrl: './worktask-overview.component.html',
+  templateUrl: './purchaseinvoice-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -29,10 +33,13 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
-  readonly m: M;
+export class PurchaseInvoiceOverviewPageComponent extends AllorsOverviewPageComponent {
+  m: M;
 
-  workTask: WorkTask;
+  order: PurchaseOrder;
+  invoice: PurchaseInvoice;
+
+  paymentTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -52,6 +59,11 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { pathBuilder: p } = this.m;
+
+    this.paymentTarget = p.Invoice({
+      PaymentApplicationsWhereInvoice: { PaymentWherePaymentApplication: {} },
+    });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -62,7 +74,7 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
     const id = this.scoped.id;
 
     pulls.push(
-      p.WorkTask({
+      p.PurchaseInvoice({
         name: prefix,
         objectId: id,
       })
@@ -70,6 +82,6 @@ export class WorkTaskOverviewComponent extends AllorsOverviewPageComponent {
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.workTask = loaded.object<WorkTask>(prefix);
+    this.invoice = loaded.object<PurchaseInvoice>(prefix);
   }
 }

@@ -1,6 +1,8 @@
+import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { SerialisedItem } from '@allors/default/workspace/domain';
+import { SalesInvoice } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -8,6 +10,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
+  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
@@ -17,7 +20,7 @@ import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-mater
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './serialiseditem-overview.component.html',
+  templateUrl: './salesinvoice-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -26,17 +29,12 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class SerialisedItemOverviewComponent extends AllorsOverviewPageComponent {
-  readonly m: M;
+export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageComponent {
+  m: M;
 
-  serialisedItem: SerialisedItem;
+  invoice: SalesInvoice;
 
-  workEffortTarget: Path;
-  workrequirementfulfillmentTarget: Path;
-  salesInvoiceTarget: Path;
-  salesOrderTarget: Path;
-  quoteTarget: Path;
-  requestTarget: Path;
+  paymentTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -58,40 +56,8 @@ export class SerialisedItemOverviewComponent extends AllorsOverviewPageComponent
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
     const { pathBuilder: p } = this.m;
 
-    this.workEffortTarget = p.FixedAsset({
-      WorkEffortFixedAssetAssignmentsWhereFixedAsset: {
-        Assignment: {},
-      },
-    });
-
-    this.workrequirementfulfillmentTarget = p.FixedAsset({
-      WorkRequirementsWhereFixedAsset: {
-        WorkRequirementFulfillmentWhereFullfilledBy: {},
-      },
-    });
-
-    this.salesInvoiceTarget = p.SerialisedItem({
-      SalesInvoiceItemsWhereSerialisedItem: {
-        SalesInvoiceWhereSalesInvoiceItem: {},
-      },
-    });
-
-    this.salesOrderTarget = p.SerialisedItem({
-      SalesOrderItemsWhereSerialisedItem: {
-        SalesOrderWhereSalesOrderItem: {},
-      },
-    });
-
-    this.quoteTarget = p.SerialisedItem({
-      QuoteItemsWhereSerialisedItem: {
-        QuoteWhereQuoteItem: {},
-      },
-    });
-
-    this.requestTarget = p.SerialisedItem({
-      RequestItemsWhereSerialisedItem: {
-        RequestWhereRequestItem: {},
-      },
+    this.paymentTarget = p.Invoice({
+      PaymentApplicationsWhereInvoice: { PaymentWherePaymentApplication: {} },
     });
   }
 
@@ -103,17 +69,14 @@ export class SerialisedItemOverviewComponent extends AllorsOverviewPageComponent
     const id = this.scoped.id;
 
     pulls.push(
-      p.SerialisedItem({
+      p.SalesInvoice({
         name: prefix,
         objectId: id,
-        include: {
-          OwnedBy: {},
-        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.serialisedItem = loaded.object<SerialisedItem>(prefix);
+    this.invoice = loaded.object<SalesInvoice>(prefix);
   }
 }
