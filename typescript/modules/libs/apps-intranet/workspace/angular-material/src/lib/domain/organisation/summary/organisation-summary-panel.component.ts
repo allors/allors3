@@ -1,4 +1,4 @@
-import { Component, Self } from '@angular/core';
+import { Component } from '@angular/core';
 
 import {
   RefreshService,
@@ -11,7 +11,6 @@ import {
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
-import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
@@ -19,13 +18,6 @@ import { Organisation } from '@allors/default/workspace/domain';
 @Component({
   selector: 'organisation-summary-panel',
   templateUrl: './organisation-summary-panel.component.html',
-  providers: [
-    ScopedService,
-    {
-      provide: PanelService,
-      useClass: AllorsMaterialPanelService,
-    },
-  ],
 })
 export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
@@ -34,8 +26,8 @@ export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelCom
   contactKindsText: string;
 
   constructor(
-    @Self() scopedService: ScopedService,
-    @Self() panelService: PanelService,
+    scopedService: ScopedService,
+    panelService: PanelService,
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService

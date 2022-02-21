@@ -6,7 +6,6 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { And } from '@allors/system/workspace/domain';
 import {
   Part,
   ProductIdentificationType,
@@ -14,7 +13,6 @@ import {
 import {
   Action,
   Filter,
-  FilterDefinition,
   FilterField,
   FilterService,
   MediaService,
@@ -22,13 +20,9 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
-  EditRoleService,
   OverviewService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
@@ -65,7 +59,6 @@ export class PartListPageComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,

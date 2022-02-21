@@ -21,10 +21,10 @@ export class AppNavigationService extends NavigationService {
 
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
-    function define(composite: Composite, list: string, overview?: string) {
+    const define = (composite: Composite, list: string, overview?: string) => {
       this.listByComposite.set(composite, list);
       this.overviewByComposite.set(composite, overview);
-    }
+    };
 
     // Navigation
     define(m.Person, '/contacts/people', '/contacts/person/:id');

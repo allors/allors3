@@ -1,6 +1,4 @@
-import { combineLatest, delay, map, switchMap } from 'rxjs';
 import { Component, Self } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import {
   PurchaseInvoice,
@@ -13,7 +11,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  NavigationActivatedRoute,
   PanelService,
   ScopedService,
   AllorsOverviewPageComponent,
@@ -21,7 +18,6 @@ import {
 import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
-import { PropertyType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './purchaseinvoice-overview-page.component.html',

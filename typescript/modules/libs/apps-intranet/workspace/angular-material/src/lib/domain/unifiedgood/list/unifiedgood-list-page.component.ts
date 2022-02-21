@@ -17,10 +17,7 @@ import {
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   DeleteService,
   OverviewService,
@@ -56,7 +53,6 @@ export class UnifiedGoodListPageComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public overviewService: OverviewService,
     public deleteService: DeleteService,

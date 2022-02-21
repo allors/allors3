@@ -21,10 +21,7 @@ import {
   UserId,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   EditRoleService,
   SorterService,
@@ -56,7 +53,6 @@ export class TaskAssignmentListPageComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     public workspaceService: WorkspaceService,
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public editRoleService: EditRoleService,
     public navigation: NavigationService,

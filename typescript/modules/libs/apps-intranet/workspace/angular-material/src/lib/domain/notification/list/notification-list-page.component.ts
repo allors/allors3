@@ -18,10 +18,7 @@ import {
   MediaService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
-  ScopedService,
-} from '@allors/base/workspace/angular/application';
+import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
   MethodService,
   SorterService,
@@ -55,7 +52,6 @@ export class NotificationListPageComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public scopedService: ScopedService,
     public refreshService: RefreshService,
     public methodService: MethodService,
     public navigation: NavigationService,

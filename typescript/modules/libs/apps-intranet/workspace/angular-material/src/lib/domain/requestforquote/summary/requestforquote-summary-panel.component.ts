@@ -1,11 +1,9 @@
-import { Component, Self } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
-  Action,
   ErrorService,
   InvokeService,
-  MediaService,
   RefreshService,
   SharedPullService,
 } from '@allors/base/workspace/angular/foundation';
@@ -17,33 +15,13 @@ import {
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
-import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import {
-  Organisation,
-  OrganisationContactKind,
-  OrganisationContactRelationship,
-  Person,
-  ProductQuote,
-  PurchaseInvoice,
-  PurchaseOrder,
-  Quote,
-  RequestForQuote,
-  SalesOrder,
-  User,
-} from '@allors/default/workspace/domain';
+import { Quote, RequestForQuote } from '@allors/default/workspace/domain';
 
 @Component({
   selector: 'requestforquote-summary-panel',
   templateUrl: './requestforquote-summary-panel.component.html',
-  providers: [
-    ScopedService,
-    {
-      provide: PanelService,
-      useClass: AllorsMaterialPanelService,
-    },
-  ],
 })
 export class RequestForQuoteSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
@@ -52,8 +30,8 @@ export class RequestForQuoteSummaryPanelComponent extends AllorsViewSummaryPanel
   quote: Quote;
 
   constructor(
-    @Self() scopedService: ScopedService,
-    @Self() panelService: PanelService,
+    scopedService: ScopedService,
+    panelService: PanelService,
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,

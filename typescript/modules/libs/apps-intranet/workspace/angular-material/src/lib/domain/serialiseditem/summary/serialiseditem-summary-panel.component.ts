@@ -1,11 +1,9 @@
-import { Component, Self } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
-  Action,
   ErrorService,
   InvokeService,
-  MediaService,
   RefreshService,
   SharedPullService,
 } from '@allors/base/workspace/angular/foundation';
@@ -17,39 +15,21 @@ import {
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
-import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   CustomerShipment,
-  Organisation,
-  OrganisationContactKind,
-  OrganisationContactRelationship,
   Part,
-  Person,
   ProductQuote,
-  PurchaseInvoice,
-  PurchaseOrder,
-  Quote,
-  RepeatingSalesInvoice,
   RequestForQuote,
   SalesInvoice,
   SalesOrder,
   SerialisedItem,
-  User,
-  WorkEffort,
 } from '@allors/default/workspace/domain';
 
 @Component({
   selector: 'serialiseditem-summary-panel',
   templateUrl: './serialiseditem-summary-panel.component.html',
-  providers: [
-    ScopedService,
-    {
-      provide: PanelService,
-      useClass: AllorsMaterialPanelService,
-    },
-  ],
 })
 export class SerialisedItemSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
@@ -63,8 +43,8 @@ export class SerialisedItemSummaryPanelComponent extends AllorsViewSummaryPanelC
   invoice: SalesInvoice;
 
   constructor(
-    @Self() scopedService: ScopedService,
-    @Self() panelService: PanelService,
+    scopedService: ScopedService,
+    panelService: PanelService,
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,

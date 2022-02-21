@@ -1,5 +1,5 @@
 import { isBefore, isAfter } from 'date-fns';
-import { Component, Self } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
@@ -15,16 +15,10 @@ import {
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
-import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
-import {
-  IPullResult,
-  Pull,
-  SortDirection,
-} from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   BasePrice,
-  NonUnifiedGood,
   Part,
   PriceComponent,
   ProductIdentificationType,
@@ -34,13 +28,6 @@ import {
 @Component({
   selector: 'nonunifiedpart-summary-panel',
   templateUrl: './nonunifiedpart-summary-panel.component.html',
-  providers: [
-    ScopedService,
-    {
-      provide: PanelService,
-      useClass: AllorsMaterialPanelService,
-    },
-  ],
 })
 export class NonUnifiedPartSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
@@ -58,8 +45,8 @@ export class NonUnifiedPartSummaryPanelComponent extends AllorsViewSummaryPanelC
   partnumber: string[];
 
   constructor(
-    @Self() scopedService: ScopedService,
-    @Self() panelService: PanelService,
+    scopedService: ScopedService,
+    panelService: PanelService,
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
