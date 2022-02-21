@@ -15,7 +15,11 @@ import {
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import {
+  IPullResult,
+  Pull,
+  SortDirection,
+} from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   BasePrice,
@@ -65,25 +69,24 @@ export class NonUnifiedPartSummaryPanelComponent extends AllorsViewSummaryPanelC
     const id = this.scoped.id;
 
     pulls.push(
-      // TODO: Martien
-      // p.PriceComponent({
-      //   name: `${prefix}_priceComponent`,
-      //   predicate: {
-      //     kind: 'Equals',
-      //     propertyType: this.m.PriceComponent.Part,
-      //     value: id,
-      //   },
-      //   include: {
-      //     Part: {},
-      //     Currency: {},
-      //   },
-      //   sorting: [
-      //     {
-      //       roleType: m.PriceComponent.FromDate,
-      //       sortDirection: SortDirection.Descending,
-      //     },
-      //   ],
-      // }),
+      p.PriceComponent({
+        name: `${prefix}_priceComponent`,
+        predicate: {
+          kind: 'Equals',
+          propertyType: this.m.PriceComponent.Product,
+          value: id,
+        },
+        include: {
+          Product: {},
+          Currency: {},
+        },
+        sorting: [
+          {
+            roleType: m.PriceComponent.FromDate,
+            sortDirection: SortDirection.Descending,
+          },
+        ],
+      }),
       p.Part({
         name: `${prefix}_part`,
         objectId: id,
@@ -120,7 +123,7 @@ export class NonUnifiedPartSummaryPanelComponent extends AllorsViewSummaryPanelC
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.part = loaded.object<Part>(prefix);
+    this.part = loaded.object<Part>(`${prefix}_part`);
     this.serialised =
       this.part.InventoryItemKind.UniqueId ===
       '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
