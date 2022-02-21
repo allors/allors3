@@ -15,10 +15,12 @@ import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'nonunifiedgood-edit-form',
@@ -36,6 +38,8 @@ export class NonUnifiedGoodEditFormComponent extends AllorsFormComponent<NonUnif
   productFeatureApplicabilities: ProductFeatureApplicability[];
   productDimensions: ProductDimension[];
 
+  nonUnifiedPartsFilter: SearchFactory;
+
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
@@ -44,6 +48,8 @@ export class NonUnifiedGoodEditFormComponent extends AllorsFormComponent<NonUnif
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.nonUnifiedPartsFilter = Filters.nonUnifiedPartsFilter(this.m);
   }
 
   onPrePull(pulls: Pull[]): void {

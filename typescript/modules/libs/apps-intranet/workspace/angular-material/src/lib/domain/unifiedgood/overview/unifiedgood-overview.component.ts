@@ -1,6 +1,6 @@
 import { Component, Self } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Good } from '@allors/default/workspace/domain';
+import { Good, UnifiedGood } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
