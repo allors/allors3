@@ -158,28 +158,32 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
       ? toNode(this.select)
       : { propertyType: this.select };
 
+    if (!this.display) {
+      console.debug('No display name');
+    }
+
     const displayInclude: Node[] = this.display
-      .filter((v) => v.objectType.isComposite)
+      ?.filter((v) => v.objectType.isComposite)
       .map((v) => {
         return {
           propertyType: v,
         };
       });
 
-    const includeDisplyInclude: Node[] = this.includeDisplay
-      .filter((v) => v.objectType.isComposite)
+    const includeDisplayInclude: Node[] = this.includeDisplay
+      ?.filter((v) => v.objectType.isComposite)
       .map((v) => {
         return {
           propertyType: v,
         };
       });
 
-    const include = [...displayInclude];
+    const include = displayInclude ? [...displayInclude] : [];
 
     if (this.include) {
       include.concat({
         propertyType: this.include,
-        nodes: includeDisplyInclude,
+        nodes: includeDisplayInclude,
       });
     }
 

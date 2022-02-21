@@ -65,9 +65,12 @@ export class AppFilterService implements FilterService {
 
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
-    function define(composite: Composite, filterDefinition: FilterDefinition) {
+    const define = (
+      composite: Composite,
+      filterDefinition: FilterDefinition
+    ) => {
       this.filterDefinitionByComposite.set(composite, filterDefinition);
-    }
+    };
 
     const currencySearch = new SearchFactory({
       objectType: m.Currency,

@@ -5,22 +5,26 @@ import { switchMap } from 'rxjs/operators';
 import { Notification, Person } from '@allors/default/workspace/domain';
 import {
   RefreshService,
+  SharedPullService,
   UserId,
+  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
 import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  IPullResult,
+  Pull,
+  SharedPullHandler,
+} from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'notification-link',
   templateUrl: './notification-link.component.html',
-  providers: [ContextService],
 })
-export class NotificationLinkComponent implements OnInit, OnDestroy {
-  notifications: Notification[];
+export class NotificationLinkComponent implements SharedPullHandler {
+  m: M;
 
-  private subscription: Subscription;
-  m: any;
+  notifications: Notification[];
 
   get nrOfNotifications() {
     if (this.notifications) {
@@ -38,49 +42,36 @@ export class NotificationLinkComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Self() public allors: ContextService,
+    public sharedPullService: SharedPullService,
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    this.m = this.workspaceService.metaPopulation as M;
+    this.sharedPullService.register(this);
+  }
+  onPreSharedPull(pulls: Pull[], prefix: string): void {
+    const {
+      m: { pullBuilder: p },
+    } = this;
+
+    pulls.push(
+      p.Person({
+        name: prefix,
+        objectId: this.userId.value,
+        include: {
+          NotificationList: {
+            UnconfirmedNotifications: {},
+          },
+        },
+      })
+    );
   }
 
-  ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
-
-    this.subscription = combineLatest([this.refreshService.refresh$])
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.Person({
-              objectId: this.userId.value,
-              include: {
-                NotificationList: {
-                  UnconfirmedNotifications: x,
-                },
-              },
-            }),
-          ];
-
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-
-        const user = loaded.object<Person>(m.Person);
-        this.notifications = user.NotificationList.UnconfirmedNotifications;
-      });
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  onPostSharedPull(pullResult: IPullResult, prefix: string): void {
+    const user = pullResult.object<Person>(prefix);
+    this.notifications = user.NotificationList.UnconfirmedNotifications;
   }
 
   toNotifications() {

@@ -16,9 +16,9 @@ export class AppSorterService implements SorterService {
 
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
-    function define(composite: Composite, sorter: Sorter) {
+    const define = (composite: Composite, sorter: Sorter) => {
       this.sorterByComposite.set(composite, sorter);
-    }
+    };
 
     define(
       m.Carrier,
