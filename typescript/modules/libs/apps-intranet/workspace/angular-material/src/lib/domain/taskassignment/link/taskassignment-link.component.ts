@@ -1,22 +1,26 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 import { M } from '@allors/default/workspace/meta';
 import { Task } from '@allors/default/workspace/domain';
 import {
   RefreshService,
+  SharedPullService,
   UserId,
+  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  IPullResult,
+  Pull,
+  SharedPullHandler,
+} from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'taskassignment-link',
   templateUrl: './taskassignment-link.component.html',
-  providers: [ContextService],
 })
-export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
+export class TaskAssignmentLinkComponent implements SharedPullHandler {
   tasks: Task[];
 
   private subscription: Subscription;
@@ -38,49 +42,43 @@ export class TaskAssignmentLinkComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    @Self() public allors: ContextService,
+    public sharedPullService: SharedPullService,
+    public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
     public navigation: NavigationService,
     private userId: UserId
   ) {
-    this.allors.context.name = this.constructor.name;
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    this.m = this.workspaceService.metaPopulation as M;
+    this.sharedPullService.register(this);
   }
 
-  ngOnInit(): void {
-    const m = this.m;
-    const { pullBuilder: pull } = m;
-    const x = {};
+  onPreSharedPull(pulls: Pull[], prefix: string): void {
+    const {
+      m: { pullBuilder: p },
+    } = this;
 
-    this.subscription = this.refreshService.refresh$
-      .pipe(
-        switchMap(() => {
-          const pulls = [
-            pull.Task({
-              predicate: {
-                kind: 'And',
-                operands: [
-                  {
-                    kind: 'Contains',
-                    propertyType: m.Task.Participants,
-                    objectId: this.userId.value,
-                  },
-                ],
-              },
-              include: {
-                Participants: x,
-              },
-            }),
-          ];
+    pulls.push(
+      p.Task({
+        name: prefix,
+        predicate: {
+          kind: 'And',
+          operands: [
+            {
+              kind: 'Contains',
+              propertyType: this.m.Task.Participants,
+              objectId: this.userId.value,
+            },
+          ],
+        },
+        include: {
+          Participants: {},
+        },
+      })
+    );
+  }
 
-          return this.allors.context.pull(pulls);
-        })
-      )
-      .subscribe((loaded) => {
-        this.allors.context.reset();
-
-        this.tasks = loaded.collection<Task>(m.Task) ?? [];
-      });
+  onPostSharedPull(pullResult: IPullResult, prefix: string): void {
+    this.tasks = pullResult.collection<Task>(prefix) ?? [];
   }
 
   ngOnDestroy(): void {

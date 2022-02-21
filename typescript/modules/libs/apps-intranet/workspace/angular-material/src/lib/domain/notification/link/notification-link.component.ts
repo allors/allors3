@@ -1,6 +1,4 @@
-import { Component, OnDestroy, OnInit, Self } from '@angular/core';
-import { Subscription, combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component } from '@angular/core';
 
 import { Notification, Person } from '@allors/default/workspace/domain';
 import {
@@ -51,6 +49,7 @@ export class NotificationLinkComponent implements SharedPullHandler {
     this.m = this.workspaceService.metaPopulation as M;
     this.sharedPullService.register(this);
   }
+
   onPreSharedPull(pulls: Pull[], prefix: string): void {
     const {
       m: { pullBuilder: p },
