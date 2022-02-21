@@ -32,8 +32,8 @@ import {
 } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'nonunifiedpart-overview-summary',
-  templateUrl: './nonunifiedpart-overview-summary.component.html',
+  selector: 'nonunifiedpart-summary-panel',
+  templateUrl: './nonunifiedpart-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -42,7 +42,7 @@ import {
     },
   ],
 })
-export class NonUnifiedPartOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class NonUnifiedPartSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   part: Part;

@@ -17,8 +17,8 @@ import { M } from '@allors/default/workspace/meta';
 import { Organisation } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'organisation-overview-summary',
-  templateUrl: './organisation-overview-summary.component.html',
+  selector: 'organisation-summary-panel',
+  templateUrl: './organisation-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -27,7 +27,7 @@ import { Organisation } from '@allors/default/workspace/domain';
     },
   ],
 })
-export class OrganisationOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class OrganisationSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   organisation: Organisation;

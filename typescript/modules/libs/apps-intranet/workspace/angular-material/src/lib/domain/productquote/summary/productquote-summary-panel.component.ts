@@ -32,8 +32,8 @@ import {
 } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'productquote-overview-summary',
-  templateUrl: './productquote-overview-summary.component.html',
+  selector: 'productquote-summary-panel',
+  templateUrl: './productquote-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -42,7 +42,7 @@ import {
     },
   ],
 })
-export class ProductQuoteOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   productQuote: ProductQuote;

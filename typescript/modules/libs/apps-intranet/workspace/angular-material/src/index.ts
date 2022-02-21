@@ -61,13 +61,13 @@ export { NonSerialisedInventoryItemFormComponent } from './lib/domain/nonseriali
 export { NonUnifiedGoodCreateFormComponent } from './lib/domain/nonunifiedgood/create/nonunifiedgood-create-form.component';
 export { NonUnifiedGoodEditFormComponent } from './lib/domain/nonunifiedgood/edit/nonunifiedgood-edit-form.component';
 export { NonUnifiedGoodOverviewComponent } from './lib/domain/nonunifiedgood/overview/nonunifiedgood-overview.component';
-export { NonUnifiedGoodSummaryComponent as NonUnifiedGoodOverviewSummaryComponent } from './lib/domain/nonunifiedgood/summary/nonunifiedgood-overview-summary.component';
+export { NonUnifiedGoodSummaryComponent as NonUnifiedGoodSummaryPanelComponent } from './lib/domain/nonunifiedgood/summary/nonunifiedgood-summary-panel.component';
 
 export { NonUnifiedPartCreateFormComponent } from './lib/domain/nonunifiedpart/create/nonunifiedpart-create-form.component';
 export { NonUnifiedPartEditFormComponent } from './lib/domain/nonunifiedpart/edit/nonunifiedpart-edit-form.component';
 export { NonUnifiedPartListComponent } from './lib/domain/nonunifiedpart/list/nonunifiedpart-list.component';
 export { NonUnifiedPartOverviewComponent } from './lib/domain/nonunifiedpart/overview/nonunifiedpart-overview.component';
-export { NonUnifiedPartOverviewSummaryComponent } from './lib/domain/nonunifiedpart/summary/nonunifiedpart-overview-summary.component';
+export { NonUnifiedPartSummaryPanelComponent } from './lib/domain/nonunifiedpart/summary/nonunifiedpart-summary-panel.component';
 
 export { NotificationLinkComponent } from './lib/domain/notification/link/notification-link.component';
 export { NotificationListComponent } from './lib/domain/notification/list/notification-list.component';
@@ -79,7 +79,7 @@ export { OrganisationEditFormComponent } from './lib/domain/organisation/edit/or
 export { OrganisationInlineComponent } from './lib/domain/organisation/inline/organisation-inline.component';
 export { OrganisationListComponent } from './lib/domain/organisation/list/organisation-list.component';
 export { OrganisationOverviewPageComponent } from './lib/domain/organisation/overview/organisation-overview-page.component';
-export { OrganisationOverviewSummaryComponent } from './lib/domain/organisation/summary/organisation-overview-summary.component';
+export { OrganisationSummaryPanelComponent } from './lib/domain/organisation/summary/organisation-summary-panel.component';
 
 export { OrganisationContactRelationshipFormComponent } from './lib/domain/organisationcontactrelationship/form/organisationcontactrelationship-form.component';
 
@@ -99,7 +99,7 @@ export { PersonEditFormComponent } from './lib/domain/person/edit/person-edit-fo
 export { PersonInlineComponent } from './lib/domain/person/inline/person-inline.component';
 export { PersonListComponent } from './lib/domain/person/list/person-list.component';
 export { PersonOverviewPageComponent } from './lib/domain/person/overview/person-overview-page.component';
-export { PersonOverviewSummaryComponent } from './lib/domain/person/summary/person-overview-summary.component';
+export { PersonSummaryPanelComponent } from './lib/domain/person/summary/person-summary-panel.component';
 
 export { PhoneCommunicationFormComponent } from './lib/domain/phonecommunication/form/phonecommunication-form.component';
 
@@ -122,7 +122,7 @@ export { ProductQuoteCreateFormComponent } from './lib/domain/productquote/creat
 export { ProductQuoteEditFormComponent } from './lib/domain/productquote/edit/productquote-edit-form.component';
 export { ProductQuoteListComponent } from './lib/domain/productquote/list/productquote-list.component';
 export { ProductQuoteOverviewComponent } from './lib/domain/productquote/overview/productquote-overview.component';
-export { ProductQuoteOverviewSummaryComponent } from './lib/domain/productquote/summary/productquote-overview-summary.component';
+export { ProductQuoteSummaryPanelComponent } from './lib/domain/productquote/summary/productquote-summary-panel.component';
 
 export { ProductQuoteApprovalFormComponent } from './lib/domain/productquoteapproval/form/productquoteapproval-form.component';
 

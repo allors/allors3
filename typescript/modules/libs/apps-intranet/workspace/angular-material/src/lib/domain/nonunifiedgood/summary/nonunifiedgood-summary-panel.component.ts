@@ -18,8 +18,8 @@ import { M } from '@allors/default/workspace/meta';
 import { NonUnifiedGood } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'nonunifiedgood-overview-summary',
-  templateUrl: './nonunifiedgood-overview-summary.component.html',
+  selector: 'nonunifiedgood-summary-panel',
+  templateUrl: './nonunifiedgood-summary-panel.component.html',
   providers: [
     ScopedService,
     {

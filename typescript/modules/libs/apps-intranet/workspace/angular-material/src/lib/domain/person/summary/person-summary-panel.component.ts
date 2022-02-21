@@ -28,8 +28,8 @@ import {
 } from '@allors/default/workspace/domain';
 
 @Component({
-  selector: 'person-overview-summary',
-  templateUrl: './person-overview-summary.component.html',
+  selector: 'person-summary-panel',
+  templateUrl: './person-summary-panel.component.html',
   providers: [
     ScopedService,
     {
@@ -38,7 +38,7 @@ import {
     },
   ],
 })
-export class PersonOverviewSummaryComponent extends AllorsViewSummaryPanelComponent {
+export class PersonSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
   person: Person;
