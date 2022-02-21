@@ -10,7 +10,7 @@ export { BasepriceFormComponent } from './lib/domain/baseprice/form/baseprice-fo
 
 export { BrandFormComponent } from './lib/domain/brand/form/brand-form.component';
 export { InlineBrandComponent } from './lib/domain/brand/inline/brand-inline.component';
-export { BrandsOverviewComponent } from './lib/domain/brand/list/brand-list.component';
+export { BrandListComponent } from './lib/domain/brand/list/brand-list.component';
 
 export { CarrierFormComponent } from './lib/domain/carrier/form/carrier-form.component';
 export { CarrierListComponent } from './lib/domain/carrier/list/carrier-list.component';
@@ -25,14 +25,14 @@ export { ContactMechanismInlineComponent } from './lib/domain/contactmechanism/i
 export { CustomerRelationshipFormComponent } from './lib/domain/customerrelationship/form/customerrelationship-form.component';
 
 export { CustomerShipmentCreateFormComponent } from './lib/domain/customershipment/create/customershipment-create-form.component';
-export { CustomerShipmentOverviewComponent } from './lib/domain/customershipment/overview/customershipment-overview.component';
 export { CustomerShipmentEditFormComponent } from './lib/domain/customershipment/edit/customershipment-edit-form.component';
+export { CustomerShipmentOverviewComponent } from './lib/domain/customershipment/overview/customershipment-overview.component';
 export { CustomerShipmentSummaryPanelComponent } from './lib/domain/customershipment/summary/customershipment-summary-panel.component';
 
 export { DisbursementFormComponent } from './lib/domain/disbursement/form/disbursement-form.component';
 
 export { EmailAddressCreateFormComponent } from './lib/domain/emailaddress/create/emailaddress-create-form.component';
-export { EmailAddressEditFormComponent as EmailAddressFormComponent } from './lib/domain/emailaddress/edit/emailaddress-edit-form.component';
+export { EmailAddressEditFormComponent } from './lib/domain/emailaddress/edit/emailaddress-edit-form.component';
 export { PartyContactMechanismEmailAddressInlineComponent } from './lib/domain/emailaddress/inline/emailaddress-inline.component';
 
 export { EmailCommunicationFormComponent } from './lib/domain/emailcommunication/form/emailcommunication-form.component';
@@ -91,6 +91,7 @@ export { PartCategoryListComponent } from './lib/domain/partcategory/list/partca
 export { PartyInlineComponent } from './lib/domain/party/inline/party-inline.component';
 
 export { PartyContactmechanismFormComponent } from './lib/domain/partycontactmechanism/form/partycontactmechanism-form.component';
+export { PartyContactMechanismPostalAddressInlineComponent } from './lib/domain/postaladdress/inline/postaladdress-inline.component';
 
 export { PartyRateFormComponent } from './lib/domain/partyrate/form/partyrate-form.component';
 
@@ -110,8 +111,7 @@ export { PositionTypeRateFormComponent } from './lib/domain/positiontyperate/for
 export { PositionTypeRatesOverviewComponent } from './lib/domain/positiontyperate/list/positiontyperate-list.component';
 
 export { PostalAddressCreateFormComponent } from './lib/domain/postaladdress/create/postaladdress-create-form.component';
-export { PostalAddressEditFormComponent as PostalAddressFormComponent } from './lib/domain/postaladdress/edit/postaladdress-edit-form.component';
-export { PartyContactMechanismPostalAddressInlineComponent } from './lib/domain/postaladdress/inline/postaladdress-inline.component';
+export { PostalAddressEditFormComponent } from './lib/domain/postaladdress/edit/postaladdress-edit-form.component';
 
 export { ProductCategoryFormComponent } from './lib/domain/productcategory/form/productcategory-form.component';
 export { ProductCategoryListComponent } from './lib/domain/productcategory/list/productcategory-list.component';
