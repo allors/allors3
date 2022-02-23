@@ -59,13 +59,12 @@
           [select]="serialisedItemTarget"
         ></a-mat-dyn-edit-extent-panel>
 
-        // TODO: Flip Party-PartyRates relation
-        <!-- <a-mat-dyn-view-extent-panel
-          [init]="m.PartyRate.Party"
+        <a-mat-dyn-view-extent-panel
+          [init]="m.PartyRate.PartyWherePartyRate"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          [init]="m.PartyRate.Party"
-        ></a-mat-dyn-edit-extent-panel> -->
+          [init]="m.PartyRate.PartyWherePartyRate"
+        ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
           [init]="m.WorkEffort.Customer"

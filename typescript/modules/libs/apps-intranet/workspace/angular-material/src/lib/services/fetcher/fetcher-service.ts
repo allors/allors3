@@ -11,6 +11,7 @@ import {
   Settings,
 } from '@allors/default/workspace/domain';
 import { InternalOrganisationId } from '../state/internal-organisation-id';
+import { Organisation } from '../../../../../../../workspace/domain/extranet/src/lib/generated/Organisation.g';
 
 const x = {};
 
@@ -34,6 +35,11 @@ export class FetcherService {
     return this.pull.InternalOrganisation({
       name: 'FetcherInternalOrganisation',
       objectId: this.internalOrganisationId.value,
+      predicate: {
+        kind: 'Equals',
+        propertyType: this.m.Organisation.IsInternalOrganisation,
+        value: true,
+      },
       include: {
         DefaultPaymentMethod: x,
         DefaultShipmentMethod: x,
