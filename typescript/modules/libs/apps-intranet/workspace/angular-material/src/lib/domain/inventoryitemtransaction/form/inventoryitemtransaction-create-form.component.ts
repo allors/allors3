@@ -25,10 +25,10 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  templateUrl: './inventoryitemtransaction-form.component.html',
+  templateUrl: './inventoryitemtransaction-create-form.component.html',
   providers: [ContextService],
 })
-export class InventoryItemTransactionFormComponent extends AllorsFormComponent<InventoryItemTransaction> {
+export class InventoryItemTransactionCreateFormComponent extends AllorsFormComponent<InventoryItemTransaction> {
   readonly m: M;
 
   title = 'Add Inventory Item Transaction';
@@ -70,17 +70,6 @@ export class InventoryItemTransactionFormComponent extends AllorsFormComponent<I
       p.Lot({ sorting: [{ roleType: m.Lot.LotNumber }] })
     );
 
-    if (this.editRequest) {
-      pulls.push(
-        p.BasePrice({
-          name: '_object',
-          objectId: this.editRequest.objectId,
-          include: {
-            Currency: {},
-          },
-        })
-      );
-    }
     const initializer = this.createRequest.initializer;
     if (initializer) {
       pulls.push(
@@ -115,9 +104,7 @@ export class InventoryItemTransactionFormComponent extends AllorsFormComponent<I
   }
 
   onPostPull(pullResult: IPullResult) {
-    this.object = this.editRequest
-      ? pullResult.object('_object')
-      : this.context.create(this.createRequest.objectType);
+    this.object = this.context.create(this.createRequest.objectType);
 
     this.inventoryTransactionReasons = pullResult.collection(
       this.m.InventoryTransactionReason

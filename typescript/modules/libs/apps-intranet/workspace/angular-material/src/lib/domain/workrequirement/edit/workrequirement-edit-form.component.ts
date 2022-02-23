@@ -62,6 +62,7 @@ export class WorkRequirementEditFormComponent extends AllorsFormComponent<WorkRe
     pulls.push(
       this.fetcher.internalOrganisation,
       p.WorkRequirement({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           FixedAsset: {},

@@ -85,6 +85,7 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
         },
       }),
       p.WorkTask({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           WorkEffortState: {},

@@ -132,6 +132,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
     pulls.push(
       this.fetcher.internalOrganisation,
       p.PurchaseInvoice({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           BilledFrom: {},

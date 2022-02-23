@@ -114,6 +114,7 @@ export class PurchaseShipmentEditFormComponent extends AllorsFormComponent<Purch
         sorting: [{ roleType: m.Organisation.DisplayName }],
       }),
       p.PurchaseShipment({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           ShipFromParty: {},

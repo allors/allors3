@@ -92,6 +92,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
     pulls.push(
       this.fetcher.internalOrganisation,
       p.PurchaseOrder({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           OrderedBy: {},

@@ -70,6 +70,7 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
 
     pulls.push(
       p.SerialisedItem({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           SerialisedItemState: {},

@@ -71,6 +71,7 @@ export class RequestForQuoteEditFormComponent extends AllorsFormComponent<Reques
       this.fetcher.internalOrganisation,
       p.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
       p.RequestForQuote({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           FullfillContactMechanism: {

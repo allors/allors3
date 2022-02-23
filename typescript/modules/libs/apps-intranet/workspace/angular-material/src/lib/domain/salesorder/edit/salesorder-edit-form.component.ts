@@ -142,6 +142,7 @@ export class SalesOrderEditFormComponent extends AllorsFormComponent<SalesOrder>
       this.fetcher.internalOrganisation,
       this.fetcher.warehouses,
       p.SalesOrder({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           DerivedCurrency: {},

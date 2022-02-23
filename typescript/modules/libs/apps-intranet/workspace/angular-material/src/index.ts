@@ -50,7 +50,7 @@ export { GoodListPageComponent } from './lib/domain/good/list/good-list-page.com
 
 export { SelectInternalOrganisationComponent } from './lib/domain/internalorganisation/state/internalorganisation-select.component';
 
-export { InventoryItemTransactionFormComponent } from './lib/domain/inventoryitemtransaction/form/inventoryitemtransaction-form.component';
+export { InventoryItemTransactionCreateFormComponent } from './lib/domain/inventoryitemtransaction/form/inventoryitemtransaction-create-form.component';
 
 export { LetterCorrespondenceFormComponent } from './lib/domain/lettercorrespondence/form/lettercorrespondence-form.component';
 

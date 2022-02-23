@@ -64,6 +64,7 @@ export class OrganisationEditFormComponent extends AllorsFormComponent<Organisat
         },
       }),
       p.Organisation({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           LegalForm: {},

@@ -79,6 +79,7 @@ export class NonUnifiedPartEditFormComponent extends AllorsFormComponent<NonUnif
       this.fetcher.Settings,
       this.fetcher.warehouses,
       p.Part({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           PrimaryPhoto: {},

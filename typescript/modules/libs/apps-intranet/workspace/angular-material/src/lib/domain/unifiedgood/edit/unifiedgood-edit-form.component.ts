@@ -81,6 +81,7 @@ export class UnifiedGoodEditFormComponent extends AllorsFormComponent<UnifiedGoo
       this.fetcher.locales,
       this.fetcher.Settings,
       p.UnifiedGood({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           PrimaryPhoto: {},

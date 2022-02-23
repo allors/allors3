@@ -87,6 +87,7 @@ export class ProductQuoteEditFormComponent extends AllorsFormComponent<ProductQu
       p.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
       p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
       p.ProductQuote({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           AssignedCurrency: {},

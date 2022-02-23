@@ -127,6 +127,7 @@ export class SalesInvoiceEditFormComponent extends AllorsFormComponent<SalesInvo
     pulls.push(
       this.fetcher.internalOrganisation,
       p.SalesInvoice({
+        name: '_object',
         objectId: this.editRequest.objectId,
         include: {
           BillToCustomer: {},
