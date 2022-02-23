@@ -11,7 +11,6 @@ import {
   Settings,
 } from '@allors/default/workspace/domain';
 import { InternalOrganisationId } from '../state/internal-organisation-id';
-import { Organisation } from '../../../../../../../workspace/domain/extranet/src/lib/generated/Organisation.g';
 
 const x = {};
 
