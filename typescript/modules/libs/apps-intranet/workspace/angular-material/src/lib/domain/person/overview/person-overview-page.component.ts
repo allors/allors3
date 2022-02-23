@@ -16,6 +16,7 @@ import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 import { PropertyType } from '@allors/system/workspace/meta';
+import { PartyContactMechanismsWhereParty } from '../../../../../../../../intranet/workspace/meta/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './person-overview-page.component.html',
@@ -57,7 +58,7 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
     const { pathBuilder: p } = this.m;
 
     this.contactMechanismTarget = p.Party({
-      CurrentPartyContactMechanisms: { ContactMechanism: {} },
+      PartyContactMechanismsWhereParty: { ContactMechanism: {} },
     });
 
     this.serialisedItemTarget = [
