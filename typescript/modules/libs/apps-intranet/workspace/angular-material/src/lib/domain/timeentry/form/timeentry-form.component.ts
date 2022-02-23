@@ -39,6 +39,7 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
   partyRate: PartyRate;
   derivedBillingRate: string;
   customerRate: PartyRate;
+  timeSheetWhereWorkerPullName: string;
 
   constructor(
     @Self() public allors: ContextService,
@@ -47,6 +48,8 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.timeSheetWhereWorkerPullName = 'TimeSheetWhereWorker';
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -163,6 +166,7 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
 
     const pulls = [
       pull.Party({
+        name: this.timeSheetWhereWorkerPullName,
         objectId: party.id,
         select: {
           Person_TimeSheetWhereWorker: {
@@ -173,9 +177,9 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
     ];
 
     this.allors.context.pull(pulls).subscribe((pullResult) => {
-      this.timeSheet = pullResult.collection<TimeSheet>(
-        this.m.Person.TimeSheetWhereWorker
-      )[0];
+      this.timeSheet = pullResult.object<TimeSheet>(
+        this.timeSheetWhereWorkerPullName
+      );
     });
   }
 

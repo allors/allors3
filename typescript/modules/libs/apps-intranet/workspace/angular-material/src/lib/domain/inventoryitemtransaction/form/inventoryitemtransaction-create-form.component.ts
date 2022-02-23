@@ -47,6 +47,7 @@ export class InventoryItemTransactionCreateFormComponent extends AllorsFormCompo
   nonSerialisedInventoryItemState: NonSerialisedInventoryItemState[];
   serialisedInventoryItemState: SerialisedInventoryItemState[];
   nonSerialisedInventoryItem: NonSerialisedInventoryItem;
+  partWhereSerialisedItemPullName: string;
 
   constructor(
     @Self() public allors: ContextService,
@@ -56,6 +57,8 @@ export class InventoryItemTransactionCreateFormComponent extends AllorsFormCompo
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.partWhereSerialisedItemPullName = 'PartWhereSerialisedItem';
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -90,6 +93,7 @@ export class InventoryItemTransactionCreateFormComponent extends AllorsFormCompo
           objectId: initializer.id,
         }),
         p.SerialisedItem({
+          name: this.partWhereSerialisedItemPullName,
           objectId: initializer.id,
           select: {
             PartWhereSerialisedItem: {
@@ -120,9 +124,7 @@ export class InventoryItemTransactionCreateFormComponent extends AllorsFormCompo
 
     this.part =
       pullResult.object(this.m.Part) ||
-      pullResult.collection<Part>(
-        this.m.SerialisedItem.PartWhereSerialisedItem
-      )[0];
+      pullResult.object<Part>(this.partWhereSerialisedItemPullName);
 
     this.facilities = pullResult.collection(this.m.Facility);
     this.lots = pullResult.collection(this.m.Lot);

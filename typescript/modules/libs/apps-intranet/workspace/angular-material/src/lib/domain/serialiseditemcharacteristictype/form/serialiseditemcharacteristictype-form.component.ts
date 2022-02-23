@@ -20,13 +20,12 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  templateUrl: './serialiseditemcharacteristic-form.component.html',
+  templateUrl: './serialiseditemcharacteristictype-form.component.html',
   providers: [ContextService],
 })
-export class SerialisedItemCharacteristicFormComponent extends AllorsFormComponent<SerialisedItemCharacteristicType> {
+export class SerialisedItemCharacteristicTypeFormComponent extends AllorsFormComponent<SerialisedItemCharacteristicType> {
   public m: M;
 
-  public singleton: Singleton;
   public uoms: IUnitOfMeasure[];
   public timeFrequencies: TimeFrequency[];
   public allUoms: IUnitOfMeasure[];
@@ -49,13 +48,6 @@ export class SerialisedItemCharacteristicFormComponent extends AllorsFormCompone
 
     pulls.push(
       this.fetcher.locales,
-      p.Singleton({
-        include: {
-          AdditionalLocales: {
-            Language: {},
-          },
-        },
-      }),
       p.UnitOfMeasure({
         predicate: {
           kind: 'Equals',
@@ -98,7 +90,6 @@ export class SerialisedItemCharacteristicFormComponent extends AllorsFormCompone
 
     this.onPostPullInitialize(pullResult);
 
-    this.singleton = pullResult.collection<Singleton>(this.m.Singleton)[0];
     this.uoms = pullResult.collection<UnitOfMeasure>(this.m.UnitOfMeasure);
     this.timeFrequencies = pullResult.collection<TimeFrequency>(
       this.m.TimeFrequency

@@ -198,7 +198,7 @@ export { SerialisedItemListPageComponent } from './lib/domain/serialiseditem/lis
 export { SerialisedItemOverviewPageComponent } from './lib/domain/serialiseditem/overview/serialiseditem-overview-page.component';
 export { SerialisedItemSummaryPanelComponent } from './lib/domain/serialiseditem/summary/serialiseditem-summary-panel.component';
 
-export { SerialisedItemCharacteristicFormComponent } from './lib/domain/serialiseditemcharacteristictype/form/serialiseditemcharacteristic-form.component';
+export { SerialisedItemCharacteristicTypeFormComponent } from './lib/domain/serialiseditemcharacteristictype/form/serialiseditemcharacteristictype-form.component';
 export { SerialisedItemCharacteristicListPageComponent } from './lib/domain/serialiseditemcharacteristictype/list/serialiseditemcharacteristic-list-page.component';
 
 export { ShipmentListPageComponent } from './lib/domain/shipment/list/shipment-list-page.component';
@@ -215,6 +215,8 @@ export { TaskAssignmentLinkComponent } from './lib/domain/taskassignment/link/ta
 export { TaskAssignmentListPageComponent } from './lib/domain/taskassignment/list/taskassignment-list-page.component';
 
 export { TelecommunicationsNumberCreateFormComponent } from './lib/domain/telecommunicationsnumber/create/telecommunicationsnumber-create-form.component';
+export { TelecommunicationsNumberEditFormComponent } from './lib/domain/telecommunicationsnumber/edit/telecommunicationsnumber-edit-form.component';
+
 export { TelecommunicationsNumberEditFormComponent as TelecommunicationsNumberFormComponent } from './lib/domain/telecommunicationsnumber/edit/telecommunicationsnumber-edit-form.component';
 export { PartyContactMechanismTelecommunicationsNumberInlineComponent } from './lib/domain/telecommunicationsnumber/inline/telecommunicationsnumber-inline.component';
 

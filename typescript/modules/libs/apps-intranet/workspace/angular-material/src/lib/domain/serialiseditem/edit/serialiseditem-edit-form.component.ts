@@ -46,6 +46,7 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
   serialisedItemAvailabilities: Enumeration[];
   internalOrganisationsFilter: SearchFactory;
   partiesFilter: SearchFactory;
+  partWhereSerialisedItemPullName: string;
 
   constructor(
     @Self() public allors: ContextService,
@@ -62,6 +63,7 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
       this.m
     );
     this.partiesFilter = Filters.partiesFilter(this.m);
+    this.partWhereSerialisedItemPullName = 'PartWhereSerialisedItem';
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -112,6 +114,7 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
       }),
       this.fetcher.locales,
       p.SerialisedItem({
+        name: this.partWhereSerialisedItemPullName,
         objectId: this.editRequest.objectId,
         select: {
           PartWhereSerialisedItem: {
@@ -182,9 +185,7 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
         this.m.SerialisedItemAvailability
       );
     this.ownerships = pullResult.collection<Ownership>(this.m.Ownership);
-    this.part = pullResult.collection<Part>(
-      this.m.SerialisedItem.PartWhereSerialisedItem
-    )[0];
+    this.part = pullResult.object<Part>(this.partWhereSerialisedItemPullName);
 
     const serialisedInventoryItems =
       pullResult.collection<SerialisedInventoryItem>(

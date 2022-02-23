@@ -16,6 +16,7 @@ import {
   CustomerShipmentEditFormComponent,
   DisbursementFormComponent,
   EmailAddressCreateFormComponent,
+  EmailAddressEditFormComponent,
   EmailCommunicationFormComponent,
   EmploymentFormComponent,
   ExchangeRateFormComponent,
@@ -40,6 +41,7 @@ import {
   PositionTypeFormComponent,
   PositionTypeRateFormComponent,
   PostalAddressCreateFormComponent,
+  PostalAddressEditFormComponent,
   ProductCategoryFormComponent,
   ProductIdentificationFormComponent,
   ProductQuoteApprovalFormComponent,
@@ -72,7 +74,7 @@ import {
   SalesOrderEditFormComponent,
   SalesOrderItemFormComponent,
   SalesTermFormComponent,
-  SerialisedItemCharacteristicFormComponent,
+  SerialisedItemCharacteristicTypeFormComponent,
   SerialisedItemCreateFormComponent,
   SerialisedItemEditFormComponent,
   ShipmentItemFormComponent,
@@ -80,11 +82,13 @@ import {
   SupplierOfferingFormComponent,
   SupplierRelationshipFormComponent,
   TelecommunicationsNumberCreateFormComponent,
+  TelecommunicationsNumberEditFormComponent,
   TimeEntryFormComponent,
   UnifiedGoodCreateFormComponent,
   UnifiedGoodEditFormComponent,
   UserProfileFormComponent,
   WebAddressCreateFormComponent,
+  WebAddressEditFormComponent,
   WorkEffortAssignmentRateFormComponent,
   WorkEffortFixedAssetAssignmentFormComponent,
   WorkEffortInventoryAssignmentFormComponent,
@@ -97,10 +101,6 @@ import {
   WorkTaskCreateFormComponent,
   WorkTaskEditFormComponent,
 } from '@allors/apps-intranet/workspace/angular-material';
-import { EmailAddressEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/emailaddress/edit/emailaddress-edit-form.component';
-import { PostalAddressEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/postaladdress/edit/postaladdress-edit-form.component';
-import { TelecommunicationsNumberEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/telecommunicationsnumber/edit/telecommunicationsnumber-edit-form.component';
-import { WebAddressEditFormComponent } from 'libs/apps-intranet/workspace/angular-material/src/lib/domain/webaddress/edit/webaddress-edit-form.component';
 
 @Injectable()
 export class AppFormService implements FormService {
@@ -212,8 +212,8 @@ export class AppFormService implements FormService {
       [m.SalesOrderItem, SalesOrderItemFormComponent],
       [m.SalesTerm, SalesTermFormComponent],
       [
-        m.SerialisedItemCharacteristic,
-        SerialisedItemCharacteristicFormComponent,
+        m.SerialisedItemCharacteristicType,
+        SerialisedItemCharacteristicTypeFormComponent,
       ],
       [m.ShipmentItem, ShipmentItemFormComponent],
       [m.SubContractorRelationship, SubContractorRelationshipFormComponent],
@@ -348,7 +348,7 @@ export const components: any[] = [
   SalesInvoiceItemFormComponent,
   SalesOrderItemFormComponent,
   SalesTermFormComponent,
-  SerialisedItemCharacteristicFormComponent,
+  SerialisedItemCharacteristicTypeFormComponent,
   ShipmentItemFormComponent,
   SubContractorRelationshipFormComponent,
   SupplierOfferingFormComponent,
