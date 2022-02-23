@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
+import { AssociationType, RoleType } from '@allors/system/workspace/meta';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
 import { Context } from '../context/context';
@@ -15,7 +16,6 @@ import { ErrorService } from '../error/error.service';
 import { Subscription } from 'rxjs';
 import { CreateRequest } from '../create/create-request';
 import { EditRequest } from '../edit/edit-request';
-import { AssociationType, RoleType } from '@allors/system/workspace/meta';
 
 @Directive()
 export abstract class AllorsFormComponent<T extends IObject>
@@ -120,18 +120,27 @@ export abstract class AllorsFormComponent<T extends IObject>
       const propertyType = initializer.propertyType;
       if (propertyType.isAssociationType) {
         const associationType = propertyType as AssociationType;
-        initializerObject.strategy.setCompositeRole(
+        this.initialize(
+          initializerObject,
           associationType.roleType,
           this.object
         );
       } else {
         const roleType = propertyType as RoleType;
-        this.object.strategy.setCompositeRole(roleType, initializerObject);
+        this.initialize(this.object, roleType, initializerObject);
       }
     }
   }
 
   ngOnDestroy(): void {
     this.formSubscription?.unsubscribe();
+  }
+
+  private initialize(object: IObject, roleType: RoleType, role: IObject) {
+    if (roleType.isOne) {
+      object.strategy.setCompositeRole(roleType, role);
+    } else {
+      object.strategy.addCompositesRole(roleType, role);
+    }
   }
 }
