@@ -57,21 +57,20 @@
           [select]="serialisedItemTarget"
         ></a-mat-dyn-edit-extent-panel>
 
-        <!-- 
         <a-mat-dyn-view-extent-panel
           [select]="[
-            m.Party.WorkEffortWhereCustomer,
-            m.Party.WOrkEffortWhereContactPerson
+            m.Party.WorkEffortsWhereCustomer,
+            m.Person.WorkEffortsWhereContactPerson
           ]"
           [init]="m.WorkEffort.Customer"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [select]="[
-            m.Party.WorkEffortWhereCustomer,
-            m.Party.WorkEffortWhereContactPerson
+            m.Party.WorkEffortsWhereCustomer,
+            m.Person.WorkEffortsWhereContactPerson
           ]"
           [init]="m.WorkEffort.Customer"
-        ></a-mat-dyn-edit-extent-panel> -->
+        ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
           [init]="m.WorkEffortPartyAssignment.Party"
