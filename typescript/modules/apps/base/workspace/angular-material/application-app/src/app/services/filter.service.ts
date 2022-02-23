@@ -30,18 +30,13 @@ export class AppFilterService implements FilterService {
             operands: [
               {
                 kind: 'Like',
-                roleType: m.Person.FirstName,
-                parameter: 'firstName',
+                roleType: m.Organisation.Name,
+                parameter: 'name',
               },
               {
                 kind: 'Like',
-                roleType: m.Person.LastName,
-                parameter: 'lastName',
-              },
-              {
-                kind: 'Like',
-                roleType: m.Person.UserEmail,
-                parameter: 'email',
+                roleType: m.Country.Name,
+                parameter: 'country',
               },
             ],
           })
@@ -54,13 +49,18 @@ export class AppFilterService implements FilterService {
             operands: [
               {
                 kind: 'Like',
-                roleType: m.Country.IsoCode,
-                parameter: 'name',
+                roleType: m.Person.FirstName,
+                parameter: 'firstName',
               },
               {
                 kind: 'Like',
-                roleType: m.Country.Name,
-                parameter: 'name',
+                roleType: m.Person.LastName,
+                parameter: 'lastName',
+              },
+              {
+                kind: 'Like',
+                roleType: m.Person.UserEmail,
+                parameter: 'email',
               },
             ],
           })
