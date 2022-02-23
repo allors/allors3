@@ -45,6 +45,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
   eventStates: CommunicationEventState[];
   contacts: Party[] = [];
   parties: Party[];
+  organisationPullName: string;
 
   constructor(
     @Self() public allors: ContextService,
@@ -54,6 +55,9 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.organisationPullName =
+      'OrganisationContactRelationshipWhereOrganisation';
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -147,6 +151,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
           objectId: initializer.id,
         }),
         p.Person({
+          name: this.organisationPullName,
           objectId: initializer.id,
           select: {
             OrganisationContactRelationshipsWhereContact: {
@@ -183,9 +188,9 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
     );
 
     this.person = pullResult.object<Person>(this.m.Person);
-    this.organisation = pullResult.collection<Organisation>(
-      this.m.OrganisationContactRelationship.Organisation
-    )[0];
+    this.organisation = pullResult.object<Organisation>(
+      this.organisationPullName
+    );
 
     if (this.createRequest) {
       this.party = this.organisation || this.person;

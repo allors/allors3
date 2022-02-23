@@ -46,6 +46,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
   emailTemplate: EmailTemplate;
   eventStates: CommunicationEventState[];
   parties: Party[];
+  organisationPullName: string;
 
   constructor(
     @Self() public allors: ContextService,
@@ -55,6 +56,9 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.organisationPullName =
+      'OrganisationContactRelationshipWhereOrganisation';
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -144,6 +148,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
           objectId: initializer.id,
         }),
         p.Person({
+          name: this.organisationPullName,
           objectId: initializer.id,
           select: {
             OrganisationContactRelationshipsWhereContact: {
@@ -193,9 +198,9 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
     );
 
     this.person = pullResult.object<Person>(this.m.Person);
-    this.organisation = pullResult.collection<Organisation>(
-      this.m.OrganisationContactRelationship.Organisation
-    )[0];
+    this.organisation = pullResult.object<Organisation>(
+      this.organisationPullName
+    );
 
     const internalOrganisation = pullResult.object<InternalOrganisation>(
       'InternalOrganisation'

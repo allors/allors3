@@ -37,6 +37,7 @@ export class FaceToFaceCommunicationFormComponent extends AllorsFormComponent<Fa
   contacts: Party[] = [];
   eventStates: CommunicationEventState[];
   parties: Party[];
+  organisationPullName: string;
 
   constructor(
     @Self() public allors: ContextService,
@@ -46,6 +47,9 @@ export class FaceToFaceCommunicationFormComponent extends AllorsFormComponent<Fa
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.organisationPullName =
+      'OrganisationContactRelationshipWhereOrganisation';
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -130,6 +134,7 @@ export class FaceToFaceCommunicationFormComponent extends AllorsFormComponent<Fa
           objectId: initializer.id,
         }),
         p.Person({
+          name: this.organisationPullName,
           objectId: initializer.id,
           select: {
             OrganisationContactRelationshipsWhereContact: {
@@ -164,9 +169,9 @@ export class FaceToFaceCommunicationFormComponent extends AllorsFormComponent<Fa
     );
 
     this.person = pullResult.object<Person>(this.m.Person);
-    this.organisation = pullResult.collection<Organisation>(
-      this.m.OrganisationContactRelationship.Organisation
-    )[0];
+    this.organisation = pullResult.object<Organisation>(
+      this.organisationPullName
+    );
 
     const internalOrganisation = pullResult.object<InternalOrganisation>(
       'InternalOrganisation'
