@@ -169,7 +169,7 @@ namespace Allors.Database.Domain
 
                 if (!internalOrganisations.Contains(@this))
                 {
-                    foreach (var internalOrganisation in internalOrganisations)
+                    foreach (var internalOrganisation in internalOrganisations.Where(v => v.DoAccounting))
                     {
                         var partyFinancial = @this.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
 
