@@ -16,10 +16,12 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@allors/default/workspace/domain": ["libs/workspace/domain/apps/extranet/src/index.ts"],
+      // System
+      "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"],
       "@allors/system/workspace/domain": ["libs/system/workspace/domain/src/index.ts"],
-      "@allors/default/workspace/meta": ["libs/workspace/meta/apps/extranet/src/index.ts"],
-      "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"]
+      // Default
+      "@allors/default/workspace/meta": ["libs/apps-extranet/workspace/meta/src/index.ts"],
+      "@allors/default/workspace/domain": ["libs/apps-extranet/workspace/domain/src/index.ts"]
     }
   }
 }

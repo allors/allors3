@@ -16,6 +16,7 @@ import {
   toNode,
   SharedPullHandler,
   selectLeaf,
+  toSelect,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import {
@@ -120,14 +121,13 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: (this.objectType.isInterface
-        ? [{ name: 'type', sort }]
-        : []
-      ).concat(
-        [...this.includeDisplay, ...this.display].map((v) => {
-          return { name: v.name, sort };
-        })
-      ),
+      columns: (this.objectType.isInterface ? [{ name: 'type', sort }] : [])
+        .concat(this.display.length === 0 ? [{ name: 'name', sort }] : [])
+        .concat(
+          [...this.includeDisplay, ...this.display].map((v) => {
+            return { name: v.name, sort };
+          })
+        ),
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       autoSort: true,
@@ -172,17 +172,19 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
       });
     }
 
+    const results = this.selectAsPaths.map((v) => {
+      const select = toSelect(v);
+      const leaf = selectLeaf(select);
+      leaf.include = include;
+      return {
+        name: prefix,
+        select,
+      };
+    });
+
     const pull: Pull = {
       objectId: id,
-      results: this.selectAsPaths.map((v) => {
-        const select = toNode(v);
-        const leaf = selectLeaf(select);
-        leaf.include = include;
-        return {
-          name: prefix,
-          select,
-        };
-      }),
+      results,
     };
 
     pulls.push(pull);
@@ -247,6 +249,11 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
       };
       if (this.objectType.isInterface) {
         row['type'] = humanize(v.strategy.cls.singularName);
+      }
+
+      if (this.display.length === 0) {
+        const display = this.displayService.name(v.strategy.cls);
+        row['name'] = v.strategy.getUnitRole(display);
       }
 
       if (this.include) {

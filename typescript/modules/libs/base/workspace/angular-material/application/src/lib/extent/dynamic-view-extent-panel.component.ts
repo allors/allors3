@@ -10,6 +10,7 @@ import {
   SharedPullHandler,
   selectLeaf,
   pathLeaf,
+  toSelect,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
 import {
@@ -106,17 +107,19 @@ export class AllorsMaterialDynamicViewExtentPanelComponent
       });
     }
 
+    const results = this.selectAsPaths.map((v) => {
+      const select = toSelect(v);
+      const leaf = selectLeaf(select);
+      leaf.include = include;
+      return {
+        name: prefix,
+        select,
+      };
+    });
+
     const pull: Pull = {
       objectId: id,
-      results: this.selectAsPaths.map((v) => {
-        const select = toNode(v);
-        const leaf = selectLeaf(select);
-        leaf.include = include;
-        return {
-          name: prefix,
-          select,
-        };
-      }),
+      results,
     };
 
     pulls.push(pull);
