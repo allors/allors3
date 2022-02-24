@@ -1,5 +1,5 @@
 import { Subscription, tap } from 'rxjs';
-import { Class, Composite } from '@allors/system/workspace/meta';
+import { Class, Composite, humanize } from '@allors/system/workspace/meta';
 import {
   Component,
   Inject,
@@ -13,6 +13,7 @@ import {
   AllorsForm,
   CreateRequest,
   FormService,
+  MetaService,
   TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
 
@@ -38,9 +39,12 @@ export class AllorsMaterialDynamicCreateComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA)
     private request: CreateRequest,
     private dialogRef: MatDialogRef<AllorsMaterialDynamicCreateComponent>,
-    private formService: FormService
+    private formService: FormService,
+    private metaService: MetaService
   ) {
     this.objectType = this.request.objectType;
+    this.title =
+      'Create ' + humanize(this.metaService.singularName(this.objectType));
   }
 
   ngOnInit(): void {
