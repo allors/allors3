@@ -28,6 +28,7 @@ import {
   TableRow,
   Table,
   TableConfig,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
@@ -90,6 +91,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
+    metaService: MetaService,
     workspaceService: WorkspaceService,
     public navigation: NavigationService,
     public deleteService: DeleteService,
@@ -97,7 +99,13 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
     private iconService: IconService,
     private displayService: DisplayService
   ) {
-    super(scopedService, panelService, sharedPullService, refreshService);
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      metaService
+    );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
 
     panelService.register(this);

@@ -54,7 +54,7 @@ import {
 
 @Injectable()
 export class AppFilterService implements FilterService {
-  // TODO: Use method instead of in Map (internalOrganisationId should not be bound early)
+  filterByComposite: Map<Composite, Filter>;
   filterDefinitionByComposite: Map<Composite, FilterDefinition>;
 
   constructor(
@@ -1867,7 +1867,13 @@ export class AppFilterService implements FilterService {
   }
 
   filter(composite: Composite): Filter {
-    const filterDefinition = this.filterDefinitionByComposite.get(composite);
-    return new Filter(filterDefinition);
+    let filter = this.filterByComposite.get(composite);
+    if (filter == null) {
+      const filterDefinition = this.filterDefinitionByComposite.get(composite);
+      filter = new Filter(filterDefinition);
+      this.filterByComposite.set(composite, filter);
+    }
+
+    return filter;
   }
 }
