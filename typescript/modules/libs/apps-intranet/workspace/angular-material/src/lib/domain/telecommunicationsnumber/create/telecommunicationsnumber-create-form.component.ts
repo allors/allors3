@@ -64,7 +64,7 @@ export class TelecommunicationsNumberCreateFormComponent extends AllorsFormCompo
       })
     );
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Party({

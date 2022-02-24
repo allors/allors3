@@ -75,7 +75,7 @@ export class RepeatingPurchaseInvoiceFormComponent extends AllorsFormComponent<R
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(p.Organisation({ objectId: initializer.id }));
     }

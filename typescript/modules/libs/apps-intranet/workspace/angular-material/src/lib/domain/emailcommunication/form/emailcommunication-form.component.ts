@@ -132,7 +132,7 @@ export class EmailCommunicationFormComponent extends AllorsFormComponent<EmailCo
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Organisation({

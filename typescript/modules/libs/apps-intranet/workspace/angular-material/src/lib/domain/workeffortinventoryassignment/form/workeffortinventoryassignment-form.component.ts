@@ -88,7 +88,7 @@ export class WorkEffortInventoryAssignmentFormComponent extends AllorsFormCompon
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.WorkEffort({

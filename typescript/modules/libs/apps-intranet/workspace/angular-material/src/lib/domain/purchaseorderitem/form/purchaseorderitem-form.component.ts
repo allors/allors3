@@ -146,7 +146,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.PurchaseOrder({

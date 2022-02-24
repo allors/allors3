@@ -74,7 +74,7 @@ export class WorkEffortPartyAssignmentFormComponent extends AllorsFormComponent<
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Party({
