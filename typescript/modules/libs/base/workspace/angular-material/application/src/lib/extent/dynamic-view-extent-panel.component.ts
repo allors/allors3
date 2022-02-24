@@ -1,15 +1,12 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { Composite, humanize, RoleType } from '@allors/system/workspace/meta';
+import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
   Pull,
   Node,
-  isPath,
-  toNode,
   SharedPullHandler,
   selectLeaf,
-  pathLeaf,
   toSelect,
 } from '@allors/system/workspace/domain';
 import { Period } from '@allors/default/workspace/domain';
@@ -18,6 +15,7 @@ import {
   RefreshService,
   WorkspaceService,
   DisplayService,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   PanelService,
@@ -63,9 +61,16 @@ export class AllorsMaterialDynamicViewExtentPanelComponent
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService,
+    metaService: MetaService,
     private displayService: DisplayService
   ) {
-    super(scopedService, panelService, sharedPullService, refreshService);
+    super(
+      scopedService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      metaService
+    );
 
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
   }

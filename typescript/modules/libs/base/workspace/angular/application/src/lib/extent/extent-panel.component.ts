@@ -14,6 +14,7 @@ import {
   pathObjectType,
 } from '@allors/system/workspace/domain';
 import {
+  MetaService,
   RefreshService,
   SharedPullService,
 } from '@allors/base/workspace/angular/foundation';
@@ -83,14 +84,12 @@ export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelCompon
       return this.assignedTitle;
     }
 
-    let title: string;
-    if (this.include) {
-      title = this.include.pluralName;
-    } else {
-      title = pathLeaf(this.selectAsPaths[0]).propertyType.pluralName;
-    }
+    const propertyType = this.include
+      ? this.include
+      : pathLeaf(this.selectAsPaths[0]).propertyType;
 
-    return humanize(title);
+    const name = this.metaService.pluralName(propertyType);
+    return humanize(name);
   }
 
   set title(value: string) {
@@ -112,7 +111,8 @@ export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelCompon
     itemPageService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
-    refreshService: RefreshService
+    refreshService: RefreshService,
+    private metaService: MetaService
   ) {
     super(itemPageService, panelService, sharedPullService, refreshService);
   }

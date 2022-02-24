@@ -1,6 +1,7 @@
 import {
   SharedPullService,
   RefreshService,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
 import { ScopedService } from '../scoped/scoped.service';
@@ -17,8 +18,15 @@ export abstract class AllorsEditExtentPanelComponent extends AllorsExtentPanelCo
     itemPageService: ScopedService,
     panelService: PanelService,
     sharedPullService: SharedPullService,
-    refreshService: RefreshService
+    refreshService: RefreshService,
+    metaService: MetaService
   ) {
-    super(itemPageService, panelService, sharedPullService, refreshService);
+    super(
+      itemPageService,
+      panelService,
+      sharedPullService,
+      refreshService,
+      metaService
+    );
   }
 }
