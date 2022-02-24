@@ -319,13 +319,13 @@ export class RequestItemFormComponent extends AllorsFormComponent<RequestItem> {
 
     if (this.createRequest) {
       this.object.UnitOfMeasure = piece;
-    }
-
-    if (this.object.Product) {
-      this.previousProduct = this.object.Product;
-      this.refreshSerialisedItems(this.object.Product);
     } else {
-      this.serialisedItems.push(this.object.SerialisedItem);
+      if (this.object.Product) {
+        this.previousProduct = this.object.Product;
+        this.refreshSerialisedItems(this.object.Product);
+      } else {
+        this.serialisedItems.push(this.object.SerialisedItem);
+      }
     }
   }
 
