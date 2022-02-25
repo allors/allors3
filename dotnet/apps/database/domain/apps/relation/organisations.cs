@@ -46,6 +46,7 @@ namespace Allors.Database.Domain
             string storeName,
             BillingProcess billingProcess,
             string customerShipmentNumberPrefix,
+            string customerReturnNumberPrefix,
             string purchaseShipmentNumberPrefix,
             string purchaseReturnNumberPrefix,
             string salesInvoiceNumberPrefix,
@@ -124,8 +125,10 @@ namespace Allors.Database.Domain
                 .WithQuoteSequence(quoteSequence)
                 .WithCustomerShipmentSequence(customerShipmentSequence)
                 .WithCustomerReturnSequence(new CustomerReturnSequences(transaction).EnforcedSequence)
+                .WithCustomerReturnNumberPrefix(customerReturnNumberPrefix)
                 .WithPurchaseShipmentSequence(purchaseShipmentSequence)
                 .WithPurchaseReturnSequence(new PurchaseReturnSequences(transaction).EnforcedSequence)
+                .WithPurchaseReturnNumberPrefix(purchaseReturnNumberPrefix)
                 .WithDropShipmentSequence(new DropShipmentSequences(transaction).EnforcedSequence)
                 .WithIncomingTransferSequence(new IncomingTransferSequences(transaction).EnforcedSequence)
                 .WithOutgoingTransferSequence(new OutgoingTransferSequences(transaction).EnforcedSequence)
