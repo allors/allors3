@@ -39,6 +39,11 @@ namespace Allors.Database.Domain
                 this.PurchaseShipmentNumberCounter = new CounterBuilder(this.Transaction()).Build();
             }
 
+            if (!this.ExistPurchaseReturnNumberCounter)
+            {
+                this.PurchaseReturnNumberCounter = new CounterBuilder(this.Transaction()).Build();
+            }
+
             if (!this.ExistCustomerReturnNumberCounter)
             {
                 this.CustomerReturnNumberCounter = new CounterBuilder(this.Transaction()).Build();
@@ -118,6 +123,12 @@ namespace Allors.Database.Domain
         {
             var number = this.RequirementNumberCounter.NextValue();
             return string.Concat(this.ExistRequirementNumberPrefix ? this.RequirementNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
+        }
+
+        public string NextPurchaseReturnNumber(int year)
+        {
+            var number = this.PurchaseReturnNumberCounter.NextValue();
+            return string.Concat(this.ExistPurchaseReturnNumberPrefix ? this.PurchaseReturnNumberPrefix.Replace("{year}", year.ToString()) : string.Empty, number);
         }
     }
 }

@@ -127,6 +127,20 @@ namespace Allors.Repository
         PurchaseReturnSequence PurchaseReturnSequence { get; set; }
 
         #region Allors
+        [Id("892e4e3b-0c84-4814-8483-a9257d539bf1")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        string PurchaseReturnNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("d5fdeec2-a1d0-483e-a1ec-e2f1f02bb65a")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        Counter PurchaseReturnNumberCounter { get; set; }
+
+        #region Allors
         [Id("713ebf82-bce2-4c1d-a4cf-c77ae03f5d12")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

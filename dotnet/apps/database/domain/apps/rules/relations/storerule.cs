@@ -9,7 +9,6 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Derivations;
-    using Derivations;
     using Meta;
     using Derivations.Rules;
 
@@ -24,7 +23,6 @@ namespace Allors.Database.Domain
                 m.Store.RolePattern(v => v.FiscalYearsStoreSequenceNumbers),
                 m.Store.RolePattern(v => v.SalesInvoiceNumberCounter),
                 m.Store.RolePattern(v => v.CustomerShipmentNumberPrefix),
-                m.Store.RolePattern(v => v.PurchaseReturnNumberPrefix),
                 m.Store.RolePattern(v => v.DropShipmentNumberPrefix),
                 m.Store.RolePattern(v => v.OutgoingTransferNumberPrefix),
             };
@@ -76,11 +74,6 @@ namespace Allors.Database.Domain
                 if (@this.InternalOrganisation.CustomerShipmentSequence != new CustomerShipmentSequences(@this.Transaction()).RestartOnFiscalYear && !@this.ExistCustomerShipmentNumberCounter)
                 {
                     @this.CustomerShipmentNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
-                }
-
-                if (@this.InternalOrganisation.PurchaseReturnSequence != new PurchaseReturnSequences(@this.Transaction()).RestartOnFiscalYear && !@this.ExistPurchaseReturnNumberCounter)
-                {
-                    @this.PurchaseReturnNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                 }
 
                 if (@this.InternalOrganisation.DropShipmentSequence != new DropShipmentSequences(@this.Transaction()).RestartOnFiscalYear && !@this.ExistDropShipmentNumberCounter)

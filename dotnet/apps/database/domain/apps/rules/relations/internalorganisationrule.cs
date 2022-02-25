@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
             {
                 m.InternalOrganisation.RolePattern(v => v.PurchaseShipmentSequence),
                 m.InternalOrganisation.RolePattern(v => v.CustomerReturnSequence),
+                m.InternalOrganisation.RolePattern(v => v.PurchaseReturnNumberPrefix),
                 m.InternalOrganisation.RolePattern(v => v.IncomingTransferSequence),
             };
 
@@ -33,6 +34,11 @@ namespace Allors.Database.Domain
                     if (@this.CustomerReturnSequence != new CustomerReturnSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistCustomerReturnNumberCounter)
                     {
                         @this.CustomerReturnNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
+                    }
+
+                    if (@this.PurchaseReturnSequence != new PurchaseReturnSequences(@this.Transaction()).RestartOnFiscalYear && !@this.ExistPurchaseReturnNumberCounter)
+                    {
+                        @this.PurchaseReturnNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
                     }
 
                     if (@this.IncomingTransferSequence != new IncomingTransferSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistIncomingTransferNumberCounter)

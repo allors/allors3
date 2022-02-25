@@ -352,6 +352,26 @@ namespace Allors.Database.Domain
             }
         }
 
+        public static string NextPurchaseReturnNumber(this InternalOrganisation @this, int year)
+        {
+            if (@this.PurchaseReturnSequence.Equals(new PurchaseReturnSequences(@this.Transaction()).EnforcedSequence))
+            {
+                return string.Concat(@this.PurchaseReturnNumberPrefix, @this.PurchaseReturnNumberCounter.NextValue()).Replace("{year}", year.ToString());
+            }
+            else
+            {
+                var fiscalYearInternalOrganisationSequenceNumbers = @this.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+
+                if (fiscalYearInternalOrganisationSequenceNumbers == null)
+                {
+                    fiscalYearInternalOrganisationSequenceNumbers = new FiscalYearInternalOrganisationSequenceNumbersBuilder(@this.Transaction()).WithFiscalYear(year).Build();
+                    @this.AddFiscalYearsInternalOrganisationSequenceNumber(fiscalYearInternalOrganisationSequenceNumbers);
+                }
+
+                return fiscalYearInternalOrganisationSequenceNumbers.NextPurchaseReturnNumber(year);
+            }
+        }
+
         public static int NextValidElevenTestNumber(int previous)
         {
             var candidate = previous.ToString();

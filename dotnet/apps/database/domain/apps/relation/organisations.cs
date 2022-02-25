@@ -46,6 +46,8 @@ namespace Allors.Database.Domain
             string storeName,
             BillingProcess billingProcess,
             string customerShipmentNumberPrefix,
+            string purchaseShipmentNumberPrefix,
+            string purchaseReturnNumberPrefix,
             string salesInvoiceNumberPrefix,
             string salesOrderNumberPrefix,
             string purchaseOrderNumberPrefix,
@@ -274,6 +276,22 @@ namespace Allors.Database.Domain
                 internalOrganisation.RequirementNumberPrefix = requirementPrefix;
             }
 
+            if (purchaseShipmentSequence == new PurchaseShipmentSequences(transaction).RestartOnFiscalYear)
+            {
+                var sequenceNumbers = internalOrganisation.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == transaction.Now().Year);
+                if (sequenceNumbers == null)
+                {
+                    sequenceNumbers = new FiscalYearInternalOrganisationSequenceNumbersBuilder(transaction).WithFiscalYear(transaction.Now().Year).Build();
+                    internalOrganisation.AddFiscalYearsInternalOrganisationSequenceNumber(sequenceNumbers);
+                }
+
+                sequenceNumbers.PurchaseShipmentNumberPrefix = purchaseShipmentNumberPrefix;
+            }
+            else
+            {
+                internalOrganisation.PurchaseShipmentNumberPrefix = purchaseShipmentNumberPrefix;
+            }
+
             OwnBankAccount defaultCollectionMethod = null;
             if (bankAccount != null)
             {
@@ -384,14 +402,7 @@ namespace Allors.Database.Domain
                 .WithInternalOrganisation(internalOrganisation)
                 .Build();
 
-            if (defaultCollectionMethod == null)
-            {
-                store.DefaultCollectionMethod = new CashBuilder(transaction).Build();
-            }
-            else
-            {
-                store.DefaultCollectionMethod = defaultCollectionMethod;
-            }
+            store.DefaultCollectionMethod = defaultCollectionMethod ?? (PaymentMethod)new CashBuilder(transaction).Build();
 
             if (facility != null)
             {

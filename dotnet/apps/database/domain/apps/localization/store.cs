@@ -90,26 +90,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public string NextPurchaseReturnNumber(int year)
-        {
-            if (this.InternalOrganisation.PurchaseReturnSequence.Equals(new PurchaseReturnSequences(this.Strategy.Transaction).EnforcedSequence))
-            {
-                return string.Concat(this.PurchaseReturnNumberPrefix, this.PurchaseReturnNumberCounter.NextValue()).Replace("{year}", year.ToString());
-            }
-            else
-            {
-                var fiscalYearStoreSequenceNumbers = this.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-
-                if (fiscalYearStoreSequenceNumbers == null)
-                {
-                    fiscalYearStoreSequenceNumbers = new FiscalYearStoreSequenceNumbersBuilder(this.Strategy.Transaction).WithFiscalYear(year).Build();
-                    this.AddFiscalYearsStoreSequenceNumber(fiscalYearStoreSequenceNumbers);
-                }
-
-                return fiscalYearStoreSequenceNumbers.NextPurchaseReturnNumber(year);
-            }
-        }
-
         public string NextDropShipmentNumber(int year)
         {
             if (this.InternalOrganisation.DropShipmentSequence.Equals(new DropShipmentSequences(this.Strategy.Transaction).EnforcedSequence))

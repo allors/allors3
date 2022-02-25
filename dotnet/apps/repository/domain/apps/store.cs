@@ -106,20 +106,6 @@ namespace Allors.Repository
         public Counter CustomerShipmentNumberCounter { get; set; }
 
         #region Allors
-        [Id("892e4e3b-0c84-4814-8483-a9257d539bf1")]
-        #endregion
-        [Size(256)]
-        [Workspace(Default)]
-        public string PurchaseReturnNumberPrefix { get; set; }
-
-        #region Allors
-        [Id("d5fdeec2-a1d0-483e-a1ec-e2f1f02bb65a")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        public Counter PurchaseReturnNumberCounter { get; set; }
-
-        #region Allors
         [Id("3CBCF813-7FD4-4C69-98C8-CFC260234477")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]

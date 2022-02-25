@@ -93,6 +93,8 @@ namespace Allors
                 storeName: "Store",
                 billingProcess: new BillingProcesses(this.Transaction).BillingForOrderItems,
                 customerShipmentNumberPrefix: "i-CS",
+                purchaseShipmentNumberPrefix: "i-PS",
+                purchaseReturnNumberPrefix: "i-PR",
                 salesInvoiceNumberPrefix: "i-SI",
                 salesOrderNumberPrefix: "i-SO",
                 purchaseOrderNumberPrefix: "purchase orderno: ",

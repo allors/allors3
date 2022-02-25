@@ -17,20 +17,20 @@ namespace Allors.Database.Domain
         public PurchaseReturnExistShipmentNumberRule(MetaPopulation m) : base(m, new Guid("489a2e64-c082-4255-ae70-fe3351c12542")) =>
             this.Patterns = new Pattern[]
             {
-                m.PurchaseReturn.RolePattern(v => v.Store),
+                m.PurchaseReturn.RolePattern(v => v.ShipFromParty),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<PurchaseReturn>())
             {
-                if (!@this.ExistShipmentNumber && @this.ExistStore)
+                if (!@this.ExistShipmentNumber && @this.ShipFromParty is InternalOrganisation shipFromParty)
                 {
-                    var year = @this.Transaction().Now().Year;
-                    @this.ShipmentNumber = @this.Store.NextPurchaseReturnNumber(year);
+                    var year = @this.Strategy.Transaction.Now().Year;
+                    @this.ShipmentNumber = shipFromParty.NextPurchaseReturnNumber(year);
 
-                    var fiscalYearStoreSequenceNumbers = @this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
-                    var prefix = ((InternalOrganisation)@this.ShipFromParty).PurchaseReturnSequence.IsEnforcedSequence ? @this.Store.PurchaseReturnNumberPrefix : fiscalYearStoreSequenceNumbers.PurchaseReturnNumberPrefix;
+                    var fiscalYearInternalOrganisationSequenceNumbers = shipFromParty.FiscalYearsInternalOrganisationSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
+                    var prefix = ((InternalOrganisation)@this.ShipFromParty).PurchaseReturnSequence.IsEnforcedSequence ? ((InternalOrganisation)@this.ShipFromParty).PurchaseReturnNumberPrefix : fiscalYearInternalOrganisationSequenceNumbers.PurchaseReturnNumberPrefix;
                     @this.SortableShipmentNumber = @this.Transaction().GetSingleton().SortableNumber(prefix, @this.ShipmentNumber, year.ToString());
                 }
             }

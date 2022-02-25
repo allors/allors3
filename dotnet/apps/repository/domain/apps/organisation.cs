@@ -67,6 +67,10 @@ namespace Allors.Repository
 
         public Counter PurchaseShipmentNumberCounter { get; set; }
 
+        public string PurchaseReturnNumberPrefix { get; set; }
+
+        public Counter PurchaseReturnNumberCounter { get; set; }
+
         public string CustomerReturnNumberPrefix { get; set; }
 
         public Counter CustomerReturnNumberCounter { get; set; }

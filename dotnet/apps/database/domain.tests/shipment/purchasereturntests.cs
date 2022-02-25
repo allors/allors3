@@ -14,31 +14,6 @@ namespace Allors.Database.Domain.Tests
         public PurchaseReturnRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedStoreDeriveShipmentNumber()
-        {
-            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.FirstOrDefault();
-            store.RemovePurchaseReturnNumberPrefix();
-            var number = this.InternalOrganisation.StoresWhereInternalOrganisation.First().PurchaseReturnNumberCounter.Value;
-
-            var shipment = new PurchaseReturnBuilder(this.Transaction).WithStore(store).Build();
-            this.Derive();
-
-            Assert.Equal(shipment.ShipmentNumber, (number + 1).ToString());
-        }
-
-        [Fact]
-        public void ChangedStoreDeriveSortableShipmentNumber()
-        {
-            var store = this.InternalOrganisation.StoresWhereInternalOrganisation.FirstOrDefault();
-            var number = store.PurchaseReturnNumberCounter.Value;
-
-            var shipment = new PurchaseReturnBuilder(this.Transaction).WithStore(store).Build();
-            this.Derive();
-
-            Assert.Equal(shipment.SortableShipmentNumber.Value, number + 1);
-        }
-
-        [Fact]
         public void ChangedShipToPartyDeriveShipToAddress()
         {
             var shipment = new PurchaseReturnBuilder(this.Transaction)

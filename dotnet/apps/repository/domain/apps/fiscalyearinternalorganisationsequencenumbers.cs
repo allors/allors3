@@ -85,6 +85,20 @@ namespace Allors.Repository
         public Counter PurchaseShipmentNumberCounter { get; set; }
 
         #region Allors
+        [Id("158d714e-17db-4368-a405-b52f86b1cbf8")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string PurchaseReturnNumberPrefix { get; set; }
+
+        #region Allors
+        [Id("9ef91df0-0be0-4e58-9173-de0cf3011c4b")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        public Counter PurchaseReturnNumberCounter { get; set; }
+
+        #region Allors
         [Id("9762a55f-08f0-45a5-93af-9998921994e7")]
         #endregion
         [Workspace(Default)]
