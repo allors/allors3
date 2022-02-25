@@ -62,7 +62,7 @@ export class SalesTermFormComponent extends AllorsFormComponent<SalesTerm> {
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.SalesInvoice({ objectId: initializer.id }),
@@ -89,7 +89,7 @@ export class SalesTermFormComponent extends AllorsFormComponent<SalesTerm> {
 
     if (this.createRequest) {
       this.container.strategy.addCompositesRole(
-        this.createRequest.initializer.propertyType as RoleType,
+        this.createRequest?.initializer.propertyType as RoleType,
         this.object
       );
     }

@@ -34,6 +34,11 @@ export class FetcherService {
     return this.pull.InternalOrganisation({
       name: 'FetcherInternalOrganisation',
       objectId: this.internalOrganisationId.value,
+      predicate: {
+        kind: 'Equals',
+        propertyType: this.m.Organisation.IsInternalOrganisation,
+        value: true,
+      },
       include: {
         DefaultPaymentMethod: x,
         DefaultShipmentMethod: x,

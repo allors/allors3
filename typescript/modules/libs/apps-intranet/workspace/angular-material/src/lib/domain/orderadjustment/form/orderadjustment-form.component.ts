@@ -47,7 +47,7 @@ export class OrderAdjustmentFormComponent extends AllorsFormComponent<OrderAdjus
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Quote({ objectId: initializer.id }),
@@ -69,7 +69,7 @@ export class OrderAdjustmentFormComponent extends AllorsFormComponent<OrderAdjus
 
     if (this.createRequest) {
       this.container.strategy.addCompositesRole(
-        this.createRequest.initializer.propertyType as RoleType,
+        this.createRequest?.initializer.propertyType as RoleType,
         this.object
       );
     }

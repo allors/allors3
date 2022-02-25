@@ -68,7 +68,7 @@ export class WorkEffortPurchaseOrderItemAssignmentFormComponent extends AllorsFo
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.WorkEffort({

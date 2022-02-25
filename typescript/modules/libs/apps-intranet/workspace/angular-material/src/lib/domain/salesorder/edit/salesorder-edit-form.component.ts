@@ -35,6 +35,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   selector: 'salesorder-edit-form',
@@ -132,8 +133,12 @@ export class SalesOrderEditFormComponent extends AllorsFormComponent<SalesOrder>
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
-  }
 
+    this.customersFilter = Filters.customersFilter(
+      this.m,
+      internalOrganisationId.value
+    );
+  }
   onPrePull(pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;
@@ -268,7 +273,6 @@ export class SalesOrderEditFormComponent extends AllorsFormComponent<SalesOrder>
         this.m.SerialisedInventoryItemState
       );
 
-    this.object = pullResult.object<SalesOrder>(this.m.SalesOrder);
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
     this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';

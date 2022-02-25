@@ -183,7 +183,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Shipment({

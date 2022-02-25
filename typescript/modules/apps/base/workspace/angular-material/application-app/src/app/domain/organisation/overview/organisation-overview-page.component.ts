@@ -12,7 +12,7 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 
@@ -30,6 +30,8 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
   m: M;
 
   object: Organisation;
+
+  employeeAddressTarget: Path;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -49,6 +51,9 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    const { pathBuilder: p } = this.m;
+
+    this.employeeAddressTarget = p.Organisation({ Employees: { Address: {} } });
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

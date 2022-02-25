@@ -62,7 +62,7 @@ export class ProductIdentificationFormComponent extends AllorsFormComponent<Prod
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Good({ objectId: initializer.id }),
@@ -82,7 +82,7 @@ export class ProductIdentificationFormComponent extends AllorsFormComponent<Prod
         pullResult.object<Part>(this.m.Part);
 
       this.container.strategy.addCompositesRole(
-        this.createRequest.initializer.propertyType as RoleType,
+        this.createRequest?.initializer.propertyType as RoleType,
         this.object
       );
     }

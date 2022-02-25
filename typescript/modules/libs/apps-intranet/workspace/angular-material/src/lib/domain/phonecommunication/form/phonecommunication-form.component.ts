@@ -127,7 +127,7 @@ export class PhoneCommunicationFormComponent extends AllorsFormComponent<PhoneCo
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Organisation({

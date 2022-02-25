@@ -73,7 +73,7 @@ export class InventoryItemTransactionCreateFormComponent extends AllorsFormCompo
       p.Lot({ sorting: [{ roleType: m.Lot.LotNumber }] })
     );
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.InventoryItem({

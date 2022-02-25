@@ -198,7 +198,7 @@ export class SalesOrderItemFormComponent extends AllorsFormComponent<SalesOrderI
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.SalesOrder({

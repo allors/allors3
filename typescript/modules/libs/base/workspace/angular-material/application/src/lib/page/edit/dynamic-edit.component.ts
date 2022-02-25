@@ -11,9 +11,10 @@ import {
   AllorsForm,
   EditRequest,
   FormService,
+  MetaService,
   TemplateHostDirective,
 } from '@allors/base/workspace/angular/foundation';
-import { Composite } from '@allors/system/workspace/meta';
+import { Composite, humanize } from '@allors/system/workspace/meta';
 import { Subscription, tap } from 'rxjs';
 
 @Component({
@@ -38,9 +39,12 @@ export class AllorsMaterialDynamicEditComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA)
     private request: EditRequest,
     private dialogRef: MatDialogRef<AllorsMaterialDynamicEditComponent>,
-    private formService: FormService
+    private formService: FormService,
+    private metaService: MetaService
   ) {
     this.objectType = this.request.objectType;
+    this.title =
+      'Edit ' + humanize(this.metaService.singularName(this.objectType));
   }
 
   ngOnInit(): void {

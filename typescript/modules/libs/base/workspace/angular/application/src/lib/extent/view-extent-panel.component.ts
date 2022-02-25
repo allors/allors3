@@ -1,6 +1,7 @@
 import {
   SharedPullService,
   RefreshService,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
 import { PanelService } from '../panel/panel.service';
@@ -17,8 +18,15 @@ export abstract class AllorsViewExtentPanelComponent extends AllorsExtentPanelCo
     itemPageService: ScopedService,
     panelService: PanelService,
     onShareService: SharedPullService,
-    refreshService: RefreshService
+    refreshService: RefreshService,
+    metaService: MetaService
   ) {
-    super(itemPageService, panelService, onShareService, refreshService);
+    super(
+      itemPageService,
+      panelService,
+      onShareService,
+      refreshService,
+      metaService
+    );
   }
 }

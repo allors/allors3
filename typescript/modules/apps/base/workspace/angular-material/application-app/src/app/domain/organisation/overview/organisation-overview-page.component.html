@@ -20,7 +20,7 @@
         <a-mat-dyn-view-detail-panel></a-mat-dyn-view-detail-panel>
         <a-mat-dyn-edit-detail-panel></a-mat-dyn-edit-detail-panel>
 
-        <a-mat-dyn-view-extent-panel
+        <!-- <a-mat-dyn-view-extent-panel
           [select]="m.Organisation.Shareholders"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
@@ -34,6 +34,13 @@
         <a-mat-dyn-edit-extent-panel
           [include]="m.Employment.Employee"
           [init]="m.Employment.Employer"
+        ></a-mat-dyn-edit-extent-panel> -->
+
+        <a-mat-dyn-view-extent-panel
+          [select]="employeeAddressTarget"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [select]="employeeAddressTarget"
         ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>

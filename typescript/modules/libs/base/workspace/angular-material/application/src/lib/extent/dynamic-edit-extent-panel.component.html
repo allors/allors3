@@ -11,7 +11,7 @@
   </div>
 
   <a-mat-factory-fab
-    [objectType]="objectType"
+    [objectType]="factory ?? objectType"
     [intitializer]="initializer"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>

@@ -43,7 +43,7 @@ export class WorkRequirementFulfillmentCreateFormComponent extends AllorsFormCom
 
     pulls.push(p.RequirementState({}));
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.WorkEffort({

@@ -133,7 +133,7 @@ export class LetterCorrespondenceFormComponent extends AllorsFormComponent<Lette
       );
     }
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Organisation({

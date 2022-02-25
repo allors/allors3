@@ -3,37 +3,41 @@ import {
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { Composite, pluralize } from '@allors/system/workspace/meta';
+import {
+  AssociationType,
+  Composite,
+  pluralize,
+  PropertyType,
+  RoleType,
+} from '@allors/system/workspace/meta';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class AppMetaService implements MetaService {
-  singularNameByComposite: Map<Composite, string>;
-  pluralNameByComposite: Map<Composite, string>;
+  singularNameByObject: Map<Composite | PropertyType, string>;
+  pluralNameByObject: Map<Composite | PropertyType, string>;
 
   constructor(workspaceService: WorkspaceService) {
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
-    this.singularNameByComposite = new Map();
-    this.pluralNameByComposite = new Map();
+    this.singularNameByObject = new Map<Composite | PropertyType, string>([
+      [m.Organisation, 'Company'],
+    ]);
 
-    this.singularNameByComposite.set(m.Organisation, 'Organizatie');
-    this.singularNameByComposite.set(m.Person, 'Persoon');
-
-    this.pluralNameByComposite.set(m.Person, 'Personen');
+    this.pluralNameByObject = new Map<Composite | PropertyType, string>([
+      [m.Organisation, 'Companies'],
+    ]);
   }
 
-  singularName(composite: Composite): string {
-    return (
-      this.singularNameByComposite.get(composite) ?? composite.singularName
-    );
+  singularName(metaObject: Composite | PropertyType): string {
+    return this.singularNameByObject.get(metaObject) ?? metaObject.singularName;
   }
 
-  pluralName(composite: Composite): string {
+  pluralName(metaObject: Composite | PropertyType): string {
     return (
-      this.pluralNameByComposite.get(composite) ??
-      pluralize(this.singularNameByComposite.get(composite)) ??
-      composite.pluralName
+      this.pluralNameByObject.get(metaObject) ??
+      pluralize(this.singularNameByObject.get(metaObject)) ??
+      metaObject.pluralName
     );
   }
 }

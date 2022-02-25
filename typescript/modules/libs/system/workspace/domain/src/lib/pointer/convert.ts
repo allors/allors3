@@ -1,3 +1,4 @@
+import { Select } from '../data/select';
 import { Node } from './node';
 import { Path } from './path';
 
@@ -54,4 +55,26 @@ function toNodeRecursive(parent: Node, path: Path): Node {
 
 export function toNode(path: Path): Node {
   return toNodeRecursive(null, path);
+}
+
+function toSelectRecursive(parent: Select, path: Path): Select {
+  const select: Select = {
+    propertyType: path.propertyType,
+    // TODO:
+    // ofType: path.ofType,
+  };
+
+  if (parent) {
+    parent.next = select;
+  }
+
+  if (path.next) {
+    toSelectRecursive(select, path.next);
+  }
+
+  return select;
+}
+
+export function toSelect(path: Path): Select {
+  return toSelectRecursive(null, path);
 }

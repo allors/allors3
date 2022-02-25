@@ -86,7 +86,7 @@ export class SerialisedItemCreateFormComponent extends AllorsFormComponent<Seria
       })
     );
 
-    const initializer = this.createRequest.initializer;
+    const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
         p.Party({ objectId: initializer.id }),
