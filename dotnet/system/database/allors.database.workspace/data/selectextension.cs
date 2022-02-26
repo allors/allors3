@@ -8,6 +8,7 @@ namespace Allors.Database.Data
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
     using Meta;
     using Security;
 
@@ -64,26 +65,12 @@ namespace Allors.Database.Data
                 }
 
                 var selection = @this.PropertyType.Get(@object.Strategy);
-                switch (selection)
+                return selection switch
                 {
-                    case null:
-                        return null;
-                    case IObject currentObject:
-                        return @this.Match(currentObject) ? currentObject : null;
-                    default:
-                        var results = new HashSet<object>();
-                        foreach (var item in (IEnumerable)selection)
-                        {
-                            if (!@this.Match(item))
-                            {
-                                continue;
-                            }
-
-                            results.Add(item);
-                        }
-
-                        return results;
-                }
+                    null => null,
+                    IObject currentObject => @this.Match(currentObject) ? currentObject : null,
+                    _ => ((IEnumerable<IObject>)selection).Where(@this.Match).ToArray()
+                };
             }
 
             return null;
