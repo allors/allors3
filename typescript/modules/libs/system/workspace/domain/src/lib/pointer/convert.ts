@@ -60,8 +60,7 @@ export function toNode(path: Path): Node {
 function toSelectRecursive(parent: Select, path: Path): Select {
   const select: Select = {
     propertyType: path.propertyType,
-    // TODO:
-    // ofType: path.ofType,
+    ofType: path.ofType,
   };
 
   if (parent) {

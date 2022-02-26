@@ -31,22 +31,9 @@ namespace Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var pull = new Pull
-            {
-                Object = c1b,
-                Results = new[]
-                {
-                    new  Result { Name = "Data" },
-                }
-            };
+            var pull = new Pull { Object = c1b, Results = new[] { new Result { Name = "Data" }, } };
 
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    pull.ToJson(this.UnitConvert)
-                },
-            };
+            var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
@@ -69,25 +56,10 @@ namespace Tests
             var pull = new Pull
             {
                 Object = c1b,
-                Results = new[]
-                {
-                    new  Result
-                    {
-                        Include = new []
-                        {
-                            new Node(this.M.C1.C1C2One2One)
-                        }
-                    },
-                }
+                Results = new[] { new Result { Include = new[] { new Node(this.M.C1.C1C2One2One) } }, }
             };
 
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    pull.ToJson(this.UnitConvert)
-                },
-            };
+            var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
@@ -113,25 +85,10 @@ namespace Tests
             var pull = new Pull
             {
                 Object = c2b,
-                Results = new[]
-                {
-                    new  Result
-                    {
-                        Include = new []
-                        {
-                            new Node(this.M.C2.C1WhereC1C2One2One)
-                        }
-                    },
-                }
+                Results = new[] { new Result { Include = new[] { new Node(this.M.C2.C1WhereC1C2One2One) } }, }
             };
 
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    pull.ToJson(this.UnitConvert)
-                },
-            };
+            var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
@@ -159,27 +116,18 @@ namespace Tests
                 Object = c1b,
                 Results = new[]
                 {
-                    new  Result
+                    new Result
                     {
                         Select = new Select
                         {
                             PropertyType = this.M.C1.C1C2One2One,
-                            Include = new[]
-                            {
-                                new Node(this.M.C2.C2C2One2One)
-                            }
+                            Include = new[] { new Node(this.M.C2.C2C2One2One) }
                         }
                     },
                 }
             };
 
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    pull.ToJson(this.UnitConvert)
-                },
-            };
+            var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
@@ -207,27 +155,18 @@ namespace Tests
                 Object = c2b,
                 Results = new[]
                 {
-                    new  Result
+                    new Result
                     {
                         Select = new Select
                         {
                             PropertyType = this.M.C2.C1WhereC1C2One2One,
-                            Include = new[]
-                            {
-                                new Node(this.M.C1.C1WhereC1C1One2One)
-                            }
+                            Include = new[] { new Node(this.M.C1.C1WhereC1C1One2One) }
                         }
                     },
                 }
             };
 
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    pull.ToJson(this.UnitConvert)
-                },
-            };
+            var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
             var api = new Api(this.Transaction, "Default");
             var pullResponse = api.Pull(pullRequest);
@@ -238,6 +177,44 @@ namespace Tests
 
             Assert.Contains(pool, v => v.i == c2b.C1WhereC1C2One2One.Id);
             Assert.Contains(pool, v => v.i == c2b.C1WhereC1C2One2One.C1WhereC1C1One2One.Id);
+        }
+
+
+        [Fact]
+        public async void OfType()
+        {
+            var user = this.SetUser("jane@example.com");
+
+            var c1b = new C1s(this.Transaction).Extent().First(v => "c1B".Equals(v.Name));
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var pull = new Pull
+            {
+                Object = c1b,
+                Results = new[]
+                {
+                    new Result
+                    {
+                        Select = new Select
+                        {
+                            PropertyType = this.M.C1.C1I12Many2Manies,
+                            OfType = this.M.C1
+                        }
+                    }
+                }
+            };
+
+            var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
+
+            var api = new Api(this.Transaction, "Default");
+            var pullResponse = api.Pull(pullRequest);
+
+            var pool = pullResponse.p;
+
+            Assert.Single(pool);
+            Assert.Contains(pool, v => v.i == c1b.Id);
         }
     }
 }

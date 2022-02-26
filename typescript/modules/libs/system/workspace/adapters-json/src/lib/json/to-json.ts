@@ -289,6 +289,7 @@ function selectToJson(from: DataSelect): Select {
   return {
     a: asAssociationTypeToJson(from.propertyType),
     r: asRoleTypeToJson(from.propertyType),
+    o: objectTypeToJson(from.ofType),
     n: selectToJson(from.next),
     i: nodesToJson(from.include),
   };

@@ -213,6 +213,7 @@ namespace Allors.Database.Protocol.Json
             {
                 a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
+                o = visited.OfType?.Tag
             };
 
             this.selects.Push(@select);

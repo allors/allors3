@@ -19,6 +19,11 @@ namespace Allors.Protocol.Json.Data
         public string r { get; set; }
 
         /// <summary>
+        /// Of Type
+        /// </summary>
+        public string o { get; set; }
+
+        /// <summary>
         /// Next
         /// </summary>
         public Select n { get; set; }

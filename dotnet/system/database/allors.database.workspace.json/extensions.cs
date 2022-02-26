@@ -13,6 +13,8 @@ namespace Allors.Database.Protocol.Json
 
     public static class Extensions
     {
+        public static IComposite FindComposite(this IMetaPopulation @this, string tag) => tag != null ? (IComposite)@this.FindByTag(tag): null;
+
         public static IAssociationType FindAssociationType(this IMetaPopulation @this, string tag) => tag != null ? ((IRelationType)@this.FindByTag(tag)).AssociationType : null;
 
         public static IRoleType FindRoleType(this IMetaPopulation @this, string tag) => tag != null ? ((IRelationType)@this.FindByTag(tag)).RoleType : null;

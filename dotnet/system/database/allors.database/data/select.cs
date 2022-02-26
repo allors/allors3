@@ -38,6 +38,8 @@ namespace Allors.Database.Data
 
         public IPropertyType PropertyType { get; set; }
 
+        public IComposite OfType { get; set; }
+
         public Select Next { get; set; }
 
         public bool IsOne

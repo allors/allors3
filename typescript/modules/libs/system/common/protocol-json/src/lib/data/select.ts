@@ -7,6 +7,9 @@ export interface Select {
   /** RoleType */
   r?: string;
 
+  /** OfType */
+  o?: string;
+
   /** Next */
   n?: Select;
 

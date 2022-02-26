@@ -131,7 +131,8 @@ namespace Allors.Database.Protocol.Json
         {
             var @select = new Select
             {
-                PropertyType = (IPropertyType)this.fromJson.MetaPopulation.FindAssociationType(visited.a) ?? this.fromJson.MetaPopulation.FindRoleType(visited.r)
+                PropertyType = (IPropertyType)this.fromJson.MetaPopulation.FindAssociationType(visited.a) ?? this.fromJson.MetaPopulation.FindRoleType(visited.r),
+                OfType = this.fromJson.MetaPopulation.FindComposite(visited.o)
             };
 
             this.selects.Push(@select);

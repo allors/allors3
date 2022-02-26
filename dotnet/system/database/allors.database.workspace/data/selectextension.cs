@@ -13,6 +13,16 @@ namespace Allors.Database.Data
 
     public static class SelectExtension
     {
+        private static bool Match(this Select @this, object value)
+        {
+            if (@this.OfType != null && value is IObject obj)
+            {
+                return @this.OfType.IsAssignableFrom(obj.Strategy.Class);
+            }
+
+            return true;
+        }
+
         public static object Get(this Select @this, IObject @object, IAccessControl acls)
         {
             var acl = acls[@object];
@@ -21,34 +31,59 @@ namespace Allors.Database.Data
             {
                 if (@this.ExistNext)
                 {
-                    var currentValue = @this.PropertyType.Get(@object.Strategy);
+                    var current = @this.PropertyType.Get(@object.Strategy);
 
-                    if (currentValue != null)
+                    switch (current)
                     {
-                        if (currentValue is IObject value)
-                        {
-                            return @this.Next.Get(value, acls);
-                        }
-
-                        var results = new HashSet<object>();
-                        foreach (var item in (IEnumerable)currentValue)
-                        {
-                            var nextValueResult = @this.Next.Get((IObject)item, acls);
-                            if (nextValueResult is HashSet<object> set)
+                        case null:
+                            return null;
+                        case IObject currentObject:
+                            return @this.Match(currentObject) ? @this.Next.Get(currentObject, acls) : null;
+                        default:
+                            var results = new HashSet<object>();
+                            foreach (var item in (IEnumerable)current)
                             {
-                                results.UnionWith(set);
-                            }
-                            else
-                            {
-                                results.Add(nextValueResult);
-                            }
-                        }
+                                if (!@this.Match(item))
+                                {
+                                    continue;
+                                }
 
-                        return results;
+                                var nextValueResult = @this.Next.Get((IObject)item, acls);
+                                if (nextValueResult is HashSet<object> set)
+                                {
+                                    results.UnionWith(set);
+                                }
+                                else
+                                {
+                                    results.Add(nextValueResult);
+                                }
+                            }
+
+                            return results;
                     }
                 }
 
-                return @this.PropertyType.Get(@object.Strategy);
+                var selection = @this.PropertyType.Get(@object.Strategy);
+                switch (selection)
+                {
+                    case null:
+                        return null;
+                    case IObject currentObject:
+                        return @this.Match(currentObject) ? currentObject : null;
+                    default:
+                        var results = new HashSet<object>();
+                        foreach (var item in (IEnumerable)selection)
+                        {
+                            if (!@this.Match(item))
+                            {
+                                continue;
+                            }
+
+                            results.Add(item);
+                        }
+
+                        return results;
+                }
             }
 
             return null;
