@@ -14,7 +14,7 @@ import {
   Pull,
   SharedPullHandler,
 } from '@allors/system/workspace/domain';
-import { EditRoleService } from '@allors/base/workspace/angular-material/application';
+import { EditActionService } from '@allors/base/workspace/angular-material/application';
 
 @Component({
   selector: 'userprofile-link',
@@ -29,7 +29,7 @@ export class UserProfileLinkComponent implements SharedPullHandler {
     public sharedPullService: SharedPullService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
-    public editRoleService: EditRoleService,
+    public editRoleService: EditActionService,
     private userId: UserId
   ) {
     this.edit = editRoleService.edit();

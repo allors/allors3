@@ -14,7 +14,7 @@ import { DeleteAction } from './delete-action';
 @Injectable({
   providedIn: 'root',
 })
-export class DeleteService {
+export class DeleteActionService {
   constructor(
     private workspaceService: WorkspaceService,
     private refreshService: RefreshService,

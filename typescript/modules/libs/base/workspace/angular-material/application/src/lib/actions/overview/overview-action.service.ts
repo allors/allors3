@@ -6,10 +6,10 @@ import { OverviewAction } from './overview-action';
 @Injectable({
   providedIn: 'root',
 })
-export class OverviewService {
+export class OverviewActionService {
   constructor(private navigation: NavigationService) {}
 
-  overview(): Action {
+  overview(): OverviewAction {
     return new OverviewAction(this.navigation);
   }
 }

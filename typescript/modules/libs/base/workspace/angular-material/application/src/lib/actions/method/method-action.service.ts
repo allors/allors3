@@ -13,7 +13,7 @@ import { MethodConfig } from './method-config';
 @Injectable({
   providedIn: 'root',
 })
-export class MethodService {
+export class MethodActionService {
   constructor(
     private refreshService: RefreshService,
     private errorService: ErrorService,

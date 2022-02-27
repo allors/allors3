@@ -30,8 +30,8 @@ export * from './lib/dialog/dialog.service';
 export * from './lib/display/display.service';
 
 export * from './lib/edit/edit-blocking';
+export * from './lib/edit/edit-dialog.service';
 export * from './lib/edit/edit-request';
-export * from './lib/edit/edit.service';
 
 export * from './lib/error/error.service';
 

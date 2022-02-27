@@ -20,7 +20,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  MethodService,
+  MethodActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { And } from '@allors/system/workspace/domain';
@@ -53,7 +53,7 @@ export class NotificationListPageComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     public refreshService: RefreshService,
-    public methodService: MethodService,
+    public methodService: MethodActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     private userId: UserId,

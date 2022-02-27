@@ -6,7 +6,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import {
   CreateService,
-  EditService,
+  EditDialogService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { RouteInfoService } from '@allors/base/workspace/angular/foundation';
@@ -25,7 +25,7 @@ export function appInitializerFactory(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
   createService: AllorsMaterialCreateService,
-  editService: AllorsMaterialEditService
+  editService: AllorsMaterialEditDialogService
 ) {
   return async () => {
     config(
@@ -65,7 +65,7 @@ export const environment = {
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFactory,
-      deps: [WorkspaceService, HttpClient, CreateService, EditService],
+      deps: [WorkspaceService, HttpClient, CreateService, EditDialogService],
       multi: true,
     },
     {
@@ -87,5 +87,5 @@ export const environment = {
 import 'zone.js/plugins/zone-error'; // Included with Angular CLI.import { AllorsMaterialCreateService } from '@allors/base/workspace/angular-material/application';
 import {
   AllorsMaterialCreateService,
-  AllorsMaterialEditService,
+  AllorsMaterialEditDialogService,
 } from '@allors/base/workspace/angular-material/application';

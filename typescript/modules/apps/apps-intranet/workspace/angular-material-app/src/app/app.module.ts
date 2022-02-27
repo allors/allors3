@@ -49,7 +49,7 @@ import {
   // Services
   CreateService,
   DisplayService,
-  EditService,
+  EditDialogService,
   FilterService,
   FormService,
   MetaService,
@@ -117,7 +117,7 @@ import {
   AllorsMaterialErrorService,
   AllorsMaterialSideNavSubjectService,
   AllorsMaterialCreateService,
-  AllorsMaterialEditService,
+  AllorsMaterialEditDialogService,
   SorterService,
   IconService,
   HyperlinkService,
@@ -473,8 +473,14 @@ import { AppActionService } from './services/action.service';
       useClass: AllorsMaterialCreateService,
     },
     { provide: CreateService, useExisting: AllorsMaterialCreateService },
-    { provide: AllorsMaterialEditService, useClass: AllorsMaterialEditService },
-    { provide: EditService, useExisting: AllorsMaterialEditService },
+    {
+      provide: AllorsMaterialEditDialogService,
+      useClass: AllorsMaterialEditDialogService,
+    },
+    {
+      provide: EditDialogService,
+      useExisting: AllorsMaterialEditDialogService,
+    },
     PrintService,
     { provide: PrintConfig, useValue: { url: environment.baseUrl } },
 

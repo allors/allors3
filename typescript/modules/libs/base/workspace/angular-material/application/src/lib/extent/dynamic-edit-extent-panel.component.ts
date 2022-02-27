@@ -12,8 +12,6 @@ import {
   Pull,
   Initializer,
   Node,
-  isPath,
-  toNode,
   SharedPullHandler,
   selectLeaf,
   toSelect,
@@ -36,11 +34,11 @@ import {
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
-import { DeleteService } from '../actions/delete/delete.service';
-import { EditRoleService } from '../actions/edit-role/edit-role.service';
+import { DeleteActionService } from '../actions/delete/delete-action.service';
 import { IconService } from '../icon/icon.service';
 import { M } from '@allors/default/workspace/meta';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
+import { ViewActionService } from '../actions/view/view-action.service';
 
 interface Row extends TableRow {
   object: IObject;
@@ -78,7 +76,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
   table: Table<Row>;
   delete: Action;
-  edit: Action;
+  view: Action;
 
   objects: IObject[];
   filtered: IObject[];
@@ -94,8 +92,8 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
     metaService: MetaService,
     workspaceService: WorkspaceService,
     public navigation: NavigationService,
-    public deleteService: DeleteService,
-    public editRoleService: EditRoleService,
+    public deleteService: DeleteActionService,
+    public viewService: ViewActionService,
     private iconService: IconService,
     private displayService: DisplayService
   ) {
@@ -123,7 +121,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
     }
 
     this.delete = this.deleteService.delete();
-    this.edit = this.editRoleService.edit();
+    this.view = this.viewService.view();
 
     const sort = true;
 
@@ -136,8 +134,8 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
             return { name: v.name, sort };
           })
         ),
-      actions: [this.edit, this.delete],
-      defaultAction: this.edit,
+      actions: [this.view, this.delete],
+      defaultAction: this.view,
       autoSort: true,
       autoFilter: true,
     };
@@ -261,7 +259,9 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
       if (this.display.length === 0) {
         const display = this.displayService.name(v.strategy.cls);
-        row['name'] = v.strategy.getUnitRole(display);
+        if (display != null) {
+          row['name'] = v.strategy.getUnitRole(display);
+        }
       }
 
       if (this.include) {

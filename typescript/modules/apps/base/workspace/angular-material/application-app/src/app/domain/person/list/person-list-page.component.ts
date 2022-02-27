@@ -23,8 +23,8 @@ import {
   NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
-  DeleteService,
-  OverviewService,
+  DeleteActionService,
+  OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 
@@ -55,8 +55,8 @@ export class PersonListPageComponent
     titleService: Title,
     public createService: CreateService,
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
-    public deleteService: DeleteService,
+    public overviewService: OverviewActionService,
+    public deleteService: DeleteActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,

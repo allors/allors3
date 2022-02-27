@@ -19,8 +19,8 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  DeleteService,
-  EditRoleService,
+  DeleteActionService,
+  EditActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -58,8 +58,8 @@ export class CommunicationEventListPageComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
 
     public refreshService: RefreshService,
-    public deleteService: DeleteService,
-    public editRoleService: EditRoleService,
+    public deleteService: DeleteActionService,
+    public editRoleService: EditActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,

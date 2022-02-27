@@ -20,9 +20,9 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  DeleteService,
-  MethodService,
-  OverviewService,
+  DeleteActionService,
+  MethodActionService,
+  OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -59,10 +59,10 @@ export class ShipmentListPageComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
 
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
+    public overviewService: OverviewActionService,
     public printService: PrintService,
-    public methodService: MethodService,
-    public deleteService: DeleteService,
+    public methodService: MethodActionService,
+    public deleteService: DeleteActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     private internalOrganisationId: InternalOrganisationId,

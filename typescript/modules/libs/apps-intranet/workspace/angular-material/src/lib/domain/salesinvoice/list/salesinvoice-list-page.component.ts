@@ -30,9 +30,9 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  DeleteService,
-  MethodService,
-  OverviewService,
+  DeleteActionService,
+  MethodActionService,
+  OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -87,10 +87,10 @@ export class SalesInvoiceListPageComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public methodService: MethodService,
+    public methodService: MethodActionService,
     public printService: PrintService,
-    public overviewService: OverviewService,
-    public deleteService: DeleteService,
+    public overviewService: OverviewActionService,
+    public deleteService: DeleteActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public refreshService: RefreshService,

@@ -23,7 +23,21 @@ export class OverviewAction implements Action {
   description = (target: ActionTarget) =>
     `Go to ${objectTypeName(target)} overview`;
 
-  disabled = () => false;
+  disabled = (target: ActionTarget) => {
+    if (Array.isArray(target)) {
+      if (target.length > 0) {
+        for (const item of target) {
+          if (this.navigation.hasOverview(item)) {
+            return false;
+          }
+        }
+      }
+    } else if (target) {
+      return !this.navigation.hasOverview(target);
+    }
+
+    return true;
+  };
 
   execute = (target: ActionTarget) => {
     if (Array.isArray(target)) {

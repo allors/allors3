@@ -25,9 +25,9 @@ import {
   NavigationService,
 } from '@allors/base/workspace/angular/application';
 import {
-  DeleteService,
-  MethodService,
-  OverviewService,
+  DeleteActionService,
+  MethodActionService,
+  OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 
@@ -61,9 +61,9 @@ export class OrganisationListPageComponent
     titleService: Title,
     public createService: CreateService,
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
-    public deleteService: DeleteService,
-    public methodService: MethodService,
+    public overviewService: OverviewActionService,
+    public deleteService: DeleteActionService,
+    public methodService: MethodActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,

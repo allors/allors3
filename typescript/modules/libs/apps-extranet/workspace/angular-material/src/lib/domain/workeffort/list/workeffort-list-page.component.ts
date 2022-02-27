@@ -7,8 +7,8 @@ import { switchMap, scan } from 'rxjs/operators';
 import { formatDistance } from 'date-fns';
 
 import {
-  DeleteService,
-  OverviewService,
+  DeleteActionService,
+  OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
@@ -62,8 +62,8 @@ export class WorkEffortListPageComponent
     @Self() allors: ContextService,
     titleService: Title,
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
-    public deleteService: DeleteService,
+    public overviewService: OverviewActionService,
+    public deleteService: DeleteActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,

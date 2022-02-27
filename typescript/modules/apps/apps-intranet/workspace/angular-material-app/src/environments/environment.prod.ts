@@ -5,7 +5,7 @@ import { config } from '../app/app.config';
 import { ErrorHandlerService } from '../app/services/error-handler.service';
 import {
   AllorsMaterialCreateService,
-  AllorsMaterialEditService,
+  AllorsMaterialEditDialogService,
 } from '@allors/base/workspace/angular-material/application';
 import { dialogs } from '../app/app.dialog';
 
@@ -17,7 +17,7 @@ export function appInitFactory(
   workspaceService: WorkspaceService,
   httpClient: HttpClient,
   createService: AllorsMaterialCreateService,
-  editService: AllorsMaterialEditService
+  editService: AllorsMaterialEditDialogService
 ) {
   return async () => {
     config(

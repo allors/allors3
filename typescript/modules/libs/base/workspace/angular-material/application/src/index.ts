@@ -1,12 +1,14 @@
-export * from './lib/actions/delete/delete.service';
+export * from './lib/actions/delete/delete-action.service';
 export * from './lib/actions/delete/delete-action';
-export * from './lib/actions/edit-role/edit-role.service';
-export * from './lib/actions/edit-role/edit-role-action';
-export * from './lib/actions/method/method.service';
+export * from './lib/actions/edit/edit-action.service';
+export * from './lib/actions/edit/edit-action';
+export * from './lib/actions/method/method-action.service';
 export * from './lib/actions/method/method-action';
 export * from './lib/actions/method/method-config';
-export * from './lib/actions/overview/overview.service';
+export * from './lib/actions/overview/overview-action.service';
 export * from './lib/actions/overview/overview-action';
+export * from './lib/actions/view/view-action.service';
+export * from './lib/actions/view/view-action';
 
 export * from './lib/barcode/barcode-entry.component';
 
@@ -15,7 +17,7 @@ export * from './lib/create/create.service';
 export * from './lib/detail/dynamic-edit-detail-panel.component';
 export * from './lib/detail/dynamic-view-detail-panel.component';
 
-export * from './lib/edit/edit.service';
+export * from './lib/edit/edit-dialog.service';
 
 export * from './lib/error/error-dialog.component';
 export * from './lib/error/error.service';

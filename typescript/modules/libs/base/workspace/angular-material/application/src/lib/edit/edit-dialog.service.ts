@@ -5,11 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { IObject } from '@allors/system/workspace/domain';
 import {
   EditRequest,
-  EditService,
+  EditDialogService,
 } from '@allors/base/workspace/angular/foundation';
 
 @Injectable()
-export class AllorsMaterialEditService extends EditService {
+export class AllorsMaterialEditDialogService extends EditDialogService {
   editControlByObjectTypeTag: { [id: string]: any };
 
   constructor(public dialog: MatDialog) {

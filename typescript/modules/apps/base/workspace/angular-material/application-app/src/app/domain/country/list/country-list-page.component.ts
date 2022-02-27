@@ -5,9 +5,9 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
 import {
-  DeleteService,
-  EditRoleService,
-  OverviewService,
+  DeleteActionService,
+  EditActionService,
+  OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
@@ -58,9 +58,9 @@ export class CountryListPageComponent
     @Self() allors: ContextService,
     titleService: Title,
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
-    public editRoleService: EditRoleService,
-    public deleteService: DeleteService,
+    public overviewService: OverviewActionService,
+    public editRoleService: EditActionService,
+    public deleteService: DeleteActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,

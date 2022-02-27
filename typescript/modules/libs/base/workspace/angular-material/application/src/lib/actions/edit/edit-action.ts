@@ -5,18 +5,18 @@ import {
   Action,
   ActionTarget,
   EditRequest,
-  EditService,
+  EditDialogService,
   RefreshService,
 } from '@allors/base/workspace/angular/foundation';
 
-export class EditRoleAction implements Action {
+export class EditAction implements Action {
   name = 'edit';
   result = new Subject<boolean>();
   displayName = () => 'Edit';
   description = () => 'Edit';
 
   constructor(
-    private editService: EditService,
+    private editDialogService: EditDialogService,
     private refreshService: RefreshService,
     private roleType?: RoleType
   ) {}
@@ -33,7 +33,7 @@ export class EditRoleAction implements Action {
 
   disabled(target: ActionTarget) {
     const editObject = this.resolve(target);
-    return !this.editService.canEdit(editObject);
+    return !this.editDialogService.canEdit(editObject);
   }
 
   execute(target: ActionTarget) {
@@ -45,7 +45,7 @@ export class EditRoleAction implements Action {
       objectType: resolved.strategy.cls,
     };
 
-    this.editService.edit(request).subscribe(() => {
+    this.editDialogService.edit(request).subscribe(() => {
       this.refreshService.refresh();
       this.result.next(true);
     });

@@ -23,7 +23,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  EditRoleService,
+  EditActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -54,7 +54,7 @@ export class TaskAssignmentListPageComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     public workspaceService: WorkspaceService,
     public refreshService: RefreshService,
-    public editRoleService: EditRoleService,
+    public editRoleService: EditActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,

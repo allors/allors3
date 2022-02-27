@@ -31,8 +31,8 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  DeleteService,
-  OverviewService,
+  DeleteActionService,
+  OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
@@ -80,8 +80,8 @@ export class NonUnifiedPartListPageComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     public refreshService: RefreshService,
-    public overviewService: OverviewService,
-    public deleteService: DeleteService,
+    public overviewService: OverviewActionService,
+    public deleteService: DeleteActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public printService: PrintService,

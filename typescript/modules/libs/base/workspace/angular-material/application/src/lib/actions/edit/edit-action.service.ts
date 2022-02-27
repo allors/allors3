@@ -2,22 +2,22 @@ import { Injectable } from '@angular/core';
 import { RoleType } from '@allors/system/workspace/meta';
 import {
   RefreshService,
-  EditService,
+  EditDialogService,
 } from '@allors/base/workspace/angular/foundation';
-import { EditRoleAction } from './edit-role-action';
+import { EditAction } from './edit-action';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EditRoleService {
+export class EditActionService {
   constructor(
-    private objectService: EditService,
+    private editDialogService: EditDialogService,
     private refreshService: RefreshService
   ) {}
 
   edit(roleType?: RoleType) {
-    return new EditRoleAction(
-      this.objectService,
+    return new EditAction(
+      this.editDialogService,
       this.refreshService,
       roleType
     );

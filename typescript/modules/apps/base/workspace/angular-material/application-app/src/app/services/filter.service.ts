@@ -12,6 +12,7 @@ import { Injectable } from '@angular/core';
 export class AppFilterService implements FilterService {
   m: M;
 
+  countryFilter: Filter;
   organisationFilter: Filter;
   personFilter: Filter;
 
@@ -23,6 +24,20 @@ export class AppFilterService implements FilterService {
     const { m } = this;
 
     switch (composite.tag) {
+      case tags.Country:
+        return (this.countryFilter ??= new Filter(
+          new FilterDefinition({
+            kind: 'And',
+            operands: [
+              {
+                kind: 'Like',
+                roleType: m.Country.Name,
+                parameter: 'name',
+              },
+            ],
+          })
+        ));
+
       case tags.Organisation:
         return (this.organisationFilter ??= new Filter(
           new FilterDefinition({
@@ -66,6 +81,7 @@ export class AppFilterService implements FilterService {
           })
         ));
     }
+
     return null;
   }
 }
