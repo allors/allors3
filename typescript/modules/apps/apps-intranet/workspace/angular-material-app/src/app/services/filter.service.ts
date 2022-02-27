@@ -61,6 +61,7 @@ export class AppFilterService implements FilterService {
     workspaceService: WorkspaceService,
     private internalOrganisationId: InternalOrganisationId
   ) {
+    this.filterByComposite = new Map();
     this.filterDefinitionByComposite = new Map();
 
     const m = workspaceService.workspace.configuration.metaPopulation as M;
