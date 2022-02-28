@@ -30,10 +30,12 @@ export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageCompo
   m: M;
 
   part: Part;
-  serialised: boolean;
 
   nonSerialisedInventoryItemTarget: Path;
   serialisedInventoryItemTarget: Path;
+
+  serialised: () => boolean;
+  nonSerialised: () => boolean;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -65,6 +67,12 @@ export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageCompo
       InventoryItemsWherePart: {},
       ofType: m.SerialisedInventoryItem,
     });
+
+    this.serialised = () =>
+      this.part.InventoryItemKind.UniqueId ===
+      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+
+    this.nonSerialised = () => !this.serialised();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -86,9 +94,6 @@ export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageCompo
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    const part = loaded.object<NonUnifiedPart>(prefix);
-    this.serialised =
-      part.InventoryItemKind.UniqueId ===
-      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+    this.part = loaded.object<NonUnifiedPart>(prefix);
   }
 }
