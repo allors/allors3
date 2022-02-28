@@ -37,6 +37,12 @@ export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelCompon
   protected assignedTitle: string;
 
   @Input()
+  enabler: () => boolean;
+
+  @Input()
+  enabled: boolean;
+
+  @Input()
   get select(): ExtentSelectType {
     if (this.assignedSelect) {
       return this.assignedSelect;

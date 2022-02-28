@@ -28,29 +28,29 @@
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          *ngIf="!serialised"
+          [enabler]="nonSerialised"
           [select]="nonSerialisedInventoryItemTarget"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          *ngIf="!serialised"
+          [enabler]="nonSerialised"
           [select]="nonSerialisedInventoryItemTarget"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          *ngIf="!!serialised"
+          [enabler]="serialised"
           [select]="serialisedInventoryItemTarget"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          *ngIf="!!serialised"
+          [enabler]="serialised"
           [select]="serialisedInventoryItemTarget"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          *ngIf="!!serialised"
+          [enabler]="serialised"
           [select]="m.Part.SerialisedItems"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          *ngIf="!!serialised"
+          [enabler]="serialised"
           [select]="m.Part.SerialisedItems"
         ></a-mat-dyn-edit-extent-panel>
 

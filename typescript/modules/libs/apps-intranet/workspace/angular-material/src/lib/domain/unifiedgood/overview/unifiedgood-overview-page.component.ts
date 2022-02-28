@@ -29,11 +29,13 @@ import { M } from '@allors/default/workspace/meta';
 export class UnifiedGoodOverviewPageComponent extends AllorsOverviewPageComponent {
   m: M;
 
-  good: Good;
-  serialised: boolean;
+  good: UnifiedGood;
 
   nonSerialisedInventoryItemTarget: Path;
   serialisedInventoryItemTarget: Path;
+
+  serialised: () => boolean;
+  nonSerialised: () => boolean;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -65,6 +67,12 @@ export class UnifiedGoodOverviewPageComponent extends AllorsOverviewPageComponen
       InventoryItemsWherePart: {},
       ofType: m.SerialisedInventoryItem,
     });
+
+    this.serialised = () =>
+      this.good.InventoryItemKind.UniqueId ===
+      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+
+    this.nonSerialised = () => !this.serialised();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -86,9 +94,6 @@ export class UnifiedGoodOverviewPageComponent extends AllorsOverviewPageComponen
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    const unifiedGood = loaded.object<UnifiedGood>(prefix);
-    this.serialised =
-      unifiedGood.InventoryItemKind.UniqueId ===
-      '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+    this.good = loaded.object<UnifiedGood>(prefix);
   }
 }

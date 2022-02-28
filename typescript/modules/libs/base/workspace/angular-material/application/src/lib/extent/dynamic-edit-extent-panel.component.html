@@ -1,4 +1,8 @@
-<div *ngIf="panelEnabled" class="mat-elevation-z2" style="background: white">
+<div
+  *ngIf="panelEnabled && enabled"
+  class="mat-elevation-z2"
+  style="background: white"
+>
   <div (click)="toggle()" class="container-fluid" style="cursor: pointer">
     <div class="row pt-3">
       <div class="col pl-3">

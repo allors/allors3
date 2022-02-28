@@ -199,6 +199,8 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
+    this.enabled = this.enabler ? this.enabler() : true;
+
     this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
     this.refreshTable();

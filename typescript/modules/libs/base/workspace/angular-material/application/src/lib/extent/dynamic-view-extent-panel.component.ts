@@ -133,6 +133,8 @@ export class AllorsMaterialDynamicViewExtentPanelComponent
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
+    this.enabled = this.enabler ? this.enabler() : true;
+
     this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
 
