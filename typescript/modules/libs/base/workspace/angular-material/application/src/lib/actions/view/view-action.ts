@@ -33,7 +33,7 @@ export class ViewAction implements Action {
     this.editAction.disabled(target) && this.overviewAction.disabled(target);
 
   execute = (target: ActionTarget) => {
-    if (!this.editAction.disabled) {
+    if (!this.editAction.disabled(target)) {
       return this.editAction.execute(target);
     }
 

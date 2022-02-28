@@ -11,6 +11,7 @@
   </div>
 
   <a-mat-factory-fab
+    *ngIf="init"
     [objectType]="factory ?? objectType"
     [intitializer]="initializer"
     (created)="this.refreshService.refresh()"

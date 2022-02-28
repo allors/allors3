@@ -1,5 +1,5 @@
 import { Path } from '@allors/system/workspace/domain';
-import { MetaPopulation } from '@allors/system/workspace/meta';
+import { Composite, MetaPopulation } from '@allors/system/workspace/meta';
 
 export class LazyPathBuilder {
   constructor(metaPopulation: MetaPopulation) {
@@ -19,9 +19,10 @@ export class LazyPathBuilder {
           propertyType,
         };
 
-        const ofType = this['ofType'];
-        if (ofType) {
-          path.ofType = ofType;
+        const ofTypeEntry = Object.entries(obj).find(([k]) => k === 'ofType');
+        if (ofTypeEntry) {
+          const [, ofType] = ofTypeEntry;
+          path.ofType = ofType as Composite;
         }
 
         const next = builder(value);
