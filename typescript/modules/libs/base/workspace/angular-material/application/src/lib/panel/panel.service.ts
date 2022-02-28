@@ -1,6 +1,9 @@
 import { Observable, of, tap } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { EditBlocking } from '@allors/base/workspace/angular/foundation';
+import {
+  EditBlocking,
+  RefreshService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   Panel,
   PanelService,
@@ -11,6 +14,10 @@ export class AllorsMaterialPanelService implements PanelService {
   panels: Set<Panel>;
 
   private activeEditPanel: Panel;
+
+  constructor(private refreshService: RefreshService) {
+    this.panels = new Set();
+  }
 
   register(panel: Panel): void {
     this.panels.add(panel);
@@ -60,10 +67,6 @@ export class AllorsMaterialPanelService implements PanelService {
     }
   }
 
-  constructor() {
-    this.panels = new Set();
-  }
-
   private enable(panelId: string) {
     for (const panel of this.panels) {
       if (panel.panelMode === 'View') {
@@ -77,6 +80,8 @@ export class AllorsMaterialPanelService implements PanelService {
         panel.panelEnabled = isActivePanel ? true : false;
       }
     }
+
+    this.refreshService.refresh();
   }
 
   private disable() {
@@ -85,5 +90,7 @@ export class AllorsMaterialPanelService implements PanelService {
     }
 
     this.activeEditPanel = null;
+
+    this.refreshService.refresh();
   }
 }

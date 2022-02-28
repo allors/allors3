@@ -153,47 +153,49 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
-    const id = this.scoped.id;
+    if (this.panelEnabled) {
+      const id = this.scoped.id;
 
-    const displayInclude: Node[] = this.display
-      ?.filter((v) => v.objectType.isComposite)
-      .map((v) => {
+      const displayInclude: Node[] = this.display
+        ?.filter((v) => v.objectType.isComposite)
+        .map((v) => {
+          return {
+            propertyType: v,
+          };
+        });
+
+      const include = displayInclude ? [...displayInclude] : [];
+
+      if (this.includeDisplay?.length > 0) {
+        include.concat({
+          propertyType: this.include,
+          nodes: this.includeDisplay
+            .filter((v) => v.objectType.isComposite)
+            .map((v) => {
+              return {
+                propertyType: v,
+              };
+            }),
+        });
+      }
+
+      const results = this.selectAsPaths.map((v) => {
+        const select = toSelect(v);
+        const leaf = selectLeaf(select);
+        leaf.include = include;
         return {
-          propertyType: v,
+          name: prefix,
+          select,
         };
       });
 
-    const include = displayInclude ? [...displayInclude] : [];
-
-    if (this.includeDisplay?.length > 0) {
-      include.concat({
-        propertyType: this.include,
-        nodes: this.includeDisplay
-          .filter((v) => v.objectType.isComposite)
-          .map((v) => {
-            return {
-              propertyType: v,
-            };
-          }),
-      });
-    }
-
-    const results = this.selectAsPaths.map((v) => {
-      const select = toSelect(v);
-      const leaf = selectLeaf(select);
-      leaf.include = include;
-      return {
-        name: prefix,
-        select,
+      const pull: Pull = {
+        objectId: id,
+        results,
       };
-    });
 
-    const pull: Pull = {
-      objectId: id,
-      results,
-    };
-
-    pulls.push(pull);
+      pulls.push(pull);
+    }
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
