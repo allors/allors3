@@ -24,7 +24,7 @@ import {
   SalesOrder,
   WorkEffort,
 } from '@allors/default/workspace/domain';
-
+import { PrintService } from '../../../actions/print/print.service';
 @Component({
   selector: 'salesinvoice-summary-panel',
   templateUrl: './salesinvoice-summary-panel.component.html',
@@ -51,6 +51,7 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
+    printService: PrintService,
     private snackBar: MatSnackBar,
     private invokeService: InvokeService,
     private errorService: ErrorService,
@@ -58,6 +59,7 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.print = printService.print();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

@@ -21,6 +21,7 @@ import {
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
+import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   selector: 'worktask-summary-panel',
@@ -40,10 +41,12 @@ export class WorkTaskSummaryPanel extends AllorsViewSummaryPanelComponent {
     panelService: PanelService,
     sharedPullService: SharedPullService,
     private workspaceService: WorkspaceService,
+    printService: PrintService,
     refreshService: RefreshService,
     public navigation: NavigationService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
+    this.print = printService.print();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
