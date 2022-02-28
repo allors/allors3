@@ -57,15 +57,13 @@ export class UnifiedGoodOverviewPageComponent extends AllorsOverviewPageComponen
     const { pathBuilder: p } = this.m;
 
     this.nonSerialisedInventoryItemTarget = p.NonUnifiedPart({
-      InventoryItemsWherePart: {
-        ofType: m.NonSerialisedInventoryItem,
-      },
+      InventoryItemsWherePart: {},
+      ofType: m.NonSerialisedInventoryItem,
     });
 
     this.serialisedInventoryItemTarget = p.NonUnifiedPart({
-      InventoryItemsWherePart: {
-        ofType: m.SerialisedInventoryItem,
-      },
+      InventoryItemsWherePart: {},
+      ofType: m.SerialisedInventoryItem,
     });
   }
 
