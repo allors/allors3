@@ -237,7 +237,6 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    this.object = pullResult.object<ShipmentItem>(this.m.ShipmentItem);
     this.shipment =
       pullResult.object<Shipment>(this.m.Shipment) ||
       this.object.SyncedShipment;
