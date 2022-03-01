@@ -91,7 +91,7 @@ export class UserProfileFormComponent extends AllorsFormComponent<UserProfile> {
       this.m.Organisation
     );
 
-    const singleton = pullResult.object<Singleton>(this.m.Singleton);
+    const singleton = pullResult.collection<Singleton>(this.m.Singleton)[0];
     this.supportedLocales = singleton.Locales;
   }
 }
