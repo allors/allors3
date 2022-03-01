@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { M } from '@allors/default/workspace/meta';
@@ -20,7 +20,7 @@ import {
   selector: 'taskassignment-link',
   templateUrl: './taskassignment-link.component.html',
 })
-export class TaskAssignmentLinkComponent implements SharedPullHandler {
+export class TaskAssignmentLinkComponent implements SharedPullHandler, OnInit {
   tasks: Task[];
 
   private subscription: Subscription;
@@ -50,6 +50,10 @@ export class TaskAssignmentLinkComponent implements SharedPullHandler {
   ) {
     this.m = this.workspaceService.metaPopulation as M;
     this.sharedPullService.register(this);
+  }
+
+  ngOnInit(): void {
+    this.refreshService.refresh();
   }
 
   onPreSharedPull(pulls: Pull[], prefix: string): void {

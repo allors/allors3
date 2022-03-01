@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Notification, Person } from '@allors/default/workspace/domain';
 import {
@@ -19,7 +19,7 @@ import {
   selector: 'notification-link',
   templateUrl: './notification-link.component.html',
 })
-export class NotificationLinkComponent implements SharedPullHandler {
+export class NotificationLinkComponent implements SharedPullHandler, OnInit {
   m: M;
 
   notifications: Notification[];
@@ -48,6 +48,10 @@ export class NotificationLinkComponent implements SharedPullHandler {
   ) {
     this.m = this.workspaceService.metaPopulation as M;
     this.sharedPullService.register(this);
+  }
+
+  ngOnInit(): void {
+    this.refreshService.refresh();
   }
 
   onPreSharedPull(pulls: Pull[], prefix: string): void {
