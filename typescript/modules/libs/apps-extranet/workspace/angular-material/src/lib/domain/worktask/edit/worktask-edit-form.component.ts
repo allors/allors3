@@ -1,24 +1,13 @@
 import { Component, Self } from '@angular/core';
 
 import {
-  Person,
-  ContactMechanism,
-  WorkTask,
-} from '@allors/default/workspace/domain';
-import {
   ErrorService,
   AllorsFormComponent,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import {
-  IObject,
-  IPullResult,
-  Node,
-  Pull,
-} from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { NgForm } from '@angular/forms';
-import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'worktask-edit-form',
