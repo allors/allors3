@@ -24,8 +24,7 @@ import {
   SalesOrder,
   WorkEffort,
 } from '@allors/default/workspace/domain';
-import { PrintService } from '@allors/apps-intranet/workspace/angular-material';
-
+import { PrintService } from '../../../actions/print/print.service';
 @Component({
   selector: 'salesinvoice-summary-panel',
   templateUrl: './salesinvoice-summary-panel.component.html',
@@ -60,7 +59,6 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
-
     this.print = printService.print();
   }
 

@@ -22,6 +22,7 @@ import {
   PurchaseInvoice,
   PurchaseOrder,
 } from '@allors/default/workspace/domain';
+import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
   selector: 'purchaseinvoice-summary-panel',
@@ -46,6 +47,7 @@ export class PurchasInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelC
     refreshService: RefreshService,
     sharedPullService: SharedPullService,
     workspaceService: WorkspaceService,
+    printService: PrintService,
     private snackBar: MatSnackBar,
     private invokeService: InvokeService,
     private errorService: ErrorService,
@@ -53,6 +55,7 @@ export class PurchasInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelC
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.print = printService.print();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
