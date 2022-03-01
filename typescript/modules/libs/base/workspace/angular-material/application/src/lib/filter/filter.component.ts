@@ -21,7 +21,7 @@ export class AllorsMaterialFilterComponent extends AllorsComponent {
   }
 
   get hasFields() {
-    return this.filter.fields.length > 0;
+    return this.filter?.fields?.length > 0 ?? false;
   }
 
   clear() {
