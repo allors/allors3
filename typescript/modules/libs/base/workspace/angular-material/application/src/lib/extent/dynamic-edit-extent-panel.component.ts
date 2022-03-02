@@ -316,7 +316,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
       }
       if (this.hasPeriod) {
         const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
-        row['from'] = format(fromDate, 'dd-MM-yyyy');
+        row['from'] = fromDate != null ? format(fromDate, 'dd-MM-yyyy') : '';
         const throughDate = v.strategy.getUnitRole(
           this.m.Period.ThroughDate
         ) as Date;
