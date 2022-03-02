@@ -26,10 +26,4 @@
   ></a-mat-factory-fab>
 
   <a-mat-table [table]="table"></a-mat-table>
-
-  <a-mat-period-selection-toggle
-    *ngIf="hasPeriod"
-    [periodSelection]="periodSelection"
-    (periodSelectionChange)="this.onPeriodSelectionChange($event)"
-  ></a-mat-period-selection-toggle>
 </div>

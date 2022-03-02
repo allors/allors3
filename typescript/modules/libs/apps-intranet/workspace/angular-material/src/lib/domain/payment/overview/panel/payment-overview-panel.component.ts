@@ -1,11 +1,6 @@
 import { format } from 'date-fns';
 import { Component, HostBinding, OnInit } from '@angular/core';
-import {
-  AssociationType,
-  Composite,
-  humanize,
-  RoleType,
-} from '@allors/system/workspace/meta';
+import { Composite, RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
@@ -13,23 +8,24 @@ import {
   Initializer,
   SharedPullHandler,
 } from '@allors/system/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 import {
-  Action,
-  SharedPullService,
-  RefreshService,
-  WorkspaceService,
-  DisplayService,
-  TableRow,
-  Table,
-  TableConfig,
-  MetaService,
-} from '@allors/base/workspace/angular/foundation';
-import {
-  NavigationService,
   AllorsEditExtentPanelComponent,
+  NavigationService,
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
+import {
+  Action,
+  DisplayService,
+  MetaService,
+  RefreshService,
+  SharedPullService,
+  Table,
+  TableConfig,
+  TableRow,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
 import {
   DeleteActionService,
@@ -39,14 +35,12 @@ import {
 import {
   Invoice,
   Payment,
-  Period,
   PurchaseInvoice,
   SalesInvoice,
 } from '@allors/default/workspace/domain';
-import { M } from '@allors/default/workspace/meta';
 
 interface Row extends TableRow {
-  object: Payment;
+  object: IObject;
   date: string;
   amount: string;
 }
@@ -86,8 +80,7 @@ export class PaymentOverviewPanelComponent
   delete: Action;
   view: Action;
 
-  objects: IObject[];
-  filtered: IObject[];
+  objects: Payment[];
 
   display: RoleType[];
   includeDisplay: RoleType[];
@@ -210,129 +203,21 @@ export class PaymentOverviewPanelComponent
         '0187d927-81f5-4d6a-9847-58b674ad3e6a';
     }
 
-    this.objects = pullResult.collection<IObject>(prefix) ?? [];
-    this.updateFilter();
-    this.refreshTable();
-  }
+    this.objects = pullResult.collection<Payment>(prefix) ?? [];
 
-  onPeriodSelectionChange(newPeriodSelection: PeriodSelection) {
-    this.periodSelection = newPeriodSelection;
-
-    if (this.objects != null) {
-      this.updateFilter();
-      this.refreshTable();
-    }
+    this.table.total = this.objects.length;
+    this.table.data = this.objects.map((v) => {
+      const row: Row = {
+        object: v,
+        date:
+          v.EffectiveDate != null ? format(v.EffectiveDate, 'dd-MM-yyyy') : '',
+        amount: v.Amount,
+      };
+      return row;
+    });
   }
 
   toggle() {
     this.panelService.stopEdit().subscribe();
-  }
-
-  private updateFilter() {
-    if (!this.hasPeriod) {
-      this.filtered = this.objects;
-      return;
-    }
-
-    const now = new Date(Date.now());
-    switch (this.periodSelection) {
-      case PeriodSelection.Current:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate < now && v.ThroughDate > now;
-          } else {
-            return v.FromDate < now;
-          }
-        });
-        break;
-      case PeriodSelection.Inactive:
-        this.filtered = this.objects.filter((v: Period) => {
-          if (v.ThroughDate) {
-            return v.FromDate > now || v.ThroughDate < now;
-          } else {
-            return v.FromDate > now;
-          }
-        });
-        break;
-      default:
-        this.filtered = this.objects;
-        break;
-    }
-  }
-
-  private refreshTable() {
-    this.table.total = this.filtered.length;
-    this.table.data = this.filtered.map((v) => {
-      const row: TableRow = {
-        object: v,
-      };
-      if (this.objectType.isInterface) {
-        row['type'] = humanize(v.strategy.cls.singularName);
-      }
-
-      if (this.display.length === 0) {
-        const display = this.displayService.name(v.strategy.cls);
-        if (display != null) {
-          row['name'] = v.strategy.getUnitRole(display);
-        }
-      }
-
-      if (this.include) {
-        const include = this.include.isRoleType
-          ? v.strategy.getCompositeRole(this.include as RoleType)
-          : v.strategy.getCompositeAssociation(this.include as AssociationType);
-        for (const w of this.includeDisplay) {
-          if (w.objectType.isUnit) {
-            row[w.name] = include.strategy.getUnitRole(w);
-          } else {
-            const role = include.strategy.getCompositeRole(w);
-            if (role) {
-              const roleName = this.displayService.name(role.strategy.cls);
-              row[w.name] = role.strategy.getUnitRole(roleName);
-            } else {
-              row[w.name] = '';
-            }
-          }
-        }
-      }
-
-      for (const w of this.display) {
-        if (w.objectType.isUnit) {
-          row[w.name] = v.strategy.getUnitRole(w);
-        } else {
-          if (w.isOne) {
-            const composite = v.strategy.getCompositeRole(w);
-            if (composite) {
-              const roleName = this.displayService.name(composite.strategy.cls);
-              row[w.name] = composite.strategy.getUnitRole(roleName);
-            } else {
-              row[w.name] = '';
-            }
-          } else {
-            const composites = v.strategy.getCompositesRole(w);
-            if (composites.length > 0) {
-              row[w.name] = composites
-                .map((v) => {
-                  const display = this.displayService.name(v.strategy.cls);
-                  return v.strategy.getUnitRole(display);
-                })
-                .join(', ');
-            } else {
-              row[w.name] = '';
-            }
-          }
-        }
-      }
-      if (this.hasPeriod) {
-        const fromDate = v.strategy.getUnitRole(this.m.Period.FromDate) as Date;
-        row['from'] = format(fromDate, 'dd-MM-yyyy');
-        const throughDate = v.strategy.getUnitRole(
-          this.m.Period.ThroughDate
-        ) as Date;
-        row['through'] =
-          throughDate != null ? format(throughDate, 'dd-MM-yyyy') : '';
-      }
-      return row;
-    });
   }
 }
