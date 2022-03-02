@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("0bdfb093-35af-4c87-9c1c-05ed9dae6df6")]
     #endregion
-    public partial class WorkEffortPartyAssignment : Commentable, Deletable, DelegatedAccessObject
+    public partial class WorkEffortPartyAssignment : Commentable, Deletable, DelegatedAccessObject, Period
     {
         #region inherited properties
 
@@ -25,21 +25,11 @@ namespace Allors.Repository
 
         public LocalisedText[] LocalisedComments { get; set; }
 
-        #endregion
-
-        #region Allors
-        [Id("3F3D9387-0758-4559-B33F-0C7B352B171C")]
-        #endregion
-        [Indexed]
-        [Workspace(Default)]
         public DateTime FromDate { get; set; }
 
-        #region Allors
-        [Id("2A49EA68-DB8F-4186-9D7E-FE2CC1AFD6F5")]
-        #endregion
-        [Indexed]
-        [Workspace(Default)]
         public DateTime ThroughDate { get; set; }
+
+        #endregion
 
         #region Allors
         [Id("2723be72-6775-4f39-9bf6-e95abc2c0b24")]
