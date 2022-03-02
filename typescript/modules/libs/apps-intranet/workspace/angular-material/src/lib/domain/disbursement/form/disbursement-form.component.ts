@@ -50,7 +50,6 @@ export class DisbursementFormComponent extends AllorsFormComponent<Disbursement>
 
     this.onPrePullInitialize(pulls);
   }
-
   onPostPull(pullResult: IPullResult) {
     this.object = this.editRequest
       ? pullResult.object('_object')
@@ -61,6 +60,7 @@ export class DisbursementFormComponent extends AllorsFormComponent<Disbursement>
         this.m.PaymentApplication
       );
 
+      this.paymentApplication.Invoice = this.object;
       this.object.addPaymentApplication(this.paymentApplication);
     } else {
       this.paymentApplication = this.object.PaymentApplications[0];

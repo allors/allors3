@@ -63,6 +63,7 @@ export class ReceiptFormComponent extends AllorsFormComponent<Receipt> {
         this.m.PaymentApplication
       );
 
+      this.paymentApplication.Invoice = this.object;
       this.object.addPaymentApplication(this.paymentApplication);
     } else {
       this.paymentApplication = this.object.PaymentApplications[0];
