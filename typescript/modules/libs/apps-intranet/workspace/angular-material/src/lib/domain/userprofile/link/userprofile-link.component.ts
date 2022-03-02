@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Person } from '@allors/default/workspace/domain';
 import {
@@ -20,7 +20,7 @@ import { EditActionService } from '@allors/base/workspace/angular-material/appli
   selector: 'userprofile-link',
   templateUrl: './userprofile-link.component.html',
 })
-export class UserProfileLinkComponent implements SharedPullHandler {
+export class UserProfileLinkComponent implements SharedPullHandler, OnInit {
   edit: Action;
   user: Person;
   m: M;
@@ -36,6 +36,10 @@ export class UserProfileLinkComponent implements SharedPullHandler {
 
     this.m = this.workspaceService.metaPopulation as M;
     this.sharedPullService.register(this);
+  }
+
+  ngOnInit(): void {
+    this.refreshService.refresh();
   }
 
   onPreSharedPull(pulls: Pull[], prefix: string): void {
