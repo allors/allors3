@@ -56,11 +56,13 @@ export class DisbursementFormComponent extends AllorsFormComponent<Disbursement>
       : this.context.create(this.createRequest.objectType);
 
     if (this.createRequest) {
+      this.invoice = pullResult.object('_initializer');
+
       this.paymentApplication = this.allors.context.create<PaymentApplication>(
         this.m.PaymentApplication
       );
 
-      this.paymentApplication.Invoice = this.object;
+      this.paymentApplication.Invoice = this.invoice;
       this.object.addPaymentApplication(this.paymentApplication);
     } else {
       this.paymentApplication = this.object.PaymentApplications[0];
