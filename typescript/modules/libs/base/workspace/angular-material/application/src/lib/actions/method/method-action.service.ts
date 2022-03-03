@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Context } from '@allors/base/workspace/angular/foundation';
+import {
+  Context,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import { MethodType } from '@allors/system/workspace/meta';
 import {
   Action,
@@ -15,20 +18,17 @@ import { MethodConfig } from './method-config';
 })
 export class MethodActionService {
   constructor(
+    private workspaceService: WorkspaceService,
     private refreshService: RefreshService,
     private errorService: ErrorService,
     private snackBar: MatSnackBar
   ) {}
 
-  create(
-    context: Context,
-    methodType: MethodType,
-    config?: MethodConfig
-  ): Action {
+  create(methodType: MethodType, config?: MethodConfig): Action {
     return new MethodAction(
+      this.workspaceService,
       this.refreshService,
       this.snackBar,
-      context,
       this.errorService,
       methodType,
       config

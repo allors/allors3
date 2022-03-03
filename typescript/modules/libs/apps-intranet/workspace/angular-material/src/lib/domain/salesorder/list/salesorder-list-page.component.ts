@@ -96,14 +96,12 @@ export class SalesOrderListPageComponent implements OnInit, OnDestroy {
     });
 
     this.print = printService.print();
-    this.ship = methodService.create(allors.context, this.m.SalesOrder.Ship, {
+    this.ship = methodService.create(this.m.SalesOrder.Ship, {
       name: 'Ship',
     });
-    this.invoice = methodService.create(
-      allors.context,
-      this.m.SalesOrder.Invoice,
-      { name: 'Invoice' }
-    );
+    this.invoice = methodService.create(this.m.SalesOrder.Invoice, {
+      name: 'Invoice',
+    });
 
     this.table = new Table({
       selection: true,

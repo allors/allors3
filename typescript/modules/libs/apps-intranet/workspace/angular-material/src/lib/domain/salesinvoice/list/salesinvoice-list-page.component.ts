@@ -87,7 +87,7 @@ export class SalesInvoiceListPageComponent implements OnInit, OnDestroy {
 
   constructor(
     @Self() public allors: ContextService,
-    public methodService: MethodActionService,
+    public methodActionService: MethodActionService,
     public printService: PrintService,
     public overviewService: OverviewActionService,
     public deleteService: DeleteActionService,
@@ -109,32 +109,25 @@ export class SalesInvoiceListPageComponent implements OnInit, OnDestroy {
     const m = this.m;
 
     this.print = printService.print();
-    this.send = methodService.create(allors.context, this.m.SalesInvoice.Send, {
+    this.send = methodActionService.create(this.m.SalesInvoice.Send, {
       name: 'Send',
     });
-    this.cancel = methodService.create(
-      allors.context,
+    this.cancel = methodActionService.create(
       this.m.SalesInvoice.CancelInvoice,
       { name: 'Cancel' }
     );
-    this.writeOff = methodService.create(
-      allors.context,
-      this.m.SalesInvoice.WriteOff,
-      { name: 'WriteOff' }
-    );
-    this.copy = methodService.create(allors.context, this.m.SalesInvoice.Copy, {
+    this.writeOff = methodActionService.create(this.m.SalesInvoice.WriteOff, {
+      name: 'WriteOff',
+    });
+    this.copy = methodActionService.create(this.m.SalesInvoice.Copy, {
       name: 'Copy',
     });
-    this.credit = methodService.create(
-      allors.context,
-      this.m.SalesInvoice.Credit,
-      { name: 'Credit' }
-    );
-    this.reopen = methodService.create(
-      allors.context,
-      this.m.SalesInvoice.Reopen,
-      { name: 'Reopen' }
-    );
+    this.credit = methodActionService.create(this.m.SalesInvoice.Credit, {
+      name: 'Credit',
+    });
+    this.reopen = methodActionService.create(this.m.SalesInvoice.Reopen, {
+      name: 'Reopen',
+    });
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {

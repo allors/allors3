@@ -2,7 +2,11 @@ import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MethodType } from '@allors/system/workspace/meta';
 import { IObject } from '@allors/system/workspace/domain';
-import { Context } from '@allors/base/workspace/angular/foundation';
+import {
+  Context,
+  ContextService,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import {
   Action,
   ActionTarget,
@@ -15,9 +19,9 @@ export class MethodAction implements Action {
   name = 'method';
 
   constructor(
+    workspaceService: WorkspaceService,
     refreshService: RefreshService,
     snackBar: MatSnackBar,
-    context: Context,
     errorService: ErrorService,
     public methodType: MethodType,
     public config?: MethodConfig
@@ -27,6 +31,8 @@ export class MethodAction implements Action {
       const methods = objects
         .filter((v) => v.strategy.canExecute(methodType))
         .map((v) => (v as any)[methodType.name]);
+
+      const context = workspaceService.contextBuilder();
 
       if (methods.length > 0) {
         context.invoke(methods).subscribe(() => {
