@@ -27,6 +27,7 @@ import {
   Table,
   TableConfig,
   MetaService,
+  ActionService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
@@ -95,7 +96,8 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
     public deleteService: DeleteActionService,
     public viewService: ViewActionService,
     private iconService: IconService,
-    private displayService: DisplayService
+    private displayService: DisplayService,
+    private actionService: ActionService
   ) {
     super(
       scopedService,
@@ -125,6 +127,9 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
     const sort = true;
 
+    const objectTypeActions = this.actionService.action(this.objectType);
+    const actions = [this.view, ...objectTypeActions, this.delete];
+
     const tableConfig: TableConfig = {
       selection: true,
       columns: (this.objectType.isInterface ? [{ name: 'type', sort }] : [])
@@ -134,7 +139,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
             return { name: v.name, sort };
           })
         ),
-      actions: [this.view, this.delete],
+      actions,
       defaultAction: this.view,
       autoSort: true,
       autoFilter: true,

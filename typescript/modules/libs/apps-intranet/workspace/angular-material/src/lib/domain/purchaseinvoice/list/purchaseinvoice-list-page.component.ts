@@ -86,7 +86,7 @@ export class PurchaseInvoiceListPageComponent implements OnInit, OnDestroy {
 
     public refreshService: RefreshService,
     public navigation: NavigationService,
-    public methodService: MethodActionService,
+    public methodActionService: MethodActionService,
     public printService: PrintService,
     public deleteService: DeleteActionService,
     public overviewService: OverviewActionService,
@@ -106,26 +106,18 @@ export class PurchaseInvoiceListPageComponent implements OnInit, OnDestroy {
     this.m = this.allors.context.configuration.metaPopulation as M;
     const m = this.m;
 
-    this.approve = methodService.create(
-      allors.context,
-      this.m.PurchaseInvoice.Approve,
-      { name: 'Approve' }
-    );
-    this.reject = methodService.create(
-      allors.context,
-      this.m.PurchaseInvoice.Reject,
-      { name: 'Reject' }
-    );
-    this.cancel = methodService.create(
-      allors.context,
-      this.m.PurchaseInvoice.Cancel,
-      { name: 'Cancel' }
-    );
-    this.reopen = methodService.create(
-      allors.context,
-      this.m.PurchaseInvoice.Reopen,
-      { name: 'Reopen' }
-    );
+    this.approve = methodActionService.create(this.m.PurchaseInvoice.Approve, {
+      name: 'Approve',
+    });
+    this.reject = methodActionService.create(this.m.PurchaseInvoice.Reject, {
+      name: 'Reject',
+    });
+    this.cancel = methodActionService.create(this.m.PurchaseInvoice.Cancel, {
+      name: 'Cancel',
+    });
+    this.reopen = methodActionService.create(this.m.PurchaseInvoice.Reopen, {
+      name: 'Reopen',
+    });
     this.print = printService.print();
 
     this.delete = deleteService.delete();

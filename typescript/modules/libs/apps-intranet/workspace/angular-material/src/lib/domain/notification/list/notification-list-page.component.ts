@@ -53,7 +53,7 @@ export class NotificationListPageComponent implements OnInit, OnDestroy {
   constructor(
     @Self() public allors: ContextService,
     public refreshService: RefreshService,
-    public methodService: MethodActionService,
+    public methodActionService: MethodActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     private userId: UserId,
@@ -67,11 +67,9 @@ export class NotificationListPageComponent implements OnInit, OnDestroy {
 
     titleService.setTitle(this.title);
 
-    this.confirm = methodService.create(
-      allors.context,
-      m.Notification.Confirm,
-      { name: 'Confirm' }
-    );
+    this.confirm = methodActionService.create(m.Notification.Confirm, {
+      name: 'Confirm',
+    });
 
     this.table = new Table({
       selection: true,
