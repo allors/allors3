@@ -98,7 +98,11 @@ export class PurchasInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelC
         name: `${prefix}_purchaseOrder`,
         objectId: id,
         select: {
-          PurchaseOrders: {},
+          PurchaseOrders: {
+            include: {
+              ValidOrderItems: {},
+            },
+          },
         },
       })
     );

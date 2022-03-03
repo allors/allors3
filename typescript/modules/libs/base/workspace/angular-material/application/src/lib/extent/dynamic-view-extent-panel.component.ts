@@ -98,10 +98,10 @@ export class AllorsMaterialDynamicViewExtentPanelComponent
           };
         });
 
-      const include = displayInclude ? [...displayInclude] : [];
+      let include = displayInclude ? [...displayInclude] : [];
 
       if (this.includeDisplay?.length > 0) {
-        include.concat({
+        include = include.concat({
           propertyType: this.include,
           nodes: this.includeDisplay
             .filter((v) => v.objectType.isComposite)
