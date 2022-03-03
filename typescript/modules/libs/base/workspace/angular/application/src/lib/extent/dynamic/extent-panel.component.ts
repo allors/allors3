@@ -18,9 +18,9 @@ import {
   RefreshService,
   SharedPullService,
 } from '@allors/base/workspace/angular/foundation';
-import { AllorsScopedPanelComponent } from '../scoped/scoped-panel.component';
-import { ScopedService } from '../scoped/scoped.service';
-import { PanelService } from '../panel/panel.service';
+import { AllorsScopedPanelComponent } from '../../scoped/scoped-panel.component';
+import { ScopedService } from '../../scoped/scoped.service';
+import { PanelService } from '../../panel/panel.service';
 
 export type ExtentSelectType = PropertyType | Path | (PropertyType | Path)[];
 
@@ -29,7 +29,7 @@ export type ExtentInitType = PropertyType;
 export type ExtentIncludeType = PropertyType;
 
 @Directive()
-export abstract class AllorsExtentPanelComponent extends AllorsScopedPanelComponent {
+export abstract class AllorsDynamicExtentPanelComponent extends AllorsScopedPanelComponent {
   readonly panelKind = 'Extent';
 
   protected assignedSelect: ExtentSelectType;

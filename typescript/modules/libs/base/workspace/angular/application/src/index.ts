@@ -1,9 +1,13 @@
 export * from './lib/detail/edit-detail-panel.component';
 export * from './lib/detail/view-detail-panel.component';
 
-export * from './lib/extent/edit-extent-panel.component';
-export * from './lib/extent/extent-panel.component';
-export * from './lib/extent/view-extent-panel.component';
+export * from './lib/extent/custom/edit-extent-panel.component';
+export * from './lib/extent/custom/extent-panel.component';
+export * from './lib/extent/custom/view-extent-panel.component';
+
+export * from './lib/extent/dynamic/edit-extent-panel.component';
+export * from './lib/extent/dynamic/extent-panel.component';
+export * from './lib/extent/dynamic/view-extent-panel.component';
 
 export * from './lib/info/menu-info.service';
 export * from './lib/info/navigation-info.service';

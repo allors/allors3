@@ -20,7 +20,7 @@ import {
 import {
   PanelService,
   ScopedService,
-  AllorsViewExtentPanelComponent,
+  AllorsDynamicViewExtentPanelComponent,
 } from '@allors/base/workspace/angular/application';
 import { M } from '@allors/default/workspace/meta';
 import { PeriodSelection } from '@allors/base/workspace/angular-material/foundation';
@@ -30,7 +30,7 @@ import { PeriodSelection } from '@allors/base/workspace/angular-material/foundat
   templateUrl: './dynamic-view-extent-panel.component.html',
 })
 export class AllorsMaterialDynamicViewExtentPanelComponent
-  extends AllorsViewExtentPanelComponent
+  extends AllorsDynamicViewExtentPanelComponent
   implements SharedPullHandler, OnInit
 {
   @HostBinding('class.expanded-panel')

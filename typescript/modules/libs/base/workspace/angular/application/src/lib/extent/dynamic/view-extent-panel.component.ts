@@ -4,12 +4,12 @@ import {
   MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import { Directive } from '@angular/core';
-import { PanelService } from '../panel/panel.service';
-import { ScopedService } from '../scoped/scoped.service';
-import { AllorsExtentPanelComponent } from './extent-panel.component';
+import { PanelService } from '../../panel/panel.service';
+import { ScopedService } from '../../scoped/scoped.service';
+import { AllorsDynamicExtentPanelComponent } from './extent-panel.component';
 
 @Directive()
-export abstract class AllorsViewExtentPanelComponent extends AllorsExtentPanelComponent {
+export abstract class AllorsDynamicViewExtentPanelComponent extends AllorsDynamicExtentPanelComponent {
   override dataAllorsKind = 'view-extent-panel';
 
   readonly panelMode = 'View';

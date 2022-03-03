@@ -30,7 +30,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import {
   NavigationService,
-  AllorsEditExtentPanelComponent,
+  AllorsDynamicEditExtentPanelComponent,
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
@@ -49,7 +49,7 @@ interface Row extends TableRow {
   templateUrl: './dynamic-edit-extent-panel.component.html',
 })
 export class AllorsMaterialDynamicEditExtentPanelComponent
-  extends AllorsEditExtentPanelComponent
+  extends AllorsDynamicEditExtentPanelComponent
   implements SharedPullHandler, OnInit
 {
   @HostBinding('class.expanded-panel')
