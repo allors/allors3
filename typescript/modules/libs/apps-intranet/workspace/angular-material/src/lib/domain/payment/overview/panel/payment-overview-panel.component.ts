@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { Composite, RoleType } from '@allors/system/workspace/meta';
+import { RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
@@ -10,7 +10,7 @@ import {
 } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
-  AllorsEditExtentPanelComponent,
+  AllorsCustomEditExtentPanelComponent,
   NavigationService,
   PanelService,
   ScopedService,
@@ -51,9 +51,17 @@ interface Row extends TableRow {
   templateUrl: './payment-overview-panel.component.html',
 })
 export class PaymentOverviewPanelComponent
-  extends AllorsEditExtentPanelComponent
+  extends AllorsCustomEditExtentPanelComponent
   implements SharedPullHandler, OnInit
 {
+  override readonly panelKind = 'Extent';
+
+  override readonly panelMode = 'Edit';
+
+  override get panelId() {
+    return this.m?.Payment.tag;
+  }
+
   @HostBinding('class.expanded-panel')
   get expandedPanelClass() {
     return true;
@@ -65,8 +73,12 @@ export class PaymentOverviewPanelComponent
   }
 
   get initializer(): Initializer {
-    return { propertyType: this.init, id: this.scoped.id };
+    return null;
+    // TODO: Martien
+    // return { propertyType: this.init, id: this.scoped.id };
   }
+
+  title = 'Payments';
 
   m: M;
 
@@ -95,13 +107,7 @@ export class PaymentOverviewPanelComponent
     private iconService: IconService,
     private displayService: DisplayService
   ) {
-    super(
-      scopedService,
-      panelService,
-      sharedPullService,
-      refreshService,
-      metaService
-    );
+    super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
 
     panelService.register(this);
