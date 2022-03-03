@@ -32,6 +32,7 @@ export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageCompone
   invoice: SalesInvoice;
 
   paymentTarget: Path;
+  canWrite: () => boolean;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -56,6 +57,8 @@ export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageCompone
     this.paymentTarget = p.Invoice({
       PaymentApplicationsWhereInvoice: { PaymentWherePaymentApplication: {} },
     });
+
+    this.canWrite = () => this.invoice.canWriteSalesInvoiceItems;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

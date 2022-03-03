@@ -30,6 +30,7 @@ export class ProductQuoteOverviewPageComponent extends AllorsOverviewPageCompone
   m: M;
   productQuote: ProductQuote;
   salesOrder: SalesOrder;
+  canWrite: () => boolean;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -49,6 +50,7 @@ export class ProductQuoteOverviewPageComponent extends AllorsOverviewPageCompone
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.canWrite = () => this.productQuote.canWriteQuoteItems;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

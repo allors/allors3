@@ -30,6 +30,7 @@ export class PurchaseOrderOverviewPageComponent extends AllorsOverviewPageCompon
   m: M;
 
   public order: PurchaseOrder;
+  canWrite: () => boolean;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -49,6 +50,7 @@ export class PurchaseOrderOverviewPageComponent extends AllorsOverviewPageCompon
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.canWrite = () => this.order.canWritePurchaseOrderItems;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

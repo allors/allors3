@@ -25,6 +25,7 @@
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [init]="m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem"
+          [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
