@@ -61,15 +61,11 @@ export class PaymentOverviewPanelComponent
   }
 
   get icon() {
-    return this.iconService.icon(this.objectType);
+    return this.iconService.icon(this.m.Period);
   }
 
   get initializer(): Initializer {
     return { propertyType: this.init, id: this.scoped.id };
-  }
-
-  get hasPeriod(): boolean {
-    return this.objectType?.supertypes.has(this.m.Period);
   }
 
   m: M;
@@ -83,7 +79,6 @@ export class PaymentOverviewPanelComponent
   objects: Payment[];
 
   display: RoleType[];
-  includeDisplay: RoleType[];
 
   receive: boolean;
 
@@ -114,14 +109,7 @@ export class PaymentOverviewPanelComponent
   }
 
   ngOnInit() {
-    this.display = this.displayService.primary(this.objectType);
-
-    if (this.include) {
-      const includeObjectType = this.include.objectType as Composite;
-      this.includeDisplay = this.displayService.primary(includeObjectType);
-    } else {
-      this.includeDisplay = [];
-    }
+    this.display = this.displayService.primary(this.m.Payment);
 
     this.delete = this.deleteService.delete();
     this.view = this.viewService.view();
@@ -136,15 +124,6 @@ export class PaymentOverviewPanelComponent
       autoSort: true,
       autoFilter: true,
     };
-
-    if (this.hasPeriod) {
-      tableConfig.columns.push(
-        ...[
-          { name: 'from', sort },
-          { name: 'through', sort },
-        ]
-      );
-    }
 
     this.table = new Table(tableConfig);
   }
