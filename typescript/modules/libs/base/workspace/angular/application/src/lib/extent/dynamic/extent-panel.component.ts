@@ -43,6 +43,12 @@ export abstract class AllorsDynamicExtentPanelComponent extends AllorsScopedPane
   enabled: boolean;
 
   @Input()
+  creatableFn: () => boolean;
+
+  @Input()
+  creatable: boolean;
+
+  @Input()
   get select(): ExtentSelectType {
     if (this.assignedSelect) {
       return this.assignedSelect;

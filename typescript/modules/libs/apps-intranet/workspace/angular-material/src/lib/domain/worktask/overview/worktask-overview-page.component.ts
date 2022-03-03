@@ -30,6 +30,7 @@ export class WorkTaskOverviewPageComponent extends AllorsOverviewPageComponent {
   readonly m: M;
 
   workTask: WorkTask;
+  canWrite: () => boolean;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -49,6 +50,7 @@ export class WorkTaskOverviewPageComponent extends AllorsOverviewPageComponent {
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.canWrite = () => this.workTask.canWriteWorkDone;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
