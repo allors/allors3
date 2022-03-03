@@ -31,6 +31,8 @@ export class CustomerShipmentOverviewPageComponent extends AllorsOverviewPageCom
   p: PathBuilder;
   shipment: CustomerShipment;
 
+  canWrite: () => boolean;
+
   constructor(
     @Self() scopedService: ScopedService,
     @Self() panelService: PanelService,
@@ -50,6 +52,7 @@ export class CustomerShipmentOverviewPageComponent extends AllorsOverviewPageCom
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
     this.p = this.m.pathBuilder;
+    this.canWrite = () => this.shipment.canWriteShipmentItems;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

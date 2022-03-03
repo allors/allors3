@@ -25,6 +25,7 @@
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [init]="m.SalesOrderItem.SalesOrderWhereSalesOrderItem"
+          [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
@@ -32,6 +33,7 @@
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [init]="m.OrderAdjustment.OrderWhereOrderAdjustment"
+          [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
@@ -39,6 +41,7 @@
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [init]="m.SalesTerm.OrderWhereSalesTerm"
+          [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>

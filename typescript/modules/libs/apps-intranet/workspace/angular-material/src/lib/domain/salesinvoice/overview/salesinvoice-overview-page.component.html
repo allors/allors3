@@ -33,6 +33,7 @@
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [init]="m.OrderAdjustment.InvoiceWhereOrderAdjustment"
+          [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel

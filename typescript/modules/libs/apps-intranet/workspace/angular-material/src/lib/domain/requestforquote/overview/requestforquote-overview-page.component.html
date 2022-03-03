@@ -25,6 +25,7 @@
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [init]="m.RequestItem.RequestWhereRequestItem"
+          [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
