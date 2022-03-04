@@ -26,6 +26,7 @@
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
           [init]="m.ShipmentItem.ShipmentWhereShipmentItem"
+          [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>

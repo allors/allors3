@@ -30,6 +30,7 @@ export class RequestForQuoteOverviewPageComponent extends AllorsOverviewPageComp
   m: M;
 
   public requestForQuote: RequestForQuote;
+  canWrite: () => boolean;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -49,6 +50,7 @@ export class RequestForQuoteOverviewPageComponent extends AllorsOverviewPageComp
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
+    this.canWrite = () => this.requestForQuote.canWriteRequestItems;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
