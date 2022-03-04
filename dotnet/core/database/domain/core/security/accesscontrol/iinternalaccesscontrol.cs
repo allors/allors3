@@ -13,5 +13,7 @@ namespace Allors.Database.Domain
         Grant[] Filter(IEnumerable<Grant> unfilteredGrants);
 
         Revocation[] Filter(IEnumerable<Revocation> unfilteredRevocations);
+
+        bool IsMasked(IObject @object);
     }
 }

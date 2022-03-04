@@ -33,7 +33,7 @@ namespace Allors.Database.Domain.Tests
             this.Setup(database, populate);
         }
 
-        public MetaPopulation M { get; }
+        public MetaPopulation M { get; set; }
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 

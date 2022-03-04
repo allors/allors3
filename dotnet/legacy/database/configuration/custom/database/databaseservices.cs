@@ -51,6 +51,9 @@ namespace Allors.Database.Configuration
 
         private IDerivationService derivationService;
 
+        private IWorkspaceMask workspaceMask;
+
+
         protected DatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
         {
             this.Engine = engine;
@@ -85,6 +88,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
                 { } type when type == typeof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
                 { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationService()),
+                { } type when type == typeof(IWorkspaceMask) => (T)(this.workspaceMask ??= new WorkspaceMask(this.M)),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 

@@ -11,10 +11,16 @@ namespace Allors.Database.Configuration
 
     public class WorkspaceAclsService : IWorkspaceAclsService
     {
+        public IWorkspaceMask WorkspaceMask { get; set; }
+
         public User User { get; }
 
-        public WorkspaceAclsService(User user) => this.User = user;
+        public WorkspaceAclsService(IWorkspaceMask workspaceMask, User user)
+        {
+            this.WorkspaceMask = workspaceMask;
+            this.User = user;
+        }
 
-        public IAccessControl Create(string workspace) => new WorkspaceAccessControl(workspace, this.User);
+        public IAccessControl Create(string workspace) => new WorkspaceAccessControl(workspace, this.WorkspaceMask, this.User);
     }
 }
