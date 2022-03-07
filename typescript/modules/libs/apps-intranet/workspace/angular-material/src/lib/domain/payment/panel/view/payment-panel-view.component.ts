@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { RoleType } from '@allors/system/workspace/meta';
 import {
@@ -8,32 +7,19 @@ import {
   SharedPullHandler,
 } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import { Payment } from '../../../../../../../../../extranet/workspace/meta/src/lib/generated/m.g';
 import {
   AllorsCustomViewExtentPanelComponent,
-  NavigationService,
   PanelService,
   ScopedService,
 } from '@allors/base/workspace/angular/application';
 import {
-  Action,
   DisplayService,
-  MetaService,
   RefreshService,
   SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import {
-  DeleteActionService,
-  IconService,
-  ViewActionService,
-} from '@allors/base/workspace/angular-material/application';
-import {
-  Invoice,
-  Payment,
-  PurchaseInvoice,
-  SalesInvoice,
-} from '@allors/default/workspace/domain';
+import { IconService } from '@allors/base/workspace/angular-material/application';
+import { Invoice, Payment } from '@allors/default/workspace/domain';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -81,7 +67,8 @@ export class PaymentPanelViewComponent
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
     workspaceService: WorkspaceService,
-    private displayService: DisplayService
+    private displayService: DisplayService,
+    private iconService: IconService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
 

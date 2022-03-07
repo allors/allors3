@@ -95,7 +95,8 @@ export { PartyContactMechanismPostalAddressInlineComponent } from './lib/domain/
 
 export { PartyRateFormComponent } from './lib/domain/partyrate/form/partyrate-form.component';
 
-export { PaymentOverviewPanelComponent } from './lib/domain/payment/overview/panel/payment-overview-panel.component';
+export { PaymentPanelEditComponent } from './lib/domain/payment/panel/edit/payment-panel-edit.component';
+export { PaymentPanelViewComponent } from './lib/domain/payment/panel/view/payment-panel-view.component';
 
 export { PersonCreateFormComponent } from './lib/domain/person/create/person-create-form.component';
 export { PersonEditFormComponent } from './lib/domain/person/edit/person-edit-form.component';
