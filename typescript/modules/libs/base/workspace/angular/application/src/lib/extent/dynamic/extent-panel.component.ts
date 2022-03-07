@@ -109,7 +109,7 @@ export abstract class AllorsDynamicExtentPanelComponent extends AllorsScopedPane
   }
 
   get panelId() {
-    // TODO:
+    // TODO: Koen
     return this.objectType?.tag;
   }
 

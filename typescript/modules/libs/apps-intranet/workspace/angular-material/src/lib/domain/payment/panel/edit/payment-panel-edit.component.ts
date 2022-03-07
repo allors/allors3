@@ -47,10 +47,10 @@ interface Row extends TableRow {
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'payment-overview-panel',
-  templateUrl: './payment-overview-panel.component.html',
+  selector: 'payment-panel-edit',
+  templateUrl: './payment-panel-edit.component.html',
 })
-export class PaymentOverviewPanelComponent
+export class PaymentPanelEditComponent
   extends AllorsCustomEditExtentPanelComponent
   implements SharedPullHandler, OnInit
 {
@@ -119,8 +119,6 @@ export class PaymentOverviewPanelComponent
 
     this.delete = this.deleteService.delete();
     this.view = this.viewService.view();
-
-    const sort = true;
 
     const tableConfig: TableConfig = {
       selection: true,
