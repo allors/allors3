@@ -20,12 +20,17 @@ namespace Allors.Database.Protocol.Json
         private readonly IRanges<long> ranges;
 
         private readonly ITransaction transaction;
+        private readonly string workspaceName;
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
-        public SyncResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges<long> ranges)
+        private ISet<IObject> maskedObjects;
+        private ISet<IObject> unmaskedObjects;
+
+        public SyncResponseBuilder(ITransaction transaction, string workspaceName, IAccessControl accessControl, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges<long> ranges)
         {
             this.transaction = transaction;
+            this.workspaceName = workspaceName;
             this.allowedClasses = allowedClasses;
             this.prefetch = prefetch;
             this.unitConvert = unitConvert;
@@ -38,15 +43,33 @@ namespace Allors.Database.Protocol.Json
 
         public SyncResponse Build(SyncRequest syncRequest)
         {
-            var objects = this.transaction.Instantiate(syncRequest.o)
+            var requestObjects = this.transaction.Instantiate(syncRequest.o)
                 .Where(v => this.allowedClasses?.Contains(v.Strategy.Class) == true)
                 .ToArray();
 
-            this.prefetch(objects);
+            this.prefetch(requestObjects);
+
+            this.maskedObjects = new HashSet<IObject>();
+            this.unmaskedObjects = new HashSet<IObject>();
+
+            foreach (var @object in requestObjects)
+            {
+                var acl = this.AccessControl[@object];
+                if (acl.IsMasked())
+                {
+                    this.maskedObjects.Add(@object);
+                }
+                else
+                {
+                    this.unmaskedObjects.Add(@object);
+                }
+            }
+
+            var responseObjects = this.unmaskedObjects.ToArray();
 
             return new SyncResponse
             {
-                o = objects.Select(v =>
+                o = responseObjects.Select(v =>
                 {
                     var @class = v.Strategy.Class;
                     var acl = this.AccessControl[v];
@@ -56,8 +79,8 @@ namespace Allors.Database.Protocol.Json
                         i = v.Id,
                         v = v.Strategy.ObjectVersion,
                         c = v.Strategy.Class.Tag,
-                        // TODO: Cache
-                        ro = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames.Length > 0)
+                        // TODO: Cache RelationTypes
+                        ro = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames?.Contains(this.workspaceName) == true)
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
@@ -78,15 +101,35 @@ namespace Allors.Database.Protocol.Json
             }
             else if (roleType.IsOne)
             {
-                syncResponseRole.o = @object.Strategy.GetCompositeRole(roleType)?.Id;
+                var role = @object.Strategy.GetCompositeRole(roleType);
+                if (this.Include(role))
+                {
+                    syncResponseRole.o = role.Id;
+                }
             }
             else
             {
-                var roles = @object.Strategy.GetCompositesRole<IObject>(roleType);
+                var roles = @object.Strategy.GetCompositesRole<IObject>(roleType).Where(this.Include);
                 syncResponseRole.c = this.ranges.Import(roles.Select(roleObject => roleObject.Id)).ToArray();
             }
 
             return syncResponseRole;
+        }
+
+        private bool Include(IObject @object)
+        {
+            if (@object == null || this.allowedClasses?.Contains(@object.Strategy.Class) != true || this.maskedObjects.Contains(@object))
+            {
+                return false;
+            }
+
+            if (this.AccessControl[@object].IsMasked())
+            {
+                this.maskedObjects.Add(@object);
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -29,6 +29,7 @@ namespace Allors.Database.Protocol.Json
         public Api(ITransaction transaction, string workspaceName)
         {
             this.Transaction = transaction;
+            this.WorkspaceName = workspaceName;
             this.Sink = transaction.Database.Sink;
 
             var transactionServices = transaction.Services;
@@ -37,8 +38,8 @@ namespace Allors.Database.Protocol.Json
 
             this.Ranges = databaseServices.Get<IRanges<long>>();
             this.User = transactionServices.Get<IUserService>().User;
-            this.AccessControl = transactionServices.Get<IWorkspaceAclsService>().Create(workspaceName);
-            this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
+            this.AccessControl = transactionServices.Get<IWorkspaceAclsService>().Create(this.WorkspaceName);
+            this.AllowedClasses = metaCache.GetWorkspaceClasses(this.WorkspaceName);
             this.M = databaseServices.Get<MetaPopulation>();
             this.MetaPopulation = this.M;
             this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
@@ -50,6 +51,8 @@ namespace Allors.Database.Protocol.Json
         }
 
         public ITransaction Transaction { get; }
+
+        public string WorkspaceName { get; set; }
 
         public ISink Sink { get; }
 
@@ -152,7 +155,7 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
+            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.WorkspaceName, this.AccessControl, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
             var syncResponse = syncResponseBuilder.Build(syncRequest);
 
             if (@event != null)

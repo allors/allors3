@@ -26,7 +26,8 @@ namespace Allors.Database.Protocol.Json
         private readonly Dictionary<string, IObject> objectByName = new Dictionary<string, IObject>();
         private readonly Dictionary<string, object> valueByName = new Dictionary<string, object>();
 
-        private readonly HashSet<IObject> objects;
+        private readonly HashSet<IObject> maskedObjects;
+        private readonly HashSet<IObject> unmaskedObjects;
 
         private List<IValidation> errors;
         private readonly IPullPrefetchers prefetchers;
@@ -45,7 +46,8 @@ namespace Allors.Database.Protocol.Json
 
             this.prefetchers = prefetchers;
 
-            this.objects = new HashSet<IObject>();
+            this.maskedObjects = new HashSet<IObject>();
+            this.unmaskedObjects = new HashSet<IObject>();
         }
 
         public ITransaction Transaction { get; }
@@ -95,7 +97,7 @@ namespace Allors.Database.Protocol.Json
 
         private void AddObjectInternal(string name, IObject @object, Node[] tree = null)
         {
-            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true || this.AccessControl[@object].IsMasked())
+            if (!this.Include(@object))
             {
                 return;
             }
@@ -104,7 +106,7 @@ namespace Allors.Database.Protocol.Json
             var transaction = @object.Strategy.Transaction;
             transaction.Prefetch(prefetchPolicy, @object);
 
-            this.objects.Add(@object);
+            this.unmaskedObjects.Add(@object);
             this.objectByName[name] = @object;
             tree?.Resolve(@object, this.AccessControl, this.Add);
         }
@@ -119,7 +121,7 @@ namespace Allors.Database.Protocol.Json
 
                 this.collectionsByName.TryGetValue(name, out var existingCollection);
 
-                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class) && !this.AccessControl[v].IsMasked()).ToArray();
+                var filteredCollection = collection.Where(this.Include);
 
                 if (tree != null)
                 {
@@ -139,7 +141,7 @@ namespace Allors.Database.Protocol.Json
                         this.collectionsByName.Add(name, newSet);
                     }
 
-                    this.objects.UnionWith(newCollection);
+                    this.unmaskedObjects.UnionWith(newCollection);
 
                     foreach (var newObject in newCollection)
                     {
@@ -158,7 +160,7 @@ namespace Allors.Database.Protocol.Json
                     {
                         var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
                         this.collectionsByName.Add(name, newWorkspaceCollection);
-                        this.objects.UnionWith(newWorkspaceCollection);
+                        this.unmaskedObjects.UnionWith(newWorkspaceCollection);
                     }
                 }
             }
@@ -242,7 +244,7 @@ namespace Allors.Database.Protocol.Json
 
             pullResponse = new PullResponse
             {
-                p = this.objects.Select(v =>
+                p = this.unmaskedObjects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
 
@@ -276,7 +278,7 @@ namespace Allors.Database.Protocol.Json
                 return;
             }
 
-            var current = this.objects.ToArray();
+            var current = this.unmaskedObjects.ToArray();
 
             while (current.Length > 0)
             {
@@ -300,11 +302,16 @@ namespace Allors.Database.Protocol.Json
                                 {
                                     if (roleType.IsOne)
                                     {
-                                        newObjects.Add(@object.Strategy.GetCompositeRole(roleType));
+                                        var role = @object.Strategy.GetCompositeRole(roleType);
+                                        if (this.Include(role))
+                                        {
+                                            newObjects.Add(role);
+                                        }
                                     }
                                     else
                                     {
-                                        newObjects.UnionWith(@object.Strategy.GetCompositesRole<IObject>(roleType));
+                                        var role = @object.Strategy.GetCompositesRole<IObject>(roleType).Where(this.Include);
+                                        newObjects.UnionWith(role);
                                     }
                                 }
                                 else
@@ -312,11 +319,16 @@ namespace Allors.Database.Protocol.Json
                                     var associationType = (IAssociationType)propertyType;
                                     if (associationType.IsOne)
                                     {
-                                        newObjects.Add(@object.Strategy.GetCompositeAssociation(associationType));
+                                        var association = @object.Strategy.GetCompositeAssociation(associationType);
+                                        if (this.Include(association))
+                                        {
+                                            newObjects.Add(association);
+                                        }
                                     }
                                     else
                                     {
-                                        newObjects.UnionWith(@object.Strategy.GetCompositesAssociation<IObject>(associationType));
+                                        var association = @object.Strategy.GetCompositesAssociation<IObject>(associationType).Where(this.Include);
+                                        newObjects.UnionWith(association);
                                     }
                                 }
                             }
@@ -324,21 +336,34 @@ namespace Allors.Database.Protocol.Json
                     }
                 }
 
-                newObjects.Remove(null);
-
-                current = newObjects.Except(this.objects).ToArray();
-                this.objects.UnionWith(newObjects);
+                current = newObjects.Except(this.unmaskedObjects).ToArray();
+                this.unmaskedObjects.UnionWith(newObjects);
             }
         }
 
         private void Add(IObject @object)
         {
-            if (this.AccessControl[@object].IsMasked())
+            if (this.Include(@object))
             {
-                return;
+                this.unmaskedObjects.Add(@object);
+            }
+        }
+
+        private bool Include(IObject @object)
+        {
+            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true ||
+                this.maskedObjects.Contains(@object))
+            {
+                return false;
             }
 
-            this.objects.Add(@object);
+            if (this.AccessControl[@object].IsMasked())
+            {
+                this.maskedObjects.Add(@object);
+                return false;
+            }
+
+            return true;
         }
     }
 }
