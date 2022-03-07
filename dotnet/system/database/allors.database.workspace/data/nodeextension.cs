@@ -11,67 +11,71 @@ namespace Allors.Database.Data
 
     public static class NodeExtensions
     {
-        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, Func<IObject, bool> add)
+        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, Action<IObject> add)
         {
-            if (@object != null)
+            if (@object == null)
             {
-                var acl = acls[@object];
-                // TODO: Access check for AssociationType
-                if (@this.PropertyType is IAssociationType || acl.CanRead((IRoleType)@this.PropertyType))
+                return;
+            }
+
+            var acl = acls[@object];
+            // TODO: Access check for AssociationType
+            if (!(@this.PropertyType is IAssociationType) && !acl.CanRead((IRoleType)@this.PropertyType))
+            {
+                return;
+            }
+
+            if (@this.PropertyType is IRoleType roleType)
+            {
+                if (roleType.ObjectType.IsComposite)
                 {
-                    if (@this.PropertyType is IRoleType roleType)
+                    if (roleType.IsOne)
                     {
-                        if (roleType.ObjectType.IsComposite)
+                        var role = @object.Strategy.GetCompositeRole(roleType);
+                        if (role != null)
                         {
-                            if (roleType.IsOne)
+                            add(role);
+                            foreach (var node in @this.Nodes)
                             {
-                                var role = @object.Strategy.GetCompositeRole(roleType);
-                                if (role != null)
-                                {
-                                    add(role);
-                                    foreach (var node in @this.Nodes)
-                                    {
-                                        node.Resolve(role, acls, add);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (var role in @object.Strategy.GetCompositesRole<IObject>(roleType))
-                                {
-                                    add(role);
-                                    foreach (var node in @this.Nodes)
-                                    {
-                                        node.Resolve(role, acls, add);
-                                    }
-                                }
+                                node.Resolve(role, acls, add);
                             }
                         }
                     }
-                    else if (@this.PropertyType is IAssociationType associationType)
+                    else
                     {
-                        if (associationType.IsOne)
+                        foreach (var role in @object.Strategy.GetCompositesRole<IObject>(roleType))
                         {
-                            var association = @object.Strategy.GetCompositeAssociation(associationType);
-                            if (association != null)
+                            add(role);
+                            foreach (var node in @this.Nodes)
                             {
-                                add(association);
-                                foreach (var node in @this.Nodes)
-                                {
-                                    node.Resolve(association, acls, add);
-                                }
+                                node.Resolve(role, acls, add);
                             }
                         }
-                        else
+                    }
+                }
+            }
+            else if (@this.PropertyType is IAssociationType associationType)
+            {
+                if (associationType.IsOne)
+                {
+                    var association = @object.Strategy.GetCompositeAssociation(associationType);
+                    if (association != null)
+                    {
+                        add(association);
+                        foreach (var node in @this.Nodes)
                         {
-                            foreach (var association in @object.Strategy.GetCompositesAssociation<IObject>(associationType))
-                            {
-                                add(association);
-                                foreach (var node in @this.Nodes)
-                                {
-                                    node.Resolve(association, acls, add);
-                                }
-                            }
+                            node.Resolve(association, acls, add);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var association in @object.Strategy.GetCompositesAssociation<IObject>(associationType))
+                    {
+                        add(association);
+                        foreach (var node in @this.Nodes)
+                        {
+                            node.Resolve(association, acls, add);
                         }
                     }
                 }

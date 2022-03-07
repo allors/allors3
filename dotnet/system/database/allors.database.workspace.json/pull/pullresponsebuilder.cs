@@ -95,16 +95,18 @@ namespace Allors.Database.Protocol.Json
 
         private void AddObjectInternal(string name, IObject @object, Node[] tree = null)
         {
-            if (@object != null && this.AllowedClasses?.Contains(@object.Strategy.Class) == true)
+            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true || this.AccessControl[@object].IsMasked())
             {
-                var prefetchPolicy = this.prefetchers.ForInclude(@object.Strategy.Class, tree);
-                var transaction = @object.Strategy.Transaction;
-                transaction.Prefetch(prefetchPolicy, @object);
-
-                this.objects.Add(@object);
-                this.objectByName[name] = @object;
-                tree?.Resolve(@object, this.AccessControl, this.objects.Add);
+                return;
             }
+
+            var prefetchPolicy = this.prefetchers.ForInclude(@object.Strategy.Class, tree);
+            var transaction = @object.Strategy.Transaction;
+            transaction.Prefetch(prefetchPolicy, @object);
+
+            this.objects.Add(@object);
+            this.objectByName[name] = @object;
+            tree?.Resolve(@object, this.AccessControl, this.Add);
         }
 
         private void AddCollectionInternal(string name, IComposite objectType, in IEnumerable<IObject> enumerable, Node[] tree)
@@ -116,7 +118,8 @@ namespace Allors.Database.Protocol.Json
                 var prefetchPolicy = this.prefetchers.ForInclude(objectType, tree);
 
                 this.collectionsByName.TryGetValue(name, out var existingCollection);
-                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class)).ToArray();
+
+                var filteredCollection = collection.Where(v => this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class) && !this.AccessControl[v].IsMasked()).ToArray();
 
                 if (tree != null)
                 {
@@ -140,7 +143,7 @@ namespace Allors.Database.Protocol.Json
 
                     foreach (var newObject in newCollection)
                     {
-                        tree.Resolve(newObject, this.AccessControl, this.objects.Add);
+                        tree.Resolve(newObject, this.AccessControl, this.Add);
                     }
                 }
                 else
@@ -326,6 +329,16 @@ namespace Allors.Database.Protocol.Json
                 current = newObjects.Except(this.objects).ToArray();
                 this.objects.UnionWith(newObjects);
             }
+        }
+
+        private void Add(IObject @object)
+        {
+            if (this.AccessControl[@object].IsMasked())
+            {
+                return;
+            }
+
+            this.objects.Add(@object);
         }
     }
 }

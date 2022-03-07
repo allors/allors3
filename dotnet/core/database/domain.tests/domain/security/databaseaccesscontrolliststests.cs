@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
-        public void GivenAnAuthenticationPopulatonWhenCreatingAnAccessListForGuestThenPermissionIsDenied()
+        public void GivenAnAuthenticationPopulationWhenCreatingAnAccessListForGuestThenPermissionIsDenied()
         {
             this.Transaction.Derive();
             this.Transaction.Commit();

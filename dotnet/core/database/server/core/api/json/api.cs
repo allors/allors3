@@ -19,6 +19,7 @@ namespace Allors.Database.Protocol.Json
     using Domain;
     using Meta;
     using Ranges;
+    using Security;
     using Services;
     using Tracing;
     using User = Domain.User;
@@ -36,7 +37,7 @@ namespace Allors.Database.Protocol.Json
 
             this.Ranges = databaseServices.Get<IRanges<long>>();
             this.User = transactionServices.Get<IUserService>().User;
-            this.AccessControl = new WorkspaceAccessControl(workspaceName, this.User);
+            this.AccessControl = transactionServices.Get<IWorkspaceAclsService>().Create(workspaceName);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(workspaceName);
             this.M = databaseServices.Get<MetaPopulation>();
             this.MetaPopulation = this.M;
@@ -56,7 +57,7 @@ namespace Allors.Database.Protocol.Json
 
         public User User { get; }
 
-        public WorkspaceAccessControl AccessControl { get; }
+        public IAccessControl AccessControl { get; }
 
         public ISet<IClass> AllowedClasses { get; }
 

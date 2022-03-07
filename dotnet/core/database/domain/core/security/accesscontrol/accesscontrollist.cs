@@ -90,6 +90,8 @@ namespace Allors.Database.Domain
             return false;
         }
 
+        public bool IsMasked() => this.accessControl.IsMasked(this.Object);
+
         private bool IsPermitted(long permissionId)
         {
             this.LazyLoad();

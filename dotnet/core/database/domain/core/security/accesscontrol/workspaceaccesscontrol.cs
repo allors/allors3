@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     using Ranges;
     using Allors.Database.Services;
 
-    public class WorkspaceAccessControl : IInternalAccessControl
+    public class WorkspaceAccessControl : IInternalAccessControl, IAccessControl
     {
         private readonly string workspaceName;
         private readonly IReadOnlyDictionary<IGrant, IRange<long>> permissionIdsByGrant;
@@ -22,8 +22,9 @@ namespace Allors.Database.Domain
 
         private readonly IRanges<long> ranges;
         private readonly IPermissionsCache permissionCache;
+        private readonly IDictionary<IClass, IRoleType> masks;
 
-        public WorkspaceAccessControl(string workspaceName, User user)
+        public WorkspaceAccessControl(string workspaceName, IWorkspaceMask workspaceMask, User user)
         {
             var services = user.Strategy.Transaction.Database.Services;
 
@@ -35,6 +36,8 @@ namespace Allors.Database.Domain
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
             this.permissionIdsByGrant = this.BuildEffectivePermissionsByGrant();
             this.permissionIdsByRevocation = new Dictionary<IRevocation, IRange<long>>();
+
+            this.masks = workspaceMask.GetMasks(this.workspaceName);
         }
 
         public User User { get; }
@@ -51,6 +54,18 @@ namespace Allors.Database.Domain
 
                 return acl;
             }
+        }
+
+        public bool IsMasked(IObject @object)
+        {
+            if (!this.masks.TryGetValue(@object.Strategy.Class, out var mask))
+            {
+                return false;
+            }
+
+            var acl = this[@object];
+            return !acl.CanRead(mask);
+
         }
 
         public IRange<long> GrantedPermissionIds(IGrant grant) => this.permissionIdsByGrant[grant];
@@ -127,5 +142,6 @@ namespace Allors.Database.Domain
 
             return permissionsByAccessControl;
         }
+
     }
 }

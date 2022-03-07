@@ -11,6 +11,7 @@ namespace Allors.Database.Domain
     using Meta;
     using Ranges;
     using Allors.Database.Services;
+    using Antlr.Runtime;
 
     public class DatabaseAccessControl : IInternalAccessControl
     {
@@ -67,6 +68,9 @@ namespace Allors.Database.Domain
         public Grant[] Filter(IEnumerable<Grant> unfilteredGrants) => unfilteredGrants.Where(v => this.permissionIdsByGrant.ContainsKey(v)).ToArray();
 
         public Revocation[] Filter(IEnumerable<Revocation> unfilteredRevocations) => unfilteredRevocations.ToArray();
+
+        // TODO: Masking for Database
+        public bool IsMasked(IObject @object) => false;
 
         private Dictionary<IGrant, IRange<long>> BuildEffectivePermissionsByGrant()
         {

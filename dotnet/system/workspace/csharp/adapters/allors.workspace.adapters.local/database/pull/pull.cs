@@ -83,8 +83,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.AddObjectInternal(name, @object, tree);
         }
-
-
+        
         public void AddValue(string name, object value)
         {
             if (value != null)
@@ -170,7 +169,7 @@ namespace Allors.Workspace.Adapters.Local
 
         private void AddObjectInternal(string name, Database.IObject @object, Node[] tree)
         {
-            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true)
+            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true || this.AccessControl[@object].IsMasked())
             {
                 return;
             }
@@ -186,7 +185,7 @@ namespace Allors.Workspace.Adapters.Local
 
             this.DatabaseObjects.Add(@object);
             this.DatabaseObjectByName[name] = @object;
-            tree?.Resolve(@object, this.AccessControl, this.DatabaseObjects.Add);
+            tree?.Resolve(@object, this.AccessControl, this.Add);
         }
 
         private void AddCollectionInternal(string name, in ICollection<Database.IObject> collection, Node[] tree)
@@ -196,7 +195,7 @@ namespace Allors.Workspace.Adapters.Local
                 this.DatabaseCollectionsByName.TryGetValue(name, out var existingCollection);
 
                 var filteredCollection = collection.Where(v =>
-                    this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class));
+                    this.AllowedClasses != null && this.AllowedClasses.Contains(v.Strategy.Class) && !this.AccessControl[v].IsMasked());
 
                 if (tree != null)
                 {
@@ -223,7 +222,7 @@ namespace Allors.Workspace.Adapters.Local
 
                     foreach (var newObject in newCollection)
                     {
-                        tree.Resolve(newObject, this.AccessControl, this.DatabaseObjects.Add);
+                        tree.Resolve(newObject, this.AccessControl, this.Add);
                     }
                 }
                 else if (existingCollection != null)
@@ -335,6 +334,16 @@ namespace Allors.Workspace.Adapters.Local
 
                 current = this.DatabaseObjects.Except(current).ToArray();
             }
+        }
+
+        private void Add(Database.IObject @object)
+        {
+            if (this.AccessControl[@object].IsMasked())
+            {
+                return;
+            }
+
+            this.DatabaseObjects.Add(@object);
         }
     }
 }
