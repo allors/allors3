@@ -119,9 +119,8 @@ export class PaymentPanelViewComponent
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.enabled = this.enabler ? this.enabler() : true;
 
-    const invoice = pullResult.object<Invoice>(this.m.Invoice);
-
     this.objects = pullResult.collection<Payment>(prefix) ?? [];
+    this.description = `${this.objects.length} payments`;
   }
 
   toggle() {
