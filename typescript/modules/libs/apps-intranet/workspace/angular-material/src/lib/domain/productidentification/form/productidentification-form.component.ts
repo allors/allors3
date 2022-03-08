@@ -76,6 +76,11 @@ export class ProductIdentificationFormComponent extends AllorsFormComponent<Prod
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
+    this.productIdentificationTypes =
+      pullResult.collection<ProductIdentificationType>(
+        this.m.ProductIdentificationType
+      );
+
     if (this.createRequest) {
       this.container =
         pullResult.object<Good>(this.m.Good) ||
