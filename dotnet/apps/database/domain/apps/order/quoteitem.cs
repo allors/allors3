@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class QuoteItem
     {
@@ -19,6 +20,19 @@ namespace Allors.Database.Domain
         public bool IsValid => !(this.QuoteItemState.IsCancelled || this.QuoteItemState.IsRejected);
 
         public bool WasValid => this.ExistLastObjectStates && !(this.LastQuoteItemState.IsCancelled || this.LastQuoteItemState.IsRejected);
+
+        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
+        {
+            if (method.SecurityTokens == null)
+            {
+                method.SecurityTokens = this.SyncedQuote?.SecurityTokens.ToArray();
+            }
+
+            if (method.Revocations == null)
+            {
+                method.Revocations = this.SyncedQuote?.Revocations.ToArray();
+            }
+        }
 
         public void AppsOnBuild(ObjectOnBuild method)
         {

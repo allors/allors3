@@ -172,14 +172,14 @@ export class PaymentPanelEditComponent
 
     const invoice = pullResult.object<Invoice>(this.m.Invoice);
 
-    if (invoice.strategy.cls === this.m.SalesInvoice) {
+    if (invoice?.strategy.cls === this.m.SalesInvoice) {
       const salesInvoice = invoice as SalesInvoice;
       this.receive =
         salesInvoice.SalesInvoiceType.UniqueId ===
         '92411bf1-835e-41f8-80af-6611efce5b32';
     }
 
-    if (invoice.strategy.cls === this.m.PurchaseInvoice) {
+    if (invoice?.strategy.cls === this.m.PurchaseInvoice) {
       const salesInvoice = invoice as PurchaseInvoice;
       this.receive =
         salesInvoice.PurchaseInvoiceType.UniqueId ===
