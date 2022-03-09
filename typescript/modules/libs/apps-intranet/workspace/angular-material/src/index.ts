@@ -168,6 +168,8 @@ export { ReceiptFormComponent } from './lib/domain/receipt/form/receipt-form.com
 export { RepeatingPurchaseInvoiceFormComponent } from './lib/domain/repeatingpurchaseinvoice/form/repeatingpurchaseinvoice-form.component';
 
 export { RepeatingSalesInvoiceFormComponent } from './lib/domain/repeatingsalesinvoice/form/repeatingsalesinvoice-form.component';
+export { RepeatingSalesInvoicePanelEditComponent } from './lib/domain/repeatingsalesinvoice/panel/edit/repeatingsalesinvoice-panel-edit.component';
+export { RepeatingSalesInvoicePanelViewComponent } from './lib/domain/repeatingsalesinvoice/panel/view/repeatingsalesinvoice-panel-view.component';
 
 export { RequestForQuoteCreateFormComponent } from './lib/domain/requestforquote/create/requestforquote-create-form.component';
 export { RequestForQuoteEditFormComponent } from './lib/domain/requestforquote/edit/requestforquote-edit-form.component';
