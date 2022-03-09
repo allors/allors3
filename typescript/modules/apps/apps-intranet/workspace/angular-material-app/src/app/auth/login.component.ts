@@ -1,9 +1,15 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { map, of, Subscription, switchMap, tap } from 'rxjs';
 
-import { AuthenticationService } from '@allors/base/workspace/angular/foundation';
+import {
+  AuthenticationService,
+  ContextService,
+} from '@allors/base/workspace/angular/foundation';
+import { M } from '@allors/default/workspace/meta';
+import { Person } from '@allors/default/workspace/domain';
+import { InternalOrganisationId } from '@allors/apps-intranet/workspace/angular-material';
 
 @Component({
   templateUrl: './login.component.html',
@@ -14,15 +20,24 @@ export class LoginComponent implements OnDestroy {
     password: ['', Validators.required],
   });
 
+  readonly m: M;
+
   private subscription: Subscription;
 
   constructor(
     private authService: AuthenticationService,
     private router: Router,
+    private allors: ContextService,
+    private internalOrganisationId: InternalOrganisationId,
     public formBuilder: FormBuilder
-  ) {}
+  ) {
+    this.m = allors.metaPopulation as M;
+  }
 
   public login() {
+    const { m } = this;
+    const { pullBuilder: p } = m;
+
     const userName = this.loginForm.controls['userName'].value;
     const password = this.loginForm.controls['password'].value;
 
@@ -30,16 +45,45 @@ export class LoginComponent implements OnDestroy {
       this.subscription.unsubscribe();
     }
 
-    this.subscription = this.authService.login$(userName, password).subscribe(
-      (result) => {
-        if (result.a) {
-          this.router.navigate(['/']);
-        } else {
-          alert('Could not log in');
-        }
-      },
-      (error) => alert(JSON.stringify(error))
-    );
+    this.subscription = this.authService
+      .login$(userName, password)
+      .pipe(
+        switchMap((result) => {
+          if (result.a) {
+            const pulls = [
+              p.Person({
+                objectId: result.u,
+                include: {
+                  UserProfile: {
+                    DefaultInternalOrganization: {},
+                  },
+                },
+              }),
+            ];
+
+            return this.allors.context.pull(pulls).pipe(
+              tap((loaded) => {
+                const person = loaded.object<Person>(m.Person);
+                this.internalOrganisationId.value =
+                  person.UserProfile?.DefaultInternalOrganization?.strategy.id;
+              }),
+              map(() => true)
+            );
+          } else {
+            return of(false);
+          }
+        })
+      )
+      .subscribe(
+        (authenticated) => {
+          if (authenticated) {
+            this.router.navigate(['/']);
+          } else {
+            alert('Could not log in');
+          }
+        },
+        (error) => alert(JSON.stringify(error))
+      );
   }
 
   public ngOnDestroy() {
