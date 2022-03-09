@@ -11,7 +11,7 @@ namespace Excel.Allors
         public const string PercentageNoDecimal = "0%";
         public const string PercentageOneDecimal = "0.0%";
         public const string PercentageTwoDecimal = "0.00%";
-        public const string ISODateTime = "YYYY/MM/DD";     
-
+        public const string ISODateTime = "YYYY/MM/DD";
+        public const string Time = "dd:hh:mm";
     }
 }

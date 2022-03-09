@@ -36,19 +36,8 @@
           [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-extent-panel
-          [init]="m.RepeatingSalesInvoice.Source"
-        ></a-mat-dyn-view-extent-panel>
-        <a-mat-dyn-edit-extent-panel
-          [init]="m.RepeatingSalesInvoice.Source"
-        ></a-mat-dyn-edit-extent-panel>
-
-        <a-mat-dyn-view-extent-panel
-          [select]="paymentTarget"
-        ></a-mat-dyn-view-extent-panel>
-        <a-mat-dyn-edit-extent-panel
-          [select]="paymentTarget"
-        ></a-mat-dyn-edit-extent-panel>
+        <repeatingsalesinvoice-panel-view></repeatingsalesinvoice-panel-view>
+        <repeatingsalesinvoice-panel-edit></repeatingsalesinvoice-panel-edit>
 
         <payment-panel-view></payment-panel-view>
         <payment-panel-edit></payment-panel-edit>

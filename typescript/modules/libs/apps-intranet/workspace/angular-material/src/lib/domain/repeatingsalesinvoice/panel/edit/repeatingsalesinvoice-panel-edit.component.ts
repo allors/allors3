@@ -32,25 +32,23 @@ import {
   IconService,
   ViewActionService,
 } from '@allors/base/workspace/angular-material/application';
-import {
-  Invoice,
-  Payment,
-  PurchaseInvoice,
-  SalesInvoice,
-} from '@allors/default/workspace/domain';
+import { RepeatingSalesInvoice } from '@allors/default/workspace/domain';
 
 interface Row extends TableRow {
   object: IObject;
-  date: string;
-  amount: string;
+  frequency: string;
+  dayOfWeek: string;
+  previousExecutionDate: string;
+  nextExecutionDate: string;
+  finalExecutionDate: string;
 }
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'payment-panel-edit',
-  templateUrl: './payment-panel-edit.component.html',
+  selector: 'repeatingsalesinvoice-panel-edit',
+  templateUrl: './repeatingsalesinvoice-panel-edit.component.html',
 })
-export class PaymentPanelEditComponent
+export class RepeatingSalesInvoicePanelEditComponent
   extends AllorsCustomEditExtentPanelComponent
   implements SharedPullHandler, OnInit
 {
@@ -59,7 +57,7 @@ export class PaymentPanelEditComponent
   override readonly panelMode = 'Edit';
 
   override get panelId() {
-    return this.m?.Payment.tag;
+    return this.m?.RepeatingSalesInvoice.tag;
   }
 
   @HostBinding('class.expanded-panel')
@@ -69,7 +67,7 @@ export class PaymentPanelEditComponent
   }
 
   get icon() {
-    return this.iconService.icon(this.m.Payment);
+    return this.iconService.icon(this.m.RepeatingSalesInvoice);
   }
 
   get initializer(): Initializer {
@@ -78,7 +76,7 @@ export class PaymentPanelEditComponent
     // return { propertyType: this.init, id: this.scoped.id };
   }
 
-  title = 'Payments';
+  title = 'Repeating Sales Invoices';
 
   m: M;
 
@@ -88,11 +86,12 @@ export class PaymentPanelEditComponent
   delete: Action;
   view: Action;
 
-  objects: Payment[];
+  objects: RepeatingSalesInvoice[];
 
   display: RoleType[];
 
   receive: boolean;
+  repeatingInvoice: () => boolean;
 
   constructor(
     scopedService: ScopedService,
@@ -110,19 +109,29 @@ export class PaymentPanelEditComponent
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
 
+    // this.repeatingInvoice = () =>
+    //   this.part.InventoryItemKind.UniqueId ===
+    //   '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+
     panelService.register(this);
     sharedPullService.register(this);
   }
 
   ngOnInit() {
-    this.display = this.displayService.primary(this.m.Payment);
+    this.display = this.displayService.primary(this.m.RepeatingSalesInvoice);
 
     this.delete = this.deleteService.delete();
     this.view = this.viewService.view();
 
     const tableConfig: TableConfig = {
       selection: true,
-      columns: [{ name: 'date' }, { name: 'amount' }],
+      columns: [
+        { name: 'frequency' },
+        { name: 'dayOfWeek' },
+        { name: 'previousExecutionDate' },
+        { name: 'nextExecutionDate' },
+        { name: 'finalExecutionDate' },
+      ],
       actions: [this.view, this.delete],
       defaultAction: this.view,
       autoSort: true,
@@ -140,27 +149,16 @@ export class PaymentPanelEditComponent
       const id = this.scoped.id;
 
       pulls.push(
-        p.PaymentApplication({
+        p.SalesInvoice({
+          objectId: id,
           name: prefix,
-          predicate: {
-            kind: 'Equals',
-            propertyType: m.PaymentApplication.Invoice,
-            objectId: id,
-          },
           select: {
-            PaymentWherePaymentApplication: {
+            RepeatingSalesInvoiceWhereSource: {
               include: {
-                Sender: {},
-                PaymentMethod: {},
+                Frequency: {},
+                DayOfWeek: {},
               },
             },
-          },
-        }),
-        p.Invoice({
-          objectId: id,
-          include: {
-            SalesInvoice_SalesInvoiceType: {},
-            PurchaseInvoice_PurchaseInvoiceType: {},
           },
         })
       );
@@ -170,31 +168,23 @@ export class PaymentPanelEditComponent
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.enabled = this.enabler ? this.enabler() : true;
 
-    const invoice = pullResult.object<Invoice>(this.m.Invoice);
-
-    if (invoice?.strategy.cls === this.m.SalesInvoice) {
-      const salesInvoice = invoice as SalesInvoice;
-      this.receive =
-        salesInvoice.SalesInvoiceType.UniqueId ===
-        '92411bf1-835e-41f8-80af-6611efce5b32';
-    }
-
-    if (invoice?.strategy.cls === this.m.PurchaseInvoice) {
-      const salesInvoice = invoice as PurchaseInvoice;
-      this.receive =
-        salesInvoice.PurchaseInvoiceType.UniqueId ===
-        '0187d927-81f5-4d6a-9847-58b674ad3e6a';
-    }
-
-    this.objects = pullResult.collection<Payment>(prefix) ?? [];
+    this.objects = pullResult.collection<RepeatingSalesInvoice>(prefix) ?? [];
 
     this.table.total = this.objects.length;
     this.table.data = this.objects.map((v) => {
       const row: Row = {
         object: v,
-        date:
-          v.EffectiveDate != null ? format(v.EffectiveDate, 'dd-MM-yyyy') : '',
-        amount: v.Amount,
+        frequency: v.Frequency.Name,
+        dayOfWeek: v.DayOfWeek && v.DayOfWeek.Name,
+        previousExecutionDate:
+          v.PreviousExecutionDate &&
+          format(new Date(v.PreviousExecutionDate), 'dd-MM-yyyy'),
+        nextExecutionDate:
+          v.NextExecutionDate &&
+          format(new Date(v.NextExecutionDate), 'dd-MM-yyyy'),
+        finalExecutionDate:
+          v.FinalExecutionDate &&
+          format(new Date(v.FinalExecutionDate), 'dd-MM-yyyy'),
       };
       return row;
     });
