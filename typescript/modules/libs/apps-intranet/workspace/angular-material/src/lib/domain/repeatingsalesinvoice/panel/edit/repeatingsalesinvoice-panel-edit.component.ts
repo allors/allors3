@@ -86,12 +86,9 @@ export class RepeatingSalesInvoicePanelEditComponent
   delete: Action;
   view: Action;
 
-  objects: RepeatingSalesInvoice[];
+  objects: RepeatingSalesInvoice[] = [];
 
   display: RoleType[];
-
-  receive: boolean;
-  repeatingInvoice: () => boolean;
 
   constructor(
     scopedService: ScopedService,
@@ -108,10 +105,6 @@ export class RepeatingSalesInvoicePanelEditComponent
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
-
-    // this.repeatingInvoice = () =>
-    //   this.part.InventoryItemKind.UniqueId ===
-    //   '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
 
     panelService.register(this);
     sharedPullService.register(this);
@@ -168,7 +161,10 @@ export class RepeatingSalesInvoicePanelEditComponent
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.enabled = this.enabler ? this.enabler() : true;
 
-    this.objects = pullResult.collection<RepeatingSalesInvoice>(prefix) ?? [];
+    const object = pullResult.object<RepeatingSalesInvoice>(prefix);
+    if (object) {
+      this.objects[0] = object;
+    }
 
     this.table.total = this.objects.length;
     this.table.data = this.objects.map((v) => {

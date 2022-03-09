@@ -56,7 +56,7 @@ export class RepeatingSalesInvoicePanelViewComponent
 
   m: M;
 
-  objects: RepeatingSalesInvoice[];
+  object: RepeatingSalesInvoice;
 
   display: RoleType[];
   description: string;
@@ -108,8 +108,8 @@ export class RepeatingSalesInvoicePanelViewComponent
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.enabled = this.enabler ? this.enabler() : true;
 
-    this.objects = pullResult.collection<RepeatingSalesInvoice>(prefix) ?? [];
-    this.description = `${this.objects.length} ${this.title}`;
+    this.object = pullResult.object<RepeatingSalesInvoice>(prefix);
+    this.description = `${this.object ? 1 : 0} ${this.title}`;
   }
 
   toggle() {

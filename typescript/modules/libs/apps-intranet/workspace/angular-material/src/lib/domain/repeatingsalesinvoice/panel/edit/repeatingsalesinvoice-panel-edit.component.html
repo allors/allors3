@@ -15,13 +15,8 @@
   </div>
 
   <a-mat-factory-fab
-    *ngIf="receive"
-    [objectType]="m.Receipt"
-    (created)="this.refreshService.refresh()"
-  ></a-mat-factory-fab>
-  <a-mat-factory-fab
-    *ngIf="!receive"
-    [objectType]="m.Disbursement"
+    *ngIf="objects.length == 0"
+    [objectType]="m.RepeatingSalesInvoice"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 
