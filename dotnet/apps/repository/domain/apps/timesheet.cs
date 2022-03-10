@@ -11,14 +11,12 @@ namespace Allors.Repository
     #region Allors
     [Id("02E8DA1B-0551-411E-BDFA-52F053EC7D4A")]
     #endregion
-    public partial class TimeSheet : Deletable, DelegatedAccessObject
+    public partial class TimeSheet : Deletable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Object DelegatedAccess { get; set; }
 
         #endregion
 
