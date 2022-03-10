@@ -20,6 +20,15 @@ namespace Allors.Database.Domain
             {
                 this.InvoiceItem.DerivationTrigger = Guid.NewGuid();
             }
+            if (this.ExistOrder)
+            {
+                this.Order.DerivationTrigger = Guid.NewGuid();
+            }
+
+            if (this.ExistOrderItem)
+            {
+                this.OrderItem.DerivationTrigger = Guid.NewGuid();
+            }
         }
     }
 }

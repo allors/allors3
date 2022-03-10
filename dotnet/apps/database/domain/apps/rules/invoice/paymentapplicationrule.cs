@@ -20,6 +20,7 @@ namespace Allors.Database.Domain
             {
                 m.PaymentApplication.RolePattern(v => v.AmountApplied),
                 m.SalesInvoice.RolePattern(v => v.AdvancePayment, v => v.PaymentApplicationsWhereInvoice),
+                m.SalesInvoice.RolePattern(v => v.TotalIncVat, v => v.PaymentApplicationsWhereInvoice),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -39,7 +40,9 @@ namespace Allors.Database.Domain
                     totalInvoiceAmountPaid += salesInvoice.AdvancePayment;
                 }
 
-                if (@this.ExistInvoice && totalInvoiceAmountPaid > @this.Invoice.TotalIncVat)
+                if (@this.ExistInvoice
+                    && @this.Invoice.TotalIncVat > 0
+                    && totalInvoiceAmountPaid > @this.Invoice.TotalIncVat)
                 {
                     validation.AddError(@this, this.M.PaymentApplication.AmountApplied, ErrorMessages.PaymentApplicationNotLargerThanInvoiceAmount);
                 }

@@ -90,7 +90,7 @@ export class PaymentPanelViewComponent
 
       pulls.push(
         p.PaymentApplication({
-          name: prefix,
+          name: `${prefix} invoice`,
           predicate: {
             kind: 'Equals',
             propertyType: m.PaymentApplication.Invoice,
@@ -105,11 +105,20 @@ export class PaymentPanelViewComponent
             },
           },
         }),
-        p.Invoice({
-          objectId: id,
-          include: {
-            SalesInvoice_SalesInvoiceType: {},
-            PurchaseInvoice_PurchaseInvoiceType: {},
+        p.PaymentApplication({
+          name: `${prefix} order`,
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.PaymentApplication.Order,
+            objectId: id,
+          },
+          select: {
+            PaymentWherePaymentApplication: {
+              include: {
+                Sender: {},
+                PaymentMethod: {},
+              },
+            },
           },
         })
       );
@@ -119,7 +128,11 @@ export class PaymentPanelViewComponent
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.enabled = this.enabler ? this.enabler() : true;
 
-    this.objects = pullResult.collection<Payment>(prefix) ?? [];
+    this.objects =
+      pullResult.collection<Payment>(`${prefix} invoice`) ??
+      pullResult.collection<Payment>(`${prefix} order`) ??
+      [];
+
     this.description = `${this.objects.length} payments`;
   }
 

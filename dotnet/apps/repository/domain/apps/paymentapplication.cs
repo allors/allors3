@@ -46,6 +46,22 @@ namespace Allors.Repository
         public Invoice Invoice { get; set; }
 
         #region Allors
+        [Id("2ece9423-3594-4d48-8341-d59472801a92")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public OrderItem OrderItem { get; set; }
+
+        #region Allors
+        [Id("75415ce0-a251-4a37-a1e4-165c20b9be20")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public Order Order { get; set; }
+
+        #region Allors
         [Id("deb07a2f-6344-4888-bd1a-97413e82700a")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

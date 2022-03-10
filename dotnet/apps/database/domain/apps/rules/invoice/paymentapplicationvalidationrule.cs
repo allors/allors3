@@ -20,6 +20,8 @@ namespace Allors.Database.Domain
             {
                 m.PaymentApplication.RolePattern(v => v.Invoice),
                 m.PaymentApplication.RolePattern(v => v.InvoiceItem),
+                m.PaymentApplication.RolePattern(v => v.Order),
+                m.PaymentApplication.RolePattern(v => v.OrderItem),
                 m.PaymentApplication.RolePattern(v => v.BillingAccount),
                 // necessary but unused
                 m.PaymentApplication.RolePattern(v => v.AmountApplied),
@@ -31,8 +33,18 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PaymentApplication>())
             {
-                validation.AssertExistsAtMostOne(@this, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
-                validation.AssertAtLeastOne(@this, this.M.PaymentApplication.Invoice, this.M.PaymentApplication.InvoiceItem, this.M.PaymentApplication.BillingAccount);
+                validation.AssertExistsAtMostOne(@this,
+                    this.M.PaymentApplication.Invoice,
+                    this.M.PaymentApplication.InvoiceItem,
+                    this.M.PaymentApplication.Order,
+                    this.M.PaymentApplication.OrderItem,
+                    this.M.PaymentApplication.BillingAccount);
+                validation.AssertAtLeastOne(@this,
+                    this.M.PaymentApplication.Invoice,
+                    this.M.PaymentApplication.InvoiceItem,
+                    this.M.PaymentApplication.Order,
+                    this.M.PaymentApplication.OrderItem,
+                    this.M.PaymentApplication.BillingAccount);
             }
         }
     }

@@ -34,6 +34,7 @@ import {
 } from '@allors/base/workspace/angular-material/application';
 import {
   Invoice,
+  Order,
   Payment,
   PurchaseInvoice,
   SalesInvoice,
@@ -57,6 +58,10 @@ export class PaymentPanelEditComponent
   override readonly panelKind = 'Extent';
 
   override readonly panelMode = 'Edit';
+  invoicePullName: string;
+  orderPullName: string;
+  order: any;
+  invoice: any;
 
   override get panelId() {
     return this.m?.Payment.tag;
@@ -73,9 +78,20 @@ export class PaymentPanelEditComponent
   }
 
   get initializer(): Initializer {
+    if (this.order) {
+      return {
+        propertyType: this.m.PaymentApplication.Order,
+        id: this.scoped.id,
+      };
+    }
+    if (this.invoice) {
+      return {
+        propertyType: this.m.PaymentApplication.Invoice,
+        id: this.scoped.id,
+      };
+    }
+
     return null;
-    // TODO: Martien
-    // return { propertyType: this.init, id: this.scoped.id };
   }
 
   title = 'Payments';
@@ -156,12 +172,31 @@ export class PaymentPanelEditComponent
             },
           },
         }),
+        p.PaymentApplication({
+          name: prefix,
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.PaymentApplication.Order,
+            objectId: id,
+          },
+          select: {
+            PaymentWherePaymentApplication: {
+              include: {
+                Sender: {},
+                PaymentMethod: {},
+              },
+            },
+          },
+        }),
         p.Invoice({
           objectId: id,
           include: {
             SalesInvoice_SalesInvoiceType: {},
             PurchaseInvoice_PurchaseInvoiceType: {},
           },
+        }),
+        p.Order({
+          objectId: id,
         })
       );
     }
@@ -170,20 +205,31 @@ export class PaymentPanelEditComponent
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
     this.enabled = this.enabler ? this.enabler() : true;
 
-    const invoice = pullResult.object<Invoice>(this.m.Invoice);
+    this.invoice = pullResult.object<Invoice>(this.m.Invoice);
 
-    if (invoice?.strategy.cls === this.m.SalesInvoice) {
-      const salesInvoice = invoice as SalesInvoice;
-      this.receive =
-        salesInvoice.SalesInvoiceType.UniqueId ===
-        '92411bf1-835e-41f8-80af-6611efce5b32';
-    }
+    if (this.invoice) {
+      if (this.invoice?.strategy.cls === this.m.SalesInvoice) {
+        const salesInvoice = this.invoice as SalesInvoice;
+        this.receive =
+          salesInvoice.SalesInvoiceType.UniqueId ===
+          '92411bf1-835e-41f8-80af-6611efce5b32';
+      }
 
-    if (invoice?.strategy.cls === this.m.PurchaseInvoice) {
-      const salesInvoice = invoice as PurchaseInvoice;
-      this.receive =
-        salesInvoice.PurchaseInvoiceType.UniqueId ===
-        '0187d927-81f5-4d6a-9847-58b674ad3e6a';
+      if (this.invoice?.strategy.cls === this.m.PurchaseInvoice) {
+        const salesInvoice = this.invoice as PurchaseInvoice;
+        this.receive =
+          salesInvoice.PurchaseInvoiceType.UniqueId ===
+          '0187d927-81f5-4d6a-9847-58b674ad3e6a';
+      }
+    } else {
+      this.order = pullResult.object<Order>(this.m.Order);
+      if (this.order?.strategy.cls === this.m.SalesOrder) {
+        this.receive = true;
+      }
+
+      if (this.order?.strategy.cls === this.m.PurchaseOrder) {
+        this.receive = false;
+      }
     }
 
     this.objects = pullResult.collection<Payment>(prefix) ?? [];
