@@ -5,69 +5,18 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Linq;
     using Meta;
     using Xunit;
     using Permission = Domain.Permission;
 
-    public class DelegateAccessTests : DomainTest, IClassFixture<Fixture>
+    public class DelegateAccessRevocationTests : DomainTest, IClassFixture<Fixture>
     {
-        public DelegateAccessTests(Fixture fixture) : base(fixture) { }
+        public DelegateAccessRevocationTests(Fixture fixture) : base(fixture) { }
 
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
-        public void WithoutSecurityTokenWithoutDelegate()
-        {
-            var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
-            var accessClass = new AccessClassBuilder(this.Transaction).Build();
-
-            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
-            var permission = this.FindPermission(this.M.AccessClass.Property, Operations.Read);
-            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
-
-            securityToken.AddGrant(
-                new GrantBuilder(this.Transaction)
-                    .WithRole(role)
-                    .WithSubject(user)
-                    .Build());
-
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-
-            var acl = new DatabaseAccessControl(user)[accessClass];
-            Assert.False(acl.CanRead(this.M.AccessClass.Property));
-            Assert.False(acl.CanRead(this.M.AccessClass.Property));
-        }
-
-        [Fact]
-        public void WithSecurityTokenWithoutDelegate()
-        {
-            var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
-            var accessClass = new AccessClassBuilder(this.Transaction).Build();
-
-            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
-            var permission = this.FindPermission(this.M.AccessClass.Property, Operations.Read);
-            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
-
-            securityToken.AddGrant(
-                new GrantBuilder(this.Transaction)
-                    .WithRole(role)
-                    .WithSubject(user)
-                    .Build());
-
-            accessClass.AddSecurityToken(securityToken);
-
-            this.Transaction.Derive();
-            this.Transaction.Commit();
-
-            var acl = new DatabaseAccessControl(user)[accessClass];
-            Assert.True(acl.CanRead(this.M.AccessClass.Property));
-            Assert.True(acl.CanRead(this.M.AccessClass.Property));
-        }
-
-        [Fact]
-        public void WithDelegate()
+        public void WithRevocationAndDelegateWithoutRevocation()
         {
             var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
 
@@ -84,7 +33,41 @@ namespace Allors.Database.Domain.Tests
                     .WithSubject(user)
                     .Build());
 
-            delegatedAccessClass.AddSecurityToken(securityToken);
+            accessClass.AddSecurityToken(securityToken);
+
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(permission).Build();
+            accessClass.AddRevocation(revocation);
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            // Use default security from Singleton
+            var acl = new DatabaseAccessControl(user)[accessClass];
+            Assert.False(acl.CanRead(this.M.AccessClass.Property));
+            Assert.False(acl.CanRead(this.M.AccessClass.Property));
+        }
+
+        [Fact]
+        public void WithoutRevocationAndDelegateWithoutRevocation()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
+
+            var delegatedAccessClass = new AccessClassBuilder(this.Transaction).Build();
+            var accessClass = new AccessClassBuilder(this.Transaction).WithDelegatedAccess(delegatedAccessClass).Build();
+
+            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
+            var permission = this.FindPermission(this.M.AccessClass.Property, Operations.Read);
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+
+            securityToken.AddGrant(
+                new GrantBuilder(this.Transaction)
+                    .WithRole(role)
+                    .WithSubject(user)
+                    .Build());
+
+            accessClass.AddSecurityToken(securityToken);
+
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(permission).Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -94,6 +77,73 @@ namespace Allors.Database.Domain.Tests
             Assert.True(acl.CanRead(this.M.AccessClass.Property));
             Assert.True(acl.CanRead(this.M.AccessClass.Property));
         }
+
+        [Fact]
+        public void WithRevocationAndDelegateWithRevocation()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
+
+            var delegatedAccessClass = new AccessClassBuilder(this.Transaction).Build();
+            var accessClass = new AccessClassBuilder(this.Transaction).WithDelegatedAccess(delegatedAccessClass).Build();
+
+            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
+            var permission = this.FindPermission(this.M.AccessClass.Property, Operations.Read);
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+
+            securityToken.AddGrant(
+                new GrantBuilder(this.Transaction)
+                    .WithRole(role)
+                    .WithSubject(user)
+                    .Build());
+
+            accessClass.AddSecurityToken(securityToken);
+
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(permission).Build();
+            accessClass.AddRevocation(revocation);
+            delegatedAccessClass.AddRevocation(revocation);
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            // Use default security from Singleton
+            var acl = new DatabaseAccessControl(user)[accessClass];
+            Assert.False(acl.CanRead(this.M.AccessClass.Property));
+            Assert.False(acl.CanRead(this.M.AccessClass.Property));
+        }
+
+        [Fact]
+        public void WithoutRevocationAndDelegateWithRevocation()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
+
+            var delegatedAccessClass = new AccessClassBuilder(this.Transaction).Build();
+            var accessClass = new AccessClassBuilder(this.Transaction).WithDelegatedAccess(delegatedAccessClass).Build();
+
+            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
+            var permission = this.FindPermission(this.M.AccessClass.Property, Operations.Read);
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+
+            securityToken.AddGrant(
+                new GrantBuilder(this.Transaction)
+                    .WithRole(role)
+                    .WithSubject(user)
+                    .Build());
+
+
+            accessClass.AddSecurityToken(securityToken);
+
+            var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(permission).Build();
+            delegatedAccessClass.AddRevocation(revocation);
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            // Use default security from Singleton
+            var acl = new DatabaseAccessControl(user)[accessClass];
+            Assert.False(acl.CanRead(this.M.AccessClass.Property));
+            Assert.False(acl.CanRead(this.M.AccessClass.Property));
+        }
+
 
         private Permission FindPermission(IRoleType roleType, Operations operation)
         {

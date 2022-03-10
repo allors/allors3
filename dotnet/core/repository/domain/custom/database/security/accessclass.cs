@@ -28,6 +28,11 @@ namespace Allors.Repository
         #endregion
         public string Property { get; set; }
 
+        #region Allors
+        [Id("4DB6E69E-F870-4643-A2F6-D3C700FBB431")]
+        #endregion
+        public string AnotherProperty { get; set; }
+
         #region inherited methods
 
         public void OnBuild()
