@@ -25,19 +25,6 @@ namespace Allors.Database.Domain
             this.DerivationTrigger = Guid.NewGuid();
         }
 
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.SyncedShipment?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.SyncedShipment?.Revocations.ToArray();
-            }
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             if (this.ExistItemIssuancesWhereShipmentItem)
@@ -48,7 +35,5 @@ namespace Allors.Database.Domain
                 }
             }
         }
-
-        public void Sync(Shipment shipment) => this.SyncedShipment = shipment;
     }
 }

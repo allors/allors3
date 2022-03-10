@@ -90,13 +90,6 @@ namespace Allors.Repository
         string Description { get; set; }
 
         #region Allors
-        [Id("4B19B32A-1B6F-478A-8376-779A32AB6386")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        Invoice SyncedInvoice { get; set; }
-
-        #region Allors
         [Id("124e6101-f1df-427e-bd19-9c8fe69ff3ee")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

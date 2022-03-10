@@ -9,27 +9,24 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Derivations;
-    using Derivations.Rules;
     using Meta;
+    using Derivations.Rules;
 
-    public class QuoteQuoteItemsRule : Rule
+    public class SalesOrderItemDelegatedAccessRule : Rule
     {
-        public QuoteQuoteItemsRule(MetaPopulation m) : base(m, new Guid("00728229-8ff0-4f2b-b34b-f62010706a95")) =>
+        public SalesOrderItemDelegatedAccessRule(MetaPopulation m) : base(m, new Guid("abf19c62-816f-4c15-8c73-297b1f835173")) =>
             this.Patterns = new Pattern[]
             {
-                m.ProductQuote.RolePattern(v => v.QuoteItems),
-                m.QuoteItem.RolePattern(v => v.QuoteItemState, v => v.QuoteWhereQuoteItem),
+                m.SalesOrder.RolePattern(v => v.SalesOrderItems),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<Quote>())
+            foreach (var @this in matches.Cast<SalesOrder>())
             {
-                @this.ValidQuoteItems = @this.QuoteItems.Where(v => v.IsValid).ToArray();
-
-                foreach (var quoteItem in @this.QuoteItems)
+                foreach (var salesOrderItem in @this.SalesOrderItems)
                 {
-                    quoteItem.Sync(@this);
+                    salesOrderItem.DelegatedAccess = @this;
                 }
             }
         }

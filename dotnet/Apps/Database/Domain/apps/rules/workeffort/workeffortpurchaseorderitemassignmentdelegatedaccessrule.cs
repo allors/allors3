@@ -12,21 +12,24 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SalesOrderSyncSalesOrderItemsRule : Rule
+    public class WorkEffortPurchaseOrderItemAssignmentDelegatedAccessRule : Rule
     {
-        public SalesOrderSyncSalesOrderItemsRule(MetaPopulation m) : base(m, new Guid("abf19c62-816f-4c15-8c73-297b1f835173")) =>
+        public WorkEffortPurchaseOrderItemAssignmentDelegatedAccessRule(MetaPopulation m) : base(m, new Guid("52353306-2a73-4949-9691-83d1362b50c1")) =>
             this.Patterns = new Pattern[]
-            {
-                m.SalesOrder.RolePattern(v => v.SalesOrderItems),
-            };
+        {
+            m.WorkEffortPurchaseOrderItemAssignment.RolePattern(v => v.Assignment),
+        };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<SalesOrder>())
+            var transaction = cycle.Transaction;
+            var validation = cycle.Validation;
+
+            foreach (var @this in matches.Cast<WorkEffortPurchaseOrderItemAssignment>())
             {
-                foreach (var salesOrderItem in @this.SalesOrderItems)
+                if (@this.ExistAssignment)
                 {
-                    salesOrderItem.Sync(@this);
+                    @this.DelegatedAccess = @this.Assignment;
                 }
             }
         }

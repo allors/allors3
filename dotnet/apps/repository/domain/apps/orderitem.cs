@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("f3ef0124-e867-4da2-9323-80fbe1f214c2")]
     #endregion
-    public partial interface OrderItem : Transitional, Priceable, Deletable, DelegatedAccessObject
+    public partial interface OrderItem : Priceable, Deletable, DelegatedAccessObject
     {
         #region Allors
         [Id("7D6B04D2-062C-45B8-96AB-DC41A3DECAF8")]
@@ -161,13 +161,6 @@ namespace Allors.Repository
         [Scale(2)]
         [Workspace(Default)]
         decimal TotalIrpf { get; set; }
-
-        #region Allors
-        [Id("0b3cdfbf-0b75-4a9e-8f5c-40d37908710b")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        Order SyncedOrder { get; set; }
 
         #region Allors
         [Id("feeed27a-c421-476c-b233-02d2fb9db76d")]

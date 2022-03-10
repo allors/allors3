@@ -267,13 +267,6 @@ namespace Allors.Repository
         public RequestItem RequestItem { get; set; }
 
         #region Allors
-        [Id("06C27EDA-0DF1-4318-BC57-D62F8BF32B0C")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        public Quote SyncedQuote { get; set; }
-
-        #region Allors
         [Id("F8746889-097A-4C4E-BB55-511F0A8E3B41")]
         #endregion
         [Size(-1)]

@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedRequestItemsDeriveRequestItemsSyncedRequest()
+        public void ChangedRequestItemsDeriveRequestItemDelegatedAccess()
         {
             var request = new RequestForInformationBuilder(this.Transaction).Build();
             this.Derive();
@@ -38,7 +38,7 @@ namespace Allors.Database.Domain.Tests
             request.AddRequestItem(requestItem);
             this.Derive();
 
-            Assert.Equal(request, requestItem.SyncedRequest);
+            Assert.Equal(request, requestItem.DelegatedAccess);
         }
     }
 

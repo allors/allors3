@@ -44,19 +44,6 @@ namespace Allors.Database.Domain
         public bool IsDeletable =>
             this.SalesInvoiceItemState.Equals(new SalesInvoiceItemStates(this.Strategy.Transaction).ReadyForPosting);
 
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.SyncedInvoice?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.SyncedInvoice?.Revocations.ToArray();
-            }
-        }
-
         public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistSalesInvoiceItemState)
@@ -129,7 +116,5 @@ namespace Allors.Database.Domain
                 billing.Delete();
             }
         }
-
-        public void Sync(Invoice invoice) => this.SyncedInvoice = invoice;
     }
 }

@@ -321,7 +321,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedQuoteItemsDeriveQuoteItemSyncedQuote()
+        public void ChangedQuoteItemsDeriveQuoteItemDelegatedAccess()
         {
             var quote = new ProductQuoteBuilder(this.Transaction).Build();
             this.Derive();
@@ -330,7 +330,7 @@ namespace Allors.Database.Domain.Tests
             quote.AddQuoteItem(quoteItem);
             this.Derive();
 
-            Assert.Equal(quoteItem.SyncedQuote, quote);
+            Assert.Equal(quoteItem.DelegatedAccess, quote);
         }
     }
 

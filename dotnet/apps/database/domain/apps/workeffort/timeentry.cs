@@ -58,19 +58,5 @@ namespace Allors.Database.Domain
             method.Derivation.Validation.AssertExists(this, this.M.TimeEntry.TimeSheetWhereTimeEntry);
             method.Derivation.Validation.AssertAtLeastOne(this, this.M.TimeEntry.WorkEffort, this.M.TimeEntry.EngagementItem);
         }
-
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                var workEffortSecurityTokens = this.WorkEffort?.SecurityTokens ?? Array.Empty<SecurityToken>();
-                method.SecurityTokens = workEffortSecurityTokens.Append(this.Worker?.OwnerSecurityToken).ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.WorkEffort?.Revocations.ToArray();
-            }
-        }
     }
 }

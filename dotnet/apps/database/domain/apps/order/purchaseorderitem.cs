@@ -56,19 +56,6 @@ namespace Allors.Database.Domain
         //    }
         //}
 
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.SyncedOrder?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.SyncedOrder?.Revocations.ToArray();
-            }
-        }
-
         public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistPurchaseOrderItemState)
@@ -247,7 +234,5 @@ namespace Allors.Database.Domain
             this.PurchaseOrderItemState = this.PreviousPurchaseOrderItemState;
             method.StopPropagation = true;
         }
-
-        public void Sync(Order order) => this.SyncedOrder = order;
     }
 }

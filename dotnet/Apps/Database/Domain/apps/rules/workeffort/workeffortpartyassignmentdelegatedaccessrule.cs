@@ -11,24 +11,24 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
     using Derivations.Rules;
+    using Resources;
 
-    public class ShipmentRule : Rule
+    public class WorkEffortPartyAssignmentDelegatedAccessRule : Rule
     {
-        public ShipmentRule(MetaPopulation m) : base(m, new Guid("C08727A3-808A-4CB1-B926-DA7432BAAC44")) =>
+        public WorkEffortPartyAssignmentDelegatedAccessRule(MetaPopulation m) : base(m, new Guid("7407eab3-b776-41d2-90f6-2e9a0d5c6c40")) =>
             this.Patterns = new Pattern[]
-            {
-                m.Shipment.RolePattern(v => v.DerivationTrigger),
-                m.Shipment.RolePattern(v => v.ShipmentItems),
-            };
+        {
+            m.WorkEffortPartyAssignment.RolePattern(v => v.AssignmentRates),
+        };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<Shipment>())
+            var transaction = cycle.Transaction;
+            var validation = cycle.Validation;
+
+            foreach (var @this in matches.Cast<WorkEffortPartyAssignment>())
             {
-                foreach (var shipmentItem in @this.ShipmentItems)
-                {
-                    shipmentItem.DelegatedAccess = @this;
-                }
+                @this.DelegatedAccess = @this.Assignment;
             }
         }
     }

@@ -9,14 +9,6 @@ namespace Allors.Database.Domain
 
     public partial class TimeSheet
     {
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = (new[] { new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.Worker.OwnerSecurityToken });
-            }
-        }
-
         public void AppsDelete(DeletableDelete method)
         {
             if (this.ExistTimeEntries)

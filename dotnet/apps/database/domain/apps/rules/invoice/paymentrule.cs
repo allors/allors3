@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                     totalAmountApplied += paymentApplication.AmountApplied;
                 }
 
-                if (@this.ExistAmount && @this.Amount > totalAmountApplied)
+                if (@this.ExistAmount && totalAmountApplied > @this.Amount)
                 {
                     cycle.Validation.AddError(@this, this.M.Payment.Amount, ErrorMessages.PaymentAmountIsToSmall);
                 }

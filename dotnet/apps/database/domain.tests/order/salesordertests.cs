@@ -3376,7 +3376,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedValidOrderItemsSyncSalesOrderItemSyncedOrder()
+        public void OnChangedValidOrderItemsDeriveSalesOrderItemDelegatedAccess()
         {
             var order = new SalesOrderBuilder(this.Transaction).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();
             this.Derive();
@@ -3385,7 +3385,7 @@ namespace Allors.Database.Domain.Tests
             order.AddSalesOrderItem(orderItem);
             this.Derive();
 
-            Assert.Equal(order, orderItem.SyncedOrder);
+            Assert.Equal(order, orderItem.DelegatedAccess);
         }
     }
 

@@ -408,7 +408,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedPurchaseInvoiceItemDerivePurchaseInvoiceItemSyncedInvoice()
+        public void ChangedPurchaseInvoiceItemDerivePurchaseInvoiceItemDelegatedAccess()
         {
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Derive();
@@ -417,7 +417,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
             this.Derive();
 
-            Assert.Equal(purchaseInvoice, invoiceItem.SyncedInvoice);
+            Assert.Equal(purchaseInvoice, invoiceItem.DelegatedAccess);
         }
     }
 

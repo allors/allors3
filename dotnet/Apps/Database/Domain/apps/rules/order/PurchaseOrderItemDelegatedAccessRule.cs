@@ -12,23 +12,21 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class RequestForInformationRequestItemsRule : Rule
+    public class PurchaseOrderItemDelegatedAccessRule : Rule
     {
-        public RequestForInformationRequestItemsRule(MetaPopulation m) : base(m, new Guid("1731d3e7-efac-41ae-8720-df07ee23f03b")) =>
-            this.Patterns = new[]
+        public PurchaseOrderItemDelegatedAccessRule(MetaPopulation m) : base(m, new Guid("cb5e2f2c-f8c4-4c3f-bd6e-1713fe1b6162")) =>
+            this.Patterns = new Pattern[]
             {
-                m.RequestForInformation.RolePattern(v => v.RequestItems)
+                m.PurchaseOrder.RolePattern(v => v.PurchaseOrderItems),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            var validation = cycle.Validation;
-
-            foreach (var @this in matches.Cast<RequestForInformation>())
+            foreach (var @this in matches.Cast<PurchaseOrder>())
             {
-                foreach (var requestItem in @this.RequestItems)
+                foreach (var salesOrderItem in @this.PurchaseOrderItems)
                 {
-                    requestItem.Sync(@this);
+                    salesOrderItem.DelegatedAccess = @this;
                 }
             }
         }

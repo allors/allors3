@@ -12,24 +12,24 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class RequestForProposalDeriveRequestItemsRule : Rule
+    public class TimeEntrySecurityRule : Rule
     {
-        public RequestForProposalDeriveRequestItemsRule(MetaPopulation m) : base(m, new Guid("2eb48653-bed2-4f58-8120-fa1f021b7c0b")) =>
-            this.Patterns = new[]
-            {
-                m.RequestForProposal.RolePattern(v => v.RequestItems)
-            };
+        public TimeEntrySecurityRule(MetaPopulation m) : base(m, new Guid("8733329d-2cd7-4555-bab1-ef4b1e21b540")) =>
+            this.Patterns = new Pattern[]
+        {
+            m.TimeEntry.RolePattern(v => v.WorkEffort),
+            m.TimeEntry.RolePattern(v => v.Worker),
+        };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<RequestForProposal>())
+            foreach (var @this in matches.Cast<TimeEntry>())
             {
-                foreach (var requestItem in @this.RequestItems)
-                {
-                    requestItem.Sync(@this);
-                }
+                @this.DelegatedAccess = @this.WorkEffort;
+                @this.AddSecurityToken(@this.Worker?.OwnerSecurityToken);
             }
         }
     }

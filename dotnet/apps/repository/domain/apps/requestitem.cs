@@ -190,13 +190,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         public DateTime RequiredByDate { get; set; }
 
-        #region Allors
-        [Id("A6AF9B26-D056-4CD4-BAFA-357EE754AB9A")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        public Request SyncedRequest { get; set; }
-
         #region inherited methods
 
         public void OnBuild() { }

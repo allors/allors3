@@ -1650,14 +1650,14 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void SyncInvoiceItemSyncedInvoice()
+        public void DeriveInvoiceItemDelegatedAccess()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             this.Transaction.Derive();
 
             foreach (InvoiceItem invoiceItem in invoice.InvoiceItems)
             {
-                Assert.Equal(invoiceItem.SyncedInvoice, invoice);
+                Assert.Equal(invoiceItem.DelegatedAccess, invoice);
             }
         }
 
@@ -1810,7 +1810,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedInvoiceItemSyncInvoiceItemSyncedInvoice()
+        public void ChangedInvoiceItemDeriveDelegatedAccess()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithSalesExternalB2BInvoiceDefaults(this.InternalOrganisation).Build();
             this.Transaction.Derive();
@@ -1819,7 +1819,7 @@ namespace Allors.Database.Domain.Tests
             invoice.AddSalesInvoiceItem(newItem);
             this.Transaction.Derive();
 
-            Assert.Equal(newItem.SyncedInvoice, invoice);
+            Assert.Equal(newItem.DelegatedAccess, invoice);
         }
     }
 

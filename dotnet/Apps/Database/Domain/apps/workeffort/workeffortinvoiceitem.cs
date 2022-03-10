@@ -5,9 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
-    using System.Linq;
-
     public partial class WorkEffortInvoiceItem
     {
         public bool IsDeletable
@@ -17,19 +14,6 @@ namespace Allors.Database.Domain
                 var workEffortState = this.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem?.Assignment?.WorkEffortState;
 
                 return !workEffortState.IsCompleted && !workEffortState.IsFinished;
-            }
-        }
-
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.Assignment?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.Assignment?.Revocations.ToArray();
             }
         }
 
