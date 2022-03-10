@@ -21,19 +21,6 @@ namespace Allors.Database.Domain
 
         public bool WasValid => this.ExistLastObjectStates && !(this.LastQuoteItemState.IsCancelled || this.LastQuoteItemState.IsRejected);
 
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.SyncedQuote?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.SyncedQuote?.Revocations.ToArray();
-            }
-        }
-
         public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistQuoteItemState)
@@ -89,7 +76,5 @@ namespace Allors.Database.Domain
             this.QuoteItemState = new QuoteItemStates(this.Strategy.Transaction).Submitted;
             method.StopPropagation = true;
         }
-
-        public void Sync(Quote quote) => this.SyncedQuote = quote;
     }
 }

@@ -16,18 +16,5 @@ namespace Allors.Database.Domain
                 this.Frequency = new TimeFrequencies(this.Strategy.Transaction).Hour;
             }
         }
-
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.WorkEffort?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.WorkEffort?.Revocations.ToArray();
-            }
-        }
     }
 }

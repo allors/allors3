@@ -23,19 +23,6 @@ namespace Allors.Database.Domain
                 || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Rejected)
                 || this.RequestItemState.Equals(new RequestItemStates(this.Strategy.Transaction).Cancelled));
 
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.SyncedRequest?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.SyncedRequest?.Revocations.ToArray();
-            }
-        }
-
         public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistRequestItemState)
@@ -49,7 +36,5 @@ namespace Allors.Database.Domain
             this.RequestItemState = new RequestItemStates(this.Strategy.Transaction).Cancelled;
             method.StopPropagation = true;
         }
-
-        public void Sync(Request request) => this.SyncedRequest = request;
     }
 }

@@ -86,7 +86,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedShipmentItemsSyncShipmentItem()
+        public void ChangedShipmentItemsDeriveShipmentItemDelegatedAccess()
         {
             var shipment = new CustomerReturnBuilder(this.Transaction).Build();
             this.Derive();
@@ -95,7 +95,7 @@ namespace Allors.Database.Domain.Tests
             shipment.AddShipmentItem(shipmentItem);
             this.Derive();
 
-            Assert.Equal(shipment, shipmentItem.SyncedShipment);
+            Assert.Equal(shipment, shipmentItem.DelegatedAccess);
         }
     }
 }

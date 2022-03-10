@@ -12,23 +12,23 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class RequestForQuoteRequestItemsRule : Rule
+    public class RequestRequestItemDelegatedAccessRule : Rule
     {
-        public RequestForQuoteRequestItemsRule(MetaPopulation m) : base(m, new Guid("8505acf9-e8b6-4d35-b0c1-a6af03217df2")) =>
+        public RequestRequestItemDelegatedAccessRule(MetaPopulation m) : base(m, new Guid("1731d3e7-efac-41ae-8720-df07ee23f03b")) =>
             this.Patterns = new[]
             {
-                m.RequestForQuote.RolePattern(v => v.RequestItems)
+                m.Request.RolePattern(v => v.RequestItems)
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<RequestForQuote>())
+            foreach (var @this in matches.Cast<Request>())
             {
                 foreach (var requestItem in @this.RequestItems)
                 {
-                    requestItem.Sync(@this);
+                    requestItem.DelegatedAccess = @this;
                 }
             }
         }

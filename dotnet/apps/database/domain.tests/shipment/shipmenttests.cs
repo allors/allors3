@@ -13,7 +13,7 @@ namespace Allors.Database.Domain.Tests
         public ShipmentRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedShipmentItemsSyncshipmentItemSyncedShipment()
+        public void ChangedShipmentItemsDeriveShipmentItemDelegatedAccess()
         {
             var shipment = new CustomerShipmentBuilder(this.Transaction).WithShipToParty(new PersonBuilder(this.Transaction).Build()).Build();
             this.Derive();
@@ -22,7 +22,7 @@ namespace Allors.Database.Domain.Tests
             shipment.AddShipmentItem(shipmentItem);
             this.Derive();
 
-            Assert.Equal(shipment, shipmentItem.SyncedShipment);
+            Assert.Equal(shipment, shipmentItem.DelegatedAccess);
         }
     }
 }

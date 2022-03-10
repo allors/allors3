@@ -7,7 +7,6 @@ namespace Allors.Database.Domain
 {
     using System.Linq;
     using Database.Derivations;
-    using Derivations;
     using Resources;
 
     public partial class WorkEffortInventoryAssignment
@@ -24,19 +23,6 @@ namespace Allors.Database.Domain
             // TODO: Avoid creating a Derivation
             var derivation = this.Strategy.Transaction.Database.Services.Get<IDerivationService>().CreateDerivation(transaction);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
-        }
-
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.Assignment?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.Assignment?.Revocations.ToArray();
-            }
         }
 
         public void SyncInventoryTransactions(IDerivation derivation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)

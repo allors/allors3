@@ -165,14 +165,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         public SerialisedItemAvailability NextSerialisedItemAvailability { get; set; }
 
-        #region Allors
-        [Id("312FC32F-3EB9-492A-AC69-AEC608A48AF4")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        public Shipment SyncedShipment { get; set; }
-
         /// <summary>
         /// Gets or Sets the Purchase price in case PurchaseShipment is not coming from PurchaseOrder.
         /// We need a price for calculating the weighted average cost for inventory.

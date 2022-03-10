@@ -12,12 +12,12 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class SalesInvoiceRule : Rule
+    public class WorkEffortFixedAssetAssignmentDelegatedAccessRule : Rule
     {
-        public SalesInvoiceRule(MetaPopulation m) : base(m, new Guid("5F9E688C-1805-4982-87EC-CE45100BDD30")) =>
+        public WorkEffortFixedAssetAssignmentDelegatedAccessRule(MetaPopulation m) : base(m, new Guid("4b364a10-4923-4a23-994a-1a3ab9d15d09")) =>
             this.Patterns = new Pattern[]
         {
-            m.SalesInvoice.RolePattern(v => v.SalesInvoiceItems),
+            m.WorkEffortFixedAssetAssignment.RolePattern(v => v.Assignment),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -25,12 +25,9 @@ namespace Allors.Database.Domain
             var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<SalesInvoice>())
+            foreach (var @this in matches.Cast<WorkEffortFixedAssetAssignment>())
             {
-                foreach (var invoiceItem in @this.SalesInvoiceItems)
-                {
-                    invoiceItem.Sync(@this);
-                }
+                @this.DelegatedAccess = @this.Assignment;
             }
         }
     }

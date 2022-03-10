@@ -113,8 +113,6 @@ namespace Allors.Repository
 
         public decimal GrandTotal { get; set; }
 
-        public Order SyncedOrder { get; set; }
-
         public User CreatedBy { get; set; }
 
         public User LastModifiedBy { get; set; }

@@ -32,8 +32,7 @@ namespace Allors.Database.Domain
                 //Sync
                 foreach (var invoiceItem in @this.PurchaseInvoiceItems)
                 {
-                    //invoiceItem.Sync(purchaseInvoice);
-                    invoiceItem.SyncedInvoice = @this;
+                    invoiceItem.DelegatedAccess = @this;
                 }
 
                 @this.ResetPrintDocument();

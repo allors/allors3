@@ -112,8 +112,6 @@ namespace Allors.Repository
 
         public decimal TotalExVat { get; set; }
 
-        public Order SyncedOrder { get; set; }
-
         public User CreatedBy { get; set; }
 
         public User LastModifiedBy { get; set; }

@@ -45,8 +45,6 @@ namespace Allors.Repository
 
         public string Description { get; set; }
 
-        public Invoice SyncedInvoice { get; set; }
-
         public Revocation[] Revocations { get; set; }
 
         public Revocation[] TransitionalRevocations { get; set; }

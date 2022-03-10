@@ -19,19 +19,6 @@ namespace Allors.Database.Domain
 
         public decimal PriceAdjustment => this.TotalSurcharge - this.TotalDiscount;
 
-        public void AppsDelegateAccess(DelegatedAccessObjectDelegateAccess method)
-        {
-            if (method.SecurityTokens == null)
-            {
-                method.SecurityTokens = this.SyncedInvoice?.SecurityTokens.ToArray();
-            }
-
-            if (method.Revocations == null)
-            {
-                method.Revocations = this.SyncedInvoice?.Revocations.ToArray();
-            }
-        }
-
         public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistPurchaseInvoiceItemState)

@@ -208,7 +208,6 @@ namespace Allors.Database.Domain
                     var timeSpendInTimeEntryRateFrequency = Rounder.RoundDecimal((decimal)frequencies.Minute.ConvertToFrequency(@this.AmountOfTimeInMinutes, @this.BillingFrequency), 2);
                     @this.Cost = Rounder.RoundDecimal(costRate * timeSpendInTimeEntryRateFrequency, 2);
                 }
-
             }
         }
     }

@@ -51,7 +51,6 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(workOrder, partyAssignment.Assignment);
             Assert.Equal(employee, partyAssignment.Party);
-            Assert.False(partyAssignment.ExistFromDate);
             Assert.False(partyAssignment.ExistThroughDate);
         }
 
