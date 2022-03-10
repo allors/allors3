@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Database.Security;
@@ -19,7 +20,7 @@ namespace Allors.Database.Domain
         private readonly IInternalAccessControl accessControl;
         private readonly IPermissionsCacheEntry permissionsCacheEntry;
 
-        private Grant[] accessControls;
+        private Grant[] grants;
         private Revocation[] revocations;
 
         private bool lazyLoaded;
@@ -39,7 +40,7 @@ namespace Allors.Database.Domain
             get
             {
                 this.LazyLoad();
-                return this.accessControls;
+                return this.grants;
             }
         }
 
@@ -96,7 +97,7 @@ namespace Allors.Database.Domain
         {
             this.LazyLoad();
 
-            if (this.accessControls.Any(v => this.accessControl.GrantedPermissionIds(v).Contains(permissionId)))
+            if (this.grants.Any(v => this.accessControl.GrantedPermissionIds(v).Contains(permissionId)))
             {
                 return this.revocations?.Any(v => this.accessControl.RevokedPermissionIds(v).Contains(permissionId)) != true;
             }
@@ -110,39 +111,45 @@ namespace Allors.Database.Domain
             {
                 var strategy = this.Object.Strategy;
                 var transaction = strategy.Transaction;
+                var delegatedAccess = this.Object is DelegatedAccessObject del ? del.DelegatedAccess : null;
 
-                SecurityToken[] securityTokens = null;
-                Revocation[] delegatedAccessDeniedPermissions = null;
-
-                if (this.Object is DelegatedAccessObject controlledObject)
+                // Grants
                 {
-                    var delegatedAccess = controlledObject.DelegatedAccess;
-                    if (delegatedAccess != null)
+                    IEnumerable<SecurityToken> tokens = null;
+                    if (delegatedAccess?.ExistSecurityTokens == true)
                     {
-                        securityTokens = delegatedAccess.SecurityTokens.ToArray();
-                        delegatedAccessDeniedPermissions = delegatedAccess.Revocations.ToArray();
+                        tokens = this.Object.ExistSecurityTokens ? delegatedAccess.SecurityTokens.Concat(this.Object.SecurityTokens) : delegatedAccess.SecurityTokens;
                     }
+                    else if (this.Object.ExistSecurityTokens)
+                    {
+                        tokens = this.Object.SecurityTokens;
+                    }
+
+                    if (tokens == null)
+                    {
+                        var securityTokens = new SecurityTokens(transaction);
+                        tokens = strategy.IsNewInTransaction
+                            ? new[] { securityTokens.InitialSecurityToken ?? securityTokens.DefaultSecurityToken }
+                            : new[] { securityTokens.DefaultSecurityToken };
+                    }
+
+                    this.grants = this.accessControl.Filter(tokens.SelectMany(v => v.Grants)).Distinct().ToArray();
                 }
-                else
+
+                // Revocations
                 {
-                    securityTokens = this.Object.SecurityTokens.ToArray();
+                    IEnumerable<Revocation> unfilteredRevocations = null;
+                    if (delegatedAccess?.ExistRevocations == true)
+                    {
+                        unfilteredRevocations = this.Object.ExistRevocations ? this.Object.Revocations.Concat(delegatedAccess.Revocations.Where(v => !this.Object.Revocations.Contains(v))) : delegatedAccess.Revocations;
+                    }
+                    else if (this.Object.ExistRevocations)
+                    {
+                        unfilteredRevocations = this.Object.Revocations;
+                    }
+
+                    this.revocations = unfilteredRevocations != null ? this.accessControl.Filter(unfilteredRevocations) : Array.Empty<Revocation>();
                 }
-
-                var unfilteredRevocations = delegatedAccessDeniedPermissions?.Length > 0
-                    ? this.Object.Revocations.Union(delegatedAccessDeniedPermissions)
-                    : this.Object.Revocations;
-
-                this.revocations = this.accessControl.Filter(unfilteredRevocations);
-
-                if (securityTokens == null || securityTokens.Length == 0)
-                {
-                    var tokens = new SecurityTokens(transaction);
-                    securityTokens = strategy.IsNewInTransaction
-                                          ? new[] { tokens.InitialSecurityToken ?? tokens.DefaultSecurityToken }
-                                          : new[] { tokens.DefaultSecurityToken };
-                }
-
-                this.accessControls = this.accessControl.Filter(securityTokens.SelectMany(v => v.Grants).Distinct());
 
                 this.lazyLoaded = true;
             }

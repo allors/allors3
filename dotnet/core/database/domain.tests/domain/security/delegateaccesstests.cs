@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Tests
         public override Config Config => new Config { SetupSecurity = true };
 
         [Fact]
-        public void WithoutDelegate()
+        public void WithoutSecurityTokenWithoutDelegate()
         {
             var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
             var accessClass = new AccessClassBuilder(this.Transaction).Build();
@@ -38,6 +38,32 @@ namespace Allors.Database.Domain.Tests
             var acl = new DatabaseAccessControl(user)[accessClass];
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
+        }
+
+        [Fact]
+        public void WithSecurityTokenWithoutDelegate()
+        {
+            var user = new PersonBuilder(this.Transaction).WithUserName("user").Build();
+            var accessClass = new AccessClassBuilder(this.Transaction).Build();
+
+            var securityToken = new SecurityTokenBuilder(this.Transaction).Build();
+            var permission = this.FindPermission(this.M.AccessClass.Property, Operations.Read);
+            var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
+
+            securityToken.AddGrant(
+                new GrantBuilder(this.Transaction)
+                    .WithRole(role)
+                    .WithSubject(user)
+                    .Build());
+
+            accessClass.AddSecurityToken(securityToken);
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var acl = new DatabaseAccessControl(user)[accessClass];
+            Assert.True(acl.CanRead(this.M.AccessClass.Property));
+            Assert.True(acl.CanRead(this.M.AccessClass.Property));
         }
 
         [Fact]
