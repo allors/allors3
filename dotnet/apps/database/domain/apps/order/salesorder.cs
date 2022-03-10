@@ -388,17 +388,17 @@ namespace Allors.Database.Domain
                 foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     OrderAdjustment newAdjustment = null;
-                    if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
+                    if (orderAdjustment.GetType().Name.Equals(nameof(DiscountAdjustment)))
                     {
                         newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
                     }
 
-                    if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
+                    if (orderAdjustment.GetType().Name.Equals(nameof(SurchargeAdjustment)))
                     {
                         newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
                     }
 
-                    if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
+                    if (orderAdjustment.GetType().Name.Equals(nameof(Fee)))
                     {
                         newAdjustment = new FeeBuilder(this.Transaction()).Build();
                     }
@@ -408,7 +408,7 @@ namespace Allors.Database.Domain
                         newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
                     }
 
-                    if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
+                    if (orderAdjustment.GetType().Name.Equals(nameof(MiscellaneousCharge)))
                     {
                         newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
                     }
@@ -422,7 +422,7 @@ namespace Allors.Database.Domain
                 {
                     var amountAlreadyInvoiced = orderItem.OrderItemBillingsWhereOrderItem.Sum(v => v.Amount);
 
-                    var leftToInvoice = orderItem.QuantityOrdered * orderItem.UnitPrice - amountAlreadyInvoiced;
+                    var leftToInvoice = (orderItem.QuantityOrdered * orderItem.UnitPrice) - amountAlreadyInvoiced;
 
                     if (leftToInvoice != 0)
                     {
@@ -458,7 +458,7 @@ namespace Allors.Database.Domain
 
                 foreach (var salesTerm in this.SalesTerms)
                 {
-                    if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
+                    if (salesTerm.GetType().Name == nameof(IncoTerm))
                     {
                         salesInvoice.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
@@ -467,7 +467,7 @@ namespace Allors.Database.Domain
                             .Build());
                     }
 
-                    if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
+                    if (salesTerm.GetType().Name == nameof(InvoiceTerm))
                     {
                         salesInvoice.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
@@ -476,7 +476,7 @@ namespace Allors.Database.Domain
                             .Build());
                     }
 
-                    if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
+                    if (salesTerm.GetType().Name == nameof(OrderTerm))
                     {
                         salesInvoice.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
@@ -484,6 +484,16 @@ namespace Allors.Database.Domain
                             .WithDescription(salesTerm.Description)
                             .Build());
                     }
+                }
+
+                foreach (var paymentApplication in this.PaymentApplicationsWhereOrder)
+                {
+                    var invoicePaymentApplication = new PaymentApplicationBuilder(this.strategy.Transaction)
+                        .WithInvoice(salesInvoice)
+                        .WithAmountApplied(paymentApplication.AmountApplied)
+                        .Build();
+
+                    paymentApplication.PaymentWherePaymentApplication.AddPaymentApplication(invoicePaymentApplication);
                 }
             }
 

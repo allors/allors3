@@ -17,7 +17,7 @@ import { IconService } from '../icon/icon.service';
 export class FactoryFabComponent extends AllorsComponent implements OnInit {
   @Input() public objectType: Composite;
 
-  @Input() public intitializer: Initializer;
+  @Input() public initializer: Initializer;
 
   @Output() public created?: EventEmitter<IObject> = new EventEmitter();
 
@@ -49,7 +49,7 @@ export class FactoryFabComponent extends AllorsComponent implements OnInit {
     const request: CreateRequest = {
       kind: 'CreateRequest',
       objectType,
-      initializer: this.intitializer,
+      initializer: this.initializer,
     };
 
     this.createService.create(request).subscribe((v) => {

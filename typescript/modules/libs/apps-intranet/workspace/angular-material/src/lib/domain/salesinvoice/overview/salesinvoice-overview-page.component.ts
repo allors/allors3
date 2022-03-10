@@ -30,8 +30,6 @@ export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageCompone
   m: M;
 
   invoice: SalesInvoice;
-
-  paymentTarget: Path;
   canWrite: () => boolean;
 
   constructor(
@@ -52,11 +50,6 @@ export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageCompone
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
-    const { pathBuilder: p } = this.m;
-
-    this.paymentTarget = p.Invoice({
-      PaymentApplicationsWhereInvoice: { PaymentWherePaymentApplication: {} },
-    });
 
     this.canWrite = () => this.invoice.canWriteSalesInvoiceItems;
   }

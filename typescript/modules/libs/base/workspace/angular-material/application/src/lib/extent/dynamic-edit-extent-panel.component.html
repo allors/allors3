@@ -17,7 +17,7 @@
   <a-mat-factory-fab
     *ngIf="init && creatable"
     [objectType]="factory ?? objectType"
-    [intitializer]="initializer"
+    [initializer]="initializer"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 
