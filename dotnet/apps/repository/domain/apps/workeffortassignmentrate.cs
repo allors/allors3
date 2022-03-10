@@ -19,6 +19,9 @@ namespace Allors.Repository
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
+
+        public Object DelegatedAccess { get; set; }
+
         #endregion
 
         #region Allors
@@ -98,7 +101,7 @@ namespace Allors.Repository
 
         public void Delete() { }
 
-        public void DelegateAccess() { }
+        
 
         #endregion
     }

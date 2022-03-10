@@ -27,6 +27,9 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        public Object DelegatedAccess { get; set; }
+
+
         #endregion
 
         #region inherited methods
@@ -41,7 +44,7 @@ namespace Allors.Repository
 
         public void OnPostDerive() { }
 
-        public void DelegateAccess() { }
+        
 
         #endregion
     }

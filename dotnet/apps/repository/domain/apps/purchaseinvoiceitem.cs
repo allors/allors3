@@ -54,6 +54,8 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        public Object DelegatedAccess { get; set; }
+
         public string Comment { get; set; }
 
         public LocalisedText[] LocalisedComments { get; set; }
@@ -218,7 +220,7 @@ namespace Allors.Repository
 
         public void Delete() { }
 
-        public void DelegateAccess() { }
+        
         #endregion
 
         #region Allors

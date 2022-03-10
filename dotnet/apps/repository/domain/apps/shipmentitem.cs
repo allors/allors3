@@ -21,6 +21,8 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        public Object DelegatedAccess { get; set; }
+        
         public ObjectState[] PreviousObjectStates { get; set; }
 
         public ObjectState[] LastObjectStates { get; set; }
@@ -204,7 +206,7 @@ namespace Allors.Repository
 
         public void Delete() { }
 
-        public void DelegateAccess() { }
+        
 
         #endregion
     }

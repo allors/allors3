@@ -111,19 +111,17 @@ namespace Allors.Database.Domain
                 var strategy = this.Object.Strategy;
                 var transaction = strategy.Transaction;
 
+                SecurityToken[] securityTokens = null;
                 Revocation[] delegatedAccessDeniedPermissions = null;
 
-                SecurityToken[] securityTokens;
                 if (this.Object is DelegatedAccessObject controlledObject)
                 {
-                    var delegatedAccess = controlledObject.DelegateAccess();
-                    securityTokens = delegatedAccess.SecurityTokens;
-                    if (securityTokens?.Any(v => v == null) == true)
+                    var delegatedAccess = controlledObject.DelegatedAccess;
+                    if (delegatedAccess != null)
                     {
-                        securityTokens = securityTokens.Where(v => v != null).ToArray();
+                        securityTokens = delegatedAccess.SecurityTokens.ToArray();
+                        delegatedAccessDeniedPermissions = delegatedAccess.Revocations.ToArray();
                     }
-
-                    delegatedAccessDeniedPermissions = delegatedAccess.Revocations;
                 }
                 else
                 {

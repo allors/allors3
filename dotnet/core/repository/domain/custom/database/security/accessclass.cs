@@ -18,13 +18,10 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        public Object DelegatedAccess { get; set; }
+
         #endregion
 
-        #region Allors
-        [Id("81C11FD0-E121-4AE7-B624-441968B62089")]
-        #endregion
-        [Required]
-        public bool Block { get; set; }
 
         #region Allors
         [Id("A67189D3-CD06-425B-98BB-59E0E73AC211")]
@@ -49,9 +46,6 @@ namespace Allors.Repository
         {
         }
 
-        public void DelegateAccess()
-        {
-        }
         #endregion
     }
 }

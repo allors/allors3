@@ -24,6 +24,8 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        public Object DelegatedAccess { get; set; }
+
         public DateTime FromDate { get; set; }
 
         public DateTime ThroughDate { get; set; }
@@ -78,7 +80,7 @@ namespace Allors.Repository
 
         public void Delete() { }
 
-        public void DelegateAccess() { }
+        
 
         #endregion
     }

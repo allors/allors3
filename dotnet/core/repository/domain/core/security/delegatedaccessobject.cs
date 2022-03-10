@@ -14,8 +14,10 @@ namespace Allors.Repository
     public partial interface DelegatedAccessObject : Object
     {
         #region Allors
-        [Id("C56B5BC5-35BD-4762-B237-54EA3BFC7E7A")]
+        [Id("4277EB04-A800-4EA9-B19F-A2268D903D5F")]
         #endregion
-        void DelegateAccess();
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        public Object DelegatedAccess { get; set; }
     }
 }
