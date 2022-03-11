@@ -69,7 +69,8 @@ namespace Allors.Database.Data
                 {
                     null => null,
                     IObject currentObject => @this.Match(currentObject) ? currentObject : null,
-                    _ => ((IEnumerable<IObject>)selection).Where(@this.Match).ToArray()
+                    IEnumerable<IObject> enumerable => enumerable.Where(@this.Match).ToArray(),
+                    var unit => unit,
                 };
             }
 

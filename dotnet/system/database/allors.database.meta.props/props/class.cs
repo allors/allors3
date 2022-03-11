@@ -72,9 +72,6 @@ namespace Allors.Database.Meta
             }
         }
 
-        // TODO: Review
-        public RoleType[] DelegatedAccessRoleTypes { get; set; }
-
         public override IEnumerable<IClassBase> Classes => this.classes;
 
         public override IEnumerable<IClass> DatabaseClasses => this.Origin == Origin.Database ? this.classes : Array.Empty<Class>();

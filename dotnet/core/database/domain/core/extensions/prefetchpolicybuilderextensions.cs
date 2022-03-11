@@ -25,32 +25,24 @@ namespace Allors.Database.Domain
 
         public static PrefetchPolicyBuilder WithSecurityRules(this PrefetchPolicyBuilder @this, IComposite composite, MetaPopulation m)
         {
-            // TODO: Cache
-
             var securityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.SecurityToken.Grants, new PrefetchPolicyBuilder()
-                    .WithRule(m.Grant.UniqueId)
-                    .Build())
-                .Build();
+                       .WithRule(m.SecurityToken.Grants, new PrefetchPolicyBuilder()
+                           .WithRule(m.Grant.UniqueId)
+                           .Build())
+                       .Build();
 
-            foreach (Class @class in composite.Classes)
-            {
-                if (@class.DelegatedAccessRoleTypes != null)
-                {
-                    var builder = new PrefetchPolicyBuilder()
-                        .WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy)
-                        .WithRule(m.Object.Revocations)
-                        .Build();
 
-                    foreach (var delegatedAccessRoleType in @class.DelegatedAccessRoleTypes)
-                    {
-                        @this.WithRule(delegatedAccessRoleType, builder);
-                    }
-                }
-            }
-
+            // Object
             @this.WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy);
             @this.WithRule(m.Object.Revocations);
+
+            // DelegatedAccessObject
+            var delegatedAccessPolicy = new PrefetchPolicyBuilder()
+                .WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy)
+                .WithRule(m.Object.Revocations)
+                .Build();
+
+            @this.WithRule(m.DelegatedAccessObject.DelegatedAccess, delegatedAccessPolicy);
 
             return @this;
         }
