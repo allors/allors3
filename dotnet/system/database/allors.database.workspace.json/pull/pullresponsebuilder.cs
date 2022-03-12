@@ -115,7 +115,7 @@ namespace Allors.Database.Protocol.Json
         {
             var collection = enumerable as ICollection<IObject> ?? enumerable.ToArray();
 
-            if (collection?.Count > 0)
+            if (collection.Count > 0)
             {
                 var prefetchPolicy = this.prefetchers.ForInclude(objectType, tree);
 
@@ -271,6 +271,23 @@ namespace Allors.Database.Protocol.Json
             return pullResponse;
         }
 
+        public bool Include(IObject @object)
+        {
+            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true ||
+                this.maskedObjects.Contains(@object))
+            {
+                return false;
+            }
+
+            if (this.AccessControl[@object].IsMasked())
+            {
+                this.maskedObjects.Add(@object);
+                return false;
+            }
+
+            return true;
+        }
+
         private void AddDependencies()
         {
             if (this.dependencies == null)
@@ -347,23 +364,6 @@ namespace Allors.Database.Protocol.Json
             {
                 this.unmaskedObjects.Add(@object);
             }
-        }
-
-        private bool Include(IObject @object)
-        {
-            if (@object == null || this.AllowedClasses?.Contains(@object.Strategy.Class) != true ||
-                this.maskedObjects.Contains(@object))
-            {
-                return false;
-            }
-
-            if (this.AccessControl[@object].IsMasked())
-            {
-                this.maskedObjects.Add(@object);
-                return false;
-            }
-
-            return true;
         }
     }
 }

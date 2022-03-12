@@ -158,7 +158,6 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
           name: '_object',
           objectId: this.editRequest.objectId,
           include: {
-            SyncedShipment: {},
             Good: {
               UnifiedGood_InventoryItemKind: {},
             },
@@ -239,7 +238,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
 
     this.shipment =
       pullResult.object<Shipment>(this.m.Shipment) ||
-      this.object.SyncedShipment;
+      this.object.ShipmentWhereShipmentItem;
     this.isCustomerShipment =
       this.shipment.strategy.cls === this.m.CustomerShipment;
     this.isPurchaseShipment =

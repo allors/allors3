@@ -8,6 +8,7 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Xml.Schema;
     using Data;
     using Meta;
     using Security;
@@ -76,6 +77,10 @@ namespace Allors.Database.Protocol.Json
 
                             if (result.Skip.HasValue || result.Take.HasValue)
                             {
+                                // TODO: Security prefetch?
+                                objects = objects.Where(response.Include).ToArray();
+                                var total = objects.Length;
+
                                 var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
                                 if (result.Take.HasValue)
                                 {
@@ -84,7 +89,7 @@ namespace Allors.Database.Protocol.Json
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
+                                response.AddValue(name + "_total", total);
                                 response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, paged, include);
                             }
                             else
@@ -99,6 +104,10 @@ namespace Allors.Database.Protocol.Json
 
                             if (result.Skip.HasValue || result.Take.HasValue)
                             {
+                                // TODO: Security prefetch?
+                                objects = objects.Where(response.Include).ToArray();
+                                var total = objects.Length;
+
                                 var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
                                 if (result.Take.HasValue)
                                 {
@@ -107,7 +116,7 @@ namespace Allors.Database.Protocol.Json
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
+                                response.AddValue(name + "_total", total);
                                 response.AddCollection(name, extent.ObjectType, paged, include);
                             }
                             else

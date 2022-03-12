@@ -16,6 +16,8 @@ namespace Allors.Database.Configuration
         public WorkspaceMask(MetaPopulation m) =>
             this.masks = new Dictionary<IClass, IRoleType>
             {
+                //{m.Organisation, m.Organisation.Name},
+                //{m.Person, m.Person.DisplayName}
             };
 
         public IDictionary<IClass, IRoleType> GetMasks(string workspaceName) => this.masks;

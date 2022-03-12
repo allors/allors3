@@ -87,18 +87,19 @@ namespace Allors.Database.Protocol.Json
                                         var set = new HashSet<IObject>();
                                         foreach (var inner in outer)
                                         {
-                                            if (inner == null)
+                                            switch (inner)
                                             {
-                                                continue;
-                                            }
-                                            else if (inner is IObject innerObject)
-                                            {
-                                                set.Add(innerObject);
-                                            }
-                                            else
-                                            {
-                                                var innerEnumerable = (IEnumerable<IObject>)inner;
-                                                set.UnionWith(innerEnumerable);
+                                                case null:
+                                                    continue;
+                                                case IObject innerObject:
+                                                    set.Add(innerObject);
+                                                    break;
+                                                default:
+                                                {
+                                                    var innerEnumerable = (IEnumerable<IObject>)inner;
+                                                    set.UnionWith(innerEnumerable);
+                                                    break;
+                                                }
                                             }
                                         }
 
@@ -111,6 +112,9 @@ namespace Allors.Database.Protocol.Json
 
                                     if (result.Skip.HasValue || result.Take.HasValue)
                                     {
+                                        // TODO: Security prefetch?
+                                        objects = objects.Where(response.Include).ToArray();
+
                                         var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
                                         if (result.Take.HasValue)
                                         {
