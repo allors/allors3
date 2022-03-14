@@ -24,9 +24,6 @@ namespace Allors.Database.Protocol.Json
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
-        private ISet<IObject> maskedObjects;
-        private ISet<IObject> unmaskedObjects;
-
         public SyncResponseBuilder(ITransaction transaction, string workspaceName, IAccessControl accessControl, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges<long> ranges)
         {
             this.transaction = transaction;
@@ -49,27 +46,9 @@ namespace Allors.Database.Protocol.Json
 
             this.prefetch(requestObjects);
 
-            this.maskedObjects = new HashSet<IObject>();
-            this.unmaskedObjects = new HashSet<IObject>();
-
-            foreach (var @object in requestObjects)
-            {
-                var acl = this.AccessControl[@object];
-                if (acl.IsMasked())
-                {
-                    this.maskedObjects.Add(@object);
-                }
-                else
-                {
-                    this.unmaskedObjects.Add(@object);
-                }
-            }
-
-            var responseObjects = this.unmaskedObjects.ToArray();
-
             return new SyncResponse
             {
-                o = responseObjects.Select(v =>
+                o = requestObjects.Select(v =>
                 {
                     var @class = v.Strategy.Class;
                     var acl = this.AccessControl[v];
@@ -116,20 +95,6 @@ namespace Allors.Database.Protocol.Json
             return syncResponseRole;
         }
 
-        private bool Include(IObject @object)
-        {
-            if (@object == null || this.allowedClasses?.Contains(@object.Strategy.Class) != true || this.maskedObjects.Contains(@object))
-            {
-                return false;
-            }
-
-            if (this.AccessControl[@object].IsMasked())
-            {
-                this.maskedObjects.Add(@object);
-                return false;
-            }
-
-            return true;
-        }
+        private bool Include(IObject @object) => @object != null && this.allowedClasses?.Contains(@object.Strategy.Class) == true;
     }
 }
