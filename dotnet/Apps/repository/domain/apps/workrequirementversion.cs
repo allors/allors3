@@ -61,7 +61,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Workspace(Default)]
-        public bool UnOperable { get; set; }
+        public bool UnServiceable { get; set; }
 
         #region inherited methods
 
