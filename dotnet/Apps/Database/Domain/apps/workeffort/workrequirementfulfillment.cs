@@ -9,6 +9,12 @@ namespace Allors.Database.Domain
 
     public partial class WorkRequirementFulfillment
     {
-        public void AppsDelete(DeletableDelete method) => this.FullfilledBy.RequirementState = new RequirementStates(this.Strategy.Transaction).Created;
+        public void AppsDelete(DeletableDelete method)
+        {
+            if (this.FullfilledBy.RequirementState.IsInProgress)
+            {
+                this.FullfilledBy.RequirementState = new RequirementStates(this.Strategy.Transaction).Created;
+            }
+        }
     }
 }
