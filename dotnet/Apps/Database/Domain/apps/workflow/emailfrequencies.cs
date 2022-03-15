@@ -9,10 +9,10 @@ namespace Allors.Database.Domain
 
     public partial class EmailFrequencies
     {
-        private static readonly Guid NoEmailId = new Guid("9815bd5c-cfc0-438f-8a80-e0181134a014");
-        private static readonly Guid ImmediateId = new Guid("80ae43d6-c4b0-4a33-91f3-86df31405f85");
-        private static readonly Guid DailyId = new Guid("1f5dbf92-26e9-403b-a812-72a27d99c243");
-        private static readonly Guid WeeklyId = new Guid("00f6eeae-df4a-403a-a285-16d6368aa92e");
+        public static readonly Guid NoEmailId = new Guid("9815bd5c-cfc0-438f-8a80-e0181134a014");
+        public static readonly Guid ImmediateId = new Guid("80ae43d6-c4b0-4a33-91f3-86df31405f85");
+        public static readonly Guid DailyId = new Guid("1f5dbf92-26e9-403b-a812-72a27d99c243");
+        public static readonly Guid WeeklyId = new Guid("00f6eeae-df4a-403a-a285-16d6368aa92e");
 
         private UniquelyIdentifiableCache<EmailFrequency> cache;
 
