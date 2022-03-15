@@ -26,6 +26,14 @@ namespace Allors.Repository
         [Indexed]
         public Grant[] Grants { get; set; }
 
+        #region Allors
+        [Id("54E9825B-791B-4D07-8247-BB0D75AA3BD6")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Derived]
+        public Permission[] Permissions { get; set; }
+
         #region inherited methods
 
         public Revocation[] Revocations { get; set; }

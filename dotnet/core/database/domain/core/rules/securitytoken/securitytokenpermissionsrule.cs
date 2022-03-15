@@ -12,23 +12,20 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class GrantEffectivePermissionsRule : Rule
+    public class SecurityTokenPermissionsRule : Rule
     {
-        public GrantEffectivePermissionsRule(MetaPopulation m) : base(m, new Guid("1F897B84-EF92-4E94-8877-3501D56D426B")) =>
+        public SecurityTokenPermissionsRule(MetaPopulation m) : base(m, new Guid("E46C7A4C-7F63-4A5C-AE53-E8B43660FC47")) =>
             this.Patterns = new Pattern[]
             {
-                m.Grant.RolePattern(v=>v.Role),
-                m.Role.RolePattern(v=>v.Permissions, v=>v.GrantsWhereRole),
+                m.SecurityToken.RolePattern(v=>v.Grants),
+                m.Grant.RolePattern(v=>v.EffectivePermissions, v=>v.SecurityTokensWhereGrant),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var grant in matches.Cast<Grant>())
+            foreach (var securityToken in matches.Cast<SecurityToken>())
             {
-                grant.EffectivePermissions = (grant.Role?.Permissions.ToArray());
-
-                // Invalidate cache
-                ((IObject)grant).Strategy.Transaction.Database.Services.Get<IGrantCache>().Clear(grant.Id);
+                securityToken.Permissions = securityToken.Grants.SelectMany(v => v.EffectivePermissions).ToArray();
             }
         }
     }

@@ -24,15 +24,15 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var accessControl in matches.Cast<Grant>())
+            foreach (var grant in matches.Cast<Grant>())
             {
-                accessControl.EffectiveUsers = accessControl
+                grant.EffectiveUsers = grant
                     .SubjectGroups.SelectMany(v => v.Members)
-                    .Union(accessControl.Subjects)
+                    .Union(grant.Subjects)
                     .ToArray();
 
                 // Invalidate cache
-                accessControl.Strategy.Transaction.Database.Services.Get<IGrantCache>().Clear(accessControl.Id);
+                grant.Strategy.Transaction.Database.Services.Get<IGrantCache>().Clear(grant.Id);
             }
         }
     }
