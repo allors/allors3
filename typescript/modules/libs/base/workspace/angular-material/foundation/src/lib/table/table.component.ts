@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, OnInit } from '@angular/core';
+import { Component, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import {
   AllorsComponent,
@@ -14,15 +14,15 @@ import {
 })
 export class AllorsMaterialTableComponent
   extends AllorsComponent
-  implements OnInit
+  implements AfterViewInit
 {
   @Input()
   public table: BaseTable;
 
-  @ViewChild(MatSort, { static: true }) matSort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
 
-  ngOnInit(): void {
-    this.table.init(this.matSort);
+  ngAfterViewInit(): void {
+    this.table.init(this.sort);
   }
 
   cellStyle(row: TableRow, column: Column) {
