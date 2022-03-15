@@ -57,6 +57,14 @@
         }}</mat-option>
       </mat-select>
     </mat-form-field>
+    <a-mat-select
+      class="col-md"
+      [object]="object"
+      [roleType]="m.Person.EmailFrequency"
+      [options]="emailFrequencies"
+      display="Name"
+    >
+    </a-mat-select>
   </div>
 
   <div class="row">

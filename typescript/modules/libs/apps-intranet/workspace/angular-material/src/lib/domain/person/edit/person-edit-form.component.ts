@@ -5,6 +5,7 @@ import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   Currency,
   EmailAddress,
+  EmailFrequency,
   Enumeration,
   GenderType,
   InternalOrganisation,
@@ -39,6 +40,7 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
   public confirmPassword: string;
 
   currencies: Currency[];
+  emailFrequencies: EmailFrequency[];
 
   constructor(
     @Self() public allors: ContextService,
@@ -67,6 +69,14 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
             },
           },
         },
+      }),
+      p.EmailFrequency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.EmailFrequency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.EmailFrequency.Name }],
       }),
       p.Currency({
         predicate: {
@@ -132,6 +142,9 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
       pullResult.collection<Locale>(this.m.Singleton.Locales) || [];
     this.genders = pullResult.collection<GenderType>(this.m.GenderType);
     this.salutations = pullResult.collection<Salutation>(this.m.Salutation);
+    this.emailFrequencies = pullResult.collection<EmailFrequency>(
+      this.m.EmailFrequency
+    );
 
     const partyContactMechanisms: PartyContactMechanism[] =
       pullResult.collection<PartyContactMechanism>(

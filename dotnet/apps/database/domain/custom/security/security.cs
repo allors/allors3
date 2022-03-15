@@ -97,6 +97,7 @@ namespace Allors.Database.Domain
                     security.Grant(Roles.OwnerId, @class, m.Person.Hobbies, Operations.Read, Operations.Write);
                     security.Grant(Roles.OwnerId, @class, m.Person.MaritalStatus, Operations.Read, Operations.Write);
                     security.Grant(Roles.OwnerId, @class, m.Person.Picture, Operations.Read, Operations.Write);
+                    security.Grant(Roles.OwnerId, @class, m.Person.EmailFrequency, Operations.Read, Operations.Write);
                     security.Grant(Roles.OwnerId, @class, m.Person.SocialSecurityNumber, Operations.Read, Operations.Write);
                     security.Grant(Roles.OwnerId, @class, m.Person.Citizenship, Operations.Read, Operations.Write);
                 }

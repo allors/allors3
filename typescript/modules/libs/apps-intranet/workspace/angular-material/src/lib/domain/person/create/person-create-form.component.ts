@@ -5,6 +5,7 @@ import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   Currency,
   CustomerRelationship,
+  EmailFrequency,
   Employment,
   Enumeration,
   GenderType,
@@ -52,6 +53,7 @@ export class PersonCreateFormComponent extends AllorsFormComponent<Person> {
   private customerRole: PersonRole;
   private employeeRole: PersonRole;
   currencies: Currency[];
+  emailFrequencies: EmailFrequency[];
 
   constructor(
     @Self() public allors: ContextService,
@@ -82,6 +84,14 @@ export class PersonCreateFormComponent extends AllorsFormComponent<Person> {
             },
           },
         },
+      }),
+      p.EmailFrequency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.EmailFrequency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.EmailFrequency.Name }],
       }),
       p.Currency({
         predicate: {
@@ -133,6 +143,9 @@ export class PersonCreateFormComponent extends AllorsFormComponent<Person> {
     this.genders = pullResult.collection<GenderType>(this.m.GenderType);
     this.salutations = pullResult.collection<Salutation>(this.m.Salutation);
     this.roles = pullResult.collection<PersonRole>(this.m.PersonRole);
+    this.emailFrequencies = pullResult.collection<EmailFrequency>(
+      this.m.EmailFrequency
+    );
     this.organisationContactKinds =
       pullResult.collection<OrganisationContactKind>(
         this.m.OrganisationContactKind

@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public void Immediate()
         {
             var persons = new People(this.transaction).Extent();
-            persons.Filter.AddEquals(this.m.Person.EmailFrequencyEnum, EmailFrequency.Immediate);
+            persons.Filter.AddEquals(this.m.Person.EmailFrequency, new EmailFrequencies(this.transaction).Immediate);
 
             foreach (Person person in persons)
             {
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
         public void Daily()
         {
             var persons = new People(this.transaction).Extent();
-            persons.Filter.AddEquals(this.m.Person.EmailFrequencyEnum, EmailFrequency.Daily);
+            persons.Filter.AddEquals(this.m.Person.EmailFrequency, new EmailFrequencies(this.transaction).Daily);
 
             foreach (Person person in persons)
             {
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
         public void Weekly()
         {
             var persons = new People(this.transaction).Extent();
-            persons.Filter.AddEquals(this.m.Person.EmailFrequencyEnum, EmailFrequency.Weekly);
+            persons.Filter.AddEquals(this.m.Person.EmailFrequency, new EmailFrequencies(this.transaction).Weekly);
 
             foreach (Person person in persons)
             {

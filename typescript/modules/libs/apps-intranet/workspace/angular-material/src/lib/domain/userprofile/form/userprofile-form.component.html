@@ -53,6 +53,14 @@
   </div>
 
   <div class="row">
+    <a-mat-select
+      class="col-md-6"
+      [object]="user"
+      [roleType]="m.Person.EmailFrequency"
+      [options]="emailFrequencies"
+      display="Name"
+    >
+    </a-mat-select>
     <a-mat-file
       class="col-md"
       [object]="user"

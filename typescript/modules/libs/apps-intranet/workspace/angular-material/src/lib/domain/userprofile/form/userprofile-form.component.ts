@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 
 import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
+  EmailFrequency,
   Locale,
   Organisation,
   Singleton,
@@ -28,6 +29,7 @@ export class UserProfileFormComponent extends AllorsFormComponent<UserProfile> {
   public confirmPassword: string;
 
   user: User;
+  emailFrequencies: EmailFrequency[];
 
   constructor(
     @Self() public allors: ContextService,
@@ -57,6 +59,14 @@ export class UserProfileFormComponent extends AllorsFormComponent<UserProfile> {
           value: true,
         },
         sorting: [{ roleType: m.Organisation.DisplayName }],
+      }),
+      p.EmailFrequency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.EmailFrequency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.EmailFrequency.Name }],
       })
     );
 
@@ -89,6 +99,9 @@ export class UserProfileFormComponent extends AllorsFormComponent<UserProfile> {
     this.user = this.object.UserWhereUserProfile;
     this.internalOrganizations = pullResult.collection<Organisation>(
       this.m.Organisation
+    );
+    this.emailFrequencies = pullResult.collection<EmailFrequency>(
+      this.m.EmailFrequency
     );
 
     const singleton = pullResult.collection<Singleton>(this.m.Singleton)[0];

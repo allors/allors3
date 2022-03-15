@@ -329,10 +329,11 @@ namespace Allors.Repository
         /// </summary>
         #region Allors
         [Id("1aefdaa4-3bbe-420c-a348-30dc8252b35b")]
-        [Indexed]
         #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
         [Workspace(Default)]
-        public int EmailFrequencyEnum { get; set; }
+        public EmailFrequency EmailFrequency { get; set; }
 
         #region Workspace
         #region Allors

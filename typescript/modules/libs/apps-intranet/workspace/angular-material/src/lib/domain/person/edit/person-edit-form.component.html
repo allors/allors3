@@ -94,6 +94,17 @@
       </div>
 
       <div class="row">
+        <a-mat-select
+          class="col-md-6"
+          [object]="object"
+          [roleType]="m.Person.EmailFrequency"
+          [options]="emailFrequencies"
+          display="Name"
+        >
+        </a-mat-select>
+      </div>
+
+      <div class="row">
         <mat-form-field class="col-md">
           <input
             matInput
@@ -104,9 +115,6 @@
             [disabled]="!object.canWriteInUserPassword"
           />
         </mat-form-field>
-      </div>
-
-      <div class="row">
         <mat-form-field class="col-md">
           <input
             matInput

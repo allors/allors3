@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public PersonEmailFrequencyRule(MetaPopulation m) : base(m, new Guid("c2815b49-0c16-4758-9cb0-ce328df72fbb")) =>
             this.Patterns = new Pattern[]
             {
-                m.Person.RolePattern(v => v.EmailFrequencyEnum),
+                m.Person.RolePattern(v => v.EmailFrequency),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -37,10 +37,11 @@ namespace Allors.Database.Domain
         public static void DerivePersonEmailFrequency(this Person @this, IValidation validation)
         {
             var builder = new StringBuilder();
+            var transaction = @this.Strategy.Transaction;
 
-            if (@this.Strategy.IsNewInTransaction && !@this.ExistEmailFrequencyEnum)
+            if (@this.Strategy.IsNewInTransaction && !@this.ExistEmailFrequency)
             {
-                @this.EmailFrequency = EmailFrequency.NoEmail;
+                @this.EmailFrequency = new EmailFrequencies(transaction).NoEmail;
             }
         }
     }
