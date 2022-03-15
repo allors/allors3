@@ -8,6 +8,12 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { NgForm } from '@angular/forms';
+import {
+  ContactMechanism,
+  Person,
+  WorkTask,
+} from '@allors/default/workspace/domain';
+import { M } from '@allors/default/workspace/meta';
 
 @Component({
   selector: 'worktask-edit-form',

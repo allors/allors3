@@ -3,7 +3,6 @@ namespace Allors.Database.Domain
     using System.Linq;
     using System.Text;
     using Allors.Database.Meta;
-    using Allors.Extra;
 
     public partial class EmailPolicy
     {
@@ -76,7 +75,7 @@ namespace Allors.Database.Domain
                 body.Append("<ul>\n");
                 foreach (var notification in notifications)
                 {
-                    body.Append($"<li>{notification.Title.Truncate(70)}</li>\n");
+                    body.Append($"<li>{notification.Title}</li>\n");
                 }
 
                 body.Append("</ul>\n");
