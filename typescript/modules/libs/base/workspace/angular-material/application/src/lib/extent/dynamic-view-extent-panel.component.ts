@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { Composite, RoleType } from '@allors/system/workspace/meta';
+import { Composite, humanize, RoleType } from '@allors/system/workspace/meta';
 import {
   IObject,
   IPullResult,
@@ -138,9 +138,9 @@ export class AllorsMaterialDynamicViewExtentPanelComponent
     this.objects = pullResult.collection<IObject>(prefix) ?? [];
     this.updateFilter();
 
-    const itemName = this.include
-      ? this.include.pluralName
-      : this.objectType.pluralName;
+    const itemName = humanize(
+      this.metaService.pluralName(this.propertyType)
+    ).toLocaleLowerCase();
 
     if (this.hasPeriod) {
       this.description = `${this.filtered.length} current and ${

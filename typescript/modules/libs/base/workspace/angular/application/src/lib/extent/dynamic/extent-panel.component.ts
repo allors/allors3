@@ -91,16 +91,18 @@ export abstract class AllorsDynamicExtentPanelComponent extends AllorsScopedPane
   @Input()
   include: ExtentIncludeType;
 
+  get propertyType(): PropertyType {
+    return this.include
+      ? this.include
+      : pathLeaf(this.selectAsPaths[0]).propertyType;
+  }
+
   get title() {
     if (this.assignedTitle) {
       return this.assignedTitle;
     }
 
-    const propertyType = this.include
-      ? this.include
-      : pathLeaf(this.selectAsPaths[0]).propertyType;
-
-    const name = this.metaService.pluralName(propertyType);
+    const name = this.metaService.pluralName(this.propertyType);
     return humanize(name);
   }
 
@@ -124,7 +126,7 @@ export abstract class AllorsDynamicExtentPanelComponent extends AllorsScopedPane
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
-    private metaService: MetaService
+    protected metaService: MetaService
   ) {
     super(itemPageService, panelService, sharedPullService, refreshService);
   }
