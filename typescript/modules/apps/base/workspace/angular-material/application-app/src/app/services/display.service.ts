@@ -30,7 +30,11 @@ export class AppDisplayService implements DisplayService {
       [m.Person, [m.Person.FirstName, m.Person.LastName, m.Person.Address]],
       [
         m.Organisation,
-        [m.Organisation.Name, m.Organisation.Owner, m.Person.Address],
+        [
+          m.Organisation.Name,
+          m.Organisation.Owner,
+          m.Organisation.IncorporationDate,
+        ],
       ],
     ]);
 

@@ -5,6 +5,7 @@ import {
   Composite,
   humanize,
   RoleType,
+  Unit,
 } from '@allors/system/workspace/meta';
 import {
   IObject,
@@ -280,7 +281,9 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
           : v.strategy.getCompositeAssociation(this.include as AssociationType);
         for (const w of this.includeDisplay) {
           if (w.objectType.isUnit) {
-            row[w.name] = include.strategy.getUnitRole(w);
+            const unit = w.objectType as Unit;
+            const value = include.strategy.getUnitRole(w) as any;
+            row[w.name] = unit.isDateTime ? format(value, 'dd-MM-yyyy') : value;
           } else {
             const role = include.strategy.getCompositeRole(w);
             if (role) {
@@ -295,7 +298,9 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
       for (const w of this.display) {
         if (w.objectType.isUnit) {
-          row[w.name] = v.strategy.getUnitRole(w);
+          const unit = w.objectType as Unit;
+          const value = v.strategy.getUnitRole(w) as any;
+          row[w.name] = unit.isDateTime ? format(value, 'dd-MM-yyyy') : value;
         } else {
           if (w.isOne) {
             const composite = v.strategy.getCompositeRole(w);

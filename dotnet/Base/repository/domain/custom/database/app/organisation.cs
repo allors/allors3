@@ -105,6 +105,7 @@ namespace Allors.Repository
         #region Allors
         [Id("7046c2b4-d458-4343-8446-d23d9c837c84")]
         #endregion
+        [Workspace(Default)]
         public DateTime IncorporationDate { get; set; }
 
         #region Allors

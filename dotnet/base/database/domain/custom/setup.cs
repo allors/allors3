@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
+
     public partial class Setup
     {
         private void CustomOnPrePrepare()
@@ -46,6 +48,7 @@ namespace Allors.Database.Domain
                 .WithOwner(jane)
                  .WithEmployee(john)
                 .WithEmployee(jenny)
+                .WithIncorporationDate(this.transaction.Now())
                 .Build();
 
             acme.Owner = jenny;
@@ -58,8 +61,8 @@ namespace Allors.Database.Domain
             new EmploymentBuilder(this.transaction).WithEmployer(acme).WithEmployee(john).WithFromDate(now.AddDays(-2)).WithThroughDate(now.AddDays(-1)).Build();
 
             // Create cycles between Organisation and Person
-            var cycleOrganisation1 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle One").Build();
-            var cycleOrganisation2 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle Two").Build();
+            var cycleOrganisation1 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle One").WithIncorporationDate(DateTimeFactory.CreateDate(2000, 1, 1)).Build();
+            var cycleOrganisation2 = new OrganisationBuilder(this.transaction).WithName("Organisatin Cycle Two").WithIncorporationDate(DateTimeFactory.CreateDate(2001, 1, 1)).Build();
 
             cycleOrganisation1.AddShareholder(jane);
             cycleOrganisation2.AddShareholder(jenny);
