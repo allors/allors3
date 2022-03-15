@@ -10,6 +10,19 @@ namespace Allors.Database.Domain
 
     public partial class Person
     {
+        public EmailFrequency EmailFrequency
+        {
+            get
+            {
+                return (EmailFrequency)this.EmailFrequencyEnum;
+            }
+
+            set
+            {
+                this.EmailFrequencyEnum = (int)value;
+            }
+        }
+
         public PrefetchPolicy PrefetchPolicy => new PrefetchPolicyBuilder()
             .WithRule(this.M.Person.OrganisationContactRelationshipsWhereContact)
             .WithRule(this.M.Person.PartyContactMechanismsWhereParty)

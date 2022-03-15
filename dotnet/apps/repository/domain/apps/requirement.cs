@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("b05ce5be-e217-4cb8-abef-772b1221b3b2")]
     #endregion
-    public partial interface Requirement : Transitional, UniquelyIdentifiable, Deletable, Searchable, IDisplayName
+    public partial interface Requirement : Transitional, UniquelyIdentifiable, Deletable, Searchable, IDisplayName, EmailSource, Auditable
     {
         #region ObjectStates
         #region Allors

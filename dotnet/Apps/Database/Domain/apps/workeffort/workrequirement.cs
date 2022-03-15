@@ -48,6 +48,7 @@ namespace Allors.Database.Domain
         public void AppsReopen(WorkRequirementReopen method)
         {
             this.RequirementState = new RequirementStates(this.Strategy.Transaction).Created;
+            this.RemoveEmailMessage();
             method.StopPropagation = true;
         }
 

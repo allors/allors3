@@ -322,6 +322,18 @@ namespace Allors.Repository
         [Workspace(Default)]
         public ContactMechanism[] CurrentOrganisationContactMechanisms { get; set; }
 
+        /// <summary>
+        /// Indicates how often a Person gets email from the system.
+        /// <remarks>This value is set manually.</remarks> 
+        /// <remarks>Possible values are: No Emails (Application only), Send emails at once,  Send daily digest emails, Send weekly digest emails.</remarks>
+        /// </summary>
+        #region Allors
+        [Id("1aefdaa4-3bbe-420c-a348-30dc8252b35b")]
+        [Indexed]
+        #endregion
+        [Workspace(Default)]
+        public int EmailFrequencyEnum { get; set; }
+
         #region Workspace
         #region Allors
         [Id("6a03aaa4-2227-4429-b8f0-1034dc9d140a")]

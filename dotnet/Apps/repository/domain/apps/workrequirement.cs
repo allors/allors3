@@ -89,6 +89,8 @@ namespace Allors.Repository
         public string SearchString { get; set; }
 
         public string DisplayName { get; set; }
+
+        public EmailMessage EmailMessage { get; set; }
         #endregion
 
         #region Versioning
