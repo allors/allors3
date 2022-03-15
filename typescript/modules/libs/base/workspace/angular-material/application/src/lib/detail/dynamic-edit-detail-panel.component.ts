@@ -6,6 +6,7 @@ import {
 } from '@allors/base/workspace/angular/application';
 import {
   AllorsForm,
+  DisplayService,
   FormService,
   RefreshService,
   SharedPullService,
@@ -40,6 +41,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     panelService: PanelService,
     sharedPullService: SharedPullService,
     refreshService: RefreshService,
+    private displayService: DisplayService,
     private formService: FormService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
@@ -51,10 +53,7 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
     this.subscribeTemplate();
   }
 
-  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {
-    const object = pullResult.object<IObject>(prefix);
-    this.title = `Edit ${object['Name']}`;
-  }
+  onPostSharedPull(pullResult: IPullResult, prefix?: string): void {}
 
   override ngOnDestroy(): void {
     super.ngOnDestroy();
