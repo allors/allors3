@@ -40,7 +40,7 @@ import {
   PurchaseInvoiceItem,
 } from '@allors/default/workspace/domain';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { PrintService } from '@allors/apps-intranet/workspace/angular-material';
+import { PrintService } from '../../../../actions/print/print.service';
 
 interface Row extends TableRow {
   object: IObject;

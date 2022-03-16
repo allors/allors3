@@ -144,6 +144,8 @@ export { PurchaseInvoiceItemFormComponent } from './lib/domain/purchaseinvoiceit
 
 export { PurchaseOrderCreateFormComponent } from './lib/domain/purchaseorder/create/purchaseorder-create-form.component';
 export { PurchaseOrderEditFormComponent } from './lib/domain/purchaseorder/edit/purchaseorder-edit-form.component';
+export { PurchaseOrderInvoicePanelEditComponent } from './lib/domain/purchaseorder/invoicepanel/edit/purchaseorderinvoice-panel-edit.component';
+export { PurchaseOrderInvoicePanelViewComponent } from './lib/domain/purchaseorder/invoicepanel/view/purchaseorderinvoice-panel-view.component';
 export { PurchaseOrderListPageComponent } from './lib/domain/purchaseorder/list/purchaseorder-list-page.component';
 export { PurchaseOrderOverviewPageComponent } from './lib/domain/purchaseorder/overview/purchaseorder-overview-page.component';
 export { PurchaseOrderSummaryPanelComponent } from './lib/domain/purchaseorder/summary/purchaseorder-summary-panel.component';
