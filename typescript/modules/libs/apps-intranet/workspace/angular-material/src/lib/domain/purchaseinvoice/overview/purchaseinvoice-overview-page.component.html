@@ -36,12 +36,8 @@
           [creatableFn]="canWrite"
         ></a-mat-dyn-edit-extent-panel>
 
-        <a-mat-dyn-view-extent-panel
-          [select]="m.PurchaseInvoice.PurchaseOrders"
-        ></a-mat-dyn-view-extent-panel>
-        <a-mat-dyn-edit-extent-panel
-          [select]="m.PurchaseInvoice.PurchaseOrders"
-        ></a-mat-dyn-edit-extent-panel>
+        <purchaseorderinvoice-panel-view></purchaseorderinvoice-panel-view>
+        <purchaseorderinvoice-panel-edit></purchaseorderinvoice-panel-edit>
 
         <a-mat-dyn-view-extent-panel
           [select]="paymentTarget"
