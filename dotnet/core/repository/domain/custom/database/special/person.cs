@@ -18,6 +18,10 @@ namespace Allors.Repository
     {
         #region inherited properties
 
+        public Guid UniqueId { get; set; }
+
+        public Guid SecurityCacheId { get; set; }
+
         public SecurityToken OwnerSecurityToken { get; set; }
 
         public Grant OwnerGrant { get; set; }
@@ -25,8 +29,6 @@ namespace Allors.Repository
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Guid UniqueId { get; set; }
 
         public string UserName { get; set; }
 
@@ -231,7 +233,7 @@ namespace Allors.Repository
 
         [Id("FAF120ED-09D1-4E42-86A6-F0D9FF75E03C")]
         public void Method() { }
-        
+
         #region inherited methods
 
         public void Delete()

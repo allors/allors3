@@ -12,11 +12,12 @@ namespace Allors.Repository
     #region Allors
     [Id("a53f1aed-0e3f-4c3c-9600-dc579cccf893")]
     #endregion
-    public partial class SecurityToken : Deletable, UniquelyIdentifiable
+    public partial class SecurityToken : UniquelyIdentifiable, SecurityCacheable, Deletable 
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
 
+        public Guid SecurityCacheId { get; set; }
         #endregion
 
         #region Allors
@@ -53,5 +54,6 @@ namespace Allors.Repository
         public void Delete() { }
 
         #endregion
-    }
+
+   }
 }

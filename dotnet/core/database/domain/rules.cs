@@ -19,7 +19,10 @@ namespace Allors.Database.Domain
                 new UserInUserPasswordRule(m),
                 new GrantEffectiveUsersRule(m),
                 new GrantEffectivePermissionsRule(m),
-                new SecurityTokenPermissionsRule(m),
+                new GrantSecurityCacheRule(m),
+                new SecurityTokenSecurityCacheRule(m),
+                new RevocationSecurityCacheRule(m),
+                new UserSecurityCacheRule(m),
                 
                 // Custom
                 new PersonFullNameRule(m),

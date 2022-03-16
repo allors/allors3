@@ -14,7 +14,7 @@ namespace Allors.Repository
     #region Allors
     [Id("a0309c3b-6f80-4777-983e-6e69800df5be")]
     #endregion
-    public partial interface User : UserPasswordReset, Deletable, UniquelyIdentifiable, SecurityTokenOwner
+    public partial interface User : UniquelyIdentifiable, SecurityTokenOwner, UserPasswordReset, SecurityCacheable, Deletable
     {
         #region Allors
         [Id("5e8ab257-1a1c-4448-aacc-71dbaaba525b")]

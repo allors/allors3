@@ -17,6 +17,9 @@ namespace Allors.Repository
     public partial class Person : User
     {
         #region inherited properties
+        public Guid UniqueId { get; set; }
+
+        public Guid SecurityCacheId { get; set; }
 
         public SecurityToken OwnerSecurityToken { get; set; }
 
@@ -25,8 +28,6 @@ namespace Allors.Repository
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
-
-        public Guid UniqueId { get; set; }
 
         public string UserName { get; set; }
 

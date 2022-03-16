@@ -10,14 +10,14 @@ namespace Allors.Repository
     using Attributes;
 
     #region Allors
-    [Id("B17AFC19-9E91-4631-B6D8-43B32A65E0A0")]
+    [Id("42A5253D-3F00-41CE-8852-DF637C98B667")]
     #endregion
-    public partial interface Cacheable : Object
+    public partial interface SecurityCacheable : Object
     {
         #region Allors
-        [Id("EF6F1F4C-5B62-49DC-9D05-0F02973ACCB3")]
+        [Id("E8F9F42D-7B84-4851-8FF9-3390C842DBA6")]
         #endregion
         [Derived]
-        Guid CacheId { get; set; }
+        Guid SecurityCacheId { get; set; }
     }
 }
