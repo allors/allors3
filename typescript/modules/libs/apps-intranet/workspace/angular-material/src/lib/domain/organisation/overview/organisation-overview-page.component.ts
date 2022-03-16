@@ -38,6 +38,8 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
   contactMechanismTarget: Path;
   serialisedItemTarget: PropertyType[];
 
+  hasSupplierOfferings: () => boolean;
+
   constructor(
     @Self() scopedService: ScopedService,
     @Self() panelService: PanelService,
@@ -67,6 +69,7 @@ export class OrganisationOverviewPageComponent extends AllorsOverviewPageCompone
       m.Party.SerialisedItemsWhereOwnedBy,
       m.Party.SerialisedItemsWhereRentedBy,
     ];
+    this.hasSupplierOfferings = () => this.supplierOfferings?.length > 0;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {

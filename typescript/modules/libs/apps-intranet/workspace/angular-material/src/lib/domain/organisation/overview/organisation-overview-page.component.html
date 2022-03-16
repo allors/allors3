@@ -102,20 +102,20 @@
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          *ngIf="supplierOfferings?.length > 0"
+          [enabler]="hasSupplierOfferings"
           [init]="m.PurchaseOrder.TakenViaSupplier"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          *ngIf="supplierOfferings?.length > 0"
+          [enabler]="hasSupplierOfferings"
           [init]="m.PurchaseOrder.TakenViaSupplier"
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          *ngIf="supplierOfferings?.length > 0"
+          [enabler]="hasSupplierOfferings"
           [init]="m.RepeatingPurchaseInvoice.Supplier"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          *ngIf="supplierOfferings?.length > 0"
+          [enabler]="hasSupplierOfferings"
           [init]="m.RepeatingPurchaseInvoice.Supplier"
         ></a-mat-dyn-edit-extent-panel>
       </div>
