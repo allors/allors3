@@ -11,19 +11,19 @@ namespace Allors.Database.Configuration
 
     public class GrantCache : IGrantCache
     {
-        private readonly ConcurrentDictionary<long, IRange<long>> permissionIdsByAccessControlId;
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, IRange<long>>> permissionIdsByAccessControlIdByWorkspaceName;
+        private readonly ConcurrentDictionary<long, IRange<long>> permissionIdsByGrantId;
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, IRange<long>>> permissionIdsByGrantIdByWorkspaceName;
 
         public GrantCache()
         {
-            this.permissionIdsByAccessControlId = new ConcurrentDictionary<long, IRange<long>>();
-            this.permissionIdsByAccessControlIdByWorkspaceName = new ConcurrentDictionary<string, ConcurrentDictionary<long, IRange<long>>>();
+            this.permissionIdsByGrantId = new ConcurrentDictionary<long, IRange<long>>();
+            this.permissionIdsByGrantIdByWorkspaceName = new ConcurrentDictionary<string, ConcurrentDictionary<long, IRange<long>>>();
         }
 
         public void Clear(long accessControlId)
         {
-            this.permissionIdsByAccessControlId.TryRemove(accessControlId, out _);
-            foreach (var kvp in this.permissionIdsByAccessControlIdByWorkspaceName)
+            this.permissionIdsByGrantId.TryRemove(accessControlId, out _);
+            foreach (var kvp in this.permissionIdsByGrantIdByWorkspaceName)
             {
                 kvp.Value.TryRemove(accessControlId, out _);
             }
@@ -31,26 +31,26 @@ namespace Allors.Database.Configuration
 
         public IRange<long> GetPermissions(long accessControlId)
         {
-            this.permissionIdsByAccessControlId.TryGetValue(accessControlId, out var permissionIds);
+            this.permissionIdsByGrantId.TryGetValue(accessControlId, out var permissionIds);
             return permissionIds;
         }
 
-        public void SetPermissions(long accessControlId, IRange<long> permissionIds) => this.permissionIdsByAccessControlId[accessControlId] = permissionIds;
+        public void SetPermissions(long accessControlId, IRange<long> permissionIds) => this.permissionIdsByGrantId[accessControlId] = permissionIds;
 
         public IRange<long> GetPermissions(string workspaceName, long accessControlId)
         {
-            this.EffectivePermissionIdsByAccessControlId(workspaceName).TryGetValue(accessControlId, out var permissionIds);
+            this.EffectivePermissionIdsByGrantId(workspaceName).TryGetValue(accessControlId, out var permissionIds);
             return permissionIds;
         }
 
-        public void SetPermissions(string workspaceName, long accessControlId, IRange<long> permissionIds) => this.EffectivePermissionIdsByAccessControlId(workspaceName)[accessControlId] = permissionIds;
+        public void SetPermissions(string workspaceName, long accessControlId, IRange<long> permissionIds) => this.EffectivePermissionIdsByGrantId(workspaceName)[accessControlId] = permissionIds;
 
-        private ConcurrentDictionary<long, IRange<long>> EffectivePermissionIdsByAccessControlId(string workspaceName)
+        private ConcurrentDictionary<long, IRange<long>> EffectivePermissionIdsByGrantId(string workspaceName)
         {
-            if (!this.permissionIdsByAccessControlIdByWorkspaceName.TryGetValue(workspaceName, out var dictionary))
+            if (!this.permissionIdsByGrantIdByWorkspaceName.TryGetValue(workspaceName, out var dictionary))
             {
                 dictionary = new ConcurrentDictionary<long, IRange<long>>();
-                this.permissionIdsByAccessControlIdByWorkspaceName[workspaceName] = dictionary;
+                this.permissionIdsByGrantIdByWorkspaceName[workspaceName] = dictionary;
             }
 
             return dictionary;

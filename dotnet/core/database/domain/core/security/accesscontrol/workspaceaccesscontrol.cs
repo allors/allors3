@@ -90,7 +90,7 @@ namespace Allors.Database.Domain
 
         private Dictionary<IGrant, IRange<long>> BuildEffectivePermissionsByGrant()
         {
-            var permissionsByAccessControl = new Dictionary<IGrant, IRange<long>>();
+            var permissionsByGrant = new Dictionary<IGrant, IRange<long>>();
 
             var transaction = this.User.Transaction();
             var database = transaction.Database;
@@ -107,7 +107,7 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    permissionsByAccessControl.Add(accessControl, effectivePermissions);
+                    permissionsByGrant.Add(accessControl, effectivePermissions);
                 }
             }
 
@@ -136,11 +136,11 @@ namespace Allors.Database.Domain
                     var workspaceEffectivePermissions = accessControl.EffectivePermissions.Where(v => v.InWorkspace(this.workspaceName));
                     var effectivePermissionIds = this.ranges.Import(workspaceEffectivePermissions.Select(v => v.Id));
                     accessControlCache.SetPermissions(this.workspaceName, accessControl.Id, effectivePermissionIds);
-                    permissionsByAccessControl.Add(accessControl, effectivePermissionIds);
+                    permissionsByGrant.Add(accessControl, effectivePermissionIds);
                 }
             }
 
-            return permissionsByAccessControl;
+            return permissionsByGrant;
         }
 
     }

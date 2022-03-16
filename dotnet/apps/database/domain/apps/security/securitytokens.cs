@@ -13,13 +13,13 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
-            var accessControls = new Grants(this.Transaction);
+            var grants = new Grants(this.Transaction);
 
             merge(DefaultSecurityTokenId, v =>
             {
                 if (setup.Config.SetupSecurity)
                 {
-                    v.AddGrant(accessControls.Employees);
+                    v.AddGrant(grants.Employees);
                 }
             });
         }

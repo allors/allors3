@@ -37,7 +37,7 @@ namespace Blazors.Bootstrap.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddBootstrapCss();
+            //services.AddBootstrapCss();
 
             // Allors
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -21,13 +21,13 @@ namespace Tests
         {
             var workspaceName = "X";
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
-            var accessControl = new Grants(this.Transaction).Administrator;
+            var grant = new Grants(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
 
             var accessRequest = new AccessRequest
             {
-                g = new[] { accessControl.Id },
+                g = new[] { grant.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
@@ -37,8 +37,8 @@ namespace Tests
 
             var securityResponseAccessControl = securityResponse.g.First();
 
-            Assert.Equal(accessControl.Id, securityResponseAccessControl.i);
-            Assert.Equal(accessControl.Strategy.ObjectVersion, securityResponseAccessControl.v);
+            Assert.Equal(grant.Id, securityResponseAccessControl.i);
+            Assert.Equal(grant.Strategy.ObjectVersion, securityResponseAccessControl.v);
 
             var permissions = securityResponseAccessControl.p
                 .Select(v => this.Transaction.Instantiate(v))
@@ -48,11 +48,11 @@ namespace Tests
 
             foreach (var permission in permissions)
             {
-                Assert.Contains(permission, accessControl.EffectivePermissions);
+                Assert.Contains(permission, grant.EffectivePermissions);
                 Assert.Contains(permission.Class, metaCache.GetWorkspaceClasses(workspaceName));
             }
 
-            foreach (var effectivePermission in accessControl.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))
+            foreach (var effectivePermission in grant.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))
             {
                 Assert.Contains(effectivePermission, permissions);
             }
@@ -63,13 +63,13 @@ namespace Tests
         {
             var workspaceName = "None";
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
-            var accessControl = new Grants(this.Transaction).Administrator;
+            var grant = new Grants(this.Transaction).Administrator;
 
             this.SetUser("jane@example.com");
 
             var accessRequest = new AccessRequest
             {
-                g = new[] { accessControl.Id },
+                g = new[] { grant.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName);
@@ -79,8 +79,8 @@ namespace Tests
 
             var accessResponseGrant = accessResponse.g.First();
 
-            Assert.Equal(accessControl.Id, accessResponseGrant.i);
-            Assert.Equal(accessControl.Strategy.ObjectVersion, accessResponseGrant.v);
+            Assert.Equal(grant.Id, accessResponseGrant.i);
+            Assert.Equal(grant.Strategy.ObjectVersion, accessResponseGrant.v);
             Assert.Null(accessResponseGrant.p);
         }
     }

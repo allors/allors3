@@ -29,15 +29,15 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
-            var accessControls = new Grants(this.Transaction);
+            var grants = new Grants(this.Transaction);
 
             merge(InitialSecurityTokenId, v =>
               {
                   if (setup.Config.SetupSecurity)
                   {
-                      v.AddGrant(accessControls.Creators);
-                      v.AddGrant(accessControls.GuestCreator);
-                      v.AddGrant(accessControls.Administrator);
+                      v.AddGrant(grants.Creators);
+                      v.AddGrant(grants.GuestCreator);
+                      v.AddGrant(grants.Administrator);
                   }
               });
 
@@ -45,8 +45,8 @@ namespace Allors.Database.Domain
               {
                   if (setup.Config.SetupSecurity)
                   {
-                      v.AddGrant(accessControls.Administrator);
-                      v.AddGrant(accessControls.Guest);
+                      v.AddGrant(grants.Administrator);
+                      v.AddGrant(grants.Guest);
                   }
               });
 
@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
               {
                   if (setup.Config.SetupSecurity)
                   {
-                      v.AddGrant(accessControls.Administrator);
+                      v.AddGrant(grants.Administrator);
                   }
               });
         }

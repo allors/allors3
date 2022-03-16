@@ -16,11 +16,11 @@ namespace Allors.Workspace.Adapters.Remote
         {
             this.database = database;
 
-            this.MissingAccessControlIds = new HashSet<long>();
+            this.MissingGrantIds = new HashSet<long>();
             this.MissingRevocationIds = new HashSet<long>();
         }
 
-        internal HashSet<long> MissingAccessControlIds { get; }
+        internal HashSet<long> MissingGrantIds { get; }
 
         internal HashSet<long> MissingRevocationIds { get; }
 
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
 
             foreach (var accessControlId in value.Where(v => !this.database.AccessControlById.ContainsKey(v)))
             {
-                this.MissingAccessControlIds.Add(accessControlId);
+                this.MissingGrantIds.Add(accessControlId);
             }
 
             return value;
