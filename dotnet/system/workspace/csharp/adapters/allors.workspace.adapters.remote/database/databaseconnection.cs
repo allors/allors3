@@ -99,11 +99,11 @@ namespace Allors.Workspace.Adapters.Remote
                 this.recordsById[databaseObjects.Id] = databaseObjects;
             }
 
-            if (ctx.MissingAccessControlIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
+            if (ctx.MissingGrantIds.Count > 0 || ctx.MissingRevocationIds.Count > 0)
             {
                 return new AccessRequest
                 {
-                    g = ctx.MissingAccessControlIds.Select(v => v).ToArray(),
+                    g = ctx.MissingGrantIds.Select(v => v).ToArray(),
                     r = ctx.MissingRevocationIds.Select(v => v).ToArray(),
                 };
             }
