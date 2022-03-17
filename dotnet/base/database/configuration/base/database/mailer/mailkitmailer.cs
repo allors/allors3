@@ -11,6 +11,8 @@ namespace Allors.Database.Configuration
 
     public class MailKitMailer : IMailer
     {
+        public string Smtp { get; set; } 
+
         public string DefaultSender { get; set; }
 
         public string DefaultSenderName { get; set; }
@@ -51,7 +53,7 @@ namespace Allors.Database.Configuration
             }
 
             using var client = new SmtpClient();
-            client.Connect("smtp");
+            client.Connect(this.Smtp);
             client.Send(message);
         }
 
