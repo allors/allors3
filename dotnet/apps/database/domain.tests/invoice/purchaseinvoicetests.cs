@@ -251,7 +251,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedOrderItemBillingInvoiceItemDerivePurchaseOrders()
+        public void AddOrderItemBillingInvoiceItemDerivePurchaseOrders()
         {
             var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithBothItems(this.Transaction.Faker());
             this.Derive();
@@ -267,6 +267,30 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(purchaseOrder, purchaseInvoice.PurchaseOrders);
+        }
+
+        [Fact]
+        public void RemoveOrderItemBillingInvoiceItemDerivePurchaseOrders()
+        {
+            var purchaseOrder = this.InternalOrganisation.CreatePurchaseOrderWithBothItems(this.Transaction.Faker());
+            this.Derive();
+
+            var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).Build();
+            purchaseInvoice.AddPurchaseInvoiceItem(invoiceItem);
+            this.Derive();
+
+            var orderItemBilling = new OrderItemBillingBuilder(this.Transaction).WithOrderItem(purchaseOrder.PurchaseOrderItems.ElementAt(0)).WithInvoiceItem(invoiceItem).Build();
+            this.Derive();
+
+            Assert.Contains(purchaseOrder, purchaseInvoice.PurchaseOrders);
+
+            orderItemBilling.InvoiceItem.Delete();
+            this.Derive();
+
+            Assert.DoesNotContain(purchaseOrder, purchaseInvoice.PurchaseOrders);
         }
 
         [Fact]
