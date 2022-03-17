@@ -15,8 +15,18 @@ namespace Allors.Database.Configuration
 
         public string DefaultSenderName { get; set; }
 
-        public void Send(EmailMessage emailMesssage)
+        public void Send(EmailMessage emailMesssage, string defaultSender)
         {
+            if (!string.IsNullOrEmpty(defaultSender))
+            {
+                this.DefaultSender = defaultSender;
+
+                if (string.IsNullOrEmpty(this.DefaultSenderName))
+                {
+                    this.DefaultSenderName = defaultSender;
+                }
+            }
+
             var message = new MimeMessage
             {
                 Subject = emailMesssage.Subject,

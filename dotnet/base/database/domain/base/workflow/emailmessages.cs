@@ -10,7 +10,7 @@ namespace Allors.Database.Domain
 
     public partial class EmailMessages
     {
-        public void Send()
+        public void Send(string defaultSender)
         {
             var transaction = this.Transaction;
 
@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
                     transaction.Derive();
                     transaction.Commit();
 
-                    mailer.Send(emailMessage);
+                    mailer.Send(emailMessage, defaultSender);
                     emailMessage.DateSent = transaction.Now();
 
                     transaction.Derive();

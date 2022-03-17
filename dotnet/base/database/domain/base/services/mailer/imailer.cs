@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public interface IMailer
     {
-        void Send(EmailMessage emailMesssage);
+        void Send(EmailMessage emailMesssage, string defaultSender = null);
     }
 }
