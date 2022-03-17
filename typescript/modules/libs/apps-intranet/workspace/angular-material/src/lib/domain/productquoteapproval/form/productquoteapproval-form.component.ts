@@ -1,7 +1,7 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import { ProductQuoteApproval } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -12,6 +12,7 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { PrintService } from '../../../actions/print/print.service';
+import { Observable, switchMap } from 'rxjs';
 
 @Component({
   templateUrl: './productquoteapproval-form.component.html',
@@ -60,5 +61,13 @@ export class ProductQuoteApprovalFormComponent extends AllorsFormComponent<Produ
       : this.context.create(this.createRequest.objectType);
 
     this.onPostPullInitialize(pullResult);
+  }
+
+  approve(): void {
+    this.saveAndInvoke(() => this.allors.context.invoke(this.object.Approve));
+  }
+
+  reject(): void {
+    this.saveAndInvoke(() => this.allors.context.invoke(this.object.Reject));
   }
 }

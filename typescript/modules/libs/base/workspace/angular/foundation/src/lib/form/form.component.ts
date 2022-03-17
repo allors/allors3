@@ -6,16 +6,22 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
+import {
+  IObject,
+  IPullResult,
+  Pull,
+  IResult,
+} from '@allors/system/workspace/domain';
 import { AssociationType, RoleType } from '@allors/system/workspace/meta';
 import { AllorsComponent } from '../component';
 import { AllorsForm } from './form';
 import { Context } from '../context/context';
 import { ContextService } from '../context/context-service';
 import { ErrorService } from '../error/error.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, switchMap } from 'rxjs';
 import { CreateRequest } from '../create/create-request';
 import { EditRequest } from '../edit/edit-request';
+import { InvokeResult } from '../../../../../../../system/workspace/adapters-json/src/lib/database/invoke/invoke-result';
 
 @Directive()
 export abstract class AllorsFormComponent<T extends IObject>
@@ -95,6 +101,33 @@ export abstract class AllorsFormComponent<T extends IObject>
         this.errorService.errorHandler(error);
       },
     });
+  }
+
+  // TODO: handle save errors?
+  saveAndInvoke(methodCall: () => Observable<IResult>): void {
+    this.context
+      .push()
+      .pipe(
+        switchMap(() => {
+          const pulls: Pull[] = [];
+          this.onPrePull(pulls);
+          this.formSubscription?.unsubscribe();
+          return this.context.pull(pulls);
+        }),
+        switchMap((pullResult) => {
+          this.context.reset();
+          this.onPostPull(pullResult);
+          return methodCall();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.saved.emit(this.object);
+        },
+        error: (error) => {
+          this.errorService.errorHandler(error);
+        },
+      });
   }
 
   cancel(): void {

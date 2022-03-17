@@ -64,4 +64,12 @@ export class PurchaseOrderApprovalLevel2FormComponent extends AllorsFormComponen
 
     this.onPostPullInitialize(pullResult);
   }
+
+  approve(): void {
+    this.saveAndInvoke(() => this.allors.context.invoke(this.object.Approve));
+  }
+
+  reject(): void {
+    this.saveAndInvoke(() => this.allors.context.invoke(this.object.Reject));
+  }
 }

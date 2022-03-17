@@ -13,10 +13,27 @@
     </button>
   </div>
 
-  <!-- TODO: KOEN -->
-  <!-- <div mat-dialog-actions>
-    <button mat-button (click)="approve()" class="ml-2" color="primary" type="button" [disabled]="!purchaseOrderApproval.canExecuteApprove">APPROVE</button>
-    <button mat-button (click)="reject()" class="ml-2" color="primary" type="button" [disabled]="!purchaseOrderApproval.canExecuteReject">REJECT</button>
-    <button mat-button (click)="dialogRef.close()" type="button">CANCEL</button>
-  </div> -->
+  <div mat-dialog-actions>
+    <button
+      mat-button
+      (click)="approve()"
+      class="ml-2"
+      color="primary"
+      type="button"
+      [disabled]="!object.canExecuteApprove"
+    >
+      APPROVE
+    </button>
+    <button
+      mat-button
+      (click)="reject()"
+      class="ml-2"
+      color="primary"
+      type="button"
+      [disabled]="!object.canExecuteReject"
+    >
+      REJECT
+    </button>
+    <a-mat-cancel></a-mat-cancel>
+  </div>
 </div>
