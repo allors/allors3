@@ -203,47 +203,51 @@ export class PaymentPanelEditComponent
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
-    this.enabled = this.enabler ? this.enabler() : true;
+    if (this.panelEnabled) {
+      this.enabled = this.enabler ? this.enabler() : true;
 
-    this.invoice = pullResult.object<Invoice>(this.m.Invoice);
+      this.invoice = pullResult.object<Invoice>(this.m.Invoice);
 
-    if (this.invoice) {
-      if (this.invoice?.strategy.cls === this.m.SalesInvoice) {
-        const salesInvoice = this.invoice as SalesInvoice;
-        this.receive =
-          salesInvoice.SalesInvoiceType.UniqueId ===
-          '92411bf1-835e-41f8-80af-6611efce5b32';
+      if (this.invoice) {
+        if (this.invoice?.strategy.cls === this.m.SalesInvoice) {
+          const salesInvoice = this.invoice as SalesInvoice;
+          this.receive =
+            salesInvoice.SalesInvoiceType.UniqueId ===
+            '92411bf1-835e-41f8-80af-6611efce5b32';
+        }
+
+        if (this.invoice?.strategy.cls === this.m.PurchaseInvoice) {
+          const salesInvoice = this.invoice as PurchaseInvoice;
+          this.receive =
+            salesInvoice.PurchaseInvoiceType.UniqueId ===
+            '0187d927-81f5-4d6a-9847-58b674ad3e6a';
+        }
+      } else {
+        this.order = pullResult.object<Order>(this.m.Order);
+        if (this.order?.strategy.cls === this.m.SalesOrder) {
+          this.receive = true;
+        }
+
+        if (this.order?.strategy.cls === this.m.PurchaseOrder) {
+          this.receive = false;
+        }
       }
 
-      if (this.invoice?.strategy.cls === this.m.PurchaseInvoice) {
-        const salesInvoice = this.invoice as PurchaseInvoice;
-        this.receive =
-          salesInvoice.PurchaseInvoiceType.UniqueId ===
-          '0187d927-81f5-4d6a-9847-58b674ad3e6a';
-      }
-    } else {
-      this.order = pullResult.object<Order>(this.m.Order);
-      if (this.order?.strategy.cls === this.m.SalesOrder) {
-        this.receive = true;
-      }
+      this.objects = pullResult.collection<Payment>(prefix) ?? [];
 
-      if (this.order?.strategy.cls === this.m.PurchaseOrder) {
-        this.receive = false;
-      }
+      this.table.total = this.objects.length;
+      this.table.data = this.objects.map((v) => {
+        const row: Row = {
+          object: v,
+          date:
+            v.EffectiveDate != null
+              ? format(v.EffectiveDate, 'dd-MM-yyyy')
+              : '',
+          amount: v.Amount,
+        };
+        return row;
+      });
     }
-
-    this.objects = pullResult.collection<Payment>(prefix) ?? [];
-
-    this.table.total = this.objects.length;
-    this.table.data = this.objects.map((v) => {
-      const row: Row = {
-        object: v,
-        date:
-          v.EffectiveDate != null ? format(v.EffectiveDate, 'dd-MM-yyyy') : '',
-        amount: v.Amount,
-      };
-      return row;
-    });
   }
 
   toggle() {

@@ -143,7 +143,7 @@ export class PurchaseOrderInvoicePanelViewComponent
       this.orderPullName
     );
 
-    this.objects = purchaseOrders.filter(
+    this.objects = purchaseOrders?.filter(
       (v) =>
         (v.canExecuteInvoice &&
           (purchaseInvoice.PurchaseInvoiceState.UniqueId ===
@@ -153,7 +153,7 @@ export class PurchaseOrderInvoicePanelViewComponent
         v.PurchaseInvoicesWherePurchaseOrder.includes(purchaseInvoice)
     );
 
-    this.description = `${this.objects.length} payments`;
+    this.description = `${this.objects?.length} purchase orders`;
   }
 
   toggle() {

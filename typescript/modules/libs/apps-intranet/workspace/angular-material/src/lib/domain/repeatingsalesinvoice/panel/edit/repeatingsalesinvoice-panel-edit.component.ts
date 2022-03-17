@@ -159,31 +159,33 @@ export class RepeatingSalesInvoicePanelEditComponent
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
-    this.enabled = this.enabler ? this.enabler() : true;
+    if (this.panelEnabled) {
+      this.enabled = this.enabler ? this.enabler() : true;
 
-    const object = pullResult.object<RepeatingSalesInvoice>(prefix);
-    if (object) {
-      this.objects[0] = object;
+      const object = pullResult.object<RepeatingSalesInvoice>(prefix);
+      if (object) {
+        this.objects[0] = object;
+      }
+
+      this.table.total = this.objects.length;
+      this.table.data = this.objects.map((v) => {
+        const row: Row = {
+          object: v,
+          frequency: v.Frequency.Name,
+          dayOfWeek: v.DayOfWeek && v.DayOfWeek.Name,
+          previousExecutionDate:
+            v.PreviousExecutionDate &&
+            format(new Date(v.PreviousExecutionDate), 'dd-MM-yyyy'),
+          nextExecutionDate:
+            v.NextExecutionDate &&
+            format(new Date(v.NextExecutionDate), 'dd-MM-yyyy'),
+          finalExecutionDate:
+            v.FinalExecutionDate &&
+            format(new Date(v.FinalExecutionDate), 'dd-MM-yyyy'),
+        };
+        return row;
+      });
     }
-
-    this.table.total = this.objects.length;
-    this.table.data = this.objects.map((v) => {
-      const row: Row = {
-        object: v,
-        frequency: v.Frequency.Name,
-        dayOfWeek: v.DayOfWeek && v.DayOfWeek.Name,
-        previousExecutionDate:
-          v.PreviousExecutionDate &&
-          format(new Date(v.PreviousExecutionDate), 'dd-MM-yyyy'),
-        nextExecutionDate:
-          v.NextExecutionDate &&
-          format(new Date(v.NextExecutionDate), 'dd-MM-yyyy'),
-        finalExecutionDate:
-          v.FinalExecutionDate &&
-          format(new Date(v.FinalExecutionDate), 'dd-MM-yyyy'),
-      };
-      return row;
-    });
   }
 
   toggle() {

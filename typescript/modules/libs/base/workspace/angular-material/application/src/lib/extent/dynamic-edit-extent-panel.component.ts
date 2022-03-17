@@ -205,12 +205,14 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
-    this.enabled = this.enabler ? this.enabler() : true;
-    this.creatable = this.creatableFn ? this.creatableFn() : true;
+    if (this.panelEnabled) {
+      this.enabled = this.enabler ? this.enabler() : true;
+      this.creatable = this.creatableFn ? this.creatableFn() : true;
 
-    this.objects = pullResult.collection<IObject>(prefix) ?? [];
-    this.updateFilter();
-    this.refreshTable();
+      this.objects = pullResult.collection<IObject>(prefix) ?? [];
+      this.updateFilter();
+      this.refreshTable();
+    }
   }
 
   onPeriodSelectionChange(newPeriodSelection: PeriodSelection) {

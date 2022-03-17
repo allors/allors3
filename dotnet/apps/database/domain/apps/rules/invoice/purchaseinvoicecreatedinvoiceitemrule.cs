@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
         {
             var validation = cycle.Validation;
 
-            foreach (var @this in matches.Cast<PurchaseInvoice>().Where(v => v.PurchaseInvoiceState.IsCreated))
+            foreach (var @this in matches.Cast<PurchaseInvoice>().Where(v => v.PurchaseInvoiceState.IsCreated || v.PurchaseInvoiceState.IsRevising))
             {
                 @this.PurchaseOrders = @this.InvoiceItems
                     .SelectMany(v => v.OrderItemBillingsWhereInvoiceItem)

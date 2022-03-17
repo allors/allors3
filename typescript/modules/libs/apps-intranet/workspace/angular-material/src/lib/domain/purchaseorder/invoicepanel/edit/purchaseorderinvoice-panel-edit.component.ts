@@ -65,6 +65,7 @@ export class PurchaseOrderInvoicePanelEditComponent
   override readonly panelKind = 'Extent';
 
   override readonly panelMode = 'Edit';
+  initialState: boolean;
 
   override get panelId() {
     return this.m?.PurchaseOrder.tag;
@@ -86,7 +87,7 @@ export class PurchaseOrderInvoicePanelEditComponent
     // return { propertyType: this.init, id: this.scoped.id };
   }
 
-  title = 'Repeating Sales Invoices';
+  title = 'Purchase Orders';
 
   m: M;
 
@@ -155,7 +156,10 @@ export class PurchaseOrderInvoicePanelEditComponent
       displayName: () => 'Remove from invoice',
       description: () => '',
       disabled: (target: PurchaseOrder) => {
-        return !this.purchaseInvoice.PurchaseOrders.includes(target);
+        return (
+          !this.initialState ||
+          !this.purchaseInvoice.PurchaseOrders.includes(target)
+        );
       },
       execute: (target: PurchaseOrder) => {
         if (!Array.isArray(target)) {
@@ -228,6 +232,7 @@ export class PurchaseOrderInvoicePanelEditComponent
           name: this.invoicePullName,
           objectId: id,
           include: {
+            PurchaseInvoiceState: {},
             PurchaseOrders: {},
             PurchaseInvoiceItems: {
               Part: {},
@@ -262,58 +267,62 @@ export class PurchaseOrderInvoicePanelEditComponent
   }
 
   onPostSharedPull(pullResult: IPullResult, prefix?: string) {
-    this.enabled = this.enabler ? this.enabler() : true;
+    if (this.panelEnabled) {
+      this.enabled = this.enabler ? this.enabler() : true;
 
-    this.purchaseInvoice = pullResult.object<PurchaseInvoice>(
-      this.invoicePullName
-    );
+      this.purchaseInvoice = pullResult.object<PurchaseInvoice>(
+        this.invoicePullName
+      );
 
-    this.orderItemBillings = pullResult.collection<OrderItemBilling>(
-      this.m.OrderItemBilling
-    );
+      this.orderItemBillings = pullResult.collection<OrderItemBilling>(
+        this.m.OrderItemBilling
+      );
 
-    const invoiceItemTypes = pullResult.collection<InvoiceItemType>(
-      this.m.InvoiceItemType
-    );
+      const invoiceItemTypes = pullResult.collection<InvoiceItemType>(
+        this.m.InvoiceItemType
+      );
 
-    this.partItem = invoiceItemTypes.find(
-      (v: InvoiceItemType) =>
-        v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
-    );
+      this.initialState =
+        this.purchaseInvoice?.PurchaseInvoiceState.UniqueId ===
+          '639ba038-d8f3-4672-80b5-c8eb96e3275d' ||
+        this.purchaseInvoice?.PurchaseInvoiceState.UniqueId ===
+          '102f4080-1d12-4090-9196-f42c094c38ca';
 
-    this.workItem = invoiceItemTypes.find(
-      (v: InvoiceItemType) =>
-        v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e'
-    );
+      this.partItem = invoiceItemTypes?.find(
+        (v: InvoiceItemType) =>
+          v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
+      );
 
-    const purchaseOrders = pullResult.collection<PurchaseOrder>(
-      this.orderPullName
-    );
+      this.workItem = invoiceItemTypes?.find(
+        (v: InvoiceItemType) =>
+          v.UniqueId === 'a4d2e6d0-c6c1-46ec-a1cf-3a64822e7a9e'
+      );
 
-    this.objects = purchaseOrders.filter(
-      (v) =>
-        (v.canExecuteInvoice &&
-          (this.purchaseInvoice.PurchaseInvoiceState.UniqueId ===
-            '102f4080-1d12-4090-9196-f42c094c38ca' ||
-            this.purchaseInvoice.PurchaseInvoiceState.UniqueId ===
-              '639ba038-d8f3-4672-80b5-c8eb96e3275d')) ||
-        v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
-    );
+      const purchaseOrders = pullResult.collection<PurchaseOrder>(
+        this.orderPullName
+      );
 
-    this.table.total = this.objects.length;
-    this.table.data = this.objects.map((v) => {
-      const row: Row = {
-        object: v,
-        number: v.OrderNumber,
-        description: v.Description,
-        reference: v.CustomerReference,
-        totalExVat: v.TotalExVat.toString(),
-        state: v.PurchaseOrderState.Name,
-        shipmentState: v.PurchaseOrderShipmentState.Name,
-        paymentState: v.PurchaseOrderPaymentState.Name,
-      };
-      return row;
-    });
+      this.objects = purchaseOrders?.filter(
+        (v) =>
+          (v.canExecuteInvoice && this.initialState) ||
+          v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
+      );
+
+      this.table.total = this.objects?.length;
+      this.table.data = this.objects?.map((v) => {
+        const row: Row = {
+          object: v,
+          number: v.OrderNumber,
+          description: v.Description,
+          reference: v.CustomerReference,
+          totalExVat: v.TotalExVat.toString(),
+          state: v.PurchaseOrderState.Name,
+          shipmentState: v.PurchaseOrderShipmentState.Name,
+          paymentState: v.PurchaseOrderPaymentState.Name,
+        };
+        return row;
+      });
+    }
   }
 
   toggle() {
@@ -324,11 +333,10 @@ export class PurchaseOrderInvoicePanelEditComponent
     const context = this.workspaceService.contextBuilder();
 
     const purchaseInvoice = context.instantiate(
-      this.purchaseInvoice.id
+      this.purchaseInvoice
     ) as PurchaseInvoice;
-
     const purchaseOrder = context.instantiate(
-      panelPurchaseOrder.id
+      panelPurchaseOrder
     ) as PurchaseOrder;
 
     purchaseOrder.ValidOrderItems.forEach(
