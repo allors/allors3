@@ -116,6 +116,7 @@ namespace Allors
                 isAutomaticallyShipped: true,
                 autoGenerateCustomerShipment: true,
                 isAutomaticallyReceived: false,
+                shipmentIsAutomaticallyReturned: true,
                 autoGeneratePurchaseShipment: false,
                 useCreditNoteSequence: true,
                 requestCounterValue: 0,

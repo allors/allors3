@@ -57,7 +57,9 @@ namespace Allors.Database.Domain
             var executeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemExecuteRevocation;
             var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
 
-            if (!@this.PurchaseOrderItemShipmentState.IsNotReceived && !@this.PurchaseOrderItemShipmentState.IsNa)
+            if (@this.ExistPurchaseOrderItemShipmentState
+                && !@this.PurchaseOrderItemShipmentState.IsNotReceived
+                && !@this.PurchaseOrderItemShipmentState.IsNa)
             {
                 @this.AddRevocation(writeRevocation);
                 @this.AddRevocation(executeRevocation);
