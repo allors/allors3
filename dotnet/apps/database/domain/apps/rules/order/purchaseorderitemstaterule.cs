@@ -97,7 +97,7 @@ namespace Allors.Database.Domain
                     }
                     else
                     {
-                        @this.PurchaseOrderItemShipmentState = @this.QuantityReceived - @this.QuantityReturned < @this.QuantityOrdered ?
+                        @this.PurchaseOrderItemShipmentState = @this.QuantityReceived < @this.QuantityOrdered ?
                             purchaseOrderItemShipmentStates.PartiallyReceived :
                             purchaseOrderItemShipmentStates.Received;
                     }

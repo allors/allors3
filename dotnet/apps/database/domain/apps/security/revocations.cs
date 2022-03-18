@@ -30,6 +30,8 @@ namespace Allors.Database.Domain
         public static readonly Guid PurchaseOrderWriteRevocationId = new Guid("99a3a62e-4367-4f13-851e-810fae4801a6");
         public static readonly Guid PurchaseOrderItemDeleteRevocationId = new Guid("c2b44a75-7d80-4399-aad9-aaa2fa3c9dc3");
         public static readonly Guid PurchaseOrderItemReturnRevocationId = new Guid("fe708ae3-54b6-4eea-a36d-5471ff3b42bc");
+        public static readonly Guid PurchaseOrderItemWriteRevocationId = new Guid("23cb74f9-0abf-4efb-bec9-93733b203023");
+        public static readonly Guid PurchaseOrderItemExecuteRevocationId = new Guid("388afd2b-08e5-4756-b3f9-de24e129a271");
         public static readonly Guid PurchaseReturnShipRevocationId = new Guid("8f66e782-c175-45e7-b997-028862c2b184");
         public static readonly Guid RequestForProposalDeleteRevocationId = new Guid("2e09cae8-c4fe-4938-88d1-55aad026a515");
         public static readonly Guid QuoteItemDeleteRevocationId = new Guid("c3a15312-bbf2-4b79-8052-cddd4ee52f6b");
@@ -47,7 +49,8 @@ namespace Allors.Database.Domain
         public static readonly Guid SalesOrderStateRevocationId = new Guid("375354ff-ddc5-4596-9ce4-4ece3cd1007c");
         public static readonly Guid SalesOrderWriteRevocationId = new Guid("1f6f1ab5-8062-430b-82a7-4adb9c520daf");
         public static readonly Guid SalesOrderItemDeleteRevocationId = new Guid("7d0a1b60-4017-472d-b8f8-e0a9f2675c02");
-        public static readonly Guid SalesOrderItemChangeRevocationId = new Guid("04258294-8044-4107-8703-84b3f679179b");
+        public static readonly Guid SalesOrderItemWriteRevocationId = new Guid("04258294-8044-4107-8703-84b3f679179b");
+        public static readonly Guid SalesOrderItemExecuteRevocationId = new Guid("c6461cf1-27da-4163-874e-e78aa11dd08d");
         public static readonly Guid SerialisedItemDeleteRevocationId = new Guid("df9751a6-50e5-41d7-bbc1-befaf38b38ec");
         public static readonly Guid StatementOfWorkDeleteRevocationId = new Guid("a6d8c7dc-c849-4850-a37c-696bba468fb5");
         public static readonly Guid UnifiedGoodDeleteRevocationId = new Guid("c742b7f9-2310-4272-ab89-25898a7db3cc");
@@ -102,6 +105,10 @@ namespace Allors.Database.Domain
 
         public Revocation PurchaseOrderItemReturnRevocation => this.Cache[PurchaseOrderItemReturnRevocationId];
 
+        public Revocation PurchaseOrderItemWriteRevocation => this.Cache[PurchaseOrderItemWriteRevocationId];
+
+        public Revocation PurchaseOrderItemExecuteRevocation => this.Cache[PurchaseOrderItemExecuteRevocationId];
+
         public Revocation PurchaseReturnShipRevocation => this.Cache[PurchaseReturnShipRevocationId];
 
         public Revocation QuoteItemDeleteRevocation => this.Cache[QuoteItemDeleteRevocationId];
@@ -134,7 +141,9 @@ namespace Allors.Database.Domain
 
         public Revocation SalesOrderItemDeleteRevocation => this.Cache[SalesOrderItemDeleteRevocationId];
 
-        public Revocation SalesOrderItemChangeRevocation => this.Cache[SalesOrderItemChangeRevocationId];
+        public Revocation SalesOrderItemWriteRevocation => this.Cache[SalesOrderItemWriteRevocationId];
+
+        public Revocation SalesOrderItemExecuteRevocation => this.Cache[SalesOrderItemExecuteRevocationId];
 
         public Revocation SerialisedItemDeleteRevocation => this.Cache[SerialisedItemDeleteRevocationId];
 
@@ -183,6 +192,8 @@ namespace Allors.Database.Domain
             merge(RequestForProposalDeleteRevocationId, _ => { });
             merge(PurchaseOrderItemDeleteRevocationId, _ => { });
             merge(PurchaseOrderItemReturnRevocationId, _ => { });
+            merge(PurchaseOrderItemWriteRevocationId, _ => { });
+            merge(PurchaseOrderItemExecuteRevocationId, _ => { });
             merge(PurchaseReturnShipRevocationId, _ => { });
             merge(QuoteItemDeleteRevocationId, _ => { });
             merge(RequestForInformationDeleteRevocationId, _ => { });
@@ -199,7 +210,8 @@ namespace Allors.Database.Domain
             merge(SalesOrderStateRevocationId, _ => { });
             merge(SalesOrderWriteRevocationId, _ => { });
             merge(SalesOrderItemDeleteRevocationId, _ => { });
-            merge(SalesOrderItemChangeRevocationId, _ => { });
+            merge(SalesOrderItemWriteRevocationId, _ => { });
+            merge(SalesOrderItemExecuteRevocationId, _ => { });
             merge(SerialisedItemDeleteRevocationId, _ => { });
             merge(StatementOfWorkDeleteRevocationId, _ => { });
             merge(UnifiedGoodDeleteRevocationId, _ => { });

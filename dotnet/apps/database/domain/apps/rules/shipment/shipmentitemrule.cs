@@ -72,6 +72,11 @@ namespace Allors.Database.Domain
                     }
                 }
 
+                if (@this.ShipmentWhereShipmentItem is PurchaseReturn && @this.ShipmentWhereShipmentItem.ShipmentState.IsShipped)
+                {
+                    @this.QuantityShipped = @this.Quantity;
+                }
+
                 if (@this.ExistShipmentWhereShipmentItem
                     && @this.ShipmentWhereShipmentItem is PurchaseShipment
                     && @this.ExistPart

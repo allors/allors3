@@ -176,9 +176,7 @@ namespace Allors.Database.Domain
                 var store = order.OrderedBy.StoresWhereInternalOrganisation.FirstOrDefault();
                 var address = order.TakenViaSupplier.ShippingAddress ?? order.TakenViaSupplier.GeneralCorrespondence as PostalAddress;
 
-                var purchaseReturn = order.OrderedBy.AppsGetPendingOutgoingShipmentForStore(address, store, order.OrderedBy.DefaultShipmentMethod);
-
-                if (purchaseReturn == null)
+                if (!(order.OrderedBy.AppsGetPendingOutgoingShipmentForStore(address, store, order.OrderedBy.DefaultShipmentMethod) is PurchaseReturn purchaseReturn))
                 {
                     purchaseReturn = new PurchaseReturnBuilder(this.Strategy.Transaction)
                         .WithShipFromParty(order.OrderedBy)
@@ -212,6 +210,11 @@ namespace Allors.Database.Domain
                     .WithShipmentItem(shipmentItem)
                     .WithQuantity(this.QuantityReceived)
                     .Build();
+
+                if (purchaseReturn.ShipFromParty is InternalOrganisation internalOrganisation && internalOrganisation.ShipmentIsAutomaticallyReturned)
+                {
+                    purchaseReturn.Ship();
+                }
             }
 
             method.StopPropagation = true;

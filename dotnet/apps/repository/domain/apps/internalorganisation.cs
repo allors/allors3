@@ -541,6 +541,13 @@ namespace Allors.Repository
         bool IsAutomaticallyReceived { get; set; }
 
         #region Allors
+        [Id("2d911c3c-bc97-4c8f-9353-40d8b19576c3")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        bool ShipmentIsAutomaticallyReturned { get; set; }
+
+        #region Allors
         [Id("B5A919ED-221C-4EED-AA2A-AE2ACB4B0B24")]
         #endregion
         [Required]

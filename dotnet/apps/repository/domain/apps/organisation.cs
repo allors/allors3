@@ -245,6 +245,8 @@ namespace Allors.Repository
 
         public bool IsAutomaticallyReceived { get; set; }
 
+        public bool ShipmentIsAutomaticallyReturned { get; set; }
+
         public bool AutoGeneratePurchaseShipment { get; set; }
 
         public SerialisedItemSoldOn[] SerialisedItemSoldOns { get; set; }

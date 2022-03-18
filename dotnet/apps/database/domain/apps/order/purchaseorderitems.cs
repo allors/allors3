@@ -66,6 +66,25 @@ namespace Allors.Database.Domain
             {
                 permissions.Get(this.Meta, this.Meta.Return),
             };
+
+            var writePermissions = new List<Permission>();
+            foreach (var roleType in this.Meta.DatabaseRoleTypes)
+            {
+                writePermissions.Add(permissions.Get(this.Meta, roleType, Operations.Write));
+            }
+
+            revocations.PurchaseOrderItemWriteRevocation.DeniedPermissions = writePermissions;
+
+            var executePermissions = new List<Permission>();
+            foreach (var methodType in this.Meta.MethodTypes)
+            {
+                if (!methodType.Equals(this.Meta.Return))
+                {
+                    executePermissions.Add(permissions.Get(this.Meta, methodType));
+                }
+            }
+
+            revocations.PurchaseOrderItemExecuteRevocation.DeniedPermissions = executePermissions;
         }
     }
 }

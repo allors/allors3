@@ -388,6 +388,11 @@ namespace Allors.Database.Domain
                             .Build();
                     }
                 }
+
+                if (purchaseReturn.ShipFromParty is InternalOrganisation internalOrganisation && internalOrganisation.ShipmentIsAutomaticallyReturned)
+                {
+                    purchaseReturn.Ship();
+                }
             }
 
             method.StopPropagation = true;

@@ -32,23 +32,41 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                @this.Revocations = @this.TransitionalRevocations;
+                @this.DerivePurchaseOrderItemDeniedPermission(validation);
+            }
+        }
+    }
 
-                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemDeleteRevocation;
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveRevocation(deleteRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(deleteRevocation);
-                }
+    public static class PurchaseOrderItemDeniedPermissionRuleExtensions
+    {
+        public static void DerivePurchaseOrderItemDeniedPermission(this PurchaseOrderItem @this, IValidation validation)
+        {
+            @this.Revocations = @this.TransitionalRevocations;
 
-                var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
-                if (@this.QuantityReceived == @this.QuantityReturned)
-                {
-                    @this.AddRevocation(returnRevocation);
-                }
+            var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemDeleteRevocation;
+            if (@this.IsDeletable)
+            {
+                @this.RemoveRevocation(deleteRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(deleteRevocation);
+            }
+
+            var writeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemWriteRevocation;
+            var executeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemExecuteRevocation;
+            var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
+
+            if (!@this.PurchaseOrderItemShipmentState.IsNotReceived && !@this.PurchaseOrderItemShipmentState.IsNa)
+            {
+                @this.AddRevocation(writeRevocation);
+                @this.AddRevocation(executeRevocation);
+                @this.RemoveRevocation(returnRevocation);
+            }
+
+            if (@this.QuantityReceived == @this.QuantityReturned)
+            {
+                @this.AddRevocation(returnRevocation);
             }
         }
     }

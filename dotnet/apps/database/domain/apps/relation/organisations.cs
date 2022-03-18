@@ -66,6 +66,7 @@ namespace Allors.Database.Domain
             bool isAutomaticallyShipped,
             bool autoGenerateCustomerShipment,
             bool isAutomaticallyReceived,
+            bool shipmentIsAutomaticallyReturned,
             bool autoGeneratePurchaseShipment,
             bool useCreditNoteSequence,
             int? requestCounterValue,
@@ -139,6 +140,7 @@ namespace Allors.Database.Domain
                 .WithPurchaseOrderApprovalThresholdLevel2(purchaseOrderApprovalThresholdLevel2)
                 .WithAutoGeneratePurchaseShipment(autoGeneratePurchaseShipment)
                 .WithIsAutomaticallyReceived(isAutomaticallyReceived)
+                .WithShipmentIsAutomaticallyReturned(shipmentIsAutomaticallyReturned)
                 .WithCollectiveWorkEffortInvoice(collectiveWorkEffortInvoice)
                 .WithCountry(country)
                 .Build();
