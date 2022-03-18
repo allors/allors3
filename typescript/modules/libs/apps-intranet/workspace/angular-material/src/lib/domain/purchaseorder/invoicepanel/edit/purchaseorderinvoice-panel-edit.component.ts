@@ -332,12 +332,9 @@ export class PurchaseOrderInvoicePanelEditComponent
   public addFromPurchaseOrder(panelPurchaseOrder: PurchaseOrder): void {
     const context = this.workspaceService.contextBuilder();
 
-    const purchaseInvoice = context.instantiate(
-      this.purchaseInvoice
-    ) as PurchaseInvoice;
-    const purchaseOrder = context.instantiate(
-      panelPurchaseOrder
-    ) as PurchaseOrder;
+    const purchaseInvoice = context.instantiate(this.purchaseInvoice);
+    const purchaseOrder = context.instantiate(panelPurchaseOrder);
+    const workItem = context.instantiate(this.workItem);
 
     purchaseOrder.ValidOrderItems.forEach(
       (purchaseOrderItem: PurchaseOrderItem) => {
@@ -360,7 +357,7 @@ export class PurchaseOrderInvoicePanelEditComponent
           if (invoiceItem.Part) {
             invoiceItem.InvoiceItemType = purchaseOrderItem.InvoiceItemType;
           } else {
-            invoiceItem.InvoiceItemType = this.workItem;
+            invoiceItem.InvoiceItemType = workItem;
           }
 
           purchaseInvoice.addPurchaseInvoiceItem(invoiceItem);
