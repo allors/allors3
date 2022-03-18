@@ -282,7 +282,9 @@ export abstract class Session implements ISession {
       return this.objectByWorkspaceId.get(id);
     }
 
-    return isNewId(id) ? this.instantiateWorkspaceStrategy(id) : null;
+    return isNewId(id)
+      ? this.instantiateWorkspaceStrategy(id)
+      : this.instantiateDatabaseStrategy(id);
   }
 
   public getCompositeAssociation(
@@ -392,4 +394,6 @@ export abstract class Session implements ISession {
   abstract push(): Promise<IPushResult>;
 
   abstract instantiateWorkspaceStrategy(id: number): IObject;
+
+  abstract instantiateDatabaseStrategy(id: number): IObject;
 }

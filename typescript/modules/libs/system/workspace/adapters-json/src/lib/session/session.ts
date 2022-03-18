@@ -69,12 +69,18 @@ export class Session extends SystemSession {
     this.changeSetTracker.onDelete(strategy.object);
   }
 
-  instantiateDatabaseStrategy(id: number): void {
+  instantiateDatabaseStrategy(id: number): IObject {
     const databaseRecord = this.workspace.database.getRecord(
       id
     ) as DatabaseRecord;
+
+    if (databaseRecord == null) {
+      return null;
+    }
+
     const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addObject(strategy.object);
+    return strategy.object;
   }
 
   instantiateWorkspaceStrategy(id: number): IObject {

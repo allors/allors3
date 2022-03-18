@@ -1,4 +1,5 @@
 import { C1, C2 } from '@allors/default/workspace/domain';
+import exp = require('constants');
 import { Fixture, name_c1A, name_c2A } from '../../fixture';
 import '../../matchers';
 
@@ -40,6 +41,31 @@ test('databasPullOtherSessionNotPushedException', async () => {
   }
 
   expect(hasErrors).toBeTruthy();
+});
+
+test('databasPullOtherSession', async () => {
+  const { workspace } = fixture;
+  const session1 = workspace.createSession();
+  const session2 = workspace.createSession();
+
+  const c1a_1 = await fixture.pullC1(session1, name_c1A);
+
+  const c1a_2 = session2.instantiate(c1a_1);
+
+  expect(c1a_2).not.toBeNull();
+  expect(c1a_2.id).toBe(c1a_1.id);
+});
+
+test('databasPullOtherSessionNonExistingId', async () => {
+  const { workspace } = fixture;
+  const session1 = workspace.createSession();
+  const session2 = workspace.createSession();
+
+  await fixture.pullC1(session1, name_c1A);
+
+  const c1a_2 = session2.instantiate(Number.MAX_SAFE_INTEGER);
+
+  expect(c1a_2).toBeNull();
 });
 
 test('databaseStrategyHasChanges', async () => {
