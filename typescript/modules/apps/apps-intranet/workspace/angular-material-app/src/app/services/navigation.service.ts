@@ -84,6 +84,11 @@ export class AppNavigationService extends NavigationService {
       '/shipment/customershipment/:id'
     );
     define(
+      m.PurchaseReturn,
+      '/shipment/shipments',
+      '/shipment/purchasereturn/:id'
+    );
+    define(
       m.PurchaseShipment,
       '/shipment/shipments',
       '/shipment/purchaseshipment/:id'

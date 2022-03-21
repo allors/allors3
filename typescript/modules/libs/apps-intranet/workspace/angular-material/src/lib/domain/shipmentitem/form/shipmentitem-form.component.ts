@@ -43,6 +43,7 @@ import {
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './shipmentitem-form.component.html',
@@ -64,6 +65,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   supplierOfferings: SupplierOffering[];
   isCustomerShipment: boolean;
   isPurchaseShipment: boolean;
+  isPurchaseReturn: boolean;
   isSerialized: boolean;
   supplierPartsFilter: SearchFactory;
   serialisedItemAvailabilities: SerialisedItemAvailability[];
@@ -113,7 +115,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   private previousGood;
   private previousPart;
 
-  goodsFilter: SearchFactory;
+  unifiedGoodsFilter: SearchFactory;
 
   constructor(
     @Self() public allors: ContextService,
@@ -123,6 +125,9 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+    const { treeBuilder } = this.m;
+
+    this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(this.m, treeBuilder);
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -243,6 +248,8 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       this.shipment.strategy.cls === this.m.CustomerShipment;
     this.isPurchaseShipment =
       this.shipment.strategy.cls === this.m.PurchaseShipment;
+    this.isPurchaseReturn =
+      this.shipment.strategy.cls === this.m.PurchaseReturn;
 
     this.facilities = pullResult.collection<Facility>(this.m.Facility);
     this.serialisedItemAvailabilities =
@@ -476,6 +483,28 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       });
     }
 
+    if (this.isPurchaseReturn) {
+      this.supplierPartsFilter = new SearchFactory({
+        objectType: this.m.Part,
+        roleTypes: [this.m.Part.Name, this.m.Part.SearchString],
+        post: (predicate: And) => {
+          predicate.operands.push({
+            kind: 'ContainedIn',
+            propertyType: this.m.Part.SupplierOfferingsWherePart,
+            extent: {
+              kind: 'Filter',
+              objectType: this.m.SupplierOffering,
+              predicate: {
+                kind: 'Equals',
+                propertyType: this.m.SupplierOffering.Supplier,
+                object: this.shipment.ShipToParty,
+              },
+            },
+          });
+        },
+      });
+    }
+
     if (this.createRequest) {
       this.selectedFacility = this.shipment.ShipToFacility;
       this.shipment.addShipmentItem(this.object);
@@ -494,7 +523,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
             this.salesOrderItems.push(this.selectedSalesOrderItem);
           }
 
-          if (this.isPurchaseShipment) {
+          if (this.isPurchaseShipment || this.isPurchaseReturn) {
             this.selectedPurchaseOrderItem = this.orderShipment
               .OrderItem as PurchaseOrderItem;
             this.purchaseOrderItems.push(this.selectedPurchaseOrderItem);

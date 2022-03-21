@@ -58,6 +58,7 @@ import {
   PurchaseOrderEditFormComponent,
   PurchaseOrderItemFormComponent,
   PurchaseReturnCreateFormComponent,
+  PurchaseReturnEditFormComponent,
   PurchaseShipmentCreateFormComponent,
   PurchaseShipmentEditFormComponent,
   QuoteItemFormComponent,
@@ -151,8 +152,7 @@ export class AppFormService implements FormService {
       [m.ProductQuote, ProductQuoteEditFormComponent],
       [m.PurchaseInvoice, PurchaseInvoiceEditFormComponent],
       [m.PurchaseOrder, PurchaseOrderEditFormComponent],
-      // TODO:
-      // [m.PurchaseReturn, PurchaseReturnEditFormComponent],
+      [m.PurchaseReturn, PurchaseReturnEditFormComponent],
       [m.PurchaseShipment, PurchaseShipmentEditFormComponent],
       [m.RequestForQuote, RequestForQuoteEditFormComponent],
       [m.SalesInvoice, SalesInvoiceEditFormComponent],
@@ -293,8 +293,7 @@ export const editComponents: any[] = [
   ProductQuoteEditFormComponent,
   PurchaseInvoiceEditFormComponent,
   PurchaseOrderEditFormComponent,
-  // TODO:
-  // PurchaseReturnEditFormComponent,
+  PurchaseReturnEditFormComponent,
   PurchaseShipmentEditFormComponent,
   RequestForQuoteEditFormComponent,
   SalesInvoiceEditFormComponent,

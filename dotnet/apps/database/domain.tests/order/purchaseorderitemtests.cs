@@ -1596,6 +1596,7 @@ namespace Allors.Database.Domain.Tests
         {
             this.deleteRevocation = new Revocations(this.Transaction).PurchaseOrderItemDeleteRevocation;
             this.returnRevocation = new Revocations(this.Transaction).PurchaseOrderItemReturnRevocation;
+            this.quickReceiveRevocation = new Revocations(this.Transaction).PurchaseOrderItemQuickReceiveRevocation;
         }
 
         public override Config Config => new Config { SetupSecurity = true };
@@ -1603,6 +1604,8 @@ namespace Allors.Database.Domain.Tests
         private readonly Revocation deleteRevocation;
 
         private readonly Revocation returnRevocation;
+
+        private readonly Revocation quickReceiveRevocation;
 
         [Fact]
         public void OnChangedOrderItemBillingOrderItemDeriveDeletePermission()
@@ -1716,6 +1719,67 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(this.returnRevocation, orderItem.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedOrderShipmentOrderItemDeriveReturnPermission()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+            this.InternalOrganisation.ShipmentIsAutomaticallyReturned = false;
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            Assert.DoesNotContain(this.returnRevocation, orderItem.Revocations);
+
+            orderItem.Return();
+            this.Derive();
+
+            Assert.True(orderItem.QuantityReturned == 0);
+            Assert.Contains(this.returnRevocation, orderItem.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedOrderShipmentOrderItemDeriveQuickReceivePermission()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = false;
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            Assert.DoesNotContain(this.quickReceiveRevocation, orderItem.Revocations);
+
+            order.QuickReceive();
+            this.Transaction.Derive();
+
+            Assert.Contains(this.quickReceiveRevocation, orderItem.Revocations);
         }
     }
 }

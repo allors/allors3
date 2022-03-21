@@ -197,4 +197,13 @@ export class PurchaseOrderSummaryPanelComponent extends AllorsViewSummaryPanelCo
       this.refreshService.refresh();
     }, this.errorService.errorHandler);
   }
+
+  public quickReturn(): void {
+    this.invokeService.invoke(this.order.Return).subscribe(() => {
+      this.snackBar.open('Purchase return shipment created', 'close', {
+        duration: 5000,
+      });
+      this.refreshService.refresh();
+    }, this.errorService.errorHandler);
+  }
 }

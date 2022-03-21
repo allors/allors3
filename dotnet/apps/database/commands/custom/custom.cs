@@ -5,6 +5,8 @@
 
 namespace Commands
 {
+    using System.Linq;
+    using Allors.Database.Derivations;
     using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
@@ -47,14 +49,21 @@ namespace Commands
 
                 var m = this.Parent.M;
 
-                User user = new People(transaction).FindBy(m.Person.FirstName, "Simone");
+                User user = new People(transaction).FindBy(m.Person.UserName, "jane@example.com");
 
                 transaction.Services.Get<IUserService>().User = user;
+                var derivation = transaction.Database.Services.Get<IDerivationService>().CreateDerivation(transaction);
 
-                var wo = new WorkTasks(transaction).FindBy(m.WorkEffort.WorkEffortNumber, "1");
+                var @this = new PurchaseOrders(transaction).FindBy(m.PurchaseOrder.OrderNumber, "purchase orderno: 7");
+                @this.Comment = "a";
 
-                var acl = new DatabaseAccessControl(user)[wo];
-                var result = acl.CanRead(m.WorkEffort.WorkEffortNumber);
+                var item = (PurchaseOrderItem)@this.ValidOrderItems.First();
+                item.DerivePurchaseOrderItemDeniedPermission(derivation.Validation);
+
+                @this.DerivePurchaseOrderDeniedPermission(derivation.Validation);
+
+                var acl = new DatabaseAccessControl(user)[@this];
+                var result = acl.CanExecute(m.PurchaseOrder.Return);
 
                 this.Logger.Info("End");
             }

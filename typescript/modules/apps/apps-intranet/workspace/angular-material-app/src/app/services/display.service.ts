@@ -280,6 +280,7 @@ export class AppDisplayService implements DisplayService {
           m.PurchaseOrderItem.PurchaseOrderItemShipmentState,
           m.PurchaseOrderItem.QuantityOrdered,
           m.PurchaseOrderItem.QuantityReceived,
+          m.PurchaseOrderItem.QuantityReturned,
         ],
       ],
       [

@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.OrderShipment.RolePattern(v => v.Quantity, v => v.OrderItem, m.PurchaseOrderItem),
+                m.PurchaseReturn.RolePattern(v => v.ShipmentState, v => v.ShipmentItems.ShipmentItem.OrderShipmentsWhereShipmentItem.OrderShipment.OrderItem, m.PurchaseOrderItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -41,7 +42,8 @@ namespace Allors.Database.Domain
             foreach (var orderShipment in @this.OrderShipmentsWhereOrderItem)
             {
                 if (orderShipment.OrderItem is PurchaseOrderItem
-                    && orderShipment.ShipmentItem.ShipmentWhereShipmentItem is PurchaseReturn)
+                    && orderShipment.ShipmentItem.ShipmentWhereShipmentItem is PurchaseReturn
+                    && orderShipment.ShipmentItem.ShipmentWhereShipmentItem.ShipmentState.IsShipped)
                 {
                     quantityReturned += orderShipment.Quantity;
                 }

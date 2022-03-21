@@ -23,6 +23,7 @@ namespace Allors.Database.Domain
             m.OrderRequirementCommitment.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
             m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, m.PurchaseOrderItem),
             m.OrderItem.AssociationPattern(v => v.OrderShipmentsWhereOrderItem, m.PurchaseOrderItem),
+            m.OrderShipment.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -42,6 +43,7 @@ namespace Allors.Database.Domain
         public static void DerivePurchaseOrderItemDeniedPermission(this PurchaseOrderItem @this, IValidation validation)
         {
             @this.Revocations = @this.TransitionalRevocations;
+            var m = @this.Transaction().Database.Services.Get<MetaPopulation>();
 
             var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemDeleteRevocation;
             if (@this.IsDeletable)
@@ -55,6 +57,7 @@ namespace Allors.Database.Domain
 
             var writeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemWriteRevocation;
             var executeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemExecuteRevocation;
+            var quickReceiveRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemQuickReceiveRevocation;
             var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
 
             if (@this.ExistPurchaseOrderItemShipmentState
@@ -64,6 +67,20 @@ namespace Allors.Database.Domain
                 @this.AddRevocation(writeRevocation);
                 @this.AddRevocation(executeRevocation);
                 @this.RemoveRevocation(returnRevocation);
+            }
+
+            // If not IsAutomaticallyReceived there could be shipment waiting to be received. Can not execute quickreceive again.
+            foreach (var orderShipment in @this.OrderShipmentsWhereOrderItem)
+            {
+                if (orderShipment.ShipmentItem.ShipmentWhereShipmentItem.Strategy.Class.Equals(m.PurchaseShipment))
+                {
+                    @this.AddRevocation(quickReceiveRevocation);
+                }
+
+                if (orderShipment.ShipmentItem.ShipmentWhereShipmentItem.Strategy.Class.Equals(m.PurchaseReturn))
+                {
+                    @this.AddRevocation(returnRevocation);
+                }
             }
 
             if (@this.QuantityReceived == @this.QuantityReturned)

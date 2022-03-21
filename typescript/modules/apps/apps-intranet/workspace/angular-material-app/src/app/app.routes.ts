@@ -29,6 +29,7 @@ import {
   PurchaseInvoiceOverviewPageComponent,
   PurchaseOrderListPageComponent,
   PurchaseOrderOverviewPageComponent,
+  PurchaseReturnOverviewPageComponent,
   PurchaseShipmentOverviewPageComponent,
   RequestForQuoteListPageComponent,
   RequestForQuoteOverviewPageComponent,
@@ -176,6 +177,10 @@ export const routes: Routes = [
           {
             path: 'customershipment/:id',
             component: CustomerShipmentOverviewPageComponent,
+          },
+          {
+            path: 'purchasereturn/:id',
+            component: PurchaseReturnOverviewPageComponent,
           },
           {
             path: 'purchaseshipment/:id',

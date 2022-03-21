@@ -108,7 +108,7 @@ namespace Allors.Database.Domain
 
                 if (nonUnifiedGoods.Length > 0)
                 {
-                    salesOrderItems.Filter.AddContainedIn(this.M.SalesOrderItem.Product, nonUnifiedGoods);
+                    salesOrderItems.Filter.AddContainedIn(this.M.SalesOrderItem.Product, (IEnumerable<IObject>)nonUnifiedGoods);
                 }
 
                 salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Instantiate(salesOrderItems);

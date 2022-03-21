@@ -37,69 +37,77 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrder>())
             {
-                @this.Revocations = @this.TransitionalRevocations;
+                @this.DerivePurchaseOrderDeniedPermission(validation);
+            }
+        }
+    }
 
-                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderDeleteRevocation;
-                var invoiceRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderInvoiceRevocation;
-                var quickReceiveRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderQuickReceiveRevocation;
-                var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReturnRevocation;
-                var reviseRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReviseRevocation;
-                var receivedRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReceivedRevocation;
-                var reopenRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReopenRevocation;
-                var writeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderWriteRevocation;
+    public static class PurchaseOrderDeniedPermissionRuleExtensions
+    {
+        public static void DerivePurchaseOrderDeniedPermission(this PurchaseOrder @this, IValidation validation)
+        {
+            @this.Revocations = @this.TransitionalRevocations;
 
-                if (@this.CanInvoice)
-                {
-                    @this.RemoveRevocation(invoiceRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(invoiceRevocation);
-                }
+            var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderDeleteRevocation;
+            var invoiceRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderInvoiceRevocation;
+            var quickReceiveRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderQuickReceiveRevocation;
+            var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReturnRevocation;
+            var reviseRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReviseRevocation;
+            var receivedRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReceivedRevocation;
+            var reopenRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderReopenRevocation;
+            var writeRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderWriteRevocation;
 
-                if (@this.CanRevise)
-                {
-                    @this.RemoveRevocation(reviseRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(reviseRevocation);
-                }
+            if (@this.CanInvoice)
+            {
+                @this.RemoveRevocation(invoiceRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(invoiceRevocation);
+            }
 
-                if (@this.IsReceivable)
-                {
-                    @this.RemoveRevocation(quickReceiveRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(quickReceiveRevocation);
-                }
+            if (@this.CanRevise)
+            {
+                @this.RemoveRevocation(reviseRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(reviseRevocation);
+            }
 
-                var returnItemRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
-                if (@this.ValidOrderItems.All(v => ((PurchaseOrderItem)v).Revocations.Contains(returnItemRevocation)))
-                {
-                    @this.AddRevocation(returnRevocation);
-                }
+            if (@this.IsReceivable)
+            {
+                @this.RemoveRevocation(quickReceiveRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(quickReceiveRevocation);
+            }
 
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveRevocation(deleteRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(deleteRevocation);
-                }
+            var returnItemRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
+            if (@this.ValidOrderItems.All(v => ((PurchaseOrderItem)v).Revocations.Contains(returnItemRevocation)))
+            {
+                @this.AddRevocation(returnRevocation);
+            }
 
-                if (!@this.PurchaseOrderShipmentState.IsNotReceived && !@this.PurchaseOrderShipmentState.IsNa)
-                {
-                    @this.AddRevocation(receivedRevocation);
-                    @this.AddRevocation(writeRevocation);
-                }
+            if (@this.IsDeletable)
+            {
+                @this.RemoveRevocation(deleteRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(deleteRevocation);
+            }
 
-                if (@this.PurchaseOrderState.IsCompleted && @this.PurchaseOrderPaymentState.IsNotPaid && @this.PurchaseOrderShipmentState.IsNa)
-                {
-                    @this.RemoveRevocation(reopenRevocation);
-                }
+            if (!@this.PurchaseOrderShipmentState.IsNotReceived && !@this.PurchaseOrderShipmentState.IsNa)
+            {
+                @this.AddRevocation(receivedRevocation);
+                @this.AddRevocation(writeRevocation);
+            }
+
+            if (@this.PurchaseOrderState.IsCompleted && @this.PurchaseOrderPaymentState.IsNotPaid && @this.PurchaseOrderShipmentState.IsNa)
+            {
+                @this.RemoveRevocation(reopenRevocation);
             }
         }
     }

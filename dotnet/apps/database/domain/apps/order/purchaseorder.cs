@@ -92,19 +92,9 @@ namespace Allors.Database.Domain
             }
         }
 
-        public bool IsReceivable
-        {
-            get
-            {
-                if (this.PurchaseOrderState.IsSent
-                    && this.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).IsReceivable))
-                {
-                    return true;
-                }
-
-                return false;
-            }
-        }
+        public bool IsReceivable => this.PurchaseOrderState.IsSent
+                    && this.ValidOrderItems.Any(v => ((PurchaseOrderItem)v).IsReceivable
+                    && !this.ValidOrderItems.Any(v => v.Revocations.Any(r => r.UniqueId.Equals(Domain.Revocations.PurchaseOrderItemQuickReceiveRevocationId))));
 
         public bool IsDeletable =>
             (this.PurchaseOrderState.Equals(new PurchaseOrderStates(this.Strategy.Transaction).Created)

@@ -67,6 +67,11 @@ namespace Allors.Database.Domain
                 permissions.Get(this.Meta, this.Meta.Return),
             };
 
+            revocations.PurchaseOrderItemQuickReceiveRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.QuickReceive),
+            };
+
             var writePermissions = new List<Permission>();
             foreach (var roleType in this.Meta.DatabaseRoleTypes)
             {

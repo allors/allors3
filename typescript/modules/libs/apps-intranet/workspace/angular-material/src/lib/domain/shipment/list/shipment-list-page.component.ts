@@ -29,12 +29,14 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { PrintService } from '../../../actions/print/print.service';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { formatDistance } from 'date-fns';
+import { ObjectType } from '../../../../../../../../system/workspace/meta/src/lib/object-type';
 
 interface Row extends TableRow {
   object: Shipment;
   number: string;
   from: string;
   to: string;
+  type: string;
   state: string;
   lastModifiedDate: string;
 }
@@ -89,6 +91,7 @@ export class ShipmentListPageComponent implements OnInit, OnDestroy {
         { name: 'number', sort },
         { name: 'from', sort },
         { name: 'to', sort },
+        { name: 'type' },
         { name: 'state', sort },
         { name: 'lastModifiedDate', sort: true },
       ],
@@ -207,6 +210,7 @@ export class ShipmentListPageComponent implements OnInit, OnDestroy {
             number: `${v.ShipmentNumber}`,
             from: v.ShipFromParty.DisplayName,
             to: v.ShipToParty.DisplayName,
+            type: v.strategy.cls.singularName,
             state: `${v.ShipmentState && v.ShipmentState.Name}`,
             lastModifiedDate: formatDistance(
               new Date(v.LastModifiedDate),

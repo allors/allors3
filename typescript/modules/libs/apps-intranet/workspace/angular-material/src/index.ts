@@ -157,6 +157,9 @@ export { PurchaseOrderApprovalLevel2FormComponent } from './lib/domain/purchaseo
 export { PurchaseOrderItemFormComponent } from './lib/domain/purchaseorderitem/form/purchaseorderitem-form.component';
 
 export { PurchaseReturnCreateFormComponent } from './lib/domain/purchasereturn/create/purchasereturn-create-form.component';
+export { PurchaseReturnEditFormComponent } from './lib/domain/purchasereturn/edit/purchasereturn-edit-form.component';
+export { PurchaseReturnOverviewPageComponent } from './lib/domain/purchasereturn/overview/purchasereturn-overview-page.component';
+export { PurchaseReturnSummaryPanelComponent } from './lib/domain/purchasereturn/summary/purchasereturn-summary-panel.component';
 
 export { PurchaseShipmentCreateFormComponent } from './lib/domain/purchaseshipment/create/purchaseshipment-create-form.component';
 export { PurchaseShipmentEditFormComponent } from './lib/domain/purchaseshipment/edit/purchaseshipment-edit-form.component';
