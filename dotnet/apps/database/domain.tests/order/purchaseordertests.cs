@@ -1745,7 +1745,7 @@ namespace Allors.Database.Domain.Tests
             Assert.DoesNotContain(this.returnRevocation, order.Revocations);
         }
 
-        [Fact (Skip = "Martien")]
+        [Fact]
 
         public void OnChangedTransitionalDeniedPermissionsDeriveReturnPermissionDenied()
         {

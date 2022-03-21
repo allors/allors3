@@ -23,6 +23,7 @@ namespace Allors.Database.Domain
             m.PurchaseOrder.AssociationPattern(v => v.PurchaseInvoicesWherePurchaseOrder),
             m.PurchaseOrder.AssociationPattern(v => v.SerialisedItemsWherePurchaseOrder),
             m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState, v => v.PurchaseOrderWherePurchaseOrderItem),
+            m.PurchaseOrderItem.RolePattern(v => v.Revocations, v => v.PurchaseOrderWherePurchaseOrderItem),
             m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, v => v.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
             m.OrderItem.AssociationPattern(v => v.OrderShipmentsWhereOrderItem, v => v.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
             m.OrderItem.AssociationPattern(v => v.OrderRequirementCommitmentsWhereOrderItem, v => v.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
