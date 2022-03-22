@@ -72,12 +72,12 @@ namespace Allors.Database.Domain
             // If not IsAutomaticallyReceived there could be shipment waiting to be received. Can not execute quickreceive again.
             foreach (var orderShipment in @this.OrderShipmentsWhereOrderItem)
             {
-                if (orderShipment.ShipmentItem.ShipmentWhereShipmentItem.Strategy.Class.Equals(m.PurchaseShipment))
+                if (orderShipment.ExistShipmentItem && orderShipment.ShipmentItem.ShipmentWhereShipmentItem.Strategy.Class.Equals(m.PurchaseShipment))
                 {
                     @this.AddRevocation(quickReceiveRevocation);
                 }
 
-                if (orderShipment.ShipmentItem.ShipmentWhereShipmentItem.Strategy.Class.Equals(m.PurchaseReturn))
+                if (orderShipment.ExistShipmentItem && orderShipment.ShipmentItem.ShipmentWhereShipmentItem.Strategy.Class.Equals(m.PurchaseReturn))
                 {
                     @this.AddRevocation(returnRevocation);
                 }

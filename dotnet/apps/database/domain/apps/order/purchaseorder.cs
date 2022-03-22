@@ -367,6 +367,7 @@ namespace Allors.Database.Domain
                             .WithReservedFromInventoryItem(inventoryItem)
                             .WithQuantity(orderItem.QuantityReceived)
                             .WithContentsDescription($"{orderItem.QuantityReceived} * {orderItem.Part.Name}")
+                            .WithStoredInFacility(orderItem.StoredInFacility)
                             .Build();
 
                         purchaseReturn.AddShipmentItem(shipmentItem);

@@ -196,9 +196,11 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseReturnCanShipDeriveShipPermissionDenied()
         {
             this.InternalOrganisation.IsAutomaticallyReceived = true;
+            var defaultFacility = this.InternalOrganisation.StoresWhereInternalOrganisation.Single().DefaultFacility;
+
             var supplier = this.InternalOrganisation.ActiveSuppliers.First();
 
-            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).Build();
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(supplier).WithStoredInFacility(defaultFacility).Build();
             this.Derive();
 
             var part = new NonUnifiedPartBuilder(this.Transaction).Build();

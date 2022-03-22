@@ -36,10 +36,10 @@ namespace Allors.Database.Domain
     {
         public static void DerivePurchaseReturnCanShip(this PurchaseReturn @this, IValidation validation)
         {
-            var NotEnoughAvailable = @this.ShipmentItems.Any(v => v.ShipmentItemState.IsCreated
-                && v.ExistPart
+            var NotEnoughAvailable = @this.ShipmentItems.Any(v => v.ExistPart
                 && v.Part.InventoryItemKind.IsNonSerialised
-                && v.Quantity > ((NonSerialisedInventoryItem)v.ReservedFromInventoryItems.First()).QuantityOnHand);
+                && v.ExistStoredInFacility
+                && v.Quantity > ((NonSerialisedInventoryItem)v.StoredInFacility.InventoryItemsWhereFacility.First(i => i.Part.Equals(v.Part))).QuantityOnHand);
 
             @this.CanShip = !NotEnoughAvailable;
         }
