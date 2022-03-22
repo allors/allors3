@@ -17,6 +17,8 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemDisplayNameRule(MetaPopulation m) : base(m, new Guid("a2149daf-bb84-4eef-8dab-d1e9ae33ff2e")) =>
             this.Patterns = new Pattern[]
             {
+                m.PurchaseOrder.RolePattern(v => v.PurchaseOrderItems, v => v.PurchaseOrderItems),
+                m.PurchaseOrderItem.RolePattern(v => v.Part),
                 m.PurchaseOrder.RolePattern(v => v.DisplayName, v => v.PurchaseOrderItems),
                 m.Part.RolePattern(v => v.DisplayName, v => v.PurchaseOrderItemsWherePart),
             };

@@ -16,7 +16,6 @@ import {
   Part,
   Product,
   PurchaseOrderItem,
-  PurchaseOrderState,
   QuoteItemState,
   QuoteState,
   RequestItemState,
@@ -151,7 +150,6 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       p.SalesOrderItemState({}),
       p.SalesOrderState({}),
       p.PurchaseOrderItemState({}),
-      p.PurchaseOrderState({}),
       p.ShipmentItemState({}),
       p.ShipmentState({}),
       p.Facility({})
@@ -216,10 +214,10 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
         p.Shipment({
           objectId: initializer.id,
           select: {
-            ShipFromParty: {
+            ShipToParty: {
               Organisation_PurchaseOrdersWhereTakenViaSupplier: {
-                include: {
-                  PurchaseOrderItems: {
+                PurchaseOrderItems: {
+                  include: {
                     Part: {},
                     SerialisedItem: {},
                     PurchaseOrderItemState: {},
@@ -432,13 +430,6 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
         v.UniqueId === '268cb9a7-6965-47e8-af89-8f915242c23d'
     );
 
-    const purchaseOrderStates = pullResult.collection<PurchaseOrderState>(
-      this.m.PurchaseOrderState
-    );
-    const purchaseOrderinProcess = purchaseOrderStates?.find(
-      (v) => v.UniqueId === '7752f5c5-b19b-4339-a937-0bad768142a8'
-    );
-
     const salesOrderItems = pullResult.collection<SalesOrderItem>(
       this.m.SalesOrderItem
     );
@@ -456,8 +447,8 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
     if (purchaseOrderItems) {
       this.purchaseOrderItems = purchaseOrderItems?.filter(
         (v) =>
-          v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrderState ===
-          purchaseOrderinProcess
+          Number(v.QuantityReceived) > 0 &&
+          Number(v.QuantityReceived) > Number(v.QuantityReturned)
       );
     }
 
@@ -569,7 +560,10 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
     if (obj) {
       const purchaseOrderItem = obj as PurchaseOrderItem;
       this.object.Part = purchaseOrderItem.Part as Part;
-      this.object.Quantity = purchaseOrderItem.QuantityOrdered;
+      this.object.Quantity = (
+        Number(purchaseOrderItem.QuantityReceived) -
+        Number(purchaseOrderItem.QuantityReturned)
+      ).toString();
       this.object.SerialisedItem = purchaseOrderItem.SerialisedItem;
     }
   }
@@ -843,19 +837,20 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   }
 
   private onSave() {
-    if (this.selectedSalesOrderItem) {
+    if (this.selectedSalesOrderItem || this.selectedPurchaseOrderItem) {
       if (this.orderShipment == null) {
         this.orderShipment = this.allors.context.create<OrderShipment>(
           this.m.OrderShipment
         );
       }
 
-      this.orderShipment.OrderItem = this.selectedSalesOrderItem;
+      this.orderShipment.OrderItem =
+        this.selectedSalesOrderItem ?? this.selectedPurchaseOrderItem;
       this.orderShipment.ShipmentItem = this.object;
       this.orderShipment.Quantity = this.object.Quantity;
     }
 
-    if (this.isPurchaseShipment) {
+    if (this.isPurchaseShipment || this.isPurchaseReturn) {
       this.object.StoredInFacility = this.selectedFacility;
     }
   }

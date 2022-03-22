@@ -98,11 +98,7 @@
     >
       Receive all items
     </button>
-    <button
-      *ngIf="order.canExecuteQuickReceive"
-      mat-button
-      (click)="quickReturn()"
-    >
+    <button *ngIf="order.canExecuteReturn" mat-button (click)="quickReturn()">
       Return all items
     </button>
   </mat-card-actions>
