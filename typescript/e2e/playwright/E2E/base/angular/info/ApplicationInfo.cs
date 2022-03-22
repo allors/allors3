@@ -50,9 +50,6 @@ namespace Allors.E2E.Angular.Info
 
         private async Task Init()
         {
-            var dialogInfo = await this.AppRoot.GetDialogsInfo();
-            dialogInfo.Init(this);
-
             var routeInfos = await this.AppRoot.GetRouteInfos();
             foreach (var routeInfo in routeInfos)
             {
