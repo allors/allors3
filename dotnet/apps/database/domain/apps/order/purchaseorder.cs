@@ -357,7 +357,7 @@ namespace Allors.Database.Domain
 
                 foreach (PurchaseOrderItem orderItem in this.ValidOrderItems)
                 {
-                    if (orderItem.ExistPart)
+                    if (orderItem.ExistPart && orderItem.QuantityReceived - orderItem.QuantityReturned > 0)
                     {
                         var inventoryItem = orderItem.Part.InventoryItemsWherePart.FirstOrDefault(v => v.Facility.Equals(orderItem.StoredInFacility));
 
@@ -365,7 +365,7 @@ namespace Allors.Database.Domain
                             .WithPart(orderItem.Part)
                             .WithSerialisedItem(orderItem.SerialisedItem)
                             .WithReservedFromInventoryItem(inventoryItem)
-                            .WithQuantity(orderItem.QuantityReceived)
+                            .WithQuantity(orderItem.QuantityReceived - orderItem.QuantityReturned)
                             .WithContentsDescription($"{orderItem.QuantityReceived} * {orderItem.Part.Name}")
                             .WithStoredInFacility(orderItem.StoredInFacility)
                             .Build();
@@ -375,7 +375,7 @@ namespace Allors.Database.Domain
                         new OrderShipmentBuilder(this.Strategy.Transaction)
                             .WithOrderItem(orderItem)
                             .WithShipmentItem(shipmentItem)
-                            .WithQuantity(orderItem.QuantityReceived)
+                            .WithQuantity(orderItem.QuantityReceived - orderItem.QuantityReturned)
                             .Build();
                     }
                 }
