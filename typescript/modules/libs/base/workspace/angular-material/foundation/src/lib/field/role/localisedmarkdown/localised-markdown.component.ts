@@ -15,7 +15,7 @@ import * as EasyMDE from 'easymde';
   selector: 'a-mat-localised-markdown',
   template: `
     <h4>{{ localisedLabel }}</h4>
-    <textarea #easymde [attr.maxlength]="maxlength"></textarea>
+    <textarea #easymde [attr.maxlength]="maxlength" data-allors></textarea>
   `,
   encapsulation: ViewEncapsulation.None,
 })

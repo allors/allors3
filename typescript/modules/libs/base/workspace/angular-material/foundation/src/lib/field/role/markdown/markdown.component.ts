@@ -5,6 +5,7 @@ import {
   Optional,
   ViewChild,
   OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { RoleField } from '@allors/base/workspace/angular/foundation';
@@ -14,15 +15,15 @@ import * as EasyMDE from 'easymde';
   selector: 'a-mat-markdown',
   template: `
     <h4>{{ label }}</h4>
-    <textarea #easymde [attr.maxlength]="maxlength"></textarea>
+    <textarea #easymde [attr.maxlength]="maxlength" data-allors></textarea>
   `,
   encapsulation: ViewEncapsulation.None,
 })
 export class AllorsMaterialMarkdownComponent
   extends RoleField
-  implements OnInit
+  implements AfterViewInit
 {
-  @ViewChild('easymde', { static: true })
+  @ViewChild('easymde')
   elementRef: ElementRef;
 
   easyMDE: EasyMDE;
@@ -31,7 +32,9 @@ export class AllorsMaterialMarkdownComponent
     super(form);
   }
 
-  ngOnInit() {
+  override ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+
     this.easyMDE = new EasyMDE({
       element: this.elementRef.nativeElement,
       errorCallback: (errorMessage) => {

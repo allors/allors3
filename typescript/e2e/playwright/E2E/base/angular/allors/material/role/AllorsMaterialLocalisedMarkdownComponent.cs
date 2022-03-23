@@ -16,20 +16,22 @@ namespace Allors.E2E.Angular.Material.Role
         {
         }
 
-        public ILocator TextAreaLocator => this.Locator.Locator("textarea[data-allors-id]");
+        public ILocator ElementLocator => this.Locator.Locator("textarea[data-allors]");
 
         public async Task<object> GetAsync()
         {
             await this.Page.WaitForAngular();
 
-            return await this.TextAreaLocator.EvaluateAsync<string>(@"(element) => element.easyMDE.value()");
+            return await this.ElementLocator.EvaluateAsync<string>(@"(element) => element.easyMDE.value()");
         }
 
         public async Task SetAsync(string value)
         {
             await this.Page.WaitForAngular();
 
-            await this.TextAreaLocator.EvaluateAsync(@"(element, value) => element.easyMDE.value(value)", value);
+            await this.Locator.ScrollIntoViewIfNeededAsync();
+
+            await this.ElementLocator.EvaluateAsync(@"(element, value) => element.easyMDE.value(value)", value);
         }
     }
 }
