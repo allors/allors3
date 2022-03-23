@@ -25,17 +25,18 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
   readonly m: M;
   internalOrganisation: InternalOrganisation;
-  internalOrganisations: InternalOrganisation[];
   addEmployee = false;
   organisationsFilter: SearchFactory;
   peopleFilter: SearchFactory;
   employee: Person;
   employer: Organisation;
+  person: Person;
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm
+    form: NgForm,
+    private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -55,6 +56,8 @@ export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
     const { m } = this;
     const { pullBuilder: p } = m;
 
+    pulls.push(this.fetcher.internalOrganisation);
+
     if (this.editRequest) {
       pulls.push(
         p.Employment({
@@ -68,7 +71,14 @@ export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
       );
     }
 
-    this.onPrePullInitialize(pulls);
+    const initializer = this.createRequest?.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Person({
+          objectId: initializer.id,
+        })
+      );
+    }
   }
 
   onPostPull(pullResult: IPullResult) {
@@ -76,9 +86,15 @@ export class EmploymentFormComponent extends AllorsFormComponent<Employment> {
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    this.onPostPullInitialize(pullResult);
+    this.person = pullResult.object<Person>(this.m.Person);
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
 
-    this.object.FromDate = new Date();
+    if (this.createRequest) {
+      this.object.FromDate = new Date();
+      this.object.Employee = this.person;
+      this.object.Employer = this.internalOrganisation;
+    }
   }
 
   public employeeAdded(employee: Person): void {

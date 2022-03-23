@@ -13,7 +13,6 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
@@ -30,7 +29,6 @@ export class SupplierRelationshipFormComponent extends AllorsFormComponent<Suppl
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    private internalOrganisationId: InternalOrganisationId,
     private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
@@ -40,6 +38,8 @@ export class SupplierRelationshipFormComponent extends AllorsFormComponent<Suppl
   onPrePull(pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;
+
+    pulls.push(this.fetcher.internalOrganisation);
 
     if (this.editRequest) {
       pulls.push(
@@ -55,7 +55,14 @@ export class SupplierRelationshipFormComponent extends AllorsFormComponent<Suppl
       );
     }
 
-    this.onPrePullInitialize(pulls);
+    const initializer = this.createRequest?.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Organisation({
+          objectId: initializer.id,
+        })
+      );
+    }
   }
 
   onPostPull(pullResult: IPullResult) {
@@ -63,9 +70,15 @@ export class SupplierRelationshipFormComponent extends AllorsFormComponent<Suppl
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    this.onPostPullInitialize(pullResult);
+    this.organisation = pullResult.object<Organisation>(this.m.Organisation);
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
 
-    this.object.FromDate = new Date();
-    this.object.NeedsApproval = false;
+    if (this.createRequest) {
+      this.object.FromDate = new Date();
+      this.object.Supplier = this.organisation;
+      this.object.InternalOrganisation = this.internalOrganisation;
+      this.object.NeedsApproval = false;
+    }
   }
 }

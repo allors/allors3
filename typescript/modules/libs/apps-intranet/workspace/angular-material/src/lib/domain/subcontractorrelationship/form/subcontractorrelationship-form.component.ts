@@ -13,6 +13,7 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './subcontractorrelationship-form.component.html',
@@ -26,7 +27,8 @@ export class SubContractorRelationshipFormComponent extends AllorsFormComponent<
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm
+    form: NgForm,
+    private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -35,6 +37,8 @@ export class SubContractorRelationshipFormComponent extends AllorsFormComponent<
   onPrePull(pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;
+
+    pulls.push(this.fetcher.internalOrganisation);
 
     if (this.editRequest) {
       pulls.push(
@@ -50,7 +54,14 @@ export class SubContractorRelationshipFormComponent extends AllorsFormComponent<
       );
     }
 
-    this.onPrePullInitialize(pulls);
+    const initializer = this.createRequest?.initializer;
+    if (initializer) {
+      pulls.push(
+        p.Organisation({
+          objectId: initializer.id,
+        })
+      );
+    }
   }
 
   onPostPull(pullResult: IPullResult) {
@@ -60,8 +71,14 @@ export class SubContractorRelationshipFormComponent extends AllorsFormComponent<
 
     this.onPostPullInitialize(pullResult);
 
+    this.organisation = pullResult.object<Organisation>(this.m.Organisation);
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
+
     if (this.createRequest) {
       this.object.FromDate = new Date();
+      this.object.SubContractor = this.organisation;
+      this.object.Contractor = this.internalOrganisation;
     }
   }
 }
