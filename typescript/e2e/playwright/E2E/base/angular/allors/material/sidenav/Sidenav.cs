@@ -54,7 +54,7 @@ namespace Allors.E2E.Angular.Material.Sidenav
             var parentMenuInfo = menuInfo.Parent;
             if (parentMenuInfo != null)
             {
-                var span = new Element(this, @$"span:has-text(""{parentMenuInfo.Title}"")");
+                var span = new Element(this, @$".mat-line:text-is(""{parentMenuInfo.Title}"")");
 
                 await this.Page.WaitForAngular();
                 if (!await span.IsVisibleAsync())

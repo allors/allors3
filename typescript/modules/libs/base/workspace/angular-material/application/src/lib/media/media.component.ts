@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  HostBinding,
   Input,
   Optional,
   Output,
@@ -22,6 +23,7 @@ import { isImage } from './media';
   styleUrls: ['./media.component.scss'],
 })
 export class AllorsMaterialMediaComponent extends AllorsComponent {
+
   @Input() media: Media;
 
   @Output() public delete: EventEmitter<IObject> = new EventEmitter();
@@ -34,6 +36,7 @@ export class AllorsMaterialMediaComponent extends AllorsComponent {
     super();
   }
 
+  @HostBinding('attr.data-allors-id')
   get dataAllorsId(): number {
     return this.media?.id;
   }
