@@ -96,6 +96,7 @@ export const dialogs = {
     [tags.EanIdentification]: Edit,
     [tags.EmailAddress]: Edit,
     [tags.EmailCommunication]: Edit,
+    [tags.EmailMessage]: Edit,
     [tags.Employment]: Edit,
     [tags.ExchangeRate]: Edit,
     [tags.FaceToFaceCommunication]: Edit,

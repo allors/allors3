@@ -45,6 +45,15 @@ export class AppSorterService implements SorterService {
     );
 
     define(
+      m.EmailMessage,
+      new Sorter({
+        created: m.EmailMessage.DateCreated,
+        sent: m.EmailMessage.DateSent,
+        subject: m.EmailMessage.Subject,
+      })
+    );
+
+    define(
       m.ExchangeRate,
       new Sorter({
         validFrom: m.ExchangeRate.ValidFrom,

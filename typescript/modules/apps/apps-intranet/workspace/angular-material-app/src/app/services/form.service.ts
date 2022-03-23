@@ -18,6 +18,7 @@ import {
   EmailAddressCreateFormComponent,
   EmailAddressEditFormComponent,
   EmailCommunicationFormComponent,
+  EmailMessageFormComponent,
   EmploymentFormComponent,
   ExchangeRateFormComponent,
   FaceToFaceCommunicationFormComponent,
@@ -144,6 +145,7 @@ export class AppFormService implements FormService {
     this.editFormByObjectType = new Map<Composite, unknown>([
       [m.CustomerShipment, CustomerShipmentEditFormComponent],
       [m.EmailAddress, EmailAddressEditFormComponent],
+      [m.EmailMessage, EmailMessageFormComponent],
       [m.NonUnifiedGood, NonUnifiedGoodEditFormComponent],
       [m.NonUnifiedPart, NonUnifiedPartEditFormComponent],
       [m.Organisation, OrganisationEditFormComponent],
@@ -316,6 +318,7 @@ export const components: any[] = [
   CustomerRelationshipFormComponent,
   DisbursementFormComponent,
   EmailCommunicationFormComponent,
+  EmailMessageFormComponent,
   EmploymentFormComponent,
   ExchangeRateFormComponent,
   FaceToFaceCommunicationFormComponent,

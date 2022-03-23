@@ -43,7 +43,6 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Filters } from '../../../filters/filters';
-import { ShipmentWhereShipmentItem } from '../../../../../../../../extranet/workspace/meta/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './shipmentitem-form.component.html',

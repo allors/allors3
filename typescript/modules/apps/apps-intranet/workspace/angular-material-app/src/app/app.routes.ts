@@ -10,6 +10,7 @@ import {
   CataloguesListPageComponent,
   CommunicationEventListPageComponent,
   CustomerShipmentOverviewPageComponent,
+  EmailMessageListPageComponent,
   ExchangeRateListPageComponent,
   GoodListPageComponent,
   NonUnifiedGoodOverviewPageComponent,
@@ -219,7 +220,6 @@ export const routes: Routes = [
           },
         ],
       },
-
       {
         path: 'workflow',
         children: [
@@ -235,6 +235,12 @@ export const routes: Routes = [
           { path: 'exchangerates', component: ExchangeRateListPageComponent },
         ],
       },
+      {
+        path: 'admin',
+        children: [
+          { path: 'emailmessages', component: EmailMessageListPageComponent },
+        ],
+      },
     ],
   },
 ];
@@ -248,6 +254,7 @@ export const components: any[] = [
   CataloguesListPageComponent,
   CommunicationEventListPageComponent,
   CustomerShipmentOverviewPageComponent,
+  EmailMessageListPageComponent,
   ExchangeRateListPageComponent,
   GoodListPageComponent,
   NonUnifiedGoodOverviewPageComponent,
