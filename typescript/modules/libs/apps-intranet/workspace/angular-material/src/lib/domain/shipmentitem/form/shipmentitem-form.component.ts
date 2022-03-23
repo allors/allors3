@@ -43,6 +43,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Filters } from '../../../filters/filters';
+import { ShipmentWhereShipmentItem } from '../../../../../../../../extranet/workspace/meta/src/lib/generated/m.g';
 
 @Component({
   templateUrl: './shipmentitem-form.component.html',
@@ -170,6 +171,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
             SerialisedItem: {},
             ShipmentItemState: {},
             StoredInFacility: {},
+            ShipmentWhereShipmentItem: {},
           },
         }),
         p.ShipmentItem({
@@ -239,9 +241,12 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    this.shipment =
-      pullResult.object<Shipment>(this.m.Shipment) ||
-      this.object.ShipmentWhereShipmentItem;
+    if (this.createRequest) {
+      this.shipment = pullResult.object<Shipment>(this.m.Shipment);
+    } else {
+      this.shipment = this.object.ShipmentWhereShipmentItem;
+    }
+
     this.isCustomerShipment =
       this.shipment.strategy.cls === this.m.CustomerShipment;
     this.isPurchaseShipment =
