@@ -37,6 +37,9 @@ export { PartyContactMechanismEmailAddressInlineComponent } from './lib/domain/e
 
 export { EmailCommunicationFormComponent } from './lib/domain/emailcommunication/form/emailcommunication-form.component';
 
+export { EmailMessageFormComponent } from './lib/domain/emailmessage/form/emailmessage-form.component';
+export { EmailMessageListPageComponent } from './lib/domain/emailmessage/list/emailmessage-list-page.component';
+
 export { EmploymentFormComponent } from './lib/domain/employment/form/employment-form.component';
 
 export { ExchangeRateFormComponent } from './lib/domain/exchangerate/form/exchangerate-form.component';

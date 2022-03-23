@@ -8,6 +8,7 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { M, tags } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
+import { EmailAddress } from '../../../../../../../libs/apps-extranet/workspace/domain/src/lib/generated/EmailAddress.g';
 import {
   Brand,
   Country,
@@ -45,6 +46,7 @@ import {
   SerialisedItemAvailability,
   SerialisedItemState,
   ShipmentState,
+  User,
   WorkEffortState,
 } from '@allors/default/workspace/domain';
 import {
@@ -316,6 +318,11 @@ export class AppFilterService implements FilterService {
       roleTypes: [m.ProductIdentification.Identification],
     });
 
+    const userSearch = new SearchFactory({
+      objectType: m.User,
+      roleTypes: [m.User.UserEmail],
+    });
+
     define(
       m.Carrier,
       new FilterDefinition({
@@ -361,6 +368,42 @@ export class AppFilterService implements FilterService {
           },
         ],
       })
+    );
+
+    define(
+      m.EmailMessage,
+      new FilterDefinition(
+        {
+          kind: 'And',
+          operands: [
+            {
+              kind: 'Like',
+              roleType: m.EmailMessage.Subject,
+              parameter: 'subject',
+            },
+            {
+              kind: 'Equals',
+              propertyType: m.EmailMessage.Sender,
+              parameter: 'Sender',
+            },
+            {
+              kind: 'Contains',
+              propertyType: m.EmailMessage.Recipients,
+              parameter: 'Recipient',
+            },
+          ],
+        },
+        {
+          Sender: {
+            search: () => userSearch,
+            display: (v: User) => v && v.UserEmail,
+          },
+          Recipient: {
+            search: () => userSearch,
+            display: (v: User) => v && v.UserEmail,
+          },
+        }
+      )
     );
 
     define(

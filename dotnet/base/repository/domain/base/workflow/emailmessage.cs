@@ -24,6 +24,7 @@ namespace Allors.Repository
         #endregion
         [Derived]
         [Required]
+        [Workspace]
         public DateTime DateCreated { get; set; }
 
         #region Allors
@@ -36,6 +37,7 @@ namespace Allors.Repository
         [Id("cc36e90a-dcda-4289-b84f-c947c97847b0")]
         [Indexed]
         #endregion
+        [Workspace]
         public DateTime DateSent { get; set; }
 
         #region Allors
@@ -43,6 +45,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace]
         public User Sender { get; set; }
 
         #region Allors
@@ -50,6 +53,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
+        [Workspace]
         public User[] Recipients { get; set; }
 
         #region Allors
@@ -57,6 +61,7 @@ namespace Allors.Repository
         #endregion
         [Indexed]
         [Size(256)]
+        [Workspace]
         public string RecipientEmailAddress { get; set; }
 
         #region Allors
@@ -64,6 +69,7 @@ namespace Allors.Repository
         #endregion
         [Size(1024)]
         [Required]
+        [Workspace]
         public string Subject { get; set; }
 
         #region Allors
@@ -71,6 +77,7 @@ namespace Allors.Repository
         #endregion
         [Size(-1)]
         [Required]
+        [Workspace]
         public string Body { get; set; }
 
         #region inherited methods

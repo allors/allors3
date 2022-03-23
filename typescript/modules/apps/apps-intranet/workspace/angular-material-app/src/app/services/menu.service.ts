@@ -84,6 +84,11 @@ export class AppMenuService implements MenuService {
         icon: 'money',
         children: [{ objectType: m.ExchangeRate }],
       },
+      {
+        title: 'Admin',
+        icon: 'admin_panel_settings',
+        children: [{ objectType: m.EmailMessage }],
+      },
     ];
   }
 

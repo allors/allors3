@@ -1,0 +1,43 @@
+<div class="container-fluid" *ngIf="object">
+  <div class="row">
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.EmailMessage.DateCreated"
+      [disabled]="true"
+    ></a-mat-datepicker>
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.EmailMessage.DateSent"
+      [disabled]="true"
+    ></a-mat-datepicker>
+  </div>
+  <div class="row">
+    <a-mat-static
+      class="col-md"
+      [object]="object"
+      [roleType]="m.EmailMessage.Sender"
+      display="UserEmail"
+    ></a-mat-static>
+    <a-mat-static
+      class="col-md"
+      [object]="object"
+      [roleType]="m.EmailMessage.Recipients"
+      display="UserEmail"
+    ></a-mat-static>
+  </div>
+  <div class="row">
+    <a-mat-static
+      class="col-md"
+      [object]="object"
+      [roleType]="m.EmailMessage.Subject"
+      display="DisplayName"
+    ></a-mat-static>
+    <a-mat-markdown
+      class="col-md-12"
+      [object]="object"
+      [roleType]="m.EmailMessage.Body"
+    ></a-mat-markdown>
+  </div>
+</div>

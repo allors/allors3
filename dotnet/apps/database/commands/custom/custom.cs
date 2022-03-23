@@ -54,14 +54,25 @@ namespace Commands
                 transaction.Services.Get<IUserService>().User = user;
                 var derivation = transaction.Database.Services.Get<IDerivationService>().CreateDerivation(transaction);
 
-                var @this = new PurchaseOrders(transaction).FindBy(m.PurchaseOrder.OrderNumber, "purchase orderno: 2");
+                //var acl = new DatabaseAccessControl(user)[@this];
+                //var result = acl.CanExecute(m.PurchaseOrder.Return);
 
-                var item = (PurchaseOrderItem)@this.ValidOrderItems.First();
-                item.DerivePurchaseOrderItemDisplayName(derivation.Validation);
+                user.UserEmail = "sender@aa.com";
 
-                var acl = new DatabaseAccessControl(user)[@this];
-                var result = acl.CanExecute(m.PurchaseOrder.Return);
+                var all = new People(transaction).Extent().ToArray();
+                all[0].UserEmail = "recipient@aa.com";
+                var recipient = all[0];
 
+                new EmailMessageBuilder(transaction)
+                    .WithDateCreated(transaction.Now().AddDays(-1).Date)
+                    .WithSender(recipient)
+                    .WithRecipient(user)
+                    .WithSubject("hallo2")
+                    .WithBody("body")
+                    .Build();
+
+
+                transaction.Derive();
                 transaction.Commit();
 
                 this.Logger.Info("End");
