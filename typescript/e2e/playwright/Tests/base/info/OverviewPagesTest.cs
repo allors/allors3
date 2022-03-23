@@ -58,7 +58,7 @@ namespace Tests.ApplicationTests
                     await this.Page.GotoAsync(url);
                     await this.Page.WaitForAngular();
 
-                    var detail = this.AppRoot.Locator.Locator("[data-allors-kind='panel-detail']");
+                    var detail = this.AppRoot.Locator.Locator("[data-allors-kind='view-detail-panel']");
                     await detail.ClickAsync();
                     await this.Page.WaitForAngular();
 
@@ -67,7 +67,12 @@ namespace Tests.ApplicationTests
                     await this.Page.WaitForAngular();
                 }
             }
+            foreach (var error in this.ConsoleErrorMessages)
+            {
+                System.Console.Write(error.Text + "\n");
+            }
 
+            // TODO: Koen
             Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
