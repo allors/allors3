@@ -72,15 +72,15 @@ namespace Allors.Database.Domain
             {
                 shipmentItem.ShipmentItemState = new ShipmentItemStates(this.Transaction()).Shipped;
 
-                foreach (var inventoryItem in shipmentItem.ReservedFromInventoryItems)
+                if (shipmentItem.ExistPart)
                 {
-                    if (inventoryItem.Part.InventoryItemKind.IsSerialised)
+                    if (shipmentItem.Part.InventoryItemKind.IsSerialised)
                     {
                         new InventoryItemTransactionBuilder(this.Transaction())
                             .WithPart(shipmentItem.Part)
                             .WithSerialisedItem(shipmentItem.SerialisedItem)
-                            .WithUnitOfMeasure(inventoryItem.Part.UnitOfMeasure)
-                            .WithFacility(inventoryItem.Facility)
+                            .WithUnitOfMeasure(shipmentItem.Part.UnitOfMeasure)
+                            .WithFacility(shipmentItem.StoredInFacility)
                             .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
                             .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction()).Good)
                             .WithQuantity(1)
@@ -89,12 +89,12 @@ namespace Allors.Database.Domain
                     else
                     {
                         new InventoryItemTransactionBuilder(this.Transaction())
-                            .WithPart(inventoryItem.Part)
-                            .WithUnitOfMeasure(inventoryItem.Part.UnitOfMeasure)
-                            .WithFacility(inventoryItem.Facility)
+                            .WithPart(shipmentItem.Part)
+                            .WithUnitOfMeasure(shipmentItem.Part.UnitOfMeasure)
+                            .WithFacility(shipmentItem.StoredInFacility)
                             .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
                             .WithQuantity(shipmentItem.Quantity)
-                            .WithCost(inventoryItem.Part.PartWeightedAverage.AverageCost)
+                            .WithCost(shipmentItem.Part.PartWeightedAverage.AverageCost)
                             .Build();
                     }
                 }

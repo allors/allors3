@@ -51,6 +51,11 @@ namespace Allors.Database.Domain
                     validation.AddError(@this, @this.Meta.Quantity, ErrorMessages.SerializedItemQuantity);
                 }
 
+                if (@this.ShipmentWhereShipmentItem is PurchaseReturn && !@this.ExistStoredInFacility)
+                {
+                    validation.AssertExists(@this, @this.Meta.StoredInFacility);
+                }
+
                 if (@this.ShipmentWhereShipmentItem is CustomerShipment)
                 {
                     @this.QuantityPicked = 0;

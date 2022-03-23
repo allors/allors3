@@ -1028,6 +1028,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedOrderShipmentQuantityDeriveQuantityReturned()
         {
+            this.InternalOrganisation.ShipmentIsAutomaticallyReturned = true;
+
             var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
             this.Derive();
 
@@ -1057,7 +1059,6 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
-                .WithIsReceivable(true)
                 .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
                 .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
                 .WithQuantityOrdered(2)
@@ -1089,6 +1090,10 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(1)
                 .Build();
 
+            shipment1.Ship();
+            this.Derive();
+
+            shipment2.Ship();
             this.Derive();
 
             Assert.Equal(2, orderItem.QuantityReturned);

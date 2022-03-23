@@ -54,16 +54,15 @@ namespace Commands
                 transaction.Services.Get<IUserService>().User = user;
                 var derivation = transaction.Database.Services.Get<IDerivationService>().CreateDerivation(transaction);
 
-                var @this = new PurchaseOrders(transaction).FindBy(m.PurchaseOrder.OrderNumber, "purchase orderno: 7");
-                @this.Comment = "a";
+                var @this = new PurchaseOrders(transaction).FindBy(m.PurchaseOrder.OrderNumber, "purchase orderno: 2");
 
                 var item = (PurchaseOrderItem)@this.ValidOrderItems.First();
-                item.DerivePurchaseOrderItemDeniedPermission(derivation.Validation);
-
-                @this.DerivePurchaseOrderDeniedPermission(derivation.Validation);
+                item.DerivePurchaseOrderItemDisplayName(derivation.Validation);
 
                 var acl = new DatabaseAccessControl(user)[@this];
                 var result = acl.CanExecute(m.PurchaseOrder.Return);
+
+                transaction.Commit();
 
                 this.Logger.Info("End");
             }

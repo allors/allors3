@@ -402,6 +402,9 @@ export class AppDisplayService implements DisplayService {
           m.ShipmentItem.ShipmentItemState,
           m.ShipmentItem.Good,
           m.ShipmentItem.Part,
+          m.ShipmentItem.Quantity,
+          m.ShipmentItem.QuantityPicked,
+          m.ShipmentItem.QuantityShipped,
         ],
       ],
       [
