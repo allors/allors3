@@ -67,6 +67,7 @@ namespace Tests.ApplicationTests
                     await this.Page.WaitForAngular();
                 }
             }
+            
             foreach (var error in this.ConsoleErrorMessages)
             {
                 System.Console.Write(error.Text + "\n");

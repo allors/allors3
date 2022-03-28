@@ -68,20 +68,22 @@ export class AllorsMaterialPanelService implements PanelService {
   }
 
   private enable(panelId: string) {
-    for (const panel of this.panels) {
-      if (panel.panelMode === 'View') {
-        panel.panelEnabled = panel.panelKind === 'Summary' ? true : false;
-      } else {
-        const isActivePanel = panel.panelId === panelId;
-        if (isActivePanel) {
-          this.activeEditPanel = panel;
+    window.setTimeout((v) => {
+      for (const panel of this.panels) {
+        if (panel.panelMode === 'View') {
+          panel.panelEnabled = panel.panelKind === 'Summary' ? true : false;
+        } else {
+          const isActivePanel = panel.panelId === panelId;
+          if (isActivePanel) {
+            this.activeEditPanel = panel;
+          }
+
+          panel.panelEnabled = isActivePanel ? true : false;
         }
-
-        panel.panelEnabled = isActivePanel ? true : false;
       }
-    }
 
-    this.refreshService.refresh();
+      this.refreshService.refresh();
+    }, 1000);
   }
 
   private disable() {

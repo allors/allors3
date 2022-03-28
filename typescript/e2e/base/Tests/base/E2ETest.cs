@@ -87,7 +87,7 @@ namespace Tests
         }
 
         [TearDown]
-        public async Task TestTearDown()
+        public async Task E2ETestTearDown()
         {
             await this.Page.CloseAsync();
             await this.Context.CloseAsync();
