@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Npm;
-using static Nuke.Common.Logger;
+using static Serilog.Log;
 
 internal class Angular : IDisposable
 {
@@ -47,27 +47,25 @@ internal class Angular : IDisposable
 
             try
             {
-                using (var client = new HttpClient())
+                using var client = new HttpClient();
+                Debug($"Angular request: ${url}");
+                var response = await client.GetAsync($"http://localhost:4200{url}");
+                success = response.IsSuccessStatusCode;
+                var result = response.Content.ReadAsStringAsync().Result;
+                if (!success)
                 {
-                    Normal($"Angular request: ${url}");
-                    var response = await client.GetAsync($"http://localhost:4200{url}");
-                    success = response.IsSuccessStatusCode;
-                    var result = response.Content.ReadAsStringAsync().Result;
-                    if (!success)
-                    {
-                        Warn("Angular response: Unsuccessful");
-                        Warn(result);
-                    }
-                    else
-                    {
-                        Normal("Angular response: Successful");
-                        Normal(result);
-                    }
+                    Warning("Angular response: Unsuccessful");
+                    Warning(result);
+                }
+                else
+                {
+                    Warning("Angular response: Successful");
+                    Warning(result);
                 }
             }
             catch
             {
-                Warn($"Angular: Exception (run {++run})");
+                Warning($"Angular: Exception (run {++run})");
             }
         }
 
