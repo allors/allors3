@@ -17,9 +17,7 @@ import {
   AllorsComponent,
   SharedPullService,
   RefreshService,
-  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
-import { M } from '@allors/default/workspace/meta';
 import { Scoped } from './scoped';
 
 @Directive()

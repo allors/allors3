@@ -13,7 +13,7 @@ partial class Build
              DotNet("Commands.dll Populate", Paths.ArtifactsBaseCommands);
 
              using var server = new Server(Paths.ArtifactsBaseServer);
-             using var angular = new Angular(Paths.TypescriptModules, "angular-base:serve");
+             using var angular = new Angular(Paths.TypescriptModules, "base-workspace-angular-material-application:serve");
              await server.Ready();
              await angular.Init();
              DotNetTest(s => s

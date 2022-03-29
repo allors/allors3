@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.20.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\Base\Tests\Base*\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Custom\**" />
+    <Compile Remove="Tests\HumanResource\**" />
+    <Compile Remove="Tests\Order\**" />
+    <Compile Remove="Tests\Product\**" />
+    <Compile Remove="Tests\Purchasing\**" />
+    <Compile Remove="Tests\Relation\**" />
+    <Compile Remove="Tests\Sales\**" />
+    <Compile Remove="Tests\Shipment\**" />
+    <Compile Remove="Tests\UserProfile\**" />
+    <Compile Remove="Tests\WorkEfforts\**" />
+    <EmbeddedResource Remove="Custom\**" />
+    <EmbeddedResource Remove="Tests\HumanResource\**" />
+    <EmbeddedResource Remove="Tests\Order\**" />
+    <EmbeddedResource Remove="Tests\Product\**" />
+    <EmbeddedResource Remove="Tests\Purchasing\**" />
+    <EmbeddedResource Remove="Tests\Relation\**" />
+    <EmbeddedResource Remove="Tests\Sales\**" />
+    <EmbeddedResource Remove="Tests\Shipment\**" />
+    <EmbeddedResource Remove="Tests\UserProfile\**" />
+    <EmbeddedResource Remove="Tests\WorkEfforts\**" />
+    <None Remove="Custom\**" />
+    <None Remove="Tests\HumanResource\**" />
+    <None Remove="Tests\Order\**" />
+    <None Remove="Tests\Product\**" />
+    <None Remove="Tests\Purchasing\**" />
+    <None Remove="Tests\Relation\**" />
+    <None Remove="Tests\Sales\**" />
+    <None Remove="Tests\Shipment\**" />
+    <None Remove="Tests\UserProfile\**" />
+    <None Remove="Tests\WorkEfforts\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="appSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appSettings.osx.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appSettings.windows.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+ 
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\dotnet\Apps\Database\configuration\Configuration.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\Apps\Database\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\Apps\Database\testpopulation\testpopulation.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\system\database\adapters\allors.database.adapters.sql.sqlclient\allors.database.adapters.sql.sqlclient.csproj" />
+    <ProjectReference Include="..\E2E\Allors.E2E.csproj" />
+  </ItemGroup>
+ 
+
+  <ItemGroup>
+    <Folder Include="Apps\" />
+  </ItemGroup>
+</Project>

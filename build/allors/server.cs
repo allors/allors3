@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
-using static Nuke.Common.Logger;
+using static Serilog.Log;
 using static Nuke.Common.Tooling.ProcessTasks;
 
 internal class Server : IDisposable
@@ -46,27 +46,25 @@ internal class Server : IDisposable
 
             try
             {
-                using (var client = new HttpClient())
+                using var client = new HttpClient();
+                Debug($"Server request: ${url}");
+                var response = await client.GetAsync($"http://localhost:5000{url}");
+                success = response.IsSuccessStatusCode;
+                var result = response.Content.ReadAsStringAsync().Result;
+                if (!success)
                 {
-                    Normal($"Server request: ${url}");
-                    var response = await client.GetAsync($"http://localhost:5000{url}");
-                    success = response.IsSuccessStatusCode;
-                    var result = response.Content.ReadAsStringAsync().Result;
-                    if (!success)
-                    {
-                        Warn("Server response: Unsuccessful");
-                        Warn(result);
-                    }
-                    else
-                    {
-                        Normal("Server response: Successful");
-                        Normal(result);
-                    }
+                    Warning("Server response: Unsuccessful");
+                    Warning(result);
+                }
+                else
+                {
+                    Warning("Server response: Successful");
+                    Warning(result);
                 }
             }
             catch
             {
-                Warn($"Server: Exception (run {++run})");
+                Warning($"Server: Exception (run {++run})");
             }
         }
 
