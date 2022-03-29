@@ -14,32 +14,35 @@ namespace Allors.Database.Domain
     {
         public void Deny(IObjectType objectType, ObjectState objectState, params Operations[] operations)
         {
-            foreach (var operation in operations ?? ReadWriteExecute)
+            if (objectState != null)
             {
-                Dictionary<IOperandType, Permission> permissionByOperandType;
-                switch (operation)
+                foreach (var operation in operations ?? ReadWriteExecute)
                 {
-                    case Operations.Read:
-                        this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
-                        break;
-
-                    case Operations.Write:
-                        this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
-                        break;
-
-                    case Operations.Execute:
-                        this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
-                        break;
-
-                    default:
-                        throw new Exception("Unkown operation: " + operations);
-                }
-
-                if (permissionByOperandType != null)
-                {
-                    foreach (var dictionaryEntry in permissionByOperandType)
+                    Dictionary<IOperandType, Permission> permissionByOperandType;
+                    switch (operation)
                     {
-                        objectState.ObjectRevocation.AddDeniedPermission(dictionaryEntry.Value);
+                        case Operations.Read:
+                            this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        case Operations.Write:
+                            this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        case Operations.Execute:
+                            this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        default:
+                            throw new Exception("Unkown operation: " + operations);
+                    }
+
+                    if (permissionByOperandType != null)
+                    {
+                        foreach (var dictionaryEntry in permissionByOperandType)
+                        {
+                            objectState.ObjectRevocation.AddDeniedPermission(dictionaryEntry.Value);
+                        }
                     }
                 }
             }
@@ -49,13 +52,16 @@ namespace Allors.Database.Domain
 
         public void Deny(IObjectType objectType, ObjectState objectState, IEnumerable<IOperandType> operandTypes)
         {
-            if (this.deniablePermissionByOperandTypeByObjectTypeId.TryGetValue(objectType.Id, out var deniablePermissionByOperandTypeId))
+            if (objectState != null)
             {
-                foreach (var operandType in operandTypes)
+                if (this.deniablePermissionByOperandTypeByObjectTypeId.TryGetValue(objectType.Id, out var deniablePermissionByOperandTypeId))
                 {
-                    if (deniablePermissionByOperandTypeId.TryGetValue(operandType, out var permission))
+                    foreach (var operandType in operandTypes)
                     {
-                        objectState.ObjectRevocation.AddDeniedPermission(permission);
+                        if (deniablePermissionByOperandTypeId.TryGetValue(operandType, out var permission))
+                        {
+                            objectState.ObjectRevocation.AddDeniedPermission(permission);
+                        }
                     }
                 }
             }
@@ -63,32 +69,36 @@ namespace Allors.Database.Domain
 
         public void DenyExcept(IObjectType objectType, ObjectState objectState, IEnumerable<IOperandType> excepts, params Operations[] operations)
         {
-            foreach (var operation in operations ?? ReadWriteExecute)
+            if (objectState != null)
             {
-                Dictionary<IOperandType, Permission> permissionByOperandType;
-                switch (operation)
+
+                foreach (var operation in operations ?? ReadWriteExecute)
                 {
-                    case Operations.Read:
-                        this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
-                        break;
-
-                    case Operations.Write:
-                        this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
-                        break;
-
-                    case Operations.Execute:
-                        this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
-                        break;
-
-                    default:
-                        throw new Exception("Unkown operation: " + operations);
-                }
-
-                if (permissionByOperandType != null)
-                {
-                    foreach (var dictionaryEntry in permissionByOperandType.Where(v => !excepts.Contains(v.Key)))
+                    Dictionary<IOperandType, Permission> permissionByOperandType;
+                    switch (operation)
                     {
-                        objectState.ObjectRevocation.AddDeniedPermission(dictionaryEntry.Value);
+                        case Operations.Read:
+                            this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        case Operations.Write:
+                            this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        case Operations.Execute:
+                            this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        default:
+                            throw new Exception("Unkown operation: " + operations);
+                    }
+
+                    if (permissionByOperandType != null)
+                    {
+                        foreach (var dictionaryEntry in permissionByOperandType.Where(v => !excepts.Contains(v.Key)))
+                        {
+                            objectState.ObjectRevocation.AddDeniedPermission(dictionaryEntry.Value);
+                        }
                     }
                 }
             }
