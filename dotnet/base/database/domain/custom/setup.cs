@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        private void CustomOnPostSetup()
+        private void CustomOnPostSetup(Config config)
         {
             var avatar = new Medias(this.transaction).Avatar;
 

@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        private void CustomOnPostSetup()
+        private void CustomOnPostSetup(Config config)
         {
 
             var jane = new PersonBuilder(this.transaction).WithFirstName("Jane").WithLastName("Doe").WithUserName("jane@example.com").Build();

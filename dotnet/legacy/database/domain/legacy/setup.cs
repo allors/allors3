@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        public void LegacyOnPostSetup()
+        public void LegacyOnPostSetup(Config config)
         {
         }
     }

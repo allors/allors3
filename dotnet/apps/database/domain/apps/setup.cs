@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        public void AppsOnPostSetup()
+        public void AppsOnPostSetup(Config config)
         {
         }
     }

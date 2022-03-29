@@ -28,11 +28,11 @@ namespace Allors.Database.Domain
             this.CustomOnPreSetup();
         }
 
-        private void OnPostSetup()
+        private void OnPostSetup(Config config)
         {
-            this.CoreOnPostSetup();
-            this.LegacyOnPostSetup();
-            this.CustomOnPostSetup();
+            this.CoreOnPostSetup(config);
+            this.LegacyOnPostSetup(config);
+            this.CustomOnPostSetup(config);
         }
     }
 }

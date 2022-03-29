@@ -47,7 +47,7 @@ namespace Allors.Database.Domain
 
             this.objectsGraph.Invoke(objects => objects.Setup(this));
 
-            this.OnPostSetup();
+            this.OnPostSetup(this.Config);
 
             this.transaction.Derive();
 
@@ -73,7 +73,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        private void CoreOnPostSetup()
+        private void CoreOnPostSetup(Config config)
         {
         }
 
