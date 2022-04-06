@@ -58,6 +58,17 @@
         ></a-mat-input>
       </div>
 
+      <!-- <div class="row">
+        <a-mat-autocomplete
+          *ngIf="createRequest"
+          class="col-md"
+          [(ngModel)]="organisation"
+          [filter]="organisationsFilter.create(allors.context)"
+          display="Name"
+          label="Organisation"
+        ></a-mat-autocomplete>
+      </div> -->
+
       <div class="row">
         <a-mat-textarea
           class="col-md-12"
@@ -94,6 +105,22 @@
       </div>
 
       <div class="row">
+        <mat-form-field class="col-md">
+          <mat-select
+            name="userGroup"
+            [(ngModel)]="selectedUserGroups"
+            placeholder="UserGroups"
+            multiple="true"
+            [disabled]="!canWriteMembers"
+          >
+            <mat-option
+              (onSelectionChange)="onUserGroupChange($event)"
+              *ngFor="let userGroup of userGroups"
+              [value]="userGroup"
+              >{{ userGroup.Name }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
         <a-mat-select
           class="col-md-6"
           [object]="object"

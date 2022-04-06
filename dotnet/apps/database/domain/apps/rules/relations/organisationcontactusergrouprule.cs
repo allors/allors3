@@ -34,6 +34,7 @@ namespace Allors.Database.Domain
                 {
                     var customerContactGroupName = $"Customer contacts at {@this.Name ?? "Unknown"} ({@this.UniqueId})";
                     @this.ContactsUserGroup = new UserGroupBuilder(@this.Strategy.Transaction).WithName(customerContactGroupName).Build();
+                    @this.ContactsUserGroup.isSelectable = @this.IsInternalOrganisation;
                 }
 
                 @this.ContactsUserGroup.Members = @this.CurrentContacts.ToArray();

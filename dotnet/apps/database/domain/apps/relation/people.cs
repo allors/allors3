@@ -21,7 +21,6 @@ namespace Allors.Database.Domain
         protected override void AppsPrepare(Setup setup)
         {
             setup.AddDependency(this.Meta, this.M.Role);
-            setup.AddDependency(this.Meta, this.M.PersonRole);
             setup.AddDependency(this.Meta, this.M.InternalOrganisation);
             setup.AddDependency(this.ObjectType, this.M.Locale);
             setup.AddDependency(this.ObjectType, this.M.ContactMechanismPurpose);

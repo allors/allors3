@@ -85,7 +85,6 @@ export class AppDisplayService implements DisplayService {
       [m.PartyClassification, m.PartyClassification.Name],
       [m.Person, m.Person.DisplayName],
       [m.PersonalTitle, m.PersonalTitle.Name],
-      [m.PersonRole, m.PersonRole.Name],
       [m.PickListState, m.PickListState.Name],
       [m.PositionStatus, m.PositionStatus.Name],
       [m.PositionType, m.PositionType.Description],

@@ -18,7 +18,11 @@ namespace Allors.Database.Domain
         {
             var merge = this.cache.Merger().Action();
 
-            merge(CustomerContactsId, v => v.Name = "All customer Contacts");
+            merge(CustomerContactsId, v =>
+            {
+                v.Name = "All customer Contacts";
+                v.isSelectable = false;
+            });
         }
     }
 }

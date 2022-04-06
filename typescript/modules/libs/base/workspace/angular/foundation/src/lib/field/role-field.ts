@@ -172,7 +172,7 @@ export abstract class RoleField extends Field {
   get label(): string {
     return this.assignedLabel
       ? this.assignedLabel
-      : humanize(this.roleType.name);
+      : humanize(this.roleType?.name);
   }
 
   get required(): boolean {

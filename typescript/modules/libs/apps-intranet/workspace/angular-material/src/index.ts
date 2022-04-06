@@ -101,8 +101,7 @@ export { PartyRateFormComponent } from './lib/domain/partyrate/form/partyrate-fo
 export { PaymentPanelEditComponent } from './lib/domain/payment/panel/edit/payment-panel-edit.component';
 export { PaymentPanelViewComponent } from './lib/domain/payment/panel/view/payment-panel-view.component';
 
-export { PersonCreateFormComponent } from './lib/domain/person/create/person-create-form.component';
-export { PersonEditFormComponent } from './lib/domain/person/edit/person-edit-form.component';
+export { PersonFormComponent } from './lib/domain/person/form/person-form.component';
 export { PersonInlineComponent } from './lib/domain/person/inline/person-inline.component';
 export { PersonListPageComponent } from './lib/domain/person/list/person-list-page.component';
 export { PersonOverviewPageComponent } from './lib/domain/person/overview/person-overview-page.component';

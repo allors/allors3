@@ -26,6 +26,7 @@ namespace Allors.Database.Domain
                 if (!this.ExistContactsUserGroup)
                 {
                     this.ContactsUserGroup = new UserGroupBuilder(transaction).WithName(groupName).Build();
+                    this.ContactsUserGroup.isSelectable = this.IsInternalOrganisation;
                 }
 
                 if (!this.ExistContactsGrant)

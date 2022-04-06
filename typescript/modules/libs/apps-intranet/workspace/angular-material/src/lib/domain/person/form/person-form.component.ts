@@ -10,30 +10,44 @@ import {
   GenderType,
   InternalOrganisation,
   Locale,
+  Organisation,
+  OrganisationContactKind,
+  OrganisationContactRelationship,
   PartyContactMechanism,
   Person,
   Salutation,
+  User,
+  UserGroup,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
+  SearchFactory,
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  selector: 'person-edit-form',
-  templateUrl: './person-edit-form.component.html',
+  selector: 'person-form',
+  templateUrl: './person-form.component.html',
   providers: [ContextService],
 })
-export class PersonEditFormComponent extends AllorsFormComponent<Person> {
+export class PersonFormComponent extends AllorsFormComponent<Person> {
   readonly m: M;
   emailAddresses: string[] = [];
 
+  userGroups: UserGroup[];
+  selectedUserGroups: UserGroup[];
+
   internalOrganisation: InternalOrganisation;
+  organisation: Organisation;
+  organisationsFilter: SearchFactory;
+
+  organisationContactKinds: OrganisationContactKind[];
+  selectedContactKinds: OrganisationContactKind[] = [];
+
   locales: Locale[];
   genders: Enumeration[];
   salutations: Enumeration[];
@@ -41,6 +55,7 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
 
   currencies: Currency[];
   emailFrequencies: EmailFrequency[];
+  canWriteMembers: boolean;
 
   constructor(
     @Self() public allors: ContextService,
@@ -51,6 +66,11 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.organisationsFilter = new SearchFactory({
+      objectType: this.m.Organisation,
+      roleTypes: [this.m.Organisation.Name],
+    });
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -102,36 +122,56 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
         },
         sorting: [{ roleType: m.Salutation.Name }],
       }),
-      p.Person({
-        name: '_object',
-        objectId: this.editRequest.objectId,
+      p.UserGroup({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.UserGroup.isSelectable,
+          value: true,
+        },
         include: {
-          PreferredCurrency: {},
-          Gender: {},
-          Salutation: {},
-          Locale: {},
-          Picture: {},
+          Members: {},
         },
+        sorting: [{ roleType: m.Role.Name }],
       }),
-      p.Person({
-        objectId: this.editRequest.objectId,
-        select: {
-          PartyContactMechanismsWhereParty: {
-            include: {
-              ContactMechanism: {
-                ContactMechanismType: {},
-              },
-            },
-          },
-        },
+      p.OrganisationContactKind({
+        sorting: [{ roleType: m.OrganisationContactKind.Description }],
       })
     );
 
+    if (this.editRequest) {
+      pulls.push(
+        p.Person({
+          name: '_object',
+          objectId: this.editRequest.objectId,
+          include: {
+            PreferredCurrency: {},
+            Gender: {},
+            Salutation: {},
+            Locale: {},
+            Picture: {},
+          },
+        }),
+        p.Person({
+          objectId: this.editRequest.objectId,
+          select: {
+            PartyContactMechanismsWhereParty: {
+              include: {
+                ContactMechanism: {
+                  ContactMechanismType: {},
+                },
+              },
+            },
+          },
+        })
+      );
+    }
+
     this.onPrePullInitialize(pulls);
   }
-
   onPostPull(pullResult: IPullResult) {
-    this.object = pullResult.object('_object');
+    this.object = this.editRequest
+      ? pullResult.object('_object')
+      : this.context.create(this.createRequest.objectType);
 
     this.onPostPullInitialize(pullResult);
 
@@ -145,6 +185,12 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
     this.emailFrequencies = pullResult.collection<EmailFrequency>(
       this.m.EmailFrequency
     );
+    this.organisationContactKinds =
+      pullResult.collection<OrganisationContactKind>(
+        this.m.OrganisationContactKind
+      );
+    this.userGroups = pullResult.collection<UserGroup>(this.m.UserGroup);
+    this.canWriteMembers = this.userGroups[0].canWriteMembers;
 
     const partyContactMechanisms: PartyContactMechanism[] =
       pullResult.collection<PartyContactMechanism>(
@@ -155,6 +201,34 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
         ?.filter((v) => v.ContactMechanism.strategy.cls === this.m.EmailAddress)
         ?.map((v) => v.ContactMechanism)
         .map((v: EmailAddress) => v.ElectronicAddressString) ?? [];
+
+    if (this.createRequest) {
+      this.object.CollectiveWorkEffortInvoice = false;
+      this.object.PreferredCurrency =
+        this.internalOrganisation.PreferredCurrency;
+    }
+
+    if (this.editRequest) {
+      this.selectedUserGroups = this.userGroups.filter((v) =>
+        v.Members.includes(this.object)
+      );
+    }
+  }
+
+  public onUserGroupChange(event): void {
+    const userGroup = event.source.value as UserGroup;
+    const user = this.object as User;
+
+    if (event.source.selected) {
+      userGroup.addMember(user);
+    } else {
+      userGroup.removeMember(user);
+    }
+  }
+
+  public override save(): void {
+    this.onSave();
+    super.save();
   }
 
   private onSave(): void {
@@ -176,11 +250,15 @@ export class PersonEditFormComponent extends AllorsFormComponent<Person> {
       partyContactMechanism.Party = this.object;
       this.emailAddresses.push(this.object.UserEmail);
     }
-  }
 
-  public override save(): void {
-    this.onSave();
-
-    super.save();
+    if (this.organisation != null) {
+      const organisationContactRelationship =
+        this.allors.context.create<OrganisationContactRelationship>(
+          this.m.OrganisationContactRelationship
+        );
+      organisationContactRelationship.Contact = this.object;
+      organisationContactRelationship.Organisation = this.organisation;
+      organisationContactRelationship.ContactKinds = this.selectedContactKinds;
+    }
   }
 }
