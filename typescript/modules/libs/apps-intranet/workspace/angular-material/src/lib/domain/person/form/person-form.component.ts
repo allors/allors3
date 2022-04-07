@@ -56,6 +56,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
   currencies: Currency[];
   emailFrequencies: EmailFrequency[];
   canWriteMembers: boolean;
+  creatorUserGroup: UserGroup;
 
   constructor(
     @Self() public allors: ContextService,
@@ -133,6 +134,17 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
         },
         sorting: [{ roleType: m.Role.Name }],
       }),
+      p.UserGroup({
+        name: 'CreatorUserGroup',
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.UserGroup.UniqueId,
+          value: 'f0d8132b-79d6-4a30-a866-ef6e5c952761',
+        },
+        include: {
+          Members: {},
+        },
+      }),
       p.OrganisationContactKind({
         sorting: [{ roleType: m.OrganisationContactKind.Description }],
       })
@@ -189,8 +201,11 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
       pullResult.collection<OrganisationContactKind>(
         this.m.OrganisationContactKind
       );
+
     this.userGroups = pullResult.collection<UserGroup>(this.m.UserGroup);
-    this.canWriteMembers = this.userGroups[0].canWriteMembers;
+    this.creatorUserGroup =
+      pullResult.collection<UserGroup>('CreatorUserGroup')[0];
+    this.canWriteMembers = this.creatorUserGroup.canWriteMembers;
 
     const partyContactMechanisms: PartyContactMechanism[] =
       pullResult.collection<PartyContactMechanism>(
@@ -223,6 +238,14 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
       userGroup.addMember(user);
     } else {
       userGroup.removeMember(user);
+    }
+
+    const remaining = this.userGroups.filter((v) => v.Members.includes(user));
+
+    if (remaining.length == 0) {
+      this.creatorUserGroup.removeMember(user);
+    } else {
+      this.creatorUserGroup.addMember(user);
     }
   }
 
