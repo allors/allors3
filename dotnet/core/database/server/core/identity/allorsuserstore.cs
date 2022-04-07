@@ -88,8 +88,6 @@ namespace Allors.Security
                         .WithUserAccessFailedCount(identityUser.AccessFailedCount)
                         .Build();
 
-                    new UserGroups(transaction).Creators.AddMember(user);
-
                     transaction.Derive();
                     transaction.Commit();
 

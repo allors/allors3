@@ -33,6 +33,11 @@ namespace Allors.Database.Domain
             {
                 v.isSelectable = true;
             });
+
+            merge(CreatorsId, v =>
+            {
+                v.isSelectable = false;
+            });
         }
     }
 }
