@@ -18,13 +18,13 @@ namespace Commands
         public Logger Logger => LogManager.GetCurrentClassLogger();
 
         [Option("-f", Description = "File to load (default is population.xml)")]
-        public string FileName { get; set; } = "population.xml";
+        public string FileName { get; set; }
 
         public int OnExecute(CommandLineApplication app)
         {
             this.Logger.Info("Begin");
 
-            var fileName = this.FileName ?? this.Parent.Configuration["populationFile"];
+            var fileName = this.FileName ?? this.Parent.Configuration["populationFile"] ?? "population.xml";
             var fileInfo = new FileInfo(fileName);
 
             using (var reader = XmlReader.Create(fileInfo.FullName))
