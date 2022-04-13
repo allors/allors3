@@ -58,8 +58,6 @@ namespace Allors.Database.Domain
                             builder.Append($", Model: {part.Model.Name}");
                         }
 
-                        builder.Append($", SN: {@this.SerialisedItem.SerialNumber}");
-
                         var details = builder.ToString();
 
                         if (details.StartsWith(","))
