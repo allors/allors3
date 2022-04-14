@@ -110,6 +110,7 @@ export class WorkEffortPartyAssignmentFormComponent extends AllorsFormComponent<
       ) {
         this.assignment = this.workEffort as WorkEffort;
         this.object.Assignment = this.assignment;
+        this.object.FromDate = this.workEffort.ActualStart ?? this.workEffort.ScheduledStart ?? new Date();
       }
     } else {
       this.party = this.object.Party;
