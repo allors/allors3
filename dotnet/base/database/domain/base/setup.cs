@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         {
         }
 
-        private void BaseOnPostSetup()
+        private void BaseOnPostSetup(Config config)
         {
         }
     }

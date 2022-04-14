@@ -73,15 +73,15 @@ namespace Allors.Database.Domain
         {
         }
 
-        private void CoreOnPostSetup(Config config)
-        {
-        }
-
         private void CoreOnPostPrepare()
         {
         }
 
         private void CoreOnPreSetup()
+        {
+        }
+
+        private void CoreOnPostSetup(Config config)
         {
         }
     }

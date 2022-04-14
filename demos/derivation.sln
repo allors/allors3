@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json.System
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters", "..\dotnet\System\Database\adapters\allors.database.adapters\Allors.Database.Adapters.csproj", "{0D33E35D-E68F-4914-859B-FB2B2B22E94C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "allors.database.workspace.json", "..\dotnet\system\database\allors.database.workspace.json\allors.database.workspace.json.csproj", "{F68FBD50-FD35-4BAD-8F37-3F82CEF53D60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "allors.database.workspace.json", "..\dotnet\system\database\allors.database.workspace.json\allors.database.workspace.json.csproj", "{0DF8F244-AE14-46F0-A7DB-1EFAD2B0B9A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,10 +95,10 @@ Global
 		{0D33E35D-E68F-4914-859B-FB2B2B22E94C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D33E35D-E68F-4914-859B-FB2B2B22E94C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D33E35D-E68F-4914-859B-FB2B2B22E94C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F68FBD50-FD35-4BAD-8F37-3F82CEF53D60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F68FBD50-FD35-4BAD-8F37-3F82CEF53D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F68FBD50-FD35-4BAD-8F37-3F82CEF53D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F68FBD50-FD35-4BAD-8F37-3F82CEF53D60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DF8F244-AE14-46F0-A7DB-1EFAD2B0B9A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DF8F244-AE14-46F0-A7DB-1EFAD2B0B9A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DF8F244-AE14-46F0-A7DB-1EFAD2B0B9A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DF8F244-AE14-46F0-A7DB-1EFAD2B0B9A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -117,7 +117,7 @@ Global
 		{329CB912-CE84-4185-939E-7CDCE8304E09} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 		{48DB1D57-847B-449F-8D01-1FFB5F494557} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 		{0D33E35D-E68F-4914-859B-FB2B2B22E94C} = {F899580C-01C7-418D-8B5D-4E88580F0316}
-		{F68FBD50-FD35-4BAD-8F37-3F82CEF53D60} = {F899580C-01C7-418D-8B5D-4E88580F0316}
+		{0DF8F244-AE14-46F0-A7DB-1EFAD2B0B9A0} = {F899580C-01C7-418D-8B5D-4E88580F0316}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C4BD046D-C81E-41F3-B82E-DED455C38924}
