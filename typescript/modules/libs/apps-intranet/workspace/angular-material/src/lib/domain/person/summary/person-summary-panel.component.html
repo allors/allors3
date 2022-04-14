@@ -1,5 +1,5 @@
 <mat-card *ngIf="person">
-  <mat-card-header>
+  <mat-card-header (click)="toggle()" style="cursor: pointer">
     <div mat-card-avatar>
       <mat-icon *ngIf="!person.Picture" style="font-size: 36px"
         >person</mat-icon

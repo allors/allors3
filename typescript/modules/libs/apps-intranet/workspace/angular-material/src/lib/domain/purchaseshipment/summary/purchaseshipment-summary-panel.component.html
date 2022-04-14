@@ -1,5 +1,5 @@
 <mat-card *ngIf="shipment">
-  <mat-card-header>
+  <mat-card-header (click)="toggle()" style="cursor: pointer">
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">local_shipping</mat-icon>
     </div>
