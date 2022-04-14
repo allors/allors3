@@ -4,6 +4,8 @@ import { Panel } from './panel';
 
 @Injectable()
 export abstract class PanelService {
+  readonly activePanel: Panel;
+
   abstract register(panel: Panel): void;
 
   abstract unregister(panel: Panel): void;

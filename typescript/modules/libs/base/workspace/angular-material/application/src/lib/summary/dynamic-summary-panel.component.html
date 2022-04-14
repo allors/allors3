@@ -1,5 +1,5 @@
 <mat-card *ngIf="name">
-  <mat-card-header>
+  <mat-card-header (click)="toggle()" style="cursor: pointer">
     <div mat-card-avatar>
       <mat-icon style="font-size: 36px">{{ icon }}</mat-icon>
     </div>

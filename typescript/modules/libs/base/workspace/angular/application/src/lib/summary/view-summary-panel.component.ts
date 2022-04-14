@@ -26,4 +26,12 @@ export abstract class AllorsViewSummaryPanelComponent extends AllorsScopedPanelC
   ) {
     super(itemPageService, panelService, sharedPullService, refreshService);
   }
+
+  toggle() {
+    if (this.panelService.activePanel) {
+      this.panelService.stopEdit();
+    } else {
+      this.panelService.startEdit('Detail');
+    }
+  }
 }

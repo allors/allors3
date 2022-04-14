@@ -10,12 +10,13 @@ import {
 } from '@allors/base/workspace/angular/application';
 
 @Injectable()
-export class AllorsMaterialPanelService implements PanelService {
+export class AllorsMaterialPanelService extends PanelService {
   panels: Set<Panel>;
 
-  private activeEditPanel: Panel;
+  override activePanel: Panel;
 
   constructor(private refreshService: RefreshService) {
+    super();
     this.panels = new Set();
   }
 
@@ -33,10 +34,10 @@ export class AllorsMaterialPanelService implements PanelService {
     }
 
     if (
-      this.activeEditPanel &&
-      (this.activeEditPanel as unknown as EditBlocking).stopEdit
+      this.activePanel &&
+      (this.activePanel as unknown as EditBlocking).stopEdit
     ) {
-      return (this.activeEditPanel as unknown as EditBlocking).stopEdit().pipe(
+      return (this.activePanel as unknown as EditBlocking).stopEdit().pipe(
         tap((success) => {
           if (success) {
             this.enable(panelId);
@@ -51,10 +52,10 @@ export class AllorsMaterialPanelService implements PanelService {
 
   stopEdit(): Observable<boolean> {
     if (
-      this.activeEditPanel &&
-      (this.activeEditPanel as unknown as EditBlocking).stopEdit
+      this.activePanel &&
+      (this.activePanel as unknown as EditBlocking).stopEdit
     ) {
-      return (this.activeEditPanel as unknown as EditBlocking).stopEdit().pipe(
+      return (this.activePanel as unknown as EditBlocking).stopEdit().pipe(
         tap((success) => {
           if (success) {
             this.disable();
@@ -75,7 +76,7 @@ export class AllorsMaterialPanelService implements PanelService {
         } else {
           const isActivePanel = panel.panelId === panelId;
           if (isActivePanel) {
-            this.activeEditPanel = panel;
+            this.activePanel = panel;
           }
 
           panel.panelEnabled = isActivePanel ? true : false;
@@ -91,7 +92,7 @@ export class AllorsMaterialPanelService implements PanelService {
       panel.panelEnabled = panel.panelMode === 'View' ? true : false;
     }
 
-    this.activeEditPanel = null;
+    this.activePanel = null;
 
     this.refreshService.refresh();
   }
