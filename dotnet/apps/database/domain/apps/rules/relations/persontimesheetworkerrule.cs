@@ -14,6 +14,9 @@ namespace Allors.Database.Domain
 
     public class PersonTimeSheetWorkerRule : Rule
     {
+        // TODO: Martien
+        // TODO: Koen
+        // Is time sensitive and should be in scheduler
         public PersonTimeSheetWorkerRule(MetaPopulation m) : base(m, new Guid("34705b9b-4634-4cbb-b9a0-a2cbec9f5cd9")) =>
             this.Patterns = new Pattern[]
             {
