@@ -21,7 +21,6 @@ import { ErrorService } from '../error/error.service';
 import { Observable, Subscription, switchMap } from 'rxjs';
 import { CreateRequest } from '../create/create-request';
 import { EditRequest } from '../edit/edit-request';
-import { InvokeResult } from '../../../../../../../system/workspace/adapters-json/src/lib/database/invoke/invoke-result';
 
 @Directive()
 export abstract class AllorsFormComponent<T extends IObject>
