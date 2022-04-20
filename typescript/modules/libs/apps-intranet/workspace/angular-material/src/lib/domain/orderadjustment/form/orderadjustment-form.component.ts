@@ -14,7 +14,7 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-import { RoleType } from '@allors/system/workspace/meta';
+import { AssociationType, RoleType } from '@allors/system/workspace/meta';
 
 @Component({
   templateUrl: './orderadjustment-form.component.html',
@@ -68,8 +68,10 @@ export class OrderAdjustmentFormComponent extends AllorsFormComponent<OrderAdjus
       pullResult.object<Invoice>(this.m.Invoice);
 
     if (this.createRequest) {
+      const associationType = this.createRequest?.initializer.propertyType as AssociationType;
+      const roleType = associationType.roleType; 
       this.container.strategy.addCompositesRole(
-        this.createRequest?.initializer.propertyType as RoleType,
+        roleType,
         this.object
       );
     }
