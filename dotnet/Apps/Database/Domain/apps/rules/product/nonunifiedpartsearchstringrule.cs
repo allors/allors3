@@ -66,6 +66,7 @@ namespace Allors.Database.Domain
         {
             var array = new string[] {
                     @this.Name,
+                    @this.SupplierReferenceNumbers,
                     @this.Description,
                     @this.Keywords,
                     @this.Comment,
