@@ -46,7 +46,6 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
   vatRegimes: VatRegime[];
   internalOrganisation: InternalOrganisation;
   facilities: Facility[];
-  selectedFacility: Facility;
   addFacility = false;
 
   addSupplier = false;
@@ -225,7 +224,8 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
 
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
-    this.selectedFacility = facility;
+    // TODO: Martien
+    this.object.StoredInFacility = facility;
   }
 
   private updateSupplier(supplier: Party): void {
