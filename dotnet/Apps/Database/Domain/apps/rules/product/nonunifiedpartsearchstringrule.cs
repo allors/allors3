@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public NonUnifiedPartSearchStringRule(MetaPopulation m) : base(m, new Guid("ebc7bac7-733d-44cf-9850-77d3a3308bfa")) =>
             this.Patterns = new Pattern[]
             {
+                m.NonUnifiedPart.RolePattern(v => v.SupplierReferenceNumbers),
                 m.Part.RolePattern(v => v.Name, m.NonUnifiedPart),
                 m.Part.RolePattern(v => v.Description, m.NonUnifiedPart),
                 m.Part.RolePattern(v => v.Comment, m.NonUnifiedPart),
