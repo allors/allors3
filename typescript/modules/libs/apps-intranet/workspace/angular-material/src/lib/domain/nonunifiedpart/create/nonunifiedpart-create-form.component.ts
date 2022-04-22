@@ -176,6 +176,29 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
     });
   }
 
+
+  public categorySelected(categories: PartCategory[]): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
+    let pulls = [];
+
+    categories.forEach((category: PartCategory) => {
+      pulls = [
+        ...pulls,
+        pull.PartCategory({
+          object: category,
+          include: {
+            Parts: x,
+          },
+        }),
+      ];
+    });
+
+    this.allors.context.pull(pulls);
+  }
+
   public override save(): void {
     this.onSave();
 

@@ -146,6 +146,7 @@
         name="categories"
         placeholder="Categories"
         multiple="true"
+        (ngModelChange)="categorySelected($event)"
       >
         <mat-option>None</mat-option>
         <mat-option *ngFor="let category of categories" [value]="category">
