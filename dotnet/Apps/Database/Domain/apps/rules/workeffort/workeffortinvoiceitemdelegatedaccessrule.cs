@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkEffortInvoiceItem>())
             {
-                @this.DelegatedAccess = @this.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.Assignment;
+                @this.DelegatedAccess = @this.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem?.Assignment;
             }
         }
     }
