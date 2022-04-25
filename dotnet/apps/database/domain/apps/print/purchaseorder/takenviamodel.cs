@@ -40,6 +40,8 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
                 this.State = postalAddress.Region;
                 this.PostalCode = postalAddress.PostalCode;
                 this.Country = postalAddress.Country?.Name;
+                this.PrintPostalCode = !string.IsNullOrEmpty(this.PostalCode);
+                this.PrintCity = !this.PrintPostalCode;
             }
 
             if (contactMechanisam is ElectronicAddress electronicAddress)
@@ -47,6 +49,10 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
                 this.Address = electronicAddress.ElectronicAddressString;
             }
         }
+
+        public bool PrintPostalCode { get; }
+
+        public bool PrintCity { get; }
 
         public string Name { get; }
 

@@ -42,6 +42,8 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
                     this.State = generalAddress.Region;
                     this.PostalCode = generalAddress.PostalCode;
                     this.Country = generalAddress.Country?.Name;
+                    this.PrintPostalCode = !string.IsNullOrEmpty(this.PostalCode);
+                    this.PrintCity = !this.PrintPostalCode;
                 }
 
                 var bankAccount = orderedBy.BankAccounts.FirstOrDefault(v => v.ExistIban);
@@ -55,6 +57,10 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
                 }
             }
         }
+
+        public bool PrintPostalCode { get; }
+
+        public bool PrintCity { get; }
 
         public string Name { get; }
 
