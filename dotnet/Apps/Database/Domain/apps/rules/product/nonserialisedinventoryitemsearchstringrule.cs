@@ -41,7 +41,7 @@ namespace Allors.Database.Domain
         public static void DeriveNonSerialisedInventoryItemSearchString(this NonSerialisedInventoryItem @this, IValidation validation)
         {
             var array = new string[] {
-                    @this.Part?.DisplayName,
+                    @this.Part?.SearchString,
                     @this.Facility?.Name,
                     @this.UnitOfMeasure?.Name,
                     @this.NonSerialisedInventoryItemState?.Name,
