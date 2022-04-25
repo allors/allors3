@@ -28,6 +28,46 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
+            foreach (var deletable in this.WorkEffortAssignmentRatesWhereWorkEffort)
+            {
+                deletable.Delete();
+            }
+
+            foreach (var deletable in this.WorkEffortFixedAssetAssignmentsWhereAssignment)
+            {
+                deletable.Delete();
+            }
+
+            foreach (var deletable in this.WorkEffortInventoryAssignmentsWhereAssignment)
+            {
+                deletable.Delete();
+            }
+
+            foreach (var deletable in this.ServiceEntriesWhereWorkEffort)
+            {
+                deletable.Delete();
+            }
+
+            foreach (var deletable in this.WorkEffortInvoiceItemAssignmentsWhereAssignment)
+            {
+                deletable.Delete();
+            }
+
+            foreach (var deletable in this.WorkEffortPartyAssignmentsWhereAssignment)
+            {
+                deletable.Delete();
+            }
+
+            foreach (var deletable in this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment)
+            {
+                deletable.Delete();
+            }
+
+            foreach (var deletable in this.WorkRequirementFulfillmentsWhereFullfillmentOf)
+            {
+                deletable.Delete();
+            }
+
             foreach (var deletable in this.AllVersions)
             {
                 deletable.Strategy.Delete();

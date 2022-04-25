@@ -149,12 +149,13 @@ namespace Allors.Database.Domain
             var complete = this.Meta.Complete;
             var invoice = this.Meta.Invoice;
             var revise = this.Meta.Revise;
+            var delete = this.Meta.Delete;
 
             config.Deny(this.ObjectType, created, reopen, complete, invoice, revise);
-            config.Deny(this.ObjectType, inProgress, cancel, reopen, revise);
+            config.Deny(this.ObjectType, inProgress, cancel, reopen, revise, delete);
             config.Deny(this.ObjectType, cancelled, cancel, invoice, complete, revise);
-            config.Deny(this.ObjectType, completed, cancel, reopen, complete);
-            config.Deny(this.ObjectType, finished, cancel, reopen, complete, invoice);
+            config.Deny(this.ObjectType, completed, cancel, reopen, complete, delete);
+            config.Deny(this.ObjectType, finished, cancel, reopen, complete, invoice, delete);
 
             var except = new HashSet<IOperandType>
             {
