@@ -22,6 +22,8 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.SalesOrderItems),
                 m.SalesOrder.RolePattern(v => v.BillToCustomer),
                 m.SalesOrder.RolePattern(v => v.OrderAdjustments),
+                m.SalesOrder.RolePattern(v => v.DerivedIrpfRate),
+                m.SalesOrder.RolePattern(v => v.DerivedVatRate),
                 m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.OrderWhereOrderAdjustment, m.SalesOrder),
                 m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.OrderWhereOrderAdjustment, m.SalesOrder),
                 m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.OrderWhereOrderAdjustment, m.SalesOrder),

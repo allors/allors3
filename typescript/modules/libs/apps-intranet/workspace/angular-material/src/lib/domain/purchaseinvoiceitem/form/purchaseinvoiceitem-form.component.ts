@@ -155,8 +155,6 @@ export class PurchaseInvoiceItemFormComponent extends AllorsFormComponent<Purcha
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    this.onPostPullInitialize(pullResult);
-
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
     this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';

@@ -48,6 +48,8 @@ namespace Allors.Database.Domain
                     var fiscalYearStoreSequenceNumbers = @this.Store.FiscalYearsStoreSequenceNumbers.FirstOrDefault(v => v.FiscalYear == year);
                     var prefix = @this.BilledFrom.InvoiceSequence.IsEnforcedSequence ? @this.Store.SalesInvoiceNumberPrefix : fiscalYearStoreSequenceNumbers.SalesInvoiceNumberPrefix;
                     @this.SortableInvoiceNumber = singleton.SortableNumber(prefix, @this.InvoiceNumber, year.ToString());
+
+                    @this.FinalInvoiceNumber = @this.InvoiceNumber;
                 }
 
                 if (Equals(@this.SalesInvoiceType, new SalesInvoiceTypes(transaction).CreditNote))
