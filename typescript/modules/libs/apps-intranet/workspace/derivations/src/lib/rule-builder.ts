@@ -8,6 +8,7 @@ import { OrganisationDisplayAddressRule } from './rules/organisation-display-add
 import { OrganisationDisplayAddress2Rule } from './rules/organisation-display-address2.rule';
 import { OrganisationDisplayAddress3Rule } from './rules/organisation-display-address3.rule';
 import { OrganisationDisplayClassificationRule } from './rules/organisation-display-classification.rule';
+import { OrganisationDisplayNameRule } from './rules/organisation-display-name.rule';
 import { PartyDisplayPhoneRule } from './rules/party-display-phone.rule';
 import { PersonDisplayEmailRule } from './rules/person-display-email.rule';
 import { PersonDisplayNameRule } from './rules/person-display-name.rule';
@@ -28,6 +29,7 @@ export function ruleBuilder(metaPopulation: MetaPopulation): IRule<IObject>[] {
     new OrganisationDisplayAddress2Rule(m),
     new OrganisationDisplayAddress3Rule(m),
     new OrganisationDisplayClassificationRule(m),
+    new OrganisationDisplayNameRule(m),
     new PartyDisplayPhoneRule(m),
     new PersonDisplayNameRule(m),
     new PersonDisplayEmailRule(m),

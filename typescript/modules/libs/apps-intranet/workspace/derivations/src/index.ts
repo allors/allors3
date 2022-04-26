@@ -5,6 +5,7 @@ export { OrganisationDisplayAddressRule } from './lib/rules/organisation-display
 export { OrganisationDisplayAddress2Rule } from './lib/rules/organisation-display-address2.rule';
 export { OrganisationDisplayAddress3Rule } from './lib/rules/organisation-display-address3.rule';
 export { OrganisationDisplayClassificationRule } from './lib/rules/organisation-display-classification.rule';
+export { OrganisationDisplayNameRule } from './lib/rules/organisation-display-name.rule';
 export { PartyDisplayPhoneRule } from './lib/rules/party-display-phone.rule';
 export { PersonDisplayEmailRule } from './lib/rules/person-display-email.rule';
 export { PersonDisplayNameRule } from './lib/rules/person-display-name.rule';
