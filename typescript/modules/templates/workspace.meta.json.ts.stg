@@ -79,11 +79,13 @@ data_supertypes() ::= <<[$objectType.WorkspaceDirectSupertypesByWorkspaceName.(w
 
 data_relationTypes() ::= <<[$objectType.WorkspaceExclusiveRoleTypesByWorkspaceName.(workspaceName):{roleType|$data_relationType(relationType=roleType.RelationType, associationType=roleType.AssociationType, roleType=roleType)$}; separator=","$]>>
 
-data_relationType(relationType, associationType, roleType) ::= <<['$relationType.Tag$', '$roleType.ObjectType.Tag$'$data_relationType_singularAndPluralName()$]>>
+data_relationType(relationType, associationType, roleType) ::= <<['$relationType.Tag$', '$roleType.ObjectType.Tag$'$data_relationType_singularAndPluralName()$$data_relationType_size_scale_precision()$]>>
 
 data_relationType_singularAndPluralName() ::= <<$if(roleType.ExistAssignedSingularName)$, "$roleType.singularName$"$data_relationType_pluralName()$$endif$>>
 
 data_relationType_pluralName() ::= <<$if(roleType.ExistAssignedPluralName)$, "$roleType.pluralName$"$endif$>>
+
+data_relationType_size_scale_precision() ::= <<$if(roleType.Size)$, $roleType.Size$$endif$$if(roleType.Scale)$, $roleType.Scale$, $roleType.Precision$$endif$>>
 
 data_methodTypes() ::= <<[$objectType.WorkspaceExclusiveMethodTypesByWorkspaceName.(workspaceName):{methodType|$data_methodType(methodType)$}; separator=","$]>>
 

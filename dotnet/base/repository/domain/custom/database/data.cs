@@ -113,6 +113,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         [MediaType("text/plain")]
+        [Size(-1)]
         public string PlainText { get; set; }
 
         #region Allors

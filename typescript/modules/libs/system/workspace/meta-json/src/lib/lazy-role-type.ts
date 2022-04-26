@@ -67,7 +67,7 @@ export class LazyRoleType implements RoleType {
 
     if (this.objectType.isUnit) {
       const unit = this.objectType as Unit;
-      if (unit.isString || unit.isDecimal) {
+      if (unit.isString || unit.isBinary || unit.isDecimal) {
         let sizeOrScale = undefined;
         let precision = undefined;
 
@@ -82,7 +82,7 @@ export class LazyRoleType implements RoleType {
           precision = v3 as number;
         }
 
-        if (unit.isString) {
+        if (unit.isString || unit.isBinary) {
           this.size = sizeOrScale;
         }
         if (unit.isDecimal) {
