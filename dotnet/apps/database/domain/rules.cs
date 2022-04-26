@@ -136,6 +136,7 @@ namespace Allors.Database.Domain
                 new NonUnifiedPartProductIdentificationsRule(m),
                 new NonUnifiedPartRule(m),
                 new NonUnifiedPartSearchStringRule(m),
+                new NonUnifiedPartSupplierReferenceNumbersRule(m),
                 new OrderShipmentRule(m),
                 new OrganisationContactRelationshipDateRule(m),
                 new OrganisationContactRelationshipPartyRule(m),

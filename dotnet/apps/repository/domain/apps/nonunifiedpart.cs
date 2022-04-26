@@ -139,6 +139,13 @@ namespace Allors.Repository
 
         #endregion inheritedProperties
 
+        #region Allors
+        [Id("c1109fec-9345-4ebf-aece-f196202b2b23")]
+        #endregion
+        [Derived]
+        [Workspace]
+        public string SupplierReferenceNumbers { get; set; }
+
         #region inheritedMethods
         public void OnBuild() { }
 
