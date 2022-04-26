@@ -31,5 +31,5 @@
 </mat-form-field>
 
 <mat-form-field *ngIf="disabled" class="d-flex flex-column align-items-stretch">
-  <input aFocus [aFocusTrigger]="roleType" [(ngModel)]="model && model[display]" type="text" matInput [placeholder]="label" [required]="required" [disabled]="disabled" readonly />
+  <input aFocus [aFocusTrigger]="roleType" type="text" value="{{model[display]}}" matInput [placeholder]="label" [required]="required" [disabled]="disabled" readonly />
 </mat-form-field>
