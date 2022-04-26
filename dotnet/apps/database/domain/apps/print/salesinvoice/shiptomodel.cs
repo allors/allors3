@@ -44,8 +44,14 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
                 this.State = postalAddress.Region;
                 this.PostalCode = postalAddress.PostalCode;
                 this.Country = postalAddress.Country?.Name;
+                this.PrintPostalCode = !string.IsNullOrEmpty(this.PostalCode);
+                this.PrintCity = !this.PrintPostalCode;
             }
         }
+
+        public bool PrintPostalCode { get; }
+
+        public bool PrintCity { get; }
 
         public string Name { get; }
 
