@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
         public WorkTaskStateRule(MetaPopulation m) : base(m, new Guid("cf686b8c-3a64-43b2-a525-cff9d818cdad")) =>
             this.Patterns = new Pattern[]
         {
+            m.WorkTask.RolePattern(v => v.DerivationTrigger),
             m.WorkTask.RolePattern(v => v.CanInvoice),
             m.WorkTask.RolePattern(v => v.ActualStart),
             m.WorkTask.RolePattern(v => v.ExecutedBy),
