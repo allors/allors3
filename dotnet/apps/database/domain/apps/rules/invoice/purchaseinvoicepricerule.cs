@@ -23,6 +23,8 @@ namespace Allors.Database.Domain
                 m.PurchaseInvoice.RolePattern(v => v.BilledFrom),
                 m.PurchaseInvoice.RolePattern(v => v.OrderAdjustments),
                 m.PurchaseInvoice.RolePattern(v => v.InvoiceDate),
+                m.PurchaseInvoice.RolePattern(v => v.DerivedVatRate),
+                m.PurchaseInvoice.RolePattern(v => v.DerivedIrpfRate),
                 m.PurchaseInvoiceItem.RolePattern(v => v.Part, v => v.PurchaseInvoiceWherePurchaseInvoiceItem),
                 m.PurchaseInvoiceItem.RolePattern(v => v.Quantity, v => v.PurchaseInvoiceWherePurchaseInvoiceItem),
                 m.PurchaseInvoiceItem.RolePattern(v => v.AssignedUnitPrice, v => v.PurchaseInvoiceWherePurchaseInvoiceItem),

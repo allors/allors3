@@ -22,6 +22,8 @@ namespace Allors.Database.Domain
             m.SalesInvoice.RolePattern(v => v.ValidInvoiceItems),
             m.SalesInvoice.RolePattern(v => v.BillToCustomer),
             m.SalesInvoice.RolePattern(v => v.OrderAdjustments),
+            m.SalesInvoice.RolePattern(v => v.DerivedVatRate),
+            m.SalesInvoice.RolePattern(v => v.DerivedIrpfRate),
             m.SalesInvoiceItem.RolePattern(v => v.Product, v => v.SalesInvoiceWhereSalesInvoiceItem),
             m.SalesInvoiceItem.RolePattern(v => v.ProductFeatures, v => v.SalesInvoiceWhereSalesInvoiceItem),
             m.SalesInvoiceItem.RolePattern(v => v.Quantity, v => v .SalesInvoiceWhereSalesInvoiceItem),
