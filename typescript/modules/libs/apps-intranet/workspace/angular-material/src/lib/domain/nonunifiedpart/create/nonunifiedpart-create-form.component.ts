@@ -6,6 +6,7 @@ import {
   Brand,
   Facility,
   Locale,
+  InternalOrganisation,
   InventoryItemKind,
   NonUnifiedPart,
   ProductType,
@@ -28,6 +29,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   templateUrl: './nonunifiedpart-create-form.component.html',
@@ -54,13 +56,15 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
   categories: PartCategory[];
   selectedCategories: PartCategory[] = [];
   manufacturersFilter: SearchFactory;
+  internalOrganisation: any;
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
+    public internalOrganisationId: InternalOrganisationId,
     private snackBar: MatSnackBar,
-    private fetcher: FetcherService
+    private fetcher: FetcherService,
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -89,7 +93,11 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
           Models: {},
         },
         sorting: [{ roleType: m.Brand.Name }],
-      })
+      }),
+      p.InternalOrganisation({
+        objectId: this.internalOrganisationId.value,
+        include: { FacilitiesWhereOwner: {} },
+      }),
     );
 
     this.onPrePullInitialize(pulls);
@@ -100,6 +108,9 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
 
     this.onPostPullInitialize(pullResult);
 
+    this.internalOrganisation = pullResult.object<InternalOrganisation>(
+      this.m.InternalOrganisation
+    );
     this.inventoryItemKinds = pullResult.collection<InventoryItemKind>(
       this.m.InventoryItemKind
     );
@@ -125,7 +136,7 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
       (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
     );
 
-    this.object.DefaultFacility = this.settings.DefaultFacility;
+    this.object.DefaultFacility = this.internalOrganisation.FacilitiesWhereOwner[0];
     this.object.UnitOfMeasure = piece;
 
     if (!this.settings.UsePartNumberCounter) {
