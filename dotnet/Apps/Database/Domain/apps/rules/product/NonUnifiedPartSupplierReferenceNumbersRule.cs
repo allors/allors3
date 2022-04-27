@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         public NonUnifiedPartSupplierReferenceNumbersRule(MetaPopulation m) : base(m, new Guid("a071aa46-d14b-45ac-b4ab-e51f400baec8")) =>
             this.Patterns = new Pattern[]
             {
-                m.Part.RolePattern(v => v.SuppliedBy),
+                m.Part.RolePattern(v => v.SuppliedBy, m.NonUnifiedPart),
                 m.SupplierOffering.RolePattern(v => v.SupplierProductId, v => v.Part.Part, m.NonUnifiedPart),
             };
 

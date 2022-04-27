@@ -1732,44 +1732,5 @@ namespace Allors.Database.Domain.Tests
 
             Assert.DoesNotContain(revisePermission, workTask.Revocations.SelectMany(v => v.DeniedPermissions));
         }
-
-        [Fact]
-        public void OnChangedCustomerDeriveRevisePermission()
-        {
-            var workTask = new WorkTaskBuilder(this.Transaction)
-                .WithExecutedBy(this.InternalOrganisation)
-                .WithActualStart(this.Transaction.Now())
-                .WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished)
-                .Build();
-            var result = this.Derive();
-
-            var reviseRevocation = new Revocations(this.Transaction).WorkTaskReviseRevocation;
-            Assert.Contains(reviseRevocation, workTask.Revocations);
-
-            workTask.Customer = this.InternalOrganisation;
-            this.Derive();
-
-            Assert.DoesNotContain(reviseRevocation, workTask.Revocations);
-        }
-
-        [Fact]
-        public void OnChangedExecutedByDeriveRevisePermission()
-        {
-            var workTask = new WorkTaskBuilder(this.Transaction)
-                .WithCustomer(this.InternalOrganisation.ActiveSuppliers.FirstOrDefault())
-                .WithExecutedBy(this.InternalOrganisation)
-                .WithActualStart(this.Transaction.Now())
-                .WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished)
-                .Build();
-            this.Derive();
-
-            var reviseRevocation = new Revocations(this.Transaction).WorkTaskReviseRevocation;
-            Assert.Contains(reviseRevocation, workTask.Revocations);
-
-            workTask.ExecutedBy = this.InternalOrganisation.ActiveSuppliers.FirstOrDefault();
-            this.Derive();
-
-            Assert.DoesNotContain(reviseRevocation, workTask.Revocations);
-        }
     }
 }
