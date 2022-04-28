@@ -44,7 +44,9 @@ namespace Allors.Database.Domain
                 var salesOrderItemInvoiceStates = new SalesOrderItemInvoiceStates(transaction);
                 var salesOrderItemStates = new SalesOrderItemStates(transaction);
 
-                if (@this.IsValid && salesOrder != null && salesOrder.ExistSalesOrderState)
+                if (salesOrder != null
+                    && salesOrder.ExistSalesOrderState
+                    && (@this.IsValid || (!@this.IsValid && salesOrder.ExistPreviousSalesOrderState && salesOrder.PreviousSalesOrderState.IsCancelled && !salesOrder.SalesOrderState.IsCancelled)))
                 {
                     if (salesOrder.SalesOrderState.IsProvisional)
                     {
