@@ -1,6 +1,7 @@
 namespace Scaffold
 {
     using AngleSharp;
+    using AngleSharp.Dom;
 
     public class Model
     {
@@ -16,15 +17,18 @@ namespace Scaffold
             this.Ns = ns;
         }
 
-        public async Task Init(string input)
+        public async Task Init(string input, Func<string, Func<IElement, ComponentModel>?> factory)
         {
             var config = Configuration.Default;
             var context = BrowsingContext.New(config);
             var document = await context.OpenAsync(req => req.Content(input));
             this.Components = document.All
-                .Where(m => m.LocalName.ToLowerInvariant().StartsWith("a-", StringComparison.InvariantCulture))
-                .Select(v => new ComponentModel(v))
+                .Where(m => m.TagName.StartsWith("a-", StringComparison.InvariantCultureIgnoreCase))
+                .Select(v => factory(v.TagName.ToLowerInvariant())?.Invoke(v))
+                .Where(v => v != null)
+                .Select(e => e!)
                 .ToArray();
         }
+
     }
 }

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Scaffold\Scaffold.csproj" />
+    <ProjectReference Include="..\..\scaffold\Scaffold.csproj" />
   </ItemGroup>
 
 </Project>
