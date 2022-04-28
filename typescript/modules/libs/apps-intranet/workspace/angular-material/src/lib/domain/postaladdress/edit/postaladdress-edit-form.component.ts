@@ -62,6 +62,8 @@ export class PostalAddressEditFormComponent extends AllorsFormComponent<PostalAd
     this.object = this.editRequest
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
+      
+      this.countries = pullResult.collection<Country>(this.m.Country);
 
     this.onPostPullInitialize(pullResult);
   }
