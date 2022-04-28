@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.InventoryItem.RolePattern(v => v.Part, m.NonSerialisedInventoryItem),
-                m.Part.RolePattern(v => v.DisplayName, v => v.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
+                m.Part.RolePattern(v => v.SearchString, v => v.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
                 m.InventoryItem.RolePattern(v => v.Facility, m.NonSerialisedInventoryItem),
                 m.Facility.RolePattern(v => v.Name, v => v.InventoryItemsWhereFacility, m.NonSerialisedInventoryItem),
                 m.InventoryItem.RolePattern(v => v.UnitOfMeasure, m.NonSerialisedInventoryItem),
