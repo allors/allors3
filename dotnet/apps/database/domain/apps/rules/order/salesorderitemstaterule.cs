@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
 
                 if (salesOrder != null
                     && salesOrder.ExistSalesOrderState
-                    && (@this.IsValid || (!@this.IsValid && salesOrder.LastSalesOrderState.IsCancelled && !salesOrder.SalesOrderState.IsCancelled)))
+                    && (@this.IsValid || (!@this.IsValid && salesOrder.ExistLastSalesOrderState && salesOrder.LastSalesOrderState.IsCancelled && !salesOrder.SalesOrderState.IsCancelled)))
                 {
                     if (salesOrder.SalesOrderState.IsProvisional)
                     {
