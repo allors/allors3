@@ -23,6 +23,7 @@
   <a-mat-factory-fab
     *ngIf="!receive"
     [objectType]="m.Disbursement"
+    [initializer]="initializer"
     (created)="this.refreshService.refresh()"
   ></a-mat-factory-fab>
 

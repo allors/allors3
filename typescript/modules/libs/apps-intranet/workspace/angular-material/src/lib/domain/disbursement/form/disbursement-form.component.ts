@@ -67,8 +67,6 @@ export class DisbursementFormComponent extends AllorsFormComponent<Disbursement>
     } else {
       this.paymentApplication = this.object.PaymentApplications[0];
     }
-
-    this.onPostPullInitialize(pullResult);
   }
 
   public override save(): void {

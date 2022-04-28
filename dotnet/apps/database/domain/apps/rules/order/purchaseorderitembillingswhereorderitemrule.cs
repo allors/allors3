@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseOrderItemBillingsWhereOrderItemRule(MetaPopulation m) : base(m, new Guid("2dd5538a-1b0b-4ffb-8049-78ee3032b38a")) =>
             this.Patterns = new Pattern[]
             {
+                m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState),
                 m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, m.PurchaseOrderItem),
             };
 
@@ -27,14 +28,22 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                if (@this.IsValid && !@this.ExistOrderItemBillingsWhereOrderItem)
-                {
-                    @this.CanInvoice = true;
-                }
-                else
-                {
-                    @this.CanInvoice = false;
-                }
+                @this.DerivePurchaseOrderItemBillingsWhereOrderItem(validation);
+            }
+        }
+    }
+
+    public static class PurchaseOrderItemBillingsWhereOrderItemRuleExtensions
+    {
+        public static void DerivePurchaseOrderItemBillingsWhereOrderItem(this PurchaseOrderItem @this, IValidation validation)
+        {
+            if (@this.IsValid && !@this.ExistOrderItemBillingsWhereOrderItem)
+            {
+                @this.CanInvoice = true;
+            }
+            else
+            {
+                @this.CanInvoice = false;
             }
         }
     }
