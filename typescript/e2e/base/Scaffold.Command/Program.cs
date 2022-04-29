@@ -8,7 +8,6 @@ namespace Scaffold // Note: actual namespace depends on the project name.
         public static int Main(string[] args)
             => CommandLineApplication.Execute<Program>(args);
 
-
         [Option(Description = "Output directory")]
         [Required]
         public string Output { get; }
@@ -24,9 +23,9 @@ namespace Scaffold // Note: actual namespace depends on the project name.
         {
             try
             {
-                var builder = new RoleComponentModel.Builder(new DefaultComponentModel.Builder());
-                var template = new Template(Template.Default);
-                var generator = new Generator(template, builder, this.Directories, this.Output, this.Namespace);
+                var componentBuilder = new RoleComponentModel.Builder(new DynamicExtentComponentModel.Builder(new DefaultComponentModel.Builder()));
+                var modelBuilder = new FormModel.Builder(componentBuilder, this.Namespace);
+                var generator = new Generator(modelBuilder, this.Directories, this.Output, this.Namespace);
                 await generator.Generate();
             }
             catch (Exception ex)

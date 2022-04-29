@@ -1,12 +1,8 @@
 namespace Scaffold
 {
-    using System.Globalization;
-
     public class Generator
     {
-        public Template Template { get; }
-
-        public ComponentModelBuilder ComponentModelBuilder { get; }
+        public ModelBuilder ModelBuilder { get; }
 
         public FileInfo[] Input { get; }
 
@@ -14,11 +10,10 @@ namespace Scaffold
 
         public string Namespace { get; }
 
-        public Generator(Template template, ComponentModelBuilder componentModelBuilder, string[] directories,
+        public Generator(ModelBuilder modelBuilder, string[] directories,
             string output, string @namespace)
         {
-            this.Template = template;
-            this.ComponentModelBuilder = componentModelBuilder;
+            this.ModelBuilder = modelBuilder;
             this.Namespace = @namespace;
 
             var fileByName = new Dictionary<string, FileInfo>();
@@ -49,25 +44,19 @@ namespace Scaffold
         {
             foreach (var input in this.Input)
             {
-                var html = await File.ReadAllTextAsync(input.FullName);
-                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(input.Name);
-                var cls = fileNameWithoutExtension.ToPascalCase();
+                var model = this.ModelBuilder.Build(input);
 
-                var model = new Model(this.ComponentModelBuilder, cls, this.Namespace);
-
-                await model.Init(html);
-
-                if (model.Components.Length <= 0)
+                if (model == null)
                 {
                     continue;
                 }
 
-                var code = this.Template.Render(model);
-                var output = Path.Combine(this.Output.FullName, $"{cls}.cs");
+                await model.Init();
+
+                var code = this.ModelBuilder.Template.Render(model);
+                var output = Path.Combine(this.Output.FullName, $"{model.Class}.cs");
                 await File.WriteAllTextAsync(output, code);
             }
         }
-
-
     }
 }
