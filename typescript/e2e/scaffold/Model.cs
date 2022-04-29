@@ -4,14 +4,17 @@ namespace Scaffold
 
     public class Model
     {
+        public ComponentModelBuilder ComponentModelBuilder { get; }
+
         public string Cls { get; private set; }
 
         public string Ns { get; private set; }
 
         public ComponentModel[] Components { get; private set; }
 
-        public Model(string cls, string ns)
+        public Model(ComponentModelBuilder componentModelBuilder, string cls, string ns)
         {
+            this.ComponentModelBuilder = componentModelBuilder;
             this.Cls = cls;
             this.Ns = ns;
         }
@@ -22,9 +25,12 @@ namespace Scaffold
             var context = BrowsingContext.New(config);
             var document = await context.OpenAsync(req => req.Content(input));
             this.Components = document.All
-                .Where(m => m.LocalName.ToLowerInvariant().StartsWith("a-", StringComparison.InvariantCulture))
-                .Select(v => new ComponentModel(v))
+                .Where(m => m.TagName.StartsWith("a-", StringComparison.InvariantCultureIgnoreCase))
+                .Select(this.ComponentModelBuilder.Build)
+                .Where(v => v != null)
+                .Select(e => e!)
                 .ToArray();
         }
+
     }
 }

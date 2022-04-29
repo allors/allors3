@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Scaffold.Command": {
-      "commandName": "Project",
-      "commandLineArgs": "--input ../../../../../../modules/apps/base/workspace/angular-material/application-app/src/app/domain/person/form/person-form.component.html --output /temp/person.cs"
-    }
-  }
-}
