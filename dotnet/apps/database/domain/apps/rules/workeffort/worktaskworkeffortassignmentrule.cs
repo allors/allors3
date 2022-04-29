@@ -38,12 +38,10 @@ namespace Allors.Database.Domain
                         var from = timeEntry.FromDate;
                         var through = timeEntry.ThroughDate;
                         var worker = timeEntry.TimeSheetWhereTimeEntry?.Worker;
-                        var facility = timeEntry.WorkEffort.Facility;
 
                         var matchingAssignment = @this.WorkEffortPartyAssignmentsWhereAssignment.FirstOrDefault
                             (a => a.Assignment.Equals(@this)
                             && a.Party.Equals(worker)
-                            && (a.ExistFacility && a.Facility.Equals(facility) || !a.ExistFacility && facility == null)
                             && (!a.ExistFromDate || a.ExistFromDate && a.FromDate <= @from)
                             && (!a.ExistThroughDate || a.ExistThroughDate && a.ThroughDate >= through));
 
@@ -52,15 +50,15 @@ namespace Allors.Database.Domain
                             if (@this.TakenBy?.RequireExistingWorkEffortPartyAssignment == true)
                             {
                                 // TODO: Move text to Resources
-                                var message = $"No Work Effort Party Assignment matches Worker: {worker}, Facility: {facility}" + $", Work Effort: {@this}, From: {from}, Through {through}";
+                                var message = $"No Work Effort Party Assignment matches Worker: {worker}" + $", Work Effort: {@this}, From: {from}, Through {through}";
                                 validation.AddError(@this, @this.M.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment, message);
                             }
                             else if (worker != null) // Sync a new WorkEffortPartyAssignment
                             {
                                 new WorkEffortPartyAssignmentBuilder(@this.Strategy.Transaction)
+                                    .WithFromDate(from)
                                     .WithAssignment(@this)
                                     .WithParty(worker)
-                                    .WithFacility(facility)
                                     .Build();
                             }
                         }
