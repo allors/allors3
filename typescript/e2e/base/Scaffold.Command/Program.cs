@@ -24,8 +24,9 @@ namespace Scaffold // Note: actual namespace depends on the project name.
         {
             try
             {
+                var builder = new RoleComponentModel.Builder(new DefaultComponentModel.Builder());
                 var template = new Template(Template.Default);
-                var generator = new Generator(template, this.Directories, this.Output, this.Namespace);
+                var generator = new Generator(template, builder, this.Directories, this.Output, this.Namespace);
                 await generator.Generate();
             }
             catch (Exception ex)

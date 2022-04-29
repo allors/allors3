@@ -25,5 +25,17 @@ namespace Scaffold
             this.Property = type;
             this.Init = "new " + fullType + "(this, );";
         }
+
+        public class Builder : ComponentModelBuilder
+        {
+            public Builder(ComponentModelBuilder? next = null) : base(next)
+            {
+            }
+
+            public override ComponentModel? Build(IElement element) =>
+                TypeByTag.ContainsKey(element.TagName.ToLowerInvariant())
+                    ? new RoleComponentModel(element)
+                    : base.Build(element);
+        }
     }
 }

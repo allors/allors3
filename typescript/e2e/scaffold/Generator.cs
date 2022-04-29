@@ -6,15 +6,19 @@ namespace Scaffold
     {
         public Template Template { get; }
 
+        public ComponentModelBuilder ComponentModelBuilder { get; }
+
         public FileInfo[] Input { get; }
 
         public DirectoryInfo Output { get; }
 
         public string Namespace { get; }
 
-        public Generator(Template template, string[] directories, string output, string @namespace)
+        public Generator(Template template, ComponentModelBuilder componentModelBuilder, string[] directories,
+            string output, string @namespace)
         {
             this.Template = template;
+            this.ComponentModelBuilder = componentModelBuilder;
             this.Namespace = @namespace;
 
             var fileByName = new Dictionary<string, FileInfo>();
@@ -49,24 +53,9 @@ namespace Scaffold
                 var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(input.Name);
                 var cls = fileNameWithoutExtension.ToPascalCase();
 
-                var model = new Model(cls, this.Namespace);
+                var model = new Model(this.ComponentModelBuilder, cls, this.Namespace);
 
-
-
-                await model.Init(html, (tag) =>
-                {
-                    if (RoleComponentModel.TypeByTag.ContainsKey(tag))
-                    {
-                        return (element) => new RoleComponentModel(element);
-                    }
-
-                    if (DefaultComponentModel.TypeByTag.ContainsKey(tag))
-                    {
-                        return (element) => new DefaultComponentModel(element);
-                    }
-
-                    return null;
-                });
+                await model.Init(html);
 
                 if (model.Components.Length <= 0)
                 {
@@ -79,6 +68,6 @@ namespace Scaffold
             }
         }
 
-     
+
     }
 }
