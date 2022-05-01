@@ -8,13 +8,13 @@ namespace Tests.Form
     using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class DatepickerTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()

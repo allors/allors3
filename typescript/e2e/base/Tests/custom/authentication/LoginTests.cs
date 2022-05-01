@@ -1,7 +1,7 @@
 namespace Tests.Authentication
 {
     using System.Threading.Tasks;
-    using Allors.E2E.Angular.Material.Authentication;
+    using Allors.E2E;
     using NUnit.Framework;
 
     public class LoginTests : Test

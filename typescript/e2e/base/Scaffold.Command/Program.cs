@@ -13,7 +13,7 @@ namespace Scaffold // Note: actual namespace depends on the project name.
         public string Output { get; }
 
         [Option(Description = "Namespace")]
-        public string Namespace { get; } = "Allors.E2E.Angular.Material.Generated";
+        public string Namespace { get; } = "Allors.E2E.Test";
 
         [Argument(0)]
         [Required]
@@ -23,7 +23,7 @@ namespace Scaffold // Note: actual namespace depends on the project name.
         {
             try
             {
-                var componentBuilder = new RoleComponentModel.Builder(new DynamicExtentComponentModel.Builder(new DefaultComponentModel.Builder()));
+                var componentBuilder = new RoleComponentModel.Builder(new AssociationComponentModel.Builder(new DefaultComponentModel.Builder()));
                 var modelBuilder = new FormModel.Builder(componentBuilder, this.Namespace);
                 var generator = new Generator(modelBuilder, this.Directories, this.Output, this.Namespace);
                 await generator.Generate();

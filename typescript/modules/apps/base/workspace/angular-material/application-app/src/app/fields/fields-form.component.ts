@@ -19,7 +19,7 @@ import {
 import { RadioGroupOption } from '@allors/base/workspace/angular-material/foundation';
 
 @Component({
-  templateUrl: './fields.component.html',
+  templateUrl: './fields-form.component.html',
   providers: [ContextService],
 })
 export class FieldsComponent implements OnInit, OnDestroy {

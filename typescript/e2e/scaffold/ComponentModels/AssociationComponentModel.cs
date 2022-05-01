@@ -2,13 +2,12 @@ namespace Scaffold
 {
     using AngleSharp.Dom;
 
-    public class DynamicExtentComponentModel : ComponentModel
+    public class AssociationComponentModel : ComponentModel
     {
         public static readonly Dictionary<string, string> TypeByTag = new()
         {
-            { "a-mat-dyn-edit-extent-panel", "Allors.E2E.Angular.Material.DynamicEditExtentPanelComponent" },
-            { "a-mat-dyn-view-extent-panel", "Allors.E2E.Angular.Material.DynamicViewExtentPanelComponent" },
-        };
+            { "a-mat-autocomplete", "Allors.E2E.Angular.Material.Association.AllorsMaterialAutocompleteComponent" },
+         };
 
         public override string Property { get; }
 
@@ -16,19 +15,19 @@ namespace Scaffold
 
         public override string Init { get; }
 
-        public DynamicExtentComponentModel(IElement element)
+        public AssociationComponentModel(IElement element)
         {
             var tag = element.TagName.ToLowerInvariant();
             var fullType = TypeByTag[tag];
 
-            var roleTypeAttribute = element.GetAttribute("[roleType]");
-            var roleTypeParts = roleTypeAttribute.Split(".");
-            var roleTypeObjectType = roleTypeParts[1];
-            var roleTypeName = roleTypeParts[2];
+            var associationTypeAttribute = element.GetAttribute("[associationType]");
+            var associationTypeParts = associationTypeAttribute.Split(".");
+            var associationTypeObjectType = associationTypeParts[1];
+            var associationTypeName = associationTypeParts[2];
 
             this.Type = fullType;
-            this.Property = $"{roleTypeName}";
-            this.Init = $"new {fullType}(this, this.M.{roleTypeObjectType}.{roleTypeName});";
+            this.Property = $"{associationTypeName}";
+            this.Init = $"new {fullType}(this, this.M.{associationTypeObjectType}.{associationTypeName});";
         }
 
         public class Builder : ComponentModelBuilder
@@ -39,7 +38,7 @@ namespace Scaffold
 
             public override ComponentModel? Build(IElement element) =>
                 TypeByTag.ContainsKey(element.TagName.ToLowerInvariant())
-                    ? new RoleComponentModel(element)
+                    ? new AssociationComponentModel(element)
                     : base.Build(element);
         }
     }

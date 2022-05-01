@@ -1,5 +1,7 @@
 namespace Scaffold
 {
+    using AngleSharp.Html.Dom;
+
     public class Generator
     {
         public ModelBuilder ModelBuilder { get; }
@@ -56,6 +58,8 @@ namespace Scaffold
                 var code = this.ModelBuilder.Template.Render(model);
                 var output = Path.Combine(this.Output.FullName, $"{model.Class}.cs");
                 await File.WriteAllTextAsync(output, code);
+
+                Console.WriteLine($"Scaffold: {input.Name} => {output}");
             }
         }
     }

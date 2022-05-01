@@ -7,8 +7,6 @@ namespace Scaffold
         public static readonly Dictionary<string, string> TypeByTag = new()
         {
             { "a-mat-barcode-entry", "Allors.E2E.Angular.Material.BarcodeEntryComponent" },
-            { "a-mat-dyn-edit-detail-panel", "Allors.E2E.Angular.Material.DynamicEditDetailPanelComponent" },
-            { "a-mat-dyn-view-detail-panel", "Allors.E2E.Angular.Material.DynamicViewDetailPanelComponent" },
             { "a-mat-factory-fab", "Allors.E2E.Angular.Material.FactoryFabComponent" },
             { "a-mat-filter", "Allors.E2E.Angular.Material.FilterComponent" },
         };

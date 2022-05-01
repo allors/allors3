@@ -1,6 +1,7 @@
-namespace Allors.E2E.Angular.Material.Authentication
+namespace Allors.E2E
 {
     using System.Threading.Tasks;
+    using Angular;
     using Microsoft.Playwright;
 
     public class LoginComponent

@@ -23,7 +23,7 @@ namespace Scaffold
             public static readonly Scriban.Template Default = Scriban.Template.Parse(
                 @"namespace {{ model.namespace }}
 {
-    public class {{ model.class }} : {{ model.base }}
+    public partial class {{ model.class }} : {{ model.base }}
     {
 
          public {{ model.class }}(global::Allors.E2E.IComponent container) : base(container) { }
