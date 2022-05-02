@@ -23,7 +23,7 @@ namespace Scaffold // Note: actual namespace depends on the project name.
         {
             try
             {
-                var componentBuilder = new RoleComponentModel.Builder(new AssociationComponentModel.Builder(new DefaultComponentModel.Builder()));
+                var componentBuilder = new RoleComponentModel.Builder(new AssociationComponentModel.Builder(new ExtentComponentModel.Builder(new DefaultComponentModel.Builder())));
                 var modelBuilder = new ContainerModel.Builder(componentBuilder, this.Namespace);
                 var generator = new Generator(modelBuilder, this.Directories, this.Output, this.Namespace);
                 await generator.Generate();

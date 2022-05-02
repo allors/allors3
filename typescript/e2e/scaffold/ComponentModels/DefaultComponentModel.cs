@@ -8,6 +8,8 @@ namespace Scaffold
         {
             { "a-mat-barcode-entry", "Allors.E2E.Angular.Material.BarcodeEntryComponent" },
             { "a-mat-cancel", "Allors.E2E.Angular.Material.CancelComponent" },
+            { "a-mat-dyn-view-detail-panel", "Allors.E2E.Angular.Material.Dynamic.AllorsMaterialDynamicViewDetailPanelComponent" },
+            { "a-mat-dyn-edit-detail-panel", "Allors.E2E.Angular.Material.Dynamic.AllorsMaterialDynamicEditDetailPanelComponent" },
             { "a-mat-factory-fab", "Allors.E2E.Angular.Material.Factory.FactoryFabComponent" },
             { "a-mat-filter", "Allors.E2E.Angular.Material.Filter.FilterComponent" },
             { "a-mat-save", "Allors.E2E.Angular.Material.SaveComponent" },
