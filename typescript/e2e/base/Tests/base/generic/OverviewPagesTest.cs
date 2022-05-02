@@ -36,8 +36,6 @@ namespace Tests.ApplicationTests
                     await this.Page.WaitForAngular();
                 }
             }
-
-            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
         [Test]
@@ -67,13 +65,6 @@ namespace Tests.ApplicationTests
                     await this.Page.WaitForAngular();
                 }
             }
-
-            foreach (var error in this.ConsoleErrorMessages)
-            {
-                System.Console.Write(error.Text + "\n");
-            }
-
-            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
         [Test]
@@ -133,8 +124,6 @@ namespace Tests.ApplicationTests
                     }
                 }
             }
-
-            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
     }
 }

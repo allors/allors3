@@ -30,8 +30,6 @@ namespace Tests.ApplicationTests
                 await this.Page.GotoAsync(component.RouteInfo.FullPath);
                 await this.Page.WaitForAngular();
             }
-
-            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
         [Test]
@@ -51,8 +49,6 @@ namespace Tests.ApplicationTests
                     await this.Page.WaitForAngular();
                 }
             }
-
-            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
         [Test]
@@ -77,8 +73,6 @@ namespace Tests.ApplicationTests
                     }
                 }
             }
-
-            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
         [Test]
@@ -103,8 +97,6 @@ namespace Tests.ApplicationTests
                     }
                 }
             }
-
-            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
     }
 }

@@ -30,5 +30,8 @@ namespace Tests
             this.AppRoot = await AppRoot.New(this.Page, this.M, "allors-root");
             this.OverlayContainer = new OverlayContainer(this.AppRoot);
         }
+
+        [TearDown]
+        public void TearDown() => Assert.IsEmpty(this.ConsoleErrorMessages);
     }
 }
