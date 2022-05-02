@@ -1,6 +1,6 @@
 namespace Scaffold
 {
-    public class FormModel : Model
+    public class ContainerModel : Model
     {
         public override string Html { get; }
 
@@ -10,7 +10,7 @@ namespace Scaffold
 
         public override string Base => "Allors.E2E.ContainerComponent";
 
-        public FormModel(ModelBuilder modelBuilder, FileInfo fileInfo) : base(modelBuilder)
+        public ContainerModel(ModelBuilder modelBuilder, FileInfo fileInfo) : base(modelBuilder)
         {
             this.Html = File.ReadAllText(fileInfo.FullName);
             var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInfo.Name);
@@ -50,8 +50,9 @@ namespace Scaffold
             public override ComponentModelBuilder ComponentModelBuilder { get; }
 
             public override Model? Build(FileInfo fileInfo) =>
-                fileInfo.Name.ToLowerInvariant().Contains("-form.")
-                    ? new FormModel(this, fileInfo)
+                fileInfo.Name.ToLowerInvariant().Contains("-form.") ||
+                fileInfo.Name.ToLowerInvariant().Contains("-dialog.")
+                    ? new ContainerModel(this, fileInfo)
                     : base.Build(fileInfo);
         }
     }

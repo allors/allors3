@@ -3,12 +3,15 @@ namespace Tests
     using System.Threading.Tasks;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Cdk;
+    using Allors.E2E.Angular.Info;
     using Microsoft.Playwright;
     using NUnit.Framework;
 
     public abstract class Test : E2ETest
     {
         public AppRoot AppRoot { get; private set; }
+
+        public ApplicationInfo Application => this.AppRoot.ApplicationInfo;
 
         public OverlayContainer OverlayContainer { get; private set; }
 

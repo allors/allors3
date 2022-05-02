@@ -7,8 +7,10 @@ namespace Scaffold
         public static readonly Dictionary<string, string> TypeByTag = new()
         {
             { "a-mat-barcode-entry", "Allors.E2E.Angular.Material.BarcodeEntryComponent" },
+            { "a-mat-cancel", "Allors.E2E.Angular.Material.CancelComponent" },
             { "a-mat-factory-fab", "Allors.E2E.Angular.Material.FactoryFabComponent" },
             { "a-mat-filter", "Allors.E2E.Angular.Material.FilterComponent" },
+            { "a-mat-save", "Allors.E2E.Angular.Material.SaveComponent" },
         };
 
         public override string Type { get; }

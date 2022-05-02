@@ -29,8 +29,18 @@
     </div>
   </mat-dialog-content>
 
-  <div mat-dialog-actions>
-    <a-mat-cancel (cancel)="dialogRef.close()"></a-mat-cancel>
-    <a-mat-save></a-mat-save>
-  </div>
+  <mat-card-actions>
+    <button *ngIf="form" mat-button type="button" (click)="dialogRef.close()">
+      CANCEL
+    </button>
+    <button
+      *ngIf="form"
+      mat-button
+      color="primary"
+      type="submit"
+      [disabled]="!(this.form.form.valid && this.allors.context.hasChanges())"
+    >
+      SAVE
+    </button>
+  </mat-card-actions>
 </form>
