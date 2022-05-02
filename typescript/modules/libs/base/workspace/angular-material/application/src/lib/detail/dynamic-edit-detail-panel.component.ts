@@ -11,11 +11,9 @@ import {
   RefreshService,
   SharedPullService,
   TemplateHostDirective,
-  WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { map, Subscription, tap } from 'rxjs';
-import { IObject, IPullResult, Pull } from '@allors/system/workspace/domain';
-import { M } from '@allors/default/workspace/meta';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 
 @Component({
   selector: 'a-mat-dyn-edit-detail-panel',
@@ -75,40 +73,43 @@ export class AllorsMaterialDynamicEditDetailPanelComponent
         return;
       }
 
-      const viewContainerRef = templateHost.viewContainerRef;
-      viewContainerRef.clear();
+      // Force a changed detection run
+      setTimeout(() => {
+        const viewContainerRef = templateHost.viewContainerRef;
+        viewContainerRef.clear();
 
-      const componentRef = viewContainerRef.createComponent<AllorsForm>(
-        this.formService.editForm(this.scoped.objectType)
-      );
+        const componentRef = viewContainerRef.createComponent<AllorsForm>(
+          this.formService.editForm(this.scoped.objectType)
+        );
 
-      this.form = componentRef.instance;
-      this.form.edit({
-        kind: 'EditRequest',
-        objectId: this.scoped.id,
-      });
+        this.form = componentRef.instance;
+        this.form.edit({
+          kind: 'EditRequest',
+          objectId: this.scoped.id,
+        });
 
-      this.cancelledSubscription = this.form.cancelled
-        .pipe(
-          map(() => {
-            this.panelService
-              .stopEdit()
-              .pipe(tap(() => this.refreshService.refresh()))
-              .subscribe();
-          })
-        )
-        .subscribe();
+        this.cancelledSubscription = this.form.cancelled
+          .pipe(
+            map(() => {
+              this.panelService
+                .stopEdit()
+                .pipe(tap(() => this.refreshService.refresh()))
+                .subscribe();
+            })
+          )
+          .subscribe();
 
-      this.savedSubscription = this.form.saved
-        .pipe(
-          map(() => {
-            this.panelService
-              .stopEdit()
-              .pipe(tap(() => this.refreshService.refresh()))
-              .subscribe();
-          })
-        )
-        .subscribe();
+        this.savedSubscription = this.form.saved
+          .pipe(
+            map(() => {
+              this.panelService
+                .stopEdit()
+                .pipe(tap(() => this.refreshService.refresh()))
+                .subscribe();
+            })
+          )
+          .subscribe();
+      }, 0);
     });
   }
 }

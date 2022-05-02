@@ -73,8 +73,7 @@ namespace Tests.ApplicationTests
                 System.Console.Write(error.Text + "\n");
             }
 
-            // TODO: Koen
-            //Assert.IsEmpty(this.ConsoleErrorMessages);
+            Assert.IsEmpty(this.ConsoleErrorMessages);
         }
 
         [Test]

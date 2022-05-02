@@ -29,11 +29,6 @@ export abstract class AllorsFormComponent<T extends IObject>
 {
   override dataAllorsKind = 'form';
 
-  @HostBinding('attr.data-allors-id')
-  get dataAllorsId() {
-    return this.object?.strategy.id;
-  }
-
   @Output()
   saved: EventEmitter<IObject> = new EventEmitter();
 

@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Directive,
-  HostBinding,
   OnDestroy,
 } from '@angular/core';
 import { Panel, PanelKind, PanelMode } from '../panel/panel';
@@ -25,16 +24,6 @@ export abstract class AllorsScopedPanelComponent
   extends AllorsComponent
   implements Panel, SharedPullHandler, AfterViewInit, OnDestroy
 {
-  @HostBinding('attr.data-allors-id')
-  get dataAllorsId() {
-    return this.scoped?.id;
-  }
-
-  @HostBinding('attr.data-allors-objecttype')
-  get dataAllorsObjectType() {
-    return this.scoped?.objectType?.tag;
-  }
-
   abstract panelId: string;
 
   abstract panelMode: PanelMode;

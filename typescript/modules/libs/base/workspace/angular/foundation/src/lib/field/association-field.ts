@@ -22,7 +22,7 @@ export abstract class AssociationField extends Field {
     return this.object?.id;
   }
 
-  @HostBinding('attr.data-allors-roletype')
+  @HostBinding('attr.data-allors-associationtype')
   get dataAllorsAssociationType() {
     return this.associationType?.relationType.tag;
   }
