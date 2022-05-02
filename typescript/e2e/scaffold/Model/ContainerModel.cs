@@ -51,7 +51,8 @@ namespace Scaffold
 
             public override Model? Build(FileInfo fileInfo) =>
                 fileInfo.Name.ToLowerInvariant().Contains("-form.") ||
-                fileInfo.Name.ToLowerInvariant().Contains("-dialog.")
+                fileInfo.Name.ToLowerInvariant().Contains("-dialog.") ||
+                fileInfo.Name.ToLowerInvariant().Contains("-page.")
                     ? new ContainerModel(this, fileInfo)
                     : base.Build(fileInfo);
         }

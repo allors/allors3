@@ -8,8 +8,8 @@ namespace Scaffold
         {
             { "a-mat-barcode-entry", "Allors.E2E.Angular.Material.BarcodeEntryComponent" },
             { "a-mat-cancel", "Allors.E2E.Angular.Material.CancelComponent" },
-            { "a-mat-factory-fab", "Allors.E2E.Angular.Material.FactoryFabComponent" },
-            { "a-mat-filter", "Allors.E2E.Angular.Material.FilterComponent" },
+            { "a-mat-factory-fab", "Allors.E2E.Angular.Material.Factory.FactoryFabComponent" },
+            { "a-mat-filter", "Allors.E2E.Angular.Material.Filter.FilterComponent" },
             { "a-mat-save", "Allors.E2E.Angular.Material.SaveComponent" },
         };
 
@@ -27,7 +27,7 @@ namespace Scaffold
 
             this.Type = fullType;
             this.Property = type;
-            this.Init = "new " + fullType + "(this, );";
+            this.Init = "new " + fullType + "(this);";
         }
 
         public class Builder : ComponentModelBuilder
@@ -38,7 +38,7 @@ namespace Scaffold
 
             public override ComponentModel? Build(IElement element) =>
                 TypeByTag.ContainsKey(element.TagName.ToLowerInvariant())
-                    ? new RoleComponentModel(element)
+                    ? new DefaultComponentModel(element)
                     : base.Build(element);
         }
     }

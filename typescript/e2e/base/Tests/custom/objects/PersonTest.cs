@@ -64,8 +64,6 @@ namespace Tests.Objects
             var @class = this.M.Person;
 
             var overview = this.Application.GetOverview(@class);
-            await this.Page.GotoAsync(overview.RouteInfo.FullPath);
-            await this.Page.WaitForAngular();
 
             var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
             await this.Page.GotoAsync(url);
