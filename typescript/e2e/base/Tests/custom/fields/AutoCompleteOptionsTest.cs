@@ -28,7 +28,7 @@ namespace Tests.Form
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.AutocompleteOptions.SelectAsync("jane@example.com", "jane@example.com");
+            await this.FormComponent.AutocompleteOptionsAutocomplete.SelectAsync("jane@example.com", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -45,7 +45,7 @@ namespace Tests.Form
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.AutocompleteOptions.SelectAsync("j", "jane@example.com");
+            await this.FormComponent.AutocompleteOptionsAutocomplete.SelectAsync("j", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -62,7 +62,7 @@ namespace Tests.Form
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.AutocompleteOptions.SelectAsync("", "jane@example.com");
+            await this.FormComponent.AutocompleteOptionsAutocomplete.SelectAsync("", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

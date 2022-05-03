@@ -27,7 +27,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Slider.SetAsync(1, 20, 10);
+            await this.FormComponent.SliderSlider.SetAsync(1, 20, 10);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

@@ -56,7 +56,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.SelectDerived.SelectAsync(this.jane);
+            await this.FormComponent.SelectDerivedSelect.SelectAsync(this.jane);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -73,7 +73,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.SelectDerived.SelectAsync(this.jenny);
+            await this.FormComponent.SelectDerivedSelect.SelectAsync(this.jenny);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

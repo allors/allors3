@@ -56,7 +56,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.AutocompleteDerivedFilter.SelectAsync("jane@example.com");
+            await this.FormComponent.AutocompleteDerivedFilterAutocomplete.SelectAsync("jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -73,7 +73,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.AutocompleteDerivedFilter.SelectAsync("jenny@example.com");
+            await this.FormComponent.AutocompleteDerivedFilterAutocomplete.SelectAsync("jenny@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

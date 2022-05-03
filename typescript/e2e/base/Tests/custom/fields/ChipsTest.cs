@@ -28,7 +28,7 @@ namespace Tests.Form
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Chips.AddAsync("jane", "jane@example.com");
+            await this.FormComponent.ChipsChips.AddAsync("jane", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -46,8 +46,8 @@ namespace Tests.Form
             var john = new People(this.Transaction).FindBy(this.M.Person.UserName, "john@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Chips.AddAsync("jane", "jane@example.com");
-            await this.FormComponent.Chips.AddAsync("john", "john@example.com");
+            await this.FormComponent.ChipsChips.AddAsync("jane", "jane@example.com");
+            await this.FormComponent.ChipsChips.AddAsync("john", "john@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -64,11 +64,11 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Chips.AddAsync("jane", "jane@example.com");
+            await this.FormComponent.ChipsChips.AddAsync("jane", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
 
-            await this.FormComponent.Chips.RemoveAsync("jane@example.com");
+            await this.FormComponent.ChipsChips.RemoveAsync("jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

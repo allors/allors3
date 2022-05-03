@@ -28,7 +28,7 @@ namespace Tests.Form
             var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Select.SelectAsync(jane);
+            await this.FormComponent.SelectSelect.SelectAsync(jane);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

@@ -27,7 +27,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.SlideToggle.SetAsync(true);
+            await this.FormComponent.SlideToggleSlideToggle.SetAsync(true);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

@@ -28,7 +28,7 @@ namespace Tests.Form
         {
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            var date = await this.FormComponent.Date.GetAsync();
+            var date = await this.FormComponent.DateDatepicker.GetAsync();
 
             Assert.IsNull(date);
         }
@@ -42,7 +42,7 @@ namespace Tests.Form
 
             var now = this.Transaction.Now();
 
-            await this.FormComponent.Date.SetAsync(now);
+            await this.FormComponent.DateDatepicker.SetAsync(now);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

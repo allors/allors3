@@ -27,7 +27,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.RadioGroup.SelectAsync("one");
+            await this.FormComponent.RadioGroupRadioGroup.SelectAsync("one");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -43,7 +43,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.RadioGroup.SelectAsync("two");
+            await this.FormComponent.RadioGroupRadioGroup.SelectAsync("two");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

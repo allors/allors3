@@ -11,6 +11,10 @@ namespace Allors.E2E.Angular.Material.Dynamic
 
     public partial class AllorsMaterialDynamicEditExtentPanelComponent : IComponent
     {
+        public AllorsMaterialDynamicEditExtentPanelComponent(IComponent container, string @init) : this(container, @init, null)
+        {
+        }
+
         public AllorsMaterialDynamicEditExtentPanelComponent(IComponent container, string @init, string @select)
         {
             this.Container = container;

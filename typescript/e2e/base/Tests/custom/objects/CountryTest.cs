@@ -36,8 +36,8 @@ namespace Tests.ApplicationTests
 
             var form = new CountryFormComponent(this.OverlayContainer);
 
-            await form.Name.SetValueAsync("Alloristan");
-            await form.IsoCode.SetValueAsync("AS");
+            await form.NameInput.SetValueAsync("Alloristan");
+            await form.IsoCodeInput.SetValueAsync("AS");
 
             var saveComponent = new SaveComponent(this.OverlayContainer);
             await saveComponent.SaveAsync();
@@ -74,8 +74,8 @@ namespace Tests.ApplicationTests
 
             var form = new CountryFormComponent(this.OverlayContainer);
 
-            await form.Name.SetValueAsync("Albania Edit");
-            await form.IsoCode.SetValueAsync("AE");
+            await form.NameInput.SetValueAsync("Albania Edit");
+            await form.IsoCodeInput.SetValueAsync("AE");
 
             var saveComponent = new SaveComponent(this.OverlayContainer);
             await saveComponent.SaveAsync();

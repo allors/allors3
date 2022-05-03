@@ -29,7 +29,7 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file = new FileInfo("logo.png");
-            await this.FormComponent.File.UploadAsync(file);
+            await this.FormComponent.FileFile.UploadAsync(file);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -46,7 +46,7 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file = new FileInfo("logo.png");
-            await this.FormComponent.File.UploadAsync(file);
+            await this.FormComponent.FileFile.UploadAsync(file);
 
             await this.FormComponent.SaveAsync();
 
@@ -54,7 +54,7 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             var data = after.Except(before).First();
 
-            var media = this.FormComponent.File.Media(data.File);
+            var media = this.FormComponent.FileFile.Media(data.File);
             await media.RemoveAsync();
 
             await this.FormComponent.SaveAsync();

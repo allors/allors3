@@ -27,7 +27,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.String.SetAsync("Hello");
+            await this.FormComponent.StringInput.SetAsync("Hello");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -43,7 +43,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Decimal.SetAsync(100.50m);
+            await this.FormComponent.DecimalInput.SetAsync(100.50m);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

@@ -17,9 +17,13 @@ namespace Scaffold
 
         public override string Type { get; }
 
-        public override string Property { get; }
+        public override string Property { get; protected set; }
 
         public override string Init { get; }
+
+        public override void ElevatePropertyName(ISet<string> properties)
+        {
+        }
 
         public DefaultComponentModel(IElement element)
         {
@@ -42,6 +46,18 @@ namespace Scaffold
                 TypeByTag.ContainsKey(element.TagName.ToLowerInvariant())
                     ? new DefaultComponentModel(element)
                     : base.Build(element);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is RoleComponentModel that)
+            {
+                return string.Equals(this.Property, that.Property) &&
+                       string.Equals(this.Type, that.Type) &&
+                       string.Equals(this.Init, that.Init);
+            }
+
+            return base.Equals(obj);
         }
     }
 }

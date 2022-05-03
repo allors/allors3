@@ -16,40 +16,57 @@ namespace Scaffold
             { "a-mat-dyn-edit-extent-panel", "Edit" },
         };
 
-        public override string Property { get; }
+        public override string Property { get; protected set; }
 
         public override string Type { get; }
 
         public override string Init { get; }
+
+        private string FullProperty { get; }
+
+        public override void ElevatePropertyName(ISet<string> properties)
+        {
+            if (properties.Contains(this.Property))
+            {
+                this.Property = this.FullProperty;
+            }
+        }
 
         public ExtentComponentModel(IElement element)
         {
             var tag = element.TagName.ToLowerInvariant();
             var fullType = TypeByTag[tag];
 
-            var @init = element.GetAttribute("[init]");
-            var @select = element.GetAttribute("[select]");
+            var @include = element.GetAttribute("[include]")?.Trim();
+            var @init = element.GetAttribute("[init]")?.Trim();
+            var @select = element.GetAttribute("[select]")?.Trim();
 
+            var includeParts = @include?.Split(".");
             var initParts = @init?.Split(".");
             var selectParts = @select?.Split(".");
 
-            var parts = initParts?.Length == 3 ? initParts : selectParts;
+            var parts = includeParts?.Length == 3 ? includeParts : initParts?.Length == 3 ? initParts : selectParts;
 
             var prefix = PrefixByTag[tag];
             if (parts?.Length == 3)
             {
+                var objectType = parts[1];
                 var propertyType = parts[2];
                 this.Property = $"{prefix}{propertyType}";
+                this.FullProperty = $"{prefix}{objectType}{propertyType}";
             }
             else
             {
                 var property = @init?.ToPascalCase() ?? @select?.ToPascalCase();
                 this.Property = prefix + property;
+                this.FullProperty = this.Property;
             }
 
 
             this.Type = fullType;
-            this.Init = $"new {fullType}(this, \"{@init}\", \"{@select}\");";
+            this.Init = !string.IsNullOrWhiteSpace(@init) ?
+                $"new {fullType}(this, \"{@init}\");" :
+                $"new {fullType}(this, \"{@init}\", \"{@select}\");";
         }
 
         public class Builder : ComponentModelBuilder
@@ -62,6 +79,18 @@ namespace Scaffold
                 TypeByTag.ContainsKey(element.TagName.ToLowerInvariant())
                     ? new ExtentComponentModel(element)
                     : base.Build(element);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is RoleComponentModel that)
+            {
+                return string.Equals(this.Property, that.Property) &&
+                       string.Equals(this.Type, that.Type) &&
+                       string.Equals(this.Init, that.Init);
+            }
+
+            return base.Equals(obj);
         }
     }
 }

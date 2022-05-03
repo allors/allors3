@@ -34,7 +34,7 @@ namespace Tests.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new PersonCreateDialogComponent(this.OverlayContainer);
+            var form = new PersonFormComponent(this.OverlayContainer);
 
             await form.FirstNameInput.SetValueAsync("Jos");
             await form.LastNameInput.SetValueAsync("Smos");

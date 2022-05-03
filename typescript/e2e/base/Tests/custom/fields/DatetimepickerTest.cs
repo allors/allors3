@@ -29,7 +29,7 @@ namespace Tests.Form
         {
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
 
-            var date = await this.FormComponent.DateTime.GetAsync();
+            var date = await this.FormComponent.DateTimeDatetimepicker.GetAsync();
 
             Assert.IsNull(date);
         }
@@ -45,7 +45,7 @@ namespace Tests.Form
 
             await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.DateTime.GetAsync();
+            var actual = await this.FormComponent.DateTimeDatetimepicker.GetAsync();
 
             Assert.That(actual, Is.EqualTo(data.DateTime.Value.ToLocalTime()).Within(1).Minutes);
         }
@@ -59,7 +59,7 @@ namespace Tests.Form
 
             var date = new DateTime(2018, 1, 1, 12, 0, 0, DateTimeKind.Local);
 
-            await this.FormComponent.DateTime.SetAsync(date);
+            await this.FormComponent.DateTimeDatetimepicker.SetAsync(date);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -79,12 +79,12 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var date = new DateTime(2019, 1, 1, 12, 0, 0, DateTimeKind.Local);
-            await this.FormComponent.DateTime.SetAsync(date);
+            await this.FormComponent.DateTimeDatetimepicker.SetAsync(date);
 
             await this.FormComponent.SaveAsync();
 
             date = new DateTime(2019, 1, 1, 18, 0, 0, DateTimeKind.Local);
-            await this.FormComponent.DateTime.SetAsync(date);
+            await this.FormComponent.DateTimeDatetimepicker.SetAsync(date);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

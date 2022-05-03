@@ -31,7 +31,7 @@ namespace Tests.Form
 
             await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.PlainText.GetAsync();
+            var actual = await this.FormComponent.PlainTextTextarea.GetAsync();
 
             Assert.That(actual, Is.EqualTo("This is plain text."));
         }
@@ -41,7 +41,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.PlainText.SetAsync("Hello");
+            await this.FormComponent.PlainTextTextarea.SetAsync("Hello");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

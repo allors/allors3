@@ -31,7 +31,7 @@ namespace Tests.Form
 
             await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.Markdown.GetAsync();
+            var actual = await this.FormComponent.MarkdownMarkdown.GetAsync();
 
             Assert.That(actual, Is.EqualTo("*** Hello ***"));
         }
@@ -41,7 +41,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Markdown.SetAsync("*** Hello ***");
+            await this.FormComponent.MarkdownMarkdown.SetAsync("*** Hello ***");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

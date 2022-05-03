@@ -33,7 +33,7 @@ namespace Tests.Form
 
             await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.LocalisedTexts.GetAsync();
+            var actual = await this.FormComponent.LocalisedTextsLocalisedText.GetAsync();
 
             Assert.That(actual, Is.EqualTo("*** Hello ***"));
         }
@@ -44,7 +44,7 @@ namespace Tests.Form
             var locale = new Locales(this.Transaction).DutchBelgium;
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.LocalisedTexts.SetAsync("*** Hello ***");
+            await this.FormComponent.LocalisedTextsLocalisedText.SetAsync("*** Hello ***");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

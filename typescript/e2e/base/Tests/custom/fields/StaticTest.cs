@@ -30,7 +30,7 @@ namespace Tests.Form
 
             await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.Static.GetAsync();
+            var actual = await this.FormComponent.StaticStatic.GetAsync();
 
             Assert.That(actual, Is.EqualTo("A Static String!"));
         }
