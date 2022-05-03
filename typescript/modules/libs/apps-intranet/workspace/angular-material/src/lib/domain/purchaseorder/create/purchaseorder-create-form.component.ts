@@ -150,8 +150,8 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     this.object.TakenViaSupplier = supplier;
     this.takenVia = supplier;
     
-    this.takenViaContactMechanisms = null;
-    this.takenViaContacts = null;
+    this.takenViaContactMechanisms = [];
+    this.takenViaContacts = [];
     this.takenViaContactMechanismInitialRole = null;
   }
 
