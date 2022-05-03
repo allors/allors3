@@ -7,13 +7,13 @@ namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class LocalisedMarkdownTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -33,7 +33,7 @@ namespace Tests.Form
 
             await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.LocalisedMarkdown.GetAsync();
+            var actual = await this.FormComponent.LocalisedMarkdownsLocalisedMarkdown.GetAsync();
 
             Assert.That(actual, Is.EqualTo("*** Hello ***"));
         }
@@ -44,7 +44,7 @@ namespace Tests.Form
             var locale = new Locales(this.Transaction).DutchBelgium;
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.LocalisedMarkdown.SetAsync("*** Hello ***");
+            await this.FormComponent.LocalisedMarkdownsLocalisedMarkdown.SetAsync("*** Hello ***");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

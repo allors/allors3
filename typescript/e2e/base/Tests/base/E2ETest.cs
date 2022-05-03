@@ -6,8 +6,8 @@ namespace Tests
     using System.Threading.Tasks;
     using Allors.Database;
     using Allors.Database.Meta;
+    using Allors.E2E;
     using Allors.E2E.Angular;
-    using Allors.E2E.Angular.Material.Authentication;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;

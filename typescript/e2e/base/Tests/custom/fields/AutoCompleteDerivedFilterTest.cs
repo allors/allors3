@@ -7,13 +7,13 @@ namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class AutoCompleteDerivedFilterTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         private Person john;
         private Person jane;
@@ -56,7 +56,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.AutocompleteDerivedFilter.SelectAsync("jane@example.com");
+            await this.FormComponent.AutocompleteDerivedFilterAutocomplete.SelectAsync("jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -73,7 +73,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.AutocompleteDerivedFilter.SelectAsync("jenny@example.com");
+            await this.FormComponent.AutocompleteDerivedFilterAutocomplete.SelectAsync("jenny@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

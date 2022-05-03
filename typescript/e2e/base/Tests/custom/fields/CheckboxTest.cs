@@ -7,13 +7,13 @@ namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class CheckboxTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -27,7 +27,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var value = await this.FormComponent.Checkbox.GetAsync();
+            var value = await this.FormComponent.CheckboxCheckbox.GetAsync();
 
             Assert.Null(value);
         }
@@ -37,7 +37,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Checkbox.SetAsync(true);
+            await this.FormComponent.CheckboxCheckbox.SetAsync(true);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -53,7 +53,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Checkbox.SetAsync(false);
+            await this.FormComponent.CheckboxCheckbox.SetAsync(false);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();

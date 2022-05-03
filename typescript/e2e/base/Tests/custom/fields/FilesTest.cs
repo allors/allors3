@@ -8,13 +8,13 @@ namespace Tests.Form
     using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class FilesTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -29,7 +29,7 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file = new FileInfo("logo.png");
-            await this.FormComponent.MultipleFiles.UploadAsync(file);
+            await this.FormComponent.MultipleFilesFiles.UploadAsync(file);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -46,10 +46,10 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file1 = new FileInfo("logo.png");
-            await this.FormComponent.MultipleFiles.UploadAsync(file1);
+            await this.FormComponent.MultipleFilesFiles.UploadAsync(file1);
 
             var file2 = new FileInfo("logo2.png");
-            await this.FormComponent.MultipleFiles.UploadAsync(file2);
+            await this.FormComponent.MultipleFilesFiles.UploadAsync(file2);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -66,10 +66,10 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file1 = new FileInfo("logo.png");
-            await this.FormComponent.MultipleFiles.UploadAsync(file1);
+            await this.FormComponent.MultipleFilesFiles.UploadAsync(file1);
 
             var file2 = new FileInfo("logo2.png");
-            await this.FormComponent.MultipleFiles.UploadAsync(file2);
+            await this.FormComponent.MultipleFilesFiles.UploadAsync(file2);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -79,7 +79,7 @@ namespace Tests.Form
             var logo1 = data.MultipleFiles.First(v => v.Name.Equals("logo"));
             var logo2 = data.MultipleFiles.First(v => v.Name.Equals("logo2"));
 
-            var media = this.FormComponent.MultipleFiles.Media(logo1);
+            var media = this.FormComponent.MultipleFilesFiles.Media(logo1);
             await media.RemoveAsync();
 
             await this.FormComponent.SaveAsync();

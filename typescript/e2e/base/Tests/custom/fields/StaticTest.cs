@@ -6,13 +6,13 @@
 namespace Tests.Form
 {
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class StaticTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -30,7 +30,7 @@ namespace Tests.Form
 
             await this.GotoAsync("/fields");
 
-            var actual = await this.FormComponent.Static.GetAsync();
+            var actual = await this.FormComponent.StaticStatic.GetAsync();
 
             Assert.That(actual, Is.EqualTo("A Static String!"));
         }

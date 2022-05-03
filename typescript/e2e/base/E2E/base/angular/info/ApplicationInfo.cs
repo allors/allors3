@@ -9,6 +9,7 @@ namespace Allors.E2E.Angular.Info
     using System.Linq;
     using System.Reflection;
     using System.Threading.Tasks;
+    using Database.Meta;
     using Task = System.Threading.Tasks.Task;
 
     public partial class ApplicationInfo
@@ -74,5 +75,9 @@ namespace Allors.E2E.Angular.Info
                 menuInfo.Init(this);
             }
         }
+
+        public ComponentInfo GetList(IComposite type) => this.ComponentInfoByName.Values.FirstOrDefault(v => type.Equals(v.List));
+
+        public ComponentInfo GetOverview(IComposite type) => this.ComponentInfoByName.Values.FirstOrDefault(v => type.Equals(v.Overview));
     }
 }

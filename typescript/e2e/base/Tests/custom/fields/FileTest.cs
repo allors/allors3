@@ -8,13 +8,13 @@ namespace Tests.Form
     using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class FileTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -29,7 +29,7 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file = new FileInfo("logo.png");
-            await this.FormComponent.File.UploadAsync(file);
+            await this.FormComponent.FileFile.UploadAsync(file);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -46,7 +46,7 @@ namespace Tests.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             var file = new FileInfo("logo.png");
-            await this.FormComponent.File.UploadAsync(file);
+            await this.FormComponent.FileFile.UploadAsync(file);
 
             await this.FormComponent.SaveAsync();
 
@@ -54,7 +54,7 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             var data = after.Except(before).First();
 
-            var media = this.FormComponent.File.Media(data.File);
+            var media = this.FormComponent.FileFile.Media(data.File);
             await media.RemoveAsync();
 
             await this.FormComponent.SaveAsync();

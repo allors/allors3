@@ -7,13 +7,13 @@ namespace Tests.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
-    using Allors.E2E.Angular.Material.Form;
+    using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
     public class InputTest : Test
     {
-        public FormComponent FormComponent => new FormComponent(this.AppRoot);
+        public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
         [SetUp]
         public async Task Setup()
@@ -27,7 +27,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.String.SetAsync("Hello");
+            await this.FormComponent.StringInput.SetAsync("Hello");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -43,7 +43,7 @@ namespace Tests.Form
         {
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.Decimal.SetAsync(100.50m);
+            await this.FormComponent.DecimalInput.SetAsync(100.50m);
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
