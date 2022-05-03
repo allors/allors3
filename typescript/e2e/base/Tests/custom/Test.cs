@@ -1,5 +1,6 @@
 namespace Tests
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Cdk;
@@ -32,6 +33,6 @@ namespace Tests
         }
 
         [TearDown]
-        public void TearDown() => Assert.IsEmpty(this.ConsoleErrorMessages);
+        public void TearDown() => Assert.IsEmpty(this.ConsoleErrorMessages, string.Join(", ", this.ConsoleErrorMessages.Select(v => v.Text)));
     }
 }
