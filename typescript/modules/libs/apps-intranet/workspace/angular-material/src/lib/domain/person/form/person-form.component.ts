@@ -130,7 +130,8 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
           value: true,
         },
         include: {
-          Members: {},
+          InMembers: {},
+          OutMembers: {},
         },
         sorting: [{ roleType: m.Role.Name }],
       }),
@@ -142,7 +143,8 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
           value: 'f0d8132b-79d6-4a30-a866-ef6e5c952761',
         },
         include: {
-          Members: {},
+          InMembers: {},
+          OutMembers: {},
         },
       }),
       p.OrganisationContactKind({
@@ -173,6 +175,13 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
                 },
               },
             },
+          },
+        }),
+        p.Person({
+          name: 'ActiveUserGroups',
+          objectId: this.editRequest.objectId,
+          select: {
+            UserGroupsWhereMember: {},
           },
         })
       );
@@ -224,9 +233,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
     }
 
     if (this.editRequest) {
-      this.selectedUserGroups = this.userGroups.filter((v) =>
-        v.Members.includes(this.object)
-      );
+      this.selectedUserGroups =  pullResult.collection<UserGroup>('ActiveUserGroups');
     }
   }
 
@@ -234,18 +241,19 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
     const userGroup = event.source.value as UserGroup;
     const user = this.object as User;
 
-    if (event.source.selected) {
-      userGroup.addMember(user);
-    } else {
-      userGroup.removeMember(user);
-    }
+    if (event.isUserInput) {
+      if (event.source.selected) {
+        userGroup.addInMember(user);
+      } 
+      else {
+        userGroup.addOutMember(user);
+      }
 
-    const remaining = this.userGroups.filter((v) => v.Members.includes(user));
-
-    if (remaining.length == 0) {
-      this.creatorUserGroup.removeMember(user);
-    } else {
-      this.creatorUserGroup.addMember(user);
+      if (this.selectedUserGroups.length == 0) {
+        this.creatorUserGroup.addOutMember(user);
+      } else {
+        this.creatorUserGroup.addInMember(user);
+      }
     }
   }
 

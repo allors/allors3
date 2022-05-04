@@ -478,6 +478,8 @@ namespace Allors.Database.Domain
                 new UnifiedProductProductIdentificationNamesRule(m),
                 new UnifiedProductScopeNameRule(m),
                 new UnifiedProductUnitOfMeasureAbbreviationRule(m),
+                new UserGroupInMembersRuleRule(m),
+                new UserGroupOutMembersRuleRule(m),
                 new VehicleSearchStringRule(m),
                 new WebAddressDisplayNameRule(m),
                 new WebSiteCommunicationSearchStringRule(m),
