@@ -23,10 +23,20 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Transitional>())
             {
-                @this.TransitionalRevocations = @this.ObjectStates.Select(v => v.ObjectRevocation).ToArray();
+                @this.DeriveTransitionalDeniedPermission(validation);
             }
+        }
+    }
+
+    public static class TransitionalDeniedPermissionRuleExtensions
+    {
+        public static void DeriveTransitionalDeniedPermission(this Transitional @this, IValidation validation)
+        {
+            @this.TransitionalRevocations = @this.ObjectStates.Select(v => v.ObjectRevocation).ToArray();
         }
     }
 }

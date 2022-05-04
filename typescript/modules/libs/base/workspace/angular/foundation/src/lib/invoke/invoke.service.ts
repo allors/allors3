@@ -1,4 +1,8 @@
-import { IInvokeResult, Method } from '@allors/system/workspace/domain';
+import {
+  IInvokeResult,
+  Method,
+  InvokeOptions,
+} from '@allors/system/workspace/domain';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { WorkspaceService } from '../workspace/workspace-service';
@@ -9,7 +13,10 @@ import { WorkspaceService } from '../workspace/workspace-service';
 export class InvokeService {
   constructor(private workspaceService: WorkspaceService) {}
 
-  invoke(method: Method): Observable<IInvokeResult> {
-    return this.workspaceService.contextBuilder().invoke(method);
+  invoke(
+    methods: Method | Method[],
+    options?: InvokeOptions
+  ): Observable<IInvokeResult> {
+    return this.workspaceService.contextBuilder().invoke(methods, options);
   }
 }

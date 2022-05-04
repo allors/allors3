@@ -136,6 +136,7 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
           value: id,
         },
         include: {
+          Source: {},
           Frequency: {},
           DayOfWeek: {},
         },

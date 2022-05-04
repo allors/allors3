@@ -108,6 +108,11 @@ namespace Allors.Database.Domain
             }
 
             this.PreviousExecutionDate = now.Date;
+
+            if (!this.ExistFinalExecutionDate && this.FinalExecutionDate.Value.Date <= now.Date)
+            {
+                this.FinalExecutionExecuted = true;
+            }
         }
     }
 }

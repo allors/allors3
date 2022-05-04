@@ -77,6 +77,12 @@ namespace Allors.Repository
         [Workspace(Default)]
         public SalesInvoice[] SalesInvoices { get; set; }
 
+        #region Allors
+        [Id("93c2f530-d4d7-4f82-ba3b-487b6bae029d")]
+        #endregion
+        [Required]
+        public bool FinalExecutionExecuted { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

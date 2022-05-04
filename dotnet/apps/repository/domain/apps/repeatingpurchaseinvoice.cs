@@ -77,6 +77,12 @@ namespace Allors.Repository
         [Workspace(Default)]
         public DateTime FinalExecutionDate { get; set; }
 
+        #region Allors
+        [Id("791cca11-6586-4a79-8bf1-05b84da54826")]
+        #endregion
+        [Required]
+        public bool FinalExecutionExecuted { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

@@ -67,6 +67,17 @@
     </div>
 
     <div
+      *ngIf="repeatingInvoice"
+      (click)="navigation.overview(repeatingInvoice)"
+      style="cursor: pointer"
+    >
+      <div style="color: grey">From Repeating Invoice:</div>
+      <div>
+        {{ repeatingInvoice.Source.InvoiceNumber}}
+      </div>
+    </div>
+
+    <div
       *ngFor="let order of orders"
       (click)="navigation.overview(order)"
       style="cursor: pointer"

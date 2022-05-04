@@ -43,7 +43,8 @@ namespace Allors.Database.Domain
                 deletable.Strategy.Delete();
             }
 
-            if (this.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsCreated)
+            if (this.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsCreated
+                || this.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsRevising)
             {
                 this.PurchaseInvoiceWherePurchaseInvoiceItem.RemovePurchaseInvoiceItem(this);
                 foreach (var orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
