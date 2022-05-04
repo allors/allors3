@@ -104,7 +104,7 @@ export class UserProfileFormComponent extends AllorsFormComponent<UserProfile> {
       this.m.EmailFrequency
     );
 
-    const singleton = pullResult.collection<Singleton>(this.m.Singleton)[0];
+    const singleton = pullResult.object<Singleton>(this.m.Singleton);
     this.supportedLocales = singleton.Locales;
   }
 }
