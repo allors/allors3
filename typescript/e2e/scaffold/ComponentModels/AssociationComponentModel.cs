@@ -18,11 +18,11 @@ namespace Scaffold
 
         public override string Type { get; }
 
-        public override string Init { get; }
+        public override string Init { get; protected set; }
 
         private string FullProperty { get; }
 
-        public override void ElevatePropertyName(ISet<string> properties)
+        public override void Elevate(ISet<string> properties)
         {
             if (properties.Contains(this.Property))
             {

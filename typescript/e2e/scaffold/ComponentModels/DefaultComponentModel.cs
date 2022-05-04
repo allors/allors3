@@ -19,9 +19,9 @@ namespace Scaffold
 
         public override string Property { get; protected set; }
 
-        public override string Init { get; }
+        public override string Init { get; protected set; }
 
-        public override void ElevatePropertyName(ISet<string> properties)
+        public override void Elevate(ISet<string> properties)
         {
         }
 
