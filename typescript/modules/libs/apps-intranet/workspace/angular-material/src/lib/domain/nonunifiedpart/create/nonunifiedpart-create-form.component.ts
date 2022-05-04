@@ -59,12 +59,12 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
   internalOrganisation: any;
 
   constructor(
-    @Self() public allors: ContextService,
+    @Self() allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
     public internalOrganisationId: InternalOrganisationId,
     private snackBar: MatSnackBar,
-    private fetcher: FetcherService,
+    private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -97,7 +97,7 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
       p.InternalOrganisation({
         objectId: this.internalOrganisationId.value,
         include: { FacilitiesWhereOwner: {} },
-      }),
+      })
     );
 
     this.onPrePullInitialize(pulls);
@@ -136,13 +136,12 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
       (v) => v.UniqueId === '5735191a-cdc4-4563-96ef-dddc7b969ca6'
     );
 
-    this.object.DefaultFacility = this.internalOrganisation.FacilitiesWhereOwner[0];
+    this.object.DefaultFacility =
+      this.internalOrganisation.FacilitiesWhereOwner[0];
     this.object.UnitOfMeasure = piece;
 
     if (!this.settings.UsePartNumberCounter) {
-      this.partNumber = this.allors.context.create<PartNumber>(
-        this.m.PartNumber
-      );
+      this.partNumber = this.context.create<PartNumber>(this.m.PartNumber);
       this.partNumber.ProductIdentificationType = partNumberType;
 
       this.object.addProductIdentification(this.partNumber);
@@ -178,7 +177,7 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
       }),
     ];
 
-    this.allors.context.pull(pulls).subscribe(() => {
+    this.context.pull(pulls).subscribe(() => {
       this.models = this.selectedBrand.Models
         ? this.selectedBrand.Models.sort((a, b) =>
             a.Name > b.Name ? 1 : b.Name > a.Name ? -1 : 0
@@ -186,7 +185,6 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
         : [];
     });
   }
-
 
   public categorySelected(categories: PartCategory[]): void {
     const m = this.m;
@@ -207,7 +205,7 @@ export class NonUnifiedPartCreateFormComponent extends AllorsFormComponent<NonUn
       ];
     });
 
-    this.allors.context.pull(pulls);
+    this.context.pull(pulls).subscribe((pullResult) => {});
   }
 
   public override save(): void {
