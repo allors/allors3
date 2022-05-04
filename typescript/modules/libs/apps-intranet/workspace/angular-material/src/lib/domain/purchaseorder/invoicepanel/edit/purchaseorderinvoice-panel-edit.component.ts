@@ -388,28 +388,26 @@ export class PurchaseOrderInvoicePanelEditComponent
       panelPurchaseOrder.id
     ) as PurchaseOrder;
 
+    const methods = [];
+
     purchaseOrder.ValidOrderItems.forEach(
       (purchaseOrderItem: PurchaseOrderItem) => {
         const orderItemBilling = this.orderItemBillings.find(
           (v) => v.OrderItem.id === purchaseOrderItem.id
         );
         if (orderItemBilling) {
-          this.invokeService
-            .invoke(orderItemBilling.InvoiceItem.Delete)
-            .subscribe(() => {
-              context.reset();
-              this.refreshService.refresh();
-              this.snackBar.open(
-                'Successfully removed from invoice.',
-                'close',
-                {
-                  duration: 5000,
-                }
-              );
-            }, this.errorService.errorHandler);
+          methods.push(orderItemBilling.InvoiceItem.Delete);
         }
       }
     );
+
+    this.invokeService.invoke(methods).subscribe(() => {
+      context.reset();
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully removed from invoice.', 'close', {
+        duration: 5000,
+      });
+    }, this.errorService.errorHandler);
   }
 
   public addFromPurchaseOrders(purchaseOrders: PurchaseOrder[]): void {
