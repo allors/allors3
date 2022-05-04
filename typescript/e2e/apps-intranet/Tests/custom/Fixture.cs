@@ -72,6 +72,10 @@ namespace Tests
             var config = new Config();
             new Setup(database, config).Apply();
 
+            using var transaction = database.CreateTransaction();
+            new IntranetPopulation(transaction, null, this.MetaPopulation).Execute();
+            transaction.Commit();
+
             return database;
         }
 
