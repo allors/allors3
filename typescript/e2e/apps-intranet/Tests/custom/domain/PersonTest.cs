@@ -20,7 +20,7 @@ namespace Tests.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task Create()
+        public async Task CreateMinimal()
         {
             var before = new People(this.Transaction).Extent().ToArray();
 
@@ -37,7 +37,6 @@ namespace Tests.Objects
             var form = new PersonFormComponent(this.OverlayContainer);
 
             await form.FirstNameInput.SetValueAsync("Jos");
-            await form.LastNameInput.SetValueAsync("Smos");
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -53,7 +52,6 @@ namespace Tests.Objects
             var person = after.Except(before).First();
 
             Assert.AreEqual("Jos", person.FirstName);
-            Assert.AreEqual("Smos", person.LastName);
         }
 
         [Test]

@@ -6,8 +6,8 @@ namespace Scaffold
 
         public abstract string Type { get; }
 
-        public abstract string Init { get; }
+        public abstract string Init { get; protected set; }
 
-        public abstract void ElevatePropertyName(ISet<string> properties);
+        public abstract void Elevate(ISet<string> properties);
     }
 }

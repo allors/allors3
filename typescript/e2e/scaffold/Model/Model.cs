@@ -50,10 +50,10 @@ namespace Scaffold
                 .GroupBy(v => v.Property)
                 .Where(g => g.Count() > 1)
                 .Select(g => g.Key));
-            
+
             foreach (var component in this.Components)
             {
-                component.ElevatePropertyName(properties);
+                component.Elevate(properties);
             }
         }
 

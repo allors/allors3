@@ -229,7 +229,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
     if (this.createRequest) {
       this.object.CollectiveWorkEffortInvoice = false;
       this.object.PreferredCurrency =
-        this.internalOrganisation.PreferredCurrency;
+        this.internalOrganisation?.PreferredCurrency;
     }
 
     if (this.editRequest) {

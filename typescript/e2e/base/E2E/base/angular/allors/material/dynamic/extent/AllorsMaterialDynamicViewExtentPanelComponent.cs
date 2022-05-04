@@ -11,33 +11,30 @@ namespace Allors.E2E.Angular.Material.Dynamic
 
     public partial class AllorsMaterialDynamicViewExtentPanelComponent : IComponent
     {
+        public AllorsMaterialDynamicViewExtentPanelComponent(IComponent container, string @init) : this(container, @init, null)
+        {
+        }
+
         public AllorsMaterialDynamicViewExtentPanelComponent(IComponent container, string @init, string @select)
         {
             this.Container = container;
             var locator = "a-mat-dyn-view-extent-panel";
+
             if (!string.IsNullOrWhiteSpace(@init))
             {
-                locator += "[init={@init}]";
+                locator += $"[init='{@init}']";
             }
 
             if (!string.IsNullOrWhiteSpace(@select))
             {
-                locator += "[select={@select}]";
+                locator += $"[select='{@select}']";
             }
 
             this.Locator = this.Container.Locator.Locator(locator);
         }
 
-        public AllorsMaterialDynamicViewExtentPanelComponent(IComponent container, string propertyType)
-        {
-            this.Container = container;
-            //this.PropertyType = propertyType;
-            this.Locator = this.Container.Locator.Locator("a-mat-dyn-view-extent-panel");
-        }
 
         public IComponent Container { get; }
-
-        public IPropertyType PropertyType { get; }
 
         public MetaPopulation M => this.Container.M;
 

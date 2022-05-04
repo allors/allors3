@@ -19,14 +19,15 @@ namespace Allors.E2E.Angular.Material.Dynamic
         {
             this.Container = container;
             var locator = "a-mat-dyn-edit-extent-panel";
+
             if (!string.IsNullOrWhiteSpace(@init))
             {
-                locator += "[init={@init}]";
+                locator += $"[init='{@init}']";
             }
 
             if (!string.IsNullOrWhiteSpace(@select))
             {
-                locator += "[select={@select}]";
+                locator += $"[select='{@select}']";
             }
 
             this.Locator = this.Container.Locator.Locator(locator);
