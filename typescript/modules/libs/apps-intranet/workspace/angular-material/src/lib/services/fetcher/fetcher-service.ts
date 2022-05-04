@@ -173,6 +173,6 @@ export class FetcherService {
   }
 
   getSettings(loaded: IPullResult) {
-    return loaded.collection<Settings>('FetcherSettings')[0];
+    return loaded.object<Settings>('FetcherSettings');
   }
 }
