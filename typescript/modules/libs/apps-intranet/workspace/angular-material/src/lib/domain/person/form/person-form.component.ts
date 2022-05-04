@@ -248,12 +248,6 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
       else {
         userGroup.addOutMember(user);
       }
-
-      if (this.selectedUserGroups.length == 0) {
-        this.creatorUserGroup.addOutMember(user);
-      } else {
-        this.creatorUserGroup.addInMember(user);
-      }
     }
   }
 
@@ -290,6 +284,12 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
       organisationContactRelationship.Contact = this.object;
       organisationContactRelationship.Organisation = this.organisation;
       organisationContactRelationship.ContactKinds = this.selectedContactKinds;
+    }
+
+    if (this.selectedUserGroups.length == 0) {
+      this.creatorUserGroup.addOutMember(this.object);
+    } else {
+      this.creatorUserGroup.addInMember(this.object);
     }
   }
 }
