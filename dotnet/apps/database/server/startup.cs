@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Server.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.Text;
     using Adapters;
@@ -108,7 +109,11 @@ namespace Allors.Database.Server.Controllers
             var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
             var databaseScope = new DefaultDatabaseServices(engine, httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, objectFactory);
-            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = databaseBuilder.Build();
+
+            var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
+            databaseService.Build = () => databaseBuilder.Build();
+            databaseService.Database = databaseService.Build();
+
 
             if (env.IsDevelopment())
             {

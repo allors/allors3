@@ -9,6 +9,8 @@ namespace Allors.Services
 
     public class DatabaseService : IDatabaseService
     {
+        public System.Func<IDatabase> Build { get; set; }
+
         public IDatabase Database { get; set; }
     }
 }

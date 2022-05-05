@@ -35,6 +35,13 @@ export class PersonOverviewPageComponent extends AllorsOverviewPageComponent {
   contactMechanismTarget: Path;
   serialisedItemTarget: PropertyType[];
 
+  get workEffortContactPerson() {
+    return [
+      this.m.Party.WorkEffortsWhereCustomer,
+      this.m.Person.WorkEffortsWhereContactPerson,
+    ];
+  }
+
   constructor(
     @Self() scopedService: ScopedService,
     @Self() panelService: PanelService,

@@ -58,17 +58,11 @@
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
-          [select]="[
-            m.Party.WorkEffortsWhereCustomer,
-            m.Person.WorkEffortsWhereContactPerson
-          ]"
+          [select]="workEffortContactPerson"
           [init]="m.WorkEffort.Customer"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
-          [select]="[
-            m.Party.WorkEffortsWhereCustomer,
-            m.Person.WorkEffortsWhereContactPerson
-          ]"
+          [select]="workEffortContactPerson"
           [init]="m.WorkEffort.Customer"
         ></a-mat-dyn-edit-extent-panel>
 

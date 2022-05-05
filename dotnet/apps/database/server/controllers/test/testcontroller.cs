@@ -14,9 +14,9 @@ namespace Allors.Database.Server.Controllers
 
     public class TestController : Controller
     {
-        public TestController(IDatabaseService databaseService) => this.Database = databaseService.Database;
+        public TestController(IDatabaseService databaseService) => this.DatabaseService = databaseService;
 
-        public IDatabase Database { get; set; }
+        public IDatabaseService DatabaseService { get; set; }
 
         private ILogger<TestController> Logger { get; set; }
 
@@ -30,9 +30,25 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var database = this.Database;
+                var database = this.DatabaseService.Database;
                 database.Init();
 
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                this.Logger.LogError(e, "Exception");
+                return this.BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Restart()
+        {
+            try
+            {
+                this.DatabaseService.Database = this.DatabaseService.Build();
                 return this.Ok();
             }
             catch (Exception e)
@@ -48,7 +64,7 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var timeService = this.Database.Services.Get<ITime>();
+                var timeService = this.DatabaseService.Database.Services.Get<ITime>();
                 timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }

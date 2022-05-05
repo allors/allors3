@@ -70,10 +70,6 @@ namespace Tests
 
         public IDatabase Init()
         {
-            var response = this.HttpClient.GetAsync(RestartUrl).Result;
-            
-            Assert.True(response.IsSuccessStatusCode);
-
             var database = new Database(
                    new DefaultDatabaseServices(this.Engine),
                    new Configuration
@@ -114,6 +110,9 @@ namespace Tests
                 population = stringWriter.ToString();
                 File.WriteAllText(populationFileInfo.FullName, population);
             }
+
+            var response = this.HttpClient.GetAsync(RestartUrl).Result;
+            Assert.True(response.IsSuccessStatusCode);
 
             return database;
         }

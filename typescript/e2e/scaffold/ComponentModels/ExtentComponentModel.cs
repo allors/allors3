@@ -64,9 +64,7 @@ namespace Scaffold
 
 
             this.Type = fullType;
-            this.Init = !string.IsNullOrWhiteSpace(@init) ?
-                $"new {fullType}(this, \"{@init}\");" :
-                $"new {fullType}(this, \"{@init}\", \"{@select}\");";
+            this.Init = $"new {fullType}(this, \"{@select}\", \"{@init}\", \"{@include}\");";
         }
 
         public class Builder : ComponentModelBuilder
