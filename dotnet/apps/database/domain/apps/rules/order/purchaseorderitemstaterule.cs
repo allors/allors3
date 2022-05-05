@@ -49,6 +49,7 @@ namespace Allors.Database.Domain
                 // when revising
                 if (purchaseOrderState.IsCreated
                     && (@this.PurchaseOrderItemState.IsInProcess || @this.PurchaseOrderItemState.IsSent)
+                    && @this.ExistPurchaseOrderItemShipmentState
                     && !@this.PurchaseOrderItemShipmentState.IsReceived)
                 {
                     @this.PurchaseOrderItemState = states.Created;

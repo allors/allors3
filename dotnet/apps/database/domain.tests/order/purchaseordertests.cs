@@ -1680,7 +1680,7 @@ namespace Allors.Database.Domain.Tests
             order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).Received;
             this.Derive();
 
-            Assert.Contains(this.reviseRevocation, order.Revocations);
+            Assert.DoesNotContain(this.reviseRevocation, order.Revocations);
         }
 
         [Fact]
@@ -1957,13 +1957,14 @@ namespace Allors.Database.Domain.Tests
             var order = new PurchaseOrderBuilder(this.Transaction).Build();
             this.Derive();
 
+            order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
             order.PurchaseOrderShipmentState = new PurchaseOrderShipmentStates(this.Transaction).Received;
             this.Derive();
 
             Assert.Contains(this.receivedRevocation, order.Revocations);
             Assert.Contains(this.quickReceiveRevocation, order.Revocations);
-            Assert.Contains(this.reviseRevocation, order.Revocations);
-            Assert.Contains(this.receivedRevocation, order.Revocations);
         }
     }
 }

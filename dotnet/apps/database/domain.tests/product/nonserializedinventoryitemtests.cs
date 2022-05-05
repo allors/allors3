@@ -776,13 +776,16 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
-                .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
                 .WithPart(part)
                 .WithStoredInFacility(part.DefaultFacility)
                 .WithQuantityOrdered(1)
                 .Build();
+
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
             this.Derive();
+
+            purchaseOrder.SetReadyForProcessing();
+            this.Transaction.Derive(false);
 
             Assert.Equal(1, ((NonSerialisedInventoryItem)part.InventoryItemsWherePart.FirstOrDefault()).QuantityExpectedIn);
         }
@@ -828,13 +831,15 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var purchaseOrderItem = new PurchaseOrderItemBuilder(this.Transaction)
-                .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
                 .WithPart(part)
                 .WithStoredInFacility(part.DefaultFacility)
                 .WithQuantityOrdered(1)
                 .Build();
             purchaseOrder.AddPurchaseOrderItem(purchaseOrderItem);
             this.Derive();
+
+            purchaseOrder.SetReadyForProcessing();
+            this.Transaction.Derive(false);
 
             purchaseOrderItem.QuantityOrdered = 2;
             this.Derive();

@@ -507,7 +507,7 @@ namespace Allors.Database.Domain.Tests
             RepeatingSalesInvoices.Daily(this.Transaction);
 
             Assert.Equal(countBefore + 4, new SalesInvoices(this.Transaction).Extent().Count());
-            Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.NextExecutionDate.Date);
+            Assert.Equal(new DateTime(2018, 6, 11), repeatingInvoice.NextExecutionDate.Date);
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.PreviousExecutionDate.Value.Date);
             Assert.Equal(4, repeatingInvoice.SalesInvoices.Count());
 
@@ -520,7 +520,7 @@ namespace Allors.Database.Domain.Tests
             RepeatingSalesInvoices.Daily(this.Transaction);
 
             Assert.Equal(countBefore + 4, new SalesInvoices(this.Transaction).Extent().Count());
-            Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.NextExecutionDate.Date);
+            Assert.Equal(new DateTime(2018, 6, 11), repeatingInvoice.NextExecutionDate.Date);
             Assert.Equal(new DateTime(2018, 6, 4), repeatingInvoice.PreviousExecutionDate.Value.Date);
             Assert.Equal(4, repeatingInvoice.SalesInvoices.Count());
         }

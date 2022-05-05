@@ -999,7 +999,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemStateDerivePurchaseOrderItemStateCompleted()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
-                .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
+                .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).Sent)
                 .WithIsReceivable(false)
                 .Build();
             this.Derive();
@@ -1011,7 +1011,7 @@ namespace Allors.Database.Domain.Tests
         public void ChangedPurchaseOrderItemStateDerivePurchaseOrderItemStateFinished()
         {
             var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
-                .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).InProcess)
+                .WithPurchaseOrderItemState(new PurchaseOrderItemStates(this.Transaction).Sent)
                 .WithPurchaseOrderItemPaymentState(new PurchaseOrderItemPaymentStates(this.Transaction).Paid)
                 .WithIsReceivable(false)
                 .Build();
@@ -1450,6 +1450,9 @@ namespace Allors.Database.Domain.Tests
             this.order.SetReadyForProcessing();
             this.Transaction.Derive();
 
+            this.order.Send();
+            this.Transaction.Derive();
+
             this.order.QuickReceive();
             this.Transaction.Derive();
 
@@ -1712,6 +1715,9 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
+            this.Transaction.Derive();
+
+            order.Send();
             this.Transaction.Derive();
 
             order.QuickReceive();
