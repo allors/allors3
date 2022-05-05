@@ -42,10 +42,7 @@ namespace Allors.Database.Domain
 
         private void Repeat(DateTime now, DateTime nextDate)
         {
-            if (!this.ExistFinalExecutionDate || nextDate <= this.FinalExecutionDate.Value.Date)
-            {
-                this.NextExecutionDate = nextDate.Date;
-            }
+            this.NextExecutionDate = nextDate.Date;
 
             var orderCandidates = this.Supplier.PurchaseOrdersWhereTakenViaSupplier
                 .Where(v => v.OrderedBy.Equals(this.InternalOrganisation) &&

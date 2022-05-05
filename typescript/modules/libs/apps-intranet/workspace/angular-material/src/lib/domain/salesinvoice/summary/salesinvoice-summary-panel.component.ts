@@ -40,6 +40,7 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
   workEfforts: WorkEffort[];
   public hasIrpf: boolean;
   creditNote: SalesInvoice;
+  repeatedFrom: RepeatingSalesInvoice;
 
   get totalIrpfIsPositive(): boolean {
     return +this.invoice.TotalIrpf > 0;
@@ -129,7 +130,7 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
         },
       }),
       p.RepeatingSalesInvoice({
-        name: `${prefix}_repeatingSalesInvoice`,
+        name: `${prefix}_repeatingSalesInvoiceSource`,
         predicate: {
           kind: 'Equals',
           propertyType: m.RepeatingSalesInvoice.Source,
@@ -140,6 +141,17 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
           Frequency: {},
           DayOfWeek: {},
         },
+      }),
+      p.SalesInvoice({
+        name: `${prefix}_repeatingSalesInvoice`,
+        objectId: id,
+        select: {
+          RepeatingSalesInvoiceWhereSalesInvoice: {
+            include: {
+              Source: {}
+            }
+          },
+        },
       })
     );
   }
@@ -149,6 +161,9 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
     this.orders = loaded.collection<SalesOrder>(`${prefix}_salesOrder`);
     this.workEfforts = loaded.collection<WorkEffort>(`${prefix}_workEffort`);
     this.repeatingInvoices = loaded.collection<RepeatingSalesInvoice>(
+      `${prefix}_repeatingSalesInvoiceSource`
+    );
+    this.repeatedFrom = loaded.object<RepeatingSalesInvoice>(
       `${prefix}_repeatingSalesInvoice`
     );
     this.hasIrpf = Number(this.invoice.TotalIrpf) !== 0;

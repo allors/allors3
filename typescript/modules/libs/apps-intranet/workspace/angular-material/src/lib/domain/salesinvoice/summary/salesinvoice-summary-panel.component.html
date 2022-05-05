@@ -67,13 +67,13 @@
     </div>
 
     <div
-      *ngIf="repeatingInvoice"
-      (click)="navigation.overview(repeatingInvoice)"
+      *ngIf="repeatedFrom"
+      (click)="navigation.overview(repeatedFrom.Source)"
       style="cursor: pointer"
     >
       <div style="color: grey">From Repeating Invoice:</div>
       <div>
-        {{ repeatingInvoice.Source.InvoiceNumber}}
+        {{ repeatedFrom.Source.InvoiceNumber}}
       </div>
     </div>
 
