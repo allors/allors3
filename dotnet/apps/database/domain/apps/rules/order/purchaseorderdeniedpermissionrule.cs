@@ -99,7 +99,7 @@ namespace Allors.Database.Domain
                 @this.AddRevocation(deleteRevocation);
             }
 
-            if (!@this.PurchaseOrderShipmentState.IsNotReceived && !@this.PurchaseOrderShipmentState.IsNa)
+            if (!@this.PurchaseOrderState.IsCreated && !@this.PurchaseOrderShipmentState.IsNotReceived && !@this.PurchaseOrderShipmentState.IsNa)
             {
                 @this.AddRevocation(receivedRevocation);
                 @this.AddRevocation(writeRevocation);

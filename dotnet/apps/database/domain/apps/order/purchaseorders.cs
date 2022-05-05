@@ -106,7 +106,6 @@ namespace Allors.Database.Domain
                 permissions.Get(this.Meta, this.Meta.Cancel),
                 permissions.Get(this.Meta, this.Meta.Reject),
                 permissions.Get(this.Meta, this.Meta.QuickReceive),
-                permissions.Get(this.Meta, this.Meta.Revise),
                 permissions.Get(this.Meta, this.Meta.SetReadyForProcessing),
             };
 

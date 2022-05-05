@@ -82,7 +82,6 @@ namespace Allors.Database.Domain
             get
             {
                 if ((this.PurchaseOrderState.IsInProcess || this.PurchaseOrderState.IsSent || this.PurchaseOrderState.IsCompleted)
-                    && (this.PurchaseOrderShipmentState.IsNotReceived || this.PurchaseOrderShipmentState.IsNa)
                     && !this.ExistPurchaseInvoicesWherePurchaseOrder)
                 {
                     return true;
@@ -364,6 +363,7 @@ namespace Allors.Database.Domain
                         var shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
                             .WithPart(orderItem.Part)
                             .WithSerialisedItem(orderItem.SerialisedItem)
+                            .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction()).NotAvailable)
                             .WithReservedFromInventoryItem(inventoryItem)
                             .WithQuantity(orderItem.QuantityReceived - orderItem.QuantityReturned)
                             .WithContentsDescription($"{orderItem.QuantityReceived} * {orderItem.Part.Name}")
