@@ -32,8 +32,7 @@ import {
   IconService,
   ViewActionService,
 } from '@allors/base/workspace/angular-material/application';
-import { RepeatingSalesInvoice } from '@allors/default/workspace/domain';
-import { SalesInvoice } from 'libs/intranet/workspace/domain/src';
+import { RepeatingSalesInvoice, SalesInvoice } from '@allors/default/workspace/domain';
 
 interface Row extends TableRow {
   object: IObject;
