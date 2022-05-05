@@ -11,26 +11,13 @@ namespace Allors.E2E.Angular.Material.Dynamic
 
     public partial class AllorsMaterialDynamicEditExtentPanelComponent : IComponent
     {
-        public AllorsMaterialDynamicEditExtentPanelComponent(IComponent container, string select, string init, string include)
+        public static string DataTag => "data-tag";
+
+        public AllorsMaterialDynamicEditExtentPanelComponent(IComponent container, string dataTag)
         {
             this.Container = container;
-            var locator = "a-mat-dyn-edit-extent-panel";
-
-            if (!string.IsNullOrWhiteSpace(select))
-            {
-                locator += $"[select='{select}']";
-            }
-
-            if (!string.IsNullOrWhiteSpace(init))
-            {
-                locator += $"[init='{init}']";
-            }
-
-            if (!string.IsNullOrWhiteSpace(include))
-            {
-                locator += $"[include='{include}']";
-            }
-
+            var locator = "a-mat-dyn-view-extent-panel";
+            locator += $"[{DataTag}='{dataTag}']";
             this.Locator = this.Container.Locator.Locator(locator);
         }
 

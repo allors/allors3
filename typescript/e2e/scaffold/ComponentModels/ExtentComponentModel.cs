@@ -4,6 +4,8 @@ namespace Scaffold
 
     public class ExtentComponentModel : ComponentModel
     {
+        public static string DataTag => "data-tag";
+
         public static readonly Dictionary<string, string> TypeByTag = new()
         {
             { "a-mat-dyn-view-extent-panel", "Allors.E2E.Angular.Material.Dynamic.AllorsMaterialDynamicViewExtentPanelComponent" },
@@ -37,34 +39,13 @@ namespace Scaffold
             var tag = element.TagName.ToLowerInvariant();
             var fullType = TypeByTag[tag];
 
-            var @include = element.GetAttribute("[include]")?.Trim();
-            var @init = element.GetAttribute("[init]")?.Trim();
-            var @select = element.GetAttribute("[select]")?.Trim();
-
-            var includeParts = @include?.Split(".");
-            var initParts = @init?.Split(".");
-            var selectParts = @select?.Split(".");
-
-            var parts = includeParts?.Length == 3 ? includeParts : initParts?.Length == 3 ? initParts : selectParts;
-
             var prefix = PrefixByTag[tag];
-            if (parts?.Length == 3)
-            {
-                var objectType = parts[1];
-                var propertyType = parts[2];
-                this.Property = $"{prefix}{propertyType}";
-                this.FullProperty = $"{prefix}{objectType}{propertyType}";
-            }
-            else
-            {
-                var property = @init?.ToPascalCase() ?? @select?.ToPascalCase();
-                this.Property = prefix + property;
-                this.FullProperty = this.Property;
-            }
-
+            var dataTag = element.GetAttribute(DataTag)?.Trim();
+            this.Property = $"{prefix}{dataTag}";
+            this.FullProperty = this.Property;
 
             this.Type = fullType;
-            this.Init = $"new {fullType}(this, \"{@select}\", \"{@init}\", \"{@include}\");";
+            this.Init = $"new {fullType}(this, \"{dataTag}\");";
         }
 
         public class Builder : ComponentModelBuilder
@@ -74,7 +55,7 @@ namespace Scaffold
             }
 
             public override ComponentModel? Build(IElement element) =>
-                TypeByTag.ContainsKey(element.TagName.ToLowerInvariant())
+                TypeByTag.ContainsKey(element.TagName.ToLowerInvariant()) && element.HasAttribute(DataTag)
                     ? new ExtentComponentModel(element)
                     : base.Build(element);
         }
