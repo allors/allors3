@@ -30,10 +30,7 @@ namespace Allors.Database.Domain
 
         private void Repeat(DateTime now, DateTime nextDate)
         {
-            if (!this.ExistFinalExecutionDate || nextDate <= this.FinalExecutionDate.Value.Date)
-            {
-                this.NextExecutionDate = nextDate.Date;
-            }
+            this.NextExecutionDate = nextDate.Date;
 
             var nextInvoice = this.Source.AppsCopy(new SalesInvoiceCopy(this.Source));
             this.AddSalesInvoice(nextInvoice);

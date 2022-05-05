@@ -18,6 +18,7 @@
     *ngIf="objects.length == 0"
     [objectType]="m.RepeatingSalesInvoice"
     (created)="this.refreshService.refresh()"
+    [initializer]="initializer"
   ></a-mat-factory-fab>
 
   <a-mat-table [table]="table"></a-mat-table>

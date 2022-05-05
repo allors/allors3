@@ -33,6 +33,7 @@ import {
   ViewActionService,
 } from '@allors/base/workspace/angular-material/application';
 import { RepeatingSalesInvoice } from '@allors/default/workspace/domain';
+import { SalesInvoice } from 'libs/intranet/workspace/domain/src';
 
 interface Row extends TableRow {
   object: IObject;
@@ -55,6 +56,7 @@ export class RepeatingSalesInvoicePanelEditComponent
   override readonly panelKind = 'Extent';
 
   override readonly panelMode = 'Edit';
+  invoice: SalesInvoice;
 
   override get panelId() {
     return this.m?.RepeatingSalesInvoice.tag;
@@ -71,9 +73,7 @@ export class RepeatingSalesInvoicePanelEditComponent
   }
 
   get initializer(): Initializer {
-    return null;
-    // TODO: Martien
-    // return { propertyType: this.init, id: this.scoped.id };
+    return { propertyType: this.m.RepeatingSalesInvoice.Source, id: this.scoped.id };
   }
 
   title = 'Repeating Sales Invoices';
@@ -153,7 +153,7 @@ export class RepeatingSalesInvoicePanelEditComponent
               },
             },
           },
-        })
+        }),
       );
     }
   }
