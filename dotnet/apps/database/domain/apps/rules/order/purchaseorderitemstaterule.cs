@@ -31,107 +31,123 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
-                var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;
-                var states = new PurchaseOrderItemStates(@this.Transaction());
-                var purchaseOrderState = @this.PurchaseOrderWherePurchaseOrderItem?.PurchaseOrderState;
+                @this.DerivePurchaseOrderItemState(validation);
+            }
+        }
+    }
 
-                if (purchaseOrderState != null)
+    public static class PurchaseOrderItemStateRuleExtensions
+    {
+        public static void DerivePurchaseOrderItemState(this PurchaseOrderItem @this, IValidation validation)
+        {
+            var purchaseOrder = @this.PurchaseOrderWherePurchaseOrderItem;
+            var states = new PurchaseOrderItemStates(@this.Transaction());
+            var purchaseOrderState = @this.PurchaseOrderWherePurchaseOrderItem?.PurchaseOrderState;
+
+            if (purchaseOrderState != null)
+            {
+                // when revising
+                if (purchaseOrderState.IsCreated
+                    && (@this.PurchaseOrderItemState.IsInProcess || @this.PurchaseOrderItemState.IsSent)
+                    && !@this.PurchaseOrderItemShipmentState.IsReceived)
                 {
-                    if (purchaseOrderState.IsInProcess &&
-                        (@this.PurchaseOrderItemState.IsCreated || @this.PurchaseOrderItemState.IsOnHold))
-                    {
-                        @this.PurchaseOrderItemState = states.InProcess;
-                    }
-
-                    if (purchaseOrderState.IsOnHold && @this.PurchaseOrderItemState.IsInProcess)
-                    {
-                        @this.PurchaseOrderItemState = states.OnHold;
-                    }
-
-                    if (purchaseOrderState.IsSent && @this.PurchaseOrderItemState.IsInProcess)
-                    {
-                        @this.PurchaseOrderItemState = states.Sent;
-                    }
-
-                    if (@this.IsValid && purchaseOrderState.IsFinished)
-                    {
-                        @this.PurchaseOrderItemState = states.Finished;
-                    }
-
-                    if (@this.IsValid && purchaseOrderState.IsCancelled)
-                    {
-                        @this.PurchaseOrderItemState = states.Cancelled;
-                    }
-
-                    if (@this.IsValid && purchaseOrderState.IsRejected)
-                    {
-                        @this.PurchaseOrderItemState = states.Rejected;
-                    }
+                    @this.PurchaseOrderItemState = states.Created;
                 }
 
-                var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(transaction);
-                var purchaseOrderItemPaymentStates = new PurchaseOrderItemPaymentStates(transaction);
-                var purchaseOrderItemStates = new PurchaseOrderItemStates(transaction);
-
-                if (@this.IsValid)
+                if (purchaseOrderState.IsInProcess &&
+                    (@this.PurchaseOrderItemState.IsCreated || @this.PurchaseOrderItemState.IsOnHold))
                 {
-                    // ShipmentState
-                    if (@this.IsReceivable)
-                    {
-                        var quantityReceived = 0M;
-                        foreach (var shipmentReceipt in @this.ShipmentReceiptsWhereOrderItem)
-                        {
-                            quantityReceived += shipmentReceipt.QuantityAccepted;
-                        }
+                    @this.PurchaseOrderItemState = states.InProcess;
+                }
 
-                        @this.QuantityReceived = quantityReceived;
+                if (purchaseOrderState.IsOnHold && @this.PurchaseOrderItemState.IsInProcess)
+                {
+                    @this.PurchaseOrderItemState = states.OnHold;
+                }
+
+                if (purchaseOrderState.IsSent && @this.PurchaseOrderItemState.IsInProcess)
+                {
+                    @this.PurchaseOrderItemState = states.Sent;
+                }
+
+                if (@this.IsValid && purchaseOrderState.IsFinished)
+                {
+                    @this.PurchaseOrderItemState = states.Finished;
+                }
+
+                if (@this.IsValid && purchaseOrderState.IsCancelled)
+                {
+                    @this.PurchaseOrderItemState = states.Cancelled;
+                }
+
+                if (@this.IsValid && purchaseOrderState.IsRejected)
+                {
+                    @this.PurchaseOrderItemState = states.Rejected;
+                }
+            }
+
+            var purchaseOrderItemShipmentStates = new PurchaseOrderItemShipmentStates(@this.Transaction());
+            var purchaseOrderItemPaymentStates = new PurchaseOrderItemPaymentStates(@this.Transaction());
+            var purchaseOrderItemStates = new PurchaseOrderItemStates(@this.Transaction());
+
+            if (@this.IsValid)
+            {
+                // ShipmentState
+                if (@this.IsReceivable)
+                {
+                    var quantityReceived = 0M;
+                    foreach (var shipmentReceipt in @this.ShipmentReceiptsWhereOrderItem)
+                    {
+                        quantityReceived += shipmentReceipt.QuantityAccepted;
                     }
 
-                    if (!@this.IsReceivable)
+                    @this.QuantityReceived = quantityReceived;
+                }
+
+                if (!@this.IsReceivable)
+                {
+                    @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).Na;
+                }
+                else if (@this.QuantityReceived == 0 && @this.IsReceivable)
+                {
+                    @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).NotReceived;
+                }
+                else
+                {
+                    @this.PurchaseOrderItemShipmentState = @this.QuantityReceived < @this.QuantityOrdered ?
+                        purchaseOrderItemShipmentStates.PartiallyReceived :
+                        purchaseOrderItemShipmentStates.Received;
+                }
+
+                // PaymentState
+                var orderBilling = @this.OrderItemBillingsWhereOrderItem.Select(v => v.InvoiceItem).OfType<PurchaseInvoiceItem>().ToArray();
+
+                if (orderBilling.Any())
+                {
+                    if (orderBilling.All(v => v.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsPaid))
                     {
-                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).Na;
+                        @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.Paid;
                     }
-                    else if (@this.QuantityReceived == 0 && @this.IsReceivable)
+                    else if (orderBilling.Any(v => v.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsPartiallyPaid))
                     {
-                        @this.PurchaseOrderItemShipmentState = new PurchaseOrderItemShipmentStates(@this.Strategy.Transaction).NotReceived;
+                        @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.PartiallyPaid;
                     }
                     else
                     {
-                        @this.PurchaseOrderItemShipmentState = @this.QuantityReceived < @this.QuantityOrdered ?
-                            purchaseOrderItemShipmentStates.PartiallyReceived :
-                            purchaseOrderItemShipmentStates.Received;
+                        @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.NotPaid;
                     }
+                }
 
-                    // PaymentState
-                    var orderBilling = @this.OrderItemBillingsWhereOrderItem.Select(v => v.InvoiceItem).OfType<PurchaseInvoiceItem>().ToArray();
+                // PurchaseOrderItem States
+                if (@this.PurchaseOrderItemState.IsSent
+                    && (@this.PurchaseOrderItemShipmentState.IsReceived || @this.PurchaseOrderItemShipmentState.IsNa))
+                {
+                    @this.PurchaseOrderItemState = purchaseOrderItemStates.Completed;
+                }
 
-                    if (orderBilling.Any())
-                    {
-                        if (orderBilling.All(v => v.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsPaid))
-                        {
-                            @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.Paid;
-                        }
-                        else if (orderBilling.Any(v => v.PurchaseInvoiceWherePurchaseInvoiceItem.PurchaseInvoiceState.IsPartiallyPaid))
-                        {
-                            @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.PartiallyPaid;
-                        }
-                        else
-                        {
-                            @this.PurchaseOrderItemPaymentState = purchaseOrderItemPaymentStates.NotPaid;
-                        }
-                    }
-
-                    // PurchaseOrderItem States
-                    if (@this.PurchaseOrderItemState.IsInProcess
-                        && (@this.PurchaseOrderItemShipmentState.IsReceived || @this.PurchaseOrderItemShipmentState.IsNa))
-                    {
-                        @this.PurchaseOrderItemState = purchaseOrderItemStates.Completed;
-                    }
-
-                    if (@this.PurchaseOrderItemState.IsCompleted && @this.PurchaseOrderItemPaymentState.IsPaid)
-                    {
-                        @this.PurchaseOrderItemState = purchaseOrderItemStates.Finished;
-                    }
+                if (@this.PurchaseOrderItemState.IsCompleted && @this.PurchaseOrderItemPaymentState.IsPaid)
+                {
+                    @this.PurchaseOrderItemState = purchaseOrderItemStates.Finished;
                 }
             }
         }
