@@ -39,7 +39,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
   emailAddresses: string[] = [];
 
   userGroups: UserGroup[];
-  selectedUserGroups: UserGroup[];
+  selectedUserGroups: UserGroup[] = [];
 
   internalOrganisation: InternalOrganisation;
   organisation: Organisation;
