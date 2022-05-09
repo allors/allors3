@@ -37,7 +37,7 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
   request: RequestForQuote;
   currencies: Currency[];
   contactMechanisms: ContactMechanism[] = [];
-  contacts: Person[] = [];
+  contacts: Party[] = [];
   irpfRegimes: IrpfRegime[];
   vatRegimes: VatRegime[];
   showIrpf: boolean;
@@ -164,6 +164,7 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
       }),
       pull.Party({
         object: party,
+        name: 'contacts',
         select: {
           CurrentContacts: x,
         },
@@ -196,7 +197,7 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
       this.contactMechanisms = partyContactMechanisms?.map(
         (v: PartyContactMechanism) => v.ContactMechanism
       );
-      this.contacts = loaded.collection<Person>(m.Party.CurrentContacts);
+      this.contacts = loaded.collection<Party>('contacts') ?? [];
 
       const selectedParty = loaded.object<Party>('selectedParty');
       this.currencyInitialRole =
