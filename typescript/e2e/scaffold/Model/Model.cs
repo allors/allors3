@@ -37,10 +37,6 @@ namespace Scaffold
                 {
                     acc.Add(el);
                 }
-                else
-                {
-                    Console.WriteLine(0);
-                }
 
                 return acc;
             }).ToArray();
