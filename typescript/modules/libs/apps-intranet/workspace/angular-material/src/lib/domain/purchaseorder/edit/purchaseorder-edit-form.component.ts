@@ -283,10 +283,10 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
         );
       this.takenViaContactMechanisms = partyContactMechanisms?.map(
         (v: PartyContactMechanism) => v.ContactMechanism
-      );
+      ) ?? [];
       this.takenViaContacts = loaded.collection<Person>(
         m.Party.CurrentContacts
-      );
+      ) ?? [];
     });
   }
 

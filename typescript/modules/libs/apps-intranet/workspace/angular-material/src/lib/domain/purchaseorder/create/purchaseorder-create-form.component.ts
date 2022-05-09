@@ -59,8 +59,6 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
   addShipToAddress = false;
   addShipToContactPerson = false;
 
-  private takenVia: Party;
-
   suppliersFilter: SearchFactory;
   irpfRegimes: IrpfRegime[];
   currencyInitialRole: Currency;
@@ -129,11 +127,6 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
 
     this.object.OrderedBy = this.internalOrganisation;
 
-    if (this.object.TakenViaSupplier) {
-      this.takenVia = this.object.TakenViaSupplier;
-      this.updateSupplier(this.takenVia);
-    }
-
     if (this.object.OrderedBy) {
       this.updateOrderedBy(this.object.OrderedBy);
     }
@@ -148,7 +141,6 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
     this.object.TakenViaSupplier = supplier;
-    this.takenVia = supplier;
     
     this.takenViaContactMechanisms = [];
     this.takenViaContacts = [];
@@ -172,7 +164,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     partyContactMechanism: PartyContactMechanism
   ): void {
     this.takenViaContactMechanisms.push(partyContactMechanism.ContactMechanism);
-    partyContactMechanism.Party = this.takenVia;
+    partyContactMechanism.Party = this.object.TakenViaSupplier;
     this.object.AssignedTakenViaContactMechanism =
       partyContactMechanism.ContactMechanism;
   }
@@ -272,10 +264,10 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
         );
       this.takenViaContactMechanisms = partyContactMechanisms?.map(
         (v: PartyContactMechanism) => v.ContactMechanism
-      );
+      ) ?? [];
       this.takenViaContacts = loaded.collection<Person>(
         m.Party.CurrentContacts
-      );
+      ) ?? [];
 
       const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
       this.takenViaContactMechanismInitialRole = selectedSupplier.OrderAddress;
