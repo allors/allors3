@@ -57,7 +57,7 @@ namespace Tests.Objects
         [Test]
         public async Task EditDetail()
         {
-            var person = new People(this.Transaction).FindBy(this.M.Person.FirstName, "John");
+            var person = new People(this.Transaction).Extent().First();
 
             var @class = this.M.Person;
 
@@ -85,40 +85,5 @@ namespace Tests.Objects
             Assert.AreEqual("Jenny", person.FirstName);
             Assert.AreEqual("Penny", person.LastName);
         }
-
-        [Test]
-        public async Task AddEmployment()
-        {
-            var person = new People(this.Transaction).FindBy(this.M.Person.FirstName, "John");
-
-            var @class = this.M.Person;
-
-            var overview = this.Application.GetOverview(@class);
-            await this.Page.GotoAsync(overview.RouteInfo.FullPath);
-            await this.Page.WaitForAngular();
-
-            var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
-            await this.Page.GotoAsync(url);
-            await this.Page.WaitForAngular();
-
-            var detail = this.AppRoot.Locator.Locator("[data-allors-kind='view-detail-panel']");
-            await detail.ClickAsync();
-            await this.Page.WaitForAngular();
-
-            var form = new PersonFormComponent(this.AppRoot);
-            await form.FirstNameInput.SetValueAsync("Jenny");
-            await form.LastNameInput.SetValueAsync("Penny");
-
-            var saveComponent = new SaveComponent(this.AppRoot);
-            await saveComponent.SaveAsync();
-
-            await this.Page.WaitForAngular();
-
-            this.Transaction.Rollback();
-
-            Assert.AreEqual("Jenny", person.FirstName);
-            Assert.AreEqual("Penny", person.LastName);
-        }
-
     }
 }

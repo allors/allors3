@@ -173,6 +173,8 @@ namespace Tests.Objects
             var dialog = new AllorsMaterialDialogComponent(this.OverlayContainer);
             await dialog.YesButton.ClickAsync();
 
+            await this.Page.WaitForAngular();
+
             this.Transaction.Rollback();
 
             var after = new Employments(this.Transaction).Extent().ToArray();
