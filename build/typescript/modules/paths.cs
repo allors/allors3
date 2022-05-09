@@ -8,5 +8,8 @@ public partial class Paths
 
     public AbsolutePath TypescriptModulesAppsBaseAngularMaterial => TypescriptModulesApps / "base/workspace/angular-material";
 
-    public AbsolutePath TypescriptModulesAppsAppsIntranetAngularMaterial => TypescriptModulesApps / "apps-intranet/workspace/angular-material-app";
+
+    public AbsolutePath TypescriptModulesLibs => TypescriptModules / "libs";
+
+    public AbsolutePath TypescriptModulesAppsAppsIntranetAngularMaterial => TypescriptModulesLibs / "apps-intranet/workspace/angular-material";
 }

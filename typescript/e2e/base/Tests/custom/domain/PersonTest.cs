@@ -10,6 +10,7 @@ namespace Tests.Objects
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Html;
     using Allors.E2E.Angular.Material.Factory;
+    using Allors.E2E.Angular.Material.Sidenav;
     using Allors.E2E.Test;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -91,7 +92,10 @@ namespace Tests.Objects
         [Test]
         public async Task AddEmployment()
         {
+            var before = new Employments(this.Transaction).Extent().ToArray();
+
             var person = new People(this.Transaction).FindBy(this.M.Person.FirstName, "John");
+            var organisation = new Organisations(this.Transaction).FindBy(this.M.Organisation.Name, "Acme");
 
             var @class = this.M.Person;
 
@@ -105,20 +109,75 @@ namespace Tests.Objects
             await personOverview.ViewEmployment.Locator.ClickAsync();
             await this.Page.WaitForAngular();
 
-            //var form = new PersonFormComponent(this.AppRoot);
-            //await form.FirstNameInput.SetValueAsync("Jenny");
-            //await form.LastNameInput.SetValueAsync("Penny");
+            var edit = personOverview.EditEmployment;
 
-            //var saveComponent = new SaveComponent(this.AppRoot);
-            //await saveComponent.SaveAsync();
+            var objectIds = await edit.Table.GetObjectIds();
+            Assert.AreEqual(0, objectIds.Length);
 
-            //await this.Page.WaitForAngular();
+            await edit.FactoryFab.Create(this.M.Employment);
 
-            //this.Transaction.Rollback();
+            var form = new EmploymentFormComponent(this.OverlayContainer);
+            await form.EmployerAutocomplete.SelectAsync(organisation.Name);
 
-            //Assert.AreEqual("Jenny", person.FirstName);
-            //Assert.AreEqual("Penny", person.LastName);
+            var saveComponent = new SaveComponent(this.OverlayContainer);
+            await saveComponent.SaveAsync();
+
+            await this.Page.WaitForAngular();
+
+            this.Transaction.Rollback();
+
+            var after = new Employments(this.Transaction).Extent().ToArray();
+
+            var employments = after.Except(before).ToArray();
+
+            Assert.AreEqual(1, employments.Length);
+
+            var employment = employments[0];
+
+            objectIds = await edit.Table.GetObjectIds();
+            Assert.AreEqual(1, objectIds.Length);
+            Assert.AreEqual(employment.Strategy.ObjectId.ToString(), objectIds[0]);
+
+            Assert.AreEqual(organisation, employment.Employer);
+            Assert.AreEqual(person, employment.Employee);
         }
 
+
+        [Test]
+        public async Task DeleteEmployment()
+        {
+            var before = new Employments(this.Transaction).Extent().ToArray();
+
+            var person = new People(this.Transaction).FindBy(this.M.Person.FirstName, "Jane");
+
+            var employment = before.First(v => person.Equals(v.Employee));
+
+            var @class = this.M.Person;
+
+            var overview = this.Application.GetOverview(@class);
+            var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
+            await this.Page.GotoAsync(url);
+            await this.Page.WaitForAngular();
+
+            var personOverview = new PersonOverviewPageComponent(this.AppRoot);
+
+            await personOverview.ViewEmployment.Locator.ClickAsync();
+            await this.Page.WaitForAngular();
+
+            var edit = personOverview.EditEmployment;
+
+            await edit.Table.Action(employment, "delete");
+
+            await this.Page.WaitForAngular();
+
+            var dialog = new AllorsMaterialDialogComponent(this.OverlayContainer);
+            await dialog.YesButton.ClickAsync();
+
+            this.Transaction.Rollback();
+
+            var after = new Employments(this.Transaction).Extent().ToArray();
+
+            Assert.AreEqual(before.Length - 1, after.Length);
+        }
     }
 }

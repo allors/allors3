@@ -6,8 +6,10 @@
 namespace Allors.E2E.Angular.Material.Dynamic
 {
     using Allors.Database.Meta;
+    using Factory;
     using Info;
     using Microsoft.Playwright;
+    using Table;
 
     public partial class AllorsMaterialDynamicEditExtentPanelComponent : IComponent
     {
@@ -16,7 +18,7 @@ namespace Allors.E2E.Angular.Material.Dynamic
         public AllorsMaterialDynamicEditExtentPanelComponent(IComponent container, string dataTag)
         {
             this.Container = container;
-            var locator = "a-mat-dyn-view-extent-panel";
+            var locator = "a-mat-dyn-edit-extent-panel";
             locator += $"[{DataTag}='{dataTag}']";
             this.Locator = this.Container.Locator.Locator(locator);
         }
@@ -30,5 +32,9 @@ namespace Allors.E2E.Angular.Material.Dynamic
         public ILocator Locator { get; }
 
         public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
+
+        public FactoryFabComponent FactoryFab => new FactoryFabComponent(this);
+
+        public AllorsMaterialTableComponent Table => new AllorsMaterialTableComponent(this);
     }
 }
