@@ -195,6 +195,8 @@ namespace Tests
             allors.CreateEmployee("letmein", faker);
             var jane = allors.CreateAdministrator("letmein", faker);
             jane.UserName = "jane@example.com";
+            jane.UserProfile.DefaultInternalOrganization = allors;
+
             var allorsB2BCustomer = allors.CreateB2BCustomer(this.Transaction.Faker());
             var allorsB2CCustomer = allors.CreateB2CCustomer(this.Transaction.Faker());
             allors.CreateSupplier(this.Transaction.Faker());
@@ -410,6 +412,11 @@ namespace Tests
             this.Transaction.Derive();
 
             new PurchaseShipmentBuilder(this.Transaction).WithDefaults(allors).Build();
+
+            this.Transaction.Derive();
+
+            new IndustryClassificationBuilder(this.Transaction).WithDefaults().Build();
+            new CustomOrganisationClassificationBuilder(this.Transaction).WithDefaults().Build();
 
             this.Transaction.Derive();
             this.Transaction.Commit();

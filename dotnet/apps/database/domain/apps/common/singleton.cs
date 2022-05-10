@@ -23,6 +23,11 @@ namespace Allors.Database.Domain
             {
                 this.LogoImage = new MediaBuilder(this.Strategy.Transaction).WithInFileName("allors.png").WithInData(this.GetResourceBytes("allors.png")).Build();
             }
+
+            if (!this.ExistSettings)
+            {
+                this.Settings = new SettingsBuilder(this.strategy.Transaction).Build();
+            }
         }
 
         private byte[] GetResourceBytes(string name)

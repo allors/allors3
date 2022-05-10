@@ -45,6 +45,12 @@ namespace Allors.E2E.Angular.Material.Role
             await this.Page.WaitForAngular();
             var optionLocator = this.Page.Locator($"mat-option[data-allors-option-id='{@object?.Id ?? 0}'] span");
             await optionLocator.ClickAsync();
+
+            _ = bool.TryParse(await this.Locator.GetAttributeAsync("multiple"), out var multiple);
+            if (multiple)
+            {
+                await this.Page.Keyboard.PressAsync("Escape");
+            }
         }
     }
 }

@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\dotnet\Apps\Database\configuration\Configuration.csproj" />
-		<ProjectReference Include="..\..\..\..\dotnet\Apps\Database\testpopulation\testpopulation.csproj" />
+		<ProjectReference Include="..\..\..\..\dotnet\Apps\Database\testpopulation\TestPopulation.csproj" />
 		<ProjectReference Include="..\..\..\..\dotnet\system\database\adapters\allors.database.adapters.sql.sqlclient\allors.database.adapters.sql.sqlclient.csproj" />
 		<ProjectReference Include="..\E2E\Allors.E2E.csproj" />
 	</ItemGroup>

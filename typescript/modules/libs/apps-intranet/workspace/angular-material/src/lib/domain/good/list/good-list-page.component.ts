@@ -179,7 +179,7 @@ export class GoodListPageComponent implements OnInit, OnDestroy {
               (p) =>
                 p.ProductIdentificationType.UniqueId ===
                 'b640630d-a556-4526-a2e5-60a84ab0db3f'
-            ).Identification,
+            )?.Identification,
             categories: productCategories
               ?.filter((w) => w.Products.includes(v))
               ?.map((w) => w.DisplayName)

@@ -6,6 +6,7 @@
 namespace Allors.E2E.Angular.Material.Factory
 {
     using System.Threading.Tasks;
+    using Cdk;
     using Database.Meta;
     using Html;
     using Info;
@@ -47,7 +48,9 @@ namespace Allors.E2E.Angular.Material.Factory
             if (@class != null)
             {
                 await this.Page.WaitForAngular();
-                var button = new Button(this, $"button[data-allors-class='{@class.Tag}']");
+
+                var overlayContainer = new OverlayContainer(this);
+                var button = new Button(overlayContainer, $"button[data-allors-class='{@class.Tag}']");
 
                 if (await button.IsVisibleAsync())
                 {
