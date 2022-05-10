@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\..\..\dotnet\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "meta", "..\..\..\dotnet\Apps\Database\meta\meta.csproj", "{E4A45639-BECA-4C63-94FA-AC0E96074C99}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "testpopulation", "..\..\..\dotnet\Apps\Database\testpopulation\testpopulation.csproj", "{E6C2B6FA-2FE4-4FD8-99BA-2E39AA64A33C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestPopulation", "..\..\..\dotnet\Apps\Database\testpopulation\TestPopulation.csproj", "{E6C2B6FA-2FE4-4FD8-99BA-2E39AA64A33C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,7 +74,6 @@ Global
 		{0FDC2ECA-529B-46AB-8F42-5D8EA728315B} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
 		{9029151A-5AB3-488D-B8AA-C73CF26D65F8} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
 		{E4A45639-BECA-4C63-94FA-AC0E96074C99} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
-		{E6C2B6FA-2FE4-4FD8-99BA-2E39AA64A33C} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

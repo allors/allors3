@@ -412,6 +412,11 @@ namespace Tests
             new PurchaseShipmentBuilder(this.Transaction).WithDefaults(allors).Build();
 
             this.Transaction.Derive();
+
+            new IndustryClassificationBuilder(this.Transaction).WithDefaults().Build();
+            new CustomOrganisationClassificationBuilder(this.Transaction).WithDefaults().Build();
+
+            this.Transaction.Derive();
             this.Transaction.Commit();
         }
 
