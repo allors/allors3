@@ -49,9 +49,9 @@ namespace Tests.Objects
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var person = after.Except(before).First();
+            var organisation = after.Except(before).First();
 
-            Assert.AreEqual("Driesjes", person.Name);
+            Assert.AreEqual("Driesjes", organisation.Name);
         }
 
         [Test]
@@ -103,19 +103,19 @@ namespace Tests.Objects
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var person = after.Except(before).First();
+            var organisation = after.Except(before).First();
 
-            Assert.AreEqual("Driesjes", person.Name);
-            Assert.AreEqual("BE047747474", person.TaxNumber);
-            Assert.AreEqual(legalForm, person.LegalForm);
-            Assert.AreEqual(locale, person.Locale);
-            Assert.AreEqual(currency, person.PreferredCurrency);
-            Assert.AreEqual(industryClassification, person.IndustryClassifications.First());
-            Assert.AreEqual(customOrganisationClassification, person.CustomClassifications.First());
-            Assert.AreEqual(true, person.IsManufacturer);
-            Assert.AreEqual(true, person.IsInternalOrganisation);
-            Assert.AreEqual("This is a comment", person.Comment);
-            Assert.AreEqual(true, person.CollectiveWorkEffortInvoice);
+            Assert.AreEqual("Driesjes", organisation.Name);
+            Assert.AreEqual("BE047747474", organisation.TaxNumber);
+            Assert.AreEqual(legalForm, organisation.LegalForm);
+            Assert.AreEqual(locale, organisation.Locale);
+            Assert.AreEqual(currency, organisation.PreferredCurrency);
+            Assert.AreEqual(industryClassification, organisation.IndustryClassifications.First());
+            Assert.AreEqual(customOrganisationClassification, organisation.CustomClassifications.First());
+            Assert.AreEqual(true, organisation.IsManufacturer);
+            Assert.AreEqual(true, organisation.IsInternalOrganisation);
+            Assert.AreEqual("This is a comment", organisation.Comment);
+            Assert.AreEqual(true, organisation.CollectiveWorkEffortInvoice);
         }
     }
 }
