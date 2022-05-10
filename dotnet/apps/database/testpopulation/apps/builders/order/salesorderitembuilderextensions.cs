@@ -9,8 +9,6 @@ namespace Allors.Database.Domain.TestPopulation
     using System.Linq;
     using Meta;
     using InvoiceItemType = InvoiceItemType;
-    using SaleKind = SaleKind;
-    using RentalType = RentalType;
     using NonUnifiedGood = NonUnifiedGood;
     using SerialisedItemAvailability = SerialisedItemAvailability;
     using UnifiedGood = UnifiedGood;
@@ -22,8 +20,6 @@ namespace Allors.Database.Domain.TestPopulation
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
             var invoiceItemTypes = @this.Transaction.Extent<InvoiceItemType>().ToList();
-            var saleKinds = @this.Transaction.Extent<SaleKind>().ToList();
-            var rentaltypes = @this.Transaction.Extent<RentalType>().ToList();
 
             var otherInvoiceItemTypes = invoiceItemTypes.Except(
                 invoiceItemTypes.Where(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId) || v.UniqueId.Equals(InvoiceItemTypes.PartItemId)).ToList())
@@ -38,8 +34,6 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithInternalComment(faker.Lorem.Sentence())
                 .WithInvoiceItemType(faker.Random.ListItem(otherInvoiceItemTypes))
                 .WithQuantityOrdered(faker.Random.UInt(1, 10))
-                .WithSaleKind(faker.Random.ListItem(saleKinds))
-                .WithRentalType(faker.Random.ListItem(rentaltypes))
                 .WithAssignedUnitPrice(faker.Random.UInt());
 
             return @this;
@@ -50,8 +44,6 @@ namespace Allors.Database.Domain.TestPopulation
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
             var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.ProductItemId));
-            var saleKinds = @this.Transaction.Extent<SaleKind>().ToList();
-            var rentaltypes = @this.Transaction.Extent<RentalType>().ToList();
 
             var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
             unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
@@ -63,8 +55,6 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithInternalComment(faker.Lorem.Sentence())
                 .WithProduct(serializedProduct)
                 .WithSerialisedItem(serializedProduct.SerialisedItems.FirstOrDefault())
-                .WithSaleKind(faker.Random.ListItem(saleKinds))
-                .WithRentalType(faker.Random.ListItem(rentaltypes))
                 .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
                 .WithQuantityOrdered(1)
                 .WithAssignedUnitPrice(faker.Random.UInt());
@@ -78,8 +68,6 @@ namespace Allors.Database.Domain.TestPopulation
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
             var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
-            var saleKinds = @this.Transaction.Extent<SaleKind>().ToList();
-            var rentaltypes = @this.Transaction.Extent<RentalType>().ToList();
 
             var unifiedGoodExtent = @this.Transaction.Extent<UnifiedGood>();
             unifiedGoodExtent.Filter.AddEquals(m.UnifiedGood.InventoryItemKind, new InventoryItemKinds(@this.Transaction).Serialised);
@@ -91,8 +79,6 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithInvoiceItemType(invoiceItemType)
                 .WithProduct(serializedPart)
                 .WithSerialisedItem(serializedPart.SerialisedItems.FirstOrDefault())
-                .WithSaleKind(faker.Random.ListItem(saleKinds))
-                .WithRentalType(faker.Random.ListItem(rentaltypes))
                 .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
                 .WithQuantityOrdered(1)
                 .WithAssignedUnitPrice(faker.Random.UInt());
@@ -105,8 +91,6 @@ namespace Allors.Database.Domain.TestPopulation
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
             var invoiceItemType = @this.Transaction.Extent<InvoiceItemType>().FirstOrDefault(v => v.UniqueId.Equals(InvoiceItemTypes.PartItemId));
-            var saleKinds = @this.Transaction.Extent<SaleKind>().ToList();
-            var rentaltypes = @this.Transaction.Extent<RentalType>().ToList();
 
             var product = @this.Transaction.Extent<NonUnifiedGood>().First(v => v.Part.InventoryItemKind.Equals(new InventoryItemKinds(@this.Transaction).NonSerialised));
 
@@ -114,8 +98,6 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithComment(faker.Lorem.Sentence())
                 .WithInternalComment(faker.Lorem.Sentence())
                 .WithInvoiceItemType(invoiceItemType)
-                .WithSaleKind(faker.Random.ListItem(saleKinds))
-                .WithRentalType(faker.Random.ListItem(rentaltypes))
                 .WithProduct(product)
                 .WithQuantityOrdered(faker.Random.UInt(2, 100))
                 .WithAssignedUnitPrice(faker.Random.UInt());
