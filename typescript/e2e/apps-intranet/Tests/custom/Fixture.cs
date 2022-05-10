@@ -102,10 +102,10 @@ namespace Tests
                 using var transaction = database.CreateTransaction();
                 new IntranetPopulation(transaction, null, this.MetaPopulation).Execute();
                 transaction.Commit();
-                
-                using var stream = File.Create(fileName);
-                using var writer = XmlWriter.Create(stream);
-                database.Save(writer);
+
+                //using var stream = File.Create(fileName);
+                //using var writer = XmlWriter.Create(stream);
+                //database.Save(writer);
             }
 
             var response = this.HttpClient.GetAsync(RestartUrl).Result;

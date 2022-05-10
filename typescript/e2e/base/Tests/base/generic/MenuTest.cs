@@ -21,13 +21,6 @@ namespace Tests.ApplicationTests
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public void Init()
-        {
-            var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null);
-            Assert.AreEqual(22, components.Count());
-        }
-
-        [Test]
         public async Task Navigate()
         {
             var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null).ToArray();

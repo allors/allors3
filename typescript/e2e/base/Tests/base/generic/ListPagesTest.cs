@@ -10,7 +10,6 @@ namespace Tests.ApplicationTests
     using Allors.E2E.Angular.Info;
     using Allors.E2E.Angular.Material.Factory;
     using Allors.E2E.Angular.Material.Table;
-    using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
