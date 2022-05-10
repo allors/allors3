@@ -9,8 +9,8 @@ namespace Allors.Database.Domain
 
     public partial class PurchaseInvoiceTypes
     {
-        private static readonly Guid PurchaseInvoiceId = new Guid("D08F0309-A4CB-4ab7-8F75-3BB11DCF3783");
-        private static readonly Guid PurchaseReturnId = new Guid("0187D927-81F5-4d6a-9847-58B674AD3E6A");
+        public static readonly Guid PurchaseInvoiceId = new Guid("D08F0309-A4CB-4ab7-8F75-3BB11DCF3783");
+        public static readonly Guid PurchaseReturnId = new Guid("0187D927-81F5-4d6a-9847-58B674AD3E6A");
 
         private UniquelyIdentifiableCache<PurchaseInvoiceType> cache;
 
