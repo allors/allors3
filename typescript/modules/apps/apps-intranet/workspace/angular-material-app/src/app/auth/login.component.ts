@@ -6,9 +6,10 @@ import { map, of, Subscription, switchMap, tap } from 'rxjs';
 import {
   AuthenticationService,
   ContextService,
+  SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { Organisation, Person } from '@allors/default/workspace/domain';
+import { Organisation, Person, Singleton } from '@allors/default/workspace/domain';
 import { InternalOrganisationId } from '@allors/apps-intranet/workspace/angular-material';
 
 @Component({
@@ -29,6 +30,7 @@ export class LoginComponent implements OnDestroy {
     private router: Router,
     private allors: ContextService,
     private internalOrganisationId: InternalOrganisationId,
+    private singletonId: SingletonId,
     public formBuilder: FormBuilder
   ) {
     this.m = allors.metaPopulation as M;
@@ -66,6 +68,7 @@ export class LoginComponent implements OnDestroy {
                   value: true,
                 },
               }),
+              p.Singleton({}),
             ];
 
             return this.allors.context.pull(pulls).pipe(
@@ -81,6 +84,9 @@ export class LoginComponent implements OnDestroy {
 
                 this.internalOrganisationId.value =
                   internalOrganisation?.strategy.id;
+
+                const singleton = loaded.collection<Singleton>(m.Singleton)[0];
+                this.singletonId.value = singleton.strategy.id;
               }),
               map(() => true)
             );
