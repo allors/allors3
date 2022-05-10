@@ -143,6 +143,7 @@ export class PurchaseInvoiceEditFormComponent extends AllorsFormComponent<Purcha
           DerivedBilledFromContactMechanism: {
             PostalAddress_Country: {},
           },
+          BilledToContactPerson: {},
           BilledFromContactPerson: {},
           BillToEndCustomer: {},
           BillToEndCustomerContactPerson: {},
