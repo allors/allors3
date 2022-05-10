@@ -85,5 +85,97 @@ namespace Tests.Objects
             Assert.AreEqual("Jenny", person.FirstName);
             Assert.AreEqual("Penny", person.LastName);
         }
+
+        [Test]
+        public async Task AddEmailCommunication()
+        {
+            var before = new EmailCommunications(this.Transaction).Extent().ToArray();
+
+            var person = new People(this.Transaction).Extent().First();
+            var organisation = new Organisations(this.Transaction).FindBy(this.M.Organisation.Name, "Acme");
+
+            var @class = this.M.Person;
+
+            var overview = this.Application.GetOverview(@class);
+            var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
+            await this.Page.GotoAsync(url);
+            await this.Page.WaitForAngular();
+
+            var personOverview = new PersonOverviewPageComponent(this.AppRoot);
+
+            await personOverview.ViewCommunicationEvent.Locator.ClickAsync();
+            await this.Page.WaitForAngular();
+
+            var edit = personOverview.EditCommunicationEvent;
+
+            var objectIds = await edit.Table.GetObjectIds();
+            Assert.AreEqual(0, objectIds.Length);
+
+            await edit.FactoryFab.Create(this.M.EmailCommunication);
+
+            var form = new EmailcommunicationFormComponent(this.OverlayContainer);
+            await form.FromPartySelect.SelectAsync(organisation);
+
+            var saveComponent = new SaveComponent(this.OverlayContainer);
+            await saveComponent.SaveAsync();
+
+            await this.Page.WaitForAngular();
+
+            this.Transaction.Rollback();
+
+            var after = new EmailCommunications(this.Transaction).Extent().ToArray();
+
+            var emailCommunications = after.Except(before).ToArray();
+
+            Assert.AreEqual(1, emailCommunications.Length);
+
+            var emailCommunication = emailCommunications[0];
+
+            objectIds = await edit.Table.GetObjectIds();
+            Assert.AreEqual(1, objectIds.Length);
+            Assert.AreEqual(emailCommunication.Strategy.ObjectId.ToString(), objectIds[0]);
+
+            Assert.AreEqual(organisation, emailCommunication.FromParty);
+        }
+
+
+        //[Test]
+        //public async Task DeleteEmployment()
+        //{
+        //    var before = new Employments(this.Transaction).Extent().ToArray();
+
+        //    var person = new People(this.Transaction).FindBy(this.M.Person.FirstName, "Jane");
+
+        //    var employment = before.First(v => person.Equals(v.Employee));
+
+        //    var @class = this.M.Person;
+
+        //    var overview = this.Application.GetOverview(@class);
+        //    var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
+        //    await this.Page.GotoAsync(url);
+        //    await this.Page.WaitForAngular();
+
+        //    var personOverview = new PersonOverviewPageComponent(this.AppRoot);
+
+        //    await personOverview.ViewEmployment.Locator.ClickAsync();
+        //    await this.Page.WaitForAngular();
+
+        //    var edit = personOverview.EditEmployment;
+
+        //    await edit.Table.Action(employment, "delete");
+
+        //    await this.Page.WaitForAngular();
+
+        //    var dialog = new AllorsMaterialDialogComponent(this.OverlayContainer);
+        //    await dialog.YesButton.ClickAsync();
+
+        //    await this.Page.WaitForAngular();
+
+        //    this.Transaction.Rollback();
+
+        //    var after = new Employments(this.Transaction).Extent().ToArray();
+
+        //    Assert.AreEqual(before.Length - 1, after.Length);
+        //}
     }
 }

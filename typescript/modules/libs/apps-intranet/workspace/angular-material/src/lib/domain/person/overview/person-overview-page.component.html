@@ -21,10 +21,12 @@
         <a-mat-dyn-edit-detail-panel></a-mat-dyn-edit-detail-panel>
 
         <a-mat-dyn-view-extent-panel
+          data-tag="CommunicationEvent"
           [init]="m.CommunicationEvent.FromParty"
           [include]="m.CommunicationEvent.InvolvedParties"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
+          data-tag="CommunicationEvent"
           [init]="m.CommunicationEvent.FromParty"
           [include]="m.CommunicationEvent.InvolvedParties"
         ></a-mat-dyn-edit-extent-panel>
