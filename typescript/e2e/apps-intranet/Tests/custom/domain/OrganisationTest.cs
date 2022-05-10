@@ -62,6 +62,8 @@ namespace Tests.Objects
             var locale = new Locales(this.Transaction).EnglishGreatBritain;
             var organisationRole = new OrganisationRoles(this.Transaction).Supplier;
             var currency = new Currencies(this.Transaction).Extent().First();
+            var industryClassification = new IndustryClassifications(this.Transaction).Extent().First();
+            var customOrganisationClassification = new CustomOrganisationClassifications(this.Transaction).Extent().First();
 
             var @class = this.M.Organisation;
 
@@ -79,13 +81,14 @@ namespace Tests.Objects
             await form.TaxNumberInput.SetValueAsync("BE047747474");
             await form.LegalFormSelect.SelectAsync(legalForm);
             await form.LocaleSelect.SelectAsync(locale);
-            //await form..SelectAsync(organisationRole); (roles)
+            // TODO: Roles
+            //await form.SelectAsync(organisationRole);
             await form.PreferredCurrencySelect.SelectAsync(currency);
-            // Industries
-            // Classifications
+            await form.IndustryClassificationsSelect.SelectAsync(industryClassification);
+            await form.CustomClassificationsSelect.SelectAsync(customOrganisationClassification);
             await form.IsManufacturerSlideToggle.SetAsync(true);
             await form.IsInternalOrganisationSlideToggle.SetAsync(true);
-            // Logo image
+            // TODO: Logo image
             await form.CommentTextarea.SetAsync("This is a comment");
             await form.CollectiveWorkEffortInvoiceSlideToggle.SetAsync(true);
 
@@ -103,6 +106,16 @@ namespace Tests.Objects
             var person = after.Except(before).First();
 
             Assert.AreEqual("Driesjes", person.Name);
+            Assert.AreEqual("BE047747474", person.TaxNumber);
+            Assert.AreEqual(legalForm, person.LegalForm);
+            Assert.AreEqual(locale, person.Locale);
+            Assert.AreEqual(currency, person.PreferredCurrency);
+            Assert.AreEqual(industryClassification, person.IndustryClassifications.First());
+            Assert.AreEqual(customOrganisationClassification, person.CustomClassifications.First());
+            Assert.AreEqual(true, person.IsManufacturer);
+            Assert.AreEqual(true, person.IsInternalOrganisation);
+            Assert.AreEqual("This is a comment", person.Comment);
+            Assert.AreEqual(true, person.CollectiveWorkEffortInvoice);
         }
     }
 }
