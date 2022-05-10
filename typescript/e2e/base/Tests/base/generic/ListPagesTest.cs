@@ -10,6 +10,7 @@ namespace Tests.ApplicationTests
     using Allors.E2E.Angular.Info;
     using Allors.E2E.Angular.Material.Factory;
     using Allors.E2E.Angular.Material.Table;
+    using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
@@ -41,11 +42,21 @@ namespace Tests.ApplicationTests
                 await this.Page.WaitForAngular();
 
                 var factory = new FactoryFabComponent(this.AppRoot);
+
+                var count = await factory.Locator.CountAsync();
+                if (count == 0)
+                {
+                    continue;
+                }
+
                 var objectType = await factory.ObjectType();
 
                 foreach (var @class in objectType.Classes.Where(v => v.WorkspaceNames.Contains(this.WorkspaceName)))
                 {
                     await factory.Create(@class);
+                    await this.Page.WaitForAngular();
+
+                    await this.Page.Keyboard.PressAsync("Escape");
                     await this.Page.WaitForAngular();
                 }
             }

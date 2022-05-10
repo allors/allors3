@@ -24,7 +24,7 @@ namespace Tests.ApplicationTests
         public void Init()
         {
             var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null);
-            Assert.AreEqual(5, components.Count());
+            Assert.AreEqual(22, components.Count());
         }
 
         [Test]

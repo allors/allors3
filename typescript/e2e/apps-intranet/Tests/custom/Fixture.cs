@@ -79,9 +79,11 @@ namespace Tests
                    });
 
             // Population
+            var fileName = populationFileInfo.FullName;
+
             if (population == null && populationFileInfo.Exists)
             {
-                population = File.ReadAllText(populationFileInfo.FullName);
+                population = File.ReadAllText(fileName);
             }
 
             if (population != null)
@@ -100,15 +102,10 @@ namespace Tests
                 using var transaction = database.CreateTransaction();
                 new IntranetPopulation(transaction, null, this.MetaPopulation).Execute();
                 transaction.Commit();
-
-                using var stringWriter = new StringWriter();
-                using (var writer = XmlWriter.Create(stringWriter))
-                {
-                    database.Save(writer);
-                }
-
-                population = stringWriter.ToString();
-                File.WriteAllText(populationFileInfo.FullName, population);
+                
+                using var stream = File.Create(fileName);
+                using var writer = XmlWriter.Create(stream);
+                database.Save(writer);
             }
 
             var response = this.HttpClient.GetAsync(RestartUrl).Result;
