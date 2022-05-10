@@ -8,7 +8,7 @@ import {
   ContextService,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { Person } from '@allors/default/workspace/domain';
+import { Organisation, Person } from '@allors/default/workspace/domain';
 import { InternalOrganisationId } from '@allors/apps-intranet/workspace/angular-material';
 
 @Component({
@@ -59,13 +59,28 @@ export class LoginComponent implements OnDestroy {
                   },
                 },
               }),
+              p.Organisation({
+                predicate: {
+                  kind: 'Equals',
+                  propertyType: m.Organisation.IsInternalOrganisation,
+                  value: true,
+                },
+              }),
             ];
 
             return this.allors.context.pull(pulls).pipe(
               tap((loaded) => {
                 const person = loaded.object<Person>(m.Person);
+                const internalOrganisations = loaded.collection<Organisation>(
+                  m.Organisation
+                );
+
+                const internalOrganisation =
+                  person.UserProfile?.DefaultInternalOrganization ??
+                  internalOrganisations[0];
+
                 this.internalOrganisationId.value =
-                  person.UserProfile?.DefaultInternalOrganization?.strategy.id;
+                  internalOrganisation?.strategy.id;
               }),
               map(() => true)
             );
