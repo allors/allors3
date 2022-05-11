@@ -1735,7 +1735,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Contains(this.returnRevocation, order.Revocations);
 
@@ -1764,7 +1764,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
             this.Derive();

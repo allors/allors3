@@ -505,7 +505,7 @@ namespace Allors.Database.Domain.Tests
                 .WithVatRegime(new VatRegimes(this.Transaction).ZeroRated)
                 .Build();
 
-            this.Transaction.Derive();
+            this.Derive();
 
             var purchaseOrder1 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
@@ -513,22 +513,22 @@ namespace Allors.Database.Domain.Tests
                 .WithStoredInFacility(defaultFacility)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             // Beginning inventory: 150 items at 8 euro received in 2 facilities
             var purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(100).WithAssignedUnitPrice(8M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseOrder1.Send();
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseItem.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             var purchaseOrder2 = new PurchaseOrderBuilder(this.Transaction)
                 .WithTakenViaSupplier(supplier)
@@ -536,43 +536,43 @@ namespace Allors.Database.Domain.Tests
                 .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Transaction.Derive();
+            this.Derive();
 
             // Beginning inventory: 150 items at 8 euro
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8M).Build();
             purchaseOrder2.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseOrder2.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseOrder2.Send();
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseItem.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
             Assert.Equal(8, part.PartWeightedAverage.AverageCost);
 
             purchaseOrder1.Revise();
-            this.Transaction.Derive();
+            this.Derive();
 
             // Purchase: 75 items at 8.1 euro
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(75).WithAssignedUnitPrice(8.1M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseOrder1.Send();
-            this.Transaction.Derive();
+            this.Derive();
 
             purchaseItem.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Equal(225, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
@@ -582,30 +582,30 @@ namespace Allors.Database.Domain.Tests
                 .WithShipToCustomer(customer)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             // Sell 50 items for 20 euro
             var salesItem1 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
             salesOrder.AddSalesOrderItem(salesItem1);
 
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.SetReadyForPosting();
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.Post();
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.Accept();
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.Ship();
-            this.Transaction.Derive();
+            this.Derive();
 
             var customerShipment = salesItem1.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment.Pick();
-            this.Transaction.Derive();
+            this.Derive();
 
             customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
@@ -617,10 +617,10 @@ namespace Allors.Database.Domain.Tests
                 package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Transaction.Derive();
+            this.Derive();
 
             customerShipment.Ship();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
@@ -628,29 +628,29 @@ namespace Allors.Database.Domain.Tests
 
             // Again Sell 50 items for 20 euro
             salesOrder.Revise();
-            this.Transaction.Derive();
+            this.Derive();
 
             var salesItem2 = new SalesOrderItemBuilder(this.Transaction).WithProduct(good).WithQuantityOrdered(50).WithAssignedUnitPrice(20M).Build();
             salesOrder.AddSalesOrderItem(salesItem2);
 
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.SetReadyForPosting();
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.Post();
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.Accept();
-            this.Transaction.Derive();
+            this.Derive();
 
             salesOrder.Ship();
-            this.Transaction.Derive();
+            this.Derive();
 
             var customerShipment2 = salesItem2.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem as CustomerShipment;
 
             customerShipment2.Pick();
-            this.Transaction.Derive();
+          this.Derive();
 
             customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
@@ -662,10 +662,10 @@ namespace Allors.Database.Domain.Tests
                 package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Transaction.Derive();
+          this.Derive();
 
             customerShipment2.Ship();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(125, part.QuantityOnHand);
             Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
@@ -673,21 +673,21 @@ namespace Allors.Database.Domain.Tests
 
             // Purchase: 50 items at 8.25 euro
             purchaseOrder1.Revise();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.25M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder1.Send();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseItem.QuickReceive();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -695,7 +695,7 @@ namespace Allors.Database.Domain.Tests
             // Use 65 items in a workorder
             var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
                 .WithAssignment(workEffort)
@@ -703,7 +703,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(65)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -712,7 +712,7 @@ namespace Allors.Database.Domain.Tests
             // Cancel workeffort inventory assignment
             inventoryAssignment.Delete();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -724,9 +724,9 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(35)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(140, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -739,7 +739,7 @@ namespace Allors.Database.Domain.Tests
                 .WithQuantity(30)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
             Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
@@ -752,21 +752,21 @@ namespace Allors.Database.Domain.Tests
                 .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(90).WithAssignedUnitPrice(8.35M).Build();
             purchaseOrder3.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder3.SetReadyForProcessing();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder3.Send();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder3.QuickReceive();
-            this.Transaction.Derive();
+          this.Derive();
 
             // Purchase: 50 items at 8.45 euro
             var purchaseOrder4 = new PurchaseOrderBuilder(this.Transaction)
@@ -775,21 +775,21 @@ namespace Allors.Database.Domain.Tests
                 .WithDeliveryDate(this.Transaction.Now())
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(50).WithAssignedUnitPrice(8.45M).Build();
             purchaseOrder4.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder4.SetReadyForProcessing();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder4.Send();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder4.QuickReceive();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
             Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
@@ -801,15 +801,15 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             var outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(10).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingShipment.Pick();
-            this.Transaction.Derive();
+          this.Derive();
 
             customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
@@ -821,10 +821,10 @@ namespace Allors.Database.Domain.Tests
                 package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingShipment.Ship();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(240, part.QuantityOnHand);
             Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
@@ -835,15 +835,15 @@ namespace Allors.Database.Domain.Tests
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             var incomingItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).WithQuantity(10).WithUnitPurchasePrice(8.55M).Build();
             incomingShipment.AddShipmentItem(incomingItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             incomingShipment.Receive();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
             Assert.Equal(8.27M, part.PartWeightedAverage.AverageCost);
@@ -854,15 +854,15 @@ namespace Allors.Database.Domain.Tests
                 .WithShipFromParty(supplier)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             incomingItem = new ShipmentItemBuilder(this.Transaction).WithPart(part).WithQuantity(100).WithUnitPurchasePrice(7.9M).Build();
             incomingShipment.AddShipmentItem(incomingItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             incomingShipment.Receive();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(350, part.QuantityOnHand);
             Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
@@ -875,15 +875,15 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(330).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingShipment.Pick();
-            this.Transaction.Derive();
+          this.Derive();
 
             customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
@@ -895,10 +895,10 @@ namespace Allors.Database.Domain.Tests
                 package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingShipment.Ship();
-            this.Transaction.Derive();
+          this.Derive();
 
             // Ship all items to customer (without sales order)
             outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
@@ -908,15 +908,15 @@ namespace Allors.Database.Domain.Tests
                 .WithShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
                 .Build();
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(20).Build();
             outgoingShipment.AddShipmentItem(outgoingItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingShipment.Pick();
-            this.Transaction.Derive();
+          this.Derive();
 
             customer.PickListsWhereShipToParty.First(v => v.PickListState.Equals(new PickListStates(this.Transaction).Created)).SetPicked();
 
@@ -928,31 +928,31 @@ namespace Allors.Database.Domain.Tests
                 package.AddPackagingContent(new PackagingContentBuilder(this.Transaction).WithShipmentItem(shipmentItem).WithQuantity(shipmentItem.Quantity).Build());
             }
 
-            this.Transaction.Derive();
+          this.Derive();
 
             outgoingShipment.Ship();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(0, part.QuantityOnHand);
             Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
 
             purchaseOrder1.Revise();
-            this.Transaction.Derive();
+          this.Derive();
 
             // Purchase 150 items at 8 euro
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(8M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder1.Send();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseItem.QuickReceive();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
             Assert.Equal(8, part.PartWeightedAverage.AverageCost);
@@ -961,16 +961,16 @@ namespace Allors.Database.Domain.Tests
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(4M).Build();
             purchaseOrder1.AddPurchaseOrderItem(purchaseItem);
 
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder1.SetReadyForProcessing();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseOrder1.Send();
-            this.Transaction.Derive();
+          this.Derive();
 
             purchaseItem.QuickReceive();
-            this.Transaction.Derive();
+          this.Derive();
 
             Assert.Equal(300, part.QuantityOnHand);
             Assert.Equal(6, part.PartWeightedAverage.AverageCost);

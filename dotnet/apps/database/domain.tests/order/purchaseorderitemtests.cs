@@ -1715,13 +1715,13 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.Send();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.True(orderItem.PurchaseOrderItemState.IsCompleted);
             Assert.DoesNotContain(this.returnRevocation, orderItem.Revocations);
@@ -1751,10 +1751,10 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.DoesNotContain(this.returnRevocation, orderItem.Revocations);
 
@@ -1783,12 +1783,12 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.DoesNotContain(this.quickReceiveRevocation, orderItem.Revocations);
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Contains(this.quickReceiveRevocation, orderItem.Revocations);
         }

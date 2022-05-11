@@ -361,13 +361,13 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.Return();
-            this.Transaction.Derive();
+            this.Derive();
 
             var shipmentItem = supplier.ShipmentsWhereShipToParty.First().ShipmentItems.First();
 

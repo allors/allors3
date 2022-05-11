@@ -85,13 +85,13 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.Return();
-            this.Transaction.Derive();
+            this.Derive();
 
             var inventory = part.InventoryItemsWherePart.ToArray().FirstOrDefault() as NonSerialisedInventoryItem;
 
@@ -99,7 +99,7 @@ namespace Allors.Database.Domain.Tests
 
             var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
             purchaseReturn.Ship();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Equal(98, inventory.QuantityOnHand);
         }
@@ -130,20 +130,20 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.Return();
-            this.Transaction.Derive();
+            this.Derive();
 
             var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
 
             Assert.True(purchaseReturn.CanShip);
 
             new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Theft).WithPart(part).Build();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.False(purchaseReturn.CanShip);
         }
@@ -179,13 +179,13 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.Return();
-            this.Transaction.Derive();
+            this.Derive();
 
             var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
 
@@ -215,20 +215,20 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             order.SetReadyForProcessing();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.QuickReceive();
-            this.Transaction.Derive();
+            this.Derive();
 
             order.Return();
-            this.Transaction.Derive();
+            this.Derive();
 
             var purchaseReturn = this.Transaction.Extent<PurchaseReturn>()[0];
 
             Assert.True(purchaseReturn.CanShip);
 
             new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(1).WithReason(new InventoryTransactionReasons(this.Transaction).Theft).WithPart(part).Build();
-            this.Transaction.Derive();
+            this.Derive();
 
             Assert.Contains(this.shipRevocation, purchaseReturn.Revocations);
         }
