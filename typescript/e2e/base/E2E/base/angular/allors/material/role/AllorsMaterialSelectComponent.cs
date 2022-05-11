@@ -17,6 +17,8 @@ namespace Allors.E2E.Angular.Material.Role
         {
         }
 
+        public ILocator MatSelectLocator => this.Locator.Locator("mat-select");
+
         public ILocator ArrowLocator => this.Locator.Locator(".mat-select-arrow");
 
         public ILocator ValueTextLocator => this.Locator.Locator(".mat-select-value-text");
@@ -46,8 +48,8 @@ namespace Allors.E2E.Angular.Material.Role
             var optionLocator = this.Page.Locator($"mat-option[data-allors-option-id='{@object?.Id ?? 0}'] span");
             await optionLocator.ClickAsync();
 
-            _ = bool.TryParse(await this.Locator.GetAttributeAsync("multiple"), out var multiple);
-            if (multiple)
+            var multiple = await this.Locator.GetPropertyAsync<bool?>("multiple");
+            if (multiple ?? false)
             {
                 await this.Page.Keyboard.PressAsync("Escape");
             }

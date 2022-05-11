@@ -189,7 +189,7 @@ export class CataloguesListPageComponent implements OnInit, OnDestroy {
             object: v,
             name: `${v.Name}`,
             description: `${v.Description || ''}`,
-            scope: v.CatScope.Name,
+            scope: v.CatScope?.Name ?? '',
           } as Row;
         });
       });
