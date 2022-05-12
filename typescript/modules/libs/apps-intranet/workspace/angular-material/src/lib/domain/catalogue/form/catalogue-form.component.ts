@@ -79,9 +79,11 @@ export class CatalogueFormComponent extends AllorsFormComponent<Catalogue> {
 
     this.onPostPullInitialize(pullResult);
 
-    this.object.InternalOrganisation = this.internalOrganisation;
+    this.internalOrganisation = this.fetcher.getInternalOrganisation(pullResult);
     this.locales = this.fetcher.getAdditionalLocales(pullResult);
     this.categories = this.fetcher.getProductCategories(pullResult);
     this.scopes = pullResult.collection<Scope>(this.m.Scope);
+
+    this.object.InternalOrganisation = this.internalOrganisation;
   }
 }

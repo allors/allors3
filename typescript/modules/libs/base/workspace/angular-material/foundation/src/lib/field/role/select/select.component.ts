@@ -23,6 +23,10 @@ export class AllorsMaterialSelectComponent extends RoleField {
   @Output()
   public selected: EventEmitter<IObject> = new EventEmitter();
 
+  public get multiple(): boolean {
+    return this.roleType.isMany;
+  }
+
   constructor(@Optional() form: NgForm) {
     super(form);
   }

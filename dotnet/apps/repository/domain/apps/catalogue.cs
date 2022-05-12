@@ -38,7 +38,7 @@ namespace Allors.Repository
         [Id("21F55EB3-4DC1-42C5-AB16-4C47DBCF0456")]
         #endregion
         [Required]
-        [Derived]
+        [Indexed]
         [Size(256)]
         [Workspace(Default)]
         public string Name { get; set; }
