@@ -205,7 +205,10 @@ export abstract class RecordBasedOriginState {
         addedRole,
         associationType
       );
-      previousAssociation?.strategy.setRole(roleType, null);
+
+      if (previousAssociation != this.object) {
+        previousAssociation?.strategy.setRole(roleType, null);
+      }
     }
   }
 
