@@ -5,9 +5,10 @@
 
 namespace Allors.E2E.Angular.Material.Dynamic
 {
-    using Allors.Database.Meta;
+    using Database.Meta;
     using Info;
     using Microsoft.Playwright;
+    using Task = System.Threading.Tasks.Task;
 
     public partial class AllorsMaterialDynamicViewDetailPanelComponent : IComponent
     {
@@ -26,5 +27,7 @@ namespace Allors.E2E.Angular.Material.Dynamic
         public ILocator Locator { get; }
 
         public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
+
+        public async Task ClickAsync() => await this.Locator.ClickAsync();
     }
 }

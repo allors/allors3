@@ -9,6 +9,7 @@ namespace Tests.Objects
     using Allors.Database.Domain;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Html;
+    using Allors.E2E.Angular.Info;
     using Allors.E2E.Angular.Material.Factory;
     using Allors.E2E.Test;
     using NUnit.Framework;
@@ -61,14 +62,12 @@ namespace Tests.Objects
 
             var @class = this.M.Person;
 
-            var overview = this.Application.GetOverview(@class);
-
-            var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
+            var url = this.Application.GetOverview(@class).RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
             await this.Page.GotoAsync(url);
             await this.Page.WaitForAngular();
 
-            var detail = this.AppRoot.Locator.Locator("[data-allors-kind='view-detail-panel']");
-            await detail.ClickAsync();
+            var overview = new PersonOverviewPageComponent(this.AppRoot);
+            await overview.AllorsMaterialDynamicViewDetailPanelComponent.ClickAsync();
             await this.Page.WaitForAngular();
 
             var form = new PersonFormComponent(this.AppRoot);
@@ -91,8 +90,7 @@ namespace Tests.Objects
         {
             var before = new EmailCommunications(this.Transaction).Extent().ToArray();
 
-            var person = new People(this.Transaction).Extent().First();
-            var organisation = new Organisations(this.Transaction).FindBy(this.M.Organisation.Name, "Acme");
+            var person = new People(this.Transaction).Extent().First(v => v.CurrentPartyContactMechanisms.Any(v => v.ContactMechanism is EmailAddress));
 
             var @class = this.M.Person;
 
@@ -114,7 +112,10 @@ namespace Tests.Objects
             await edit.FactoryFab.Create(this.M.EmailCommunication);
 
             var form = new EmailcommunicationFormComponent(this.OverlayContainer);
-            await form.FromPartySelect.SelectAsync(organisation);
+            await form.FromPartySelect.SelectAsync(0);
+            await form.ToPartySelect.SelectAsync(0);
+            await form.ToEmailSelect.SelectAsync(0);
+            await form.SubjectTemplateInput.SetAsync("You got mail");
 
             var saveComponent = new SaveComponent(this.OverlayContainer);
             await saveComponent.SaveAsync();
@@ -135,7 +136,7 @@ namespace Tests.Objects
             Assert.AreEqual(1, objectIds.Length);
             Assert.AreEqual(emailCommunication.Strategy.ObjectId.ToString(), objectIds[0]);
 
-            Assert.AreEqual(organisation, emailCommunication.FromParty);
+            Assert.AreEqual(person, emailCommunication.FromParty);
         }
 
 

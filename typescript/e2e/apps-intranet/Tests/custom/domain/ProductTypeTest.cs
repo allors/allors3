@@ -24,7 +24,7 @@ namespace Tests.Objects
         {
             var before = new ProductTypes(this.Transaction).Extent().ToArray();
 
-            var @class = this.M.Organisation;
+            var @class = this.M.ProductType;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -60,7 +60,7 @@ namespace Tests.Objects
             var before = new ProductTypes(this.Transaction).Extent().ToArray();
             var serialisedItemCharacteristicType = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().First();
 
-            var @class = this.M.Organisation;
+            var @class = this.M.ProductType;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -89,7 +89,8 @@ namespace Tests.Objects
             var productType = after.Except(before).First();
 
             Assert.AreEqual("Joren", productType.Name);
-            Assert.AreEqual(serialisedItemCharacteristicType, productType.SerialisedItemCharacteristicTypes);
+            Assert.AreEqual(1, productType.SerialisedItemCharacteristicTypes.Count());
+            Assert.Contains(serialisedItemCharacteristicType, productType.SerialisedItemCharacteristicTypes.ToArray());
         }
     }
 }

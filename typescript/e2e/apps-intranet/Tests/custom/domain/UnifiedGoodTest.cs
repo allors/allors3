@@ -23,6 +23,7 @@ namespace Tests.Objects
         public async Task CreateMinimal()
         {
             var before = new UnifiedGoods(this.Transaction).Extent().ToArray();
+            var inventoryItemKind = new InventoryItemKinds(this.Transaction).NonSerialised;
 
             var @class = this.M.UnifiedGood;
 
@@ -37,6 +38,7 @@ namespace Tests.Objects
             var form = new UnifiedgoodCreateFormComponent(this.OverlayContainer);
 
             await form.NameInput.SetValueAsync("Driesjes");
+            await form.InventoryItemKindSelect.SelectAsync(inventoryItemKind);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -49,9 +51,10 @@ namespace Tests.Objects
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var person = after.Except(before).First();
+            var unifiedGood = after.Except(before).First();
 
-            Assert.AreEqual("Driesjes", person.Name);
+            Assert.AreEqual("Driesjes", unifiedGood.Name);
+            Assert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
         }
     }
 }

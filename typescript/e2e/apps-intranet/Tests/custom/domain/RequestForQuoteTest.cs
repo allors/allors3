@@ -58,11 +58,10 @@ namespace Tests.Objects
         public async Task CreateMaximum()
         {
             var before = new RequestsForQuote(this.Transaction).Extent().ToArray();
-            var organisation = new Organisations(this.Transaction).Extent().First();
+            var organisation = new Organisations(this.Transaction).Extent().First(v => v.ExistCurrentPartyContactMechanisms);
 
             var contactMechanism = organisation.CurrentPartyContactMechanisms.First().ContactMechanism;
             var contactPerson = organisation.CurrentContacts.First();
-
 
             var dateNow = System.DateTime.Today;
             var dateTommorow = dateNow.AddDays(1);
@@ -102,7 +101,7 @@ namespace Tests.Objects
             Assert.AreEqual(before.Length + 1, after.Length);
 
             var request = after.Except(before).First();
-            
+
             Assert.AreEqual(organisation, request.Originator);
             Assert.AreEqual(contactMechanism, request.FullfillContactMechanism);
             Assert.AreEqual(contactPerson, request.ContactPerson);

@@ -98,7 +98,8 @@ namespace Tests.Objects
             Assert.AreEqual("Lucca", productCategory.Name);
             Assert.AreEqual(scope, productCategory.CatScope);
             Assert.AreEqual(primaryParent, productCategory.PrimaryParent);
-            Assert.AreEqual(secondaryParent, productCategory.SecondaryParents);
+            Assert.AreEqual(1, productCategory.SecondaryParents.Count());
+            Assert.Contains(secondaryParent, productCategory.SecondaryParents.ToArray());
         }
     }
 }

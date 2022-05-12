@@ -39,6 +39,22 @@ namespace Allors.E2E.Angular.Material.Role
             await optionLocator.ClickAsync();
         }
 
+        public async Task SelectAsync(int index)
+        {
+            await this.Page.WaitForAngular();
+            await this.ArrowLocator.ClickAsync();
+
+            await this.Page.WaitForAngular();
+            var optionLocator = this.Page.Locator($"mat-option[data-allors-option-id]:nth-of-type({index + 1}) span");
+            await optionLocator.ClickAsync();
+
+            var multiple = await this.Locator.GetPropertyAsync<bool?>("multiple");
+            if (multiple ?? false)
+            {
+                await this.Page.Keyboard.PressAsync("Escape");
+            }
+        }
+
         public async Task SelectAsync(IObject @object)
         {
             await this.Page.WaitForAngular();
