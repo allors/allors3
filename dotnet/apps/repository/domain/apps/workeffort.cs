@@ -146,6 +146,12 @@ namespace Allors.Repository
         WorkEffortPurpose[] WorkEffortPurposes { get; set; }
 
         #region Allors
+        [Id("cbef7da1-a540-4fa0-b308-7a0d330aaaf3")]
+        #endregion
+        [Workspace(Default)]
+        DateTime IssueDate { get; set; }
+
+        #region Allors
         [Id("1cac44f2-bf48-4b7b-9d29-658e6eedeb86")]
         #endregion
         [Indexed]

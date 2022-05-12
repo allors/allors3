@@ -43,6 +43,8 @@ namespace Allors.Repository
 
         public WorkEffortPurpose[] WorkEffortPurposes { get; set; }
 
+        public DateTime IssueDate { get; set; }
+
         public DateTime ActualCompletion { get; set; }
 
         public DateTime ScheduledStart { get; set; }

@@ -101,6 +101,7 @@ export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
 
     this.object.TakenBy = this.internalOrganisation as Organisation;
     this.object.Customer = fromCustomer;
+    this.object.IssueDate = new Date();
 
     if (fromSerialiseditem != null) {
       this.workEffortFixedAssetAssignment =
