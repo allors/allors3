@@ -5,6 +5,8 @@
 
 namespace Allors.E2E.Angular.Material.Factory
 {
+    using System;
+    using System.Linq;
     using System.Threading.Tasks;
     using Cdk;
     using Database.Meta;
@@ -38,6 +40,19 @@ namespace Allors.E2E.Angular.Material.Factory
             await this.Page.WaitForAngular();
             var tag = await this.Button.GetAttributeAsync("data-allors-objecttype");
             return (IComposite)this.M.FindByTag(tag);
+        }
+
+        public async Task<Class[]> Classes()
+        {
+            await this.Page.WaitForAngular();
+            var classNames = await this.Locator.GetExpressionAsync<string[]>("component.classes.map(v=>v.singularName)");
+            if (classNames == null || classNames.Length == 0)
+            {
+                return Array.Empty<Class>();
+            }
+
+            var classes = classNames.Select(v => this.M.Classes.First(w => w.SingularName.Equals(v, StringComparison.Ordinal)) as Class).ToArray();
+            return classes;
         }
 
         public async Task Create(IClass @class = null)

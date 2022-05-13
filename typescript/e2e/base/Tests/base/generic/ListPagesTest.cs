@@ -6,6 +6,7 @@
 namespace Tests.ApplicationTests
 {
     using System.Linq;
+    using Allors.E2E;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Info;
     using Allors.E2E.Angular.Material.Factory;
@@ -19,44 +20,49 @@ namespace Tests.ApplicationTests
 
         public ComponentInfo[] Components => this.Application.ComponentInfoByName.Values.ToArray();
 
-        [SetUp]
-        public async Task Setup() => await this.LoginAsync("jane@example.com");
-
         [Test]
         public async Task Open()
         {
-            foreach (var component in this.Components.Where(v => v.List != null))
+            foreach (var user in this.Fixture.Logins)
             {
-                await this.Page.GotoAsync(component.RouteInfo.FullPath);
-                await this.Page.WaitForAngular();
+                await this.LoginAsync(user);
+
+                foreach (var component in this.Components.Where(v => v.List != null))
+                {
+                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                    await this.Page.WaitForAngular();
+                }
             }
         }
 
         [Test]
         public async Task Create()
         {
-            foreach (var component in this.Components.Where(v => v.List != null))
+            foreach (var user in this.Fixture.Logins)
             {
-                await this.Page.GotoAsync(component.RouteInfo.FullPath);
-                await this.Page.WaitForAngular();
+                await this.LoginAsync(user);
 
-                var factory = new FactoryFabComponent(this.AppRoot);
-
-                var count = await factory.Locator.CountAsync();
-                if (count == 0)
+                foreach (var component in this.Components.Where(v => v.List != null))
                 {
-                    continue;
-                }
-
-                var objectType = await factory.ObjectType();
-
-                foreach (var @class in objectType.Classes.Where(v => v.WorkspaceNames.Contains(this.WorkspaceName)))
-                {
-                    await factory.Create(@class);
+                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
 
-                    await this.Page.Keyboard.PressAsync("Escape");
-                    await this.Page.WaitForAngular();
+                    var factory = new FactoryFabComponent(this.AppRoot);
+
+                    var count = await factory.Locator.CountAsync();
+                    if (count == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (var @class in await factory.Classes())
+                    {
+                        await factory.Create(@class);
+                        await this.Page.WaitForAngular();
+
+                        await this.Page.Keyboard.PressAsync("Escape");
+                        await this.Page.WaitForAngular();
+                    }
                 }
             }
         }
@@ -64,22 +70,27 @@ namespace Tests.ApplicationTests
         [Test]
         public async Task Edit()
         {
-            foreach (var component in this.Components.Where(v => v.List != null))
+            foreach (var user in this.Fixture.Logins)
             {
-                await this.Page.GotoAsync(component.RouteInfo.FullPath);
-                await this.Page.WaitForAngular();
+                await this.LoginAsync(user);
 
-                var table = new AllorsMaterialTableComponent(this.AppRoot);
-                var actions = await table.Actions();
-                if (actions.Contains("edit"))
+                foreach (var component in this.Components.Where(v => v.List != null))
                 {
-                    foreach (var @object in this.Transaction.Instantiate(await table.GetObjectIds()))
-                    {
-                        await this.Page.WaitForAngular();
-                        await table.Action(@object, "edit");
+                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                    await this.Page.WaitForAngular();
 
-                        await this.Page.WaitForAngular();
-                        await this.Page.Keyboard.PressAsync("Escape");
+                    var table = new AllorsMaterialTableComponent(this.AppRoot);
+                    var actions = await table.Actions();
+                    if (actions.Contains("edit"))
+                    {
+                        foreach (var @object in this.Transaction.Instantiate(await table.GetObjectIds()))
+                        {
+                            await this.Page.WaitForAngular();
+                            await table.Action(@object, "edit");
+
+                            await this.Page.WaitForAngular();
+                            await this.Page.Keyboard.PressAsync("Escape");
+                        }
                     }
                 }
             }
@@ -88,22 +99,27 @@ namespace Tests.ApplicationTests
         [Test]
         public async Task Overview()
         {
-            foreach (var component in this.Components.Where(v => v.List != null))
+            foreach (var user in this.Fixture.Logins)
             {
-                await this.Page.GotoAsync(component.RouteInfo.FullPath);
-                await this.Page.WaitForAngular();
+                await this.LoginAsync(user);
 
-                var table = new AllorsMaterialTableComponent(this.AppRoot);
-                var actions = await table.Actions();
-                if (actions.Contains("overview"))
+                foreach (var component in this.Components.Where(v => v.List != null))
                 {
-                    foreach (var @object in this.Transaction.Instantiate(await table.GetObjectIds()))
-                    {
-                        await this.Page.WaitForAngular();
-                        await table.Action(@object, "overview");
+                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                    await this.Page.WaitForAngular();
 
-                        await this.Page.WaitForAngular();
-                        await this.Page.GoBackAsync();
+                    var table = new AllorsMaterialTableComponent(this.AppRoot);
+                    var actions = await table.Actions();
+                    if (actions.Contains("overview"))
+                    {
+                        foreach (var @object in this.Transaction.Instantiate(await table.GetObjectIds()))
+                        {
+                            await this.Page.WaitForAngular();
+                            await table.Action(@object, "overview");
+
+                            await this.Page.WaitForAngular();
+                            await this.Page.GoBackAsync();
+                        }
                     }
                 }
             }

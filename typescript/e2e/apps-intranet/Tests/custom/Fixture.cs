@@ -58,6 +58,8 @@ namespace Tests
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
+        public string[] Logins { get; } = new[] { "jane@example.com" };
+
         public IConfigurationRoot Configuration { get; set; }
 
         public MetaPopulation MetaPopulation { get; set; }
