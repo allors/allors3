@@ -172,16 +172,21 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
       let include = displayInclude ? [...displayInclude] : [];
 
-      include = include.concat({
-        propertyType: this.include,
-        nodes: this.includeDisplay
-          ?.filter((v) => v.objectType.isComposite)
-          .map((v) => {
-            return {
-              propertyType: v,
-            };
-          }),
-      });
+      if (this.include) {
+        include = include.concat({
+          propertyType: this.include,
+          nodes:
+            this.includeDisplay?.length > 0
+              ? this.includeDisplay
+                  .filter((v) => v.objectType.isComposite)
+                  .map((v) => {
+                    return {
+                      propertyType: v,
+                    };
+                  })
+              : null,
+        });
+      }
 
       const results = this.selectAsPaths.map((v) => {
         const select = toSelect(v);

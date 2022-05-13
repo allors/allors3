@@ -12,9 +12,11 @@ export class PostalAddressDisplayNameRule implements IRule<PostalAddress> {
 
   constructor(m: M) {
     this.m = m;
+    const { dependency: d } = m;
 
     this.objectType = m.PostalAddress;
     this.roleType = m.PostalAddress.DisplayName;
+    this.dependencies = [d(m.PostalAddress, (v) => v.Country)];
   }
 
   derive(postalAddress: PostalAddress) {

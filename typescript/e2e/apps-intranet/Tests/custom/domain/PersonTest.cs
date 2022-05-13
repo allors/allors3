@@ -113,7 +113,7 @@ namespace Tests.Objects
 
             var form = new EmailcommunicationFormComponent(this.OverlayContainer);
             await form.FromPartySelect.SelectAsync(0);
-            await form.ToPartySelect.SelectAsync(0);
+            await form.ToPartySelect.SelectAsync(person);
             await form.ToEmailSelect.SelectAsync(0);
             await form.SubjectTemplateInput.SetAsync("You got mail");
 
