@@ -172,18 +172,16 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
 
       let include = displayInclude ? [...displayInclude] : [];
 
-      if (this.includeDisplay?.length > 0) {
-        include = include.concat({
-          propertyType: this.include,
-          nodes: this.includeDisplay
-            .filter((v) => v.objectType.isComposite)
-            .map((v) => {
-              return {
-                propertyType: v,
-              };
-            }),
-        });
-      }
+      include = include.concat({
+        propertyType: this.include,
+        nodes: this.includeDisplay
+          ?.filter((v) => v.objectType.isComposite)
+          .map((v) => {
+            return {
+              propertyType: v,
+            };
+          }),
+      });
 
       const results = this.selectAsPaths.map((v) => {
         const select = toSelect(v);
@@ -277,7 +275,7 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
         }
       }
 
-      if (this.include) {
+      if (this.include && this.include.isOne) {
         const include = this.include.isRoleType
           ? v.strategy.getCompositeRole(this.include as RoleType)
           : v.strategy.getCompositeAssociation(this.include as AssociationType);
