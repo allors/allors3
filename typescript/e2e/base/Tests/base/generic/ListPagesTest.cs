@@ -6,13 +6,11 @@
 namespace Tests.E2E.Generic
 {
     using System.Linq;
-    using Allors.E2E;
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Info;
     using Allors.E2E.Angular.Material.Factory;
     using Allors.E2E.Angular.Material.Table;
     using NUnit.Framework;
-    using Tests;
     using Task = System.Threading.Tasks.Task;
 
     public class ListPagesTest : Test

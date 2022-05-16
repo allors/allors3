@@ -164,8 +164,8 @@ export class ExchangeRateListPageComponent implements OnInit, OnDestroy {
           return {
             object: v,
             validFrom: format(new Date(v.ValidFrom), 'dd-MM-yyyy'),
-            from: v.FromCurrency.Name,
-            to: v.ToCurrency.Name,
+            from: v.FromCurrency?.Name,
+            to: v.ToCurrency?.Name,
             rate: v.Rate,
           } as Row;
         });

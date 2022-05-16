@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture))
+            @this.WithCustomerReference(faker.Random.Words(16).ToUpper(CultureInfo.CurrentCulture))
                 .WithBilledFrom(internalOrganisation)
                 .WithAssignedBilledFromContactMechanism(internalOrganisation.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
                 .WithBilledFromContactPerson(internalOrganisation.CurrentContacts.FirstOrDefault())
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             var paymentMethod = faker.Random.ListItem(@this.Transaction.Extent<PaymentMethod>());
 
-            @this.WithCustomerReference(faker.Random.String(16).ToUpper(CultureInfo.CurrentCulture))
+            @this.WithCustomerReference(faker.Random.Words(16).ToUpper(CultureInfo.CurrentCulture))
                 .WithBilledFrom(supplier)
                 .WithAssignedBilledFromContactMechanism(supplier.CurrentPartyContactMechanisms.Select(v => v.ContactMechanism).FirstOrDefault())
                 .WithBilledFromContactPerson(supplier.CurrentContacts.FirstOrDefault())

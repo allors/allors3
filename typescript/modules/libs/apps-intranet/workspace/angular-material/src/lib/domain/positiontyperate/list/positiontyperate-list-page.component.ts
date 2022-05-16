@@ -183,14 +183,14 @@ export class PositionTypeRateListPageComponent implements OnInit, OnDestroy {
               ?.filter((p) => p.PositionTypeRate === v)
               ?.map((p) => p.Title)
               .join(', '),
-            rateType: v.RateType.Name,
+            rateType: v.RateType?.Name,
             from: format(new Date(v.FromDate), 'dd-MM-yyyy'),
             through:
               v.ThroughDate != null
                 ? format(new Date(v.ThroughDate), 'dd-MM-yyyy')
                 : '',
             rate: v.Rate,
-            frequency: v.Frequency.Name,
+            frequency: v.Frequency?.Name,
           } as Row;
         });
       });

@@ -200,7 +200,7 @@ export class ProductCategoryListPageComponent implements OnInit, OnDestroy {
             secondaryParents: v.SecondaryParents?.map(
               (w) => w.DisplayName
             ).join(', '),
-            scope: v.CatScope.Name,
+            scope: v.CatScope?.Name,
           } as Row;
         });
       });
