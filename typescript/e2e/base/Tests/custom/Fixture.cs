@@ -1,6 +1,7 @@
 namespace Tests.E2E
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Xml;
@@ -31,6 +32,8 @@ namespace Tests.E2E
         public HttpClientHandler HttpClientHandler { get; set; }
 
         public HttpClient HttpClient { get; set; }
+
+        public string[] Logins { get; } = new[] { "jane@example.com" };
 
         public IDatabase Init()
         {

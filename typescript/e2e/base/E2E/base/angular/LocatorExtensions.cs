@@ -13,9 +13,7 @@ namespace Allors.E2E
         if(!component){
             var component = window.ng.getOwningComponent(element);
         }
-
-        console.debug(component);
-
+     
         return component[property];
     }
 
@@ -23,6 +21,25 @@ namespace Allors.E2E
 }";
 
             var value = await @this.EvaluateAsync<T>(expression, property);
+            return value;
+        }
+
+        public static async Task<T> GetExpressionAsync<T>(this ILocator @this, string componentExpression)
+        {
+            const string expression = @"async (element, expression) => {
+    if(window.ng){
+        var component = window.ng.getComponent(element);
+        if(!component){
+            var component = window.ng.getOwningComponent(element);
+        }
+
+        return eval(expression);
+    }
+
+    return null;
+}";
+
+            var value = await @this.EvaluateAsync<T>(expression, componentExpression);
             return value;
         }
     }

@@ -18,20 +18,22 @@ namespace Tests.E2E.Generic
 
         public ApplicationInfo Application => this.AppRoot.ApplicationInfo;
 
-        [SetUp]
-        public async Task Setup() => await this.LoginAsync("jane@example.com");
-
         [Test]
         public async Task Navigate()
         {
-            var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null).ToArray();
-
-            Assert.IsNotEmpty(components);
-
-            foreach (var component in components)
+            foreach (var user in this.Fixture.Logins)
             {
-                await this.Sidenav.NavigateAsync(component);
+                await this.LoginAsync(user);
 
+                var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null).ToArray();
+
+                Assert.IsNotEmpty(components);
+
+                foreach (var component in components)
+                {
+                    await this.Sidenav.NavigateAsync(component);
+
+                }
             }
         }
     }
