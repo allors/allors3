@@ -1,7 +1,8 @@
-namespace Tests.Authentication
+namespace Tests.E2E.Authentication
 {
     using System.Threading.Tasks;
     using Allors.E2E;
+    using E2E;
     using NUnit.Framework;
 
     public class LoginTests : Test

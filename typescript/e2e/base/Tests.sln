@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffold", "..\scaffold\Sca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffold.Command", "Scaffold.Command\Scaffold.Command.csproj", "{CB82EDE5-4B7D-471B-8C55-FE77E983B85A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "resources", "..\..\..\dotnet\Base\Database\resources\resources.csproj", "{7966E5CD-BA47-40E1-8768-4CC993262F37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{CB82EDE5-4B7D-471B-8C55-FE77E983B85A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB82EDE5-4B7D-471B-8C55-FE77E983B85A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB82EDE5-4B7D-471B-8C55-FE77E983B85A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7966E5CD-BA47-40E1-8768-4CC993262F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7966E5CD-BA47-40E1-8768-4CC993262F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7966E5CD-BA47-40E1-8768-4CC993262F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7966E5CD-BA47-40E1-8768-4CC993262F37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{73BBAF79-76D5-42FA-AF3B-A9FE2A96A336} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
 		{4099337D-0A80-4416-9F24-02382A073183} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
 		{BB36C267-FD8D-4233-ABD6-6851526C4E4F} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
+		{7966E5CD-BA47-40E1-8768-4CC993262F37} = {B7DFA9E8-6643-4B55-996D-2D884D9D19A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

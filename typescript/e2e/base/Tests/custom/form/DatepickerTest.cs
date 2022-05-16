@@ -3,12 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Form
+namespace Tests.E2E.Form
 {
     using System.Globalization;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Test;
+    using E2E;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 

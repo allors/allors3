@@ -7,22 +7,16 @@ namespace Allors.Database.Server.Controllers
 {
     using System;
     using Allors.Services;
-    using Domain;
     using Database;
+    using Domain;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
     public class TestController : Controller
     {
-        public TestController(IDatabaseService databaseService, ILogger<TestController> logger)
-        {
-            this.DatabaseService = databaseService;
-            this.Logger = logger;
-        }
+        public TestController(IDatabaseService databaseService) => this.DatabaseService = databaseService;
 
         public IDatabaseService DatabaseService { get; set; }
-
-        public IDatabase Database => this.DatabaseService.Database;
 
         private ILogger<TestController> Logger { get; set; }
 
@@ -36,7 +30,7 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var database = this.Database;
+                var database = this.DatabaseService.Database;
                 database.Init();
 
                 return this.Ok();
@@ -54,7 +48,7 @@ namespace Allors.Database.Server.Controllers
         {
             try
             {
-                var database = this.Database;
+                var database = this.DatabaseService.Database;
                 database.Init();
 
                 var config = new Config();
@@ -85,12 +79,28 @@ namespace Allors.Database.Server.Controllers
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Restart()
+        {
+            try
+            {
+                this.DatabaseService.Database = this.DatabaseService.Build();
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                this.Logger.LogError(e, "Exception");
+                return this.BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult TimeShift(int days, int hours = 0, int minutes = 0, int seconds = 0)
         {
             try
             {
-                var time = this.Database.Services.Get<ITime>();
-                time.Shift = new TimeSpan(days, hours, minutes, seconds);
+                var timeService = this.DatabaseService.Database.Services.Get<ITime>();
+                timeService.Shift = new TimeSpan(days, hours, minutes, seconds);
                 return this.Ok();
             }
             catch (Exception e)

@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.ApplicationTests
+namespace Tests.E2E.Generic
 {
     using System.Linq;
     using Allors.Database;
@@ -12,6 +12,7 @@ namespace Tests.ApplicationTests
     using Allors.E2E.Angular.Info;
     using Allors.E2E.Angular.Material.Factory;
     using NUnit.Framework;
+    using Tests;
     using Task = System.Threading.Tasks.Task;
 
     public class OverviewPagesTest : Test
@@ -45,7 +46,7 @@ namespace Tests.ApplicationTests
             {
                 var objectType = component.Overview;
 
-                if (!objectType.Equals(M.Organisation))
+                if (!objectType.Equals(this.M.Organisation))
                 {
                     continue;
                 }
@@ -74,7 +75,7 @@ namespace Tests.ApplicationTests
             {
                 var objectType = component.Overview;
 
-                if (!objectType.Equals(M.Organisation))
+                if (!objectType.Equals(this.M.Organisation))
                 {
                     continue;
                 }

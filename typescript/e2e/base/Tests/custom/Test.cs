@@ -1,4 +1,4 @@
-namespace Tests
+namespace Tests.E2E
 {
     using System.Linq;
     using System.Threading.Tasks;

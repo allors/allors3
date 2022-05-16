@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Objects
+namespace Tests.E2E.Objects
 {
     using System.Linq;
     using Allors.Database.Domain;

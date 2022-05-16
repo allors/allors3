@@ -1,20 +1,12 @@
 namespace Tests
 {
     using System;
-    using System.Globalization;
-    using System.IO;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Xml;
     using Allors.Database;
     using Allors.Database.Adapters.Sql;
     using Allors.Database.Configuration;
-    using Allors.Database.Configuration.Derivations.Default;
-    using Allors.Database.Domain;
-    using Allors.Database.Domain.TestPopulation;
-    using Allors.Database.Domain.Tests;
-    using Allors.Database.Meta;
-    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
     using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
     using Person = Allors.Database.Domain.Person;
@@ -24,30 +16,8 @@ namespace Tests
         public const string Url = "http://localhost:5000/allors";
         public static readonly string RestartUrl = $"{Url}/Test/Restart";
 
-        private static readonly MetaBuilder MetaBuilder = new MetaBuilder();
-
-        private static readonly FileInfo populationFileInfo;
-        private static string population;
-
-        static Fixture()
-        {
-            var domainPrint = typeof(Person).Assembly.Fingerprint();
-            var testPrint = typeof(Test).Assembly.Fingerprint();
-            var testPopulationPrint = typeof(Marker).Assembly.Fingerprint();
-            populationFileInfo = new FileInfo($"population.{domainPrint}.{testPrint}.{testPopulationPrint}.xml");
-        }
-
         public Fixture()
         {
-            var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddCrossPlatform(".");
-            this.Configuration = configurationBuilder.Build();
-
-            CultureInfo.CurrentCulture = new CultureInfo("nl-BE");
-            this.MetaPopulation = MetaBuilder.Build();
-            var rules = Rules.Create(this.MetaPopulation);
-            this.Engine = new Engine(rules);
-
             this.HttpClientHandler = new HttpClientHandler();
             this.HttpClient = new HttpClient(this.HttpClientHandler)
             {
@@ -58,12 +28,6 @@ namespace Tests
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public IConfigurationRoot Configuration { get; set; }
-
-        public MetaPopulation MetaPopulation { get; set; }
-
-        public Engine Engine { get; set; }
-
         public HttpClientHandler HttpClientHandler { get; set; }
 
         public HttpClient HttpClient { get; set; }
@@ -71,42 +35,16 @@ namespace Tests
         public IDatabase Init()
         {
             var database = new Database(
-                   new DefaultDatabaseServices(this.Engine),
+                   new DefaultDatabaseServices(Config.Engine),
                    new Configuration
                    {
-                       ConnectionString = this.Configuration["ConnectionStrings:DefaultConnection"],
-                       ObjectFactory = new ObjectFactory(this.MetaPopulation, typeof(Person)),
+                       ConnectionString = Config.Configuration["ConnectionStrings:DefaultConnection"],
+                       ObjectFactory = new ObjectFactory(Config.MetaPopulation, typeof(Person)),
                    });
 
-            // Population
-            var fileName = populationFileInfo.FullName;
-
-            if (population == null && populationFileInfo.Exists)
-            {
-                population = File.ReadAllText(fileName);
-            }
-
-            if (population != null)
-            {
-                using var stringReader = new StringReader(population);
-                using var reader = XmlReader.Create(stringReader);
-                database.Load(reader);
-            }
-            else
-            {
-                database.Init();
-
-                var config = new Config();
-                new Setup(database, config).Apply();
-
-                using var transaction = database.CreateTransaction();
-                new IntranetPopulation(transaction, null, this.MetaPopulation).Execute();
-                transaction.Commit();
-
-                //using var stream = File.Create(fileName);
-                //using var writer = XmlWriter.Create(stream);
-                //database.Save(writer);
-            }
+            using var stream = Config.PopulationFileInfo.OpenRead();
+            using var reader = XmlReader.Create(stream);
+            database.Load(reader);
 
             var response = this.HttpClient.GetAsync(RestartUrl).Result;
             Assert.True(response.IsSuccessStatusCode);

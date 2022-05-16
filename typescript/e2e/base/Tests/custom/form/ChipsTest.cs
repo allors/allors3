@@ -3,15 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Form
+namespace Tests.E2E.Form
 {
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Test;
+    using E2E;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class CheckboxTest : Test
+    public class ChipsTest : Test
     {
         public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
@@ -23,21 +24,12 @@ namespace Tests.Form
         }
 
         [Test]
-        public async Task Indeterminate()
+        public async Task AddOne()
         {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var value = await this.FormComponent.CheckboxCheckbox.GetAsync();
-
-            Assert.Null(value);
-        }
-
-        [Test]
-        public async Task SetTrue()
-        {
-            var before = new Datas(this.Transaction).Extent().ToArray();
-
-            await this.FormComponent.CheckboxCheckbox.SetAsync(true);
+            await this.FormComponent.ChipsChips.AddAsync("jane", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -45,15 +37,18 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.Checkbox);
+            Assert.Contains(jane, data.Chips.ToArray());
         }
 
         [Test]
-        public async Task SetFalse()
+        public async Task AddTwo()
         {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
+            var john = new People(this.Transaction).FindBy(this.M.Person.UserName, "john@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            await this.FormComponent.CheckboxCheckbox.SetAsync(false);
+            await this.FormComponent.ChipsChips.AddAsync("jane", "jane@example.com");
+            await this.FormComponent.ChipsChips.AddAsync("john", "john@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -61,7 +56,28 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.False(data.Checkbox);
+            Assert.Contains(jane, data.Chips.ToArray());
+            Assert.Contains(john, data.Chips.ToArray());
+        }
+
+        [Test]
+        public async Task RemoveOne()
+        {
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            await this.FormComponent.ChipsChips.AddAsync("jane", "jane@example.com");
+
+            await this.FormComponent.SaveAsync();
+
+            await this.FormComponent.ChipsChips.RemoveAsync("jane@example.com");
+
+            await this.FormComponent.SaveAsync();
+            this.Transaction.Rollback();
+
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
+            var data = after.Except(before).First();
+            Assert.IsEmpty(data.Chips);
         }
     }
 }

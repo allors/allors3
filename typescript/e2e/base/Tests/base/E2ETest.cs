@@ -1,4 +1,4 @@
-namespace Tests
+namespace Tests.E2E
 {
     using System;
     using System.Collections.Generic;
@@ -8,6 +8,7 @@ namespace Tests
     using Allors.Database.Meta;
     using Allors.E2E;
     using Allors.E2E.Angular;
+    using E2E;
     using Microsoft.Playwright;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
@@ -81,7 +82,7 @@ namespace Tests
             this.ConsoleMessages = new List<IConsoleMessage>();
             this.Page.Console += (_, message) => this.ConsoleMessages.Add(message);
 
-            this.M = this.Fixture.MetaPopulation;
+            this.M = Config.MetaPopulation;
             this.Database = this.Fixture.Init();
             this.Transaction = this.Database.CreateTransaction();
         }

@@ -5,6 +5,7 @@ namespace Tests
     using Allors.E2E.Angular;
     using Allors.E2E.Angular.Cdk;
     using Allors.E2E.Angular.Info;
+    using E2E;
     using Microsoft.Playwright;
     using NUnit.Framework;
 

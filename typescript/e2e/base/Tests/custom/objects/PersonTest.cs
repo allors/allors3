@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Objects
+namespace Tests.E2E.Objects
 {
     using System.Linq;
     using Allors.Database.Domain;
@@ -12,6 +12,7 @@ namespace Tests.Objects
     using Allors.E2E.Angular.Material.Factory;
     using Allors.E2E.Angular.Material.Sidenav;
     using Allors.E2E.Test;
+    using E2E;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 

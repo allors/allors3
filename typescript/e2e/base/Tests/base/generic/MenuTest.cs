@@ -3,12 +3,13 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.ApplicationTests
+namespace Tests.E2E.Generic
 {
     using System.Linq;
     using Allors.E2E.Angular.Info;
     using Allors.E2E.Angular.Material.Sidenav;
     using NUnit.Framework;
+    using Tests;
     using Task = System.Threading.Tasks.Task;
 
     public class MenuTest : Test

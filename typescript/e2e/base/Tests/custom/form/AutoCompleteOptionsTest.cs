@@ -3,16 +3,16 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Form
+namespace Tests.E2E.Form
 {
-    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Test;
+    using E2E;
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class FileTest : Test
+    public class AutoCompleteOptionsTest : Test
     {
         public FieldsFormComponent FormComponent => new FieldsFormComponent(this.AppRoot);
 
@@ -24,12 +24,12 @@ namespace Tests.Form
         }
 
         [Test]
-        public async Task Upload()
+        public async Task Full()
         {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var file = new FileInfo("logo.png");
-            await this.FormComponent.FileFile.UploadAsync(file);
+            await this.FormComponent.AutocompleteOptionsAutocomplete.SelectAsync("jane@example.com", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
@@ -37,30 +37,41 @@ namespace Tests.Form
             var after = new Datas(this.Transaction).Extent().ToArray();
             Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.ExistFile);
+            Assert.AreEqual(jane, data.AutocompleteOptions);
         }
 
         [Test]
-        public async Task Remove()
+        public async Task Partial()
         {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
             var before = new Datas(this.Transaction).Extent().ToArray();
 
-            var file = new FileInfo("logo.png");
-            await this.FormComponent.FileFile.UploadAsync(file);
+            await this.FormComponent.AutocompleteOptionsAutocomplete.SelectAsync("j", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
-
             this.Transaction.Rollback();
+
             var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
+            Assert.AreEqual(jane, data.AutocompleteOptions);
+        }
 
-            var media = this.FormComponent.FileFile.Media(data.File);
-            await media.RemoveAsync();
+        [Test]
+        public async Task Blank()
+        {
+            var jane = new People(this.Transaction).FindBy(this.M.Person.UserName, "jane@example.com");
+            var before = new Datas(this.Transaction).Extent().ToArray();
+
+            await this.FormComponent.AutocompleteOptionsAutocomplete.SelectAsync("", "jane@example.com");
 
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
-            Assert.False(data.ExistFile);
+            var after = new Datas(this.Transaction).Extent().ToArray();
+            Assert.AreEqual(after.Length, before.Length + 1);
+            var data = after.Except(before).First();
+            Assert.AreEqual(jane, data.AutocompleteOptions);
         }
     }
 }

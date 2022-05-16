@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Tests.Objects
+namespace Tests.E2E.Objects
 {
     using System.Linq;
     using Allors.Database.Domain;
@@ -112,7 +112,7 @@ namespace Tests.Objects
             await edit.FactoryFab.Create(this.M.EmailCommunication);
 
             var form = new EmailcommunicationFormComponent(this.OverlayContainer);
-            await form.FromPartySelect.SelectAsync(0);
+            await form.FromPartySelect.SelectAsync(person);
             await form.ToPartySelect.SelectAsync(person);
             await form.ToEmailSelect.SelectAsync(0);
             await form.SubjectTemplateInput.SetAsync("You got mail");
