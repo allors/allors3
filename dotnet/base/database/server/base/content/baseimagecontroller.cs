@@ -66,7 +66,8 @@ namespace Allors.Database.Server.Controllers
 
                     var data = media.MediaContent.Data;
 
-                    var mediaType = media.Type.ToLowerInvariant();
+                    var mediaType = media.Type?.ToLowerInvariant() ?? "application/octet-stream";
+
                     if ("image/jpeg".Equals(mediaType) || "image/png".Equals(mediaType))
                     {
                         var width = w;

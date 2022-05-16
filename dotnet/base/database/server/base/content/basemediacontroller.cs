@@ -120,7 +120,8 @@ namespace Allors.Database.Server.Controllers
                     this.Response.Headers[HeaderNames.ETag] = $"\"{media.Revision}\"";
 
                     var data = media.MediaContent.Data;
-                    return this.File(data, media.MediaContent.Type, name ?? media.FileName);
+                    var mediaType = media.MediaContent.Type ?? "application/octet-stream";
+                    return this.File(data, mediaType, name ?? media.FileName);
                 }
             }
 
