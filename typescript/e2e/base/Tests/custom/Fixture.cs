@@ -49,9 +49,6 @@ namespace Tests.E2E
             using var reader = XmlReader.Create(stream);
             database.Load(reader);
 
-            var config = new Allors.Database.Domain.Config();
-            new Setup(database, config).Apply();
-
             var response = this.HttpClient.GetAsync(RestartUrl).Result;
             Assert.True(response.IsSuccessStatusCode);
 

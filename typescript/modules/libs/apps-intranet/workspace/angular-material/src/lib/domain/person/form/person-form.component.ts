@@ -233,7 +233,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
     }
 
     if (this.editRequest) {
-      this.selectedUserGroups =  pullResult.collection<UserGroup>('ActiveUserGroups');
+      this.selectedUserGroups =  pullResult.collection<UserGroup>('ActiveUserGroups') ?? [];
     }
   }
 
