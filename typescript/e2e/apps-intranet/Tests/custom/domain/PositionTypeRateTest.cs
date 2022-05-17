@@ -14,7 +14,7 @@ namespace Tests.E2E.Objects
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class ProductQuotesTest : Test
+    public class PositionTypeRateTest : Test
     {
         [SetUp]
         public async Task Setup() => await this.LoginAsync("jane@example.com");
@@ -22,13 +22,12 @@ namespace Tests.E2E.Objects
         [Test]
         public async Task CreateMinimal()
         {
-            var before = new ProductQuotes(this.Transaction).Extent().ToArray();
-            var organisation = new Organisations(this.Transaction).Extent().First(x => x.DisplayName.Equals("Allors BV"));
-
-            var contactMechanism = organisation.CurrentPartyContactMechanisms.First().ContactMechanism;
-            var contactPerson = organisation.CurrentContacts.First();
-
-            var @class = this.M.ProductQuote;
+            var before = new PositionTypeRates(this.Transaction).Extent().ToArray();
+            var rateType = new RateTypes(this.Transaction).StandardRate;
+            var frequency = new TimeFrequencies(this.Transaction).Day;
+            var date = DateTimeFactory.CreateDate(System.DateTime.Now);
+            
+            var @class = this.M.PositionTypeRate;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -38,11 +37,12 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new ProductquoteCreateFormComponent(this.OverlayContainer);
+            var form = new PositiontyperateFormComponent(this.OverlayContainer);
 
-            await form.ReceiverAutocomplete.SelectAsync(organisation.DisplayName);
-            await form.FullfillContactMechanismSelect.SelectAsync(contactMechanism);
-            await form.ContactPersonSelect.SelectAsync(contactPerson);
+            await form.RateTypeSelect.SetAsync(rateType.Name);
+            await form.FromDateDatepicker.SetAsync(date);
+            await form.FrequencySelect.SetAsync(frequency.Name);
+            await form.RateInput.SetAsync("10");
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -51,13 +51,16 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new ProductQuotes(this.Transaction).Extent().ToArray();
+            var after = new PositionTypeRates(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var productQuotes = after.Except(before).First();
+            var positionTypeRate = after.Except(before).First();
 
-
+            Assert.AreEqual(rateType, positionTypeRate.RateType);
+            Assert.AreEqual(date, positionTypeRate.FromDate);
+            Assert.AreEqual(frequency, positionTypeRate.Frequency);
+            Assert.AreEqual(10D, positionTypeRate.Rate);
         }
     }
 }

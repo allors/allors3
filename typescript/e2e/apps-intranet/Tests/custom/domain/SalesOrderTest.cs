@@ -14,7 +14,7 @@ namespace Tests.E2E.Objects
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class ProductQuotesTest : Test
+    public class SalesOrderTest : Test
     {
         [SetUp]
         public async Task Setup() => await this.LoginAsync("jane@example.com");
@@ -22,13 +22,10 @@ namespace Tests.E2E.Objects
         [Test]
         public async Task CreateMinimal()
         {
-            var before = new ProductQuotes(this.Transaction).Extent().ToArray();
-            var organisation = new Organisations(this.Transaction).Extent().First(x => x.DisplayName.Equals("Allors BV"));
+            var before = new SalesOrders(this.Transaction).Extent().ToArray();
+            var organisation = new Organisations(this.Transaction).Extent().First();
 
-            var contactMechanism = organisation.CurrentPartyContactMechanisms.First().ContactMechanism;
-            var contactPerson = organisation.CurrentContacts.First();
-
-            var @class = this.M.ProductQuote;
+            var @class = this.M.SalesOrder;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -38,11 +35,9 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new ProductquoteCreateFormComponent(this.OverlayContainer);
+            var form = new SalesorderCreateFormComponent(this.OverlayContainer);
 
-            await form.ReceiverAutocomplete.SelectAsync(organisation.DisplayName);
-            await form.FullfillContactMechanismSelect.SelectAsync(contactMechanism);
-            await form.ContactPersonSelect.SelectAsync(contactPerson);
+            await form.ShipToCustomerAutocomplete.SelectAsync(organisation.DisplayName);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -50,14 +45,14 @@ namespace Tests.E2E.Objects
             await this.Page.WaitForAngular();
 
             this.Transaction.Rollback();
-
-            var after = new ProductQuotes(this.Transaction).Extent().ToArray();
+            
+            var after = new SalesOrders(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
             var productQuotes = after.Except(before).First();
 
-
+            Assert.Equals(organisation, productQuotes.ShipToCustomer);
         }
     }
 }
