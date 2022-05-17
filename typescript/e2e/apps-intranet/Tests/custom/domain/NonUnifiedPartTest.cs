@@ -14,7 +14,7 @@ namespace Tests.E2E.Objects
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class UnifiedGoodTest : Test
+    public class NonUnifiedPartTest : Test
     {
         [SetUp]
         public async Task Setup() => await this.LoginAsync("jane@example.com");
@@ -22,10 +22,11 @@ namespace Tests.E2E.Objects
         [Test]
         public async Task CreateMinimal()
         {
-            var before = new UnifiedGoods(this.Transaction).Extent().ToArray();
-            var inventoryItemKind = new InventoryItemKinds(this.Transaction).NonSerialised;
+            var before = new NonUnifiedParts(this.Transaction).Extent().ToArray();
+            var facility = new Facilities(this.Transaction).Extent().First();
+            var inventoryItemKind = new InventoryItemKinds(this.Transaction).Extent().First();
 
-            var @class = this.M.UnifiedGood;
+            var @class = this.M.NonUnifiedPart;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -35,9 +36,10 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new UnifiedgoodCreateFormComponent(this.OverlayContainer);
+            var form = new NonunifiedpartCreateFormComponent(this.OverlayContainer);
 
-            await form.NameInput.SetValueAsync("Driesjes");
+            await form.NameInput.SetValueAsync("TempName");
+            await form.DefaultFacilitySelect.SelectAsync(facility);
             await form.InventoryItemKindSelect.SelectAsync(inventoryItemKind);
 
             var saveComponent = new Button(form, "text=SAVE");
@@ -47,24 +49,26 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new UnifiedGoods(this.Transaction).Extent().ToArray();
+            var after = new NonUnifiedParts(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var unifiedGood = after.Except(before).First();
+            var nonUnifiedPart = after.Except(before).First();
 
-            Assert.AreEqual("Driesjes", unifiedGood.Name);
-            Assert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
+            Assert.AreEqual("TempName", nonUnifiedPart.Name);
+            Assert.AreEqual(facility, nonUnifiedPart.DefaultFacility);
+            Assert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
         }
 
         [Test]
         public async Task CreateMaximum()
         {
-            var before = new UnifiedGoods(this.Transaction).Extent().ToArray();
-            var inventoryItemKind = new InventoryItemKinds(this.Transaction).NonSerialised;
-            var productType = new ProductTypes(this.Transaction).Extent().First();
+            var before = new NonUnifiedParts(this.Transaction).Extent().ToArray();
+            var facility = new Facilities(this.Transaction).Extent().First();
+            var inventoryItemKind = new InventoryItemKinds(this.Transaction).Extent().First();
+            var brand = new Brands(this.Transaction).Extent().First();
 
-            var @class = this.M.UnifiedGood;
+            var @class = this.M.NonUnifiedPart;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -74,11 +78,12 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new UnifiedgoodCreateFormComponent(this.OverlayContainer);
+            var form = new NonunifiedpartCreateFormComponent(this.OverlayContainer);
 
             await form.NameInput.SetValueAsync("TempName");
+            await form.DefaultFacilitySelect.SelectAsync(facility);
             await form.InventoryItemKindSelect.SelectAsync(inventoryItemKind);
-            await form.ProductTypeSelect.SelectAsync(productType);
+            //TODO: Koen Brand en Model staan niet in form
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -87,15 +92,15 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new UnifiedGoods(this.Transaction).Extent().ToArray();
+            var after = new NonUnifiedParts(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var unifiedGood = after.Except(before).First();
+            var nonUnifiedPart = after.Except(before).First();
 
-            Assert.AreEqual("TempName", unifiedGood.Name);
-            Assert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
-            Assert.AreEqual(productType, unifiedGood.ProductType);
+            Assert.AreEqual("TempName", nonUnifiedPart.Name);
+            Assert.AreEqual(facility, nonUnifiedPart.DefaultFacility);
+            Assert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
         }
 
     }
