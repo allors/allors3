@@ -63,4 +63,12 @@ export class PurchaseInvoiceApprovalFormComponent extends AllorsFormComponent<Pu
 
     this.onPostPullInitialize(pullResult);
   }
+
+  approve(): void {
+    this.saveAndInvoke(() => this.allors.context.invoke(this.object.Approve));
+  }
+
+  reject(): void {
+    this.saveAndInvoke(() => this.allors.context.invoke(this.object.Reject));
+  }
 }
