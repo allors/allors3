@@ -53,23 +53,19 @@ namespace Tests.E2E.Objects
         [Test]
         public async Task CreateMaximum()
         {
-            var before = new ProductTypes(this.Transaction).Extent().ToArray();
-            var serialisedItemCharacteristicType = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().First();
+            var before = new PurchaseReturns(this.Transaction).Extent().ToArray();
 
-            var @class = this.M.ProductType;
+            var @class = this.M.Shipment;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
             await this.Page.WaitForAngular();
 
             var factory = new FactoryFabComponent(this.AppRoot);
-            await factory.Create(@class);
+            await factory.Create(this.M.PurchaseReturn);
             await this.Page.WaitForAngular();
 
-            var form = new ProducttypeFormComponent(this.OverlayContainer);
-
-            await form.NameInput.SetValueAsync("Joren");
-            await form.SerialisedItemCharacteristicTypesSelect.SelectAsync(serialisedItemCharacteristicType);
+            var form = new PurchasereturnCreateFormComponent(this.OverlayContainer);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -78,15 +74,11 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new ProductTypes(this.Transaction).Extent().ToArray();
+            var after = new PurchaseReturns(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var productType = after.Except(before).First();
-
-            Assert.AreEqual("Joren", productType.Name);
-            Assert.AreEqual(1, productType.SerialisedItemCharacteristicTypes.Count());
-            Assert.Contains(serialisedItemCharacteristicType, productType.SerialisedItemCharacteristicTypes.ToArray());
+            //var productType = after.Except(before).First();
         }
     }
 }
