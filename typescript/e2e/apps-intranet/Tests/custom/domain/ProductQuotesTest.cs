@@ -23,10 +23,11 @@ namespace Tests.E2E.Objects
         public async Task CreateMinimal()
         {
             var before = new ProductQuotes(this.Transaction).Extent().ToArray();
-            var organisation = new Organisations(this.Transaction).Extent().First(x => x.DisplayName.Equals("Allors BV"));
+            var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
+            var customer = organisation.ActiveCustomers.First();
 
-            var contactMechanism = organisation.CurrentPartyContactMechanisms.First().ContactMechanism;
-            var contactPerson = organisation.CurrentContacts.First();
+            var contactMechanism = customer.CurrentPartyContactMechanisms.First().ContactMechanism;
+            var contactPerson = customer.CurrentContacts.First();
 
             var @class = this.M.ProductQuote;
 
@@ -40,7 +41,7 @@ namespace Tests.E2E.Objects
 
             var form = new ProductquoteCreateFormComponent(this.OverlayContainer);
 
-            await form.ReceiverAutocomplete.SelectAsync(organisation.DisplayName);
+            await form.ReceiverAutocomplete.SelectAsync(customer.DisplayName);
             await form.FullfillContactMechanismSelect.SelectAsync(contactMechanism);
             await form.ContactPersonSelect.SelectAsync(contactPerson);
 
@@ -55,9 +56,11 @@ namespace Tests.E2E.Objects
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var productQuotes = after.Except(before).First();
+            var productQuote = after.Except(before).First();
 
-
+            Assert.AreEqual(customer, productQuote.Receiver);
+            Assert.AreEqual(contactMechanism, productQuote.FullfillContactMechanism);
+            Assert.AreEqual(contactPerson, productQuote.ContactPerson);
         }
     }
 }

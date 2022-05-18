@@ -23,7 +23,8 @@ namespace Tests.E2E.Objects
         public async Task CreateMinimal()
         {
             var before = new SalesOrders(this.Transaction).Extent().ToArray();
-            var organisation = new Organisations(this.Transaction).Extent().First();
+            var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
+            var customer = organisation.ActiveCustomers.First();
 
             var @class = this.M.SalesOrder;
 
@@ -37,7 +38,7 @@ namespace Tests.E2E.Objects
 
             var form = new SalesorderCreateFormComponent(this.OverlayContainer);
 
-            await form.ShipToCustomerAutocomplete.SelectAsync(organisation.DisplayName);
+            await form.ShipToCustomerAutocomplete.SelectAsync(customer.DisplayName);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -45,14 +46,14 @@ namespace Tests.E2E.Objects
             await this.Page.WaitForAngular();
 
             this.Transaction.Rollback();
-            
+
             var after = new SalesOrders(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var productQuotes = after.Except(before).First();
+            var salesOrder = after.Except(before).First();
 
-            Assert.Equals(organisation, productQuotes.ShipToCustomer);
+            Assert.AreEqual(customer, salesOrder.ShipToCustomer);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Tests.E2E.Objects
             var rateType = new RateTypes(this.Transaction).StandardRate;
             var frequency = new TimeFrequencies(this.Transaction).Day;
             var date = DateTimeFactory.CreateDate(System.DateTime.Now);
-            
+
             var @class = this.M.PositionTypeRate;
 
             var list = this.Application.GetList(@class);
@@ -39,9 +39,9 @@ namespace Tests.E2E.Objects
 
             var form = new PositiontyperateFormComponent(this.OverlayContainer);
 
-            await form.RateTypeSelect.SetAsync(rateType.Name);
+            await form.RateTypeSelect.SetAsync(rateType);
             await form.FromDateDatepicker.SetAsync(date);
-            await form.FrequencySelect.SetAsync(frequency.Name);
+            await form.FrequencySelect.SetAsync(frequency);
             await form.RateInput.SetAsync("10");
 
             var saveComponent = new Button(form, "text=SAVE");

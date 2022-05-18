@@ -29,13 +29,13 @@ namespace Allors.E2E.Angular.Material.Role
             return await this.ValueTextLocator.TextContentAsync();
         }
 
-        public async Task SetAsync(string value)
+        public async Task SetAsync(IObject @object)
         {
             await this.Page.WaitForAngular();
             await this.ArrowLocator.ClickAsync();
 
             await this.Page.WaitForAngular();
-            var optionLocator = this.Page.Locator($"mat-option[data-allors-option-display='{value}'] span");
+            var optionLocator = this.Page.Locator($"mat-option[data-allors-option-id='{@object.Id}'] span");
             await optionLocator.ClickAsync();
         }
 

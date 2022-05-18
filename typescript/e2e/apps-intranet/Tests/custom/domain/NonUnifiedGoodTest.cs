@@ -23,7 +23,7 @@ namespace Tests.E2E.Objects
         public async Task CreateMinimal()
         {
             var before = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
-            var part = new Parts(this.Transaction).Extent().First();
+            var part = new NonUnifiedParts(this.Transaction).Extent().First();
 
             var @class = this.M.NonUnifiedGood;
 
@@ -61,7 +61,7 @@ namespace Tests.E2E.Objects
         public async Task CreateMaximum()
         {
             var before = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
-            var part = new Parts(this.Transaction).Extent().First();
+            var part = new NonUnifiedParts(this.Transaction).Extent().First();
             var categorie = new ProductCategories(this.Transaction).Extent().First();
 
             var @class = this.M.NonUnifiedGood;

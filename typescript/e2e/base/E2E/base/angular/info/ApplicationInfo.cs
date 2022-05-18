@@ -76,8 +76,8 @@ namespace Allors.E2E.Angular.Info
             }
         }
 
-        public ComponentInfo GetList(IComposite type) => this.ComponentInfoByName.Values.FirstOrDefault(v => type.Equals(v.List));
+        public ComponentInfo GetList(IComposite type) => this.ComponentInfoByName.Values.FirstOrDefault(v => v.List.Contains(type));
 
-        public ComponentInfo GetOverview(IComposite type) => this.ComponentInfoByName.Values.FirstOrDefault(v => type.Equals(v.Overview));
+        public ComponentInfo GetOverview(IComposite type) => this.ComponentInfoByName.Values.FirstOrDefault(v => v.Overview.Contains(type));
     }
 }
