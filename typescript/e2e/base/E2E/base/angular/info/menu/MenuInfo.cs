@@ -39,7 +39,7 @@ namespace Allors.E2E.Angular.Info
         {
             if (this.Tag != null)
             {
-                var componentInfo = applicationInfo.ComponentInfoByName.Values.FirstOrDefault(v => v.List?.Tag.Equals(this.Tag) == true);
+                var componentInfo = applicationInfo.ComponentInfoByName.Values.FirstOrDefault(v => v.List?.Any(w => w.Tag.Equals(this.Tag, System.StringComparison.OrdinalIgnoreCase)) == true);
                 if (componentInfo != null)
                 {
                     componentInfo.MenuInfo = this;

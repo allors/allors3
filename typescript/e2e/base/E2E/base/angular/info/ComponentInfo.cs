@@ -6,6 +6,7 @@
 namespace Allors.E2E.Angular.Info
 {
     using System;
+    using System.Collections.Generic;
     using Database.Meta;
 
     public partial class ComponentInfo
@@ -16,13 +17,13 @@ namespace Allors.E2E.Angular.Info
 
         public RouteInfo RouteInfo { get; set; }
 
-        public IComposite Create { get; set; }
+        public IList<IComposite> Create { get; set; } = new List<IComposite>();
 
-        public IComposite Edit { get; set; }
+        public IList<IComposite> Edit { get; set; } = new List<IComposite>();
 
-        public IComposite List { get; set; }
+        public IList<IComposite> List { get; set; } = new List<IComposite>();
 
-        public IComposite Overview { get; set; }
+        public IList<IComposite> Overview { get; set; } = new List<IComposite>();
 
         public MenuInfo MenuInfo { get; set; }
 

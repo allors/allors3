@@ -2,6 +2,7 @@ namespace Tests.E2E
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     using Allors.Database;
@@ -80,7 +81,7 @@ namespace Tests.E2E
             this.Page = await this.Context.NewPageAsync();
 
             this.ConsoleMessages = new List<IConsoleMessage>();
-            this.Page.Console += (_, message) => this.ConsoleMessages.Add(message);
+            this.Page.Console += this.PageOnConsole();
 
             this.M = Config.MetaPopulation;
             this.Database = this.Fixture.Init();
@@ -114,5 +115,16 @@ namespace Tests.E2E
             await this.Page.GotoAsync(url);
             await this.Page.WaitForAngular();
         }
+
+        private EventHandler<IConsoleMessage> PageOnConsole() =>
+            (_, message) =>
+            {
+                if ("error".Equals(message.Type))
+                {
+                    //Debugger.Break();
+                }
+
+                this.ConsoleMessages.Add(message);
+            };
     }
 }

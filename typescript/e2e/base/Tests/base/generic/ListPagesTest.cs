@@ -26,7 +26,7 @@ namespace Tests.E2E.Generic
             {
                 await this.LoginAsync(user);
 
-                foreach (var component in this.Components.Where(v => v.List != null))
+                foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
                     await this.Page.GotoAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
@@ -41,7 +41,7 @@ namespace Tests.E2E.Generic
             {
                 await this.LoginAsync(user);
 
-                foreach (var component in this.Components.Where(v => v.List != null))
+                foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
                     await this.Page.GotoAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
@@ -73,7 +73,7 @@ namespace Tests.E2E.Generic
             {
                 await this.LoginAsync(user);
 
-                foreach (var component in this.Components.Where(v => v.List != null))
+                foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
                     await this.Page.GotoAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
@@ -102,7 +102,7 @@ namespace Tests.E2E.Generic
             {
                 await this.LoginAsync(user);
 
-                foreach (var component in this.Components.Where(v => v.List != null))
+                foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
                     await this.Page.GotoAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();

@@ -197,6 +197,7 @@ export class SalesOrderEditFormComponent extends AllorsFormComponent<SalesOrder>
           DerivedBillToContactMechanism: {
             PostalAddress_Country: {},
           },
+          ElectronicDocuments: {},
         },
       }),
       p.VatClause({ sorting: [{ roleType: m.VatClause.Name }] }),

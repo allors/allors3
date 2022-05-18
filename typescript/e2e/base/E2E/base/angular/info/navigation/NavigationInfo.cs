@@ -26,7 +26,7 @@ namespace Allors.E2E.Angular.Info
                 if (applicationInfo.ComponentInfoByFullPath.TryGetValue(this.List, out var componentInfos))
                 {
                     var componentInfo = componentInfos.OrderBy(v => v.RouteInfo.Depth).Last();
-                    componentInfo.List = objectType;
+                    componentInfo.List.Add(objectType);
                 }
             }
 
@@ -35,7 +35,7 @@ namespace Allors.E2E.Angular.Info
                 if (applicationInfo.ComponentInfoByFullPath.TryGetValue(this.Overview, out var componentInfos))
                 {
                     var componentInfo = componentInfos.OrderBy(v => v.RouteInfo.Depth).Last();
-                    componentInfo.Overview = objectType;
+                    componentInfo.Overview.Add(objectType);
                 }
             }
         }
