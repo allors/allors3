@@ -6,6 +6,7 @@
     [(ngModel)]="localisedText"
     [name]="localisedName"
     [placeholder]="localisedLabel"
+    [disabled]="disabled"
   ></textarea>
   <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
 </mat-form-field>

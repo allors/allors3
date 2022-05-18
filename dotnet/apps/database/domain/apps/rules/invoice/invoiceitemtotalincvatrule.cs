@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<InvoiceItem>())
             {
                 var totalInvoiceItemAmountPaid = @this?.PaymentApplicationsWhereInvoiceItem.Sum(v => v.AmountApplied);
-                if (totalInvoiceItemAmountPaid > @this.TotalIncVat)
+                if (totalInvoiceItemAmountPaid != 0 && totalInvoiceItemAmountPaid > @this.TotalIncVat)
                 {
                     cycle.Validation.AddError(@this, this.M.PaymentApplication.AmountApplied, ErrorMessages.PaymentApplicationNotLargerThanInvoiceItemAmount);
                 }
