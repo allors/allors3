@@ -41,7 +41,7 @@ namespace Allors
 
             var allors = Organisations.CreateInternalOrganisation(
                 transaction: @this.Transaction(),
-                name: "Allors BVBA",
+                name: "Allors BV",
                 address1: "Kleine Nieuwedijkstraat 4",
                 postalCode: "2800",
                 locality: "Mechelen",
@@ -109,7 +109,7 @@ namespace Allors
 
             var dipu = Organisations.CreateInternalOrganisation(
                 transaction: @this.Transaction(),
-                name: "Dipu BVBA",
+                name: "Dipu BV",
                 address1: "Kleine Nieuwedijkstraat 2",
                 postalCode: "2800",
                 locality: "Mechelen",

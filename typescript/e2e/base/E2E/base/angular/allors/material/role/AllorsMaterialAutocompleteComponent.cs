@@ -17,6 +17,18 @@ namespace Allors.E2E.Angular.Material.Role
 
         public ILocator InputLocator => this.Locator.Locator("input");
 
+        public async Task SelectAsync(int index)
+        {
+            await this.Page.WaitForAngular();
+
+            await this.InputLocator.FillAsync(string.Empty);
+
+            await this.Page.WaitForAngular();
+
+            var optionLocator = this.Page.Locator($"mat-option[data-allors-option-display]:nth-of-type({index + 1}) span");
+            await optionLocator.ClickAsync();
+        }
+
         public async Task SelectAsync(string value, string selection = null)
         {
             await this.Page.WaitForAngular();

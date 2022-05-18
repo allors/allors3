@@ -14,7 +14,7 @@ namespace Tests.E2E.Objects
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class UnifiedGoodTest : Test
+    public class WorkRequirementTest : Test
     {
         [SetUp]
         public async Task Setup() => await this.LoginAsync("jane@example.com");
@@ -22,10 +22,9 @@ namespace Tests.E2E.Objects
         [Test]
         public async Task CreateMinimal()
         {
-            var before = new UnifiedGoods(this.Transaction).Extent().ToArray();
-            var inventoryItemKind = new InventoryItemKinds(this.Transaction).NonSerialised;
+            var before = new WorkRequirements(this.Transaction).Extent().ToArray();
 
-            var @class = this.M.UnifiedGood;
+            var @class = this.M.WorkRequirement;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -35,10 +34,7 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new UnifiedgoodCreateFormComponent(this.OverlayContainer);
-
-            await form.NameInput.SetValueAsync("Driesjes");
-            await form.InventoryItemKindSelect.SelectAsync(inventoryItemKind);
+            var form = new WorkrequirementCreateFormComponent(this.OverlayContainer);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -47,24 +43,21 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new UnifiedGoods(this.Transaction).Extent().ToArray();
+            var after = new WorkRequirements(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var unifiedGood = after.Except(before).First();
-
-            Assert.AreEqual("Driesjes", unifiedGood.Name);
-            Assert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
+            //var workRequirement = after.Except(before).First();
         }
 
         [Test]
         public async Task CreateMaximum()
         {
-            var before = new UnifiedGoods(this.Transaction).Extent().ToArray();
-            var inventoryItemKind = new InventoryItemKinds(this.Transaction).NonSerialised;
-            var productType = new ProductTypes(this.Transaction).Extent().First();
+            var before = new WorkRequirements(this.Transaction).Extent().ToArray();
+            var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
+            var originator = organisation.ActiveCustomers.First();
 
-            var @class = this.M.UnifiedGood;
+            var @class = this.M.WorkRequirement;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -74,11 +67,9 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new UnifiedgoodCreateFormComponent(this.OverlayContainer);
+            var form = new WorkrequirementCreateFormComponent(this.OverlayContainer);
 
-            await form.NameInput.SetValueAsync("TempName");
-            await form.InventoryItemKindSelect.SelectAsync(inventoryItemKind);
-            await form.ProductTypeSelect.SelectAsync(productType);
+            await form.OriginatorAutocomplete.SelectAsync(originator.DisplayName);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -87,16 +78,13 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new UnifiedGoods(this.Transaction).Extent().ToArray();
+            var after = new WorkRequirements(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var unifiedGood = after.Except(before).First();
+            var workRequirement = after.Except(before).First();
 
-            Assert.AreEqual("TempName", unifiedGood.Name);
-            Assert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
-            Assert.AreEqual(productType, unifiedGood.ProductType);
+            Assert.AreEqual(originator, workRequirement.Originator);
         }
-
     }
 }

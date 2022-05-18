@@ -58,10 +58,11 @@ namespace Tests.E2E.Objects
         public async Task CreateMaximum()
         {
             var before = new RequestsForQuote(this.Transaction).Extent().ToArray();
-            var organisation = new Organisations(this.Transaction).Extent().First(v => v.ExistCurrentPartyContactMechanisms);
+            var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
+            var customer = organisation.ActiveCustomers.First();
 
-            var contactMechanism = organisation.CurrentPartyContactMechanisms.First().ContactMechanism;
-            var contactPerson = organisation.CurrentContacts.First();
+            var contactMechanism = customer.CurrentPartyContactMechanisms.First().ContactMechanism;
+            var contactPerson = customer.CurrentContacts.First();
 
             var dateNow = System.DateTime.Today;
             var dateTommorow = dateNow.AddDays(1);
@@ -78,7 +79,9 @@ namespace Tests.E2E.Objects
 
             var form = new RequestforquoteCreateFormComponent(this.OverlayContainer);
 
-            await form.OriginatorAutocomplete.SelectAsync(organisation.DisplayName);
+            await form.OriginatorAutocomplete.SelectAsync(0);
+            await form.OriginatorAutocomplete.SelectAsync(1);
+            await form.OriginatorAutocomplete.SelectAsync(customer.DisplayName);
             await form.FullfillContactMechanismSelect.SelectAsync(contactMechanism);
             await form.ContactPersonSelect.SelectAsync(contactPerson);
 
@@ -102,7 +105,7 @@ namespace Tests.E2E.Objects
 
             var request = after.Except(before).First();
 
-            Assert.AreEqual(organisation, request.Originator);
+            Assert.AreEqual(customer, request.Originator);
             Assert.AreEqual(contactMechanism, request.FullfillContactMechanism);
             Assert.AreEqual(contactPerson, request.ContactPerson);
             Assert.AreEqual(dateNow.Date, request.RequestDate.Date);

@@ -23,7 +23,7 @@ namespace Tests.E2E.Objects
         public async Task CreateMinimal()
         {
             var before = new PurchaseOrders(this.Transaction).Extent().ToArray();
-            var supplier = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BVBA").ActiveSuppliers.First();
+            var supplier = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BV").ActiveSuppliers.First();
 
             var @class = this.M.PurchaseOrder;
 
@@ -59,7 +59,7 @@ namespace Tests.E2E.Objects
         public async Task CreateMaximum()
         {
             var before = new PurchaseOrders(this.Transaction).Extent().ToArray();
-            var internalOrganisation = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BVBA");
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BV");
             var supplier = internalOrganisation.ActiveSuppliers.First();
             var supplierContactMechanism = supplier.CurrentPartyContactMechanisms.First().ContactMechanism;
             var takenViaContactPerson = supplier.CurrentContacts.First();

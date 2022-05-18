@@ -21,6 +21,7 @@ export class AppNavigationService extends NavigationService {
 
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
+    // TODO: Koen
     const define = (composite: Composite, list: string, overview?: string) => {
       this.listByComposite.set(composite, list);
       this.overviewByComposite.set(composite, overview);
@@ -77,6 +78,7 @@ export class AppNavigationService extends NavigationService {
       '/purchasing/purchaseinvoice/:id'
     );
 
+    // TODO: Koen
     define(m.Shipment, '/shipment/shipments');
     define(
       m.CustomerShipment,
