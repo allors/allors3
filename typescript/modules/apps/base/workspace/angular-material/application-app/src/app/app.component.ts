@@ -1,11 +1,12 @@
 import { map, Subscription, switchMap, tap } from 'rxjs';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, NgZone, OnDestroy } from '@angular/core';
 import {
   RefreshService,
   SharedPullService,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
 import { SharedPullHandler } from '@allors/system/workspace/domain';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'allors-root',
@@ -15,6 +16,8 @@ export class AppComponent implements OnDestroy {
   subscription: Subscription;
 
   constructor(
+    public ngZone: NgZone,
+    public router: Router,
     private workspaceService: WorkspaceService,
     private refreshService: RefreshService,
     private sharePullService: SharedPullService
