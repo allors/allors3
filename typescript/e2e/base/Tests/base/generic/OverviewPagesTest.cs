@@ -36,7 +36,7 @@ namespace Tests.E2E.Generic
                         foreach (IObject @object in this.Transaction.Extent(objectType))
                         {
                             var url = component.RouteInfo.FullPath.Replace(":id", $"{@object.Strategy.ObjectId}");
-                            await this.Page.GotoAsync(url);
+                            await this.Page.NavigateAsync(url);
                             await this.Page.WaitForAngular();
                         }
                     }
@@ -60,7 +60,7 @@ namespace Tests.E2E.Generic
                         foreach (IObject @object in this.Transaction.Extent(objectType))
                         {
                             var url = component.RouteInfo.FullPath.Replace(":id", $"{@object.Strategy.ObjectId}");
-                            await this.Page.GotoAsync(url);
+                            await this.Page.NavigateAsync(url);
                             await this.Page.WaitForAngular();
 
                             var detail = this.AppRoot.Locator.Locator("[data-allors-kind='view-detail-panel']");
@@ -92,7 +92,7 @@ namespace Tests.E2E.Generic
                         foreach (IObject @object in this.Transaction.Extent(objectType))
                         {
                             var url = component.RouteInfo.FullPath.Replace(":id", $"{@object.Strategy.ObjectId}");
-                            await this.Page.GotoAsync(url);
+                            await this.Page.NavigateAsync(url);
                             await this.Page.WaitForAngular();
 
                             var objectRelations =
