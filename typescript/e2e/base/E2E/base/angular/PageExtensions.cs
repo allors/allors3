@@ -7,6 +7,22 @@ namespace Allors.E2E.Angular
 
     public static class PageExtensions
     {
+        public static async Task NavigateAsync(this IPage @this, string url)
+        {
+            const string expression =
+                @"async (url) => {
+    var app = document.querySelector('allors-root');
+    var component = window.ng.getComponent(app);
+    var router = component.router;
+    var ngZone = component.ngZone;
+
+    ngZone.run(async ()=> {
+        await router.navigateByUrl(url);
+    });
+}";
+            await @this.EvaluateAsync(expression, url);
+        }
+
         public static async Task WaitForAngular(this IPage @this)
         {
             const string expression =

@@ -28,7 +28,7 @@ namespace Tests.E2E.Generic
 
                 foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
-                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                    await this.Page.NavigateAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
                 }
             }
@@ -43,7 +43,7 @@ namespace Tests.E2E.Generic
 
                 foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
-                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                    await this.Page.NavigateAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
 
                     var factory = new FactoryFabComponent(this.AppRoot);
@@ -75,7 +75,7 @@ namespace Tests.E2E.Generic
 
                 foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
-                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                    await this.Page.NavigateAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
 
                     var table = new AllorsMaterialTableComponent(this.AppRoot);
@@ -104,7 +104,7 @@ namespace Tests.E2E.Generic
 
                 foreach (var component in this.Components.Where(v => v.List.Any()))
                 {
-                    await this.Page.GotoAsync(component.RouteInfo.FullPath);
+                    await this.Page.NavigateAsync(component.RouteInfo.FullPath);
                     await this.Page.WaitForAngular();
 
                     var table = new AllorsMaterialTableComponent(this.AppRoot);

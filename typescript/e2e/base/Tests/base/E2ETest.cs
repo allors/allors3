@@ -110,21 +110,15 @@ namespace Tests.E2E
             await loginPage.Login(username, password);
         }
 
-        protected async Task GotoAsync(string url)
-        {
-            await this.Page.GotoAsync(url);
-            await this.Page.WaitForAngular();
-        }
-
         private EventHandler<IConsoleMessage> PageOnConsole() =>
-            (_, message) =>
-            {
-                if ("error".Equals(message.Type))
-                {
-                    //Debugger.Break();
-                }
+              (_, message) =>
+              {
+                  if ("error".Equals(message.Type))
+                  {
+                      //Debugger.Break();
+                  }
 
-                this.ConsoleMessages.Add(message);
-            };
+                  this.ConsoleMessages.Add(message);
+              };
     }
 }
