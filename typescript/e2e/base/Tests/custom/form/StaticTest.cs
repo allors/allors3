@@ -6,6 +6,7 @@
 namespace Tests.E2E.Form
 {
     using Allors.Database.Domain;
+    using Allors.E2E.Angular;
     using Allors.E2E.Test;
     using E2E;
     using NUnit.Framework;
@@ -19,7 +20,7 @@ namespace Tests.E2E.Form
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/fields");
+            await this.Page.NavigateAsync("/fields");
         }
 
         [Test]
@@ -29,7 +30,7 @@ namespace Tests.E2E.Form
             data.Static = "A Static String!";
             this.Transaction.Commit();
 
-            await this.GotoAsync("/fields");
+            await this.Page.NavigateAsync("/fields");
 
             var actual = await this.FormComponent.StaticStatic.GetAsync();
 

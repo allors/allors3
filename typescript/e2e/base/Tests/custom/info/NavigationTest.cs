@@ -6,6 +6,7 @@
 namespace Tests.E2E.Info
 {
     using System.Linq;
+    using Allors.E2E.Angular;
     using Allors.E2E.Angular.Info;
     using E2E;
     using NUnit.Framework;
@@ -17,7 +18,7 @@ namespace Tests.E2E.Info
         public async Task Setup()
         {
             await this.LoginAsync("jane@example.com");
-            await this.GotoAsync("/fields");
+            await this.Page.NavigateAsync("/fields");
         }
 
         [Test]
