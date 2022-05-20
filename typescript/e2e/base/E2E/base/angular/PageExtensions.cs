@@ -21,6 +21,8 @@ namespace Allors.E2E.Angular
     });
 }";
             await @this.EvaluateAsync(expression, url);
+
+            await @this.WaitForAngular();
         }
 
         public static async Task WaitForAngular(this IPage @this)

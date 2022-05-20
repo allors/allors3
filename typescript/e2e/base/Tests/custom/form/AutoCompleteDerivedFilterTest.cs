@@ -44,6 +44,9 @@ namespace Tests.E2E.Form
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             await this.FormComponent.SaveAsync();
+
+            await this.Page.WaitForAngular();
+
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
