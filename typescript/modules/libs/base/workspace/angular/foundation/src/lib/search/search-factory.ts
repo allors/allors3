@@ -15,6 +15,8 @@ import { Context } from '@allors/base/workspace/angular/foundation';
 
 import { SearchOptions } from './search-options';
 
+const DEFAULT_TAKE = 100;
+
 export class SearchFactory {
   constructor(private options: SearchOptions) {}
 
@@ -75,6 +77,7 @@ export class SearchFactory {
             {
               name: 'results',
               include: this.options.include,
+              take: this.options.take ?? DEFAULT_TAKE,
             },
           ],
           arguments: parameters,

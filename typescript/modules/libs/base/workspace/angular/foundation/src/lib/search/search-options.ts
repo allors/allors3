@@ -7,4 +7,5 @@ export interface SearchOptions {
   predicates?: Predicate[];
   post?: (and: And) => void;
   include?: Node[] | any;
+  take?: number;
 }
