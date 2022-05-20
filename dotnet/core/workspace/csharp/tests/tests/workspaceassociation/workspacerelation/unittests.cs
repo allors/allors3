@@ -101,11 +101,6 @@ namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
                         Assert.Equal("a string", c1.WorkspaceAllorsString);
                         Assert.Equal(new Guid("0208BB9B-E87B-4CED-8DEC-516E6778CD66"), c1.WorkspaceAllorsUnique);
 
-                        if (counter == 41)
-                        {
-                            Debugger.Break();
-                        }
-
                         await push(session1);
 
                         Assert.Equal(new byte[] { 1, 2 }, c1.WorkspaceAllorsBinary);

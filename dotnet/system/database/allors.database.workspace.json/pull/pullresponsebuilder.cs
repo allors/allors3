@@ -6,7 +6,9 @@
 namespace Allors.Database.Protocol.Json
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
+    using System.Threading;
     using Allors.Protocol.Json;
     using Allors.Protocol.Json.Api.Pull;
     using Data;
@@ -32,7 +34,7 @@ namespace Allors.Database.Protocol.Json
         private List<IValidation> errors;
         private readonly IPullPrefetchers prefetchers;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies, IPullPrefetchers prefetchers)
+        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies, IPullPrefetchers prefetchers, CancellationToken cancellationToken)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;
@@ -43,6 +45,7 @@ namespace Allors.Database.Protocol.Json
             this.AllowedClasses = allowedClasses;
             this.PreparedSelects = preparedSelects;
             this.PreparedExtents = preparedExtents;
+            this.CancellationToken = cancellationToken;
 
             this.prefetchers = prefetchers;
 
@@ -59,6 +62,7 @@ namespace Allors.Database.Protocol.Json
         public IPreparedSelects PreparedSelects { get; }
 
         public IPreparedExtents PreparedExtents { get; }
+        public CancellationToken CancellationToken { get; }
 
         public void AddError(IValidation validation)
         {
@@ -203,6 +207,7 @@ namespace Allors.Database.Protocol.Json
 
                 var input = new ProcedureInput(this.Transaction.Database.ObjectFactory, procedure);
 
+                this.ThrowIfCancellationRequested();
                 proc.Execute(this, input, this);
 
                 if (this.errors?.Count > 0)
@@ -222,6 +227,8 @@ namespace Allors.Database.Protocol.Json
 
                 foreach (var pull in pulls)
                 {
+                    this.ThrowIfCancellationRequested();
+
                     if (pull.Object != null)
                     {
                         var pullInstantiate = new PullInstantiate(this.Transaction, pull, this.AccessControl, this.PreparedSelects);
@@ -241,6 +248,8 @@ namespace Allors.Database.Protocol.Json
             // Serialize
             var grants = new HashSet<IGrant>();
             var revocations = new HashSet<IRevocation>();
+
+            this.ThrowIfCancellationRequested();
 
             pullResponse = new PullResponse
             {
@@ -295,14 +304,20 @@ namespace Allors.Database.Protocol.Json
                 return;
             }
 
+            this.ThrowIfCancellationRequested();
+
             var current = this.unmaskedObjects.ToArray();
 
             while (current.Length > 0)
             {
+                this.ThrowIfCancellationRequested();
+
                 var newObjects = new HashSet<IObject>();
 
                 foreach (var grouping in current.GroupBy(v => v.Strategy.Class, v => v))
                 {
+                    this.ThrowIfCancellationRequested();
+
                     var @class = grouping.Key;
                     var grouped = grouping.ToArray();
 
@@ -364,6 +379,16 @@ namespace Allors.Database.Protocol.Json
             {
                 this.unmaskedObjects.Add(@object);
             }
+        }
+
+        private void ThrowIfCancellationRequested()
+        {
+            //if (this.CancellationToken.IsCancellationRequested)
+            //{
+            //    Debugger.Break();
+            //}
+
+            this.CancellationToken.ThrowIfCancellationRequested();
         }
     }
 }

@@ -6,6 +6,7 @@
 namespace Allors.Database.Server.Controllers
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Allors.Services;
     using Domain;
@@ -30,7 +31,7 @@ namespace Allors.Database.Server.Controllers
         public ITreeCache TreeCache { get; }
 
         [HttpPost]
-        public async Task<IActionResult> Pull([FromBody] TestUnitSamplesParams @params)
+        public async Task<IActionResult> Pull([FromBody] TestUnitSamplesParams @params, CancellationToken cancellationToken)
         {
             try
             {
@@ -41,7 +42,7 @@ namespace Allors.Database.Server.Controllers
                     this.Transaction.Commit();
                 }
 
-                var api = new Api(this.Transaction, this.WorkspaceService.Name);
+                var api = new Api(this.Transaction, this.WorkspaceService.Name, cancellationToken);
                 var response = api.CreatePullResponseBuilder();
 
                 switch (@params.Step)

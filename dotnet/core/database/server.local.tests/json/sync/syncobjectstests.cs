@@ -6,6 +6,7 @@
 namespace Tests
 {
     using System.Linq;
+    using System.Threading;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json.Api.Sync;
@@ -33,7 +34,7 @@ namespace Tests
                 o = new[] { organisation.Id },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.o);
@@ -52,7 +53,7 @@ namespace Tests
                 o = new[] { person.Id },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Single(syncResponse.o);
@@ -81,7 +82,7 @@ namespace Tests
                 o = new[] { person.Id },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Single(syncResponse.o);

@@ -8,6 +8,7 @@ namespace Tests
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using Allors.Database.Configuration;
     using Allors.Database.Data;
     using Allors.Database.Domain;
@@ -43,7 +44,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var organisations = pullResponse.c["Organisations"];
@@ -69,7 +70,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var organisations = pullResponse.c["Organisations"];
@@ -104,7 +105,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.c["Datas"];
@@ -165,7 +166,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;
@@ -212,7 +213,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;
@@ -263,7 +264,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;
@@ -314,7 +315,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;

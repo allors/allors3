@@ -33,11 +33,6 @@ namespace Allors.Database.Configuration
                     var permissions = new Permissions(transaction).Extent();
                     transaction.Prefetch(this.Database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
 
-                    if (permissions.Count == 0)
-                    {
-                        Debugger.Break();
-                    }
-
                     this.permissionCacheEntryByClassId = permissions
                         .GroupBy(v => v.ClassPointer)
                         .ToDictionary(

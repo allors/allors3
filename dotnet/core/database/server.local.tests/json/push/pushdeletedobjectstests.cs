@@ -6,6 +6,7 @@
 namespace Tests
 {
     using System;
+    using System.Threading;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json.Api.Push;
@@ -51,7 +52,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);

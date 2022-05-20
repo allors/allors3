@@ -5,6 +5,7 @@
 
 namespace Allors.Server.Controllers
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using Database;
     using Database.Domain;
@@ -30,9 +31,9 @@ namespace Allors.Server.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Pull()
+        public async Task<IActionResult> Pull(CancellationToken cancellationToken)
         {
-            var api = new Api(this.Transaction, this.WorkspaceService.Name);
+            var api = new Api(this.Transaction, this.WorkspaceService.Name, cancellationToken);
             var response = api.CreatePullResponseBuilder();
             var people = new People(this.Transaction);
             response.AddCollection("people", people.ObjectType, people.Extent().ToArray());

@@ -6,6 +6,7 @@
 
 namespace Tests
 {
+    using System.Threading;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json.Api.Sync;
@@ -34,7 +35,7 @@ namespace Tests
             {
                 o = new[] { x1.Id },
             };
-            var api = new Api(this.Transaction, "X");
+            var api = new Api(this.Transaction, "X", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Single(syncResponse.o);
@@ -70,7 +71,7 @@ namespace Tests
             {
                 o = new[] { x1.Id},
             };
-            var api = new Api(this.Transaction, "None");
+            var api = new Api(this.Transaction, "None", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.o);

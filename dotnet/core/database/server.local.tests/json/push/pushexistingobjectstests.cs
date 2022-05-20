@@ -5,6 +5,7 @@
 
 namespace Tests
 {
+    using System.Threading;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json.Api.Push;
@@ -59,7 +60,7 @@ namespace Tests
                 }
             };
 
-            var api = new Api(this.Transaction, "X");
+            var api = new Api(this.Transaction, "X", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             this.Transaction.Rollback();
@@ -94,7 +95,7 @@ namespace Tests
                 }
             };
 
-            var api = new Api(this.Transaction, "Y");
+            var api = new Api(this.Transaction, "Y", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             this.Transaction.Rollback();

@@ -6,6 +6,7 @@
 namespace Tests
 {
     using System.Linq;
+    using System.Threading;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Database.Services;
@@ -30,7 +31,7 @@ namespace Tests
                 g = new[] { grant.Id },
             };
 
-            var api = new Api(this.Transaction, workspaceName);
+            var api = new Api(this.Transaction, workspaceName, CancellationToken.None);
             var securityResponse = api.Access(accessRequest);
 
             Assert.Single(securityResponse.g);
@@ -72,7 +73,7 @@ namespace Tests
                 g = new[] { grant.Id },
             };
 
-            var api = new Api(this.Transaction, workspaceName);
+            var api = new Api(this.Transaction, workspaceName, CancellationToken.None);
             var accessResponse = api.Access(accessRequest);
 
             Assert.Single(accessResponse.g);

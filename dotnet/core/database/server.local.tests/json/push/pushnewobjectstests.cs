@@ -5,6 +5,7 @@
 
 namespace Tests
 {
+    using System.Threading;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json.Api.Push;
@@ -24,7 +25,7 @@ namespace Tests
                 n = new[] { new PushRequestNewObject { t = this.M.WorkspaceXObject1.Tag, w = -1 }, },
             };
 
-            var api = new Api(this.Transaction, "X");
+            var api = new Api(this.Transaction, "X", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             this.Transaction.Rollback();
@@ -44,7 +45,7 @@ namespace Tests
                 n = new[] { new PushRequestNewObject { t = this.M.WorkspaceXObject1.Tag, w = -1 }, },
             };
 
-            var api = new Api(this.Transaction, "Y");
+            var api = new Api(this.Transaction, "Y", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
@@ -61,7 +62,7 @@ namespace Tests
                 n = new[] { new PushRequestNewObject { t = this.M.WorkspaceXObject1.Tag, w = -1 }, },
             };
 
-            var api = new Api(this.Transaction, "None");
+            var api = new Api(this.Transaction, "None", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
@@ -77,7 +78,7 @@ namespace Tests
                 n = new[] { new PushRequestNewObject { t = this.M.WorkspaceYObject1.Tag, w = -1 }, },
             };
 
-            var api = new Api(this.Transaction, "None");
+            var api = new Api(this.Transaction, "None", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
@@ -94,7 +95,7 @@ namespace Tests
                 n = new[] { new PushRequestNewObject { t = this.M.WorkspaceNoneObject1.Tag, w = -1 }, },
             };
 
-            var api = new Api(this.Transaction, "X");
+            var api = new Api(this.Transaction, "X", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
@@ -111,7 +112,7 @@ namespace Tests
                 n = new[] { new PushRequestNewObject { t = this.M.WorkspaceNoneObject1.Tag, w = -1 }, },
             };
 
-            var api = new Api(this.Transaction, "Y");
+            var api = new Api(this.Transaction, "Y", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);
@@ -128,7 +129,7 @@ namespace Tests
                 n = new[] { new PushRequestNewObject { t = this.M.WorkspaceNoneObject1.Tag, w = -1 }, },
             };
 
-            var api = new Api(this.Transaction, "None");
+            var api = new Api(this.Transaction, "None", CancellationToken.None);
             var pushResponse = api.Push(pushRequest);
 
             Assert.True(pushResponse.HasErrors);

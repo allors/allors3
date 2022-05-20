@@ -7,6 +7,7 @@
 namespace Tests
 {
     using System.Linq;
+    using System.Threading;
     using Allors.Database.Adapters.Sql;
     using Allors.Database.Adapters.Sql.Tracing;
     using Allors.Database.Domain;
@@ -54,7 +55,7 @@ namespace Tests
                 }).ToArray()
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
 
             tree.Clear();
             var pullResponse = api.Pull(pullRequest);
@@ -116,7 +117,7 @@ namespace Tests
                 }).ToArray()
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             tree.Clear();
@@ -165,7 +166,7 @@ namespace Tests
                 o = new[] { this.x[0].Id },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
 
             tree.Clear();

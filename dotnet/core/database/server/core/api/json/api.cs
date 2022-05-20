@@ -8,6 +8,7 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
     using Allors.Protocol.Json.Api.Invoke;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Protocol.Json.Api.Push;
@@ -26,10 +27,11 @@ namespace Allors.Database.Protocol.Json
 
     public class Api
     {
-        public Api(ITransaction transaction, string workspaceName)
+        public Api(ITransaction transaction, string workspaceName, CancellationToken cancellationToken)
         {
             this.Transaction = transaction;
             this.WorkspaceName = workspaceName;
+            this.CancellationToken = cancellationToken;
             this.Sink = transaction.Database.Sink;
 
             var transactionServices = transaction.Services;
@@ -53,6 +55,7 @@ namespace Allors.Database.Protocol.Json
         public ITransaction Transaction { get; }
 
         public string WorkspaceName { get; set; }
+        public CancellationToken CancellationToken { get; }
 
         public ISink Sink { get; }
 
@@ -102,7 +105,7 @@ namespace Allors.Database.Protocol.Json
 
             var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
             var dependencies = this.ToDependencies(pullRequest.d);
-            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, pullResponsePrefetcher);
+            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, pullResponsePrefetcher, this.CancellationToken);
             var pullResponse = pullResponseBuilder.Build(pullRequest);
 
             if (@event != null)
@@ -182,10 +185,9 @@ namespace Allors.Database.Protocol.Json
         // TODO: Delete
         public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
         {
-
             // TODO: Dependencies
             var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, pullResponsePrefetcher);
+            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, pullResponsePrefetcher, this.CancellationToken);
         }
 
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)

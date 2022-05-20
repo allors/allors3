@@ -7,6 +7,7 @@
 namespace Allors.Database.Protocol.Json
 {
     using System;
+    using System.Threading;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Services;
     using Domain;
@@ -43,20 +44,24 @@ namespace Allors.Database.Protocol.Json
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<PullResponse> Post([FromBody] PullRequest request) =>
+        public ActionResult<PullResponse> Post([FromBody] PullRequest request, CancellationToken cancellationToken) =>
             this.PolicyService.InvokePolicy.Execute(
                 () =>
                 {
                     try
                     {
                         using var transaction = this.DatabaseService.Database.CreateTransaction();
-                        var api = new Api(transaction, this.WorkspaceService.Name);
+                        var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken);
                         return api.Pull(request);
                     }
                     catch (Exception e)
                     {
                         this.Logger.Error(e, "PullRequest {request}", request);
                         throw;
+                    }
+                    finally
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
                     }
                 });
     }

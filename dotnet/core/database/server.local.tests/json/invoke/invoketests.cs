@@ -5,6 +5,7 @@
 
 namespace Tests
 {
+    using System.Threading;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
     using Allors.Protocol.Json.Api.Invoke;
@@ -52,7 +53,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "X");
+            var api = new Api(this.Transaction, "X", CancellationToken.None);
             var invokeResponse = api.Invoke(invokeRequest);
 
             Assert.False(invokeResponse.HasErrors);
@@ -76,7 +77,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Y");
+            var api = new Api(this.Transaction, "Y", CancellationToken.None);
             var invokeResponse = api.Invoke(invokeRequest);
 
             Assert.True(invokeResponse.HasErrors);
@@ -106,7 +107,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "None");
+            var api = new Api(this.Transaction, "None", CancellationToken.None);
             var invokeResponse = api.Invoke(invokeRequest);
 
             Assert.True(invokeResponse.HasErrors);

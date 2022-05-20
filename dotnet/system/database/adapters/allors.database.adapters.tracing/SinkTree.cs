@@ -49,11 +49,6 @@ namespace Allors.Database.Adapters.Sql.Tracing
 
         public void OnAfter(IEvent @event)
         {
-            if (this.stack.Count == 0)
-            {
-                Debugger.Break();
-            }
-
             var top = this.stack.Pop();
             if (top.Event != @event)
             {

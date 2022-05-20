@@ -7,6 +7,7 @@
 namespace Tests
 {
     using System.Linq;
+    using System.Threading;
     using Allors.Database.Data;
     using Allors.Database.Domain;
     using Allors.Database.Protocol.Json;
@@ -35,7 +36,7 @@ namespace Tests
 
             var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var namedObject = pullResponse.o["Data"];
@@ -61,7 +62,7 @@ namespace Tests
 
             var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;
@@ -90,7 +91,7 @@ namespace Tests
 
             var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;
@@ -129,7 +130,7 @@ namespace Tests
 
             var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;
@@ -168,7 +169,7 @@ namespace Tests
 
             var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;
@@ -208,7 +209,7 @@ namespace Tests
 
             var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pool = pullResponse.p;

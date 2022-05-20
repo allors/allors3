@@ -6,6 +6,7 @@
 namespace Allors.Database.Protocol.Json
 {
     using System;
+    using System.Threading;
     using Allors.Protocol.Json.Api.Security;
     using Allors.Services;
     using Microsoft.AspNetCore.Authorization;
@@ -33,14 +34,14 @@ namespace Allors.Database.Protocol.Json
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
-        public ActionResult<AccessResponse> Post([FromBody] AccessRequest accessRequest) =>
+        public ActionResult<AccessResponse> Post([FromBody] AccessRequest accessRequest, CancellationToken cancellationToken) =>
             this.PolicyService.SyncPolicy.Execute(
                 () =>
                 {
                     try
                     {
                         using var transaction = this.DatabaseService.Database.CreateTransaction();
-                        var api = new Api(transaction, this.WorkspaceService.Name);
+                        var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken);
                         return api.Access(accessRequest);
                     }
                     catch (Exception e)

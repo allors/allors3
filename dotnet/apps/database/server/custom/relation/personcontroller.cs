@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Server.Controllers
 {
+    using System.Threading;
     using Allors.Services;
     using Services;
     using Protocol.Json;
@@ -24,9 +25,9 @@ namespace Allors.Database.Server.Controllers
 
 
         [HttpPost]
-        public IActionResult Pull([FromBody] Model model)
+        public IActionResult Pull([FromBody] Model model, CancellationToken cancellationToken)
         {
-            var api = new Api(this.TransactionService.Transaction, this.WorkspaceService.Name);
+            var api = new Api(this.TransactionService.Transaction, this.WorkspaceService.Name, cancellationToken);
             var response = api.CreatePullResponseBuilder();
 
             var person = this.TransactionService.Transaction.Instantiate(model.Id);

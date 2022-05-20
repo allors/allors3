@@ -8,6 +8,7 @@ namespace Tests
 {
     using System;
     using System.Linq;
+    using System.Threading;
     using Allors;
     using Allors.Database.Data;
     using Allors.Database.Domain;
@@ -38,7 +39,7 @@ namespace Tests
                 var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1) };
                 var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-                var api = new Api(this.Transaction, "X");
+                var api = new Api(this.Transaction, "X", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
                 var wx1s = pullResponse.c["WorkspaceXObject1s"];
 
@@ -62,7 +63,7 @@ namespace Tests
                 },
                 };
 
-                var api = new Api(this.Transaction, "X");
+                var api = new Api(this.Transaction, "X", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
                 var wx1 = pullResponse.o["WorkspaceXObject1"];
 
@@ -86,7 +87,7 @@ namespace Tests
 
                 var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) } };
 
-                var api = new Api(this.Transaction, "Y");
+                var api = new Api(this.Transaction, "Y", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
                 var wx1s = pullResponse.c["WorkspaceXObject1s"];
 
@@ -106,7 +107,7 @@ namespace Tests
                     },
                 };
 
-                var api = new Api(this.Transaction, "Y");
+                var api = new Api(this.Transaction, "Y", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
                 Assert.Empty(pullResponse.o);
             }
@@ -127,7 +128,7 @@ namespace Tests
                 var pull = new Pull { Extent = new Extent(m.WorkspaceXObject1) };
                 var pullRequest = new PullRequest { l = new[] { pull.ToJson(this.UnitConvert) }, };
 
-                var api = new Api(this.Transaction, "None");
+                var api = new Api(this.Transaction, "None", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
 
                 var wx1s = pullResponse.c["WorkspaceXObject1s"];
@@ -148,7 +149,7 @@ namespace Tests
                     },
                 };
 
-                var api = new Api(this.Transaction, "None");
+                var api = new Api(this.Transaction, "None", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
 
                 Assert.Empty(pullResponse.o);
@@ -178,7 +179,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.c["Datas"];
@@ -222,7 +223,7 @@ namespace Tests
                 },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var pullResponseObject = pullResponse.p[0];
@@ -261,7 +262,7 @@ namespace Tests
                       },
             };
 
-            var api = new Api(this.Transaction, "Default");
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
             var pullResponse = api.Pull(pullRequest);
 
             var namedCollection = pullResponse.c["Datas"];

@@ -5,6 +5,7 @@
 
 namespace Allors.Server.Controllers
 {
+    using System.Threading;
     using Database;
     using Database.Domain;
     using Database.Protocol.Json;
@@ -27,9 +28,9 @@ namespace Allors.Server.Controllers
         public ITreeCache TreeCache { get; }
 
         [HttpPost]
-        public IActionResult Pull()
+        public IActionResult Pull(CancellationToken cancellationToken)
         {
-            var api = new Api(this.Transaction, this.WorkspaceService.Name);
+            var api = new Api(this.Transaction, this.WorkspaceService.Name, cancellationToken);
             var response = api.CreatePullResponseBuilder();
             response.AddObject("object", api.User);
             var organisations = new Organisations(this.Transaction);
