@@ -29,30 +29,38 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseInvoice>())
             {
-                @this.Revocations = @this.TransitionalRevocations;
+                @this.DerivePurchaseInvoiceDeniedPermissionRule(validation);
+            }
+        }
+    }
 
-                var createSalesInvoiceRevocation = new Revocations(@this.Strategy.Transaction).PurchaseInvoiceCreateSalesInvoiceRevocation;
-                var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseInvoiceDeleteRevocation;
+    public static class PurchaseInvoiceDeniedPermissionRuleExtensions
+    {
+        public static void DerivePurchaseInvoiceDeniedPermissionRule(this PurchaseInvoice @this, IValidation validation)
+        {
+            @this.Revocations = @this.TransitionalRevocations;
 
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveRevocation(deleteRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(deleteRevocation);
-                }
+            var createSalesInvoiceRevocation = new Revocations(@this.Strategy.Transaction).PurchaseInvoiceCreateSalesInvoiceRevocation;
+            var deleteRevocation = new Revocations(@this.Strategy.Transaction).PurchaseInvoiceDeleteRevocation;
 
-                if (!@this.ExistSalesInvoiceWherePurchaseInvoice
-                    && (@this.BilledFrom as Organisation)?.IsInternalOrganisation == true
-                    && (@this.PurchaseInvoiceState.IsPaid || @this.PurchaseInvoiceState.IsPartiallyPaid || @this.PurchaseInvoiceState.IsNotPaid))
-                {
-                    @this.RemoveRevocation(createSalesInvoiceRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(createSalesInvoiceRevocation);
-                }
+            if (@this.IsDeletable)
+            {
+                @this.RemoveRevocation(deleteRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(deleteRevocation);
+            }
+
+            if (!@this.ExistSalesInvoiceWherePurchaseInvoice
+                && (@this.BilledFrom as Organisation)?.IsInternalOrganisation == true
+                && (@this.PurchaseInvoiceState.IsPaid || @this.PurchaseInvoiceState.IsPartiallyPaid || @this.PurchaseInvoiceState.IsNotPaid))
+            {
+                @this.RemoveRevocation(createSalesInvoiceRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(createSalesInvoiceRevocation);
             }
         }
     }

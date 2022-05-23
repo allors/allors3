@@ -114,6 +114,11 @@ namespace Allors.Database.Domain
 
         public void Apply()
         {
+            foreach (var revocation in this.transaction.Extent<Revocation>().Where(v => v.ExistObjectStatesWhereObjectRevocation))
+            {
+                revocation.RemoveDeniedPermissions();
+            }
+
             foreach (Role role in this.transaction.Extent<Role>())
             {
                 role.RemovePermissions();
