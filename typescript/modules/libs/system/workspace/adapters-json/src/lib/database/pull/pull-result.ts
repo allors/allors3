@@ -73,7 +73,7 @@ export class PullResult extends Result implements IPullResult {
     nameOrType: string | Class | Interface | AssociationType | RoleType
   ): T[] {
     if (typeof nameOrType === 'string') {
-      return (this.collections.get(nameOrType.toUpperCase()) as T[]) ?? null;
+      return (this.collections.get(nameOrType.toUpperCase()) as T[]) ?? [];
     }
 
     switch (nameOrType.kind) {
@@ -85,12 +85,12 @@ export class PullResult extends Result implements IPullResult {
               ? nameOrType.pluralName
               : nameOrType.singularName
             ).toUpperCase()
-          ) as T[]) ?? null
+          ) as T[]) ?? []
         );
       default:
         return (
           (this.collections.get(nameOrType.pluralName.toUpperCase()) as T[]) ??
-          null
+          []
         );
     }
   }
