@@ -33,6 +33,7 @@ namespace Tests.E2E.Form
             data.AddLocalisedText(localisedMarkdown);
             this.Transaction.Commit();
 
+            await this.Page.NavigateAsync("/");
             await this.Page.NavigateAsync("/fields");
 
             var actual = await this.FormComponent.LocalisedTextsLocalisedText.GetAsync();

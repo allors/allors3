@@ -104,11 +104,15 @@ namespace Allors.Database.Domain
             }
         }
 
-        private void BaseOnPostSetup()
+        private void BaseOnPreSetup()
         {
+            foreach (var revocation in this.transaction.Extent<Revocation>().Where(v => v.ExistObjectStatesWhereObjectRevocation))
+            {
+                revocation.RemoveDeniedPermissions();
+            }
         }
 
-        private void BaseOnPreSetup()
+        private void BaseOnPostSetup()
         {
         }
     }

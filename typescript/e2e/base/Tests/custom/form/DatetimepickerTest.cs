@@ -45,6 +45,7 @@ namespace Tests.E2E.Form
             data.DateTime = this.Transaction.Database.Services.Get<ITime>().Now();
             this.Transaction.Commit();
 
+            await this.Page.NavigateAsync("/");
             await this.Page.NavigateAsync("/fields");
 
             var actual = await this.FormComponent.DateTimeDatetimepicker.GetAsync();

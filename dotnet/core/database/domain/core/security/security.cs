@@ -114,17 +114,6 @@ namespace Allors.Database.Domain
 
         public void Apply()
         {
-            foreach (var revocation in this.transaction.Extent<Revocation>().Where(v => v.ExistObjectStatesWhereObjectRevocation))
-            {
-                revocation.RemoveDeniedPermissions();
-            }
-
-            foreach (Role role in this.transaction.Extent<Role>())
-            {
-                role.RemovePermissions();
-                role.RemoveRevocations();
-            }
-
             this.OnPreSetup();
 
             foreach (var objects in this.objectsByObjectType.Values)
@@ -258,11 +247,16 @@ namespace Allors.Database.Domain
 
         public void GrantOwner(ObjectType objectType, params Operations[] operations) => this.Grant(Roles.OwnerId, objectType, operations);
 
-        private void CoreOnPostSetup()
+        private void CoreOnPreSetup()
         {
+            foreach (Role role in this.transaction.Extent<Role>())
+            {
+                role.RemovePermissions();
+                role.RemoveRevocations();
+            }
         }
 
-        private void CoreOnPreSetup()
+        private void CoreOnPostSetup()
         {
         }
     }

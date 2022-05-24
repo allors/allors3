@@ -31,6 +31,7 @@ namespace Tests.E2E.Form
             data.PlainText = "This is plain text.";
             this.Transaction.Commit();
 
+            await this.Page.NavigateAsync("/");
             await this.Page.NavigateAsync("/fields");
 
             var actual = await this.FormComponent.PlainTextTextarea.GetAsync();
