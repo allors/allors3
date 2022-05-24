@@ -26,6 +26,11 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<UnifiedGood>())
             {
+                if (!@this.ExistDerivationTrigger)
+                {
+                    @this.DerivationTrigger = Guid.NewGuid();
+                }
+
                 if (@this.ExistCurrentVersion)
                 {
                     foreach (Good variant in @this.CurrentVersion.Variants)
