@@ -46,8 +46,6 @@ namespace Tests.E2E.Objects
             var after = new WorkRequirements(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
-
-            //var workRequirement = after.Except(before).First();
         }
 
         [Test]
@@ -55,7 +53,12 @@ namespace Tests.E2E.Objects
         {
             var before = new WorkRequirements(this.Transaction).Extent().ToArray();
             var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
-            var originator = organisation.ActiveCustomers.First();
+            var originator = organisation.ActiveCustomers.First(v => v.SerialisedItemsWhereRentedBy.Any());
+            var fixedAsset = originator.SerialisedItemsWhereRentedBy.First();
+            var priority = new Priorities(this.Transaction).High;
+            var location = "Location";
+            var reason = "Reason";
+            var unServiceable = true;
 
             var @class = this.M.WorkRequirement;
 
@@ -70,6 +73,12 @@ namespace Tests.E2E.Objects
             var form = new WorkrequirementCreateFormComponent(this.OverlayContainer);
 
             await form.OriginatorAutocomplete.SelectAsync(originator.DisplayName);
+            await form.FixedAssetSelect.SelectAsync(fixedAsset);
+            await form.PriorityRadioGroup.SelectAsync(priority.Name);
+            await form.LocationInput.SetAsync(location);
+            await form.ReasonTextarea.SetAsync(reason);
+            // TODO: Pictures
+            await form.UnServiceableSlideToggle.SetAsync(unServiceable);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -85,6 +94,11 @@ namespace Tests.E2E.Objects
             var workRequirement = after.Except(before).First();
 
             Assert.AreEqual(originator, workRequirement.Originator);
+            Assert.AreEqual(fixedAsset, workRequirement.FixedAsset);
+            Assert.AreEqual(priority, workRequirement.Priority);
+            Assert.AreEqual(location, workRequirement.Location);
+            Assert.AreEqual(reason, workRequirement.Reason);
+            Assert.AreEqual(unServiceable, workRequirement.UnServiceable);
         }
     }
 }
