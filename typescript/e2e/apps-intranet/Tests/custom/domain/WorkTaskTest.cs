@@ -5,6 +5,7 @@
 
 namespace Tests.E2E.Objects
 {
+    using System;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.E2E.Angular;
@@ -63,7 +64,17 @@ namespace Tests.E2E.Objects
         {
             var before = new WorkTasks(this.Transaction).Extent().ToArray();
             var name = "WorkTask 1";
-            var customer = new Organisations(this.Transaction).Extent().First();
+            var customer = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BV");
+            var executedBy = customer.ActiveSubContractors.First();
+            var fullfillContactMechanism = customer.CurrentPartyContactMechanisms.First().ContactMechanism;
+            var contactPerson = customer.CurrentContacts.First();
+            var description = "WorkTask 1 description";
+
+            var now = DateTime.Now;
+
+            var issueDate = DateTimeFactory.CreateDate(now);
+            var scheduledStart = DateTimeFactory.CreateDateTime(now.Year, now.Month, now.Day + 1, now.Hour, now.Minute, 0, 0);
+            var scheduledCompletion = DateTimeFactory.CreateDateTime(now.Year, now.Month, now.Day + 2, now.Hour, now.Minute, 0, 0);
 
             var @class = this.M.WorkTask;
 
@@ -79,6 +90,13 @@ namespace Tests.E2E.Objects
 
             await form.NameInput.SetValueAsync(name);
             await form.CustomerAutocomplete.SelectAsync(customer.Name);
+            await form.ExecutedByAutocomplete.SelectAsync(executedBy.Name);
+            await form.FullfillContactMechanismSelect.SelectAsync(fullfillContactMechanism);
+            await form.ContactPersonSelect.SelectAsync(contactPerson);
+            await form.DescriptionTextarea.SetAsync(description);
+            await form.IssueDateDatepicker.SetAsync(issueDate);
+            await form.ScheduledStartDatetimepicker.SetAsync(scheduledStart);
+            await form.ScheduledCompletionDatetimepicker.SetAsync(scheduledCompletion);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -95,6 +113,13 @@ namespace Tests.E2E.Objects
 
             Assert.AreEqual(name, workTask.Name);
             Assert.AreEqual(customer, workTask.Customer);
+            Assert.AreEqual(executedBy, workTask.ExecutedBy);
+            Assert.AreEqual(fullfillContactMechanism, workTask.FullfillContactMechanism);
+            Assert.AreEqual(contactPerson, workTask.ContactPerson);
+            Assert.AreEqual(description, workTask.Description);
+            Assert.AreEqual(issueDate, workTask.IssueDate.Value.Date);
+            Assert.AreEqual(scheduledStart, workTask.ScheduledStart?.ToLocalTime());
+            Assert.AreEqual(scheduledCompletion, workTask.ScheduledCompletion?.ToLocalTime());
         }
     }
 }
