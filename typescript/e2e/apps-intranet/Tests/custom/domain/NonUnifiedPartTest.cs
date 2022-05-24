@@ -67,6 +67,9 @@ namespace Tests.E2E.Objects
             var facility = new Facilities(this.Transaction).Extent().First();
             var inventoryItemKind = new InventoryItemKinds(this.Transaction).Extent().First();
             var brand = new Brands(this.Transaction).Extent().First();
+            var productType = new ProductTypes(this.Transaction).Extent().First();
+            var manufacteredBy = new Organisations(this.Transaction).Extent().First(v => v.IsManufacturer);
+            var categorie = new PartCategories(this.Transaction).Extent().First();
 
             var @class = this.M.NonUnifiedPart;
 
@@ -82,8 +85,12 @@ namespace Tests.E2E.Objects
 
             await form.NameInput.SetValueAsync("TempName");
             await form.DefaultFacilitySelect.SelectAsync(facility);
+            await form.ProductTypeSelect.SelectAsync(productType);
             await form.InventoryItemKindSelect.SelectAsync(inventoryItemKind);
-            //TODO: Koen Brand en Model staan niet in form
+            await form.ManufacturedByAutocomplete.SelectAsync(manufacteredBy.Name);
+            await form.HsCodeInput.SetValueAsync("4202 21");
+
+            //TODO: Koen Brand, Category en Model staan niet in form
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -101,6 +108,10 @@ namespace Tests.E2E.Objects
             Assert.AreEqual("TempName", nonUnifiedPart.Name);
             Assert.AreEqual(facility, nonUnifiedPart.DefaultFacility);
             Assert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
+            Assert.AreEqual(productType, nonUnifiedPart.ProductType);
+            Assert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
+            Assert.AreEqual(manufacteredBy.Name, nonUnifiedPart.ManufacturedBy.DisplayName);
+            Assert.AreEqual("4202 21", nonUnifiedPart.HsCode);
         }
 
     }

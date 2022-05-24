@@ -415,6 +415,10 @@ namespace Tests
 
             this.Transaction.Derive();
 
+            new PartCategoryBuilder(this.Transaction).WithDefaults().Build();
+
+            this.Transaction.Derive();
+
             new IndustryClassificationBuilder(this.Transaction).WithDefaults().Build();
             new CustomOrganisationClassificationBuilder(this.Transaction).WithDefaults().Build();
 
