@@ -74,7 +74,7 @@ namespace Tests.E2E.Objects
 
             await form.OriginatorAutocomplete.SelectAsync(originator.DisplayName);
             await form.FixedAssetSelect.SelectAsync(fixedAsset);
-            await form.PriorityRadioGroup.SelectAsync(priority.Name);
+            await form.PriorityRadioGroup.SelectAsync(priority);
             await form.LocationInput.SetAsync(location);
             await form.ReasonTextarea.SetAsync(reason);
             // TODO: Pictures
