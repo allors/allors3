@@ -97,6 +97,8 @@ namespace Allors.Repository
 
         public string Name { get; set; }
 
+        public int Order { get; set; }
+
         public C1[] I12C1Many2Manies { get; set; }
 
         public I2 I12I2Many2One { get; set; }

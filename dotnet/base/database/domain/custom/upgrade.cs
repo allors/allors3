@@ -13,9 +13,9 @@ namespace Allors.Database.Domain
 
         private readonly DirectoryInfo dataPath;
 
-        public Upgrade(ITransaction session, DirectoryInfo dataPath)
+        public Upgrade(ITransaction transaction, DirectoryInfo dataPath)
         {
-            this.transaction = session;
+            this.transaction = transaction;
             this.dataPath = dataPath;
         }
 

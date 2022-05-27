@@ -205,15 +205,15 @@ $class.DatabaseAssociationTypes:{associationType|$classAssociationType_Class()$}
 $class.MethodTypes:{methodType|$classMethodType_Method()$}$
 
         #region Test Helpers
-        public static $class.name$ Create(ITransaction session) => ($class.name$)session.Create(session.Database.Context().M.$class.name$);
+        public static $class.name$ Create(ITransaction transaction) => ($class.name$)transaction.Create(transaction.Database.Context().M.$class.name$);
 
-        public static $class.name$[] Create(ITransaction session, int count) => ($class.name$[])session.Create(session.Database.Context().M.$class.name$, count);
+        public static $class.name$[] Create(ITransaction transaction, int count) => ($class.name$[])transaction.Create(transaction.Database.Context().M.$class.name$, count);
 
-        public static $class.name$ Instantiate(ITransaction session, long id) => ($class.name$)session.Instantiate(id);
+        public static $class.name$ Instantiate(ITransaction transaction, long id) => ($class.name$)transaction.Instantiate(id);
 
-        public static $class.name$[] Instantiate(ITransaction session, string[] ids) => ($class.name$[])session.Instantiate(ids);
+        public static $class.name$[] Instantiate(ITransaction transaction, string[] ids) => ($class.name$[])transaction.Instantiate(ids);
 
-        public static $class.name$[] Extent(ITransaction session) => ($class.name$[])session.Extent(session.Database.Context().M.$class.name$).ToArray();
+        public static $class.name$[] Extent(ITransaction transaction) => ($class.name$[])transaction.Extent(transaction.Database.Context().M.$class.name$).ToArray();
         #endregion
 	}
 }

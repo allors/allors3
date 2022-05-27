@@ -108,6 +108,12 @@ namespace Allors.Repository
         string Name { get; set; }
 
         #region Allors
+        [Id("24B8155F-2741-4742-95F7-49F9B66C2465")]
+        [Workspace(Default)]
+        #endregion
+        int Order { get; set; }
+
+        #region Allors
         [Id("7827af95-147f-4803-865a-b418d567da68")]
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]

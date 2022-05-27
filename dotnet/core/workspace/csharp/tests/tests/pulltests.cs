@@ -10,6 +10,8 @@ namespace Tests.Workspace
 {
     using System;
     using System.Linq;
+    using Allors;
+    using Allors.Database.Domain;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
     using Xunit;
@@ -2060,6 +2062,82 @@ namespace Tests.Workspace
             Assert.Equal("c2B", c2ByC1[c1b].Name);
             Assert.Equal("c2C", c2ByC1[c1c].Name);
             Assert.Equal("c2D", c2ByC1[c1d].Name);
+        }
+
+        [Fact]
+        public async void SortDirectionDefault()
+        {
+            await this.Login("administrator");
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.I12) { Sorting = new[] { new Sort(this.M.I12.Order) } },
+            };
+
+            var result = await session.PullAsync(pull);
+
+            var i12s = result.GetCollection<I12>();
+
+            Assert.Equal("c2D", i12s[0].Name);
+            Assert.Equal("c2C", i12s[1].Name);
+            Assert.Equal("c1B", i12s[2].Name);
+            Assert.Equal("c1A", i12s[3].Name);
+            Assert.Equal("c2A", i12s[4].Name);
+            Assert.Equal("c2B", i12s[5].Name);
+            Assert.Equal("c1D", i12s[6].Name);
+            Assert.Equal("c1C", i12s[7].Name);
+        }
+
+        [Fact]
+        public async void SortDirectionAscending()
+        {
+            await this.Login("administrator");
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.I12) { Sorting = new[] { new Sort(this.M.I12.Order) { SortDirection = SortDirection.Ascending } } },
+            };
+
+            var result = await session.PullAsync(pull);
+
+            var i12s = result.GetCollection<I12>();
+
+            Assert.Equal("c2D", i12s[0].Name);
+            Assert.Equal("c2C", i12s[1].Name);
+            Assert.Equal("c1B", i12s[2].Name);
+            Assert.Equal("c1A", i12s[3].Name);
+            Assert.Equal("c2A", i12s[4].Name);
+            Assert.Equal("c2B", i12s[5].Name);
+            Assert.Equal("c1D", i12s[6].Name);
+            Assert.Equal("c1C", i12s[7].Name);
+        }
+
+
+        [Fact]
+        public async void SortDirectionDescending()
+        {
+            await this.Login("administrator");
+            var session = this.Workspace.CreateSession();
+
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.I12) { Sorting = new[] { new Sort(this.M.I12.Order) { SortDirection = SortDirection.Descending } } },
+            };
+
+            var result = await session.PullAsync(pull);
+
+            var i12s = result.GetCollection<I12>();
+
+            Assert.Equal("c2D", i12s[7].Name);
+            Assert.Equal("c2C", i12s[6].Name);
+            Assert.Equal("c1B", i12s[5].Name);
+            Assert.Equal("c1A", i12s[4].Name);
+            Assert.Equal("c2A", i12s[3].Name);
+            Assert.Equal("c2B", i12s[2].Name);
+            Assert.Equal("c1D", i12s[1].Name);
+            Assert.Equal("c1C", i12s[0].Name);
         }
     }
 }
