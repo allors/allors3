@@ -48,6 +48,7 @@ export class QuoteItemFormComponent extends AllorsFormComponent<QuoteItem> {
   readonly m: M;
   quote: ProductQuote;
   invoiceItemTypes: InvoiceItemType[];
+  partItemType: InvoiceItemType;
   productItemType: InvoiceItemType;
   requestItem: RequestItem;
   inventoryItems: InventoryItem[];
@@ -55,6 +56,7 @@ export class QuoteItemFormComponent extends AllorsFormComponent<QuoteItem> {
   nonSerialisedInventoryItem: NonSerialisedInventoryItem;
   unitsOfMeasure: UnitOfMeasure[];
   goodsFilter: SearchFactory;
+  partsFilter: SearchFactory;
   part: Part;
   parts: Part[];
   serialisedItem: SerialisedItem;
@@ -118,6 +120,7 @@ export class QuoteItemFormComponent extends AllorsFormComponent<QuoteItem> {
     this.m = allors.metaPopulation as M;
 
     this.goodsFilter = Filters.goodsFilter(this.m);
+    this.partsFilter = Filters.nonUnifiedPartsFilter(this.m);
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -237,8 +240,13 @@ export class QuoteItemFormComponent extends AllorsFormComponent<QuoteItem> {
       (v: UnitOfMeasure) =>
         v.UniqueId === 'f4bbdb52-3441-4768-92d4-729c6c5d6f1b'
     );
+
     this.invoiceItemTypes = pullResult.collection<InvoiceItemType>(
       this.m.InvoiceItemType
+    );
+    this.partItemType = this.invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
     );
     this.productItemType = this.invoiceItemTypes?.find(
       (v: InvoiceItemType) =>
