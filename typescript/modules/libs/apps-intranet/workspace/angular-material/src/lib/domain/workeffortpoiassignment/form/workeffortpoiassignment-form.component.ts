@@ -62,6 +62,9 @@ export class WorkEffortPurchaseOrderItemAssignmentFormComponent extends AllorsFo
           objectId: this.editRequest.objectId,
           include: {
             Assignment: {},
+            PurchaseOrder: {
+              PurchaseOrderItems: {},
+            },
             PurchaseOrderItem: {},
           },
         })
@@ -83,16 +86,6 @@ export class WorkEffortPurchaseOrderItemAssignmentFormComponent extends AllorsFo
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    if (this.createRequest) {
-      this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
-
-      this.object.Assignment = this.workEffort;
-      this.object.Quantity = 1;
-    } else {
-      this.selectedPurchaseOrder = this.object.PurchaseOrder;
-      this.workEffort = this.object.Assignment;
-    }
-
     const purchaseOrders = pullResult.collection<PurchaseOrder>(
       this.m.PurchaseOrder
     );
@@ -106,13 +99,22 @@ export class WorkEffortPurchaseOrderItemAssignmentFormComponent extends AllorsFo
             this.workEffort.TakenBy
       )
     );
+
+    if (this.createRequest) {
+      this.workEffort = pullResult.object<WorkEffort>(this.m.WorkEffort);
+
+      this.object.Assignment = this.workEffort;
+      this.object.Quantity = 1;
+    } else {
+      this.selectedPurchaseOrder = this.object.PurchaseOrder;
+      this.workEffort = this.object.Assignment;
+
+      this.purchaseOrders.push(this.selectedPurchaseOrder);
+      this.purchaseOrderSelected(this.selectedPurchaseOrder);
+    }
   }
 
   public purchaseOrderSelected(purchaseOrder: PurchaseOrder): void {
-    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems?.filter(
-      (v) =>
-        v.WorkEffortPurchaseOrderItemAssignmentsWherePurchaseOrderItem
-          .length === 0
-    );
+    this.purchaseOrderItems = purchaseOrder.PurchaseOrderItems;
   }
 }

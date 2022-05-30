@@ -549,9 +549,13 @@ export class SalesOrderItemFormComponent extends AllorsFormComponent<SalesOrderI
       this.serialisedItem = this.part.SerialisedItems?.find(
         (v) => v === serialisedItem
       );
-      this.object.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;
+
+      if (this.createRequest) {
+        this.object.AssignedUnitPrice = this.serialisedItem.ExpectedSalesPrice;
+        this.object.NextSerialisedItemAvailability = this.sold;
+      }
+
       this.object.QuantityOrdered = '1';
-      this.object.NextSerialisedItemAvailability = this.sold;
     }
   }
 

@@ -32,9 +32,11 @@
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
+          [init]="m.CommunicationEvent.FromParty"
           [select]="contactMechanismTarget"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
+          [init]="m.CommunicationEvent.FromParty"
           [select]="contactMechanismTarget"
         ></a-mat-dyn-edit-extent-panel>
 
