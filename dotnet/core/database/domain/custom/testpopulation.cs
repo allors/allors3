@@ -23,14 +23,14 @@ namespace Allors.Database.Domain
 
             var acl = new GrantBuilder(this.transaction).WithRole(emptyRole).WithSubject(noperm).WithSecurityToken(defaultSecurityToken).Build();
 
-            var c1A = new C1Builder(this.transaction).WithName("c1A").Build();
-            var c1B = new C1Builder(this.transaction).WithName("c1B").Build();
-            var c1C = new C1Builder(this.transaction).WithName("c1C").Build();
-            var c1D = new C1Builder(this.transaction).WithName("c1D").Build();
-            var c2A = new C2Builder(this.transaction).WithName("c2A").Build();
-            var c2B = new C2Builder(this.transaction).WithName("c2B").Build();
-            var c2C = new C2Builder(this.transaction).WithName("c2C").Build();
-            var c2D = new C2Builder(this.transaction).WithName("c2D").Build();
+            var c1A = new C1Builder(this.transaction).WithName("c1A").WithOrder(4).Build();
+            var c1B = new C1Builder(this.transaction).WithName("c1B").WithOrder(3).Build();
+            var c1C = new C1Builder(this.transaction).WithName("c1C").WithOrder(8).Build();
+            var c1D = new C1Builder(this.transaction).WithName("c1D").WithOrder(7).Build();
+            var c2A = new C2Builder(this.transaction).WithName("c2A").WithOrder(5).Build();
+            var c2B = new C2Builder(this.transaction).WithName("c2B").WithOrder(6).Build();
+            var c2C = new C2Builder(this.transaction).WithName("c2C").WithOrder(2).Build();
+            var c2D = new C2Builder(this.transaction).WithName("c2D").WithOrder(1).Build();
 
             // class
             c1B.C1AllorsString = "ᴀbra";

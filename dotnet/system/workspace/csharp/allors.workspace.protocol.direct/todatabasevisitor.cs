@@ -56,7 +56,8 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Database.Data.Extent Visit(Data.Filter ws) => new Database.Data.Extent(this.Visit(ws.ObjectType))
         {
-            Predicate = this.Visit(ws.Predicate)
+            Predicate = this.Visit(ws.Predicate),
+            Sorting = this.Visit(ws.Sorting)
         };
 
         private IPredicate Visit(Data.IPredicate ws) =>
@@ -182,7 +183,14 @@ namespace Allors.Workspace.Protocol.Direct
 
         private Node Visit(Data.Node ws) => ws != null ? new Node(this.Visit(ws.PropertyType), ws.Nodes?.Select(this.Visit).ToArray()) : null;
 
-        private Database.Data.Sort[] Visit(Data.Sort[] ws) => ws?.Select(v => new Database.Data.Sort { RoleType = this.Visit(v.RoleType), SortDirection = (SortDirection)(int)v.SortDirection }).ToArray();
+        private Database.Data.Sort[] Visit(Data.Sort[] ws) => ws?.Select(v =>
+        {
+            return new Database.Data.Sort
+            {
+                RoleType = this.Visit(v.RoleType),
+                SortDirection = v.SortDirection ?? SortDirection.Ascending
+            };
+        }).ToArray();
 
         private IObjectType Visit(Meta.IObjectType ws) => ws != null ? (IObjectType)this.metaPopulation.FindByTag(ws.Tag) : null;
 
