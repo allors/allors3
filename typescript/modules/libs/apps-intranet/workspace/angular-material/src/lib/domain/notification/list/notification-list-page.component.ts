@@ -140,7 +140,6 @@ export class NotificationListPageComponent implements OnInit, OnDestroy {
         const notifications = loaded.collection<Notification>(
           m.NotificationList.UnconfirmedNotifications
         );
-        this.table.total = notifications?.length ?? 0;
         this.table.data = notifications?.map((v) => {
           return {
             object: v,

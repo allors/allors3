@@ -308,7 +308,6 @@ export class PurchaseOrderInvoicePanelEditComponent
           v.PurchaseInvoicesWherePurchaseOrder.includes(this.purchaseInvoice)
       );
 
-      this.table.total = this.objects?.length;
       this.table.data = this.objects?.map((v) => {
         const row: Row = {
           object: v,
