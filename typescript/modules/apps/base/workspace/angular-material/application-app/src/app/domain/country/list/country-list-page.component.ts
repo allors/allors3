@@ -157,7 +157,6 @@ export class CountryListPageComponent
         this.allors.context.reset();
 
         const objects = loaded.collection<Country>(m.Country);
-        this.table.total = (loaded.value('Countrys_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

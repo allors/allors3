@@ -232,8 +232,6 @@ export class PurchaseOrderListPageComponent implements OnInit, OnDestroy {
           this.internalOrganisation.canExecuteCreatePurchaseOrder;
 
         const orders = loaded.collection<PurchaseOrder>(m.PurchaseOrder);
-        this.table.total = (loaded.value('PurchaseOrders_total') ??
-          0) as number;
         this.table.data = orders
           ?.filter((v) => v.canReadOrderNumber)
           ?.map((v) => {

@@ -185,9 +185,6 @@ export class PartListPageComponent implements OnInit, OnDestroy {
           return map;
         }, {});
 
-        this.table.total = (loaded.value('NonUnifiedParts_total') ??
-          0) as number;
-
         this.table.data = parts?.map((v) => {
           return {
             object: v,

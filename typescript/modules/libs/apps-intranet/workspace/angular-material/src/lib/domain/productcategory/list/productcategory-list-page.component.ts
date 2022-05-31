@@ -190,8 +190,6 @@ export class ProductCategoryListPageComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         const objects = loaded.collection<ProductCategory>(m.ProductCategory);
-        this.table.total = (loaded.value('ProductCategories_total') ??
-          0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

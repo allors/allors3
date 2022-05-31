@@ -357,7 +357,6 @@ export class PurchaseInvoiceListPageComponent implements OnInit, OnDestroy {
         const purchaseInvoices = loaded.collection<PurchaseInvoice>(
           m.PurchaseInvoice
         );
-        this.table.total = loaded.value('PurchaseInvoices_total') as number;
         this.table.data = purchaseInvoices
           ?.filter((v) => v.canReadInvoiceNumber)
           ?.map((v) => {

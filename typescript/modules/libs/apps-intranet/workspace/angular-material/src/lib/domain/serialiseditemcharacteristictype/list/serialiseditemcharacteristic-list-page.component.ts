@@ -157,9 +157,6 @@ export class SerialisedItemCharacteristicListPageComponent
         const objects = loaded.collection<SerialisedItemCharacteristicType>(
           m.SerialisedItemCharacteristicType
         );
-        this.table.total = (loaded.value(
-          'SerialisedItemCharacteristicTypes_total'
-        ) ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

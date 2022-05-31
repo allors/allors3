@@ -155,8 +155,6 @@ export class SerialisedItemListPageComponent implements OnInit, OnDestroy {
 
         const objects = loaded.collection<SerialisedItem>(m.SerialisedItem);
 
-        this.table.total = (loaded.value('SerialisedItems_total') ??
-          0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

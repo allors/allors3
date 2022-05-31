@@ -203,7 +203,6 @@ export class ShipmentListPageComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
         const objects = loaded.collection<Shipment>(m.Shipment);
-        this.table.total = (loaded.value('Shipments_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

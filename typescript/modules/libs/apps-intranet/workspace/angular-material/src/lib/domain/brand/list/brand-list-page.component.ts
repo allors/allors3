@@ -153,7 +153,6 @@ export class BrandListPageComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         const objects = loaded.collection<Brand>(this.m.Brand);
-        this.table.total = (loaded.value('Brands_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

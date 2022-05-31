@@ -169,8 +169,6 @@ export class GoodListPageComponent implements OnInit, OnDestroy {
           m.Good.ProductCategoriesWhereProduct
         );
 
-        this.table.total = (loaded.value('NonUnifiedGoods_total') ??
-          0) as number;
         this.table.data = goods?.map((v) => {
           return {
             object: v,

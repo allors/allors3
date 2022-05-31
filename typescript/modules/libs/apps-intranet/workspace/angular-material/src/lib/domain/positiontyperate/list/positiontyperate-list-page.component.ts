@@ -174,8 +174,6 @@ export class PositionTypeRateListPageComponent implements OnInit, OnDestroy {
         this.positionTypes = loaded.collection<PositionType>(m.PositionType);
         const objects = loaded.collection<PositionTypeRate>(m.PositionTypeRate);
 
-        this.table.total = (loaded.value('PositionTypeRates_total') ??
-          0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

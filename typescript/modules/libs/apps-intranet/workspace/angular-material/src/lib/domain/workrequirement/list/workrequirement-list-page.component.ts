@@ -180,7 +180,6 @@ export class WorkRequirementListPageComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
         const objects = loaded.collection<WorkRequirement>(m.WorkRequirement);
-        this.table.total = loaded.value('Requirements_total') as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

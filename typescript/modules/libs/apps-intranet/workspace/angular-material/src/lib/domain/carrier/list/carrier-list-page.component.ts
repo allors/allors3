@@ -146,7 +146,6 @@ export class CarrierListPageComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         const objects = loaded.collection<Carrier>(m.Carrier);
-        this.table.total = (loaded.value('Carriers_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

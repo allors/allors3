@@ -16,14 +16,14 @@ export interface BaseTable {
   selection: SelectionModel<TableRow>;
   actions: Action[];
   defaultAction?: Action;
-  pageIndex: number;
-  pageSize?: number;
-  pageSizeOptions?: number[];
 
   sort$: BehaviorSubject<Sort | null>;
-  pager$: BehaviorSubject<PageEvent>;
 
-  total: number;
+  pageIndex: number;
+  pageFill: number;
+  pageSize?: number;
+  pageSizeOptions?: number[];
+  pager$: BehaviorSubject<PageEvent>;
 
   autoFilter: boolean;
 

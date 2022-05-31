@@ -157,7 +157,6 @@ export class UnifiedGoodListPageComponent implements OnInit, OnDestroy {
 
         const goods = loaded.collection<UnifiedGood>(m.UnifiedGood);
 
-        this.table.total = (loaded.value('UnifiedGoods_total') ?? 0) as number;
         this.table.data = goods?.map((v) => {
           return {
             object: v,
