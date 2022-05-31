@@ -61,7 +61,6 @@ export class QueryComponent implements OnInit, OnDestroy {
     this.subscription = context.pull(pulls).subscribe(
       (result: IPullResult) => {
         this.organisations = result.collection<Organisation>(m.Organisation);
-        this.organisationCount = result.value('Organisations_total') as number;
       },
       (error) => {
         alert(error);

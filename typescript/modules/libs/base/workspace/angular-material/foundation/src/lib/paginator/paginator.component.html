@@ -1,0 +1,41 @@
+<div>Rows per page:</div>
+<mat-form-field>
+  <mat-select [(value)]="pageSize" (valueChange)="pageSizeChange()">
+    <mat-option
+      *ngFor="let pageSizeOption of pageSizeOptions"
+      [value]="pageSizeOption"
+    >
+      {{ pageSizeOption }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<button
+  class="right"
+  type="button"
+  mat-icon-button
+  aria-label="First page"
+  [disabled]="isFirst"
+  (click)="first()"
+>
+  <mat-icon>first_page</mat-icon>
+</button>
+<div>Page {{ pageIndex + 1 }} of {{ of }}</div>
+<button
+  type="button"
+  mat-icon-button
+  aria-label="Previous page"
+  [disabled]="isFirst"
+  (click)="previous()"
+>
+  <mat-icon>chevron_left</mat-icon>
+</button>
+<button
+  type="button"
+  aria-label="First page"
+  mat-icon-button
+  [disabled]="isLast"
+  (click)="next()"
+>
+  <mat-icon>chevron_right</mat-icon>
+</button>

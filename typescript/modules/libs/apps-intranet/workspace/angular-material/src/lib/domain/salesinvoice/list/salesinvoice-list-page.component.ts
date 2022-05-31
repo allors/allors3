@@ -362,7 +362,6 @@ export class SalesInvoiceListPageComponent implements OnInit, OnDestroy {
         this.canCreate = this.internalOrganisation.canExecuteCreateSalesInvoice;
 
         const salesInvoices = loaded.collection<SalesInvoice>(m.SalesInvoice);
-        this.table.total = (loaded.value('SalesInvoices_total') ?? 0) as number;
         this.table.data = salesInvoices
           ?.filter((v) => v.canReadInvoiceNumber)
           ?.map((v) => {

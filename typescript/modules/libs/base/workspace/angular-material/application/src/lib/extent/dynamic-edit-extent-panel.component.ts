@@ -264,7 +264,6 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
   }
 
   private refreshTable() {
-    this.table.total = this.filtered.length;
     this.table.data = this.filtered.map((v) => {
       const row: TableRow = {
         object: v,

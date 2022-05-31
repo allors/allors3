@@ -182,8 +182,6 @@ export class PartCategoryListPageComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         const objects = loaded.collection<PartCategory>(m.PartCategory);
-        this.table.total = (loaded.value('PartCategories_total') ??
-          0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

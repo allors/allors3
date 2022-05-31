@@ -173,8 +173,6 @@ export class TaskAssignmentListPageComponent implements OnInit, OnDestroy {
         const taskAssignments = loaded.collection<TaskAssignment>(
           m.TaskAssignment
         );
-        this.table.total = (loaded.value('TaskAssignments_total') ??
-          0) as number;
         this.table.data = taskAssignments?.map((v) => {
           return {
             object: v,

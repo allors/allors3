@@ -152,7 +152,6 @@ export class EmailMessageListPageComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         const objects = loaded.collection<EmailMessage>(m.EmailMessage);
-        this.table.total = (loaded.value('EmailMessages_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

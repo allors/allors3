@@ -211,7 +211,6 @@ export class ProductQuoteListPageComponent implements OnInit, OnDestroy {
         this.canCreate = this.internalOrganisation.canExecuteCreateQuote;
 
         const quotes = loaded.collection<Quote>(m.Quote);
-        this.table.total = (loaded.value('Quotes_total') ?? 0) as number;
         this.table.data = quotes
           ?.filter((v) => v.canReadQuoteNumber)
           ?.map((v) => {

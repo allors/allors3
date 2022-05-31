@@ -152,7 +152,6 @@ export class OrganisationListPageComponent
         this.allors.context.reset();
 
         const organisations = loaded.collection<Organisation>(m.Organisation);
-        this.table.total = (loaded.value('Organisations_total') ?? 0) as number;
         this.table.data = organisations?.map((v) => {
           return {
             object: v,

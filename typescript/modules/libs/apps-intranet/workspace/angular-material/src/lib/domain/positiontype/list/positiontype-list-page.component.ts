@@ -149,7 +149,6 @@ export class PositionTypesListPageComponent implements OnInit, OnDestroy {
         this.allors.context.reset();
 
         const objects = loaded.collection<PositionType>(m.PositionType);
-        this.table.total = (loaded.value('PositionTypes_total') ?? 0) as number;
         this.table.data = objects?.map((v) => {
           return {
             object: v,

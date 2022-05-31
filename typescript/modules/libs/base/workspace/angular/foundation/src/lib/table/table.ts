@@ -18,14 +18,13 @@ export class Table<Row extends TableRow> implements BaseTable {
   actions: Action[];
   defaultAction?: Action;
 
-  pageIndex: number;
+  pageIndex = 0;
+  pageFill: number;
   pageSize?: number;
   pageSizeOptions?: number[];
 
   sort$: BehaviorSubject<Sort | null>;
   pager$: BehaviorSubject<PageEvent>;
-
-  total: number;
 
   autoFilter: boolean;
 
@@ -151,16 +150,12 @@ export class Table<Row extends TableRow> implements BaseTable {
       this.selection.clear();
     }
     this.dataSource.data = value;
-    if (
-      this.pageSize &&
-      this.pageSizeOptions &&
-      this.total > Math.max(...this.pageSizeOptions)
-    ) {
+    this.pageFill = value.length;
+    if (this.pageSize && this.pageSizeOptions) {
       this.pageSizeOptions = [
         this.pageSize,
         this.pageSize * 2,
         this.pageSize * 5,
-        this.total * 1,
       ];
     }
   }

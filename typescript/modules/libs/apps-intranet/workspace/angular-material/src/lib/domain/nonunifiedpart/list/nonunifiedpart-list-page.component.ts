@@ -278,9 +278,6 @@ export class NonUnifiedPartListPageComponent implements OnInit, OnDestroy {
             m.ProductIdentificationType
           );
 
-        this.table.total = (loaded.value('NonUnifiedParts_total') ??
-          0) as number;
-
         this.table.data = this.parts?.map((v) => {
           return {
             object: v,

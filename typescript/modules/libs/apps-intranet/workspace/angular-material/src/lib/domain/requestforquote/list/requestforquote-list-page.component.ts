@@ -203,7 +203,6 @@ export class RequestForQuoteListPageComponent implements OnInit, OnDestroy {
         this.canCreate = this.internalOrganisation.canExecuteCreateRequest;
 
         const requests = loaded.collection<Request>(m.Request);
-        this.table.total = (loaded.value('Requests_total') ?? 0) as number;
         this.table.data = requests
           ?.filter((v) => v.canReadRequestNumber)
           ?.map((v) => {
