@@ -73,8 +73,8 @@ namespace Tests.E2E.Objects
             var now = DateTime.Now;
 
             var issueDate = DateTimeFactory.CreateDate(now);
-            var scheduledStart = DateTimeFactory.CreateDateTime(now.Year, now.Month, now.Day + 1, now.Hour, now.Minute, 0, 0);
-            var scheduledCompletion = DateTimeFactory.CreateDateTime(now.Year, now.Month, now.Day + 2, now.Hour, now.Minute, 0, 0);
+            var scheduledStart = DateTimeFactory.CreateDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, 0).AddDays(1);
+            var scheduledCompletion = DateTimeFactory.CreateDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0, 0).AddDays(2);
 
             var @class = this.M.WorkTask;
 

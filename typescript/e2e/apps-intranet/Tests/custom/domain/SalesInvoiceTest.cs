@@ -25,7 +25,8 @@ namespace Tests.E2E.Objects
         {
             var before = new SalesInvoices(this.Transaction).Extent().ToArray();
             var salesInvoiceType = new SalesInvoiceTypes(this.Transaction).SalesInvoice;
-            var billTo = new Organisations(this.Transaction).Extent().Where(v => v.Name != "Allors BV").First();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BV");
+            var billTo = internalOrganisation.ActiveCustomers.OfType<Organisation>().First(v => v.CurrentContacts.Any());
 
             var @class = this.M.SalesInvoice;
 
