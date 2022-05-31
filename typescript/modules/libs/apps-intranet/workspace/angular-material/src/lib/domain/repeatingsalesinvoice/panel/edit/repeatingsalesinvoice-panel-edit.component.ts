@@ -166,7 +166,6 @@ export class RepeatingSalesInvoicePanelEditComponent
         this.objects[0] = object;
       }
 
-      this.table.total = this.objects.length;
       this.table.data = this.objects.map((v) => {
         const row: Row = {
           object: v,

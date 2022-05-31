@@ -235,7 +235,6 @@ export class PaymentPanelEditComponent
 
       this.objects = pullResult.collection<Payment>(prefix) ?? [];
 
-      this.table.total = this.objects.length;
       this.table.data = this.objects.map((v) => {
         const row: Row = {
           object: v,
