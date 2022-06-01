@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("2439F72A-A435-4070-9A11-EDCDF679FCC9")]
     #endregion
-    public partial class RepeatingSalesInvoice : Object
+    public partial class RepeatingSalesInvoice : Object, Deletable
     {
         #region inherited properties
 
@@ -94,6 +94,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }

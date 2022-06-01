@@ -7,6 +7,17 @@ namespace Allors.Database.Domain
 {
     public partial class RepeatingSalesInvoices
     {
+        protected override void AppsSecure(Security config)
+        {
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.RepeatingSalesInvoiceDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
+        }
+
         public static void Daily(ITransaction transaction)
         {
             foreach (RepeatingSalesInvoice repeatingSalesInvoice in new RepeatingSalesInvoices(transaction).Extent())
