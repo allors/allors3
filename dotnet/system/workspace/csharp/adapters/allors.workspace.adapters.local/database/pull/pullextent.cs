@@ -91,6 +91,7 @@ namespace Allors.Workspace.Adapters.Local
 
                             if (result.Skip.HasValue || result.Take.HasValue)
                             {
+                                // TODO: Total
                                 var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
                                 if (result.Take.HasValue)
                                 {
@@ -99,7 +100,6 @@ namespace Allors.Workspace.Adapters.Local
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
                                 response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, paged, include);
                             }
                             else
@@ -122,7 +122,6 @@ namespace Allors.Workspace.Adapters.Local
 
                                 paged = paged.ToArray();
 
-                                response.AddValue(name + "_total", extent.Build(this.transaction, this.pull.Arguments).Count.ToString());
                                 response.AddCollection(name, extent.ObjectType, paged, include);
                             }
                             else

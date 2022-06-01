@@ -235,7 +235,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     else
                     {
-                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents);
+                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents, this.prefetchers);
                         pullExtent.Execute(this);
                     }
                 }

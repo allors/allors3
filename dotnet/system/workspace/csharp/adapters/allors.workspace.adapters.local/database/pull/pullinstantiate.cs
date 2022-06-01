@@ -79,23 +79,7 @@ namespace Allors.Workspace.Adapters.Local
                                         ? set.Cast<IObject>().ToArray()
                                         : ((Extent)stepResult)?.ToArray() ?? Array.Empty<IObject>();
 
-                                    if (result.Skip.HasValue || result.Take.HasValue)
-                                    {
-                                        var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
-                                        if (result.Take.HasValue)
-                                        {
-                                            paged = paged.Take(result.Take.Value);
-                                        }
-
-                                        paged = paged.ToArray();
-
-                                        response.AddValue(name + "_total", objects.Length.ToString());
-                                        response.AddCollection(name, (IComposite)@select.GetObjectType() ?? @class, paged, include);
-                                    }
-                                    else
-                                    {
-                                        response.AddCollection(name, (IComposite)@select.GetObjectType() ?? @class, objects, include);
-                                    }
+                                    response.AddCollection(name, (IComposite)@select.GetObjectType() ?? @class, objects, include);
                                 }
                             }
                             else

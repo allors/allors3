@@ -18,15 +18,18 @@ namespace Allors.Database.Protocol.Json
         private readonly ITransaction transaction;
         private readonly Pull pull;
         private readonly IAccessControl acls;
-        private readonly IPreparedExtents preparedExtents;
         private readonly IPreparedSelects preparedSelects;
+        private readonly IPreparedExtents preparedExtents;
+        private readonly IPullPrefetchers pullPrefetchers;
 
-        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents)
+        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects,
+            IPreparedExtents preparedExtents, IPullPrefetchers pullPrefetchers)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
             this.preparedExtents = preparedExtents;
+            this.pullPrefetchers = pullPrefetchers;
             this.preparedSelects = preparedSelects;
         }
 
@@ -38,102 +41,98 @@ namespace Allors.Database.Protocol.Json
             }
 
             var extent = this.pull.Extent ?? this.preparedExtents.Get(this.pull.ExtentRef.Value);
-            var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
 
-            if (this.pull.Results != null)
+            if (this.pull.Results == null || this.pull.Results.Length == 0)
             {
-                foreach (var result in this.pull.Results)
-                {
-                    try
-                    {
-                        var name = result.Name;
-
-                        var select = result.Select;
-                        if (select == null && result.SelectRef.HasValue)
-                        {
-                            select = this.preparedSelects.Get(result.SelectRef.Value);
-                        }
-
-                        if (select != null)
-                        {
-                            var include = select.End.Include;
-
-                            if (select.PropertyType != null)
-                            {
-                                objects = select.IsOne ?
-                                              objects.Select(v => select.Get(v, this.acls)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
-                                              objects.SelectMany(v =>
-                                              {
-                                                  var stepResult = select.Get(v, this.acls);
-                                                  return (IEnumerable<IObject>)stepResult ?? Array.Empty<IObject>();
-                                              }).Distinct().ToArray();
-
-                                var propertyType = select.End.PropertyType;
-                                name ??= propertyType.PluralName;
-                            }
-
-                            name ??= extent.ObjectType.PluralName;
-
-                            if (result.Skip.HasValue || result.Take.HasValue)
-                            {
-                                // TODO: Security prefetch?
-                                objects = objects.Where(response.Include).ToArray();
-                                var total = objects.Length;
-
-                                var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
-                                if (result.Take.HasValue)
-                                {
-                                    paged = paged.Take(result.Take.Value);
-                                }
-
-                                paged = paged.ToArray();
-
-                                response.AddValue(name + "_total", total);
-                                response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, paged, include);
-                            }
-                            else
-                            {
-                                response.AddCollection(name, (IComposite)select.GetObjectType() ?? extent.ObjectType, objects, include);
-                            }
-                        }
-                        else
-                        {
-                            name ??= extent.ObjectType.PluralName;
-                            var include = result.Include;
-
-                            if (result.Skip.HasValue || result.Take.HasValue)
-                            {
-                                // TODO: Security prefetch?
-                                objects = objects.Where(response.Include).ToArray();
-                                var total = objects.Length;
-
-                                var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
-                                if (result.Take.HasValue)
-                                {
-                                    paged = paged.Take(result.Take.Value);
-                                }
-
-                                paged = paged.ToArray();
-
-                                response.AddValue(name + "_total", total);
-                                response.AddCollection(name, extent.ObjectType, paged, include);
-                            }
-                            else
-                            {
-                                response.AddCollection(name, extent.ObjectType, objects, include);
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception($"Extent: {extent.ObjectType}, {result}", e);
-                    }
-                }
+                this.WithoutResults(extent, response);
             }
             else
             {
-                var name = extent.ObjectType.PluralName;
-                response.AddCollection(name, extent.ObjectType, objects);
+                this.WithResults(extent, response);
+            }
+        }
+
+        private void WithoutResults(IExtent extent, PullResponseBuilder response)
+        {
+            var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
+            var name = extent.ObjectType.PluralName;
+            response.AddCollection(name, extent.ObjectType, objects);
+        }
+
+
+        private void WithResults(IExtent dataExtent, PullResponseBuilder response)
+        {
+            var results = this.pull.Results;
+
+            var extent = dataExtent.Build(this.transaction, this.pull.Arguments);
+            var prefetchPolicy = this.pullPrefetchers.ForInclude(extent.ObjectType, null);
+            this.transaction.Prefetch(prefetchPolicy, extent);
+
+            IObject[] trimmed;
+            if (results.All(v => v.Take.HasValue))
+            {
+                var resultsRequired = results.Aggregate(0, (acc, v) =>
+                {
+                    var resultRequired = v.Skip.HasValue ? v.Take.Value + v.Skip.Value : v.Take.Value;
+                    return resultRequired > acc ? resultRequired : acc;
+                });
+
+                trimmed = extent.Where(response.Include).Take(resultsRequired).ToArray();
+            }
+            else
+            {
+                trimmed = extent.Where(response.Include).ToArray();
+            }
+
+            foreach (var result in results)
+            {
+                var name = result.Name;
+
+                var objects = trimmed;
+                if (result.Skip.HasValue || result.Take.HasValue)
+                {
+                    var paged = result.Skip.HasValue ? objects.Skip(result.Skip.Value) : objects;
+                    if (result.Take.HasValue)
+                    {
+                        paged = paged.Take(result.Take.Value);
+                    }
+
+                    objects = paged.ToArray();
+                }
+
+                var select = result.Select;
+                if (select == null && result.SelectRef.HasValue)
+                {
+                    select = this.preparedSelects.Get(result.SelectRef.Value);
+                }
+
+                if (select != null)
+                {
+                    var include = select.End.Include;
+
+                    if (select.PropertyType != null)
+                    {
+                        objects = select.IsOne ?
+                                      objects.Select(v => select.Get(v, this.acls)).Where(v => v != null).Cast<IObject>().Distinct().ToArray() :
+                                      objects.SelectMany(v =>
+                                      {
+                                          var stepResult = select.Get(v, this.acls);
+                                          return (IEnumerable<IObject>)stepResult ?? Array.Empty<IObject>();
+                                      }).Distinct().ToArray();
+
+                        var propertyType = select.End.PropertyType;
+                        name ??= propertyType.PluralName;
+                    }
+
+                    name ??= dataExtent.ObjectType.PluralName;
+                    response.AddCollection(name, (IComposite)select.GetObjectType() ?? dataExtent.ObjectType, objects, include);
+                }
+                else
+                {
+                    name ??= dataExtent.ObjectType.PluralName;
+                    var include = result.Include;
+                    response.AddCollection(name, dataExtent.ObjectType, objects, include);
+                }
             }
         }
     }
