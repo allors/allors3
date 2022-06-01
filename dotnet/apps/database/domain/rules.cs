@@ -301,6 +301,7 @@ namespace Allors.Database.Domain
                 new QuoteQuoteItemDelegatedAccessRule(m),
                 new ProductQuoteQuoteNumberRule(m),
                 new RepeatingPurchaseInvoiceRule(m),
+                new RepeatingSalesInvoiceDeniedPermissionRule(m),
                 new RepeatingSalesInvoiceRule(m),
                 new RequestAnonymousRule(m),
                 new RequestCurrencyRule(m),
