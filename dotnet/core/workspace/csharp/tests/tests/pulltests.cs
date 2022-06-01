@@ -11,7 +11,6 @@ namespace Tests.Workspace
     using System;
     using System.Linq;
     using Allors;
-    using Allors.Database.Domain;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
     using Xunit;

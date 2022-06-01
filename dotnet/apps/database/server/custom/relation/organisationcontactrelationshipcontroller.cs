@@ -8,7 +8,6 @@ namespace Allors.Database.Server.Controllers
     using System.Threading;
     using Allors.Services;
     using Domain;
-    using Services;
     using Protocol.Json;
     using Microsoft.AspNetCore.Mvc;
 

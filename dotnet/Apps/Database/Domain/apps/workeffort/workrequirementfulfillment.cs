@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
-
     public partial class WorkRequirementFulfillment
     {
         public void AppsDelete(DeletableDelete method)

@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using Allors;
     using Allors.Database.Domain;
 
     using Xunit;

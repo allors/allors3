@@ -12,7 +12,6 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
     using Derivations.Rules;
-    using Derivations;
 
     public class OwnCreditCardInternalOrganisationPaymentMethodsRule : Rule
     {

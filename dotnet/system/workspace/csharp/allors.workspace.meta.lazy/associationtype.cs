@@ -7,7 +7,6 @@
 namespace Allors.Workspace.Meta
 {
     using System;
-    using System.Linq;
 
     /// <summary>
     /// An <see cref="AssociationType"/> defines the association side of a relation.

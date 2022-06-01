@@ -11,7 +11,6 @@ namespace Allors.Database.Adapters.Memory
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
     using Meta;
 
     public abstract class Extent : Allors.Database.Extent

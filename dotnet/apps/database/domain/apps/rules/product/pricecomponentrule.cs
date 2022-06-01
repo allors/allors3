@@ -10,7 +10,6 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Database.Derivations;
     using Meta;
-    using Derivations;
     using Derivations.Rules;
 
     public class PriceComponentRule : Rule

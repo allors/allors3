@@ -10,7 +10,6 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation.WorkspaceRole
     using Allors.Workspace;
     using Xunit;
     using System;
-    using System.Diagnostics;
     using System.Linq;
 
     public abstract class ManyToManyTests : Test

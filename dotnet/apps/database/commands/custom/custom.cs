@@ -5,7 +5,6 @@
 
 namespace Commands
 {
-    using System.Linq;
     using Allors.Database.Derivations;
     using Allors.Database.Domain;
     using McMaster.Extensions.CommandLineUtils;

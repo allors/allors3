@@ -7,7 +7,6 @@ namespace Allors.Workspace.Adapters
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.Design;
     using System.Linq;
     using Meta;
     using Ranges;

@@ -7,7 +7,6 @@ namespace Application
     using Allors.Excel;
     using Allors.Workspace;
     using Allors.Workspace.Data;
-    using Allors.Workspace.Domain;
     using Sheets;
     using Person = Allors.Workspace.Domain.Person;
     using Result = Allors.Workspace.Data.Result;

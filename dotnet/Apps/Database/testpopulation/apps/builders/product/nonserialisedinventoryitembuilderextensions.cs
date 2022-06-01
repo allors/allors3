@@ -5,10 +5,6 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Allors.Database.Domain.TestPopulation
 {
     public static partial class NonSerialisedInventoryItemExtensions

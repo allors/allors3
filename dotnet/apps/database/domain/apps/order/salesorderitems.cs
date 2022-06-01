@@ -7,7 +7,6 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using Allors;
-    using Allors.Database.Meta;
 
     public partial class SalesOrderItems
     {

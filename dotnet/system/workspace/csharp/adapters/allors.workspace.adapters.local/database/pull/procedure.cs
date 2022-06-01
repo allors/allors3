@@ -6,7 +6,6 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using System;
     using System.Collections.Generic;
     using Database;
     using Database.Derivations;

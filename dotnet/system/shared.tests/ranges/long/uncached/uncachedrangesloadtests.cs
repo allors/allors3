@@ -5,8 +5,6 @@
 
 namespace Allors.Ranges.Long
 {
-    using System.Runtime.CompilerServices;
-
     public class UncachedRangesLoadTests : RangesLoadTests
     {
         public override IRanges<long> Ranges { get; }

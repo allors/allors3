@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Server.Controllers
 {
-    using System;
     using System.Collections.Generic;
     using System.Text;
     using Adapters;

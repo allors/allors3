@@ -7,7 +7,6 @@ namespace Allors.Database.Configuration.Derivations.Default
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Configuration.Derivations.Default;
     using Domain;
     using Domain.Derivations.Legacy;
 

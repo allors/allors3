@@ -6,7 +6,6 @@
 namespace Allors.Workspace
 {
     using System;
-    using Domain;
 
     public partial class SessionServices : ISessionServices
     {

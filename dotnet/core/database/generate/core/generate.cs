@@ -1,7 +1,6 @@
 namespace Allors.Meta.Generation
 {
     using System.IO;
-    using Database.Meta;
     using Model;
 
     public static class Generate

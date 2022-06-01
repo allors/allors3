@@ -6,7 +6,6 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
-    using System.Globalization;
     using System.Linq;
 
     public static partial class PurchaseOrderBuilderExtensions

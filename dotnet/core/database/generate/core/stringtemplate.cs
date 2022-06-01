@@ -13,7 +13,6 @@ namespace Allors.Meta.Generation
     using System.Xml;
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
-    using Database.Meta;
     using Model;
     using Storage;
 

@@ -6,7 +6,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Linq;
     using Xunit;
 
     public class UnifiedProductProductIdentificationNamesRuleTests : DomainTest, IClassFixture<Fixture>

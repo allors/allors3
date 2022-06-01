@@ -9,7 +9,6 @@ namespace Tests.Workspace.Session
     using Allors.Workspace.Domain;
     using Xunit;
     using Allors.Workspace.Data;
-    using System.Linq;
 
     public abstract class ManyToManyTests : Test
     {

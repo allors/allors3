@@ -5,8 +5,6 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System;
-
 namespace Allors.Database.Domain.TestPopulation
 {
     public static partial class PartCategoryExtensions

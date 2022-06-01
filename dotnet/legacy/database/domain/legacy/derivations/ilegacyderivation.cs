@@ -6,10 +6,8 @@
 // ReSharper disable StyleCop.SA1121
 namespace Allors.Database.Domain.Derivations.Legacy
 {
-    using System;
     using System.Collections.Generic;
     using Database.Derivations;
-    using Derivations;
     using Object = Object;
 
     public interface ILegacyDerivation : IDerivation

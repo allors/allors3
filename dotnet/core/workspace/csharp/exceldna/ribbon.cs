@@ -10,7 +10,6 @@ namespace ExcelDNA
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
-    using Allors.Workspace.Adapters.Remote;
     using Allors.Workspace.Adapters.Remote.ResthSharp;
     using Allors.Workspace.Meta.Lazy;
     using Application;

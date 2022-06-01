@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
     using Meta;
 
     public partial class UnitOfMeasureConversionAccessor

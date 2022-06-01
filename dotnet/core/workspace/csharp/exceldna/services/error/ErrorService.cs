@@ -1,6 +1,5 @@
 namespace ExcelDNA
 {
-    using System;
     using Allors.Excel;
     using Allors.Workspace;
 

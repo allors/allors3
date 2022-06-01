@@ -12,7 +12,6 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using System.Text;
     using Database.Derivations;
-    using Derivations;
 
     public class QuoteItemDetailsRule : Rule
     {

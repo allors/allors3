@@ -2,7 +2,6 @@ namespace Allors.Workspace.Blazor.Ant.Forms.Roles
 {
     using System;
     using Microsoft.AspNetCore.Components;
-    using Microsoft.Extensions.Options;
 
     public class ARadioGroupBase : RoleField
     {

@@ -7,8 +7,6 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
-    using System;
-    using System.Linq;
     using Database.Domain;
 
     public static partial class IndustryClassificationExtensions

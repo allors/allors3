@@ -5,9 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
-    using Meta;
-
     public partial class StatementsOfWork
     {
         protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);

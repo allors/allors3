@@ -10,8 +10,6 @@ namespace Allors.Database.Domain.Tests
 {
     using System;
     using System.Collections.Generic;
-
-    using Allors;
     using Allors.Database.Domain;
     using Derivations.Legacy;
     using Xunit;

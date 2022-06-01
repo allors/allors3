@@ -7,7 +7,6 @@
 
 namespace Allors.Database.Domain.TestPopulation
 {
-    using System;
     using System.Linq;
     using Database.Domain;
 

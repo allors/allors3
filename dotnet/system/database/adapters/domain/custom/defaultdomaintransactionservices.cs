@@ -7,8 +7,6 @@
 
 namespace Allors.Database
 {
-    using Services;
-
     public class DefaultDomainTransactionServices : IDomainTransactionServices
     {
         public void OnInit(ITransaction transaction) { }

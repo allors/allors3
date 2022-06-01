@@ -7,7 +7,6 @@
 namespace Allors.Workspace.Meta
 {
     using System;
-    using System.Linq;
     using Text;
 
     public abstract class RoleType : IRoleTypeInternals

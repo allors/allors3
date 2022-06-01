@@ -6,7 +6,6 @@
 namespace Allors.Workspace.Configuration
 {
     using System;
-    using Domain;
 
     public class Time : ITime
     {

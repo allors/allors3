@@ -5,11 +5,8 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Allors.Database.Derivations;
-    using Resources;
 
     public partial class SalesInvoice
     {

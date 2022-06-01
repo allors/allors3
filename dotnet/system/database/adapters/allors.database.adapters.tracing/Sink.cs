@@ -7,7 +7,6 @@ namespace Allors.Database.Adapters.Sql.Tracing
 {
     using System;
     using System.Collections.Concurrent;
-    using System.Diagnostics;
     using System.Linq;
     using Database.Tracing;
 

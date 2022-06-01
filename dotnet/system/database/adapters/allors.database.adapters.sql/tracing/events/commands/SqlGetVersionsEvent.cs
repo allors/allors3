@@ -8,7 +8,6 @@ namespace Allors.Database.Adapters.Sql.Tracing
     using System.Collections.Generic;
     using System.Text;
     using Adapters.Tracing;
-    using Meta;
 
     public sealed class SqlGetVersionsEvent : Event
     {

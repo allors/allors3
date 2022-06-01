@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Adapters.Memory
 {
-    using System.Collections.Generic;
     using Adapters;
     using Meta;
 

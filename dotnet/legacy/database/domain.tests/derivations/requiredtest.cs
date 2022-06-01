@@ -9,8 +9,6 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-
-    using Allors;
     using Allors.Database.Domain;
 
     using Xunit;

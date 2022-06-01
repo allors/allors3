@@ -6,7 +6,6 @@
 namespace Allors.Database.Server.Controllers
 {
     using Allors.Services;
-    using Services;
 
     public class ImageController : BaseImageController
     {

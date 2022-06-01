@@ -10,7 +10,6 @@ namespace Allors.Database.Configuration.Derivations.Default
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using Allors.Database.Domain;
-    using Configuration.Derivations.Default;
     using Database.Derivations;
     using Domain.Derivations.Legacy;
     using Object = Domain.Object;

@@ -8,10 +8,8 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using Meta;
     using Database.Derivations;
-    using Resources;
     using Allors.Database.Domain.Derivations.Rules;
 
     public class NonUnifiedPartSupplierReferenceNumbersRule : Rule

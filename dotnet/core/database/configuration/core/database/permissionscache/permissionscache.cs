@@ -7,7 +7,6 @@ namespace Allors.Database.Configuration
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using Domain;
     using Security;

@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
-
     public partial class SerialisedItems
     {
         protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);

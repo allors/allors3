@@ -9,7 +9,6 @@ namespace Allors.Database.Configuration.Derivations.Default
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Configuration.Derivations.Default;
     using Database.Derivations;
     using Domain.Derivations.Legacy;
     using Object = Domain.Object;

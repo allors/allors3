@@ -6,7 +6,6 @@
 namespace Tests.Workspace.WorkspaceAssociation.WorkspaceRelation
 {
     using System;
-    using System.Diagnostics;
     using System.Threading.Tasks;
     using Allors.Workspace;
     using Allors.Workspace.Data;

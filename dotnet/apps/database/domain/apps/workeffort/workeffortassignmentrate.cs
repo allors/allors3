@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
-
     public partial class WorkEffortAssignmentRate
     {
         public void AppsOnBuild(ObjectOnBuild method)

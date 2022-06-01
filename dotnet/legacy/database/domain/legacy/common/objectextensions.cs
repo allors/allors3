@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain
 {
     using Derivations;
-    using Domain;
 
     public static partial class ObjectExtensions
     {

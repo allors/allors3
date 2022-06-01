@@ -1,7 +1,6 @@
 namespace ExcelDNA
 {
     using System;
-    using System.Reflection;
     using Allors.Excel;
 
     public class MessageService : IMessageService
