@@ -118,53 +118,51 @@ namespace Allors.Database.Protocol.Json
         {
             var collection = enumerable as ICollection<IObject> ?? enumerable.ToArray();
 
-            if (collection.Count > 0)
+            if (collection.Count == 0)
             {
-                var prefetchPolicy = this.prefetchers.ForInclude(objectType, tree);
+                return;
+            }
 
-                this.collectionsByName.TryGetValue(name, out var existingCollection);
+            var prefetchPolicy = this.prefetchers.ForInclude(objectType, tree);
+            this.Transaction.Prefetch(prefetchPolicy, collection);
+            var trimmed = collection.Where(this.Include);
 
-                var filteredCollection = collection.Where(this.Include);
+            this.collectionsByName.TryGetValue(name, out var existingCollection);
 
-                if (tree != null)
+            if (tree != null)
+            {
+                ICollection<IObject> newCollection;
+
+                if (existingCollection != null)
                 {
-                    ICollection<IObject> newCollection;
-
-                    if (existingCollection != null)
-                    {
-                        newCollection = filteredCollection.ToArray();
-                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
-                        existingCollection.UnionWith(newCollection);
-                    }
-                    else
-                    {
-                        var newSet = new HashSet<IObject>(filteredCollection);
-                        newCollection = newSet;
-                        this.Transaction.Prefetch(prefetchPolicy, newCollection);
-                        this.collectionsByName.Add(name, newSet);
-                    }
-
-                    this.unmaskedObjects.UnionWith(newCollection);
-
-                    foreach (var newObject in newCollection)
-                    {
-                        tree.Resolve(newObject, this.AccessControl, this.Add);
-                    }
+                    newCollection = trimmed.ToArray();
+                    existingCollection.UnionWith(newCollection);
                 }
                 else
                 {
-                    this.Transaction.Prefetch(prefetchPolicy, filteredCollection);
+                    var newSet = new HashSet<IObject>(trimmed);
+                    newCollection = newSet;
+                    this.collectionsByName.Add(name, newSet);
+                }
 
-                    if (existingCollection != null)
-                    {
-                        existingCollection.UnionWith(filteredCollection);
-                    }
-                    else
-                    {
-                        var newWorkspaceCollection = new HashSet<IObject>(filteredCollection);
-                        this.collectionsByName.Add(name, newWorkspaceCollection);
-                        this.unmaskedObjects.UnionWith(newWorkspaceCollection);
-                    }
+                this.unmaskedObjects.UnionWith(newCollection);
+
+                foreach (var newObject in newCollection)
+                {
+                    tree.Resolve(newObject, this.AccessControl, this.Add);
+                }
+            }
+            else
+            {
+                if (existingCollection != null)
+                {
+                    existingCollection.UnionWith(trimmed);
+                }
+                else
+                {
+                    var newWorkspaceCollection = new HashSet<IObject>(trimmed);
+                    this.collectionsByName.Add(name, newWorkspaceCollection);
+                    this.unmaskedObjects.UnionWith(newWorkspaceCollection);
                 }
             }
         }
