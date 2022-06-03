@@ -9,7 +9,6 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Security;
-    using Database.Services;
     using Meta;
 
     /// <summary>
@@ -18,21 +17,34 @@ namespace Allors.Database.Domain
     public class AccessControlList : IAccessControlList
     {
         private readonly IInternalAccessControl accessControl;
-        private readonly IPermissionsCacheEntry permissionsCacheEntry;
+        private readonly IReadOnlyDictionary<Guid, long> readPermissionIdByRelationTypeId;
+        private readonly IReadOnlyDictionary<Guid, long> writePermissionIdByRelationTypeId;
+        private readonly IReadOnlyDictionary<Guid, long> executePermissionIdByMethodTypeId;
 
         private Grant[] grants;
         private Revocation[] revocations;
 
         private bool lazyLoaded;
 
-        internal AccessControlList(IInternalAccessControl accessControl, IObject @object, IPermissionsCache permissionsCache)
+        internal AccessControlList(IInternalAccessControl accessControl, IObject @object)
         {
             this.accessControl = accessControl;
             this.Object = (Object)@object;
-            this.permissionsCacheEntry = permissionsCache.Get(this.Object.Strategy.Class.Id);
+
+            if (this.Object != null)
+            {
+                var @class = this.Object.Strategy.Class;
+                this.readPermissionIdByRelationTypeId = @class.ReadPermissionIdByRelationTypeId;
+                this.writePermissionIdByRelationTypeId = @class.WritePermissionIdByRelationTypeId;
+                this.executePermissionIdByMethodTypeId = @class.ExecutePermissionIdByMethodTypeId;
+            }
 
             this.lazyLoaded = false;
         }
+
+        public Object Object { get; }
+
+
 
         IEnumerable<IGrant> IAccessControlList.Grants => this.Grants;
         public IEnumerable<Grant> Grants
@@ -54,42 +66,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public Object Object { get; }
+        public bool CanRead(IRoleType roleType) => this.readPermissionIdByRelationTypeId?.TryGetValue(roleType.RelationType.Id, out var permissionId) == true && this.IsPermitted(permissionId);
 
-        public bool CanRead(IRoleType roleType)
-        {
-            if (this.Object != null && this.permissionsCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
-            {
-                return this.IsPermitted(permissionId);
-            }
+        public bool CanWrite(IRoleType roleType) => !roleType.RelationType.IsDerived && this.writePermissionIdByRelationTypeId?.TryGetValue(roleType.RelationType.Id, out var permissionId) == true && this.IsPermitted(permissionId);
 
-            return false;
-        }
-
-        public bool CanWrite(IRoleType roleType)
-        {
-            if (roleType.RelationType.IsDerived)
-            {
-                return false;
-            }
-
-            if (this.Object != null && this.permissionsCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(roleType.RelationType.Id, out var permissionId))
-            {
-                return this.IsPermitted(permissionId);
-            }
-
-            return false;
-        }
-
-        public bool CanExecute(IMethodType methodType)
-        {
-            if (this.Object != null && this.permissionsCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
-            {
-                return this.IsPermitted(permissionId);
-            }
-
-            return false;
-        }
+        public bool CanExecute(IMethodType methodType) => this.executePermissionIdByMethodTypeId?.TryGetValue(methodType.Id, out var permissionId) == true && this.IsPermitted(permissionId);
 
         public bool IsMasked() => this.accessControl.IsMasked(this.Object);
 

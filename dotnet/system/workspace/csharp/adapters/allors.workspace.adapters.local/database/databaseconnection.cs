@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Local
     public class DatabaseConnection : Adapters.DatabaseConnection
     {
         private readonly Dictionary<long, AccessControl> accessControlById;
-        private readonly IPermissionsCache permissionCache;
+        private readonly IPermissions permission;
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
@@ -33,7 +33,7 @@ namespace Allors.Workspace.Adapters.Local
             this.recordRanges = rangesFactory();
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
-            this.permissionCache = this.Database.Services.Get<IPermissionsCache>();
+            this.permission = this.Database.Services.Get<IPermissions>();
             this.accessControlById = new Dictionary<long, AccessControl>();
         }
 
@@ -70,24 +70,22 @@ namespace Allors.Workspace.Adapters.Local
             return databaseObjects;
         }
 
-        public override long GetPermission(IClass @class, IOperandType operandType, Operations operation)
+        public override long GetPermission(IClass workspaceClass, IOperandType operandType, Operations operation)
         {
-            var classId = this.Database.MetaPopulation.FindByTag(@class.Tag).Id;
+            var @class = (Database.Meta.IClass)this.Database.MetaPopulation.FindByTag(workspaceClass.Tag);
             var operandId = this.Database.MetaPopulation.FindByTag(operandType.OperandTag).Id;
 
             long permission;
-            var permissionCacheEntry = this.permissionCache.Get(classId);
-
             switch (operation)
             {
                 case Operations.Read:
-                    permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    @class.ReadPermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Write:
-                    permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
+                    @class.WritePermissionIdByRelationTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Execute:
-                    permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
+                    @class.ExecutePermissionIdByMethodTypeId.TryGetValue(operandId, out permission);
                     break;
                 case Operations.Create:
                     throw new NotSupportedException("Create is not supported");

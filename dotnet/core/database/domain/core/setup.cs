@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
+    using Database.Services;
     using Meta;
 
     public partial class Setup
@@ -18,7 +19,10 @@ namespace Allors.Database.Domain
         public Setup(IDatabase database, Config config)
         {
             this.Config = config;
-            Permissions.Sync(database);
+
+            var permissions = database.Services.Get<IPermissions>();
+            permissions.Sync();
+
             this.transaction = database.CreateTransaction();
 
             this.objectsByObjectType = new Dictionary<IObjectType, IObjects>();

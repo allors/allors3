@@ -9,6 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.Linq;
     using Meta;
+    using Services;
     using Xunit;
 
     public class PermissionTests : DomainTest, IClassFixture<Fixture>
@@ -69,7 +70,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void NoPermissionsForAssociationsWhenUnitType()
         {
-            Permissions.Sync(this.Transaction.Database);
+            this.Transaction.Database.Services.Get<IPermissions>().Sync();
             this.Transaction.Rollback();
 
             var permissions = new Permissions(this.Transaction).Extent().ToArray();
@@ -86,7 +87,7 @@ namespace Allors.Database.Domain.Tests
 
             var permission = new ExecutePermissionBuilder(this.Transaction).WithClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
 
-            Permissions.Sync(this.Transaction.Database);
+            this.Transaction.Database.Services.Get<IPermissions>().Sync();
 
             this.Transaction.Rollback();
 
@@ -98,7 +99,7 @@ namespace Allors.Database.Domain.Tests
         {
             var permission = new ReadPermissionBuilder(this.Transaction).Build();
 
-            Permissions.Sync(this.Transaction.Database);
+            this.Transaction.Database.Services.Get<IPermissions>().Sync();
 
             this.Transaction.Rollback();
 

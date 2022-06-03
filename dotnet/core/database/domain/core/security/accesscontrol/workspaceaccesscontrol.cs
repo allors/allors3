@@ -21,7 +21,6 @@ namespace Allors.Database.Domain
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
         private readonly IRanges<long> ranges;
-        private readonly IPermissionsCache permissionCache;
         private readonly IDictionary<IClass, IRoleType> masks;
 
         public WorkspaceAccessControl(string workspaceName, IWorkspaceMask workspaceMask, User user)
@@ -29,7 +28,6 @@ namespace Allors.Database.Domain
             var services = user.Strategy.Transaction.Database.Services;
 
             this.ranges = services.Get<IRanges<long>>();
-            this.permissionCache = services.Get<IPermissionsCache>();
 
             this.workspaceName = workspaceName ?? throw new ArgumentNullException(nameof(workspaceName));
             this.User = user ?? throw new ArgumentNullException(nameof(user));
@@ -48,7 +46,7 @@ namespace Allors.Database.Domain
             {
                 if (!this.aclByObject.TryGetValue(@object, out var acl))
                 {
-                    acl = new AccessControlList(this, @object, this.permissionCache);
+                    acl = new AccessControlList(this, @object);
                     this.aclByObject.Add(@object, acl);
                 }
 

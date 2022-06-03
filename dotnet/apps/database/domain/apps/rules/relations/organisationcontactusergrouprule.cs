@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Organisation>())
             {
-                transaction.Prefetch(@this.PrefetchPolicy);
+                transaction.Prefetch(@this.PrefetchPolicy, @this);
 
                 if (!@this.ExistContactsUserGroup)
                 {

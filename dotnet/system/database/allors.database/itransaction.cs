@@ -149,7 +149,7 @@ namespace Allors.Database
         /// <returns>The instantiated objects.</returns>
         IObject[] Instantiate(IEnumerable<long> objectIds);
 
-        void Prefetch(PrefetchPolicy prefetchPolicy, params IObject[] objects);
+        void Prefetch<T>(PrefetchPolicy prefetchPolicy, params T[] objects) where T : IObject;
 
         void Prefetch(PrefetchPolicy prefetchPolicy, IEnumerable<string> objectIds);
 

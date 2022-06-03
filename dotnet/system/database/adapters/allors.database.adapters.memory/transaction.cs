@@ -178,7 +178,7 @@ namespace Allors.Database.Adapters.Memory
 
         public IObject[] Instantiate(IEnumerable<long> objectIds) => objectIds != null ? objectIds.Select(v => this.InstantiateMemoryStrategy(v)?.GetObject()).Where(v => v != null).ToArray() : Array.Empty<IObject>();
 
-        public void Prefetch(PrefetchPolicy prefetchPolicy, params IObject[] objects)
+        public void Prefetch<T>(PrefetchPolicy prefetchPolicy, params T[] objects) where T : IObject
         {
             // nop
         }

@@ -222,7 +222,7 @@ namespace Allors.Database.Adapters.Sql
             return allorsObjects;
         }
 
-        public void Prefetch(PrefetchPolicy prefetchPolicy, params IObject[] objects) => this.Prefetch(prefetchPolicy, objects.Select(x => x.Strategy.ObjectId));
+        public void Prefetch<T>(PrefetchPolicy prefetchPolicy, params T[] objects) where T : IObject => this.Prefetch(prefetchPolicy, objects.Select(x => x.Strategy.ObjectId));
 
         public void Prefetch(PrefetchPolicy prefetchPolicy, IEnumerable<IObject> objects) => this.Prefetch(prefetchPolicy, objects.Select(x => x.Strategy.ObjectId));
 

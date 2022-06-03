@@ -7,6 +7,7 @@
 namespace Allors.Database.Meta
 {
     using System;
+    using System.Collections.Generic;
 
     public interface IClass : IComposite
     {
@@ -15,5 +16,13 @@ namespace Allors.Database.Meta
         IRoleType[] OverriddenRequiredRoleTypes { get; set; }
 
         IRoleType[] RequiredRoleTypes { get; }
+
+        long CreatePermissionId { get; set; }
+
+        IReadOnlyDictionary<Guid, long> ReadPermissionIdByRelationTypeId { get; set; }
+
+        IReadOnlyDictionary<Guid, long> WritePermissionIdByRelationTypeId { get; set; }
+
+        IReadOnlyDictionary<Guid, long> ExecutePermissionIdByMethodTypeId { get; set; }
     }
 }

@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Person>())
             {
-                @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy);
+                @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy, @this);
                 @this.DerivePersonDisplayName(validation);
             }
         }

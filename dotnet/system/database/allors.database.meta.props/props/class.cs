@@ -30,6 +30,14 @@ namespace Allors.Database.Meta
             metaPopulation.OnClassCreated(this);
         }
 
+        public long CreatePermissionId { get; set; }
+
+        public IReadOnlyDictionary<Guid, long> ReadPermissionIdByRelationTypeId { get; set; }
+
+        public IReadOnlyDictionary<Guid, long> WritePermissionIdByRelationTypeId { get; set; }
+
+        public IReadOnlyDictionary<Guid, long> ExecutePermissionIdByMethodTypeId { get; set; }
+
         public IRoleType[] OverriddenRequiredRoleTypes
         {
             get => this.overriddenRequiredRoleTypes ?? Array.Empty<IRoleType>();

@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
             {
                 var now = @this.Transaction().Now();
 
-                @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy);
+                @this.Strategy.Transaction.Prefetch(@this.PrefetchPolicy, @this);
 
                 if (!@this.ExistTimeSheetWhereWorker && (@this.AppsIsActiveEmployee(now) || @this.CurrentOrganisationContactRelationships.Any()))
                 {

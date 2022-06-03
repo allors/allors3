@@ -5,16 +5,10 @@
 
 namespace Allors.Database.Services
 {
-    using System;
-    using System.Linq;
-    using Database.Security;
-
-    public interface IPermissionsCache
+    public interface IPermissions
     {
-        IPermissionsCacheEntry Create(IGrouping<Guid, IPermission> permissions);
+        void Sync();
 
-        IPermissionsCacheEntry Get(Guid classId);
-
-        void Clear();
+        void Load();
     }
 }

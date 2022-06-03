@@ -11,6 +11,7 @@ namespace Commands
     using System.Linq;
     using System.Xml;
     using Allors.Database.Domain;
+    using Allors.Database.Services;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
@@ -95,7 +96,8 @@ namespace Commands
                 return 1;
             }
 
-            Permissions.Sync(this.Parent.Database);
+            var permissions = this.Parent.Database.Services.Get<IPermissions>();
+            permissions.Sync();
 
             using (var session = this.Parent.Database.CreateTransaction())
             {
