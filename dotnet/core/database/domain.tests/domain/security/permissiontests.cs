@@ -71,6 +71,7 @@ namespace Allors.Database.Domain.Tests
         public void NoPermissionsForAssociationsWhenUnitType()
         {
             this.Transaction.Database.Services.Get<IPermissions>().Sync();
+            this.Transaction.Database.Services.Get<IPermissions>().Load();
             this.Transaction.Rollback();
 
             var permissions = new Permissions(this.Transaction).Extent().ToArray();
@@ -79,7 +80,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void WhenSyncingPermissionsThenObsolotePermissionsAreDeleted()
+        public void WhenSyncingPermissionsThenObsoletePermissionsAreDeleted()
         {
             var domain = (Domain)this.Transaction.Database.MetaPopulation.FindById(new Guid("AB41FD0C-C887-4A1D-BEDA-CED69527E69A"));
 
@@ -87,11 +88,14 @@ namespace Allors.Database.Domain.Tests
 
             var permission = new ExecutePermissionBuilder(this.Transaction).WithClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
 
+            this.Transaction.Commit();
+
             this.Transaction.Database.Services.Get<IPermissions>().Sync();
+            this.Transaction.Database.Services.Get<IPermissions>().Load();
 
             this.Transaction.Rollback();
 
-            Assert.Equal(count, new Permissions(this.Transaction).Extent().Count);
+            Assert.True(permission.Strategy.IsDeleted);
         }
 
         [Fact]
@@ -99,7 +103,10 @@ namespace Allors.Database.Domain.Tests
         {
             var permission = new ReadPermissionBuilder(this.Transaction).Build();
 
+            this.Transaction.Commit();
+
             this.Transaction.Database.Services.Get<IPermissions>().Sync();
+            this.Transaction.Database.Services.Get<IPermissions>().Load();
 
             this.Transaction.Rollback();
 

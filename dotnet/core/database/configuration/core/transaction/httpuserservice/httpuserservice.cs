@@ -14,25 +14,35 @@ namespace Allors.Database.Configuration
     public class HttpUserService : IUserService
     {
         private readonly IHttpContextAccessor httpContextAccessor;
+        private ITransaction transaction;
+        private User user;
 
         public HttpUserService(IHttpContextAccessor httpContextAccessor) => this.httpContextAccessor = httpContextAccessor;
 
-        public User User { get; set; }
-
-        public virtual void OnInit(ITransaction transaction)
+        public User User
         {
-            var nameIdentifier = this.httpContextAccessor?.HttpContext.User.Claims
-                .FirstOrDefault(v => v.Type == ClaimTypes.NameIdentifier)
-                ?.Value;
+            get
+            {
+                var user = this.user;
 
-            if (long.TryParse(nameIdentifier, out var userId))
-            {
-                this.User = (User)transaction.Instantiate(userId);
+                if (user == null)
+                {
+                    var nameIdentifier = this.httpContextAccessor?.HttpContext.User.Claims
+                        .FirstOrDefault(v => v.Type == ClaimTypes.NameIdentifier)
+                        ?.Value;
+
+                    if (long.TryParse(nameIdentifier, out var userId))
+                    {
+                        user = (User)this.transaction.Instantiate(userId);
+                    }
+                }
+
+                return user;
             }
-            else
-            {
-                this.User = null;
-            }
+
+            set => this.user = value;
         }
+
+        public virtual void OnInit(ITransaction transaction) => this.transaction = transaction;
     }
 }

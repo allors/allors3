@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
 
         public bool ExistClass => this.Class != null;
 
-        public bool ExistOperandType => true;
+        public bool ExistOperandType => false;
 
         public bool ExistOperation => true;
 

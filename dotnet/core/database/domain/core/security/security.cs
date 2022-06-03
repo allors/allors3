@@ -25,6 +25,7 @@ namespace Allors.Database.Domain
         private readonly Dictionary<ObjectType, IObjects> objectsByObjectType;
         private readonly ObjectsGraph objectsGraph;
 
+        // TODO: Koen
         public Security(ITransaction transaction)
         {
             this.transaction = transaction;
@@ -54,7 +55,7 @@ namespace Allors.Database.Domain
 
             this.deniablePermissionByOperandTypeByObjectTypeId = new Dictionary<Guid, Dictionary<IOperandType, Permission>>();
 
-            foreach (Permission permission in transaction.Extent<Permission>())
+            foreach (var permission in transaction.Extent<ReadPermission>().Cast<Permission>().Union(transaction.Extent<WritePermission>()).Union(transaction.Extent<ExecutePermission>()))
             {
                 if (!permission.ExistClassPointer || !permission.ExistOperation)
                 {

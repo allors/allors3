@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using Services;
+
     public partial class Setup
     {
         private void CustomOnPrePrepare()
@@ -113,6 +115,12 @@ namespace Allors.Database.Domain
 
     This paragraph belongs to item two of the outer list.
 ").Build();
+
+            if (this.Config.SetupSecurity)
+            {
+                this.transaction.Database.Services.Get<IPermissions>().Sync();
+                this.transaction.Database.Services.Get<IPermissions>().Load();
+            }
         }
     }
 }

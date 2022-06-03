@@ -12,12 +12,13 @@ namespace Allors.Database.Domain
     {
         bool ExistClass { get; }
 
-        bool ExistOperandType { get; }
-
         bool ExistOperation { get; }
+
+        Operations Operation { get; }
+
+        bool ExistOperandType { get; }
 
         IOperandType OperandType { get; }
 
-        Operations Operation { get; }
     }
 }

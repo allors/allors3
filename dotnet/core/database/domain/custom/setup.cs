@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using Services;
 
     public partial class Setup
     {
@@ -85,6 +86,9 @@ namespace Allors.Database.Domain
 
             if (this.Config.SetupSecurity)
             {
+                this.transaction.Database.Services.Get<IPermissions>().Sync();
+                this.transaction.Database.Services.Get<IPermissions>().Load();
+
                 var denied = new DeniedBuilder(this.transaction)
                     .WithDatabaseProperty("DatabaseProp")
                     .WithDefaultWorkspaceProperty("DefaultWorkspaceProp")
@@ -93,9 +97,9 @@ namespace Allors.Database.Domain
 
                 var m = denied.M;
 
-                var databaseWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DatabaseProperty) && v.Operation == Operations.Write);
-                var defaultWorkspaceWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
-                var workspaceXWrite = new Permissions(this.transaction).Extent().First(v => v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
+                var databaseWrite = new Permissions(this.transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.DatabaseProperty));
+                var defaultWorkspaceWrite = new Permissions(this.transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty));
+                var workspaceXWrite = new Permissions(this.transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.WorkspaceXProperty));
 
                 var revocation = new RevocationBuilder(this.transaction)
                     .WithDeniedPermission(databaseWrite)

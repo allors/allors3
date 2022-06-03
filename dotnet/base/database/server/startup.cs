@@ -28,6 +28,7 @@ namespace Allors.Server
     using User = Database.Domain.User;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
+    using Database.Services;
 
     public class Startup
     {
@@ -105,6 +106,7 @@ namespace Allors.Server
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
             databaseService.Build = () => databaseBuilder.Build();
             databaseService.Database = databaseService.Build();
+            databaseService.Database.Services.Get<IPermissions>().Load();
 
             if (env.IsDevelopment())
             {

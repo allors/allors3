@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using Database.Services;
+
     public partial class Setup
     {
         private void CustomOnPrePrepare()
@@ -21,6 +23,11 @@ namespace Allors.Database.Domain
 
         private void CustomOnPostSetup(Config config)
         {
+            if (this.Config.SetupSecurity)
+            {
+                this.transaction.Database.Services.Get<IPermissions>().Sync();
+                this.transaction.Database.Services.Get<IPermissions>().Load();
+            }
         }
     }
 }

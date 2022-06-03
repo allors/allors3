@@ -19,100 +19,181 @@ namespace Allors.Database.Configuration
 
         public void Sync()
         {
-            //using (var transaction = database.CreateTransaction())
-            //{
-            //    var permissions = new Permissions(transaction).Extent();
-            //    transaction.Prefetch(database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, permissions);
+            var transaction = this.database.CreateTransaction();
+            try
+            {
+                var createPermissions = new CreatePermissions(transaction).Extent().ToArray();
+                var readPermissions = new ReadPermissions(transaction).Extent().ToArray();
+                var writePermissions = new WritePermissions(transaction).Extent().ToArray();
+                var executePermissions = new ExecutePermissions(transaction).Extent().ToArray();
 
-            //    var permissionsCache = database.Services.Get<IPermissions>();
+                transaction.Prefetch(this.database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, createPermissions);
+                transaction.Prefetch(this.database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, readPermissions);
+                transaction.Prefetch(this.database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, writePermissions);
+                transaction.Prefetch(this.database.Services.Get<IPrefetchPolicyCache>().PermissionsWithClass, executePermissions);
 
-            //    var permissionCacheEntryByClassId = permissions
-            //        .GroupBy(v => v.ClassPointer)
-            //        .ToDictionary(
-            //            v => v.Key,
-            //            w => permissionsCache.Create(w));
+                foreach (var permission in createPermissions.Where(v => !v.ExistClass))
+                {
+                    permission.Strategy.Delete();
+                }
 
-            //    var permissionIds = new HashSet<long>();
+                foreach (var permission in readPermissions.Cast<Permission>().Union(writePermissions).Union(executePermissions).Where(v => !v.ExistClass || !v.ExistOperandType))
+                {
+                    permission.Strategy.Delete();
+                }
 
-            //    // Create new permissions
-            //    foreach (var @class in database.Services.Get<MetaPopulation>().Classes)
-            //    {
-            //        if (permissionCacheEntryByClassId.TryGetValue(@class.Id, out var permissionCacheEntry))
-            //        {
-            //            // existing class
-            //            foreach (var roleType in @class.DatabaseRoleTypes)
-            //            {
-            //                var relationTypeId = roleType.RelationType.Id;
-            //                {
-            //                    if (!permissionCacheEntry.RoleReadPermissionIdByRelationTypeId.TryGetValue(relationTypeId,
-            //                        out var permissionId))
-            //                    {
-            //                        permissionId = new ReadPermissionBuilder(transaction)
-            //                            .WithClassPointer(@class.Id)
-            //                            .WithRelationTypePointer(relationTypeId)
-            //                            .Build()
-            //                            .Id;
-            //                    }
+                var createPermissionsByClassId = createPermissions
+                    .Where(v => !v.Strategy.IsDeleted)
+                    .GroupBy(v => v.ClassPointer)
+                    .ToDictionary(
+                        v => v.Key,
+                        w => w.ToArray());
 
-            //                    permissionIds.Add(permissionId);
-            //                }
+                var readPermissionsByClassId = readPermissions
+                    .Where(v => !v.Strategy.IsDeleted)
+                    .GroupBy(v => v.ClassPointer)
+                    .ToDictionary(
+                        v => v.Key,
+                        w => w.ToArray());
 
-            //                {
-            //                    if (!permissionCacheEntry.RoleWritePermissionIdByRelationTypeId.TryGetValue(relationTypeId, out var permissionId))
-            //                    {
-            //                        permissionId = new WritePermissionBuilder(transaction)
-            //                            .WithClassPointer(@class.Id)
-            //                            .WithRelationTypePointer(relationTypeId)
-            //                            .Build()
-            //                            .Id;
-            //                    }
+                var writePermissionsByClassId = writePermissions
+                    .Where(v => !v.Strategy.IsDeleted)
+                    .GroupBy(v => v.ClassPointer)
+                    .ToDictionary(
+                        v => v.Key,
+                        w => w.ToArray());
 
-            //                    permissionIds.Add(permissionId);
-            //                }
-            //            }
+                var executePermissionsByClassId = executePermissions
+                    .Where(v => !v.Strategy.IsDeleted)
+                    .GroupBy(v => v.ClassPointer)
+                    .ToDictionary(
+                        v => v.Key,
+                        w => w.ToArray());
 
-            //            foreach (var methodType in @class.MethodTypes)
-            //            {
-            //                if (!permissionCacheEntry.MethodExecutePermissionIdByMethodTypeId.TryGetValue(methodType.Id, out var permissionId))
-            //                {
-            //                    permissionId = new ExecutePermissionBuilder(transaction)
-            //                        .WithClassPointer(@class.Id)
-            //                        .WithMethodTypePointer(methodType.Id)
-            //                        .Build()
-            //                        .Id;
-            //                }
+                var metaPopulation = this.database.MetaPopulation;
 
-            //                permissionIds.Add(permissionId);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            // new class
-            //            foreach (var roleType in @class.DatabaseRoleTypes)
-            //            {
-            //                var relationTypeId = roleType.RelationType.Id;
+                foreach (var @class in metaPopulation.Classes)
+                {
+                    // Create
+                    if (!createPermissionsByClassId.ContainsKey(@class.Id))
+                    {
+                        new CreatePermissionBuilder(transaction).WithClassPointer(@class.Id).Build();
+                    }
 
-            //                permissionIds.Add(new ReadPermissionBuilder(transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
-            //                permissionIds.Add(new WritePermissionBuilder(transaction).WithClassPointer(@class.Id).WithRelationTypePointer(relationTypeId).Build().Id);
-            //            }
+                    var relationTypeIds = new HashSet<Guid>(@class.DatabaseRoleTypes.Select(v => v.RelationType.Id));
 
-            //            foreach (var methodType in @class.MethodTypes)
-            //            {
-            //                permissionIds.Add(new ExecutePermissionBuilder(transaction).WithClassPointer(@class.Id).WithMethodTypePointer(methodType.Id).Build().Id);
-            //            }
-            //        }
-            //    }
+                    // Read
+                    if (readPermissionsByClassId.TryGetValue(@class.Id, out var classReadPermissions))
+                    {
+                        var removedPermissions = classReadPermissions
+                            .Where(v => !relationTypeIds.Contains(v.RelationTypePointer))
+                            .ToArray();
 
-            //    // Delete obsolete permissions
-            //    foreach (var permissionToDelete in new Permissions(transaction).Extent().Where(v => !permissionIds.Contains(v.Id)))
-            //    {
-            //        permissionToDelete.Delete();
-            //    }
+                        var existingRelationTypeIds = new HashSet<Guid>(classReadPermissions
+                            .Except(removedPermissions)
+                            .Select(v => v.RelationType.Id));
 
-            //    transaction.Derive();
-            //    transaction.Commit();
-            //    permissionsCache.Clear();
-            //}
+                        foreach (var removedPermission in removedPermissions)
+                        {
+                            removedPermission.Strategy.Delete();
+                        }
+
+                        foreach (var relationTypeId in relationTypeIds.Where(v => !existingRelationTypeIds.Contains(v)))
+                        {
+                            new ReadPermissionBuilder(transaction)
+                                .WithClassPointer(@class.Id)
+                                .WithRelationTypePointer(relationTypeId).Build();
+                        }
+                    }
+                    else
+                    {
+                        foreach (var relationTypeId in relationTypeIds)
+                        {
+                            new ReadPermissionBuilder(transaction)
+                                .WithClassPointer(@class.Id)
+                                .WithRelationTypePointer(relationTypeId).Build();
+                        }
+                    }
+
+                    // Write
+                    if (writePermissionsByClassId.TryGetValue(@class.Id, out var classWritePermissions))
+                    {
+                        var removedPermissions = classWritePermissions
+                            .Where(v => !relationTypeIds.Contains(v.RelationTypePointer))
+                            .ToArray();
+
+                        var existingRelationTypeIds = new HashSet<Guid>(classWritePermissions
+                            .Except(removedPermissions)
+                            .Select(v => v.RelationType.Id));
+
+                        foreach (var removedPermission in removedPermissions)
+                        {
+                            removedPermission.Strategy.Delete();
+                        }
+
+                        foreach (var relationTypeId in relationTypeIds.Where(v => !existingRelationTypeIds.Contains(v)))
+                        {
+                            new WritePermissionBuilder(transaction)
+                                .WithClassPointer(@class.Id)
+                                .WithRelationTypePointer(relationTypeId).Build();
+                        }
+                    }
+                    else
+                    {
+                        foreach (var relationTypeId in relationTypeIds)
+                        {
+                            new WritePermissionBuilder(transaction)
+                                .WithClassPointer(@class.Id)
+                                .WithRelationTypePointer(relationTypeId).Build();
+                        }
+                    }
+
+                    var methodTypeIds = new HashSet<Guid>(@class.MethodTypes.Select(v => v.Id));
+
+                    // Execute
+                    if (executePermissionsByClassId.TryGetValue(@class.Id, out var classExecutePermissions))
+                    {
+                        var removedPermissions = classExecutePermissions
+                            .Where(v => !methodTypeIds.Contains(v.MethodTypePointer))
+                            .ToArray();
+
+                        var existingRelationTypeIds = new HashSet<Guid>(classExecutePermissions
+                            .Except(removedPermissions)
+                            .Select(v => v.MethodType.Id));
+
+                        foreach (var removedPermission in removedPermissions)
+                        {
+                            removedPermission.Strategy.Delete();
+                        }
+
+                        foreach (var methodTypeId in methodTypeIds.Where(v => !existingRelationTypeIds.Contains(v)))
+                        {
+                            new ExecutePermissionBuilder(transaction)
+                                .WithClassPointer(@class.Id)
+                                .WithMethodTypePointer(methodTypeId).Build();
+                        }
+                    }
+                    else
+                    {
+                        foreach (var methodTypeId in methodTypeIds)
+                        {
+                            new ExecutePermissionBuilder(transaction)
+                                .WithClassPointer(@class.Id)
+                                .WithMethodTypePointer(methodTypeId).Build();
+                        }
+                    }
+                }
+
+                transaction.Derive();
+                transaction.Commit();
+            }
+            finally
+            {
+                if (this.database.IsShared)
+                {
+                    transaction.Dispose();
+                }
+            }
         }
 
         public void Load()

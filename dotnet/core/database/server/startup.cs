@@ -13,6 +13,7 @@ namespace Allors.Server
     using Database.Configuration.Derivations.Default;
     using Database.Domain;
     using Database.Meta;
+    using Database.Services;
     using JSNLog;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
@@ -104,6 +105,7 @@ namespace Allors.Server
             var databaseScope = new DefaultDatabaseServices(engine, httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, objectFactory);
             app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = databaseBuilder.Build();
+            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database.Services.Get<IPermissions>().Load();
 
             if (env.IsDevelopment())
             {

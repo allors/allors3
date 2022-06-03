@@ -15,6 +15,7 @@ namespace Allors.Database.Domain.Tests
     using Database.Security;
     using Meta;
     using Moq;
+    using Services;
     using User = Domain.User;
 
     public class DomainTest : IDisposable

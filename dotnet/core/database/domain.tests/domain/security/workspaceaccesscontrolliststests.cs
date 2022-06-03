@@ -63,7 +63,7 @@ namespace Allors.Database.Domain.Tests
             var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            var databaseOnlyPermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DatabaseOnlyField));
+            var databaseOnlyPermissions = new Permissions(this.Transaction).Extent().Where(v => v.ExistOperandType && v.OperandType.Equals(M.Person.DatabaseOnlyField));
             var databaseOnlyReadPermission = databaseOnlyPermissions.First(v => v.Operation == Operations.Read);
 
             var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(databaseOnlyReadPermission).Build();
@@ -86,7 +86,7 @@ namespace Allors.Database.Domain.Tests
             var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DefaultWorkspaceField));
+            var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.ExistOperandType && v.OperandType.Equals(M.Person.DefaultWorkspaceField));
             var workspaceReadPermission = workspacePermissions.First(v => v.Operation == Operations.Read);
             var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
 
@@ -108,7 +108,7 @@ namespace Allors.Database.Domain.Tests
             var administrators = new UserGroups(this.Transaction).Administrators;
             administrators.AddMember(administrator);
 
-            var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.OperandType.Equals(M.Person.DefaultWorkspaceField));
+            var workspacePermissions = new Permissions(this.Transaction).Extent().Where(v => v.ExistOperandType && v.OperandType.Equals(M.Person.DefaultWorkspaceField));
             var workspaceReadPermission = workspacePermissions.First(v => v.Operation == Operations.Read);
             var revocation = new RevocationBuilder(this.Transaction).WithDeniedPermission(workspaceReadPermission).Build();
 

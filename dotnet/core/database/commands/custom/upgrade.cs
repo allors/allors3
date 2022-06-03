@@ -95,6 +95,7 @@ namespace Commands
 
             var permissions = this.Parent.Database.Services.Get<IPermissions>();
             permissions.Sync();
+            permissions.Load();
 
             using (var session = this.Parent.Database.CreateTransaction())
             {
