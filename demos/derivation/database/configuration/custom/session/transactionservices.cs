@@ -25,6 +25,8 @@ namespace Allors.Database.Configuration
 
         public virtual void OnInit(ITransaction transaction)
         {
+            transaction.Database.Services.Get<IPermissions>().Load(transaction);
+            
             this.Transaction = transaction;
             this.userService.OnInit(transaction);
         }

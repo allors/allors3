@@ -228,9 +228,9 @@ namespace Tests
 
             var pullResponseObject = pullResponse.p[0];
 
-            var databaseWrite = new Permissions(this.Transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DatabaseProperty) && v.Operation == Operations.Write);
-            var defaultWorkspaceWrite = new Permissions(this.Transaction).Extent().First(v => v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
-            var workspaceXWrite = new Permissions(this.Transaction).Extent().First(v => v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
+            var databaseWrite = new Permissions(this.Transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.DatabaseProperty));
+            var defaultWorkspaceWrite = new Permissions(this.Transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
+            var workspaceXWrite = new Permissions(this.Transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
 
             // TODO: Koen
             //Assert.Single(pullResponseObject.d);

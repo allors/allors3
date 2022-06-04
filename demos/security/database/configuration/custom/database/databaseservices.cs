@@ -39,7 +39,7 @@ namespace Allors.Database.Configuration
 
         private ITreeCache treeCache;
 
-        private IPermissionsCache permissionsCache;
+        private IPermissions permissions;
 
         private IGrantCache grantCache;
 
@@ -88,7 +88,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.database)),
                 { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.database)),
                 { } type when type == typeof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
-                { } type when type == typeof(IPermissionsCache) => (T)(this.permissionsCache ??= new PermissionsCache(this.database)),
+                { } type when type == typeof(IPermissions) => (T)(this.permissions ??= new Permissions()),
                 { } type when type == typeof(IGrantCache) => (T)(this.grantCache ??= new GrantCache()),
                 { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
