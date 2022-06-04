@@ -189,9 +189,9 @@ namespace Allors.Database.Configuration
                 }
             }
 
-            this.ToMeta(transaction);
-
             transaction.Derive();
+
+            this.ToMeta(transaction);
         }
 
         public void Load(ITransaction transaction)
@@ -201,9 +201,8 @@ namespace Allors.Database.Configuration
                 if (!this.loaded)
                 {
                     this.ToMeta(transaction);
+                    this.loaded = true;
                 }
-
-                this.loaded = true;
             }
         }
 
