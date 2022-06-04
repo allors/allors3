@@ -93,18 +93,16 @@ namespace Commands
                 return 1;
             }
 
-            var permissions = this.Parent.Database.Services.Get<IPermissions>();
-            permissions.Sync();
-            permissions.Load();
-
-            using (var session = this.Parent.Database.CreateTransaction())
+            using (var transaction = this.Parent.Database.CreateTransaction())
             {
-                new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
-                session.Commit();
+                this.Parent.Database.Services.Get<IPermissions>().Sync(transaction);
 
-                new Security(session).Apply();
+                new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
+                transaction.Commit();
 
-                session.Commit();
+                new Security(transaction).Apply();
+
+                transaction.Commit();
             }
 
             this.Logger.Info("End");

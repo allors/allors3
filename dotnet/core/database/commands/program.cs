@@ -83,7 +83,6 @@ namespace Commands
                     var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
                     var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine), this.Configuration, objectFactory, this.IsolationLevel, this.CommandTimeout);
                     this.database = databaseBuilder.Build();
-                    this.database.Services.Get<IPermissions>().Load();
                 }
 
                 return this.database;

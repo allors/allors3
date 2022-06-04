@@ -7,8 +7,8 @@ namespace Allors.Database.Services
 {
     public interface IPermissions
     {
-        void Sync();
+        void Sync(ITransaction transaction);
 
-        void Load();
+        void Load(ITransaction transaction);
     }
 }

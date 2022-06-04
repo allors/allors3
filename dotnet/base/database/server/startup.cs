@@ -106,7 +106,6 @@ namespace Allors.Server
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
             databaseService.Build = () => databaseBuilder.Build();
             databaseService.Database = databaseService.Build();
-            databaseService.Database.Services.Get<IPermissions>().Load();
 
             if (env.IsDevelopment())
             {

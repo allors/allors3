@@ -105,7 +105,6 @@ namespace Allors.Server
             var databaseScope = new DefaultDatabaseServices(engine, httpContextAccessor);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, objectFactory);
             app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = databaseBuilder.Build();
-            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database.Services.Get<IPermissions>().Load();
 
             if (env.IsDevelopment())
             {

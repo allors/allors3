@@ -70,9 +70,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void NoPermissionsForAssociationsWhenUnitType()
         {
-            this.Transaction.Database.Services.Get<IPermissions>().Sync();
-            this.Transaction.Database.Services.Get<IPermissions>().Load();
-            this.Transaction.Rollback();
+            this.Transaction.Database.Services.Get<IPermissions>().Sync(this.Transaction);
 
             var permissions = new Permissions(this.Transaction).Extent().ToArray();
 
@@ -88,12 +86,7 @@ namespace Allors.Database.Domain.Tests
 
             var permission = new ExecutePermissionBuilder(this.Transaction).WithClassPointer(new Guid()).WithMethodTypePointer(new Guid()).Build();
 
-            this.Transaction.Commit();
-
-            this.Transaction.Database.Services.Get<IPermissions>().Sync();
-            this.Transaction.Database.Services.Get<IPermissions>().Load();
-
-            this.Transaction.Rollback();
+            this.Transaction.Database.Services.Get<IPermissions>().Sync(this.Transaction);
 
             Assert.True(permission.Strategy.IsDeleted);
         }
@@ -103,12 +96,7 @@ namespace Allors.Database.Domain.Tests
         {
             var permission = new ReadPermissionBuilder(this.Transaction).Build();
 
-            this.Transaction.Commit();
-
-            this.Transaction.Database.Services.Get<IPermissions>().Sync();
-            this.Transaction.Database.Services.Get<IPermissions>().Load();
-
-            this.Transaction.Rollback();
+            this.Transaction.Database.Services.Get<IPermissions>().Sync(this.Transaction);
 
             Assert.True(permission.Strategy.IsDeleted);
         }

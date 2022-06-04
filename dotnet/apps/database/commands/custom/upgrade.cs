@@ -93,11 +93,10 @@ namespace Commands
                 return 1;
             }
 
-            var permissions = this.Parent.Database.Services.Get<IPermissions>();
-            permissions.Sync();
-
             using (var transaction = this.Parent.Database.CreateTransaction())
             {
+                this.Parent.Database.Services.Get<IPermissions>().Sync(transaction);
+
                 new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
                 transaction.Commit();
 

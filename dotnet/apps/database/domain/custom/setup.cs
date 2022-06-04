@@ -25,8 +25,7 @@ namespace Allors.Database.Domain
         {
             if (this.Config.SetupSecurity)
             {
-                this.transaction.Database.Services.Get<IPermissions>().Sync();
-                this.transaction.Database.Services.Get<IPermissions>().Load();
+                this.transaction.Database.Services.Get<IPermissions>().Sync(this.transaction);
             }
         }
     }
