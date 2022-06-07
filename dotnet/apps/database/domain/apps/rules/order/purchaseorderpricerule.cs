@@ -84,8 +84,8 @@ namespace Allors.Database.Domain
                         purchaseOrderItem.TotalVat = purchaseOrderItem.UnitVat * purchaseOrderItem.QuantityOrdered;
                         purchaseOrderItem.TotalExVat = purchaseOrderItem.UnitPrice * purchaseOrderItem.QuantityOrdered;
                         purchaseOrderItem.TotalIrpf = purchaseOrderItem.UnitIrpf * purchaseOrderItem.QuantityOrdered;
-                        purchaseOrderItem.TotalIncVat = purchaseOrderItem.TotalExVat + @this.TotalVat;
-                        purchaseOrderItem.GrandTotal = purchaseOrderItem.TotalIncVat - @this.TotalIrpf;
+                        purchaseOrderItem.TotalIncVat = purchaseOrderItem.TotalExVat + purchaseOrderItem.TotalVat;
+                        purchaseOrderItem.GrandTotal = purchaseOrderItem.TotalIncVat - purchaseOrderItem.TotalIrpf;
                     }
                 }
 
