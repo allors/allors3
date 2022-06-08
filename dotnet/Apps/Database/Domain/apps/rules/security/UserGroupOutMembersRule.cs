@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class UserGroupOutMembersRuleRule : Rule
+    public class UserGroupOutMembersRule : Rule
     {
-        public UserGroupOutMembersRuleRule(MetaPopulation m) : base(m, new Guid("59aa339d-af58-416f-8765-48779166ac68")) =>
+        public UserGroupOutMembersRule(MetaPopulation m) : base(m, new Guid("59aa339d-af58-416f-8765-48779166ac68")) =>
             this.Patterns = new Pattern[]
             {
                 m.UserGroup.RolePattern(v => v.OutMembers),
