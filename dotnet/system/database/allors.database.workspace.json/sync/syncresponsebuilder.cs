@@ -8,6 +8,7 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http.Headers;
     using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Api.Sync;
@@ -24,6 +25,8 @@ namespace Allors.Database.Protocol.Json
         private readonly ISet<IClass> allowedClasses;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
+        private readonly HashSet<IObject> maskedObjects;
+
         public SyncResponseBuilder(ITransaction transaction, string workspaceName, IAccessControl accessControl, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges<long> ranges)
         {
             this.transaction = transaction;
@@ -32,6 +35,7 @@ namespace Allors.Database.Protocol.Json
             this.prefetch = prefetch;
             this.unitConvert = unitConvert;
             this.ranges = ranges;
+            this.maskedObjects = new HashSet<IObject>();
 
             this.AccessControl = accessControl;
         }
@@ -94,7 +98,22 @@ namespace Allors.Database.Protocol.Json
 
             return syncResponseRole;
         }
+        
+        public bool Include(IObject @object)
+        {
+            if (@object == null || this.allowedClasses?.Contains(@object.Strategy.Class) != true ||
+                this.maskedObjects.Contains(@object))
+            {
+                return false;
+            }
 
-        private bool Include(IObject @object) => @object != null && this.allowedClasses?.Contains(@object.Strategy.Class) == true;
+            if (this.AccessControl[@object].IsMasked())
+            {
+                this.maskedObjects.Add(@object);
+                return false;
+            }
+
+            return true;
+        }
     }
 }

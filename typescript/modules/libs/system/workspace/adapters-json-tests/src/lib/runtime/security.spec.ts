@@ -1,4 +1,4 @@
-import { C1, Denied } from '@allors/default/workspace/domain';
+import { C1, Denied, TrimFrom } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import { Origin } from '@allors/system/workspace/meta';
 import { Fixture } from '../fixture';
@@ -93,4 +93,42 @@ test('deniedPermissions', async () => {
       }
     }
   }
+});
+
+test('trim', async () => {
+  const { workspace, m } = fixture;
+  const session = workspace.createSession();
+
+  const pull: Pull = {
+    extent: {
+      kind: 'Filter',
+      objectType: m.TrimFrom,
+    },
+    results: [
+      {
+        include: [
+          {
+            propertyType: m.TrimFrom.Many2One,
+          },
+          {
+            propertyType: m.TrimFrom.Many2Manies,
+          },
+        ],
+      },
+    ],
+  };
+  const result = await session.pull(pull);
+
+  const trimFrom = result.collection<TrimFrom>(m.TrimFrom);
+
+  expect(trimFrom.length).toBe(2);
+
+  const from1 = trimFrom.find((v) => v.Name === 'Untrimmed1');
+  const from2 = trimFrom.find((v) => v.Name === 'Untrimmed2');
+
+  expect(from1.Many2One).toBeNull();
+  expect(from2.Many2One).toBeDefined();
+
+  expect(from1.Many2Manies.length).toBe(0);
+  expect(from2.Many2Manies.length).toBe(1);
 });
