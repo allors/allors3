@@ -31,7 +31,7 @@ namespace Allors.E2E.Angular.Material.Role
 
             await this.Locator.ScrollIntoViewIfNeededAsync();
 
-            await this.ElementLocator.EvaluateAsync(@"(element, value) => element.easyMDE.value(value)", value);
+            await this.ElementLocator.EvaluateAsync(@"(element, value) => { element.easyMDE.value(value); return null; }", value);
         }
     }
 }
