@@ -56,4 +56,41 @@ namespace Allors.Database.Domain
             }
         }
     }
+
+    public static class PurchaseInvoiceSerialisedItemRuleExtensions
+    {
+        public static void DerivePurchaseInvoiceSerialisedItem(this PurchaseInvoice @this, IValidation validation)
+        {
+            if (@this.PurchaseInvoiceState.IsNotPaid)
+            {
+                foreach (PurchaseInvoiceItem invoiceItem in @this.ValidInvoiceItems)
+                {
+                    if (invoiceItem.ExistSerialisedItem && !invoiceItem.SerialisedItem.ExistAssignedPurchasePrice)
+                    {
+                        invoiceItem.SerialisedItem.PurchasePrice = invoiceItem.TotalExVat;
+                    }
+
+                    if (invoiceItem.ExistSerialisedItem
+                        && @this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).PurchaseInvoiceConfirm))
+                    {
+                        if ((@this.BilledFrom as InternalOrganisation)?.IsInternalOrganisation == false)
+                        {
+                            invoiceItem.SerialisedItem.Buyer = @this.BilledTo;
+                        }
+
+                        // who comes first?
+                        // Item you purchased can be on sold via sales invoice even before purchase invoice is created and confirmed!!
+                        if (!invoiceItem.SerialisedItem.SalesInvoiceItemsWhereSerialisedItem
+                            .Any(v => (v.SalesInvoiceWhereSalesInvoiceItem.BillToCustomer as Organisation)?.IsInternalOrganisation == false
+                                        && v.ExistNextSerialisedItemAvailability
+                                        && v.NextSerialisedItemAvailability.IsSold))
+                        {
+                            invoiceItem.SerialisedItem.OwnedBy = @this.BilledTo;
+                            invoiceItem.SerialisedItem.Ownership = new Ownerships(@this.Transaction()).Own;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
