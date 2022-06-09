@@ -56,9 +56,9 @@ namespace Allors.Database.Protocol.Json
         {
             var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
             var name = extent.ObjectType.PluralName;
-            response.AddCollection(name, extent.ObjectType, objects);
+            var trimmed = objects.Where(response.Include).ToArray();
+            response.AddCollection(name, extent.ObjectType, trimmed);
         }
-
 
         private void WithResults(IExtent dataExtent, PullResponseBuilder response)
         {

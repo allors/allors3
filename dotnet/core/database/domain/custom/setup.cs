@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Linq;
+    using Meta;
     using Services;
 
     public partial class Setup
@@ -84,6 +85,7 @@ namespace Allors.Database.Domain
             cyclePerson2.AddCycleMany(cycleOrganisation1);
             cyclePerson2.AddCycleMany(cycleOrganisation2);
 
+            // Security
             if (this.Config.SetupSecurity)
             {
                 this.transaction.Database.Services.Get<IPermissions>().Sync(this.transaction);
@@ -107,6 +109,46 @@ namespace Allors.Database.Domain
                     .Build();
 
                 denied.AddRevocation(revocation);
+            }
+
+            // Trimming
+            if (this.Config.SetupSecurity)
+            {
+                // Objects
+                var fromTrimmed1 = new TrimFromBuilder(this.transaction).WithName("Trimmed1").Build();
+                var fromTrimmed2 = new TrimFromBuilder(this.transaction).WithName("Trimmed2").Build();
+                var fromUntrimmed1 = new TrimFromBuilder(this.transaction).WithName("Untrimmed1").Build();
+                var fromUntrimmed2 = new TrimFromBuilder(this.transaction).WithName("Untrimmed2").Build();
+
+                var toTrimmed = new TrimToBuilder(this.transaction).WithName("Trimmed1").Build();
+                var toUntrimmed = new TrimToBuilder(this.transaction).WithName("Untrimmed1").Build();
+
+                var m = this.transaction.Database.Services.Get<MetaPopulation>();
+
+                // Denied Permissions
+                var fromTrimPermission = new Permissions(this.transaction).Extent().First(v => v.Operation == Operations.Read && v.OperandType.Equals(m.TrimFrom.Name));
+                var fromRevocation = new RevocationBuilder(this.transaction)
+                    .WithDeniedPermission(fromTrimPermission)
+                    .Build();
+                fromTrimmed1.AddRevocation(fromRevocation);
+                fromTrimmed2.AddRevocation(fromRevocation);
+
+                var toTrimPermission = new Permissions(this.transaction).Extent().First(v => v.Operation == Operations.Read && v.OperandType.Equals(m.TrimTo.Name));
+                var toRevocation = new RevocationBuilder(this.transaction)
+                    .WithDeniedPermission(toTrimPermission)
+                    .Build();
+                toTrimmed.AddRevocation(toRevocation);
+
+                // Relations
+                fromTrimmed1.Many2One = toTrimmed;
+                fromTrimmed2.Many2One = toUntrimmed;
+                fromUntrimmed1.Many2One = toTrimmed;
+                fromUntrimmed2.Many2One = toUntrimmed;
+
+                fromTrimmed1.AddMany2Many(toTrimmed);
+                fromTrimmed2.AddMany2Many(toUntrimmed);
+                fromUntrimmed1.AddMany2Many(toTrimmed);
+                fromUntrimmed2.AddMany2Many(toUntrimmed);
             }
         }
     }
