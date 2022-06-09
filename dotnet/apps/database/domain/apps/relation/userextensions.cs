@@ -7,6 +7,13 @@ namespace Allors.Database.Domain
 {
     public static partial class UserExtensions
     {
+        public static void AppsOnPostBuild(this User @this, ObjectOnPostBuild method)
+        {
+            if (@this.ExistUserName && !@this.ExistUserProfile)
+            {
+                @this.UserProfile = new UserProfileBuilder(@this.Strategy.Transaction).Build();
+            }
+        }
         public static void AppsDelete(this User @this, DeletableDelete method) => @this.UserProfile?.Delete();
     }
 }
