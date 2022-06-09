@@ -13,15 +13,10 @@ namespace Allors.Database.Configuration
 
     public class Permissions : IPermissions
     {
-        private readonly object locker;
 
         private bool loaded;
 
-        public Permissions()
-        {
-            this.locker = new object();
-            this.loaded = false;
-        }
+        public Permissions() => this.loaded = false;
 
         public void Sync(ITransaction transaction)
         {
@@ -196,13 +191,10 @@ namespace Allors.Database.Configuration
 
         public void Load(ITransaction transaction)
         {
-            lock (this.locker)
+            if (!this.loaded)
             {
-                if (!this.loaded)
-                {
-                    this.ToMeta(transaction);
-                    this.loaded = true;
-                }
+                this.ToMeta(transaction);
+                this.loaded = true;
             }
         }
 
