@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Allors.Documents" Version="1.0.3" />
+    <PackageReference Include="Allors.Documents" Version="1.0.4" />
     <PackageReference Include="DataUtils.DataUrl" Version="1.0.2" />
     <PackageReference Include="MailKit" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />

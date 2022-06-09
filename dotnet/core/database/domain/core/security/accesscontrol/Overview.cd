@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Allors.Database.Domain.DatabaseAccessControl">
+    <Position X="4.5" Y="3.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAIAAAAAAQACRAIAAAAABAAABAAIAAAAAAABAA=</HashCode>
+      <FileName>core\security\accesscontrol\databaseaccesscontrol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Database.Domain.WorkspaceAccessControl">
+    <Position X="8" Y="3.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAIAAAAAAQACRAIAAAAABAABBAAIAAAAAAABAQ=</HashCode>
+      <FileName>core\security\accesscontrol\workspaceaccesscontrol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Database.Domain.AccessControlList">
+    <Position X="13.5" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BAGAAQAAAAgAACgoEEAIAAAAAAAAAACAAAEAwACIAAA=</HashCode>
+      <FileName>core\security\accesscontrol\accesscontrollist.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="accessControl" />
+      <Field Name="grants" />
+      <Field Name="revocations" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Database.Domain.Grant" Collapsed="true">
+    <Position X="17.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>lAACAEApgAqBHAACkAciAEAICVkMKISBAoCQABKIQAA=</HashCode>
+      <FileName>core\security\grant.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Allors.Database.Domain.Revocation" Collapsed="true">
+    <Position X="19" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAACIEAIAAoADAAAgAUAAIAJAhkEIITBAoCQABIIQAA=</HashCode>
+      <FileName>core\security\revocation.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Allors.Database.Domain.IInternalAccessControl">
+    <Position X="6.75" Y="1.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>core\security\accesscontrol\iinternalaccesscontrol.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

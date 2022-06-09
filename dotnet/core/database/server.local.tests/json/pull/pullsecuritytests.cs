@@ -89,9 +89,8 @@ namespace Tests
 
                 var api = new Api(this.Transaction, "Y", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
-                var wx1s = pullResponse.c["WorkspaceXObject1s"];
 
-                Assert.Empty(wx1s);
+                Assert.False(pullResponse.c.ContainsKey("WorkspaceXObject1s"));
             }
 
             // Instantiate
@@ -131,9 +130,7 @@ namespace Tests
                 var api = new Api(this.Transaction, "None", CancellationToken.None);
                 var pullResponse = api.Pull(pullRequest);
 
-                var wx1s = pullResponse.c["WorkspaceXObject1s"];
-
-                Assert.Empty(wx1s);
+                Assert.False(pullResponse.c.ContainsKey("WorkspaceXObject1s"));
             }
 
             // Instantiate
