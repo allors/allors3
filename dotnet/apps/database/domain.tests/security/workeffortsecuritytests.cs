@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workTask];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workTask];
             Assert.True(acl.CanExecute(this.M.WorkEffort.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Complete));
@@ -58,7 +58,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workTask];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workTask];
             Assert.True(acl.CanExecute(this.M.WorkEffort.Invoice));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
@@ -114,7 +114,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workTask];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workTask];
             Assert.False(acl.CanExecute(this.M.WorkEffort.Invoice));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkEffort.Reopen));
@@ -157,7 +157,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[timeEntry];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[timeEntry];
             Assert.False(acl.CanWrite(this.M.TimeEntry.AmountOfTime));
         }
     }

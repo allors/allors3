@@ -42,6 +42,10 @@ namespace Allors.Database.Domain.Tests
 
         public ITime Time => this.Transaction.Database.Services.Get<ITime>();
 
+        public ISecurity Security => this.Transaction.Database.Services.Get<ISecurity>();
+
+        public DatabaseAccessControl CreateDatabaseAccessControl() => new DatabaseAccessControl(this.Security, this.Transaction.GetUser());
+
         public TimeSpan? TimeShift
         {
             get => this.Time.Shift;

@@ -53,7 +53,7 @@ namespace Allors.Database.Configuration
                     var permissionIds = new HashSet<long>();
                     permissionIds.Add(@class.CreatePermissionId);
 
-                    foreach (var relationType in @class.RoleTypes.Select(v => v.RelationType).Where(w => w.WorkspaceNames.Contains(v)))
+                    foreach (var relationType in @class.DatabaseRoleTypes.Select(v => v.RelationType).Where(w => w.WorkspaceNames.Contains(v)))
                     {
                         permissionIds.Add(@class.ReadPermissionIdByRelationTypeId[relationType.Id]);
                         permissionIds.Add(@class.WritePermissionIdByRelationTypeId[relationType.Id]);
@@ -70,7 +70,35 @@ namespace Allors.Database.Configuration
 
         public IDictionary<IGrant, IVersionedPermissions> GetGrantPermissions(ITransaction transaction, IEnumerable<IGrant> grants)
         {
-            throw new System.NotImplementedException();
+            ISet<IGrant> missingGrants = null;
+            IDictionary<IGrant, IVersionedPermissions> permissionsByGrant = new Dictionary<IGrant, IVersionedPermissions>();
+
+            foreach (var grant in grants)
+            {
+                if (this.databasePermissionsById.TryGetValue(grant.Strategy.ObjectId, out var permissions) && permissions.Version == grant.Strategy.ObjectVersion)
+                {
+                    permissionsByGrant[grant] = permissions;
+                }
+                else
+                {
+                    missingGrants ??= new HashSet<IGrant>();
+                    missingGrants.Add(grant);
+                }
+            }
+
+            if (missingGrants != null)
+            {
+                transaction.Prefetch(this.grantPrefetchPolicy, missingGrants.Select(v => v.Strategy));
+
+                foreach (var grant in missingGrants)
+                {
+                    var permissions = new VersionedPermissions(this.ranges, grant.Strategy.ObjectVersion, ((Grant)grant).EffectivePermissions);
+                    this.databasePermissionsById[grant.Strategy.ObjectId] = permissions;
+                    permissionsByGrant[grant] = permissions;
+                }
+            }
+
+            return permissionsByGrant;
         }
 
         public IDictionary<IGrant, IVersionedPermissions> GetGrantPermissions(ITransaction transaction, IEnumerable<IGrant> grants, string workspaceName)
@@ -116,7 +144,35 @@ namespace Allors.Database.Configuration
 
         public IDictionary<IRevocation, IVersionedPermissions> GetRevocationPermissions(ITransaction transaction, IEnumerable<IRevocation> revocations)
         {
-            throw new System.NotImplementedException();
+            ISet<IRevocation> missingRevocations = null;
+            IDictionary<IRevocation, IVersionedPermissions> permissionsByRevocation = new Dictionary<IRevocation, IVersionedPermissions>();
+
+            foreach (var revocation in revocations)
+            {
+                if (this.databasePermissionsById.TryGetValue(revocation.Strategy.ObjectId, out var permissions) && permissions.Version == revocation.Strategy.ObjectVersion)
+                {
+                    permissionsByRevocation[revocation] = permissions;
+                }
+                else
+                {
+                    missingRevocations ??= new HashSet<IRevocation>();
+                    missingRevocations.Add(revocation);
+                }
+            }
+
+            if (missingRevocations != null)
+            {
+                transaction.Prefetch(this.revocationPrefetchPolicy, missingRevocations.Select(v => v.Strategy));
+
+                foreach (var revocation in missingRevocations)
+                {
+                    var permissions = new VersionedPermissions(this.ranges, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions);
+                    this.databasePermissionsById[revocation.Strategy.ObjectId] = permissions;
+                    permissionsByRevocation[revocation] = permissions;
+                }
+            }
+
+            return permissionsByRevocation;
         }
 
         public IDictionary<IRevocation, IVersionedPermissions> GetRevocationPermissions(ITransaction transaction, IEnumerable<IRevocation> revocations, string workspaceName)

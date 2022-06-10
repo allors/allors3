@@ -122,7 +122,7 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new DatabaseAccessControl(user);
+            var acls = new DatabaseAccessControl(this.Security, user);
             var acl = acls[data];
 
             Assert.NotNull(@object);

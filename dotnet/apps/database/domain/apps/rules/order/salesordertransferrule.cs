@@ -12,6 +12,7 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Allors.Database.Data;
     using Database.Derivations;
+    using Database.Services;
 
     public class SalesOrderTransferRule : Rule
     {
@@ -25,7 +26,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SalesOrderTransfer>().Where(v => v.ExistFrom && v.From.SalesOrderState.IsProvisional && v.ExistToInternalOrganisation && !v.ExistToSalesOrder))
             {
-                var acl = new DatabaseAccessControl(cycle.Transaction.Services.Get<IUserService>().User)[@this.From];
+                var acl = @this.Transaction().Services.Get<IDatabaseAclsService>().Create()[@this.From];
                 if (!acl.CanExecute(this.M.SalesOrder.DoTransfer))
                 {
                     // TODO: Move text to Resources

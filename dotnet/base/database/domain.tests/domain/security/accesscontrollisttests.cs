@@ -31,7 +31,7 @@ namespace Allors.Database.Domain.Tests
                 session.Commit();
 
                 var guest = new AutomatedAgents(this.Session).Guest;
-                var acls = new DatabaseAccessControl(guest);
+                var acls = new DatabaseAccessControl(this.Security, guest);
                 foreach (Object aco in (IObject[])session.Extent(this.M.Organisation))
                 {
                     // When
@@ -44,7 +44,6 @@ namespace Allors.Database.Domain.Tests
                 session.Rollback();
             }
         }
-
 
         private Permission FindPermission(RoleType roleType, Operations operation)
         {

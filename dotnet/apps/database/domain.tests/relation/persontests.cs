@@ -339,10 +339,10 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(existingAdministrator)[internalOrganisation];
+            var acl = new DatabaseAccessControl(this.Security, existingAdministrator)[internalOrganisation];
             Assert.True(acl.CanRead(this.M.Organisation.Name));
 
-            acl = new DatabaseAccessControl(existingAdministrator)[internalOrganisation];
+            acl = new DatabaseAccessControl(this.Security, existingAdministrator)[internalOrganisation];
             Assert.True(acl.CanWrite(this.M.Organisation.Name));
 
             var administrators = new UserGroups(this.Transaction).Administrators;
@@ -352,10 +352,10 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(secondAdministrator.IsAdministrator());
 
-            acl = new DatabaseAccessControl(existingAdministrator)[internalOrganisation];
+            acl = new DatabaseAccessControl(this.Security, existingAdministrator)[internalOrganisation];
             Assert.True(acl.CanRead(this.M.Organisation.Name));
 
-            acl = new DatabaseAccessControl(existingAdministrator)[internalOrganisation];
+            acl = new DatabaseAccessControl(this.Security, existingAdministrator)[internalOrganisation];
             Assert.True(acl.CanWrite(this.M.Organisation.Name));
         }
     }

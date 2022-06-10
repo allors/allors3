@@ -2088,7 +2088,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[shipment];
+            var acl= this.CreateDatabaseAccessControl()[shipment];
             Assert.Equal(new ShipmentStates(this.Transaction).Created, shipment.ShipmentState);
             Assert.True(acl.CanExecute(this.M.CustomerShipment.Cancel));
         }
@@ -2114,7 +2114,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[shipment];
+            var acl= this.CreateDatabaseAccessControl()[shipment];
             Assert.False(acl.CanExecute(this.M.CustomerShipment.Cancel));
         }
 
@@ -2198,7 +2198,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[shipment];
+            var acl= this.CreateDatabaseAccessControl()[shipment];
             Assert.Equal(new ShipmentStates(this.Transaction).Shipped, shipment.ShipmentState);
             Assert.False(acl.CanExecute(this.M.CustomerShipment.Cancel));
             Assert.False(acl.CanWrite(this.M.Shipment.HandlingInstruction));

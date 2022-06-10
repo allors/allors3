@@ -45,6 +45,8 @@ namespace Allors.Database.Domain.Tests
 
         public IDerivationService DerivationService => this.Session.Database.Services.Get<IDerivationService>();
 
+        public ISecurity Security => this.Session.Database.Services.Get<ISecurity>();
+
         public TimeSpan? TimeShift
         {
             get => this.Time.Shift;

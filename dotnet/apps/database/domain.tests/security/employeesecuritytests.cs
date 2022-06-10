@@ -25,7 +25,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new Employments(this.Transaction).Extent().Select(v => v.Employee).First();
             this.Transaction.SetUser(employee);
 
-            var acl = new DatabaseAccessControl(employee)[anotherPerson];
+            var acl = new DatabaseAccessControl(this.Security, employee)[anotherPerson];
             Assert.True(acl.CanRead(this.M.Person.FirstName));
             Assert.False(acl.CanWrite(this.M.Person.FirstName));
         }
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new Employments(this.Transaction).Extent().Select(v => v.Employee).First();
             this.Transaction.SetUser(employee);
 
-            var acl = new DatabaseAccessControl(employee)[employee];
+            var acl = new DatabaseAccessControl(this.Security, employee)[employee];
             Assert.True(acl.CanRead(this.M.Person.FirstName));
             Assert.True(acl.CanWrite(this.M.Person.FirstName));
         }
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new Employments(this.Transaction).Extent().Select(v => v.Employee).First();
             this.Transaction.SetUser(employee);
 
-            var acl = new DatabaseAccessControl(employee)[good];
+            var acl = new DatabaseAccessControl(this.Security, employee)[good];
             Assert.True(acl.CanRead(this.M.Good.Name));
             Assert.False(acl.CanWrite(this.M.Good.Name));
         }
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(workTask.Strategy.IsNewInTransaction);
 
-            var acl = new DatabaseAccessControl(employee)[workTask];
+            var acl = new DatabaseAccessControl(this.Security, employee)[workTask];
             Assert.True(acl.CanRead(this.M.WorkTask.Name));
             Assert.False(acl.CanWrite(this.M.WorkTask.Name));
         }
@@ -98,7 +98,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(salesInvoice.Strategy.IsNewInTransaction);
 
-            var acl = new DatabaseAccessControl(employee)[salesInvoice];
+            var acl = new DatabaseAccessControl(this.Security, employee)[salesInvoice];
             Assert.True(acl.CanRead(this.M.SalesInvoice.Description));
             Assert.True(acl.CanWrite(this.M.SalesInvoice.Description));
 
@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.False(salesInvoice.Strategy.IsNewInTransaction);
 
-            acl = new DatabaseAccessControl(employee)[salesInvoice];
+            acl = new DatabaseAccessControl(this.Security, employee)[salesInvoice];
             Assert.True(acl.CanRead(this.M.SalesInvoice.Description));
             Assert.False(acl.CanWrite(this.M.SalesInvoice.Description));
         }
@@ -136,7 +136,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(new SalesOrderStates(this.Transaction).Provisional, order.SalesOrderState);
 
-            var acl = new DatabaseAccessControl(employee)[order];
+            var acl = new DatabaseAccessControl(this.Security, employee)[order];
             Assert.False(acl.CanExecute(this.M.SalesOrder.Ship));
             Assert.True(acl.CanWrite(this.M.SalesOrder.Description));
             Assert.True(acl.CanRead(this.M.SalesOrder.Description));
@@ -150,7 +150,7 @@ namespace Allors.Database.Domain.Tests
             var employee = new Employments(this.Transaction).Extent().Select(v => v.Employee).First();
             this.Transaction.SetUser(employee);
 
-            var acl = new DatabaseAccessControl(employee)[userGroup];
+            var acl = new DatabaseAccessControl(this.Security, employee)[userGroup];
             Assert.True(acl.CanRead(this.M.UserGroup.Members));
             Assert.False(acl.CanWrite(this.M.UserGroup.Members));
         }

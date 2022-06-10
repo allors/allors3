@@ -51,6 +51,8 @@ namespace Allors.Database.Domain.Tests
 
             var acl = new WorkspaceAccessControl(this.workspaceName, new WorkspaceMask(this.M), this.Security, person)[organisation];
 
+            var canRead = acl.CanRead(this.M.Organisation.Name);
+
             Assert.True(acl.IsMasked());
         }
 

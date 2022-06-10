@@ -35,7 +35,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workRequirement];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workRequirement];
             Assert.True(acl.CanExecute(this.M.WorkRequirement.Delete));
             Assert.True(acl.CanExecute(this.M.WorkRequirement.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Reopen));
@@ -67,7 +67,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workRequirement];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workRequirement];
             Assert.True(acl.CanExecute(this.M.WorkRequirement.Delete));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Cancel));
             Assert.True(acl.CanExecute(this.M.WorkRequirement.Reopen));
@@ -100,7 +100,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workRequirement];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workRequirement];
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Delete));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Cancel));
             Assert.True(acl.CanExecute(this.M.WorkRequirement.Reopen));
@@ -131,7 +131,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workRequirement];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workRequirement];
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Delete));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Reopen));
@@ -178,7 +178,7 @@ namespace Allors.Database.Domain.Tests
             User user = this.Administrator;
             this.Transaction.SetUser(user);
 
-            var acl = new DatabaseAccessControl(this.Administrator)[workRequirement];
+            var acl = new DatabaseAccessControl(this.Security, this.Administrator)[workRequirement];
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Cancel));
             Assert.False(acl.CanExecute(this.M.WorkRequirement.Reopen));
         }

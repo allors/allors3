@@ -1235,7 +1235,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
+            var acl = this.CreateDatabaseAccessControl()[invoice];
 
             Assert.Equal(new PurchaseInvoiceStates(this.Transaction).Created, invoice.PurchaseInvoiceState);
             Assert.False(acl.CanExecute(this.M.PurchaseInvoice.Approve));

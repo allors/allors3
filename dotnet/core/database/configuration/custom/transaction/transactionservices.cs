@@ -44,7 +44,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IWorkspaceAclsService) => (T)(this.workspaceAclsService ??= new WorkspaceAclsService(this.DatabaseServices.Get<ISecurity>(), this.DatabaseServices.Get<IWorkspaceMask>(), this.userService.User)),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
-        
+
         public void Dispose()
         {
         }

@@ -193,7 +193,7 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new DatabaseAccessControl(user);
+            var acls = new DatabaseAccessControl(this.Security, user);
             var acl = acls[data];
 
             Assert.NotNull(@object);
@@ -203,6 +203,8 @@ namespace Tests
             Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.g);
             Assert.Equal(acl.Revocations.Select(v => v.Strategy.ObjectId), @object.r);
         }
+
+    
 
         [Fact]
         public void WithDeniedPermissionsFromDatabaseAndOtherWorkspace()
@@ -276,7 +278,7 @@ namespace Tests
 
             var @object = objects[0];
 
-            var acls = new DatabaseAccessControl(user);
+            var acls = new DatabaseAccessControl(this.Security, user);
             var acl = acls[data];
 
             Assert.NotNull(@object);

@@ -450,7 +450,7 @@ namespace Allors.Database.Domain.Tests
             shipment.Pick();
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[shipmentItem];
+            var acl= this.CreateDatabaseAccessControl()[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Transaction).Picking, shipmentItem.ShipmentItemState);
             Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
 
@@ -460,7 +460,7 @@ namespace Allors.Database.Domain.Tests
             pickList.SetPicked();
             this.Transaction.Derive();
 
-            acl = new DatabaseAccessControl(this.Transaction.GetUser())[shipmentItem];
+            acl= this.CreateDatabaseAccessControl()[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Transaction).Picked, shipmentItem.ShipmentItemState);
             Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
 
@@ -477,14 +477,14 @@ namespace Allors.Database.Domain.Tests
             shipment.SetPacked();
             this.Transaction.Derive();
 
-            acl = new DatabaseAccessControl(this.Transaction.GetUser())[shipmentItem];
+            acl= this.CreateDatabaseAccessControl()[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Transaction).Packed, shipmentItem.ShipmentItemState);
             Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
 
             shipment.Ship();
             this.Transaction.Derive();
 
-            acl = new DatabaseAccessControl(this.Transaction.GetUser())[shipmentItem];
+            acl= this.CreateDatabaseAccessControl()[shipmentItem];
             Assert.Equal(new ShipmentItemStates(this.Transaction).Shipped, shipmentItem.ShipmentItemState);
             Assert.False(acl.CanExecute(this.M.ShipmentItem.Delete));
         }

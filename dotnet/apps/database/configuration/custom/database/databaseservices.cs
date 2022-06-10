@@ -21,7 +21,6 @@ namespace Allors.Database.Configuration
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        private IDatabase database;
 
         private IRanges<long> ranges;
 
@@ -71,10 +70,12 @@ namespace Allors.Database.Configuration
             this.httpContextAccessor = httpContextAccessor;
         }
 
+        internal IDatabase Database { get; private set; }
+
         public virtual void OnInit(IDatabase database)
         {
-            this.database = database;
-            this.M = (MetaPopulation)this.database.MetaPopulation;
+            this.Database = database;
+            this.M = (MetaPopulation)this.Database.MetaPopulation;
         }
 
         public MetaPopulation M { get; private set; }
@@ -85,17 +86,17 @@ namespace Allors.Database.Configuration
             typeof(T) switch
             {
                 // System
-                { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
+                { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.Database)),
                 { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
-                { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.database.ObjectFactory.Assembly)),
+                { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.Database.ObjectFactory.Assembly)),
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
                 { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
-                { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.database)),
-                { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.database)),
-                { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.database)),
+                { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.Database)),
+                { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.Database)),
+                { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.Database)),
                 { } type when type == typeof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
                 { } type when type == typeof(IPermissions) => (T)(this.permissions ??= new Permissions()),
                 { } type when type == typeof(IGrantCache) => (T)(this.grantCache ??= new GrantCache()),

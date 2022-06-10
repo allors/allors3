@@ -3245,7 +3245,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
+            var acl= this.CreateDatabaseAccessControl()[invoice];
             Assert.True(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.True(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3289,7 +3289,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(new SalesInvoiceStates(this.Transaction).NotPaid, invoice.SalesInvoiceState);
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
+            var acl= this.CreateDatabaseAccessControl()[invoice];
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.True(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3364,7 +3364,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
+            var acl= this.CreateDatabaseAccessControl()[invoice];
 
             Assert.Equal(new SalesInvoiceStates(this.Transaction).Paid, invoice.SalesInvoiceState);
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
@@ -3416,7 +3416,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
+            var acl= this.CreateDatabaseAccessControl()[invoice];
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.True(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3456,7 +3456,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
+            var acl= this.CreateDatabaseAccessControl()[invoice];
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.CancelInvoice));
@@ -3494,7 +3494,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[invoice];
+            var acl= this.CreateDatabaseAccessControl()[invoice];
             Assert.Equal(new SalesInvoiceStates(this.Transaction).Cancelled, invoice.SalesInvoiceState);
             Assert.False(acl.CanExecute(this.M.SalesInvoice.Send));
             Assert.False(acl.CanExecute(this.M.SalesInvoice.WriteOff));

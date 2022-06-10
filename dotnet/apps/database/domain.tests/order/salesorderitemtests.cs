@@ -3990,7 +3990,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Provisional, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Reject));
@@ -4031,7 +4031,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).InProcess, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Reject));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Delete));
@@ -4100,7 +4100,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemShipmentStates(this.Transaction).PartiallyShipped, item.SalesOrderItemShipmentState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Delete));
@@ -4136,7 +4136,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Cancelled, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -4171,7 +4171,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Cancelled, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
@@ -4205,7 +4205,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Rejected, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -4240,7 +4240,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Rejected, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.True(acl.CanExecute(this.M.SalesOrderItem.Delete));
         }
 
@@ -4320,7 +4320,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Completed, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -4355,7 +4355,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemStates(this.Transaction).Finished, item.SalesOrderItemState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Reject));
         }
@@ -4423,7 +4423,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemShipmentStates(this.Transaction).PartiallyShipped, item.SalesOrderItemShipmentState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.False(acl.CanWrite(this.M.SalesOrderItem.Product));
         }
 
@@ -4466,7 +4466,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(new SalesOrderItemShipmentStates(this.Transaction).InProgress, item.SalesOrderItemShipmentState);
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[item];
+            var acl= this.CreateDatabaseAccessControl()[item];
             Assert.False(acl.CanExecute(this.M.SalesOrderItem.Cancel));
         }
 

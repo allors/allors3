@@ -659,7 +659,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[pickList];
+            var acl= this.CreateDatabaseAccessControl()[pickList];
             Assert.True(acl.CanExecute(this.M.PickList.Cancel));
         }
 
@@ -680,7 +680,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[pickList];
+            var acl= this.CreateDatabaseAccessControl()[pickList];
             Assert.False(acl.CanExecute(this.M.PickList.Cancel));
             Assert.False(acl.CanExecute(this.M.PickList.SetPicked));
         }
@@ -702,7 +702,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            var acl = new DatabaseAccessControl(this.Transaction.GetUser())[pickList];
+            var acl= this.CreateDatabaseAccessControl()[pickList];
             Assert.False(acl.CanExecute(this.M.PickList.Cancel));
             Assert.False(acl.CanExecute(this.M.PickList.SetPicked));
         }
