@@ -5,14 +5,8 @@
 
 namespace Allors.Database.Security
 {
-    using Ranges;
-
     public interface IAccessControl
     {
-        IRange<long> GrantedPermissionIds(IGrant grant);
-
-        IRange<long> RevokedPermissionIds(IRevocation revocation);
-
         IAccessControlList this[IObject @object]
         {
             get;

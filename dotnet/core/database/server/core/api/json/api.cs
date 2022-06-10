@@ -48,11 +48,14 @@ namespace Allors.Database.Protocol.Json
             this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
             this.Build = @class => DefaultObjectBuilder.Build(transaction, @class);
             this.Derive = () => this.Transaction.Derive(false);
+            this.Security = databaseServices.Get<ISecurity>();
 
             this.UnitConvert = new UnitConvert();
         }
 
         public ITransaction Transaction { get; }
+
+        public ISecurity Security { get; }
 
         public string WorkspaceName { get; set; }
         public CancellationToken CancellationToken { get; }
@@ -172,7 +175,7 @@ namespace Allors.Database.Protocol.Json
 
         public AccessResponse Access(AccessRequest accessRequest)
         {
-            var responseBuilder = new AccessResponseBuilder(this.Transaction, this.AccessControl);
+            var responseBuilder = new AccessResponseBuilder(this.Transaction, this.Security, this.WorkspaceName);
             return responseBuilder.Build(accessRequest);
         }
 

@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
                 session.Commit();
 
                 var guest = new Users(this.Transaction).FindBy(this.M.User.UserName, "guest@example.com");
-                var acls = new DatabaseAccessControl(guest);
+                var acls = new DatabaseAccessControl(this.Security, guest);
                 foreach (Object aco in (IObject[])session.Extent(this.M.Organisation))
                 {
                     // When
@@ -71,7 +71,7 @@ namespace Allors.Database.Domain.Tests
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
 
-                var acl = new DatabaseAccessControl(person)[organisation];
+                var acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 Assert.True(acl.CanRead(this.M.Organisation.Name));
 
@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Tests
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
 
-                var acl = new DatabaseAccessControl(person)[organisation];
+                var acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 Assert.True(acl.CanRead(this.M.Organisation.Name));
 
@@ -146,7 +146,7 @@ namespace Allors.Database.Domain.Tests
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
 
-                var acl = new DatabaseAccessControl(person)[organisation];
+                var acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 Assert.False(acl.CanRead(this.M.Organisation.Name));
 
@@ -186,7 +186,7 @@ namespace Allors.Database.Domain.Tests
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
 
-                var acl = new DatabaseAccessControl(person)[organisation];
+                var acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 Assert.False(acl.CanRead(this.M.Organisation.Name));
 
@@ -220,14 +220,14 @@ namespace Allors.Database.Domain.Tests
 
                 this.Transaction.Derive();
 
-                var acl = new DatabaseAccessControl(person)[organisation];
+                var acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 accessControl.RemoveSubject(person);
                 accessControl.AddSubject(person2);
 
                 this.Transaction.Derive();
 
-                acl = new DatabaseAccessControl(person)[organisation];
+                acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 Assert.False(acl.CanRead(this.M.Organisation.Name));
 
@@ -261,7 +261,7 @@ namespace Allors.Database.Domain.Tests
 
                 Assert.False(this.Transaction.Derive(false).HasErrors);
 
-                var acl = new DatabaseAccessControl(person)[organisation];
+                var acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 Assert.True(acl.CanRead(this.M.Organisation.Name));
 
@@ -269,7 +269,7 @@ namespace Allors.Database.Domain.Tests
 
                 organisation.AddRevocation(revocation);
 
-                acl = new DatabaseAccessControl(person)[organisation];
+                acl = new DatabaseAccessControl(this.Security, person)[organisation];
 
                 Assert.False(acl.CanRead(this.M.Organisation.Name));
 

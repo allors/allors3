@@ -5,22 +5,25 @@
 
 namespace Allors.Database.Configuration
 {
+    using Database.Security;
     using Domain;
-    using Security;
     using Services;
 
     public class WorkspaceAclsService : IWorkspaceAclsService
     {
+        public ISecurity Security { get; }
+
         public IWorkspaceMask WorkspaceMask { get; set; }
 
         public User User { get; }
 
-        public WorkspaceAclsService(IWorkspaceMask workspaceMask, User user)
+        public WorkspaceAclsService(ISecurity security, IWorkspaceMask workspaceMask, User user)
         {
+            this.Security = security;
             this.WorkspaceMask = workspaceMask;
             this.User = user;
         }
 
-        public IAccessControl Create(string workspace) => new WorkspaceAccessControl(workspace, this.WorkspaceMask, this.User);
+        public IAccessControl Create(string workspaceName) => new WorkspaceAccessControl(workspaceName, this.WorkspaceMask, this.Security, this.User);
     }
 }

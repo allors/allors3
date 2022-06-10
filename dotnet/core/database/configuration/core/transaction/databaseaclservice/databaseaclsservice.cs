@@ -5,16 +5,22 @@
 
 namespace Allors.Database.Configuration
 {
+    using Database.Security;
     using Domain;
-    using Security;
     using Services;
 
     public class DatabaseAclsService : IDatabaseAclsService
     {
         public User User { get; }
 
-        public DatabaseAclsService(User user) => this.User = user;
+        public ISecurity Security { get; }
 
-        public IAccessControl Create() => new DatabaseAccessControl(this.User);
+        public DatabaseAclsService(User user, ISecurity security)
+        {
+            this.User = user;
+            this.Security = security;
+        }
+
+        public IAccessControl Create() => new DatabaseAccessControl(this.Security, this.User);
     }
 }

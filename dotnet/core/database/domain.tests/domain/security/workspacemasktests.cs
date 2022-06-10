@@ -34,7 +34,7 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var acl = new WorkspaceAccessControl(this.workspaceName, new WorkspaceMask(this.M), person)[organisation];
+            var acl = new WorkspaceAccessControl(this.workspaceName, new WorkspaceMask(this.M), this.Security, person)[organisation];
 
             Assert.False(acl.IsMasked());
         }
@@ -49,7 +49,7 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var acl = new WorkspaceAccessControl(this.workspaceName, new WorkspaceMask(this.M), person)[organisation];
+            var acl = new WorkspaceAccessControl(this.workspaceName, new WorkspaceMask(this.M), this.Security, person)[organisation];
 
             Assert.True(acl.IsMasked());
         }

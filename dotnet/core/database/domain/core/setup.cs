@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
-    using Database.Services;
     using Meta;
 
     public partial class Setup

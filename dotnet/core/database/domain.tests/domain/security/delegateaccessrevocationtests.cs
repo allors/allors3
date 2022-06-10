@@ -42,7 +42,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             // Use default security from Singleton
-            var acl = new DatabaseAccessControl(user)[accessClass];
+            var acl = new DatabaseAccessControl(this.Security, user)[accessClass];
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
         }
@@ -73,7 +73,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             // Use default security from Singleton
-            var acl = new DatabaseAccessControl(user)[accessClass];
+            var acl = new DatabaseAccessControl(this.Security, user)[accessClass];
             Assert.True(acl.CanRead(this.M.AccessClass.Property));
             Assert.True(acl.CanRead(this.M.AccessClass.Property));
         }
@@ -106,7 +106,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             // Use default security from Singleton
-            var acl = new DatabaseAccessControl(user)[accessClass];
+            var acl = new DatabaseAccessControl(this.Security, user)[accessClass];
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
         }
@@ -139,7 +139,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             // Use default security from Singleton
-            var acl = new DatabaseAccessControl(user)[accessClass];
+            var acl = new DatabaseAccessControl(this.Security, user)[accessClass];
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
             Assert.False(acl.CanRead(this.M.AccessClass.Property));
         }

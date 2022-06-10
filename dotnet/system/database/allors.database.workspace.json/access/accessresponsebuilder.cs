@@ -7,19 +7,21 @@ namespace Allors.Database.Protocol.Json
 {
     using System.Linq;
     using Allors.Protocol.Json.Api.Security;
+    using Domain;
     using Security;
 
     public class AccessResponseBuilder
     {
         private readonly ITransaction transaction;
+        private readonly string workspaceName;
+        private readonly ISecurity security;
 
-        public AccessResponseBuilder(ITransaction transaction, IAccessControl accessControl)
+        public AccessResponseBuilder(ITransaction transaction, ISecurity security, string workspaceName)
         {
             this.transaction = transaction;
-            this.AccessControl = accessControl;
+            this.security = security;
+            this.workspaceName = workspaceName;
         }
-
-        public IAccessControl AccessControl { get; }
 
         public AccessResponse Build(AccessRequest accessRequest)
         {
@@ -30,6 +32,8 @@ namespace Allors.Database.Protocol.Json
                 var ids = accessRequest.g;
                 var grants = this.transaction.Instantiate(ids).Cast<IGrant>().ToArray();
 
+                var grantPermissions = this.security.GetGrantPermissions(this.transaction, grants, this.workspaceName);
+
                 accessResponse.g = grants
                     .Select(v =>
                     {
@@ -37,9 +41,8 @@ namespace Allors.Database.Protocol.Json
                         {
                             i = v.Strategy.ObjectId,
                             v = v.Strategy.ObjectVersion,
+                            p = grantPermissions[v].Range.Save()
                         };
-
-                        response.p = this.AccessControl.GrantedPermissionIds(v).Save();
 
                         return response;
                     }).ToArray();
@@ -50,6 +53,8 @@ namespace Allors.Database.Protocol.Json
                 var revocationIds = accessRequest.r;
                 var revocations = this.transaction.Instantiate(revocationIds).Cast<IRevocation>().ToArray();
 
+                var revocationPermissions = this.security.GetRevocationPermissions(this.transaction, revocations, this.workspaceName);
+
                 accessResponse.r = revocations
                     .Select(v =>
                     {
@@ -57,9 +62,8 @@ namespace Allors.Database.Protocol.Json
                         {
                             i = v.Strategy.ObjectId,
                             v = v.Strategy.ObjectVersion,
+                            p = revocationPermissions[v].Range.Save()
                         };
-
-                        response.p = this.AccessControl.RevokedPermissionIds(v).Save();
 
                         return response;
                     }).ToArray();

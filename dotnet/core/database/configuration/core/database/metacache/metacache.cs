@@ -14,7 +14,8 @@ namespace Allors.Database.Configuration
     public class MetaCache : IMetaCache
     {
         private readonly IReadOnlyDictionary<IClass, Type> builderTypeByClass;
-        private readonly IReadOnlyDictionary<string, HashSet<IClass>> workspaceClassesByWorkspaceName;
+        private readonly IReadOnlyDictionary<string, HashSet<IClass>> classesByWorkspaceName;
+        private readonly IReadOnlyDictionary<string, HashSet<long>> permissionIdsByWorkspaceName;
 
         public MetaCache(IDatabase database)
         {
@@ -26,15 +27,25 @@ namespace Allors.Database.Configuration
                     v => (IClass)v,
                     v => assembly.GetType($"Allors.Database.Domain.{v.Name}Builder", false));
 
-            this.workspaceClassesByWorkspaceName = metaPopulation.WorkspaceNames
+            this.classesByWorkspaceName = new Dictionary<string, HashSet<IClass>>();
+            this.permissionIdsByWorkspaceName = new Dictionary<string, HashSet<long>>();
+
+            this.classesByWorkspaceName = metaPopulation.WorkspaceNames
                 .ToDictionary(v => v, v => new HashSet<IClass>(metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(v))));
+
         }
 
         public Type GetBuilderType(IClass @class) => this.builderTypeByClass[@class];
 
         public ISet<IClass> GetWorkspaceClasses(string workspaceName)
         {
-            this.workspaceClassesByWorkspaceName.TryGetValue(workspaceName, out var classes);
+            this.classesByWorkspaceName.TryGetValue(workspaceName, out var classes);
+            return classes;
+        }
+
+        public ISet<long> GetWorkspacePermissionIds(string workspaceName)
+        {
+            this.permissionIdsByWorkspaceName.TryGetValue(workspaceName, out var classes);
             return classes;
         }
     }

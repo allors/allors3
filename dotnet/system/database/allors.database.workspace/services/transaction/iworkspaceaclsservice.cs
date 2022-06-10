@@ -9,6 +9,6 @@ namespace Allors.Database.Services
 
     public interface IWorkspaceAclsService
     {
-        IAccessControl Create(string workspace);
+        IAccessControl Create(string workspaceName);
     }
 }
