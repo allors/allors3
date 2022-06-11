@@ -8,8 +8,7 @@ namespace Allors.Database.Security
     /// <summary>
     /// List of permissions for an object/user combination.
     /// </summary>
-    public interface IGrant : IObject
+    public interface IUser : IObject
     {
-        IPermission[] Permissions { get; }
     }
 }

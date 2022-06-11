@@ -226,6 +226,7 @@ namespace Allors.Database.Domain.Tests
                 accessControl.AddSubject(person2);
 
                 this.Transaction.Derive();
+                this.Transaction.Commit();
 
                 acl = new DatabaseAccessControl(this.Security, person)[organisation];
 

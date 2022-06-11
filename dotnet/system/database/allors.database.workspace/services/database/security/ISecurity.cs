@@ -10,6 +10,8 @@ namespace Allors.Database.Domain
 
     public interface ISecurity
     {
+        IVersionedGrants GetVersionedGrantIdsForUser(IUser user);
+
         IDictionary<IGrant, IVersionedPermissions> GetGrantPermissions(ITransaction transaction, IEnumerable<IGrant> grants);
 
         IDictionary<IGrant, IVersionedPermissions> GetGrantPermissions(ITransaction transaction, IEnumerable<IGrant> grants, string workspaceName);

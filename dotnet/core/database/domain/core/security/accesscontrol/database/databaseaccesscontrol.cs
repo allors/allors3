@@ -9,27 +9,20 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using System.Linq;
     using Database.Security;
-    using Ranges;
 
     public class DatabaseAccessControl : IAccessControl
     {
         private readonly ISecurity security;
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
-        private readonly IRanges<long> ranges;
+        private readonly IVersionedGrants versionedGrants;
 
         public DatabaseAccessControl(ISecurity security, User user)
         {
             this.security = security;
-            var services = user.Strategy.Transaction.Database.Services;
-
-            this.ranges = services.Get<IRanges<long>>();
-
-            this.User = user;
+            this.versionedGrants = this.security.GetVersionedGrantIdsForUser(user);
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
         }
-
-        public User User { get; }
 
         public IAccessControlList this[IObject @object]
         {
@@ -77,7 +70,7 @@ namespace Allors.Database.Domain
                         : new[] { securityTokens.DefaultSecurityToken };
                 }
 
-                grants = tokens.SelectMany(v => v.Grants).Distinct().ToArray();
+                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.versionedGrants.Set.Contains(v.Id)).ToArray();
             }
 
             // Revocations

@@ -8,10 +8,8 @@ namespace Allors.Database.Security
     /// <summary>
     /// List of permissions for an object/user combination.
     /// </summary>
-    public interface IRevocation
+    public interface IRevocation : IObject
     {
-        IStrategy Strategy { get; }
-
         IPermission[] Permissions { get; }
     }
 }

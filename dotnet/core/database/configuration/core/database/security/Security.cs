@@ -10,19 +10,20 @@ namespace Allors.Database.Configuration
     using System.Linq;
     using Database.Security;
     using Domain;
-    using Meta;
     using Ranges;
     using Services;
+    using Class = Meta.Class;
     using Grant = Domain.Grant;
+    using MetaPopulation = Meta.MetaPopulation;
     using Revocation = Domain.Revocation;
 
     public class Security : ISecurity
     {
+        private readonly ConcurrentDictionary<long, IVersionedGrants> grantIdsByUserId;
         private readonly ConcurrentDictionary<long, IVersionedPermissions> databasePermissionsById;
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedPermissions>> permissionsByIdByWorkspace;
 
         private readonly IRanges<long> ranges;
-        private readonly IMetaCache metaCache;
 
         private readonly PrefetchPolicy grantPrefetchPolicy;
         private readonly PrefetchPolicy revocationPrefetchPolicy;
@@ -32,9 +33,9 @@ namespace Allors.Database.Configuration
         {
             var database = databaseServices.Database;
             var m = database.Services.Get<MetaPopulation>();
+            var metaCache = databaseServices.Get<IMetaCache>();
 
             this.ranges = databaseServices.Get<IRanges<long>>();
-            this.metaCache = databaseServices.Get<IMetaCache>();
 
             this.databasePermissionsById = new ConcurrentDictionary<long, IVersionedPermissions>();
             this.permissionsByIdByWorkspace = new ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedPermissions>>();
@@ -47,7 +48,7 @@ namespace Allors.Database.Configuration
                 .Build();
 
             this.permissionIdsByWorkspaceName = m.WorkspaceNames
-                .ToDictionary(v => v, v => new HashSet<long>(this.metaCache.GetWorkspaceClasses(v).SelectMany(w =>
+                .ToDictionary(v => v, v => new HashSet<long>(metaCache.GetWorkspaceClasses(v).SelectMany(w =>
                 {
                     var @class = (Class)w;
                     var permissionIds = new HashSet<long>();
@@ -66,6 +67,19 @@ namespace Allors.Database.Configuration
 
                     return permissionIds;
                 })));
+
+            this.grantIdsByUserId = new ConcurrentDictionary<long, IVersionedGrants>();
+        }
+
+        public IVersionedGrants GetVersionedGrantIdsForUser(IUser user)
+        {
+            if (!this.grantIdsByUserId.TryGetValue(user.Strategy.ObjectId, out var grantIds) || grantIds.Version != user.Strategy.ObjectVersion)
+            {
+                grantIds = new VersionedGrants(user.Strategy.ObjectId, ((User)user).GrantsWhereEffectiveUser);
+                this.grantIdsByUserId[user.Strategy.ObjectId] = grantIds;
+            }
+
+            return grantIds;
         }
 
         public IDictionary<IGrant, IVersionedPermissions> GetGrantPermissions(ITransaction transaction, IEnumerable<IGrant> grants)

@@ -14,29 +14,26 @@ namespace Allors.Database.Domain
 
     public class WorkspaceAccessControl : IAccessControl
     {
-        private readonly string workspaceName;
         private readonly ISecurity security;
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
         private readonly IRanges<long> ranges;
         private readonly IDictionary<IClass, IRoleType> masks;
 
+        private readonly IVersionedGrants versionedGrants;
+
         public WorkspaceAccessControl(string workspaceName, IWorkspaceMask workspaceMask, ISecurity security, User user)
         {
-            this.workspaceName = workspaceName;
             this.security = security;
+            this.versionedGrants = this.security.GetVersionedGrantIdsForUser(user);
+            this.masks = workspaceMask.GetMasks(workspaceName);
 
             var services = user.Strategy.Transaction.Database.Services;
-
             this.ranges = services.Get<IRanges<long>>();
 
-            this.User = user;
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
 
-            this.masks = workspaceMask.GetMasks(this.workspaceName);
         }
-
-        public User User { get; }
 
         public IAccessControlList this[IObject @object]
         {
@@ -92,7 +89,7 @@ namespace Allors.Database.Domain
                         : new[] { securityTokens.DefaultSecurityToken };
                 }
 
-                grants = tokens.SelectMany(v => v.Grants).Distinct().ToArray();
+                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.versionedGrants.Set.Contains(v.Id)).ToArray();
             }
 
             // Revocations
