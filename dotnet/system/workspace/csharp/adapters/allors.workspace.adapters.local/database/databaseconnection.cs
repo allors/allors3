@@ -43,22 +43,23 @@ namespace Allors.Workspace.Adapters.Local
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControl accessControl)
         {
-            foreach (var @object in objects)
+            using (var transaction = this.Database.CreateTransaction())
             {
-                var id = @object.Id;
-                var databaseClass = @object.Strategy.Class;
-                var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Length > 0);
+                foreach (var @object in objects)
+                {
+                    var id = @object.Id;
+                    var databaseClass = @object.Strategy.Class;
+                    var roleTypes = databaseClass.DatabaseRoleTypes.Where(w => w.RelationType.WorkspaceNames.Length > 0);
 
-                var workspaceClass = (IClass)this.Configuration.MetaPopulation.FindByTag(databaseClass.Tag);
-                var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => this.GetRole(@object, w));
+                    var workspaceClass = (IClass)this.Configuration.MetaPopulation.FindByTag(databaseClass.Tag);
+                    var roleByRoleType = roleTypes.ToDictionary(w => ((IRelationType)this.Configuration.MetaPopulation.FindByTag(w.RelationType.Tag)).RoleType, w => this.GetRole(@object, w));
 
-                var acl = accessControl[@object];
+                    var acl = accessControl[@object];
 
-                var accessControls = acl.Grants
-                    ?.Select(this.GetAccessControl)
-                    .ToArray() ?? Array.Empty<AccessControl>();
+                    var accessControls = acl.Grants?.Select(v => (IGrant)transaction.Instantiate(v.Id)).Select(this.GetAccessControl).ToArray() ?? Array.Empty<AccessControl>();
 
-                this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.Revocations.Select(v => v.Strategy.ObjectId)), accessControls);
+                    this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.Revocations.Select(v => v.Id)), accessControls);
+                }
             }
         }
 

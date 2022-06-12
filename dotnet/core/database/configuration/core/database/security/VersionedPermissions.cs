@@ -14,13 +14,16 @@ namespace Allors.Database.Configuration
     {
         private readonly IRanges<long> ranges;
 
-        public VersionedPermissions(IRanges<long> ranges, long version, IEnumerable<Permission> permissions)
+        public VersionedPermissions(IRanges<long> ranges, long id, long version, IEnumerable<Permission> permissions)
         {
+            this.Id = id;
             this.ranges = ranges;
             this.Version = version;
             this.Range = this.ranges.Import(permissions.Select(v => v.Id));
             this.Set = new HashSet<long>(this.Range);
         }
+
+        public long Id { get; }
 
         public long Version { get; }
 

@@ -17,8 +17,6 @@ namespace Allors.Database.Domain
     public class DatabaseAccessControlList : IAccessControlList
     {
         private readonly DatabaseAccessControl accessControl;
-        private readonly Grant[] grants;
-        private readonly Revocation[] revocations;
         private readonly IVersionedPermissions[] grantsPermissions;
         private readonly IVersionedPermissions[] revocationsPermissions;
 
@@ -29,8 +27,6 @@ namespace Allors.Database.Domain
         internal DatabaseAccessControlList(DatabaseAccessControl accessControl, IObject @object, Grant[] grants, Revocation[] revocations, IVersionedPermissions[] grantsPermissions, IVersionedPermissions[] revocationsPermissions)
         {
             this.accessControl = accessControl;
-            this.grants = grants;
-            this.revocations = revocations;
             this.grantsPermissions = grantsPermissions;
             this.revocationsPermissions = revocationsPermissions;
             this.Object = (Object)@object;
@@ -46,9 +42,9 @@ namespace Allors.Database.Domain
 
         public Object Object { get; }
 
-        IEnumerable<IGrant> IAccessControlList.Grants => this.grants;
+        IVersionedPermissions[] IAccessControlList.Grants => this.grantsPermissions;
 
-        IEnumerable<IRevocation> IAccessControlList.Revocations => this.revocations;
+        IVersionedPermissions[] IAccessControlList.Revocations => this.revocationsPermissions;
 
         public bool CanRead(IRoleType roleType) => this.readPermissionIdByRelationTypeId?.TryGetValue(roleType.RelationType.Id, out var permissionId) == true && this.IsPermitted(permissionId);
 

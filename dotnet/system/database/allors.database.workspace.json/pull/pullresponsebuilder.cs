@@ -12,6 +12,7 @@ namespace Allors.Database.Protocol.Json
     using Allors.Protocol.Json.Api.Pull;
     using Data;
     using Derivations;
+    using Domain;
     using Meta;
     using Ranges;
     using Security;
@@ -243,8 +244,8 @@ namespace Allors.Database.Protocol.Json
             this.AddDependencies();
 
             // Serialize
-            var grants = new HashSet<IGrant>();
-            var revocations = new HashSet<IRevocation>();
+            var grants = new HashSet<IVersionedPermissions>();
+            var revocations = new HashSet<IVersionedPermissions>();
 
             this.ThrowIfCancellationRequested();
 
@@ -261,8 +262,8 @@ namespace Allors.Database.Protocol.Json
                     {
                         i = v.Strategy.ObjectId,
                         v = v.Strategy.ObjectVersion,
-                        g = this.ranges.Import(accessControlList.Grants.Select(w => w.Strategy.ObjectId)).Save(),
-                        r = this.ranges.Import(accessControlList.Revocations.Select(w => w.Strategy.ObjectId))
+                        g = this.ranges.Import(accessControlList.Grants.Select(w => w.Id)).Save(),
+                        r = this.ranges.Import(accessControlList.Revocations.Select(w => w.Id))
                             .Save(),
                     };
                 }).ToArray(),
@@ -271,8 +272,8 @@ namespace Allors.Database.Protocol.Json
                 v = this.valueByName,
             };
 
-            pullResponse.g = grants.Count > 0 ? grants.Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion }).ToArray() : null;
-            pullResponse.r = revocations.Count > 0 ? revocations.Select(v => new[] { v.Strategy.ObjectId, v.Strategy.ObjectVersion }).ToArray() : null;
+            pullResponse.g = grants.Count > 0 ? grants.Select(v => new[] { v.Id, v.Version }).ToArray() : null;
+            pullResponse.r = revocations.Count > 0 ? revocations.Select(v => new[] { v.Id, v.Version }).ToArray() : null;
 
             return pullResponse;
         }

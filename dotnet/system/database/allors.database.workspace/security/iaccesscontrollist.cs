@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Security
 {
-    using System.Collections.Generic;
+    using Domain;
     using Meta;
 
     /// <summary>
@@ -13,9 +13,9 @@ namespace Allors.Database.Security
     /// </summary>
     public interface IAccessControlList
     {
-        IEnumerable<IGrant> Grants { get; }
+        IVersionedPermissions[] Grants { get; }
 
-        IEnumerable<IRevocation> Revocations { get; }
+        IVersionedPermissions[] Revocations { get; }
 
         bool CanRead(IRoleType roleType);
 

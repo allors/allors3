@@ -10,29 +10,24 @@ namespace Allors.Database.Domain
     using System.Linq;
     using Database.Security;
     using Meta;
-    using Ranges;
 
     public class WorkspaceAccessControl : IAccessControl
     {
         private readonly ISecurity security;
+        private readonly IVersionedGrants userGrants;
+        private readonly IDictionary<IClass, IRoleType> masks;
+        private readonly string workspaceName;
+
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
-        private readonly IRanges<long> ranges;
-        private readonly IDictionary<IClass, IRoleType> masks;
-
-        private readonly IVersionedGrants versionedGrants;
-
-        public WorkspaceAccessControl(string workspaceName, IWorkspaceMask workspaceMask, ISecurity security, User user)
+        public WorkspaceAccessControl(ISecurity security, IVersionedGrants userGrants, IDictionary<IClass, IRoleType> masks, string workspaceName)
         {
             this.security = security;
-            this.versionedGrants = this.security.GetVersionedGrantIdsForUser(user);
-            this.masks = workspaceMask.GetMasks(workspaceName);
-
-            var services = user.Strategy.Transaction.Database.Services;
-            this.ranges = services.Get<IRanges<long>>();
+            this.userGrants = userGrants;
+            this.masks = masks;
+            this.workspaceName = workspaceName;
 
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
-
         }
 
         public IAccessControlList this[IObject @object]
@@ -57,7 +52,6 @@ namespace Allors.Database.Domain
 
             var acl = this[@object];
             return !acl.CanRead(mask);
-
         }
 
         private WorkspaceAccessControlList GetAccessControlList(Object @object)
@@ -89,7 +83,7 @@ namespace Allors.Database.Domain
                         : new[] { securityTokens.DefaultSecurityToken };
                 }
 
-                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.versionedGrants.Set.Contains(v.Id)).ToArray();
+                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.userGrants.Set.Contains(v.Id)).ToArray();
             }
 
             // Revocations
@@ -107,10 +101,24 @@ namespace Allors.Database.Domain
                 revocations = unfilteredRevocations != null ? unfilteredRevocations.ToArray() : Array.Empty<Revocation>();
             }
 
-            var grantsPermissions = this.security.GetGrantPermissions(transaction, grants);
-            var revocationsPermissions = this.security.GetRevocationPermissions(transaction, revocations);
+            var grantsPermissions = this.security
+                .GetGrantPermissions(transaction, grants, this.workspaceName)
+                .Where(v => v.Value.Set.Any())
+                .Select(v => v.Value)
+                .ToArray();
 
-            return new WorkspaceAccessControlList(this, @object, grants, revocations, grantsPermissions.Select(v => v.Value).ToArray(), revocationsPermissions.Select(v => v.Value).ToArray());
+            var revocationsPermissions = this.security
+                .GetRevocationPermissions(transaction, revocations, this.workspaceName)
+                .Where(v => v.Value.Set.Any())
+                .Select(v => v.Value)
+                .ToArray();
+
+
+            return new WorkspaceAccessControlList(
+                this,
+                @object,
+                grantsPermissions,
+                revocationsPermissions);
         }
     }
 }

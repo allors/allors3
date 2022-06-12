@@ -6,9 +6,11 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Collections.Generic;
+    using Configuration;
     using Meta;
     using Xunit;
     using Permission = Domain.Permission;
+    using Permissions = Domain.Permissions;
 
     public class WorkspaceMaskTests : DomainTest, IClassFixture<Fixture>
     {
@@ -34,7 +36,8 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var acl = new WorkspaceAccessControl(this.workspaceName, new WorkspaceMask(this.M), this.Security, person)[organisation];
+            var aclService = new WorkspaceAclsService(this.Security, new WorkspaceMask(this.M), person);
+            var acl = aclService.Create(this.workspaceName)[organisation];
 
             Assert.False(acl.IsMasked());
         }
@@ -49,7 +52,8 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction).WithName("Organisation").Build();
 
-            var acl = new WorkspaceAccessControl(this.workspaceName, new WorkspaceMask(this.M), this.Security, person)[organisation];
+            var aclService = new WorkspaceAclsService(this.Security, new WorkspaceMask(this.M), person);
+            var acl = aclService.Create(this.workspaceName)[organisation];
 
             var canRead = acl.CanRead(this.M.Organisation.Name);
 

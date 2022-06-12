@@ -24,6 +24,11 @@ namespace Allors.Database.Configuration
             this.User = user;
         }
 
-        public IAccessControl Create(string workspaceName) => new WorkspaceAccessControl(workspaceName, this.WorkspaceMask, this.Security, this.User);
+        public IAccessControl Create(string workspaceName)
+        {
+            var masks = this.WorkspaceMask.GetMasks(workspaceName);
+            var userGrants = this.Security.GetVersionedGrantIdsForUser(this.User);
+            return new WorkspaceAccessControl(this.Security, userGrants, masks, workspaceName);
+        }
     }
 }

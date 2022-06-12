@@ -10,6 +10,8 @@ namespace Allors.Database.Domain
 
     public interface IVersionedPermissions
     {
+        long Id { get; }
+
         long Version { get; }
 
         IRange<long> Range { get; }

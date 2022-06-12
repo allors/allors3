@@ -106,7 +106,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var grant in missingGrants)
                 {
-                    var permissions = new VersionedPermissions(this.ranges, grant.Strategy.ObjectVersion, ((Grant)grant).EffectivePermissions);
+                    var permissions = new VersionedPermissions(this.ranges, grant.Strategy.ObjectId, grant.Strategy.ObjectVersion, ((Grant)grant).EffectivePermissions);
                     this.databasePermissionsById[grant.Strategy.ObjectId] = permissions;
                     permissionsByGrant[grant] = permissions;
                 }
@@ -147,7 +147,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var grant in missingGrants)
                 {
-                    var permissions = new VersionedPermissions(this.ranges, grant.Strategy.ObjectVersion, ((Grant)grant).EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)));
+                    var permissions = new VersionedPermissions(this.ranges, grant.Strategy.ObjectId, grant.Strategy.ObjectVersion, ((Grant)grant).EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)));
                     permissionsById[grant.Strategy.ObjectId] = permissions;
                     permissionsByGrant[grant] = permissions;
                 }
@@ -180,7 +180,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var revocation in missingRevocations)
                 {
-                    var permissions = new VersionedPermissions(this.ranges, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions);
+                    var permissions = new VersionedPermissions(this.ranges, revocation.Strategy.ObjectId, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions);
                     this.databasePermissionsById[revocation.Strategy.ObjectId] = permissions;
                     permissionsByRevocation[revocation] = permissions;
                 }
@@ -217,13 +217,11 @@ namespace Allors.Database.Configuration
             {
                 transaction.Prefetch(this.revocationPrefetchPolicy, missingRevocations.Select(v => v.Strategy));
 
-                var x = this.permissionsByIdByWorkspace[workspaceName];
+                var workspacePermissionIds = this.permissionIdsByWorkspaceName[workspaceName];
 
                 foreach (var revocation in missingRevocations)
                 {
-                    var workspacePermissionIds = x[revocation.Strategy.ObjectId];
-
-                    var permissions = new VersionedPermissions(this.ranges, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions.Where(v => workspacePermissionIds.Set.Contains(v.Id)));
+                    var permissions = new VersionedPermissions(this.ranges, revocation.Strategy.ObjectId, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions.Where(v => workspacePermissionIds.Contains(v.Id)));
                     permissionsById[revocation.Strategy.ObjectId] = permissions;
                     permissionsByRevocation[revocation] = permissions;
                 }

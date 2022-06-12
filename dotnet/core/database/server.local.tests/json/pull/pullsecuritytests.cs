@@ -200,11 +200,9 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.g);
-            Assert.Equal(acl.Revocations.Select(v => v.Strategy.ObjectId), @object.r);
+            Assert.Equal(acl.Grants.Select(v => v.Id), @object.g);
+            Assert.Equal(acl.Revocations.Select(v => v.Id), @object.r);
         }
-
-    
 
         [Fact]
         public void WithDeniedPermissionsFromDatabaseAndOtherWorkspace()
@@ -285,7 +283,7 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.Grants.Select(v => v.Strategy.ObjectId), @object.g);
+            Assert.Equal(acl.Grants.Select(v => v.Id), @object.g);
         }
     }
 }
