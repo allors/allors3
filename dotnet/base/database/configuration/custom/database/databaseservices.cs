@@ -24,6 +24,8 @@ namespace Allors.Database.Configuration
 
         private IMetaCache metaCache;
 
+        private ISecurity security;
+
         private IClassById classById;
 
         private IVersionedIdByStrategy versionedIdByStrategy;
@@ -85,6 +87,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.Database)),
                 { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
                 { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.Database.ObjectFactory.Assembly)),
+                { } type when type == typeof(ISecurity) => (T)(this.security ??= new Security(this)),
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
                 { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
