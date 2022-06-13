@@ -2646,6 +2646,43 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ShipmentItemDeleteDeriveSalesOrderItemShipmentStateIsNotShipped()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            order.PartiallyShip = false;
+            this.Derive();
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Derive();
+
+            order.SetReadyForPosting();
+            this.Transaction.Derive();
+
+            order.Post();
+            this.Transaction.Derive();
+
+            order.Accept();
+            this.Transaction.Derive();
+
+            order.Ship();
+            this.Transaction.Derive();
+
+            Assert.True(order.SalesOrderItems.First().SalesOrderItemShipmentState.IsInProgress);
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+
+            shipment.Delete();
+            this.Transaction.Derive();
+
+            Assert.True(order.SalesOrderItems.First().SalesOrderItemShipmentState.IsNotShipped);
+        }
+
+        [Fact]
         public void SalesOrderAddSalesOrderItemDeriveSalesOrderItemPaymentStateIsNotPaid()
         {
             var order = new SalesOrderBuilder(this.Transaction).WithOrganisationExternalDefaults(this.InternalOrganisation).Build();

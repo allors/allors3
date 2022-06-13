@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public SalesOrderItemStateRule(MetaPopulation m) : base(m, new Guid("3d2c70e3-3751-4ffb-bfaa-f9c2b81b7a70")) =>
             this.Patterns = new Pattern[]
             {
+                m.SalesOrderItem.RolePattern(v => v.DerivationTrigger),
                 m.SalesOrderItem.RolePattern(v => v.ReservedFromNonSerialisedInventoryItem),
                 m.SalesOrderItem.RolePattern(v => v.ReservedFromSerialisedInventoryItem),
                 m.SalesOrderItem.RolePattern(v => v.QuantityPendingShipment),

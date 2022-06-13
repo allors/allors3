@@ -38,6 +38,7 @@ namespace Allors.Database.Domain
             {
                 foreach (var orderShipment in this.OrderShipmentsWhereShipmentItem)
                 {
+                    orderShipment.OrderItem.DerivationTrigger = Guid.NewGuid();
                     orderShipment.Delete();
                 }
             }
