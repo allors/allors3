@@ -24,10 +24,6 @@ namespace Allors.Database.Protocol.Json
             this.DatabaseService = databaseService;
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
-
-            var scope = this.DatabaseService.Database.Services;
-
-            this.TreeCache = scope.Get<ITreeCache>();
         }
 
         private IDatabaseService DatabaseService { get; }
@@ -38,8 +34,6 @@ namespace Allors.Database.Protocol.Json
         public Logger Logger => LogManager.GetCurrentClassLogger();
 
         private IPolicyService PolicyService { get; }
-
-        private ITreeCache TreeCache { get; }
 
         [HttpPost]
         [Authorize]
