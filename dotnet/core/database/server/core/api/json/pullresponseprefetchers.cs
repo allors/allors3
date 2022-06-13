@@ -25,7 +25,7 @@ namespace Allors.Database.Protocol.Json
         public PrefetchPolicy ForInclude(IComposite composite, Node[] tree)
         {
             var builder = new PrefetchPolicyBuilder();
-            builder.WithSecurityRules(composite, this.metaPopulation);
+            builder.WithSecurityRules(this.metaPopulation);
             if (tree != null)
             {
                 builder.WithNodes(tree, this.metaPopulation);
@@ -37,13 +37,13 @@ namespace Allors.Database.Protocol.Json
         public PrefetchPolicy ForDependency(IComposite composite, ISet<IPropertyType> propertyTypes)
         {
             var builder = new PrefetchPolicyBuilder();
-            builder.WithSecurityRules(composite, this.metaPopulation);
+            builder.WithSecurityRules(this.metaPopulation);
             foreach (var propertyType in propertyTypes)
             {
                 if (propertyType.ObjectType.IsComposite)
                 {
                     var securityBuilder = new PrefetchPolicyBuilder();
-                    securityBuilder.WithSecurityRules((Composite)propertyType.ObjectType, this.metaPopulation);
+                    securityBuilder.WithSecurityRules(this.metaPopulation);
                     var security = securityBuilder.Build();
                     builder.WithRule(propertyType, security);
                 }

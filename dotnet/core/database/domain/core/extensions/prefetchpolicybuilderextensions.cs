@@ -12,18 +12,21 @@ namespace Allors.Database.Domain
 
     public static class PrefetchPolicyBuilderExtensions
     {
-        public static PrefetchPolicyBuilder WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class)
+        public static PrefetchPolicyBuilder WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class, MetaPopulation m)
         {
+            @this.WithSecurityRules(m);
+
             // TODO: Cache
             foreach (var roleType in @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0))
             {
-                @this.WithRule(roleType);
+                var rolePrefetchPolicyBuilder = @this.WithRule(roleType);
+                rolePrefetchPolicyBuilder.WithSecurityRules(m);
             }
 
             return @this;
         }
 
-        public static PrefetchPolicyBuilder WithSecurityRules(this PrefetchPolicyBuilder @this, IComposite composite, MetaPopulation m)
+        public static PrefetchPolicyBuilder WithSecurityRules(this PrefetchPolicyBuilder @this, MetaPopulation m)
         {
             var securityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
                        .WithRule(m.SecurityToken.Grants, new PrefetchPolicyBuilder()
@@ -67,7 +70,7 @@ namespace Allors.Database.Domain
                 {
                     foreach (var @class in composite.Classes)
                     {
-                        @this.WithSecurityRules(@class, m);
+                        @this.WithSecurityRules(m);
                     }
                 }
             }

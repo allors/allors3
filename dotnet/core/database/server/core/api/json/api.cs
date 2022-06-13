@@ -142,7 +142,6 @@ namespace Allors.Database.Protocol.Json
             var @event = this.Sink?.OnSync(this.Transaction, syncRequest);
             this.Sink?.OnBefore(@event);
 
-
             void Prefetch(IEnumerable<IObject> objects)
             {
                 // Prefetch
@@ -152,9 +151,7 @@ namespace Allors.Database.Protocol.Json
                     var prefetchObjects = groupBy;
 
                     var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                    prefetchPolicyBuilder.WithWorkspaceRules(prefetchClass);
-                    prefetchPolicyBuilder.WithSecurityRules((Class)prefetchClass, this.M);
-
+                    prefetchPolicyBuilder.WithWorkspaceRules(prefetchClass, this.M);
                     var prefetcher = prefetchPolicyBuilder.Build();
 
                     this.Transaction.Prefetch(prefetcher, prefetchObjects);

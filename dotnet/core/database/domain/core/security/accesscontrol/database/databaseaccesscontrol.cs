@@ -15,13 +15,19 @@ namespace Allors.Database.Domain
         private readonly ISecurity security;
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
-        private readonly IVersionedGrants versionedGrants;
+        private readonly IVersionedGrants userGrants;
 
         public DatabaseAccessControl(ISecurity security, User user)
         {
             this.security = security;
-            this.versionedGrants = this.security.GetVersionedGrantIdsForUser(user);
+            this.userGrants = this.security.GetVersionedGrantIdsForUser(user);
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
+        }
+
+
+        public void Prepare(IEnumerable<IObject> objects)
+        {
+            // TODO:
         }
 
         public IAccessControlList this[IObject @object]
@@ -70,7 +76,7 @@ namespace Allors.Database.Domain
                         : new[] { securityTokens.DefaultSecurityToken };
                 }
 
-                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.versionedGrants.Set.Contains(v.Id)).ToArray();
+                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.userGrants.Set.Contains(v.Id)).ToArray();
             }
 
             // Revocations

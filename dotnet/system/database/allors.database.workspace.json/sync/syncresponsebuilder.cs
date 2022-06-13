@@ -8,7 +8,6 @@ namespace Allors.Database.Protocol.Json
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Http.Headers;
     using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Api.Sync;
@@ -44,15 +43,16 @@ namespace Allors.Database.Protocol.Json
 
         public SyncResponse Build(SyncRequest syncRequest)
         {
-            var requestObjects = this.transaction.Instantiate(syncRequest.o)
-                .Where(v => this.allowedClasses?.Contains(v.Strategy.Class) == true)
-                .ToArray();
+            var requestObjects = this.transaction.Instantiate(syncRequest.o);
 
             this.prefetch(requestObjects);
+            this.AccessControl.Prepare(requestObjects);
+
+            var objects = requestObjects.Where(this.Include).ToArray();
 
             return new SyncResponse
             {
-                o = requestObjects.Select(v =>
+                o = objects.Select(v =>
                 {
                     var @class = v.Strategy.Class;
                     var acl = this.AccessControl[v];
@@ -98,11 +98,10 @@ namespace Allors.Database.Protocol.Json
 
             return syncResponseRole;
         }
-        
+
         public bool Include(IObject @object)
         {
-            if (@object == null || this.allowedClasses?.Contains(@object.Strategy.Class) != true ||
-                this.maskedObjects.Contains(@object))
+            if (@object == null || this.allowedClasses?.Contains(@object.Strategy.Class) != true || this.maskedObjects.Contains(@object))
             {
                 return false;
             }

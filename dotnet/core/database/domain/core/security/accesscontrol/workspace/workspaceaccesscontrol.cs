@@ -30,42 +30,23 @@ namespace Allors.Database.Domain
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
         }
 
-        public IAccessControlList this[IObject @object]
+        public void Prepare(IEnumerable<IObject> objects)
         {
-            get
+            ITransaction transaction = null;
+
+            var grantsByObject = new Dictionary<Object, Grant[]>();
+            var revocationsByObject = new Dictionary<Object, Revocation[]>();
+
+            var allGrants = new HashSet<Grant>();
+            var allRevocations = new HashSet<Revocation>();
+
+            foreach (Object @object in objects)
             {
-                if (!this.aclByObject.TryGetValue(@object, out var acl))
-                {
-                    acl = this.GetAccessControlList((Object)@object);
-                    this.aclByObject.Add(@object, acl);
-                }
+                transaction ??= @object.Strategy.Transaction;
 
-                return acl;
-            }
-        }
-        public bool IsMasked(IObject @object)
-        {
-            if (!this.masks.TryGetValue(@object.Strategy.Class, out var mask))
-            {
-                return false;
-            }
-
-            var acl = this[@object];
-            return !acl.CanRead(mask);
-        }
-
-        private WorkspaceAccessControlList GetAccessControlList(Object @object)
-        {
-            var strategy = @object.Strategy;
-            var transaction = strategy.Transaction;
-            var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
-
-            Grant[] grants = null;
-            Revocation[] revocations = null;
-
-            // Grants
-            {
                 IEnumerable<SecurityToken> tokens = null;
+
+                var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
                 if (delegatedAccess?.ExistSecurityTokens == true)
                 {
                     tokens = @object.ExistSecurityTokens ? delegatedAccess.SecurityTokens.Concat(@object.SecurityTokens) : delegatedAccess.SecurityTokens;
@@ -78,47 +59,70 @@ namespace Allors.Database.Domain
                 if (tokens == null)
                 {
                     var securityTokens = new SecurityTokens(transaction);
-                    tokens = strategy.IsNewInTransaction
+                    tokens = @object.Strategy.IsNewInTransaction
                         ? new[] { securityTokens.InitialSecurityToken ?? securityTokens.DefaultSecurityToken }
                         : new[] { securityTokens.DefaultSecurityToken };
                 }
 
-                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.userGrants.Set.Contains(v.Id)).ToArray();
-            }
+                var grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.userGrants.Set.Contains(v.Id)).ToArray();
+                grantsByObject.Add(@object, grants);
 
-            // Revocations
-            {
-                IEnumerable<Revocation> unfilteredRevocations = null;
+                allGrants.UnionWith(grants);
+
+                IEnumerable<Revocation> revocationEnum = null;
                 if (delegatedAccess?.ExistRevocations == true)
                 {
-                    unfilteredRevocations = @object.ExistRevocations ? @object.Revocations.Concat(delegatedAccess.Revocations.Where(v => !@object.Revocations.Contains(v))) : delegatedAccess.Revocations;
+                    revocationEnum = @object.ExistRevocations ? @object.Revocations.Concat(delegatedAccess.Revocations.Where(v => !@object.Revocations.Contains(v))) : delegatedAccess.Revocations;
                 }
                 else if (@object.ExistRevocations)
                 {
-                    unfilteredRevocations = @object.Revocations;
+                    revocationEnum = @object.Revocations;
                 }
 
-                revocations = unfilteredRevocations != null ? unfilteredRevocations.ToArray() : Array.Empty<Revocation>();
+                var revocations = revocationEnum != null ? revocationEnum.ToArray() : Array.Empty<Revocation>();
+                revocationsByObject.Add(@object, revocations);
+
+                allRevocations.UnionWith(revocations);
             }
 
-            var grantsPermissions = this.security
-                .GetGrantPermissions(transaction, grants, this.workspaceName)
-                .Where(v => v.Value.Set.Any())
-                .Select(v => v.Value)
-                .ToArray();
+            var allGrantsPermissions = this.security.GetGrantPermissions(transaction, allGrants, this.workspaceName);
+            var allRevocationsPermissions = this.security.GetRevocationPermissions(transaction, allRevocations, this.workspaceName);
 
-            var revocationsPermissions = this.security
-                .GetRevocationPermissions(transaction, revocations, this.workspaceName)
-                .Where(v => v.Value.Set.Any())
-                .Select(v => v.Value)
-                .ToArray();
+            foreach (Object @object in objects)
+            {
+                var grants = grantsByObject[@object];
+                var revocations = revocationsByObject[@object];
 
+                var grantsPermissions = grants.Select(v => allGrantsPermissions[v]).Where(v => v.Set.Any()).ToArray();
+                var revocationsPermission = revocations.Select(v => allRevocationsPermissions[v]).Where(v => v.Set.Any()).ToArray();
 
-            return new WorkspaceAccessControlList(
-                this,
-                @object,
-                grantsPermissions,
-                revocationsPermissions);
+                var acl = new WorkspaceAccessControlList(this, @object, grantsPermissions, revocationsPermission);
+                this.aclByObject[@object] = acl;
+            }
+        }
+
+        public IAccessControlList this[IObject @object]
+        {
+            get
+            {
+                if (this.aclByObject.TryGetValue(@object, out var acl))
+                {
+                    return acl;
+                }
+
+                this.Prepare(new[] { @object });
+                return this.aclByObject[@object];
+            }
+        }
+        public bool IsMasked(IObject @object)
+        {
+            if (!this.masks.TryGetValue(@object.Strategy.Class, out var mask))
+            {
+                return false;
+            }
+
+            var acl = this[@object];
+            return !acl.CanRead(mask);
         }
     }
 }
