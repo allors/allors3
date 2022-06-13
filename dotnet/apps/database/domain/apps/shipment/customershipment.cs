@@ -126,6 +126,11 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
+            foreach (var shipmentItems in this.ShipmentItems)
+            {
+                shipmentItems.Delete();
+            }
+
             foreach (var deletable in this.AllVersions)
             {
                 deletable.Strategy.Delete();

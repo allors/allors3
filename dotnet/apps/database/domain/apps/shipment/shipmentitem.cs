@@ -33,6 +33,14 @@ namespace Allors.Database.Domain
                     itemIssuance.Delete();
                 }
             }
+
+            if (this.ExistOrderShipmentsWhereShipmentItem)
+            {
+                foreach (var orderShipment in this.OrderShipmentsWhereShipmentItem)
+                {
+                    orderShipment.Delete();
+                }
+            }
         }
     }
 }

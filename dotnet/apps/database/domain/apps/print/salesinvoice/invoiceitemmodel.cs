@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
 
             this.Product = item.ExistProduct ? item.Product?.Name : item.Part?.Name;
 
-            var description = item.Description;
+            var description = item.Description ?? this.Product;
             if (description != null)
             {
                 description = Markdown.ToPlainText(description);
