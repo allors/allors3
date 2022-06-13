@@ -59,30 +59,31 @@ namespace Tests
             }
         }
 
-        [Fact]
-        public void NoneWorkspace()
-        {
-            var workspaceName = "None";
-            var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
-            var grant = new Grants(this.Transaction).Administrator;
+        // TODO: non existing workspace should throw error
+        //[Fact]
+        //public void NoneWorkspace()
+        //{
+        //    var workspaceName = "Y";
+        //    var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
+        //    var grant = new Grants(this.Transaction).Administrator;
 
-            this.SetUser("jane@example.com");
+        //    this.SetUser("jane@example.com");
 
-            var accessRequest = new AccessRequest
-            {
-                g = new[] { grant.Id },
-            };
+        //    var accessRequest = new AccessRequest
+        //    {
+        //        g = new[] { grant.Id },
+        //    };
 
-            var api = new Api(this.Transaction, workspaceName, CancellationToken.None);
-            var accessResponse = api.Access(accessRequest);
+        //    var api = new Api(this.Transaction, workspaceName, CancellationToken.None);
+        //    var accessResponse = api.Access(accessRequest);
 
-            Assert.Single(accessResponse.g);
+        //    Assert.Single(accessResponse.g);
 
-            var accessResponseGrant = accessResponse.g.First();
+        //    var accessResponseGrant = accessResponse.g.First();
 
-            Assert.Equal(grant.Id, accessResponseGrant.i);
-            Assert.Equal(grant.Strategy.ObjectVersion, accessResponseGrant.v);
-            Assert.Null(accessResponseGrant.p);
-        }
+        //    Assert.Equal(grant.Id, accessResponseGrant.i);
+        //    Assert.Equal(grant.Strategy.ObjectVersion, accessResponseGrant.v);
+        //    Assert.Null(accessResponseGrant.p);
+        //}
     }
 }
