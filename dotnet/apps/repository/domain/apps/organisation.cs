@@ -203,8 +203,6 @@ namespace Allors.Repository
 
         public Template ProductQuoteTemplate { get; set; }
 
-        public Template PartQuoteTemplate { get; set; }
-
         public Template ProposalTemplate { get; set; }
 
         public Template StatementOfWorkTemplate { get; set; }
