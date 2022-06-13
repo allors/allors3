@@ -39,7 +39,8 @@ namespace Allors.Database.Domain
                 {
                     var nonUnifiedGood = this.Product as NonUnifiedGood;
                     var unifiedGood = this.Product as UnifiedGood;
-                    return unifiedGood ?? nonUnifiedGood?.Part;
+                    var nonunifiedPart = this.Product as NonUnifiedPart;
+                    return unifiedGood ?? nonUnifiedGood?.Part ?? nonunifiedPart;
                 }
 
                 return null;

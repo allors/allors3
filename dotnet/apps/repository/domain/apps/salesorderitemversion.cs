@@ -253,7 +253,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        public Product PreviousProduct { get; set; }
+        public UnifiedProduct PreviousProduct { get; set; }
 
         #region Allors
         [Id("7A3ED514-0136-45BB-835B-05AA446052B7")]
@@ -285,7 +285,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Product Product { get; set; }
+        public UnifiedProduct Product { get; set; }
 
         #region Allors
         [Id("303E6727-E0E8-4D7E-B3F1-FF751B6BF285")]

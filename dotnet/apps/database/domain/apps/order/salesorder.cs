@@ -270,11 +270,12 @@ namespace Allors.Database.Domain
 
                             if (orderItem.ExistProduct && orderItem.DerivedShipToAddress.Equals(address.Key) && orderItem.QuantityRequestsShipping > 0)
                             {
-                                var good = orderItem.Product as Good;
+                                var good = orderItem.Product as UnifiedGood;
                                 var nonUnifiedGood = orderItem.Product as NonUnifiedGood;
                                 var unifiedGood = orderItem.Product as UnifiedGood;
+                                var nonUnifiedPart = orderItem.Product as NonUnifiedPart;
                                 var inventoryItemKind = unifiedGood?.InventoryItemKind ?? nonUnifiedGood?.Part.InventoryItemKind;
-                                var part = unifiedGood ?? nonUnifiedGood?.Part;
+                                var part = unifiedGood ?? nonUnifiedGood?.Part ?? nonUnifiedPart;
 
                                 ShipmentItem shipmentItem = null;
                                 foreach (var item in pendingShipment.ShipmentItems)
