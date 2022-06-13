@@ -21,11 +21,11 @@ namespace Allors.Database.Configuration
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        private IDatabase database;
-
         private IRanges<long> ranges;
 
         private IMetaCache metaCache;
+
+        private ISecurity security;
 
         private IClassById classById;
 
@@ -57,38 +57,52 @@ namespace Allors.Database.Configuration
 
         private ITemplateObjectCache templateObjectCache;
 
-        private IDerivationService derivationFactory;
+        private IDerivationService derivationService;
+
+        private IProcedures procedures;
+
+        //private IWorkspaceMask workspaceMask;
 
         protected DatabaseServices(IHttpContextAccessor httpContextAccessor = null)
         {
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public virtual void OnInit(IDatabase database) => this.database = database;
+        internal IDatabase Database { get; private set; }
 
-        public MetaPopulation M => (MetaPopulation)this.database.MetaPopulation;
+        public virtual void OnInit(IDatabase database)
+        {
+            this.Database = database;
+            this.M = (MetaPopulation)this.Database.MetaPopulation;
+        }
+
+        public MetaPopulation M { get; private set; }
 
         public ITransactionServices CreateTransactionServices() => new TransactionServices(this.httpContextAccessor);
 
         public T Get<T>() =>
             typeof(T) switch
             {
+                // System
+                { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.Database)),
+                { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
+                { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.Database.ObjectFactory.Assembly)),
+                { } type when type == typeof(ISecurity) => (T)(this.security ??= new Security(this)),
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
                 { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
-                { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.database)),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
-                { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.database)),
-                { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.database)),
-                { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.database)),
+                { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.Database)),
+                { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.Database)),
+                { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.Database)),
                 { } type when type == typeof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
                 { } type when type == typeof(IPermissions) => (T)(this.permissions ??= new Permissions()),
                 { } type when type == typeof(IGrantCache) => (T)(this.grantCache ??= new GrantCache()),
                 { } type when type == typeof(ITime) => (T)(this.time ??= new Time()),
                 { } type when type == typeof(ICaches) => (T)(this.caches ??= new Caches()),
                 { } type when type == typeof(IPasswordHasher) => (T)(this.passwordHasher ??= this.CreatePasswordHasher()),
-                { } type when type == typeof(IDerivationService) => (T)(this.derivationFactory ??= this.CreateDerivationFactory()),
+                //{ } type when type == typeof(IWorkspaceMask) => (T)(this.workspaceMask ??= new WorkspaceMask(this.M)),
                 // Base
                 { } type when type == typeof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
                 { } type when type == typeof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
