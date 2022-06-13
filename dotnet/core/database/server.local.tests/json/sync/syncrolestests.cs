@@ -71,7 +71,7 @@ namespace Tests
             {
                 o = new[] { x1.Id},
             };
-            var api = new Api(this.Transaction, "None", CancellationToken.None);
+            var api = new Api(this.Transaction, "Y", CancellationToken.None);
             var syncResponse = api.Sync(syncRequest);
 
             Assert.Empty(syncResponse.o);
