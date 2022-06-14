@@ -101,19 +101,19 @@ namespace Allors.Database.Domain
             }
         }
 
-        public IAccessControlList this[IObject @object]
+        public IAccessControlList this[IObject obj]
         {
             get
             {
-                if (this.aclByObject.TryGetValue(@object, out var acl))
+                if (this.aclByObject.TryGetValue(obj, out var acl))
                 {
                     return acl;
                 }
 
-                this.Prepare(new[] { @object });
-                return this.aclByObject[@object];
+                return this.UnpreparedAcl(obj);
             }
         }
+
         public bool IsMasked(IObject @object)
         {
             if (!this.masks.TryGetValue(@object.Strategy.Class, out var mask))
@@ -123,6 +123,82 @@ namespace Allors.Database.Domain
 
             var acl = this[@object];
             return !acl.CanRead(mask);
+        }
+
+        private IAccessControlList UnpreparedAcl(IObject obj)
+        {
+            var @object = (Object)obj;
+
+            var strategy = @object.Strategy;
+            var transaction = strategy.Transaction;
+            var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
+
+            Grant[] grants = null;
+            Revocation[] revocations = null;
+
+            // Grants
+            {
+                IEnumerable<SecurityToken> tokens = null;
+                if (delegatedAccess?.ExistSecurityTokens == true)
+                {
+                    tokens = @object.ExistSecurityTokens
+                        ? delegatedAccess.SecurityTokens.Concat(@object.SecurityTokens)
+                        : delegatedAccess.SecurityTokens;
+                }
+                else if (@object.ExistSecurityTokens)
+                {
+                    tokens = @object.SecurityTokens;
+                }
+
+                if (tokens == null)
+                {
+                    var securityTokens = new SecurityTokens(transaction);
+                    tokens = strategy.IsNewInTransaction
+                        ? new[] { securityTokens.InitialSecurityToken ?? securityTokens.DefaultSecurityToken }
+                        : new[] { securityTokens.DefaultSecurityToken };
+                }
+
+                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.userGrants.Set.Contains(v.Id)).ToArray();
+            }
+
+            // Revocations
+            {
+                IEnumerable<Revocation> unfilteredRevocations = null;
+                if (delegatedAccess?.ExistRevocations == true)
+                {
+                    unfilteredRevocations = @object.ExistRevocations
+                        ? @object.Revocations.Concat(delegatedAccess.Revocations.Where(v => !@object.Revocations.Contains(v)))
+                        : delegatedAccess.Revocations;
+                }
+                else if (@object.ExistRevocations)
+                {
+                    unfilteredRevocations = @object.Revocations;
+                }
+
+                revocations = unfilteredRevocations != null ? unfilteredRevocations.ToArray() : Array.Empty<Revocation>();
+            }
+
+            var grantsPermissions = this.security
+                .GetGrantPermissions(transaction, grants, this.workspaceName)
+                .Where(v => v.Value.Set.Any())
+                .Select(v => v.Value)
+                .ToArray();
+
+            var revocationsPermissions = this.security
+                .GetRevocationPermissions(transaction, revocations, this.workspaceName)
+                .Where(v => v.Value.Set.Any())
+                .Select(v => v.Value)
+                .ToArray();
+
+            IAccessControlList acl = new WorkspaceAccessControlList(
+                this,
+                @object,
+                grantsPermissions,
+                revocationsPermissions);
+
+            this.aclByObject[@object] = acl;
+
+            return acl;
         }
     }
 }
