@@ -12,6 +12,8 @@ import {
   Good,
   InventoryItem,
   NonSerialisedInventoryItem,
+  NonUnifiedGood,
+  NonUnifiedPart,
   OrderShipment,
   Part,
   Product,
@@ -774,12 +776,24 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
           },
         },
       }),
+      pull.NonUnifiedPart({
+        objectId: product.id,
+        include: {
+          InventoryItemKind: x,
+        },
+      }),
     ];
 
     this.allors.context.pull(pulls).subscribe((pullResult) => {
-      const part =
-        pullResult.object<UnifiedGood>(this.m.UnifiedGood) ||
-        pullResult.object<Part>(this.m.Part);
+      const unifiedGood = pullResult.object<UnifiedGood>(this.m.UnifiedGood);
+      const nonUnifiedGood = pullResult.object<NonUnifiedGood>(
+        this.m.NonUnifiedGood
+      );
+      const nonUnifiedPart = pullResult.object<NonUnifiedPart>(
+        this.m.NonUnifiedPart
+      );
+
+      const part = unifiedGood || nonUnifiedGood?.Part || nonUnifiedPart;
 
       this.isSerialized =
         part.InventoryItemKind.UniqueId ===

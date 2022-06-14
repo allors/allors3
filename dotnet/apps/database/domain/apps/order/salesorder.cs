@@ -292,13 +292,13 @@ namespace Allors.Database.Domain
 
                                 if (shipmentItem != null)
                                 {
-                                    shipmentItem.ContentsDescription = $"{shipmentItem.Quantity} * {good.Name}";
+                                    shipmentItem.ContentsDescription = $"{shipmentItem.Quantity} * {good.DisplayName}";
                                 }
                                 else
                                 {
                                     shipmentItem = new ShipmentItemBuilder(this.Strategy.Transaction)
                                         .WithGood(good)
-                                        .WithContentsDescription($"{orderItem.QuantityRequestsShipping} * {good}")
+                                        .WithContentsDescription($"{orderItem.QuantityRequestsShipping} * {good.DisplayName}")
                                         .Build();
 
                                     if (orderItem.ExistSerialisedItem)
