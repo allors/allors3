@@ -8,6 +8,7 @@ import {
   InvoiceItemType,
   IrpfRegime,
   NonSerialisedInventoryItem,
+  NonUnifiedPart,
   Part,
   QuoteItem,
   QuoteItemState,
@@ -37,6 +38,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './salesorderitem-form.component.html',
@@ -103,6 +105,7 @@ export class SalesOrderItemFormComponent extends AllorsFormComponent<SalesOrderI
   private previousProduct;
   inRent: SerialisedItemAvailability;
   goodsFilter: SearchFactory;
+  partsFilter: SearchFactory;
   internalOrganisation: InternalOrganisation;
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
@@ -117,6 +120,9 @@ export class SalesOrderItemFormComponent extends AllorsFormComponent<SalesOrderI
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+
+    this.goodsFilter = Filters.goodsFilter(this.m);
+    this.partsFilter = Filters.nonUnifiedPartsFilter(this.m);
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -445,6 +451,24 @@ export class SalesOrderItemFormComponent extends AllorsFormComponent<SalesOrderI
     if (product) {
       this.refreshSerialisedItems(product as UnifiedProduct);
     }
+  }
+
+  public partSelected(part: any): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+
+    const pulls = [
+      pull.NonUnifiedPart({
+        objectId: part.id,
+        include: {
+          SupplierOfferingsWherePart: {},
+        },
+      }),
+    ];
+
+    this.allors.context.pull(pulls).subscribe((pullResult) => {
+      this.part = pullResult.object<NonUnifiedPart>(m.NonUnifiedPart);
+    });
   }
 
   public serialisedItemSelected(obj: IObject): void {

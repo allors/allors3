@@ -103,23 +103,6 @@ namespace Allors.Database.Domain
                                 }
                             }
 
-                            var quantityRequestsShipping = wantToShip + availableFromInventory;
-
-                            if (quantityRequestsShipping > qoh)
-                            {
-                                quantityRequestsShipping = qoh;
-                            }
-
-                            if (salesOrder.OrderKind?.ScheduleManually == true)
-                            {
-                                quantityRequestsShipping = 0;
-                            }
-
-                            if (@this.QuantityRequestsShipping != quantityRequestsShipping)
-                            {
-                                @this.QuantityRequestsShipping = quantityRequestsShipping;
-                            }
-
                             @this.QuantityReserved = @this.QuantityOrdered - @this.QuantityShipped;
 
                             if (@this.QuantityPendingShipment > 0)
@@ -135,6 +118,23 @@ namespace Allors.Database.Domain
                             {
                                 @this.QuantityShortFalled = 0;
                             }
+                        }
+
+                        var quantityRequestsShipping = wantToShip + availableFromInventory;
+
+                        if (quantityRequestsShipping > qoh)
+                        {
+                            quantityRequestsShipping = qoh;
+                        }
+
+                        if (salesOrder.OrderKind?.ScheduleManually == true)
+                        {
+                            quantityRequestsShipping = 0;
+                        }
+
+                        if (@this.QuantityRequestsShipping != quantityRequestsShipping)
+                        {
+                            @this.QuantityRequestsShipping = quantityRequestsShipping;
                         }
                     }
                 }

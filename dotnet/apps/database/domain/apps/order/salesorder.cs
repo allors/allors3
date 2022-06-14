@@ -270,7 +270,7 @@ namespace Allors.Database.Domain
 
                             if (orderItem.ExistProduct && orderItem.DerivedShipToAddress.Equals(address.Key) && orderItem.QuantityRequestsShipping > 0)
                             {
-                                var good = orderItem.Product as UnifiedGood;
+                                var good = orderItem.Product;
                                 var nonUnifiedGood = orderItem.Product as NonUnifiedGood;
                                 var unifiedGood = orderItem.Product as UnifiedGood;
                                 var nonUnifiedPart = orderItem.Product as NonUnifiedPart;

@@ -2687,6 +2687,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ShipmentItemDeleteDeriveSalesOrderItemShipmentStateIsNotShipped()
         {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
             var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
             order.PartiallyShip = false;
             this.Derive();
@@ -3608,6 +3610,43 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal(item.QuantityOrdered - 1, item.QuantityRequestsShipping);
+        }
+
+        [Fact]
+        public void DeleteShipmentItemDeriveDeriveQuantityRequestsShipping()
+        {
+            this.InternalOrganisation.StoresWhereInternalOrganisation.First().AutoGenerateCustomerShipment = false;
+
+            var order = this.InternalOrganisation.CreateB2BSalesOrderForSingleNonSerialisedItem(this.Transaction.Faker());
+            order.PartiallyShip = true;
+            this.Derive();
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
+                .WithPart(item.Part)
+                .Build();
+            this.Derive();
+
+            order.SetReadyForPosting();
+            this.Derive();
+
+            order.Post();
+            this.Derive();
+
+            order.Accept();
+            this.Derive();
+
+            order.Ship();
+            this.Derive();
+
+            var shipment = item.OrderShipmentsWhereOrderItem.First().ShipmentItem.ShipmentWhereShipmentItem;
+
+            shipment.Delete();
+            this.Derive();
+
+            Assert.Equal(item.QuantityOrdered, item.QuantityRequestsShipping);
         }
     }
 

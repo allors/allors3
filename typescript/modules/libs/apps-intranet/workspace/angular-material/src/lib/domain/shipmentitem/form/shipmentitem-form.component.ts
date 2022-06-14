@@ -32,6 +32,7 @@ import {
   ShipmentState,
   SupplierOffering,
   UnifiedGood,
+  UnifiedProduct,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -698,7 +699,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
     this.selectedFacility = facility;
   }
 
-  private loadProduct(product: Product): void {
+  private loadProduct(product: UnifiedProduct): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
     const x = {};
