@@ -63,6 +63,7 @@ export class SalesInvoiceItemFormComponent extends AllorsFormComponent<SalesInvo
   inRent: SerialisedItemAvailability;
 
   goodsFilter: SearchFactory;
+  partsFilter: SearchFactory;
   internalOrganisation: InternalOrganisation;
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
@@ -83,6 +84,7 @@ export class SalesInvoiceItemFormComponent extends AllorsFormComponent<SalesInvo
     });
 
     this.goodsFilter = Filters.goodsFilter(this.m);
+    this.partsFilter = Filters.nonUnifiedPartsFilter(this.m);
   }
 
   onPrePull(pulls: Pull[]): void {
@@ -223,6 +225,24 @@ export class SalesInvoiceItemFormComponent extends AllorsFormComponent<SalesInvo
     if (object) {
       this.refreshSerialisedItems(object as Product);
     }
+  }
+
+  public partSelected(part: any): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+
+    const pulls = [
+      pull.NonUnifiedPart({
+        objectId: part.id,
+        include: {
+          SupplierOfferingsWherePart: {},
+        },
+      }),
+    ];
+
+    this.allors.context.pull(pulls).subscribe((pullResult) => {
+      this.part = pullResult.object<NonUnifiedPart>(m.NonUnifiedPart);
+    });
   }
 
   public serialisedItemSelected(serialisedItem: IObject): void {
