@@ -103,8 +103,6 @@ namespace Allors.Database.Domain
                                 }
                             }
 
-                            @this.QuantityReserved = @this.QuantityOrdered - @this.QuantityShipped;
-
                             if (@this.QuantityPendingShipment > 0)
                             {
                                 @this.QuantityShortFalled = @this.QuantityOrdered - @this.QuantityPendingShipment - @this.QuantityShipped;
@@ -119,6 +117,8 @@ namespace Allors.Database.Domain
                                 @this.QuantityShortFalled = 0;
                             }
                         }
+
+                        @this.QuantityReserved = @this.QuantityOrdered - @this.QuantityShipped;
 
                         var quantityRequestsShipping = wantToShip + availableFromInventory;
 
