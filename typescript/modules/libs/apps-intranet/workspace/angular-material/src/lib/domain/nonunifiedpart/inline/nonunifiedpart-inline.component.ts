@@ -85,6 +85,8 @@ export class NonUnifiedPartInlineComponent implements OnInit, OnDestroy {
       );
       this.object.UnitOfMeasure = piece;
       this.object.InventoryItemKind = nonSerialised;
+      this.object.DefaultFacility =
+        this.internalOrganisation.FacilitiesWhereOwner[0];
     });
   }
 
