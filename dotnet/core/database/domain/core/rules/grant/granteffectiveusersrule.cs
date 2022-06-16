@@ -30,9 +30,6 @@ namespace Allors.Database.Domain
                     .SubjectGroups.SelectMany(v => v.Members)
                     .Union(grant.Subjects)
                     .ToArray();
-
-                // Invalidate cache
-                grant.Strategy.Transaction.Database.Services.Get<IGrantCache>().Clear(grant.Id);
             }
         }
     }

@@ -26,9 +26,6 @@ namespace Allors.Database.Domain
             foreach (var grant in matches.Cast<Grant>())
             {
                 grant.EffectivePermissions = (grant.Role?.Permissions.ToArray());
-
-                // Invalidate cache
-                ((IObject)grant).Strategy.Transaction.Database.Services.Get<IGrantCache>().Clear(grant.Id);
             }
         }
     }
