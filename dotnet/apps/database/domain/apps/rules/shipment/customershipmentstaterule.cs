@@ -93,6 +93,17 @@ namespace Allors.Database.Domain
                         {
                             @this.SetPacked();
                         }
+
+                        if (@this.Store.IsAutomaticallyShipped && @this.ShipmentState.IsPacked)
+                        {
+                            @this.Ship();
+                        }
+
+                        // Shipment originating from spare part quote are immediatally shipped
+                        if (@this.ShipmentState.IsPacked && @this.ShipmentItems.Any(v => v.Good.GetType().Name.Equals(typeof(NonUnifiedPart).Name)))
+                        {
+                            @this.Ship();
+                        }
                     }
 
                     if (@this.ShipmentState.IsCreated

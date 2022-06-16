@@ -345,6 +345,12 @@ namespace Allors.Database.Domain
 
                         shipments.Add(pendingShipment);
                         this.AddRevocation(new Revocations(this.Strategy.Transaction).SalesOrderShipRevocation);
+
+                        if (pendingShipment.GetType().Name.Equals(typeof(CustomerShipment).Name) && this.Store.IsImmediatelyPicked)
+                        {
+                            var customerShipment = (CustomerShipment)pendingShipment;
+                            customerShipment.Pick();
+                        }
                     }
                 }
             }

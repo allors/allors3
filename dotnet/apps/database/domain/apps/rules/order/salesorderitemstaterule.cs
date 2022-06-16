@@ -73,7 +73,7 @@ namespace Allors.Database.Domain
                     }
 
                     if (salesOrder.SalesOrderState.IsInProcess
-                        && @this.SalesOrderItemState.IsAwaitingAcceptance || @this.SalesOrderItemState.IsOnHold)
+                        && (@this.SalesOrderItemState.IsAwaitingAcceptance || @this.SalesOrderItemState.IsOnHold))
                     {
                         @this.SalesOrderItemState = salesOrderItemStates.InProcess;
                     }
