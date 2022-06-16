@@ -172,7 +172,7 @@ namespace Allors.Database.Protocol.Json
 
         public AccessResponse Access(AccessRequest accessRequest)
         {
-            var responseBuilder = new AccessResponseBuilder(this.Transaction, this.Security, this.WorkspaceName);
+            var responseBuilder = new AccessResponseBuilder(this.Transaction, this.Security, this.User, this.WorkspaceName);
             return responseBuilder.Build(accessRequest);
         }
 

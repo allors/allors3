@@ -64,19 +64,29 @@
     <Position X="1.75" Y="1" Width="1.5" />
     <AssociationLine Name="_Permissions" Type="Allors.Domain.Permission" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="3.25" Y="1.814" />
-        <Point X="3.625" Y="1.814" />
+        <Point X="3.25" Y="1.673" />
+        <Point X="3.625" Y="1.673" />
         <Point X="3.625" Y="5.812" />
         <Point X="5.25" Y="5.812" />
       </Path>
     </AssociationLine>
+    <AssociationLine Name="_Users" Type="Allors.Domain.User" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="1" />
+        <Point X="2.5" Y="0.383" />
+        <Point X="10.375" Y="0.383" />
+        <Point X="10.375" Y="1.875" />
+        <Point X="10" Y="1.875" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAgAAIAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>generated\domain.g.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Grants" />
       <Property Name="_Permissions" />
+      <Property Name="_Users" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.Object">

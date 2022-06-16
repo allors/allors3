@@ -56,7 +56,7 @@ namespace Allors.Workspace.Adapters.Local
 
                     var acl = accessControl[@object];
 
-                    var accessControls = acl.Grants?.Select(v => (IGrant)transaction.Instantiate(v.Id)).Select(this.GetAccessControl).ToArray() ?? Array.Empty<AccessControl>();
+                    var accessControls = acl.SecurityTokens?.Select(v => (IGrant)transaction.Instantiate(v.Id)).Select(this.GetAccessControl).ToArray() ?? Array.Empty<AccessControl>();
 
                     this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.Revocations.Select(v => v.Id)), accessControls);
                 }

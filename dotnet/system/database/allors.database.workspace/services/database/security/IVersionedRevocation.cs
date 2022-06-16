@@ -8,14 +8,14 @@ namespace Allors.Database.Domain
     using System.Collections.Generic;
     using Ranges;
 
-    public interface IVersionedPermissions
+    public interface IVersionedRevocation
     {
         long Id { get; }
 
         long Version { get; }
 
-        IRange<long> Range { get; }
+        ISet<long> PermissionSet { get; }
 
-        ISet<long> Set { get; }
+        IRange<long> PermissionRange { get; }
     }
 }

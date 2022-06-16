@@ -5,19 +5,16 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
     using Database.Security;
 
     public interface ISecurity
     {
-        IVersionedGrants GetVersionedGrantIdsForUser(IUser user);
+        IVersionedSecurityToken[] GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens);
 
-        IDictionary<IGrant, IVersionedPermissions> GetGrantPermissions(ITransaction transaction, IEnumerable<IGrant> grants);
+        IVersionedSecurityToken[] GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens, string workspaceName);
 
-        IDictionary<IGrant, IVersionedPermissions> GetGrantPermissions(ITransaction transaction, IEnumerable<IGrant> grants, string workspaceName);
+        IVersionedRevocation[] GetVersionedRevocations(ITransaction transaction, IUser user, IRevocation[] revocations);
 
-        IDictionary<IRevocation, IVersionedPermissions> GetRevocationPermissions(ITransaction transaction, IEnumerable<IRevocation> revocations);
-
-        IDictionary<IRevocation, IVersionedPermissions> GetRevocationPermissions(ITransaction transaction, IEnumerable<IRevocation> revocations, string workspaceName);
+        IVersionedRevocation[] GetVersionedRevocations(ITransaction transaction, IUser user, IRevocation[] revocations, string workspaceName);
     }
 }

@@ -13,14 +13,15 @@ namespace Allors.Database.Domain
     public class DatabaseAccessControl : IAccessControl
     {
         private readonly ISecurity security;
+        private readonly IUser user;
+
         private readonly Dictionary<IObject, IAccessControlList> aclByObject;
 
-        private readonly IVersionedGrants userGrants;
-
-        public DatabaseAccessControl(ISecurity security, User user)
+        public DatabaseAccessControl(ISecurity security, IUser user)
         {
             this.security = security;
-            this.userGrants = this.security.GetVersionedGrantIdsForUser(user);
+            this.user = user;
+
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
         }
 
@@ -53,8 +54,8 @@ namespace Allors.Database.Domain
             var transaction = strategy.Transaction;
             var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
 
-            Grant[] grants = null;
-            Revocation[] revocations = null;
+            IVersionedSecurityToken[] versionedSecurityTokens;
+            IVersionedRevocation[] versionedRevocations;
 
             // Grants
             {
@@ -76,28 +77,25 @@ namespace Allors.Database.Domain
                         : new[] { securityTokens.DefaultSecurityToken };
                 }
 
-                grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.userGrants.Set.Contains(v.Id)).ToArray();
+                versionedSecurityTokens = this.security.GetVersionedSecurityTokens(transaction, this.user, tokens.ToArray());
             }
 
             // Revocations
             {
-                IEnumerable<Revocation> unfilteredRevocations = null;
+                IEnumerable<Revocation> revocations = null;
                 if (delegatedAccess?.ExistRevocations == true)
                 {
-                    unfilteredRevocations = @object.ExistRevocations ? @object.Revocations.Concat(delegatedAccess.Revocations.Where(v => !@object.Revocations.Contains(v))) : delegatedAccess.Revocations;
+                    revocations = @object.ExistRevocations ? @object.Revocations.Union(delegatedAccess.Revocations) : delegatedAccess.Revocations;
                 }
                 else if (@object.ExistRevocations)
                 {
-                    unfilteredRevocations = @object.Revocations;
+                    revocations = @object.Revocations;
                 }
 
-                revocations = unfilteredRevocations != null ? unfilteredRevocations.ToArray() : Array.Empty<Revocation>();
+                versionedRevocations = this.security.GetVersionedRevocations(transaction, this.user, revocations?.ToArray() ?? Array.Empty<IRevocation>());
             }
 
-            var grantsPermissions = this.security.GetGrantPermissions(transaction, grants);
-            var revocationsPermissions = this.security.GetRevocationPermissions(transaction, revocations);
-
-            return new DatabaseAccessControlList(this, @object, grants, revocations, grantsPermissions.Select(v => v.Value).ToArray(), revocationsPermissions.Select(v => v.Value).ToArray());
+            return new DatabaseAccessControlList(this, @object, versionedSecurityTokens, versionedRevocations);
         }
     }
 }

@@ -6,29 +6,25 @@
 namespace Allors.Database.Configuration
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Domain;
     using Ranges;
 
-    public class VersionedPermissions : IVersionedPermissions
+    public class VersionedRevocation : IVersionedRevocation
     {
-        private readonly IRanges<long> ranges;
-
-        public VersionedPermissions(IRanges<long> ranges, long id, long version, IEnumerable<Permission> permissions)
+        public VersionedRevocation(IRanges<long> ranges, long id, long version, IEnumerable<long> permissions)
         {
             this.Id = id;
-            this.ranges = ranges;
             this.Version = version;
-            this.Range = this.ranges.Import(permissions.Select(v => v.Id));
-            this.Set = new HashSet<long>(this.Range);
+            this.PermissionRange = ranges.Import(permissions);
+            this.PermissionSet = new HashSet<long>(this.PermissionRange);
         }
 
         public long Id { get; }
 
         public long Version { get; }
 
-        public IRange<long> Range { get; }
+        public ISet<long> PermissionSet { get; }
 
-        public ISet<long> Set { get; }
+        public IRange<long> PermissionRange { get; }
     }
 }

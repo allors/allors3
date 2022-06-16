@@ -244,8 +244,8 @@ namespace Allors.Database.Protocol.Json
             this.AddDependencies();
 
             // Serialize
-            var grants = new HashSet<IVersionedPermissions>();
-            var revocations = new HashSet<IVersionedPermissions>();
+            var versionBySecurityToken = new Dictionary<long, long>();
+            var revocationBySecurityToken = new Dictionary<long, long>();
 
             this.ThrowIfCancellationRequested();
 
@@ -254,16 +254,25 @@ namespace Allors.Database.Protocol.Json
                 p = this.unmaskedObjects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
+                    var securityTokens = accessControlList.SecurityTokens;
+                    var revocations = accessControlList.Revocations;
 
-                    grants.UnionWith(accessControlList.Grants);
-                    revocations.UnionWith(accessControlList.Revocations);
+                    foreach (var securityToken in securityTokens)
+                    {
+                        versionBySecurityToken[securityToken.Id] = securityToken.Version;
+                    }
+
+                    foreach (var revocation in revocations)
+                    {
+                        revocationBySecurityToken[revocation.Id] = revocation.Version;
+                    }
 
                     return new PullResponseObject
                     {
                         i = v.Strategy.ObjectId,
                         v = v.Strategy.ObjectVersion,
-                        g = this.ranges.Import(accessControlList.Grants.Select(w => w.Id)).Save(),
-                        r = this.ranges.Import(accessControlList.Revocations.Select(w => w.Id))
+                        g = this.ranges.Import(securityTokens.Select(w => w.Id)).Save(),
+                        r = this.ranges.Import(revocations.Select(w => w.Id))
                             .Save(),
                     };
                 }).ToArray(),
@@ -272,8 +281,8 @@ namespace Allors.Database.Protocol.Json
                 v = this.valueByName,
             };
 
-            pullResponse.g = grants.Count > 0 ? grants.Select(v => new[] { v.Id, v.Version }).ToArray() : null;
-            pullResponse.r = revocations.Count > 0 ? revocations.Select(v => new[] { v.Id, v.Version }).ToArray() : null;
+            pullResponse.g = versionBySecurityToken.Count > 0 ? versionBySecurityToken.Select(v => new[] { v.Key, v.Value }).ToArray() : null;
+            pullResponse.r = revocationBySecurityToken.Count > 0 ? revocationBySecurityToken.Select(v => new[] { v.Key, v.Value }).ToArray() : null;
 
             return pullResponse;
         }
