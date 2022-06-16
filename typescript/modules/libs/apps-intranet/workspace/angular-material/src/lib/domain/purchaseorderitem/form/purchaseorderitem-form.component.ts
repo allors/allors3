@@ -14,12 +14,14 @@ import {
   InvoiceItemType,
   IrpfRegime,
   NonSerialisedInventoryItem,
+  NonUnifiedPart,
   Part,
   Product,
   PurchaseOrder,
   PurchaseOrderItem,
   SerialisedInventoryItem,
   SerialisedItem,
+  Settings,
   SupplierOffering,
   UnifiedGood,
   VatRegime,
@@ -42,6 +44,7 @@ import { isAfter, isBefore } from 'date-fns';
 })
 export class PurchaseOrderItemFormComponent extends AllorsFormComponent<PurchaseOrderItem> {
   readonly m: M;
+  settings: Settings;
   order: PurchaseOrder;
   inventoryItems: InventoryItem[];
   vatRegimes: VatRegime[];
@@ -67,6 +70,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
   vatRegimeInitialRole: VatRegime;
   irpfRegimeInitialRole: IrpfRegime;
   partsFilter: SearchFactory;
+  addPart = false;
 
   unifiedGoodsFilter: SearchFactory;
   internalOrganisation: InternalOrganisation;
@@ -90,6 +94,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
 
     pulls.push(
       this.fetcher.internalOrganisation,
+      this.fetcher.Settings,
       p.InvoiceItemType({
         predicate: {
           kind: 'Equals',
@@ -169,6 +174,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
 
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
+    this.settings = this.fetcher.getSettings(pullResult);
     this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
     this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
     this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
@@ -292,6 +298,17 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
     this.selectedFacility = facility;
+  }
+
+  public partAdded(part: NonUnifiedPart): void {
+    this.object.Part = part;
+    const supplierOffering = this.allors.context.create<SupplierOffering>(
+      this.m.SupplierOffering
+    );
+    supplierOffering.Supplier = this.order.TakenViaSupplier;
+    supplierOffering.Part = part;
+    supplierOffering.UnitOfMeasure = part.UnitOfMeasure;
+    supplierOffering.Currency = this.settings.PreferredCurrency;
   }
 
   public override save(): void {
