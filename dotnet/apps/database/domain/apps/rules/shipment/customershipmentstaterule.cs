@@ -93,6 +93,11 @@ namespace Allors.Database.Domain
                         {
                             @this.SetPacked();
                         }
+
+                        if (@this.Store.IsAutomaticallyShipped && @this.ShipmentState.IsPacked)
+                        {
+                            @this.Ship();
+                        }
                     }
 
                     if (@this.ShipmentState.IsCreated

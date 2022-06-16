@@ -67,6 +67,7 @@ export { NonUnifiedGoodOverviewPageComponent } from './lib/domain/nonunifiedgood
 export { NonUnifiedGoodSummaryPanelComponent } from './lib/domain/nonunifiedgood/summary/nonunifiedgood-summary-panel.component';
 
 export { NonUnifiedPartCreateFormComponent } from './lib/domain/nonunifiedpart/create/nonunifiedpart-create-form.component';
+export { NonUnifiedPartInlineComponent } from './lib/domain/nonunifiedpart/inline/nonunifiedpart-inline.component';
 export { NonUnifiedPartEditFormComponent } from './lib/domain/nonunifiedpart/edit/nonunifiedpart-edit-form.component';
 export { NonUnifiedPartListPageComponent } from './lib/domain/nonunifiedpart/list/nonunifiedpart-list-page.component';
 export { NonUnifiedPartOverviewPageComponent } from './lib/domain/nonunifiedpart/overview/nonunifiedpart-overview-page.component';
