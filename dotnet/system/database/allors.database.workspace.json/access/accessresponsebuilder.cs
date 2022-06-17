@@ -32,10 +32,10 @@ namespace Allors.Database.Protocol.Json
             if (accessRequest.g?.Length > 0)
             {
                 var ids = accessRequest.g;
-                var securityTokens = this.transaction.Instantiate(ids).Cast<ISecurityToken>().ToArray();
-                var versionedSecurityTokens = this.security.GetVersionedGrants(this.transaction, this.user, securityTokens, this.workspaceName);
+                var grants = this.transaction.Instantiate(ids).Cast<IGrant>().ToArray();
+                var versionedGrants = this.security.GetVersionedGrants(this.transaction, this.user, grants, this.workspaceName);
 
-                accessResponse.g = versionedSecurityTokens
+                accessResponse.g = versionedGrants
                     .Select(v =>
                     {
                         var response = new AccessResponseGrant
