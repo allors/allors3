@@ -31,7 +31,7 @@ namespace Tests
 
             var accessRequest = new AccessRequest
             {
-                g = new[] { securityToken.Id },
+                g = new[] { grant.Id },
             };
 
             var api = new Api(this.Transaction, workspaceName, CancellationToken.None);

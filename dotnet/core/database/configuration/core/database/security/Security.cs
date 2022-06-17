@@ -135,8 +135,7 @@ namespace Allors.Database.Configuration
         public IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, ISecurityToken[] securityTokens, string workspaceName)
         {
             var versionedSecurityTokens = this.GetVersionedSecurityTokens(transaction, user, securityTokens, workspaceName);
-            return this.GetVersionedGrants(transaction, user, versionedSecurityTokens.SelectMany(v => v.VersionByGrant),
-                workspaceName);
+            return this.GetVersionedGrants(transaction, user, versionedSecurityTokens.SelectMany(v => v.VersionByGrant), workspaceName);
         }
 
         public IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, IGrant[] grants, string workspaceName) => this.GetVersionedGrants(transaction, user, grants.Select(v => new KeyValuePair<long, long>(v.Id, v.Strategy.ObjectVersion)), workspaceName);
