@@ -10,8 +10,6 @@ namespace Allors.Database.Security
     /// </summary>
     public interface ISecurityToken : IObject
     {
-        IUser[] Users { get; }
-
         IGrant[] Grants { get; }
     }
 }

@@ -11,10 +11,11 @@ namespace Allors.Database.Configuration
 
     public class VersionedGrant : IVersionedGrant
     {
-        public VersionedGrant(IRanges<long> ranges, long id, long version, IEnumerable<long> permissions)
+        public VersionedGrant(IRanges<long> ranges, long id, long version, ISet<long> users, IEnumerable<long> permissions)
         {
             this.Id = id;
             this.Version = version;
+            this.UserSet = users;
             this.PermissionRange = ranges.Import(permissions);
             this.PermissionSet = new HashSet<long>(this.PermissionRange);
         }
@@ -22,6 +23,8 @@ namespace Allors.Database.Configuration
         public long Id { get; }
 
         public long Version { get; }
+
+        public ISet<long> UserSet { get; }
 
         public ISet<long> PermissionSet { get; }
 

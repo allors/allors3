@@ -14,6 +14,8 @@ namespace Allors.Database.Domain
 
         long Version { get; }
 
+        ISet<long> UserSet { get; }
+
         ISet<long> PermissionSet { get; }
 
         IRange<long> PermissionRange { get; }

@@ -10,8 +10,6 @@ namespace Allors.Database.Domain
 
     public partial class SecurityToken : ISecurityToken
     {
-        IUser[] ISecurityToken.Users => this.Users.ToArray();
-
         IGrant[] ISecurityToken.Grants => this.Grants.ToArray();
     }
 }

@@ -19,7 +19,6 @@ namespace Allors.Database.Domain
                 new UserInUserPasswordRule(m),
                 new GrantEffectiveUsersRule(m),
                 new GrantEffectivePermissionsRule(m),
-                new SecurityTokenUsersRule(m),
                 new SecurityTokenSecurityStampRule(m),
 
                 // Base

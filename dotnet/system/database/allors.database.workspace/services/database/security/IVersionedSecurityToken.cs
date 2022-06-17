@@ -12,9 +12,7 @@ namespace Allors.Database.Domain
         long Id { get; }
 
         long Version { get; }
-
-        ISet<long> UserSet { get; }
-
+        
         IDictionary<long, long> VersionByGrant { get; }
     }
 }

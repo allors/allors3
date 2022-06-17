@@ -53,11 +53,11 @@ namespace Allors.Database.Configuration
             this.versionedRevocationByIdByWorkspace = new ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedRevocation>>();
 
             this.securityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.SecurityToken.Users)
                 .WithRule(m.SecurityToken.Grants)
                 .Build();
 
             this.grantPrefetchPolicy = new PrefetchPolicyBuilder()
+                .WithRule(m.Grant.EffectiveUsers)
                 .WithRule(m.Grant.EffectivePermissions)
                 .Build();
 
@@ -101,7 +101,10 @@ namespace Allors.Database.Configuration
 
                 if (this.databaseVersionedGrantById.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
-                    result.Add(versionedGrant);
+                    if (versionedGrant.UserSet.Contains(user.Id))
+                    {
+                        result.Add(versionedGrant);
+                    }
                 }
                 else
                 {
@@ -117,9 +120,12 @@ namespace Allors.Database.Configuration
 
                 foreach (var grant in missing)
                 {
-                    var versionedGrant = new VersionedGrant(this.ranges, grant.Id, grant.Strategy.ObjectVersion, grant.EffectivePermissions.Select(v => v.Id));
+                    var versionedGrant = new VersionedGrant(this.ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Select(v => v.Id));
                     this.databaseVersionedGrantById[grant.Id] = versionedGrant;
-                    result.Add(versionedGrant);
+                    if (versionedGrant.UserSet.Contains(user.Id))
+                    {
+                        result.Add(versionedGrant);
+                    }
                 }
             }
 
@@ -146,7 +152,10 @@ namespace Allors.Database.Configuration
 
                 if (versionedGrantById.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
-                    result.Add(versionedGrant);
+                    if (versionedGrant.UserSet.Contains(user.Id))
+                    {
+                        result.Add(versionedGrant);
+                    }
                 }
                 else
                 {
@@ -164,9 +173,12 @@ namespace Allors.Database.Configuration
 
                 foreach (var grant in missing)
                 {
-                    var versionedGrant = new VersionedGrant(this.ranges, grant.Id, grant.Strategy.ObjectVersion, grant.EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)).Select(v => v.Id));
+                    var versionedGrant = new VersionedGrant(this.ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)).Select(v => v.Id));
                     versionedGrantById[grant.Id] = versionedGrant;
-                    result.Add(versionedGrant);
+                    if (versionedGrant.UserSet.Contains(user.Id))
+                    {
+                        result.Add(versionedGrant);
+                    }
                 }
             }
 
@@ -256,10 +268,7 @@ namespace Allors.Database.Configuration
             {
                 if (this.databaseVersionedSecurityTokenById.TryGetValue(securityToken.Strategy.ObjectId, out var versionedSecurityToken) && versionedSecurityToken.Version == securityToken.Strategy.ObjectVersion)
                 {
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        versionedSecurityTokens.Add(versionedSecurityToken);
-                    }
+                    versionedSecurityTokens.Add(versionedSecurityToken);
                 }
                 else
                 {
@@ -274,13 +283,9 @@ namespace Allors.Database.Configuration
 
                 foreach (var securityToken in missing)
                 {
-                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, new HashSet<long>(securityToken.Users.Select(v => v.Id)), securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
+                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
                     this.databaseVersionedSecurityTokenById[securityToken.Id] = versionedSecurityToken;
-
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        versionedSecurityTokens.Add(versionedSecurityToken);
-                    }
+                    versionedSecurityTokens.Add(versionedSecurityToken);
                 }
             }
 
@@ -302,10 +307,7 @@ namespace Allors.Database.Configuration
             {
                 if (versionedSecurityTokenById.TryGetValue(securityToken.Strategy.ObjectId, out var versionedSecurityToken) && versionedSecurityToken.Version == securityToken.Strategy.ObjectVersion)
                 {
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        result.Add(versionedSecurityToken);
-                    }
+                    result.Add(versionedSecurityToken);
                 }
                 else
                 {
@@ -320,13 +322,9 @@ namespace Allors.Database.Configuration
 
                 foreach (var securityToken in missing)
                 {
-                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, new HashSet<long>(securityToken.Users.Select(v => v.Id)), securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
+                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
                     versionedSecurityTokenById[securityToken.Strategy.ObjectId] = versionedSecurityToken;
-
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        result.Add(versionedSecurityToken);
-                    }
+                    result.Add(versionedSecurityToken);
                 }
             }
 

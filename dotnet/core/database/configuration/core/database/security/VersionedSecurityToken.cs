@@ -11,19 +11,16 @@ namespace Allors.Database.Configuration
 
     public class VersionedSecurityToken : IVersionedSecurityToken
     {
-        public VersionedSecurityToken(IRanges<long> ranges, long id, long version, ISet<long> users, IDictionary<long, long> versionByGrant)
+        public VersionedSecurityToken(IRanges<long> ranges, long id, long version, IDictionary<long, long> versionByGrant)
         {
             this.Id = id;
             this.Version = version;
-            this.UserSet = users;
             this.VersionByGrant = versionByGrant;
         }
 
         public long Id { get; }
 
         public long Version { get; }
-
-        public ISet<long> UserSet { get; }
 
         public IDictionary<long, long> VersionByGrant { get; }
     }
