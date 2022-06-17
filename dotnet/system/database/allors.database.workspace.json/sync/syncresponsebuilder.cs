@@ -46,7 +46,7 @@ namespace Allors.Database.Protocol.Json
             var requestObjects = this.transaction.Instantiate(syncRequest.o);
 
             this.prefetch(requestObjects);
-            this.AccessControl.Prepare(requestObjects);
+            this.AccessControl.Prepare(this.transaction, requestObjects);
 
             var objects = requestObjects.Where(this.Include).ToArray();
 

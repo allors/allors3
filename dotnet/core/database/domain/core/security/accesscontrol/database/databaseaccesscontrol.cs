@@ -26,9 +26,66 @@ namespace Allors.Database.Domain
         }
 
 
-        public void Prepare(IEnumerable<IObject> objects)
+        public void Prepare(ITransaction transaction, IEnumerable<IObject> objects)
         {
-            // TODO:
+            var securityTokens = new SecurityTokens(transaction);
+
+            var allTokens = new HashSet<ISecurityToken>();
+            var allRevocations = new HashSet<IRevocation>();
+
+            foreach (Object @object in objects)
+            {
+                var strategy = @object.Strategy;
+                var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
+
+                // Grants
+                {
+                    IEnumerable<SecurityToken> tokens = null;
+                    if (delegatedAccess?.ExistSecurityTokens == true)
+                    {
+                        tokens = @object.ExistSecurityTokens ? delegatedAccess.SecurityTokens.Concat(@object.SecurityTokens) : delegatedAccess.SecurityTokens;
+                    }
+                    else if (@object.ExistSecurityTokens)
+                    {
+                        tokens = @object.SecurityTokens;
+                    }
+
+                    if (tokens == null)
+                    {
+
+                        tokens = strategy.IsNewInTransaction
+                            ? new[] { securityTokens.InitialSecurityToken ?? securityTokens.DefaultSecurityToken }
+                            : new[] { securityTokens.DefaultSecurityToken };
+                    }
+
+                    allTokens.UnionWith(tokens);
+                }
+
+                // Revocations
+                {
+                    IEnumerable<Revocation> revocations = null;
+                    if (delegatedAccess?.ExistRevocations == true)
+                    {
+                        revocations = @object.ExistRevocations ? @object.Revocations.Union(delegatedAccess.Revocations) : delegatedAccess.Revocations;
+                    }
+                    else if (@object.ExistRevocations)
+                    {
+                        revocations = @object.Revocations;
+                    }
+
+                    if (revocations != null)
+                    {
+                        allRevocations.UnionWith(revocations);
+                    }
+                }
+            }
+
+            this.security.GetVersionedGrants(transaction, this.user, allTokens.ToArray());
+
+            if (allRevocations.Any())
+            {
+                this.security.GetVersionedRevocations(transaction, this.user, allRevocations.ToArray());
+            }
         }
 
         public IAccessControlList this[IObject @object]

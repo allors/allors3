@@ -30,75 +30,66 @@ namespace Allors.Database.Domain
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
         }
 
-        public void Prepare(IEnumerable<IObject> objects)
+        public void Prepare(ITransaction transaction, IEnumerable<IObject> objects)
         {
-            //ITransaction transaction = null;
+            var securityTokens = new SecurityTokens(transaction);
 
-            //var grantsByObject = new Dictionary<Object, Grant[]>();
-            //var revocationsByObject = new Dictionary<Object, Revocation[]>();
+            var allTokens = new HashSet<ISecurityToken>();
+            var allRevocations = new HashSet<IRevocation>();
 
-            //var allGrants = new HashSet<Grant>();
-            //var allRevocations = new HashSet<Revocation>();
+            foreach (Object @object in objects)
+            {
+                var strategy = @object.Strategy;
+                var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
 
-            //foreach (Object @object in objects)
-            //{
-            //    transaction ??= @object.Strategy.Transaction;
+                // Grants
+                {
+                    IEnumerable<SecurityToken> tokens = null;
+                    if (delegatedAccess?.ExistSecurityTokens == true)
+                    {
+                        tokens = @object.ExistSecurityTokens ? delegatedAccess.SecurityTokens.Concat(@object.SecurityTokens) : delegatedAccess.SecurityTokens;
+                    }
+                    else if (@object.ExistSecurityTokens)
+                    {
+                        tokens = @object.SecurityTokens;
+                    }
 
-            //    IEnumerable<SecurityToken> tokens = null;
+                    if (tokens == null)
+                    {
 
-            //    var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
-            //    if (delegatedAccess?.ExistSecurityTokens == true)
-            //    {
-            //        tokens = @object.ExistSecurityTokens ? delegatedAccess.SecurityTokens.Concat(@object.SecurityTokens) : delegatedAccess.SecurityTokens;
-            //    }
-            //    else if (@object.ExistSecurityTokens)
-            //    {
-            //        tokens = @object.SecurityTokens;
-            //    }
+                        tokens = strategy.IsNewInTransaction
+                            ? new[] { securityTokens.InitialSecurityToken ?? securityTokens.DefaultSecurityToken }
+                            : new[] { securityTokens.DefaultSecurityToken };
+                    }
 
-            //    if (tokens == null)
-            //    {
-            //        var securityTokens = new SecurityTokens(transaction);
-            //        tokens = @object.Strategy.IsNewInTransaction
-            //            ? new[] { securityTokens.InitialSecurityToken ?? securityTokens.DefaultSecurityToken }
-            //            : new[] { securityTokens.DefaultSecurityToken };
-            //    }
+                    allTokens.UnionWith(tokens);
+                }
 
-            //    var grants = tokens.SelectMany(v => v.Grants).Distinct().Where(v => this.userGrants.Set.Contains(v.Id)).ToArray();
-            //    grantsByObject.Add(@object, grants);
+                // Revocations
+                {
+                    IEnumerable<Revocation> revocations = null;
+                    if (delegatedAccess?.ExistRevocations == true)
+                    {
+                        revocations = @object.ExistRevocations ? @object.Revocations.Union(delegatedAccess.Revocations) : delegatedAccess.Revocations;
+                    }
+                    else if (@object.ExistRevocations)
+                    {
+                        revocations = @object.Revocations;
+                    }
 
-            //    allGrants.UnionWith(grants);
+                    if (revocations != null)
+                    {
+                        allRevocations.UnionWith(revocations);
+                    }
+                }
+            }
 
-            //    IEnumerable<Revocation> revocationEnum = null;
-            //    if (delegatedAccess?.ExistRevocations == true)
-            //    {
-            //        revocationEnum = @object.ExistRevocations ? @object.Revocations.Concat(delegatedAccess.Revocations.Where(v => !@object.Revocations.Contains(v))) : delegatedAccess.Revocations;
-            //    }
-            //    else if (@object.ExistRevocations)
-            //    {
-            //        revocationEnum = @object.Revocations;
-            //    }
+            this.security.GetVersionedGrants(transaction, this.user, allTokens.ToArray(), this.workspaceName);
 
-            //    var revocations = revocationEnum != null ? revocationEnum.ToArray() : Array.Empty<Revocation>();
-            //    revocationsByObject.Add(@object, revocations);
-
-            //    allRevocations.UnionWith(revocations);
-            //}
-
-            //var allGrantsPermissions = this.security.GetVersionedSecurityTokens(transaction, allGrants, this.workspaceName);
-            //var allRevocationsPermissions = this.security.GetVersionedRevocations(transaction, allRevocations, this.workspaceName);
-
-            //foreach (Object @object in objects)
-            //{
-            //    var grants = grantsByObject[@object];
-            //    var revocations = revocationsByObject[@object];
-
-            //    var grantsPermissions = grants.Select(v => allGrantsPermissions[v]).Where(v => v.Set.Any()).ToArray();
-            //    var revocationsPermission = revocations.Select(v => allRevocationsPermissions[v]).Where(v => v.Set.Any()).ToArray();
-
-            //    var acl = new WorkspaceAccessControlList(this, @object, grantsPermissions, revocationsPermission);
-            //    this.aclByObject[@object] = acl;
-            //}
+            if (allRevocations.Any())
+            {
+                this.security.GetVersionedRevocations(transaction, this.user, allRevocations.ToArray(), this.workspaceName);
+            }
         }
 
         public IAccessControlList this[IObject @object]

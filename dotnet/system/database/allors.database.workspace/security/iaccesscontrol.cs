@@ -9,7 +9,7 @@ namespace Allors.Database.Security
 
     public interface IAccessControl
     {
-        void Prepare(IEnumerable<IObject> objects);
+        void Prepare(ITransaction transaction, IEnumerable<IObject> objects);
 
         IAccessControlList this[IObject @object]
         {

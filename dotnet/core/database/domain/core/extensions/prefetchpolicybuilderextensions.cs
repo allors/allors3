@@ -28,20 +28,13 @@ namespace Allors.Database.Domain
 
         public static PrefetchPolicyBuilder WithSecurityRules(this PrefetchPolicyBuilder @this, MetaPopulation m)
         {
-            var securityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
-                       .WithRule(m.SecurityToken.Grants, new PrefetchPolicyBuilder()
-                           .WithRule(m.Grant.UniqueId)
-                           .Build())
-                       .Build();
-
-
             // Object
-            @this.WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy);
+            @this.WithRule(m.Object.SecurityTokens);
             @this.WithRule(m.Object.Revocations);
 
             // DelegatedAccessObject
             var delegatedAccessPolicy = new PrefetchPolicyBuilder()
-                .WithRule(m.Object.SecurityTokens, securityTokenPrefetchPolicy)
+                .WithRule(m.Object.SecurityTokens)
                 .WithRule(m.Object.Revocations)
                 .Build();
 
