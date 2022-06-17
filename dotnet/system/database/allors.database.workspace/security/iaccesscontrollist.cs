@@ -13,7 +13,7 @@ namespace Allors.Database.Security
     /// </summary>
     public interface IAccessControlList
     {
-        IVersionedSecurityToken[] SecurityTokens { get; }
+        IVersionedGrant[] Grants { get; }
 
         IVersionedRevocation[] Revocations { get; }
 

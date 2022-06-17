@@ -35,12 +35,10 @@ namespace Allors.Repository
         public User[] Users { get; set; }
 
         #region Allors
-        [Id("54E9825B-791B-4D07-8247-BB0D75AA3BD6")]
+        [Id("E094E1DD-A3B0-4B6A-B2FA-B00E98BDC0D6")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Derived]
-        public Permission[] Permissions { get; set; }
+        [Size(256)]
+        public Guid SecurityStamp { get; set; }
 
         #region inherited methods
 
@@ -61,6 +59,5 @@ namespace Allors.Repository
         public void Delete() { }
 
         #endregion
-
     }
 }

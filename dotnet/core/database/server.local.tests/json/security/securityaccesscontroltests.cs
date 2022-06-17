@@ -22,8 +22,8 @@ namespace Tests
         {
             var workspaceName = "X";
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
-            var x = new Grants(this.Transaction).Administrator;
-            var securityToken = new SecurityTokenBuilder(this.Transaction).WithGrant(x).Build();
+            var grant = new Grants(this.Transaction).Administrator;
+            var securityToken = new SecurityTokenBuilder(this.Transaction).WithGrant(grant).Build();
 
             this.Transaction.Derive();
 
@@ -41,8 +41,8 @@ namespace Tests
 
             var securityResponseAccessControl = securityResponse.g.First();
 
-            Assert.Equal(securityToken.Id, securityResponseAccessControl.i);
-            Assert.Equal(securityToken.Strategy.ObjectVersion, securityResponseAccessControl.v);
+            Assert.Equal(grant.Id, securityResponseAccessControl.i);
+            Assert.Equal(grant.Strategy.ObjectVersion, securityResponseAccessControl.v);
 
             var permissions = securityResponseAccessControl.p
                 .Select(v => this.Transaction.Instantiate(v))
@@ -52,11 +52,11 @@ namespace Tests
 
             foreach (var permission in permissions)
             {
-                Assert.Contains(permission, securityToken.Permissions);
+                Assert.Contains(permission, grant.EffectivePermissions);
                 Assert.Contains(permission.Class, metaCache.GetWorkspaceClasses(workspaceName));
             }
 
-            foreach (var effectivePermission in securityToken.Permissions.Where(v => v.InWorkspace(workspaceName)))
+            foreach (var effectivePermission in grant.EffectivePermissions.Where(v => v.InWorkspace(workspaceName)))
             {
                 Assert.Contains(effectivePermission, permissions);
             }

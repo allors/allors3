@@ -12,21 +12,29 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class SecurityTokenPermissionsRule : Rule
+    public class SecurityTokenSecurityStampRule : Rule
     {
-        public SecurityTokenPermissionsRule(MetaPopulation m) : base(m, new Guid("0C788305-AD7E-4722-B03C-83B5DE3E881A")) =>
+        public SecurityTokenSecurityStampRule(MetaPopulation m) : base(m, new Guid("0C788305-AD7E-4722-B03C-83B5DE3E881A")) =>
             this.Patterns = new Pattern[]
             {
                 m.SecurityToken.RolePattern(v=>v.Grants),
+                m.Grant.RolePattern(v=>v.EffectiveUsers, v => v.SecurityTokensWhereGrant),
                 m.Grant.RolePattern(v=>v.EffectivePermissions, v => v.SecurityTokensWhereGrant),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var securityToken in matches.Cast<SecurityToken>())
             {
-                securityToken.Permissions = securityToken.Grants.SelectMany(v => v.EffectivePermissions);
+                securityToken.DeriveSecurityTokenSecurityStampRule(validation);
             }
         }
+    }
+
+    public static class SecurityTokenSecurityStampRuleExtensions
+    {
+        public static void DeriveSecurityTokenSecurityStampRule(this SecurityToken @this, IValidation validation) => @this.SecurityStamp = Guid.NewGuid();
     }
 }

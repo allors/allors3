@@ -9,9 +9,9 @@ namespace Allors.Database.Domain
 
     public interface ISecurity
     {
-        IVersionedSecurityToken[] GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens);
+        IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, ISecurityToken[] securityTokens);
 
-        IVersionedSecurityToken[] GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens, string workspaceName);
+        IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, ISecurityToken[] securityTokens, string workspaceName);
 
         IVersionedRevocation[] GetVersionedRevocations(ITransaction transaction, IUser user, IRevocation[] revocations);
 

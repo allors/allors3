@@ -17,17 +17,17 @@ namespace Allors.Database.Domain
     public class WorkspaceAccessControlList : IAccessControlList
     {
         private readonly WorkspaceAccessControl accessControl;
-        private readonly IVersionedSecurityToken[] securityTokens;
+        private readonly IVersionedGrant[] grants;
         private readonly IVersionedRevocation[] revocations;
 
         private readonly IReadOnlyDictionary<Guid, long> readPermissionIdByRelationTypeId;
         private readonly IReadOnlyDictionary<Guid, long> writePermissionIdByRelationTypeId;
         private readonly IReadOnlyDictionary<Guid, long> executePermissionIdByMethodTypeId;
 
-        internal WorkspaceAccessControlList(WorkspaceAccessControl accessControl, Object @object, IVersionedSecurityToken[] securityTokens, IVersionedRevocation[] revocations)
+        internal WorkspaceAccessControlList(WorkspaceAccessControl accessControl, Object @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations)
         {
             this.accessControl = accessControl;
-            this.securityTokens = securityTokens;
+            this.grants = grants;
             this.revocations = revocations;
             this.Object = @object;
 
@@ -42,7 +42,7 @@ namespace Allors.Database.Domain
 
         public Object Object { get; }
 
-        IVersionedSecurityToken[] IAccessControlList.SecurityTokens => this.securityTokens;
+        IVersionedGrant[] IAccessControlList.Grants => this.grants;
 
         IVersionedRevocation[] IAccessControlList.Revocations => this.revocations;
 
@@ -56,7 +56,7 @@ namespace Allors.Database.Domain
 
         private bool IsPermitted(long permissionId)
         {
-            if (this.securityTokens.Any(v => v.PermissionSet.Contains(permissionId)))
+            if (this.grants.Any(v => v.PermissionSet.Contains(permissionId)))
             {
                 return this.revocations?.Any(v => v.PermissionSet.Contains(permissionId)) != true;
             }

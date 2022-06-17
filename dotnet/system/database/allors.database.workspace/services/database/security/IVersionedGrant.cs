@@ -6,15 +6,16 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
+    using Ranges;
 
-    public interface IVersionedSecurityToken
+    public interface IVersionedGrant
     {
         long Id { get; }
 
         long Version { get; }
 
-        ISet<long> UserSet { get; }
+        ISet<long> PermissionSet { get; }
 
-        IDictionary<long, long> VersionByGrant { get; }
+        IRange<long> PermissionRange { get; }
     }
 }

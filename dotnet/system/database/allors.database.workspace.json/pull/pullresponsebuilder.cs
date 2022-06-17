@@ -254,7 +254,7 @@ namespace Allors.Database.Protocol.Json
                 p = this.unmaskedObjects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
-                    var securityTokens = accessControlList.SecurityTokens;
+                    var securityTokens = accessControlList.Grants;
                     var revocations = accessControlList.Revocations;
 
                     foreach (var securityToken in securityTokens)

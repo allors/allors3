@@ -12,6 +12,6 @@ namespace Allors.Database.Domain
     {
         IUser[] ISecurityToken.Users => this.Users.ToArray();
 
-        IPermission[] ISecurityToken.Permissions => this.Permissions.ToArray();
+        IGrant[] ISecurityToken.Grants => this.Grants.ToArray();
     }
 }

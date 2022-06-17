@@ -23,10 +23,17 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var securityToken in matches.Cast<SecurityToken>())
             {
-                securityToken.Users = securityToken.Grants.SelectMany(v => v.EffectiveUsers);
+                securityToken.DeriveSecurityTokenUsersRule(validation);
             }
         }
+    }
+
+    public static class SecurityTokenUsersRuleExtensions
+    {
+        public static void DeriveSecurityTokenUsersRule(this SecurityToken @this, IValidation validation) => @this.Users = @this.Grants.SelectMany(v => v.EffectiveUsers);
     }
 }

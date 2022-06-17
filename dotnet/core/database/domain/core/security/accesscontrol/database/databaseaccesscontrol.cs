@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
             var transaction = strategy.Transaction;
             var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
 
-            IVersionedSecurityToken[] versionedSecurityTokens;
+            IVersionedGrant[] versionedGrants;
             IVersionedRevocation[] versionedRevocations;
 
             // Grants
@@ -77,7 +77,7 @@ namespace Allors.Database.Domain
                         : new[] { securityTokens.DefaultSecurityToken };
                 }
 
-                versionedSecurityTokens = this.security.GetVersionedSecurityTokens(transaction, this.user, tokens.ToArray());
+                versionedGrants = this.security.GetVersionedGrants(transaction, this.user, tokens.ToArray());
             }
 
             // Revocations
@@ -95,7 +95,7 @@ namespace Allors.Database.Domain
                 versionedRevocations = this.security.GetVersionedRevocations(transaction, this.user, revocations?.ToArray() ?? Array.Empty<IRevocation>());
             }
 
-            return new DatabaseAccessControlList(this, @object, versionedSecurityTokens, versionedRevocations);
+            return new DatabaseAccessControlList(this, @object, versionedGrants, versionedRevocations);
         }
     }
 }

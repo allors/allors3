@@ -200,7 +200,7 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.SecurityTokens.Select(v => v.Id), @object.g);
+            Assert.Equal(acl.Grants.Select(v => v.Id), @object.g);
             Assert.Equal(acl.Revocations.Select(v => v.Id), @object.r);
         }
 
@@ -283,7 +283,7 @@ namespace Tests
 
             Assert.Equal(data.Strategy.ObjectId, @object.i);
             Assert.Equal(data.Strategy.ObjectVersion, @object.v);
-            Assert.Equal(acl.SecurityTokens.Select(v => v.Id), @object.g);
+            Assert.Equal(acl.Grants.Select(v => v.Id), @object.g);
         }
     }
 }

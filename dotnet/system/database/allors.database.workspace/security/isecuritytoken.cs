@@ -12,6 +12,6 @@ namespace Allors.Database.Security
     {
         IUser[] Users { get; }
 
-        IPermission[] Permissions { get; }
+        IGrant[] Grants { get; }
     }
 }

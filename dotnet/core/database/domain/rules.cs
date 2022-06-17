@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
                 new GrantEffectiveUsersRule(m),
                 new GrantEffectivePermissionsRule(m),
                 new SecurityTokenUsersRule(m),
-                new SecurityTokenPermissionsRule(m),
+                new SecurityTokenSecurityStampRule(m),
                 
                 // Custom
                 new PersonFullNameRule(m),

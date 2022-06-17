@@ -21,13 +21,18 @@ namespace Allors.Database.Configuration
         private readonly ConcurrentDictionary<long, IVersionedSecurityToken> databaseVersionedSecurityTokenById;
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedSecurityToken>> versionedSecurityTokenByIdByWorkspace;
 
+        private readonly ConcurrentDictionary<long, IVersionedGrant> databaseVersionedGrantById;
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedGrant>> versionedGrantByIdByWorkspace;
+
         private readonly ConcurrentDictionary<long, IVersionedRevocation> databaseVersionedRevocationById;
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedRevocation>> versionedRevocationByIdByWorkspace;
 
         private readonly IRanges<long> ranges;
 
         private readonly PrefetchPolicy securityTokenPrefetchPolicy;
+        private readonly PrefetchPolicy grantPrefetchPolicy;
         private readonly PrefetchPolicy revocationPrefetchPolicy;
+
         private readonly Dictionary<string, HashSet<long>> permissionIdsByWorkspaceName;
 
         public Security(DatabaseServices databaseServices)
@@ -41,12 +46,19 @@ namespace Allors.Database.Configuration
             this.databaseVersionedSecurityTokenById = new ConcurrentDictionary<long, IVersionedSecurityToken>();
             this.versionedSecurityTokenByIdByWorkspace = new ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedSecurityToken>>();
 
+            this.databaseVersionedGrantById = new ConcurrentDictionary<long, IVersionedGrant>();
+            this.versionedGrantByIdByWorkspace = new ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedGrant>>();
+
             this.databaseVersionedRevocationById = new ConcurrentDictionary<long, IVersionedRevocation>();
             this.versionedRevocationByIdByWorkspace = new ConcurrentDictionary<string, ConcurrentDictionary<long, IVersionedRevocation>>();
 
             this.securityTokenPrefetchPolicy = new PrefetchPolicyBuilder()
                 .WithRule(m.SecurityToken.Users)
-                .WithRule(m.SecurityToken.Permissions)
+                .WithRule(m.SecurityToken.Grants)
+                .Build();
+
+            this.grantPrefetchPolicy = new PrefetchPolicyBuilder()
+                .WithRule(m.Grant.EffectivePermissions)
                 .Build();
 
             this.revocationPrefetchPolicy = new PrefetchPolicyBuilder()
@@ -75,88 +87,86 @@ namespace Allors.Database.Configuration
                 })));
         }
 
-        public IVersionedSecurityToken[] GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens)
+        public IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, ISecurityToken[] securityTokens)
         {
-            var result = new List<IVersionedSecurityToken>(securityTokens.Length);
+            var result = new List<IVersionedGrant>();
 
-            IList<ISecurityToken> missing = null;
-            foreach (var securityToken in securityTokens)
+            var versionedSecurityTokens = this.GetVersionedSecurityTokens(transaction, user, securityTokens);
+
+            IList<long> missingIds = null;
+            foreach (var kvp in versionedSecurityTokens.SelectMany(v => v.VersionByGrant))
             {
-                if (this.databaseVersionedSecurityTokenById.TryGetValue(securityToken.Strategy.ObjectId, out var versionedSecurityToken) && versionedSecurityToken.Version == securityToken.Strategy.ObjectVersion)
+                var grantId = kvp.Key;
+                var grantVersion = kvp.Value;
+
+                if (this.databaseVersionedGrantById.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        result.Add(versionedSecurityToken);
-                    }
+                    result.Add(versionedGrant);
                 }
                 else
                 {
-                    missing ??= new List<ISecurityToken>(securityTokens.Length);
-                    missing.Add(securityToken);
+                    missingIds ??= new List<long>();
+                    missingIds.Add(grantId);
                 }
             }
 
-            if (missing != null)
+            if (missingIds != null)
             {
-                transaction.Prefetch(this.securityTokenPrefetchPolicy, missing);
+                transaction.Prefetch(this.grantPrefetchPolicy, missingIds);
+                var missing = transaction.Instantiate(missingIds).Cast<Grant>();
 
-                foreach (var securityToken in missing)
+                foreach (var grant in missing)
                 {
-                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Users.Select(v => v.Id), securityToken.Permissions.Select(v => v.Id));
-                    this.databaseVersionedSecurityTokenById[securityToken.Id] = versionedSecurityToken;
-
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        result.Add(versionedSecurityToken);
-                    }
+                    var versionedGrant = new VersionedGrant(this.ranges, grant.Id, grant.Strategy.ObjectVersion, grant.EffectivePermissions.Select(v => v.Id));
+                    this.databaseVersionedGrantById[grant.Id] = versionedGrant;
+                    result.Add(versionedGrant);
                 }
             }
 
             return result.ToArray();
         }
 
-        public IVersionedSecurityToken[] GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens, string workspaceName)
+        public IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, ISecurityToken[] securityTokens, string workspaceName)
         {
-            var result = new List<IVersionedSecurityToken>(securityTokens.Length);
+            var result = new List<IVersionedGrant>();
 
-            if (!this.versionedSecurityTokenByIdByWorkspace.TryGetValue(workspaceName, out var versionedSecurityTokenById))
+            var versionedSecurityTokens = this.GetVersionedSecurityTokens(transaction, user, securityTokens, workspaceName);
+
+            if (!this.versionedGrantByIdByWorkspace.TryGetValue(workspaceName, out var versionedGrantById))
             {
-                versionedSecurityTokenById = new ConcurrentDictionary<long, IVersionedSecurityToken>();
-                this.versionedSecurityTokenByIdByWorkspace[workspaceName] = versionedSecurityTokenById;
+                versionedGrantById = new ConcurrentDictionary<long, IVersionedGrant>();
+                this.versionedGrantByIdByWorkspace[workspaceName] = versionedGrantById;
             }
 
-            IList<ISecurityToken> missing = null;
-            foreach (var securityToken in securityTokens)
+            IList<long> missingIds = null;
+            foreach (var kvp in versionedSecurityTokens.SelectMany(v => v.VersionByGrant))
             {
-                if (versionedSecurityTokenById.TryGetValue(securityToken.Strategy.ObjectId, out var versionedSecurityToken) && versionedSecurityToken.Version == securityToken.Strategy.ObjectVersion)
+                var grantId = kvp.Key;
+                var grantVersion = kvp.Value;
+
+                if (versionedGrantById.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        result.Add(versionedSecurityToken);
-                    }
+                    result.Add(versionedGrant);
                 }
                 else
                 {
-                    missing ??= new List<ISecurityToken>(securityTokens.Length);
-                    missing.Add(securityToken);
+                    missingIds ??= new List<long>();
+                    missingIds.Add(grantId);
                 }
             }
 
-            if (missing != null)
+            if (missingIds != null)
             {
-                transaction.Prefetch(this.securityTokenPrefetchPolicy, missing);
+                transaction.Prefetch(this.grantPrefetchPolicy, missingIds);
+                var missing = transaction.Instantiate(missingIds).Cast<Grant>();
 
                 var workspacePermissionIds = this.permissionIdsByWorkspaceName[workspaceName];
 
-                foreach (var securityToken in missing)
+                foreach (var grant in missing)
                 {
-                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Users.Select(v => v.Id), securityToken.Permissions.Select(v => v.Id).Where(v => workspacePermissionIds.Contains(v)));
-                    versionedSecurityTokenById[securityToken.Strategy.ObjectId] = versionedSecurityToken;
-
-                    if (versionedSecurityToken.UserSet.Contains(user.Id))
-                    {
-                        result.Add(versionedSecurityToken);
-                    }
+                    var versionedGrant = new VersionedGrant(this.ranges, grant.Id, grant.Strategy.ObjectVersion, grant.EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)).Select(v => v.Id));
+                    versionedGrantById[grant.Id] = versionedGrant;
+                    result.Add(versionedGrant);
                 }
             }
 
@@ -235,6 +245,92 @@ namespace Allors.Database.Configuration
             }
 
             return result.ToArray();
+        }
+
+        private IList<IVersionedSecurityToken> GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens)
+        {
+            var versionedSecurityTokens = new List<IVersionedSecurityToken>(securityTokens.Length);
+
+            IList<ISecurityToken> missing = null;
+            foreach (var securityToken in securityTokens)
+            {
+                if (this.databaseVersionedSecurityTokenById.TryGetValue(securityToken.Strategy.ObjectId, out var versionedSecurityToken) && versionedSecurityToken.Version == securityToken.Strategy.ObjectVersion)
+                {
+                    if (versionedSecurityToken.UserSet.Contains(user.Id))
+                    {
+                        versionedSecurityTokens.Add(versionedSecurityToken);
+                    }
+                }
+                else
+                {
+                    missing ??= new List<ISecurityToken>(securityTokens.Length);
+                    missing.Add(securityToken);
+                }
+            }
+
+            if (missing != null)
+            {
+                transaction.Prefetch(this.securityTokenPrefetchPolicy, missing);
+
+                foreach (var securityToken in missing)
+                {
+                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, new HashSet<long>(securityToken.Users.Select(v => v.Id)), securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
+                    this.databaseVersionedSecurityTokenById[securityToken.Id] = versionedSecurityToken;
+
+                    if (versionedSecurityToken.UserSet.Contains(user.Id))
+                    {
+                        versionedSecurityTokens.Add(versionedSecurityToken);
+                    }
+                }
+            }
+
+            return versionedSecurityTokens;
+        }
+
+        private IList<IVersionedSecurityToken> GetVersionedSecurityTokens(ITransaction transaction, IUser user, ISecurityToken[] securityTokens, string workspaceName)
+        {
+            var result = new List<IVersionedSecurityToken>(securityTokens.Length);
+
+            if (!this.versionedSecurityTokenByIdByWorkspace.TryGetValue(workspaceName, out var versionedSecurityTokenById))
+            {
+                versionedSecurityTokenById = new ConcurrentDictionary<long, IVersionedSecurityToken>();
+                this.versionedSecurityTokenByIdByWorkspace[workspaceName] = versionedSecurityTokenById;
+            }
+
+            IList<ISecurityToken> missing = null;
+            foreach (var securityToken in securityTokens)
+            {
+                if (versionedSecurityTokenById.TryGetValue(securityToken.Strategy.ObjectId, out var versionedSecurityToken) && versionedSecurityToken.Version == securityToken.Strategy.ObjectVersion)
+                {
+                    if (versionedSecurityToken.UserSet.Contains(user.Id))
+                    {
+                        result.Add(versionedSecurityToken);
+                    }
+                }
+                else
+                {
+                    missing ??= new List<ISecurityToken>(securityTokens.Length);
+                    missing.Add(securityToken);
+                }
+            }
+
+            if (missing != null)
+            {
+                transaction.Prefetch(this.securityTokenPrefetchPolicy, missing);
+
+                foreach (var securityToken in missing)
+                {
+                    var versionedSecurityToken = new VersionedSecurityToken(this.ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, new HashSet<long>(securityToken.Users.Select(v => v.Id)), securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
+                    versionedSecurityTokenById[securityToken.Strategy.ObjectId] = versionedSecurityToken;
+
+                    if (versionedSecurityToken.UserSet.Contains(user.Id))
+                    {
+                        result.Add(versionedSecurityToken);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

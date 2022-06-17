@@ -9,22 +9,22 @@ namespace Allors.Database.Configuration
     using Domain;
     using Ranges;
 
-    public class VersionedSecurityToken : IVersionedSecurityToken
+    public class VersionedGrant : IVersionedGrant
     {
-        public VersionedSecurityToken(IRanges<long> ranges, long id, long version, ISet<long> users, IDictionary<long, long> versionByGrant)
+        public VersionedGrant(IRanges<long> ranges, long id, long version, IEnumerable<long> permissions)
         {
             this.Id = id;
             this.Version = version;
-            this.UserSet = users;
-            this.VersionByGrant = versionByGrant;
+            this.PermissionRange = ranges.Import(permissions);
+            this.PermissionSet = new HashSet<long>(this.PermissionRange);
         }
 
         public long Id { get; }
 
         public long Version { get; }
 
-        public ISet<long> UserSet { get; }
+        public ISet<long> PermissionSet { get; }
 
-        public IDictionary<long, long> VersionByGrant { get; }
+        public IRange<long> PermissionRange { get; }
     }
 }

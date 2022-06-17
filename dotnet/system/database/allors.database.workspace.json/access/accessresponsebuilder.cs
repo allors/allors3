@@ -33,7 +33,7 @@ namespace Allors.Database.Protocol.Json
             {
                 var ids = accessRequest.g;
                 var securityTokens = this.transaction.Instantiate(ids).Cast<ISecurityToken>().ToArray();
-                var versionedSecurityTokens = this.security.GetVersionedSecurityTokens(this.transaction, this.user, securityTokens, this.workspaceName);
+                var versionedSecurityTokens = this.security.GetVersionedGrants(this.transaction, this.user, securityTokens, this.workspaceName);
 
                 accessResponse.g = versionedSecurityTokens
                     .Select(v =>
