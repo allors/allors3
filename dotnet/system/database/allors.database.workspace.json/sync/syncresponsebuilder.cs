@@ -53,14 +53,42 @@ namespace Allors.Database.Protocol.Json
 
             this.prefetch(requestObjects);
 
-            var acls = this.AccessControl.GetAccessControlLists(this.transaction, requestObjects);
-            var objects = requestObjects.Where(v => this.Include(v, acls)).ToArray();
+            var objectAcls = this.AccessControl.GetAccessControlLists(this.transaction, requestObjects);
+            var filteredObjects = requestObjects.Where(v => this.Include(v, objectAcls)).ToArray();
+            var compositeRoles = this.Roles(filteredObjects, objectAcls);
+            var roleAcls = this.AccessControl.GetAccessControlLists(this.transaction, compositeRoles);
 
+            return new SyncResponse
+            {
+                o = filteredObjects.Select(v =>
+                {
+                    var @class = v.Strategy.Class;
+                    var acl = objectAcls[v];
+                    var roleTypes = this.roleTypesByClass[@class];
+
+                    return new SyncResponseObject
+                    {
+                        i = v.Id,
+                        v = v.Strategy.ObjectVersion,
+                        c = v.Strategy.Class.Tag,
+                        ro = roleTypes
+                            .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
+                            .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert, roleAcls))
+                            .ToArray(),
+                        g = this.ranges.Import(acl.Grants.Select(v => v.Id)).Save(),
+                        r = this.ranges.Import(acl.Revocations.Select(v => v.Id)).Save(),
+                    };
+                }).ToArray(),
+            };
+        }
+
+        private HashSet<IObject> Roles(IObject[] filteredObjects, IDictionary<IObject, IAccessControlList> objectAcls)
+        {
             var roles = new HashSet<IObject>();
-            foreach (var @object in objects)
+            foreach (var @object in filteredObjects)
             {
                 var @class = @object.Strategy.Class;
-                var acl = acls[@object];
+                var acl = objectAcls[@object];
                 var roleTypes = this.roleTypesByClass[@class];
                 foreach (var roleType in roleTypes.Where(v => v.ObjectType.IsComposite))
                 {
@@ -78,30 +106,7 @@ namespace Allors.Database.Protocol.Json
                 }
             }
 
-            var roleAcls = this.AccessControl.GetAccessControlLists(this.transaction, roles);
-
-            return new SyncResponse
-            {
-                o = objects.Select(v =>
-                {
-                    var @class = v.Strategy.Class;
-                    var acl = acls[v];
-                    var roleTypes = this.roleTypesByClass[@class];
-
-                    return new SyncResponseObject
-                    {
-                        i = v.Id,
-                        v = v.Strategy.ObjectVersion,
-                        c = v.Strategy.Class.Tag,
-                        ro = roleTypes
-                            .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
-                            .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert, roleAcls))
-                            .ToArray(),
-                        g = this.ranges.Import(acl.Grants.Select(v => v.Id)).Save(),
-                        r = this.ranges.Import(acl.Revocations.Select(v => v.Id)).Save(),
-                    };
-                }).ToArray(),
-            };
+            return roles;
         }
 
         private SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType, IUnitConvert unitConvert, IDictionary<IObject, IAccessControlList> accessControlLists)
