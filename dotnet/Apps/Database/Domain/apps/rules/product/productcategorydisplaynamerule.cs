@@ -39,6 +39,11 @@ namespace Allors.Database.Domain
             var primaryAncestors = @this.PrimaryAncestors.Reverse().ToList();
             primaryAncestors.Add(@this);
 
+            if (primaryAncestors.Count == 2)
+            {
+                primaryAncestors.Reverse();
+            }
+
             var array = new string[] {
                     string.Join(", ", string.Join("/", primaryAncestors.Select(v => v.Name ?? string.Empty).ToArray()))
                 };
