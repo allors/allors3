@@ -6,18 +6,17 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Linq;
+    using System.Collections.Generic;
     using Database.Data;
     using Meta;
 
     public static class PrefetchPolicyBuilderExtensions
     {
-        public static PrefetchPolicyBuilder WithWorkspaceRules(this PrefetchPolicyBuilder @this, IClass @class, MetaPopulation m)
+        public static PrefetchPolicyBuilder WithWorkspaceRules(this PrefetchPolicyBuilder @this, MetaPopulation m, ISet<IRoleType> roleTypes)
         {
             @this.WithSecurityRules(m);
 
-            // TODO: Cache
-            foreach (var roleType in @class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Length > 0))
+            foreach (var roleType in roleTypes)
             {
                 var rolePrefetchPolicyBuilder = @this.WithRule(roleType);
                 rolePrefetchPolicyBuilder.WithSecurityRules(m);

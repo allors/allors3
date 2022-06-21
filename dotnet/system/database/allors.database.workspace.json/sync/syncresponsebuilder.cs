@@ -20,17 +20,23 @@ namespace Allors.Database.Protocol.Json
         private readonly IRanges<long> ranges;
 
         private readonly ITransaction transaction;
-        private readonly string workspaceName;
         private readonly ISet<IClass> allowedClasses;
+        private readonly IDictionary<IClass, ISet<IRoleType>> roleTypesByClass;
         private readonly Action<IEnumerable<IObject>> prefetch;
 
         private readonly HashSet<IObject> maskedObjects;
 
-        public SyncResponseBuilder(ITransaction transaction, string workspaceName, IAccessControl accessControl, ISet<IClass> allowedClasses, Action<IEnumerable<IObject>> prefetch, IUnitConvert unitConvert, IRanges<long> ranges)
+        public SyncResponseBuilder(ITransaction transaction,
+            IAccessControl accessControl,
+            ISet<IClass> allowedClasses,
+            IDictionary<IClass, ISet<IRoleType>> roleTypesByClass,
+            Action<IEnumerable<IObject>> prefetch,
+            IUnitConvert unitConvert,
+            IRanges<long> ranges)
         {
             this.transaction = transaction;
-            this.workspaceName = workspaceName;
             this.allowedClasses = allowedClasses;
+            this.roleTypesByClass = roleTypesByClass;
             this.prefetch = prefetch;
             this.unitConvert = unitConvert;
             this.ranges = ranges;
@@ -47,9 +53,32 @@ namespace Allors.Database.Protocol.Json
 
             this.prefetch(requestObjects);
 
-            var objects = requestObjects.Where(this.Include).ToArray();
+            var acls = this.AccessControl.GetAccessControlLists(this.transaction, requestObjects);
+            var objects = requestObjects.Where(v => this.Include(v, acls)).ToArray();
 
-            var acls = this.AccessControl.GetAccessControlLists(this.transaction, objects);
+            var roles = new HashSet<IObject>();
+            foreach (var @object in objects)
+            {
+                var @class = @object.Strategy.Class;
+                var acl = acls[@object];
+                var roleTypes = this.roleTypesByClass[@class];
+                foreach (var roleType in roleTypes.Where(v => v.ObjectType.IsComposite))
+                {
+                    if (acl.CanRead(roleType) && @object.Strategy.ExistRole(roleType))
+                    {
+                        if (roleType.IsOne)
+                        {
+                            roles.Add(@object.Strategy.GetCompositeRole(roleType));
+                        }
+                        else
+                        {
+                            roles.UnionWith(@object.Strategy.GetCompositesRole<IObject>(roleType));
+                        }
+                    }
+                }
+            }
+
+            var roleAcls = this.AccessControl.GetAccessControlLists(this.transaction, roles);
 
             return new SyncResponse
             {
@@ -57,16 +86,16 @@ namespace Allors.Database.Protocol.Json
                 {
                     var @class = v.Strategy.Class;
                     var acl = acls[v];
+                    var roleTypes = this.roleTypesByClass[@class];
 
                     return new SyncResponseObject
                     {
                         i = v.Id,
                         v = v.Strategy.ObjectVersion,
                         c = v.Strategy.Class.Tag,
-                        // TODO: Cache RelationTypes
-                        ro = @class.DatabaseRoleTypes?.Where(v => v.RelationType.WorkspaceNames?.Contains(this.workspaceName) == true)
+                        ro = roleTypes
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
-                            .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
+                            .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert, roleAcls))
                             .ToArray(),
                         g = this.ranges.Import(acl.Grants.Select(v => v.Id)).Save(),
                         r = this.ranges.Import(acl.Revocations.Select(v => v.Id)).Save(),
@@ -75,7 +104,7 @@ namespace Allors.Database.Protocol.Json
             };
         }
 
-        private SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType, IUnitConvert unitConvert)
+        private SyncResponseRole CreateSyncResponseRole(IObject @object, IRoleType roleType, IUnitConvert unitConvert, IDictionary<IObject, IAccessControlList> accessControlLists)
         {
             var syncResponseRole = new SyncResponseRole { t = roleType.RelationType.Tag };
 
@@ -86,28 +115,28 @@ namespace Allors.Database.Protocol.Json
             else if (roleType.IsOne)
             {
                 var role = @object.Strategy.GetCompositeRole(roleType);
-                if (this.Include(role))
+                if (this.Include(role, accessControlLists))
                 {
                     syncResponseRole.o = role.Id;
                 }
             }
             else
             {
-                var roles = @object.Strategy.GetCompositesRole<IObject>(roleType).Where(this.Include);
+                var roles = @object.Strategy.GetCompositesRole<IObject>(roleType).Where(v => this.Include(v, accessControlLists));
                 syncResponseRole.c = this.ranges.Import(roles.Select(roleObject => roleObject.Id)).ToArray();
             }
 
             return syncResponseRole;
         }
 
-        public bool Include(IObject @object)
+        public bool Include(IObject @object, IDictionary<IObject, IAccessControlList> accessControlLists)
         {
             if (@object == null || this.allowedClasses?.Contains(@object.Strategy.Class) != true || this.maskedObjects.Contains(@object))
             {
                 return false;
             }
 
-            if (this.AccessControl[@object].IsMasked())
+            if (accessControlLists[@object].IsMasked())
             {
                 this.maskedObjects.Add(@object);
                 return false;

@@ -13,9 +13,9 @@ namespace Allors.Database.Configuration
 
     public class MetaCache : IMetaCache
     {
-        private readonly IReadOnlyDictionary<IClass, Type> builderTypeByClass;
-        private readonly IReadOnlyDictionary<string, HashSet<IClass>> classesByWorkspaceName;
-        private readonly IReadOnlyDictionary<string, HashSet<long>> permissionIdsByWorkspaceName;
+        private readonly IDictionary<IClass, Type> builderTypeByClass;
+        private readonly IDictionary<string, ISet<IClass>> classesByWorkspaceName;
+        private readonly IDictionary<string, IDictionary<IClass, ISet<IRoleType>>> roleTypesByClassByWorkspaceName;
 
         public MetaCache(IDatabase database)
         {
@@ -27,12 +27,23 @@ namespace Allors.Database.Configuration
                     v => (IClass)v,
                     v => assembly.GetType($"Allors.Database.Domain.{v.Name}Builder", false));
 
-            this.classesByWorkspaceName = new Dictionary<string, HashSet<IClass>>();
-            this.permissionIdsByWorkspaceName = new Dictionary<string, HashSet<long>>();
+            this.classesByWorkspaceName = new Dictionary<string, ISet<IClass>>();
+            this.roleTypesByClassByWorkspaceName = new Dictionary<string, IDictionary<IClass, ISet<IRoleType>>>();
 
-            this.classesByWorkspaceName = metaPopulation.WorkspaceNames
-                .ToDictionary(v => v, v => new HashSet<IClass>(metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(v))));
+            foreach (var workspaceName in metaPopulation.WorkspaceNames)
+            {
+                ISet<IClass> classes = new HashSet<IClass>(metaPopulation.Classes.Where(w => w.WorkspaceNames.Contains(workspaceName)));
+                this.classesByWorkspaceName[workspaceName] = classes;
 
+                var roleTypesByClass = new Dictionary<IClass, ISet<IRoleType>>();
+                foreach (var @class in classes)
+                {
+                    var roleTypes = new HashSet<IRoleType>(@class.DatabaseRoleTypes.Where(v => v.RelationType.WorkspaceNames.Contains(workspaceName)));
+                    roleTypesByClass[@class] = roleTypes;
+                }
+
+                this.roleTypesByClassByWorkspaceName[workspaceName] = roleTypesByClass;
+            }
         }
 
         public Type GetBuilderType(IClass @class) => this.builderTypeByClass[@class];
@@ -43,10 +54,10 @@ namespace Allors.Database.Configuration
             return classes;
         }
 
-        public ISet<long> GetWorkspacePermissionIds(string workspaceName)
+        public IDictionary<IClass, ISet<IRoleType>> GetWorkspaceRoleTypesByClass(string workspaceName)
         {
-            this.permissionIdsByWorkspaceName.TryGetValue(workspaceName, out var classes);
-            return classes;
+            this.roleTypesByClassByWorkspaceName.TryGetValue(workspaceName, out var rolesByClass);
+            return rolesByClass;
         }
     }
 }

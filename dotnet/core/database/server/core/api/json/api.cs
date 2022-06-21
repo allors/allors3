@@ -42,6 +42,7 @@ namespace Allors.Database.Protocol.Json
             this.User = transactionServices.Get<IUserService>().User;
             this.AccessControl = transactionServices.Get<IWorkspaceAclsService>().Create(this.WorkspaceName);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.WorkspaceName);
+            this.RoleTypesByClass = metaCache.GetWorkspaceRoleTypesByClass(this.WorkspaceName);
             this.M = databaseServices.Get<MetaPopulation>();
             this.MetaPopulation = this.M;
             this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
@@ -58,6 +59,7 @@ namespace Allors.Database.Protocol.Json
         public ISecurity Security { get; }
 
         public string WorkspaceName { get; set; }
+
         public CancellationToken CancellationToken { get; }
 
         public ISink Sink { get; }
@@ -69,6 +71,8 @@ namespace Allors.Database.Protocol.Json
         public IAccessControl AccessControl { get; }
 
         public ISet<IClass> AllowedClasses { get; }
+
+        public IDictionary<IClass, ISet<IRoleType>> RoleTypesByClass { get; }
 
         public MetaPopulation M { get; }
 
@@ -151,14 +155,14 @@ namespace Allors.Database.Protocol.Json
                     var prefetchObjects = groupBy;
 
                     var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                    prefetchPolicyBuilder.WithWorkspaceRules(prefetchClass, this.M);
+                    prefetchPolicyBuilder.WithWorkspaceRules(this.M, this.RoleTypesByClass[prefetchClass]);
                     var prefetcher = prefetchPolicyBuilder.Build();
 
                     this.Transaction.Prefetch(prefetcher, prefetchObjects);
                 }
             }
 
-            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.WorkspaceName, this.AccessControl, this.AllowedClasses, Prefetch, this.UnitConvert, this.Ranges);
+            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.RoleTypesByClass, Prefetch, this.UnitConvert, this.Ranges);
             var syncResponse = syncResponseBuilder.Build(syncRequest);
 
             if (@event != null)

@@ -14,5 +14,7 @@ namespace Allors.Database.Services
         Type GetBuilderType(IClass @class);
 
         ISet<IClass> GetWorkspaceClasses(string workspaceName);
+
+        IDictionary<IClass, ISet<IRoleType>> GetWorkspaceRoleTypesByClass(string workspaceName);
     }
 }
