@@ -8,7 +8,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { M, tags } from '@allors/default/workspace/meta';
 import { Composite } from '@allors/system/workspace/meta';
-import { EmailAddress } from '../../../../../../../libs/apps-extranet/workspace/domain/src/lib/generated/EmailAddress.g';
 import {
   Brand,
   Country,
@@ -990,6 +989,11 @@ export class AppFilterService implements FilterService {
               kind: 'Equals',
               propertyType: m.ProductQuote.Receiver,
               parameter: 'to',
+            },
+            {
+              kind: 'Like',
+              roleType: m.ProductQuote.InternalComment,
+              parameter: 'internalComment',
             },
           ],
         },
