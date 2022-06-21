@@ -122,8 +122,8 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal("1", productCategory1.DisplayName);
             Assert.Equal("2", productCategory2.DisplayName);
-            Assert.Equal("1/1.1", productCategory11.DisplayName);
-            Assert.Equal("1/1.2", productCategory12.DisplayName);
+            Assert.Equal("1.1/1", productCategory11.DisplayName);
+            Assert.Equal("1.2/1", productCategory12.DisplayName);
             Assert.Equal("1/1.1/1.1.1", productCategory111.DisplayName);
             Assert.Equal("1/1.2/1.2.1", productCategory121.DisplayName);
         }
@@ -1052,7 +1052,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Derive();
 
-            Assert.Equal("1/1.1", productCategory11.DisplayName);
+            Assert.Equal("1.1/1", productCategory11.DisplayName);
         }
 
         [Fact]
