@@ -49,12 +49,14 @@ namespace Allors.Database.Protocol.Json
 
             var objects = requestObjects.Where(this.Include).ToArray();
 
+            var acls = this.AccessControl.GetAccessControlLists(this.transaction, objects);
+
             return new SyncResponse
             {
                 o = objects.Select(v =>
                 {
                     var @class = v.Strategy.Class;
-                    var acl = this.AccessControl[v];
+                    var acl = acls[v];
 
                     return new SyncResponseObject
                     {
