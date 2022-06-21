@@ -25,6 +25,8 @@ namespace Allors.Database.Domain
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
         }
 
+        public IDictionary<IObject, IAccessControlList> GetAccessControlLists(ITransaction transaction, IEnumerable<IObject> objects) => this.security.GetAccessControlLists(transaction, objects, this.user, this.aclByObject, this.Create);
+
         public IAccessControlList this[IObject @object]
         {
             get
@@ -40,7 +42,6 @@ namespace Allors.Database.Domain
         }
 
         public bool IsMasked(IObject @object) => false;
-
 
         private DatabaseAccessControlList GetAccessControlList(Object @object)
         {
@@ -91,5 +92,7 @@ namespace Allors.Database.Domain
 
             return new DatabaseAccessControlList(this, @object, versionedGrants, versionedRevocations);
         }
+
+        private DatabaseAccessControlList Create(IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations) => new DatabaseAccessControlList(this, @object, grants, revocations);
     }
 }

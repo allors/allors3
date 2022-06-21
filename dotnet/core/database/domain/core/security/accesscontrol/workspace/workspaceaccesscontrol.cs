@@ -30,6 +30,8 @@ namespace Allors.Database.Domain
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
         }
 
+        public IDictionary<IObject, IAccessControlList> GetAccessControlLists(ITransaction transaction, IEnumerable<IObject> objects) => this.security.GetAccessControlLists(transaction, objects, this.user, this.workspaceName, this.aclByObject, this.Create);
+
         public IAccessControlList this[IObject @object]
         {
             get
@@ -107,5 +109,7 @@ namespace Allors.Database.Domain
 
             return new WorkspaceAccessControlList(this, @object, versionedGrants, versionedRevocations);
         }
+
+        private WorkspaceAccessControlList Create(IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations) => new WorkspaceAccessControlList(this, @object, grants, revocations);
     }
 }

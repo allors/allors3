@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
         private readonly IReadOnlyDictionary<Guid, long> writePermissionIdByRelationTypeId;
         private readonly IReadOnlyDictionary<Guid, long> executePermissionIdByMethodTypeId;
 
-        internal DatabaseAccessControlList(DatabaseAccessControl accessControl, Object @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations)
+        internal DatabaseAccessControlList(DatabaseAccessControl accessControl, IObject @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations)
         {
             this.accessControl = accessControl;
             this.grants = grants;
@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
             }
         }
 
-        public Object Object { get; }
+        public IObject Object { get; }
 
         IVersionedGrant[] IAccessControlList.Grants => this.grants;
 

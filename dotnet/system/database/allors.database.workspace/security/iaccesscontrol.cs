@@ -5,8 +5,12 @@
 
 namespace Allors.Database.Security
 {
+    using System.Collections.Generic;
+
     public interface IAccessControl
     {
+        IDictionary<IObject, IAccessControlList> GetAccessControlLists(ITransaction transaction, IEnumerable<IObject> objects);
+
         IAccessControlList this[IObject @object]
         {
             get;
