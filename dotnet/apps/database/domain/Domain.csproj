@@ -26,14 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="..\..\..\Base\Database\Domain\Base\DomainDerivations\AuditableDerivation.cs" />
-    <Compile Remove="..\..\..\Base\Database\Domain\base\services\IDatabaseContext.cs" />
-    <Compile Remove="..\..\..\Base\Database\Domain\Base\Workflow\TaskDeriveParticipants.cs" />
-    <Compile Remove="..\..\..\Core\Database\Domain\Core\Derivations\DomainDerivation.cs" />
-    <Compile Remove="..\..\..\Core\Database\Domain\core\services\IDatabaseContext.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Templates\allors.png" />
     <None Remove="Templates\No_image_available.svg" />
     <None Remove="Templates\ProductQuote.odt" />

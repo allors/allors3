@@ -6,19 +6,22 @@
 namespace Allors.Database.Configuration
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Domain;
+    using Ranges;
 
-    public class VersionedGrants : IVersionedGrants
+    public class VersionedSecurityToken : IVersionedSecurityToken
     {
-        public VersionedGrants(long version, IEnumerable<Grant> grants)
+        public VersionedSecurityToken(IRanges<long> ranges, long id, long version, IDictionary<long, long> versionByGrant)
         {
+            this.Id = id;
             this.Version = version;
-            this.Set = new HashSet<long>(grants.Select(v => v.Id));
+            this.VersionByGrant = versionByGrant;
         }
+
+        public long Id { get; }
 
         public long Version { get; }
 
-        public ISet<long> Set { get; }
+        public IDictionary<long, long> VersionByGrant { get; }
     }
 }

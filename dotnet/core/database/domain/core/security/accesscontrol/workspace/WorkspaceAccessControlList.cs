@@ -17,19 +17,19 @@ namespace Allors.Database.Domain
     public class WorkspaceAccessControlList : IAccessControlList
     {
         private readonly WorkspaceAccessControl accessControl;
-        private readonly IVersionedPermissions[] grantsPermissions;
-        private readonly IVersionedPermissions[] revocationsPermissions;
+        private readonly IVersionedGrant[] grants;
+        private readonly IVersionedRevocation[] revocations;
 
         private readonly IReadOnlyDictionary<Guid, long> readPermissionIdByRelationTypeId;
         private readonly IReadOnlyDictionary<Guid, long> writePermissionIdByRelationTypeId;
         private readonly IReadOnlyDictionary<Guid, long> executePermissionIdByMethodTypeId;
 
-        internal WorkspaceAccessControlList(WorkspaceAccessControl accessControl, IObject @object, IVersionedPermissions[] grantsPermissions, IVersionedPermissions[] revocationsPermissions)
+        internal WorkspaceAccessControlList(WorkspaceAccessControl accessControl, Object @object, IVersionedGrant[] grants, IVersionedRevocation[] revocations)
         {
             this.accessControl = accessControl;
-            this.grantsPermissions = grantsPermissions;
-            this.revocationsPermissions = revocationsPermissions;
-            this.Object = (Object)@object;
+            this.grants = grants;
+            this.revocations = revocations;
+            this.Object = @object;
 
             if (this.Object != null)
             {
@@ -42,9 +42,9 @@ namespace Allors.Database.Domain
 
         public Object Object { get; }
 
-        IVersionedPermissions[] IAccessControlList.Grants => this.grantsPermissions;
+        IVersionedGrant[] IAccessControlList.Grants => this.grants;
 
-        IVersionedPermissions[] IAccessControlList.Revocations => this.revocationsPermissions;
+        IVersionedRevocation[] IAccessControlList.Revocations => this.revocations;
 
         public bool CanRead(IRoleType roleType) => this.readPermissionIdByRelationTypeId?.TryGetValue(roleType.RelationType.Id, out var permissionId) == true && this.IsPermitted(permissionId);
 
@@ -56,9 +56,9 @@ namespace Allors.Database.Domain
 
         private bool IsPermitted(long permissionId)
         {
-            if (this.grantsPermissions.Any(v => v.Set.Contains(permissionId)))
+            if (this.grants.Any(v => v.PermissionSet.Contains(permissionId)))
             {
-                return this.revocationsPermissions?.Any(v => v.Set.Contains(permissionId)) != true;
+                return this.revocations?.Any(v => v.PermissionSet.Contains(permissionId)) != true;
             }
 
             return false;

@@ -27,8 +27,7 @@ namespace Allors.Database.Configuration
         public IAccessControl Create(string workspaceName)
         {
             var masks = this.WorkspaceMask.GetMasks(workspaceName);
-            var userGrants = this.Security.GetVersionedGrantIdsForUser(this.User);
-            return new WorkspaceAccessControl(this.Security, userGrants, masks, workspaceName);
+            return new WorkspaceAccessControl(this.Security, this.User, masks, workspaceName);
         }
     }
 }

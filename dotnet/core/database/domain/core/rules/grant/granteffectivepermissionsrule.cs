@@ -12,19 +12,20 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class RevocationSecurityCacheRule : Rule
+    public class GrantEffectivePermissionsRule : Rule
     {
-        public RevocationSecurityCacheRule(MetaPopulation m) : base(m, new Guid("302F5D78-3287-40DF-A371-357CAFC60647")) =>
+        public GrantEffectivePermissionsRule(MetaPopulation m) : base(m, new Guid("1F897B84-EF92-4E94-8877-3501D56D426B")) =>
             this.Patterns = new Pattern[]
             {
-                m.User.AssociationPattern(v=>v.GrantsWhereEffectiveUser),
+                m.Grant.RolePattern(v=>v.Role),
+                m.Role.RolePattern(v=>v.Permissions, v=>v.GrantsWhereRole),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var user in matches.Cast<User>())
+            foreach (var grant in matches.Cast<Grant>())
             {
-                user.SecurityCacheId = Guid.NewGuid();
+                grant.EffectivePermissions = (grant.Role?.Permissions.ToArray());
             }
         }
     }

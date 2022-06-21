@@ -12,12 +12,11 @@ namespace Allors.Repository
     #region Allors
     [Id("a53f1aed-0e3f-4c3c-9600-dc579cccf893")]
     #endregion
-    public partial class SecurityToken : UniquelyIdentifiable, SecurityCacheable, Deletable 
+    public partial class SecurityToken : UniquelyIdentifiable, Deletable
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
 
-        public Guid SecurityCacheId { get; set; }
         #endregion
 
         #region Allors
@@ -28,12 +27,10 @@ namespace Allors.Repository
         public Grant[] Grants { get; set; }
 
         #region Allors
-        [Id("54E9825B-791B-4D07-8247-BB0D75AA3BD6")]
+        [Id("E094E1DD-A3B0-4B6A-B2FA-B00E98BDC0D6")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Derived]
-        public Permission[] Permissions { get; set; }
+        [Size(256)]
+        public Guid SecurityStamp { get; set; }
 
         #region inherited methods
 
@@ -54,6 +51,5 @@ namespace Allors.Repository
         public void Delete() { }
 
         #endregion
-
-   }
+    }
 }

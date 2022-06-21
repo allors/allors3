@@ -244,8 +244,8 @@ namespace Allors.Database.Protocol.Json
             this.AddDependencies();
 
             // Serialize
-            var grants = new HashSet<IVersionedPermissions>();
-            var revocations = new HashSet<IVersionedPermissions>();
+            var versionByGrant = new Dictionary<long, long>();
+            var versionByRevocation = new Dictionary<long, long>();
 
             this.ThrowIfCancellationRequested();
 
@@ -254,16 +254,25 @@ namespace Allors.Database.Protocol.Json
                 p = this.unmaskedObjects.Select(v =>
                 {
                     var accessControlList = this.AccessControl[v];
+                    var grants = accessControlList.Grants;
+                    var revocations = accessControlList.Revocations;
 
-                    grants.UnionWith(accessControlList.Grants);
-                    revocations.UnionWith(accessControlList.Revocations);
+                    foreach (var grant in grants)
+                    {
+                        versionByGrant[grant.Id] = grant.Version;
+                    }
+
+                    foreach (var revocation in revocations)
+                    {
+                        versionByRevocation[revocation.Id] = revocation.Version;
+                    }
 
                     return new PullResponseObject
                     {
                         i = v.Strategy.ObjectId,
                         v = v.Strategy.ObjectVersion,
-                        g = this.ranges.Import(accessControlList.Grants.Select(w => w.Id)).Save(),
-                        r = this.ranges.Import(accessControlList.Revocations.Select(w => w.Id))
+                        g = this.ranges.Import(grants.Select(w => w.Id)).Save(),
+                        r = this.ranges.Import(revocations.Select(w => w.Id))
                             .Save(),
                     };
                 }).ToArray(),
@@ -272,8 +281,8 @@ namespace Allors.Database.Protocol.Json
                 v = this.valueByName,
             };
 
-            pullResponse.g = grants.Count > 0 ? grants.Select(v => new[] { v.Id, v.Version }).ToArray() : null;
-            pullResponse.r = revocations.Count > 0 ? revocations.Select(v => new[] { v.Id, v.Version }).ToArray() : null;
+            pullResponse.g = versionByGrant.Count > 0 ? versionByGrant.Select(v => new[] { v.Key, v.Value }).ToArray() : null;
+            pullResponse.r = versionByRevocation.Count > 0 ? versionByRevocation.Select(v => new[] { v.Key, v.Value }).ToArray() : null;
 
             return pullResponse;
         }

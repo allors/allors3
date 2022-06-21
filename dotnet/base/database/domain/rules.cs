@@ -19,10 +19,7 @@ namespace Allors.Database.Domain
                 new UserInUserPasswordRule(m),
                 new GrantEffectiveUsersRule(m),
                 new GrantEffectivePermissionsRule(m),
-                new GrantSecurityCacheRule(m),
-                new SecurityTokenSecurityCacheRule(m),
-                new RevocationSecurityCacheRule(m),
-                new UserSecurityCacheRule(m),
+                new SecurityTokenSecurityStampRule(m),
 
                 // Base
                 new MediaRule(m),

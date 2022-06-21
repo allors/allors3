@@ -19,8 +19,6 @@ namespace Allors.Repository
         #region inherited properties
         public Guid UniqueId { get; set; }
 
-        public Guid SecurityCacheId { get; set; }
-
         public SecurityToken OwnerSecurityToken { get; set; }
 
         public Grant OwnerGrant { get; set; }

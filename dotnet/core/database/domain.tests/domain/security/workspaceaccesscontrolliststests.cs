@@ -42,10 +42,10 @@ namespace Allors.Database.Domain.Tests
             var permission = this.FindPermission(this.M.Organisation.Name, Operations.Read);
             var role = new RoleBuilder(this.Transaction).WithName("Role").WithPermission(permission).Build();
             var person = new PersonBuilder(this.Transaction).WithFirstName("John").WithLastName("Doe").Build();
-            var accessControl = new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
+            var grant = new GrantBuilder(this.Transaction).WithSubject(person).WithRole(role).Build();
 
-            var intialSecurityToken = new SecurityTokens(this.Transaction).InitialSecurityToken;
-            intialSecurityToken.AddGrant(accessControl);
+            var initialSecurityToken = new SecurityTokens(this.Transaction).InitialSecurityToken;
+            initialSecurityToken.AddGrant(grant);
 
             this.Transaction.Derive();
             this.Transaction.Commit();

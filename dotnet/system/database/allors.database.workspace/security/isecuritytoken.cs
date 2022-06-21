@@ -5,24 +5,11 @@
 
 namespace Allors.Database.Security
 {
-    using Domain;
-    using Meta;
-
     /// <summary>
     /// List of permissions for an object/user combination.
     /// </summary>
-    public interface IAccessControlList
+    public interface ISecurityToken : IObject
     {
-        IVersionedGrant[] Grants { get; }
-
-        IVersionedRevocation[] Revocations { get; }
-
-        bool CanRead(IRoleType roleType);
-
-        bool CanWrite(IRoleType roleType);
-
-        bool CanExecute(IMethodType methodType);
-
-        bool IsMasked();
+        IGrant[] Grants { get; }
     }
 }

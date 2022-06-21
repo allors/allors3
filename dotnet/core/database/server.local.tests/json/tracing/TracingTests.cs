@@ -63,7 +63,7 @@ namespace Tests
             var nodes = tree.Nodes[0].Nodes;
 
             Assert.Single(nodes.Where(v => v.Event is SqlInstantiateObjectEvent));
-            Assert.Equal(2, nodes.Count(v => v.Event is SqlInstantiateReferencesEvent));
+            Assert.Equal(3, nodes.Count(v => v.Event is SqlInstantiateReferencesEvent));
             Assert.All(nodes, v => Assert.Empty(v.Nodes));
 
             this.Transaction.Rollback();
