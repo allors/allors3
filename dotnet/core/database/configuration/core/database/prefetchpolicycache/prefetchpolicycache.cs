@@ -5,21 +5,46 @@
 
 namespace Allors.Database.Configuration
 {
+    using System.Collections.Generic;
     using Database;
     using Domain;
     using Meta;
+    using Services;
 
     public partial class PrefetchPolicyCache : IPrefetchPolicyCache
     {
-        public PrefetchPolicyCache(IDatabase database)
+        private readonly IDictionary<string, IDictionary<IClass, PrefetchPolicy>> prefetchPolicyByClassByWorkspace;
+
+        public PrefetchPolicyCache(IDatabase database, IMetaCache metaCache)
         {
             var m = database.Services.Get<MetaPopulation>();
 
             this.PermissionsWithClass = new PrefetchPolicyBuilder()
                     .WithRule(m.Permission.ClassPointer)
                     .Build();
+
+
+            this.prefetchPolicyByClassByWorkspace = new Dictionary<string, IDictionary<IClass, PrefetchPolicy>>();
+
+            foreach (var workspaceName in m.WorkspaceNames)
+            {
+                var roleTypesByClass = metaCache.GetWorkspaceRoleTypesByClass(workspaceName);
+
+                var prefetchPolicyByClass = new Dictionary<IClass, PrefetchPolicy>();
+                foreach (var @class in metaCache.GetWorkspaceClasses(workspaceName))
+                {
+                    var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
+                    prefetchPolicyBuilder.WithWorkspaceRules(m, roleTypesByClass[@class]);
+                    var prefetcher = prefetchPolicyBuilder.Build();
+                    prefetchPolicyByClass[@class] = prefetcher;
+                }
+
+                this.prefetchPolicyByClassByWorkspace[workspaceName] = prefetchPolicyByClass;
+            }
         }
 
         public PrefetchPolicy PermissionsWithClass { get; }
+
+        public IDictionary<IClass, PrefetchPolicy> WorkspacePrefetchPolicyByClass(string workspaceName) => this.prefetchPolicyByClassByWorkspace[workspaceName];
     }
 }

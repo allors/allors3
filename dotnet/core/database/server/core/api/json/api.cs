@@ -38,6 +38,7 @@ namespace Allors.Database.Protocol.Json
             var databaseServices = transaction.Database.Services;
             var metaCache = databaseServices.Get<IMetaCache>();
 
+            this.PrefetchPolicyCache = databaseServices.Get<IPrefetchPolicyCache>();
             this.Ranges = databaseServices.Get<IRanges<long>>();
             this.User = transactionServices.Get<IUserService>().User;
             this.AccessControl = transactionServices.Get<IWorkspaceAclsService>().Create(this.WorkspaceName);
@@ -54,6 +55,7 @@ namespace Allors.Database.Protocol.Json
             this.UnitConvert = new UnitConvert();
         }
 
+
         public ITransaction Transaction { get; }
 
         public ISecurity Security { get; }
@@ -63,6 +65,8 @@ namespace Allors.Database.Protocol.Json
         public CancellationToken CancellationToken { get; }
 
         public ISink Sink { get; }
+
+        public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
 
         public IRanges<long> Ranges { get; }
 
@@ -146,23 +150,8 @@ namespace Allors.Database.Protocol.Json
             var @event = this.Sink?.OnSync(this.Transaction, syncRequest);
             this.Sink?.OnBefore(@event);
 
-            void Prefetch(IEnumerable<IObject> objects)
-            {
-                // Prefetch
-                foreach (var groupBy in objects.GroupBy(v => v.Strategy.Class, v => v))
-                {
-                    var prefetchClass = groupBy.Key;
-                    var prefetchObjects = groupBy;
-
-                    var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
-                    prefetchPolicyBuilder.WithWorkspaceRules(this.M, this.RoleTypesByClass[prefetchClass]);
-                    var prefetcher = prefetchPolicyBuilder.Build();
-
-                    this.Transaction.Prefetch(prefetcher, prefetchObjects);
-                }
-            }
-
-            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.RoleTypesByClass, Prefetch, this.UnitConvert, this.Ranges);
+            var prefetchPolicyByClass = this.PrefetchPolicyCache.WorkspacePrefetchPolicyByClass(this.WorkspaceName);
+            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.RoleTypesByClass, prefetchPolicyByClass, this.UnitConvert, this.Ranges);
             var syncResponse = syncResponseBuilder.Build(syncRequest);
 
             if (@event != null)

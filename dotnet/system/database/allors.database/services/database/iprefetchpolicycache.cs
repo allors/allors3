@@ -5,8 +5,13 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Collections.Generic;
+    using Meta;
+
     public interface IPrefetchPolicyCache
     {
         PrefetchPolicy PermissionsWithClass { get; }
+
+        IDictionary<IClass, PrefetchPolicy> WorkspacePrefetchPolicyByClass(string workspaceName);
     }
 }

@@ -11,6 +11,7 @@ namespace Allors.Database.Protocol.Json
     using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Api.Sync;
+    using Domain;
     using Ranges;
     using Security;
 
@@ -22,7 +23,7 @@ namespace Allors.Database.Protocol.Json
         private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
         private readonly IDictionary<IClass, ISet<IRoleType>> roleTypesByClass;
-        private readonly Action<IEnumerable<IObject>> prefetch;
+        private readonly IDictionary<IClass, PrefetchPolicy> prefetchPolicyByClass;
 
         private readonly HashSet<IObject> maskedObjects;
 
@@ -30,14 +31,14 @@ namespace Allors.Database.Protocol.Json
             IAccessControl accessControl,
             ISet<IClass> allowedClasses,
             IDictionary<IClass, ISet<IRoleType>> roleTypesByClass,
-            Action<IEnumerable<IObject>> prefetch,
+            IDictionary<IClass, PrefetchPolicy> prefetchPolicyByClass,
             IUnitConvert unitConvert,
             IRanges<long> ranges)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;
             this.roleTypesByClass = roleTypesByClass;
-            this.prefetch = prefetch;
+            this.prefetchPolicyByClass = prefetchPolicyByClass;
             this.unitConvert = unitConvert;
             this.ranges = ranges;
             this.maskedObjects = new HashSet<IObject>();
@@ -51,7 +52,13 @@ namespace Allors.Database.Protocol.Json
         {
             var requestObjects = this.transaction.Instantiate(syncRequest.o);
 
-            this.prefetch(requestObjects);
+            foreach (var groupBy in requestObjects.GroupBy(v => v.Strategy.Class, v => v))
+            {
+                var prefetchClass = groupBy.Key;
+                var prefetchObjects = groupBy;
+                var prefetchPolicy = this.prefetchPolicyByClass[prefetchClass];
+                this.transaction.Prefetch(prefetchPolicy, prefetchObjects);
+            }
 
             var objectAcls = this.AccessControl.GetAccessControlLists(this.transaction, requestObjects);
             var filteredObjects = requestObjects.Where(v => this.Include(v, objectAcls)).ToArray();
