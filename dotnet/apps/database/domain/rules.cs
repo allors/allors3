@@ -486,6 +486,7 @@ namespace Allors.Database.Domain
                 new WorkEffortAssignmentRateDelegatedAccessRule(m),
                 new WorkEffortAssignmentRateValidationRule(m),
                 new WorkEffortAssignmentRateWorkEffortRule(m),
+                new WorkEffortDisplayNameRule(m),
                 new WorkEffortFixedAssetAssignmentDelegatedAccessRule(m),
                 new WorkEffortGrandTotalRule(m),
                 new WorkEffortInventoryAssignmentCostOfGoodsSoldRule(m),

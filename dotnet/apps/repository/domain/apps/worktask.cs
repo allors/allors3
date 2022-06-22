@@ -139,6 +139,8 @@ namespace Allors.Repository
 
         public string SearchString { get; set; }
 
+        public string DisplayName { get; set; }
+
         #endregion
 
         #region Allors
