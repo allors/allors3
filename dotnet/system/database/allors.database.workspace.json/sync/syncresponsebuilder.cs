@@ -60,10 +60,10 @@ namespace Allors.Database.Protocol.Json
                 this.transaction.Prefetch(prefetchPolicy, prefetchObjects);
             }
 
-            var objectAcls = this.AccessControl.GetAccessControlLists(this.transaction, requestObjects);
+            var objectAcls = requestObjects.ToDictionary(v => v, v => this.AccessControl[v]);
             var filteredObjects = requestObjects.Where(v => this.Include(v, objectAcls)).ToArray();
             var compositeRoles = this.Roles(filteredObjects, objectAcls);
-            var roleAcls = this.AccessControl.GetAccessControlLists(this.transaction, compositeRoles);
+            var roleAcls = compositeRoles.ToDictionary(v => v, v => this.AccessControl[v]);
 
             return new SyncResponse
             {
@@ -82,8 +82,8 @@ namespace Allors.Database.Protocol.Json
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert, roleAcls))
                             .ToArray(),
-                        g = this.ranges.Import(acl.Grants.Select(v => v.Id)).Save(),
-                        r = this.ranges.Import(acl.Revocations.Select(v => v.Id)).Save(),
+                        g = this.ranges.Import(acl.Grants.Select(w => w.Id)).Save(),
+                        r = this.ranges.Import(acl.Revocations.Select(w => w.Id)).Save(),
                     };
                 }).ToArray(),
             };

@@ -216,28 +216,6 @@ namespace Allors.Database.Configuration
             return result.Values.ToArray();
         }
 
-        public IDictionary<IObject, IAccessControlList> GetAccessControlLists(ITransaction transaction, IEnumerable<IObject> objects, IUser user, Dictionary<IObject, IAccessControlList> cache,
-            Func<IObject, IVersionedGrant[], IVersionedRevocation[], IAccessControlList> create)
-        {
-            var resolver = new BulkResolver(this, transaction, objects, user, cache, create, this.databaseVersionedSecurityTokens, this.databaseVersionedGrants, this.databaseVersionedRevocations, null);
-            return resolver.Result;
-        }
-
-        public IDictionary<IObject, IAccessControlList> GetAccessControlLists(ITransaction transaction,
-            IEnumerable<IObject> objects, IUser user, string workspaceName,
-            Dictionary<IObject, IAccessControlList> cache,
-            Func<IObject, IVersionedGrant[], IVersionedRevocation[], IAccessControlList> create)
-        {
-            var versionedSecurityTokens = this.versionedSecurityTokensByWorkspace[workspaceName];
-            var versionedGrants = this.versionedGrantsByWorkspace[workspaceName];
-            var versionedRevocations = this.versionedRevocationsByWorkspace[workspaceName];
-
-            var allowedPermissionIds = this.permissionIdsByWorkspaceName[workspaceName];
-
-            var resolver = new BulkResolver(this, transaction, objects, user, cache, create, versionedSecurityTokens, versionedGrants, versionedRevocations, allowedPermissionIds);
-            return resolver.Result;
-        }
-
         private IList<IVersionedSecurityToken> GetVersionedSecurityTokens(ITransaction transaction, ISecurityToken[] securityTokens)
         {
             var versionedSecurityTokens = new List<IVersionedSecurityToken>(securityTokens.Length);

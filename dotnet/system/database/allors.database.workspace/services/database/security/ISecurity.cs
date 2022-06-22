@@ -5,8 +5,6 @@
 
 namespace Allors.Database.Domain
 {
-    using System;
-    using System.Collections.Generic;
     using Database.Security;
 
     public interface ISecurity
@@ -20,19 +18,5 @@ namespace Allors.Database.Domain
         IVersionedRevocation[] GetVersionedRevocations(ITransaction transaction, IUser user, IRevocation[] revocations);
 
         IVersionedRevocation[] GetVersionedRevocations(ITransaction transaction, IUser user, IRevocation[] revocations, string workspaceName);
-
-        IDictionary<IObject, IAccessControlList> GetAccessControlLists(
-            ITransaction transaction,
-            IEnumerable<IObject> objects,
-            IUser user,
-            Dictionary<IObject, IAccessControlList> cache,
-            Func<IObject, IVersionedGrant[], IVersionedRevocation[], IAccessControlList> create);
-
-        IDictionary<IObject, IAccessControlList> GetAccessControlLists(
-            ITransaction transaction,
-            IEnumerable<IObject> objects,
-            IUser user, string workspaceName,
-            Dictionary<IObject, IAccessControlList> cache,
-            Func<IObject, IVersionedGrant[], IVersionedRevocation[], IAccessControlList> create);
     }
 }

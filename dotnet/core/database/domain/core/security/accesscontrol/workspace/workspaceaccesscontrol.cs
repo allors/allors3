@@ -30,13 +30,6 @@ namespace Allors.Database.Domain
             this.aclByObject = new Dictionary<IObject, IAccessControlList>();
         }
 
-        public IDictionary<IObject, IAccessControlList> GetAccessControlLists(ITransaction transaction, IEnumerable<IObject> objects)
-        {
-            return objects.ToDictionary(v => v, v => this[(Object)v]);
-
-            //return this.security.GetAccessControlLists(transaction, objects, this.user, this.workspaceName, this.aclByObject, this.Create);
-        }
-
         public IAccessControlList this[IObject @object]
         {
             get
