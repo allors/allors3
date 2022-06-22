@@ -75,6 +75,7 @@ namespace Allors.Database.Configuration
         {
             this.Database = database;
             this.M = (MetaPopulation)this.Database.MetaPopulation;
+            this.metaCache = new MetaCache(this.Database);
         }
 
         public MetaPopulation M { get; private set; }
@@ -85,16 +86,16 @@ namespace Allors.Database.Configuration
             typeof(T) switch
             {
                 // System
-                { } type when type == typeof(IMetaCache) => (T)(this.metaCache ??= new MetaCache(this.Database)),
+                { } type when type == typeof(IMetaCache) => (T)this.metaCache,
                 { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
                 { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.Database.ObjectFactory.Assembly)),
                 { } type when type == typeof(ISecurity) => (T)(this.security ??= new Security(this)),
+                { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.Database, this.metaCache)),
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
                 { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
-                { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.Database)),
                 { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.Database)),
                 { } type when type == typeof(IPreparedExtents) => (T)(this.preparedExtents ??= new PreparedExtents(this.Database)),
                 { } type when type == typeof(ITreeCache) => (T)(this.treeCache ??= new TreeCache()),
