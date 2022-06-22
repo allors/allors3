@@ -94,11 +94,16 @@ namespace Allors.Database.Configuration
 
             var versionedSecurityTokens = this.GetVersionedSecurityTokens(transaction, securityTokens);
 
-            IList<long> missingIds = null;
+            ISet<long> missingGrantIds = null;
             foreach (var kvp in versionedSecurityTokens.SelectMany(v => v.VersionByGrant))
             {
                 var grantId = kvp.Key;
                 var grantVersion = kvp.Value;
+
+                if (result.ContainsKey(grantId) || missingGrantIds?.Contains(grantId) == true)
+                {
+                    continue;
+                }
 
                 if (this.databaseVersionedGrants.TryGetValue(grantId, out var versionedGrant) && versionedGrant.Version == grantVersion)
                 {
@@ -109,15 +114,15 @@ namespace Allors.Database.Configuration
                 }
                 else
                 {
-                    missingIds ??= new List<long>();
-                    missingIds.Add(grantId);
+                    missingGrantIds ??= new HashSet<long>();
+                    missingGrantIds.Add(grantId);
                 }
             }
 
-            if (missingIds != null)
+            if (missingGrantIds != null)
             {
-                transaction.Prefetch(this.GrantPrefetchPolicy, missingIds);
-                var missing = transaction.Instantiate(missingIds).Cast<Grant>();
+                transaction.Prefetch(this.GrantPrefetchPolicy, missingGrantIds);
+                var missing = transaction.Instantiate(missingGrantIds).Cast<Grant>();
 
                 foreach (var grant in missing)
                 {

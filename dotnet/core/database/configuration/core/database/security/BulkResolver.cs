@@ -132,20 +132,13 @@ namespace Allors.Database.Configuration
 
                 foreach (var @object in this.missingObjects)
                 {
-                    var delegatedAccess = @object is DelegatedAccessObject del ? del.DelegatedAccess : null;
-                    IEnumerable<ISecurityToken> tokens = null;
-                    if (delegatedAccess?.ExistSecurityTokens == true)
+                    var tokens = this.GetDefinedSecurityTokens(@object).ToArray();
+                    if (tokens.Length == 0)
                     {
-                        tokens = @object.ExistSecurityTokens ? delegatedAccess.SecurityTokens.Concat(@object.SecurityTokens) : delegatedAccess.SecurityTokens;
+                        tokens = @object.Strategy.IsNewInTransaction
+                            ? new ISecurityToken[] { initialSecurityToken ?? defaultSecurityToken }
+                            : new ISecurityToken[] { defaultSecurityToken };
                     }
-                    else if (@object.ExistSecurityTokens)
-                    {
-                        tokens = @object.SecurityTokens;
-                    }
-
-                    tokens ??= @object.Strategy.IsNewInTransaction
-                        ? new[] { initialSecurityToken ?? defaultSecurityToken }
-                        : new[] { defaultSecurityToken };
 
                     var grants = tokens.SelectMany(v => this.versionedSecurityTokens[v.Id].VersionByGrant.Keys
                             .Select(w => this.versionedGrants[w]))
