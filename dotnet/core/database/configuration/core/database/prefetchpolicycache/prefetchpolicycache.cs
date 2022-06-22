@@ -35,8 +35,8 @@ namespace Allors.Database.Configuration
                 {
                     var prefetchPolicyBuilder = new PrefetchPolicyBuilder();
                     prefetchPolicyBuilder.WithWorkspaceRules(m, roleTypesByClass[@class]);
-                    var prefetcher = prefetchPolicyBuilder.Build();
-                    prefetchPolicyByClass[@class] = prefetcher;
+                    var prefetchPolicy = prefetchPolicyBuilder.Build();
+                    prefetchPolicyByClass[@class] = prefetchPolicy;
                 }
 
                 this.prefetchPolicyByClassByWorkspace[workspaceName] = prefetchPolicyByClass;

@@ -18,10 +18,14 @@ namespace Allors.Database.Domain
 
             foreach (var roleType in roleTypes)
             {
-                var rolePrefetchPolicyBuilder = @this.WithRule(roleType);
                 if (roleType.ObjectType.IsComposite)
                 {
-                    rolePrefetchPolicyBuilder.WithSecurityRules(m);
+                    var securityPrefetch = new PrefetchPolicyBuilder().WithSecurityRules(m).Build();
+                    @this.WithRule(roleType, securityPrefetch);
+                }
+                else
+                {
+                    @this.WithRule(roleType);
                 }
             }
 
