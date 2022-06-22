@@ -14,20 +14,16 @@ namespace Allors.Database.Configuration
 
     public class BulkResolver
     {
-        private readonly Security security;
         private readonly Dictionary<IObject, IAccessControlList> cache;
-        private readonly Func<IObject, IVersionedGrant[], IVersionedRevocation[], IAccessControlList> create;
         private readonly ConcurrentDictionary<long, IVersionedSecurityToken> cachedSecurityTokens;
         private readonly ConcurrentDictionary<long, IVersionedGrant> cachedGrants;
         private readonly ConcurrentDictionary<long, IVersionedRevocation> cachedRevocations;
-        private readonly HashSet<long> allowedPermissionIds;
+
+        private readonly IDictionary<long, IVersionedSecurityToken> versionedSecurityTokens;
+        private readonly IDictionary<long, IVersionedGrant> versionedGrants;
+        private readonly IDictionary<long, IVersionedRevocation> versionedRevocations;
 
         private IList<Domain.Object> missingObjects;
-
-        private IDictionary<long, IVersionedSecurityToken> versionedSecurityTokens;
-        private IDictionary<long, IVersionedGrant> versionedGrants;
-        private IDictionary<long, IVersionedRevocation> versionedRevocations;
-
         private ISet<ISecurityToken> missingSecurityTokens;
         private ISet<long> missingGrants;
         private ISet<IRevocation> missingRevocations;
@@ -40,13 +36,10 @@ namespace Allors.Database.Configuration
             ConcurrentDictionary<long, IVersionedRevocation> cachedRevocations,
             HashSet<long> allowedPermissionIds)
         {
-            this.security = security;
             this.cache = cache;
-            this.create = create;
             this.cachedSecurityTokens = cachedSecurityTokens;
             this.cachedGrants = cachedGrants;
             this.cachedRevocations = cachedRevocations;
-            this.allowedPermissionIds = allowedPermissionIds;
 
             this.Result = new Dictionary<IObject, IAccessControlList>();
 
@@ -72,7 +65,7 @@ namespace Allors.Database.Configuration
                         this.FromCache(securityToken);
                     }
 
-                    foreach (var revocation in missingObject.Revocations)
+                    foreach (var revocation in this.GetRevocations(missingObject))
                     {
                         this.FromCache(revocation);
                     }
@@ -80,11 +73,11 @@ namespace Allors.Database.Configuration
 
                 if (this.missingSecurityTokens != null)
                 {
-                    transaction.Prefetch(this.security.SecurityTokenPrefetchPolicy, this.missingSecurityTokens);
+                    transaction.Prefetch(security.SecurityTokenPrefetchPolicy, this.missingSecurityTokens);
 
                     foreach (var securityToken in this.missingSecurityTokens)
                     {
-                        var versionedSecurityToken = new VersionedSecurityToken(this.security.Ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
+                        var versionedSecurityToken = new VersionedSecurityToken(security.Ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
                         cachedSecurityTokens[securityToken.Strategy.ObjectId] = versionedSecurityToken;
                         this.versionedSecurityTokens[securityToken.Strategy.ObjectId] = versionedSecurityToken;
                         foreach (var grant in versionedSecurityToken.VersionByGrant)
@@ -96,17 +89,17 @@ namespace Allors.Database.Configuration
 
                 if (this.missingRevocations != null)
                 {
-                    transaction.Prefetch(this.security.RevocationPrefetchPolicy, this.missingRevocations.Select(v => v.Strategy));
+                    transaction.Prefetch(security.RevocationPrefetchPolicy, this.missingRevocations.Select(v => v.Strategy));
 
                     foreach (var revocation in this.missingRevocations)
                     {
                         var permissions = ((Revocation)revocation).DeniedPermissions.Select(v => v.Id);
-                        if (this.allowedPermissionIds != null)
+                        if (allowedPermissionIds != null)
                         {
-                            permissions = permissions.Where(v => this.allowedPermissionIds.Contains(v));
+                            permissions = permissions.Where(v => allowedPermissionIds.Contains(v));
                         }
 
-                        var versionedRevocation = new VersionedRevocation(this.security.Ranges, revocation.Id, revocation.Strategy.ObjectVersion, permissions);
+                        var versionedRevocation = new VersionedRevocation(security.Ranges, revocation.Id, revocation.Strategy.ObjectVersion, permissions);
                         cachedRevocations[revocation.Strategy.ObjectId] = versionedRevocation;
                         this.versionedRevocations[revocation.Strategy.ObjectId] = versionedRevocation;
                     }
@@ -114,18 +107,18 @@ namespace Allors.Database.Configuration
 
                 if (this.missingGrants != null)
                 {
-                    transaction.Prefetch(this.security.GrantPrefetchPolicy, this.missingGrants);
+                    transaction.Prefetch(security.GrantPrefetchPolicy, this.missingGrants);
                     var missing = transaction.Instantiate(this.missingGrants).Cast<Grant>();
 
                     foreach (var grant in missing)
                     {
                         var permissions = grant.EffectivePermissions;
-                        if (this.allowedPermissionIds != null)
+                        if (allowedPermissionIds != null)
                         {
-                            permissions = permissions.Where(v => this.allowedPermissionIds.Contains(v.Id));
+                            permissions = permissions.Where(v => allowedPermissionIds.Contains(v.Id));
                         }
 
-                        var versionedGrant = new VersionedGrant(this.security.Ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), permissions.Select(v => v.Id));
+                        var versionedGrant = new VersionedGrant(security.Ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), permissions.Select(v => v.Id));
                         this.versionedGrants[grant.Id] = versionedGrant;
                     }
                 }
@@ -146,8 +139,8 @@ namespace Allors.Database.Configuration
                             .Distinct()
                             .ToArray();
 
-                    var revocations = @object.Revocations.Select(v => this.versionedRevocations[v.Id]).Where(v => v.PermissionSet.Any()).ToArray();
-                    var acl = this.create(@object, grants, revocations);
+                    var revocations = this.GetRevocations(@object).Select(v => this.versionedRevocations[v.Id]).Where(v => v.PermissionSet.Any()).ToArray();
+                    var acl = create(@object, grants, revocations);
 
                     this.cache[@object] = acl;
                     this.Result[@object] = acl;
@@ -175,6 +168,11 @@ namespace Allors.Database.Configuration
 
         private void FromCache(ISecurityToken securityToken)
         {
+            if (this.versionedSecurityTokens.ContainsKey(securityToken.Id) || this.missingSecurityTokens?.Contains(securityToken) == true)
+            {
+                return;
+            }
+
             if (this.cachedSecurityTokens.TryGetValue(securityToken.Strategy.ObjectId, out var versionedSecurityToken) && versionedSecurityToken.Version == securityToken.Strategy.ObjectVersion)
             {
                 this.versionedSecurityTokens[securityToken.Id] = versionedSecurityToken;
@@ -192,6 +190,11 @@ namespace Allors.Database.Configuration
 
         private void FromCache(KeyValuePair<long, long> grant)
         {
+            if (this.versionedGrants.ContainsKey(grant.Key) || this.missingGrants?.Contains(grant.Key) == true)
+            {
+                return;
+            }
+
             if (this.cachedGrants.TryGetValue(grant.Key, out var versionedGrant) && versionedGrant.Version == grant.Value)
             {
                 this.versionedGrants[versionedGrant.Id] = versionedGrant;
@@ -205,6 +208,11 @@ namespace Allors.Database.Configuration
 
         private void FromCache(IRevocation revocation)
         {
+            if (this.versionedRevocations.ContainsKey(revocation.Id) || this.missingRevocations?.Contains(revocation) == true)
+            {
+                return;
+            }
+
             if (this.cachedRevocations.TryGetValue(revocation.Strategy.ObjectId, out var versionedRevocation) && versionedRevocation.Version != revocation.Strategy.ObjectVersion)
             {
                 this.versionedRevocations[versionedRevocation.Id] = versionedRevocation;
@@ -224,6 +232,16 @@ namespace Allors.Database.Configuration
             }
 
             return @object.SecurityTokens;
+        }
+
+        private IEnumerable<IRevocation> GetRevocations(Domain.Object @object)
+        {
+            if (@object is DelegatedAccessObject { ExistRevocations: true } delegated)
+            {
+                return @object.ExistRevocations ? @object.Revocations.Concat(delegated.Revocations) : delegated.Revocations;
+            }
+
+            return @object.Revocations;
         }
     }
 }
