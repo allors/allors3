@@ -1,0 +1,18 @@
+<div
+  *ngIf="panelEnabled && enabled"
+  class="mat-elevation-z2"
+  style="background: white"
+>
+  <div (click)="toggle()" class="container-fluid" style="cursor: pointer">
+    <div class="row pt-3">
+      <div class="col pl-3">
+        <h4>{{ title }}</h4>
+      </div>
+      <div class="pr-3">
+        <mat-icon>expand_less</mat-icon>
+      </div>
+    </div>
+  </div>
+
+  <a-mat-table [table]="table"></a-mat-table>
+</div>
