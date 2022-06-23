@@ -33,6 +33,10 @@ export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageCompo
 
   nonSerialisedInventoryItemTarget: Path;
   serialisedInventoryItemTarget: Path;
+  purchaseInvoiceTarget: Path;
+  workOrderTarget: Path;
+  salesOrderTarget: Path;
+  quoteTarget: Path;
 
   serialised: () => boolean;
   nonSerialised: () => boolean;
@@ -66,6 +70,32 @@ export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageCompo
     this.serialisedInventoryItemTarget = p.NonUnifiedPart({
       InventoryItemsWherePart: {},
       ofType: m.SerialisedInventoryItem,
+    });
+
+    this.workOrderTarget = p.Part({
+      InventoryItemsWherePart: {
+        WorkEffortInventoryAssignmentsWhereInventoryItem: {
+          Assignment: {},
+        },
+      },
+    });
+
+    this.purchaseInvoiceTarget = p.UnifiedProduct({
+      Part_PurchaseInvoiceItemsWherePart: {
+        PurchaseInvoiceWherePurchaseInvoiceItem: {},
+      },
+    });
+
+    this.salesOrderTarget = p.UnifiedProduct({
+      SalesOrderItemsWhereProduct: {
+        SalesOrderWhereSalesOrderItem: {},
+      },
+    });
+
+    this.quoteTarget = p.UnifiedProduct({
+      QuoteItemsWhereProduct: {
+        QuoteWhereQuoteItem: {},
+      },
     });
 
     this.serialised = () =>
