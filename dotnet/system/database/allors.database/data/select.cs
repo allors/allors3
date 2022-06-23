@@ -20,7 +20,7 @@ namespace Allors.Database.Data
         {
         }
 
-        internal Select(IPropertyType[] propertyTypes, int index)
+        private Select(IPropertyType[] propertyTypes, int index)
         {
             if (propertyTypes?.Length > 0)
             {
@@ -59,52 +59,8 @@ namespace Allors.Database.Data
 
         public Select End => this.ExistNext ? this.Next.End : this;
 
-        public IEnumerable<IObject> Get(IObject @object)
-        {
-            if (this.PropertyType.IsOne)
-            {
-                var resolved = this.PropertyType.Get(@object.Strategy);
-                if (resolved != null)
-                {
-                    if (this.ExistNext)
-                    {
-                        foreach (var next in this.Next.Get((IObject)resolved))
-                        {
-                            yield return next;
-                        }
-                    }
-                    else
-                    {
-                        yield return (IObject)resolved;
-                    }
-                }
-            }
-            else
-            {
-                var resolved = (IEnumerable)this.PropertyType.Get(@object.Strategy);
-                if (resolved != null)
-                {
-                    if (this.ExistNext)
-                    {
-                        foreach (var resolvedItem in resolved)
-                        {
-                            foreach (var next in this.Next.Get((IObject)resolvedItem))
-                            {
-                                yield return next;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (IObject child in resolved)
-                        {
-                            yield return child;
-                        }
-                    }
-                }
-            }
-        }
-        
+        public void Accept(IVisitor visitor) => visitor.VisitSelect(this);
+
         public IObjectType GetObjectType()
         {
             if (this.ExistNext)
@@ -136,8 +92,6 @@ namespace Allors.Database.Data
                 this.Next.ToStringAppendToName(name);
             }
         }
-
-        public void Accept(IVisitor visitor) => visitor.VisitSelect(this);
 
         public static bool TryParse(IComposite composite, string selectString, out Select @select)
         {

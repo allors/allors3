@@ -55,8 +55,12 @@ namespace Allors.Database.Protocol.Json
         private void WithoutResults(IExtent extent, PullResponseBuilder response)
         {
             var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
-            var name = extent.ObjectType.PluralName;
+            var prefetchPolicy = this.pullPrefetchers.ForInclude(extent.ObjectType, null);
+            this.transaction.Prefetch(prefetchPolicy, objects);
+
             var trimmed = objects.Where(response.Include).ToArray();
+
+            var name = extent.ObjectType.PluralName;
             response.AddCollection(name, extent.ObjectType, trimmed);
         }
 
