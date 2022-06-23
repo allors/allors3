@@ -142,6 +142,8 @@ export { PurchaseInvoiceOverviewPageComponent } from './lib/domain/purchaseinvoi
 export { PurchasInvoiceSummaryPanelComponent } from './lib/domain/purchaseinvoice/summary/purchaseinvoice-summary-panel.component';
 
 export { PurchaseInvoiceApprovalFormComponent } from './lib/domain/purchaseinvoiceapproval/form/purchaseinvoiceapproval-form.component';
+export { PurchaseInvoicePanelEditComponent } from './lib/domain/serialiseditempurchaseinvoice/panel/edit/purchaseinvoice-panel-edit.component';
+export { PurchaseInvoicePanelViewComponent } from './lib/domain/serialiseditempurchaseinvoice/panel/view/purchaseinvoice-panel-view.component';
 
 export { PurchaseInvoiceItemFormComponent } from './lib/domain/purchaseinvoiceitem/form/purchaseinvoiceitem-form.component';
 

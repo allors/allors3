@@ -33,6 +33,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { isAfter, isBefore } from 'date-fns';
+import { Filters } from '../../../filters/filters';
 
 @Component({
   templateUrl: './purchaseinvoiceitem-form.component.html',
@@ -75,6 +76,9 @@ export class PurchaseInvoiceItemFormComponent extends AllorsFormComponent<Purcha
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
+    const { treeBuilder } = this.m;
+
+    this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(this.m, treeBuilder);
   }
 
   onPrePull(pulls: Pull[]): void {
