@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateCatalogueMinimal()
         {
             //TODO: Koen
 
@@ -60,7 +60,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateCatalogueMaximal()
         {
             //TODO: Catalogue Image
 

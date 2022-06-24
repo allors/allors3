@@ -21,7 +21,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreatePersonMinimal()
         {
             var before = new People(this.Transaction).Extent().ToArray();
 
@@ -56,7 +56,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task EditDetail()
+        public async Task EditPersonDetail()
         {
             var person = new People(this.Transaction).Extent().First();
 
@@ -86,7 +86,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task AddEmailCommunication()
+        public async Task AddPersonEmailCommunication()
         {
             var before = new EmailCommunications(this.Transaction).Extent().ToArray();
 
@@ -141,7 +141,7 @@ namespace Tests.E2E.Objects
 
 
         //[Test]
-        //public async Task DeleteEmployment()
+        //public async Task DeletePersonEmployment()
         //{
         //    var before = new Employments(this.Transaction).Extent().ToArray();
 

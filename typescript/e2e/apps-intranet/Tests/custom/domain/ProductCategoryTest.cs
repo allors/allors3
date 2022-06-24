@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateProductCategoryMinimal()
         {
             var before = new ProductCategories(this.Transaction).Extent().ToArray();
             var scope = new Scopes(this.Transaction).Private;
@@ -58,7 +58,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateProductCategoryMaximal()
         {
             var before = new ProductCategories(this.Transaction).Extent().ToArray();
             var scope = new Scopes(this.Transaction).Private;

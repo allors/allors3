@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateWorkRequirementMinimal()
         {
             var before = new WorkRequirements(this.Transaction).Extent().ToArray();
 
@@ -49,7 +49,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateWorkRequirementMaximal()
         {
             var before = new WorkRequirements(this.Transaction).Extent().ToArray();
             var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));

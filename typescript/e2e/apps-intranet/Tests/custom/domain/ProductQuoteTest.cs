@@ -14,13 +14,13 @@ namespace Tests.E2E.Objects
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class ProductQuotesTest : Test
+    public class ProductQuoteTest : Test
     {
         [SetUp]
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateProductQuoteMinimal()
         {
             var before = new ProductQuotes(this.Transaction).Extent().ToArray();
             var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
@@ -64,7 +64,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateProductQuoteMaximal()
         {
             var before = new ProductQuotes(this.Transaction).Extent().ToArray();
             var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));

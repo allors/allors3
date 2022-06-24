@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateUnifiedGoodMinimal()
         {
             var before = new UnifiedGoods(this.Transaction).Extent().ToArray();
             var inventoryItemKind = new InventoryItemKinds(this.Transaction).NonSerialised;
@@ -58,7 +58,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateUnifiedGoodMaximal()
         {
             var before = new UnifiedGoods(this.Transaction).Extent().ToArray();
             var inventoryItemKind = new InventoryItemKinds(this.Transaction).NonSerialised;

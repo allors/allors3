@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateOrganisationMinimal()
         {
             var before = new Organisations(this.Transaction).Extent().ToArray();
 
@@ -55,7 +55,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateOrganisationMaximal()
         {
             var before = new Organisations(this.Transaction).Extent().ToArray();
             var legalForm = new LegalForms(this.Transaction).BeBvbaSprl;

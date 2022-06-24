@@ -21,7 +21,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateExchangeRateMaximal()
         {
             var before = new ExchangeRates(this.Transaction).Extent().ToArray();
             var datum = DateTimeFactory.CreateDate(DateTime.Now);
