@@ -113,9 +113,8 @@ namespace Allors.Database.Protocol.Json
             var @event = this.Sink?.OnPull(this.Transaction, pullRequest);
             this.Sink?.OnBefore(@event);
 
-            var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
             var dependencies = this.ToDependencies(pullRequest.d);
-            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, pullResponsePrefetcher, this.PrefetchPolicyCache.Security, this.CancellationToken);
+            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, this.PrefetchPolicyCache, this.CancellationToken);
             var pullResponse = pullResponseBuilder.Build(pullRequest);
 
             if (@event != null)
@@ -178,8 +177,7 @@ namespace Allors.Database.Protocol.Json
         public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
         {
             // TODO: Dependencies
-            var pullResponsePrefetcher = new PullResponsePrefetcher(this.Transaction, this.M);
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, pullResponsePrefetcher, this.PrefetchPolicyCache.Security, this.CancellationToken);
+            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, this.PrefetchPolicyCache, this.CancellationToken);
         }
 
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)

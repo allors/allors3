@@ -9,6 +9,7 @@ namespace Allors.Database.Protocol.Json
     using System.Collections.Generic;
     using System.Linq;
     using Data;
+    using Domain;
     using Meta;
     using Security;
     using Services;
@@ -20,17 +21,15 @@ namespace Allors.Database.Protocol.Json
         private readonly IAccessControl acls;
         private readonly IPreparedSelects preparedSelects;
         private readonly IPreparedExtents preparedExtents;
-        private readonly IPullPrefetchers pullPrefetchers;
-        private readonly PrefetchPolicy securityPrefetchPolicy;
+        private readonly IPrefetchPolicyCache prefetchPolicyCache;
 
-        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IPullPrefetchers pullPrefetchers, PrefetchPolicy securityPrefetchPolicy)
+        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IPrefetchPolicyCache prefetchPolicyCache)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
             this.preparedExtents = preparedExtents;
-            this.pullPrefetchers = pullPrefetchers;
-            this.securityPrefetchPolicy = securityPrefetchPolicy;
+            this.prefetchPolicyCache = prefetchPolicyCache;
             this.preparedSelects = preparedSelects;
         }
 
@@ -56,7 +55,7 @@ namespace Allors.Database.Protocol.Json
         private void WithoutResults(IExtent extent, PullResponseBuilder response)
         {
             var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
-            this.transaction.Prefetch(this.securityPrefetchPolicy, objects);
+            this.transaction.Prefetch(this.prefetchPolicyCache.Security, objects);
 
             var trimmed = objects.Where(response.Include).ToArray();
 
@@ -69,7 +68,7 @@ namespace Allors.Database.Protocol.Json
             var results = this.pull.Results;
 
             var extent = dataExtent.Build(this.transaction, this.pull.Arguments);
-            this.transaction.Prefetch(this.securityPrefetchPolicy, extent);
+            this.transaction.Prefetch(this.prefetchPolicyCache.Security, extent);
 
             IObject[] trimmed;
             if (results.All(v => v.Take.HasValue))

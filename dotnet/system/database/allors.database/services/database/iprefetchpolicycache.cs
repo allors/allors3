@@ -14,6 +14,8 @@ namespace Allors.Database.Domain
 
         PrefetchPolicy Security { get; }
 
+        PrefetchPolicy ForDependency(IComposite composite, ISet<IPropertyType> propertyTypes);
+
         IDictionary<IClass, PrefetchPolicy> WorkspacePrefetchPolicyByClass(string workspaceName);
     }
 }
