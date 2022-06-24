@@ -6,6 +6,7 @@
 namespace Allors.Database.Configuration
 {
     using System.Collections.Generic;
+    using Data;
     using Database;
     using Domain;
     using Meta;
@@ -49,6 +50,26 @@ namespace Allors.Database.Configuration
         public PrefetchPolicy Security { get; }
 
         public IDictionary<IClass, PrefetchPolicy> WorkspacePrefetchPolicyByClass(string workspaceName) => this.prefetchPolicyByClassByWorkspace[workspaceName];
+
+        public PrefetchPolicy ForNodes(Node[] nodes)
+        {
+            var builder = new PrefetchPolicyBuilder();
+            builder.WithSecurityRules(this.m);
+            foreach (var node in nodes)
+            {
+                var propertyType = node.PropertyType;
+                if (propertyType.ObjectType.IsComposite)
+                {
+                    builder.WithRule(propertyType, this.Security);
+                }
+                else
+                {
+                    builder.WithRule(propertyType);
+                }
+            }
+
+            return builder.Build();
+        }
 
         public PrefetchPolicy ForDependency(IComposite composite, ISet<IPropertyType> propertyTypes)
         {

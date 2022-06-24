@@ -112,13 +112,12 @@ namespace Allors.Database.Protocol.Json
 
         private void AddObjectInternal(string name, IObject @object, Node[] tree = null)
         {
-            if (this.maskedObjects.Contains(@object))
+            if (@object == null || this.maskedObjects.Contains(@object))
             {
                 return;
             }
 
-            var transaction = @object.Strategy.Transaction;
-            transaction.Prefetch(this.prefetchPolicyCache.Security, @object);
+            this.Transaction.Prefetch(this.prefetchPolicyCache.Security, @object);
 
             if (!this.Include(@object))
             {
@@ -128,7 +127,7 @@ namespace Allors.Database.Protocol.Json
 
             this.unmaskedObjects.Add(@object);
             this.objectByName[name] = @object;
-            tree?.Resolve(@object, this.AccessControl, this.Add);
+            tree?.Resolve(@object, this.AccessControl, this.Add, this.prefetchPolicyCache, this.Transaction);
         }
 
         private void AddCollectionInternal(string name, IComposite objectType, in IEnumerable<IObject> enumerable, Node[] tree)
@@ -163,7 +162,7 @@ namespace Allors.Database.Protocol.Json
 
                 this.unmaskedObjects.UnionWith(newCollection);
 
-                tree.Resolve(newCollection, this.AccessControl, this.Add);
+                tree.Resolve(newCollection, this.AccessControl, this.Add, this.prefetchPolicyCache, this.Transaction);
             }
             else
             {

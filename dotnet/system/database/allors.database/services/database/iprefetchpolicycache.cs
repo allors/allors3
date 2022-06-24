@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
+    using Data;
     using Meta;
 
     public interface IPrefetchPolicyCache
@@ -17,5 +18,7 @@ namespace Allors.Database.Domain
         PrefetchPolicy ForDependency(IComposite composite, ISet<IPropertyType> propertyTypes);
 
         IDictionary<IClass, PrefetchPolicy> WorkspacePrefetchPolicyByClass(string workspaceName);
+
+        PrefetchPolicy ForNodes(Node[] nodes);
     }
 }
