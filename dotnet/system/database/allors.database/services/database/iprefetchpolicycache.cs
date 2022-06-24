@@ -12,6 +12,8 @@ namespace Allors.Database.Domain
     {
         PrefetchPolicy PermissionsWithClass { get; }
 
+        PrefetchPolicy Security { get; }
+
         IDictionary<IClass, PrefetchPolicy> WorkspacePrefetchPolicyByClass(string workspaceName);
     }
 }

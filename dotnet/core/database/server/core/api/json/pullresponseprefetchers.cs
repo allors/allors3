@@ -7,7 +7,6 @@
 namespace Allors.Database.Protocol.Json
 {
     using System.Collections.Generic;
-    using Data;
     using Domain;
     using Meta;
 
@@ -20,18 +19,6 @@ namespace Allors.Database.Protocol.Json
         {
             this.transaction = transaction;
             this.metaPopulation = metaPopulation;
-        }
-
-        public PrefetchPolicy ForInclude(IComposite composite, Node[] tree)
-        {
-            var builder = new PrefetchPolicyBuilder();
-            builder.WithSecurityRules(this.metaPopulation);
-            if (tree != null)
-            {
-                builder.WithNodes(tree, this.metaPopulation);
-            }
-
-            return builder.Build();
         }
 
         public PrefetchPolicy ForDependency(IComposite composite, ISet<IPropertyType> propertyTypes)

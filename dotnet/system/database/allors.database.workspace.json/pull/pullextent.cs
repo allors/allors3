@@ -21,15 +21,16 @@ namespace Allors.Database.Protocol.Json
         private readonly IPreparedSelects preparedSelects;
         private readonly IPreparedExtents preparedExtents;
         private readonly IPullPrefetchers pullPrefetchers;
+        private readonly PrefetchPolicy securityPrefetchPolicy;
 
-        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects,
-            IPreparedExtents preparedExtents, IPullPrefetchers pullPrefetchers)
+        public PullExtent(ITransaction transaction, Pull pull, IAccessControl acls, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IPullPrefetchers pullPrefetchers, PrefetchPolicy securityPrefetchPolicy)
         {
             this.transaction = transaction;
             this.pull = pull;
             this.acls = acls;
             this.preparedExtents = preparedExtents;
             this.pullPrefetchers = pullPrefetchers;
+            this.securityPrefetchPolicy = securityPrefetchPolicy;
             this.preparedSelects = preparedSelects;
         }
 
@@ -55,8 +56,7 @@ namespace Allors.Database.Protocol.Json
         private void WithoutResults(IExtent extent, PullResponseBuilder response)
         {
             var objects = extent.Build(this.transaction, this.pull.Arguments).ToArray();
-            var prefetchPolicy = this.pullPrefetchers.ForInclude(extent.ObjectType, null);
-            this.transaction.Prefetch(prefetchPolicy, objects);
+            this.transaction.Prefetch(this.securityPrefetchPolicy, objects);
 
             var trimmed = objects.Where(response.Include).ToArray();
 
@@ -69,8 +69,7 @@ namespace Allors.Database.Protocol.Json
             var results = this.pull.Results;
 
             var extent = dataExtent.Build(this.transaction, this.pull.Arguments);
-            var prefetchPolicy = this.pullPrefetchers.ForInclude(extent.ObjectType, null);
-            this.transaction.Prefetch(prefetchPolicy, extent);
+            this.transaction.Prefetch(this.securityPrefetchPolicy, extent);
 
             IObject[] trimmed;
             if (results.All(v => v.Take.HasValue))

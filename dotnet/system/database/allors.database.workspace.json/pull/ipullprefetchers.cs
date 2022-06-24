@@ -6,13 +6,10 @@
 namespace Allors.Database.Protocol.Json
 {
     using System.Collections.Generic;
-    using Data;
     using Meta;
 
     public interface IPullPrefetchers
     {
-        PrefetchPolicy ForInclude(IComposite composite, Node[] tree);
-
         PrefetchPolicy ForDependency(IComposite composite, ISet<IPropertyType> propertyTypes);
     }
 }

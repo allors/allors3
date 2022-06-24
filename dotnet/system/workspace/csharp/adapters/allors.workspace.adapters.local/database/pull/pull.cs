@@ -220,11 +220,8 @@ namespace Allors.Workspace.Adapters.Local
 
                     this.DatabaseObjects.UnionWith(newCollection);
 
-                    foreach (var newObject in newCollection)
-                    {
-                        tree.Resolve(newObject, this.AccessControl, this.Add);
-                    }
-                }
+                    tree.Resolve(newCollection, this.AccessControl, this.Add);
+}
                 else if (existingCollection != null)
                 {
                     existingCollection.UnionWith(filteredCollection);

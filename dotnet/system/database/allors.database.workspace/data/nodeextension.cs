@@ -6,12 +6,42 @@
 namespace Allors.Database.Data
 {
     using System;
+    using System.Collections.Generic;
     using Meta;
     using Security;
 
     public static class NodeExtensions
     {
-        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, Action<IObject> add)
+        public static void Resolve(this Node[] treeNodes, ICollection<IObject> collection, IAccessControl acls, Action<IObject> add)
+        {
+            if (collection == null || collection.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var node in treeNodes)
+            {
+                foreach (var @object in collection)
+                {
+                    node.Resolve(@object, acls, add);
+                }
+            }
+        }
+
+        public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControl acls, Action<IObject> add)
+        {
+            if (@object == null)
+            {
+                return;
+            }
+
+            foreach (var node in treeNodes)
+            {
+                node.Resolve(@object, acls, add);
+            }
+        }
+
+        private static void Resolve(this Node @this, IObject @object, IAccessControl acls, Action<IObject> add)
         {
             if (@object == null)
             {

@@ -23,9 +23,9 @@ namespace Allors.Database.Configuration
                     .WithRule(m.Permission.ClassPointer)
                     .Build();
 
+            this.Security = new PrefetchPolicyBuilder().WithSecurityRules(m).Build();
 
             this.prefetchPolicyByClassByWorkspace = new Dictionary<string, IDictionary<IClass, PrefetchPolicy>>();
-
             foreach (var workspaceName in m.WorkspaceNames)
             {
                 var roleTypesByClass = metaCache.GetWorkspaceRoleTypesByClass(workspaceName);
@@ -44,6 +44,8 @@ namespace Allors.Database.Configuration
         }
 
         public PrefetchPolicy PermissionsWithClass { get; }
+
+        public PrefetchPolicy Security { get; }
 
         public IDictionary<IClass, PrefetchPolicy> WorkspacePrefetchPolicyByClass(string workspaceName) => this.prefetchPolicyByClassByWorkspace[workspaceName];
     }

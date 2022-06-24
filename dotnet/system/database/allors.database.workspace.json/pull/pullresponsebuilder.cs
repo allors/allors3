@@ -31,10 +31,23 @@ namespace Allors.Database.Protocol.Json
         private readonly HashSet<IObject> maskedObjects;
         private readonly HashSet<IObject> unmaskedObjects;
 
-        private List<IValidation> errors;
-        private readonly IPullPrefetchers prefetchers;
+        private readonly IPullPrefetchers pullPrefetchers;
+        private readonly PrefetchPolicy securityPrefetchPolicy;
 
-        public PullResponseBuilder(ITransaction transaction, IAccessControl accessControl, ISet<IClass> allowedClasses, IPreparedSelects preparedSelects, IPreparedExtents preparedExtents, IUnitConvert unitConvert, IRanges<long> ranges, IDictionary<IClass, ISet<IPropertyType>> dependencies, IPullPrefetchers prefetchers, CancellationToken cancellationToken)
+        private List<IValidation> errors;
+
+        public PullResponseBuilder(
+            ITransaction transaction,
+            IAccessControl accessControl,
+            ISet<IClass> allowedClasses,
+            IPreparedSelects preparedSelects,
+            IPreparedExtents preparedExtents,
+            IUnitConvert unitConvert,
+            IRanges<long> ranges,
+            IDictionary<IClass, ISet<IPropertyType>> dependencies,
+            IPullPrefetchers pullPrefetchers,
+            PrefetchPolicy securityPrefetchPolicy,
+            CancellationToken cancellationToken)
         {
             this.unitConvert = unitConvert;
             this.ranges = ranges;
@@ -47,7 +60,8 @@ namespace Allors.Database.Protocol.Json
             this.PreparedExtents = preparedExtents;
             this.CancellationToken = cancellationToken;
 
-            this.prefetchers = prefetchers;
+            this.pullPrefetchers = pullPrefetchers;
+            this.securityPrefetchPolicy = securityPrefetchPolicy;
 
             this.maskedObjects = new HashSet<IObject>();
             this.unmaskedObjects = new HashSet<IObject>();
@@ -101,14 +115,19 @@ namespace Allors.Database.Protocol.Json
 
         private void AddObjectInternal(string name, IObject @object, Node[] tree = null)
         {
-            if (!this.Include(@object))
+            if (this.maskedObjects.Contains(@object))
             {
                 return;
             }
 
-            var prefetchPolicy = this.prefetchers.ForInclude(@object.Strategy.Class, tree);
             var transaction = @object.Strategy.Transaction;
-            transaction.Prefetch(prefetchPolicy, @object);
+            transaction.Prefetch(this.securityPrefetchPolicy, @object);
+
+            if (!this.Include(@object))
+            {
+                this.maskedObjects.Add(@object);
+                return;
+            }
 
             this.unmaskedObjects.Add(@object);
             this.objectByName[name] = @object;
@@ -124,8 +143,7 @@ namespace Allors.Database.Protocol.Json
                 return;
             }
 
-            var prefetchPolicy = this.prefetchers.ForInclude(objectType, tree);
-            this.Transaction.Prefetch(prefetchPolicy, collection);
+            this.Transaction.Prefetch(this.securityPrefetchPolicy, collection);
             var trimmed = collection.Where(this.Include);
 
             this.collectionsByName.TryGetValue(name, out var existingCollection);
@@ -148,10 +166,7 @@ namespace Allors.Database.Protocol.Json
 
                 this.unmaskedObjects.UnionWith(newCollection);
 
-                foreach (var newObject in newCollection)
-                {
-                    tree.Resolve(newObject, this.AccessControl, this.Add);
-                }
+                tree.Resolve(newCollection, this.AccessControl, this.Add);
             }
             else
             {
@@ -234,7 +249,7 @@ namespace Allors.Database.Protocol.Json
                     }
                     else
                     {
-                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents, this.prefetchers);
+                        var pullExtent = new PullExtent(this.Transaction, pull, this.AccessControl, this.PreparedSelects, this.PreparedExtents, this.pullPrefetchers, this.securityPrefetchPolicy);
                         pullExtent.Execute(this);
                     }
                 }
@@ -330,7 +345,7 @@ namespace Allors.Database.Protocol.Json
 
                     if (this.dependencies.TryGetValue(@class, out var propertyTypes))
                     {
-                        var prefetchPolicy = this.prefetchers.ForDependency(@class, propertyTypes);
+                        var prefetchPolicy = this.pullPrefetchers.ForDependency(@class, propertyTypes);
                         this.Transaction.Prefetch(prefetchPolicy, grouped);
 
                         foreach (var @object in grouped)
