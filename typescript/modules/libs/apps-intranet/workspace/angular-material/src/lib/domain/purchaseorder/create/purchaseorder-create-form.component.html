@@ -325,6 +325,20 @@
   </div>
 
   <div class="row">
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.PurchaseOrder.OrderDate"
+    >
+    </a-mat-datepicker>
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.PurchaseOrder.DeliveryDate"
+    ></a-mat-datepicker>
+  </div>
+
+  <div class="row">
     <a-mat-select
       class="col-md-6"
       [object]="object"

@@ -30,7 +30,7 @@ export abstract class RoleField extends Field {
   assignedRoleType: RoleType;
 
   @Input()
-  derivedInitialRole: IObject;
+  derivedInitialRole: any;
 
   // tslint:disable-next-line:no-input-rename
   @Input('name')

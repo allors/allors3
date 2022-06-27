@@ -10,6 +10,17 @@ namespace Allors.Database.Domain
 
     public partial class PurchaseOrders
     {
+        public static void Daily(ITransaction transaction)
+        {
+            foreach (PurchaseOrder @this in new PurchaseOrders(transaction).Extent())
+            {
+                if (@this.PurchaseOrderShipmentState.IsNotReceived || @this.PurchaseOrderShipmentState.IsPartiallyReceived)
+                {
+                    @this.DerivePurchaseOrderOverdue(null);
+                }
+            }
+        }
+
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.PurchaseOrderState);
 
         protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);

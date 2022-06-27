@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             var validation = cycle.Validation;
             var transaction = cycle.Transaction;
 
-            foreach (var @this in matches.Cast<PurchaseOrderItem>().Where(v => v.PurchaseOrderItemState.IsCreated))
+            foreach (var @this in matches.Cast<PurchaseOrderItem>())
             {
                 var order = @this.PurchaseOrderWherePurchaseOrderItem;
 

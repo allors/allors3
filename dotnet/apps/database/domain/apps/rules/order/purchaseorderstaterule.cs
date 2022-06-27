@@ -42,6 +42,7 @@ namespace Allors.Database.Domain
                         if (@this.ValidOrderItems.Where(v => ((PurchaseOrderItem)v).IsReceivable).All(v => ((PurchaseOrderItem)v).ExistPurchaseOrderItemShipmentState && ((PurchaseOrderItem)v).PurchaseOrderItemShipmentState.IsReceived))
                         {
                             @this.PurchaseOrderShipmentState = purchaseOrderShipmentStates.Received;
+                            @this.Overdue = false;
                         }
                         else if (@this.ValidOrderItems.Where(v => ((PurchaseOrderItem)v).IsReceivable).All(v => ((PurchaseOrderItem)v).ExistPurchaseOrderItemShipmentState && ((PurchaseOrderItem)v).PurchaseOrderItemShipmentState.IsNotReceived))
                         {

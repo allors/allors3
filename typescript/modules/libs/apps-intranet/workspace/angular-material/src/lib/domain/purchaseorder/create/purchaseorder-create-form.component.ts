@@ -126,6 +126,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     this.facilities = pullResult.collection<Facility>(this.m.Facility);
 
     this.object.OrderedBy = this.internalOrganisation;
+    this.object.OrderDate = new Date();
 
     if (this.object.OrderedBy) {
       this.updateOrderedBy(this.object.OrderedBy);
@@ -141,7 +142,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     supplierRelationship.InternalOrganisation = this.internalOrganisation;
 
     this.object.TakenViaSupplier = supplier;
-    
+
     this.takenViaContactMechanisms = [];
     this.takenViaContacts = [];
     this.takenViaContactMechanismInitialRole = null;
@@ -262,12 +263,12 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
         loaded.collection<PartyContactMechanism>(
           m.Party.CurrentPartyContactMechanisms
         );
-      this.takenViaContactMechanisms = partyContactMechanisms?.map(
-        (v: PartyContactMechanism) => v.ContactMechanism
-      ) ?? [];
-      this.takenViaContacts = loaded.collection<Person>(
-        m.Party.CurrentContacts
-      ) ?? [];
+      this.takenViaContactMechanisms =
+        partyContactMechanisms?.map(
+          (v: PartyContactMechanism) => v.ContactMechanism
+        ) ?? [];
+      this.takenViaContacts =
+        loaded.collection<Person>(m.Party.CurrentContacts) ?? [];
 
       const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
       this.takenViaContactMechanismInitialRole = selectedSupplier.OrderAddress;

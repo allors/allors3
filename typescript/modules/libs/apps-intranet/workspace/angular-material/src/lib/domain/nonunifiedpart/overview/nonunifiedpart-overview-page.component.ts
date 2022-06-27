@@ -33,6 +33,7 @@ export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageCompo
 
   nonSerialisedInventoryItemTarget: Path;
   serialisedInventoryItemTarget: Path;
+  purchaseOrderTarget: Path;
   purchaseInvoiceTarget: Path;
   workOrderTarget: Path;
   salesOrderTarget: Path;
@@ -77,6 +78,12 @@ export class NonUnifiedPartOverviewPageComponent extends AllorsOverviewPageCompo
         WorkEffortInventoryAssignmentsWhereInventoryItem: {
           Assignment: {},
         },
+      },
+    });
+
+    this.purchaseOrderTarget = p.UnifiedProduct({
+      Part_PurchaseOrderItemsWherePart: {
+        PurchaseOrderWherePurchaseOrderItem: {},
       },
     });
 

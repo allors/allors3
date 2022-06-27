@@ -1542,6 +1542,43 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class PurchaseOrderOverdueRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public PurchaseOrderOverdueRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedAssignedDeliveryDateCalculateOverdue()
+        {
+            var order = this.InternalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Transaction.Faker());
+            order.OrderDate = this.Transaction.Now().AddMonths(-1);
+            this.Transaction.Derive();
+
+            order.PurchaseOrderItems.First().AssignedDeliveryDate = this.Transaction.Now().AddDays(-1);
+            this.Transaction.Derive();
+
+            Assert.True(order.Overdue);
+        }
+
+        [Fact]
+        public void ChangedValidOrderItemsCalculateOverdue()
+        {
+            var order = this.InternalOrganisation.CreatePurchaseOrderWithNonSerializedItem(this.Transaction.Faker());
+            order.OrderDate = this.Transaction.Now().AddMonths(-1);
+            order.DeliveryDate = this.Transaction.Now().AddMonths(1);
+            this.Transaction.Derive();
+
+            Assert.False(order.Overdue);
+
+            var part = new NonUnifiedParts(this.Transaction).Extent().First;
+            var newItem = new PurchaseOrderItemBuilder(this.Transaction).WithNonSerializedPartDefaults(part, this.InternalOrganisation).Build();
+            newItem.AssignedDeliveryDate = this.Transaction.Now().AddDays(-1);
+            order.AddPurchaseOrderItem(newItem);
+            this.Transaction.Derive();
+
+            Assert.True(order.Overdue);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class PurchaseOrderDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {

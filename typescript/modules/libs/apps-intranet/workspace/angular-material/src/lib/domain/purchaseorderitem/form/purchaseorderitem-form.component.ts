@@ -69,6 +69,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
   showIrpf: boolean;
   vatRegimeInitialRole: VatRegime;
   irpfRegimeInitialRole: IrpfRegime;
+  deliveryDateIniatiolRole: Date;
   partsFilter: SearchFactory;
   addPart = false;
 
@@ -206,6 +207,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
       this.order.addPurchaseOrderItem(this.object);
       this.vatRegimeInitialRole = this.order.DerivedVatRegime;
       this.irpfRegimeInitialRole = this.order.DerivedIrpfRegime;
+      this.deliveryDateIniatiolRole = this.order.DeliveryDate;
     } else {
       this.order = this.object.PurchaseOrderWherePurchaseOrderItem;
       this.selectedFacility = this.object.StoredInFacility;

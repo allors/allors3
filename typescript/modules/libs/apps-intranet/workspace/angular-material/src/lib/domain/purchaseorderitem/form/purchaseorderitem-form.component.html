@@ -252,6 +252,16 @@
     </div>
 
     <div class="row">
+      <a-mat-datepicker
+        class="col-md-6"
+        [object]="object"
+        [roleType]="m.PurchaseOrderItem.DerivedDeliveryDate"
+        [assignedRoleType]="m.PurchaseOrderItem.AssignedDeliveryDate"
+        [derivedInitialRole]="deliveryDateIniatiolRole"
+      ></a-mat-datepicker>
+    </div>
+
+    <div class="row">
       <a-mat-textarea
         class="col-md"
         [object]="object"

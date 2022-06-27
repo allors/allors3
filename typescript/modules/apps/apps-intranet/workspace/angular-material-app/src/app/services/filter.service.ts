@@ -1153,6 +1153,11 @@ export class AppFilterService implements FilterService {
                 },
               },
             },
+            {
+              kind: 'Equals',
+              propertyType: m.PurchaseOrder.Overdue,
+              parameter: 'overdue',
+            },
           ],
         },
         {

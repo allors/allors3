@@ -383,7 +383,8 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Derived]
-        public bool OverDue { get; set; }
+        [Workspace(Default)]
+        public bool Overdue { get; set; }
 
         #region Allors
         [Id("db6de178-8836-406a-b02a-e58500c9d617")]
