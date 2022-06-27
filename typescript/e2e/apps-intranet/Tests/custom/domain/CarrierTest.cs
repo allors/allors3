@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task Create()
+        public async Task CreateCarrier()
         {
             var before = new Carriers(this.Transaction).Extent().ToArray();
             var name = "TEST";

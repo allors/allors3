@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateProductTypeMinimal()
         {
             var before = new ProductTypes(this.Transaction).Extent().ToArray();
 
@@ -55,7 +55,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateProductTypeMaximal()
         {
             var before = new ProductTypes(this.Transaction).Extent().ToArray();
             var serialisedItemCharacteristicType = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().First();

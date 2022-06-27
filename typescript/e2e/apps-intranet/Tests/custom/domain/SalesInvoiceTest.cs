@@ -21,7 +21,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateSalesInvoiceMinimal()
         {
             var before = new SalesInvoices(this.Transaction).Extent().ToArray();
             var salesInvoiceType = new SalesInvoiceTypes(this.Transaction).SalesInvoice;
@@ -61,7 +61,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateSalesInvoiceMaximal()
         {
             var before = new SalesInvoices(this.Transaction).Extent().ToArray();
             var salesInvoiceType = new SalesInvoiceTypes(this.Transaction).SalesInvoice;

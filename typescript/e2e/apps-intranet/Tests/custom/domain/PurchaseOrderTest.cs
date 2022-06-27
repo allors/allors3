@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreatePurchaseOrderMinimal()
         {
             var before = new PurchaseOrders(this.Transaction).Extent().ToArray();
             var supplier = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BV").ActiveSuppliers.First();
@@ -56,7 +56,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreatePurchaseOrderMaximal()
         {
             var before = new PurchaseOrders(this.Transaction).Extent().ToArray();
             var internalOrganisation = new Organisations(this.Transaction).Extent().First(v => v.Name == "Allors BV");

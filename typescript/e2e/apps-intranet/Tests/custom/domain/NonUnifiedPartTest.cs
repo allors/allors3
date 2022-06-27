@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateNonUnifiedPartMinimal()
         {
             var before = new NonUnifiedParts(this.Transaction).Extent().ToArray();
             var facility = new Facilities(this.Transaction).Extent().First();
@@ -61,7 +61,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateNonUnifiedPartMaximal()
         {
             var before = new NonUnifiedParts(this.Transaction).Extent().ToArray();
             var facility = new Facilities(this.Transaction).Extent().First();

@@ -10,7 +10,6 @@ namespace Allors.Database.Protocol.Json
     using System.Threading;
     using Allors.Protocol.Json.Api.Pull;
     using Allors.Services;
-    using Domain;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using NLog;

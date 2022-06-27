@@ -20,7 +20,7 @@ namespace Tests.E2E.Objects
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreateSalesOrderMinimal()
         {
             var before = new SalesOrders(this.Transaction).Extent().ToArray();
             var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
@@ -57,7 +57,7 @@ namespace Tests.E2E.Objects
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreateSalesOrderMaximal()
         {
             var before = new SalesOrders(this.Transaction).Extent().ToArray();
             var organisation = new Organisations(this.Transaction).Extent().First(v => v.Name.Equals("Allors BV"));
@@ -65,10 +65,10 @@ namespace Tests.E2E.Objects
 
             var contactMechanism = customer.CurrentPartyContactMechanisms.First().ContactMechanism;
             var contactPerson = customer.CurrentContacts.First();
-            
+
             var currency = new Currencies(this.Transaction).Extent().First(x => x.ExistExchangeRatesWhereToCurrency);
             var vatRegime = new VatRegimes(this.Transaction).BelgiumStandard;
-            
+
             //organisation.PartyContactMechanismsWhereParty.First()
             var @class = this.M.SalesOrder;
 

@@ -10,6 +10,7 @@ namespace Allors.Workspace.Adapters.Local
     using System.Linq;
     using Database;
     using Database.Data;
+    using Database.Domain;
     using Database.Security;
     using Database.Services;
     using Meta;
@@ -36,6 +37,7 @@ namespace Allors.Workspace.Adapters.Local
                 .GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
             this.PreparedSelects = database.Services.Get<IPreparedSelects>();
             this.PreparedExtents = database.Services.Get<IPreparedExtents>();
+            this.PrefetchPolicyCache = database.Services.Get<IPrefetchPolicyCache>();
 
             this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>()
                 .Create(this.Workspace.DatabaseConnection.Configuration.Name);
@@ -66,6 +68,8 @@ namespace Allors.Workspace.Adapters.Local
 
         private IPreparedExtents PreparedExtents { get; }
 
+        public IPrefetchPolicyCache PrefetchPolicyCache { get; }
+
         public void AddCollection(string name, IComposite objectType, in IEnumerable<Database.IObject> collection, Node[] tree)
         {
             switch (collection)
@@ -83,7 +87,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.AddObjectInternal(name, @object, tree);
         }
-        
+
         public void AddValue(string name, object value)
         {
             if (value != null)
@@ -159,13 +163,9 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        public void AddCollection(string name, in ICollection<Database.IObject> collection) =>
-            this.AddCollectionInternal(name, collection, null);
+        public void AddCollection(string name, in ICollection<Database.IObject> collection) => this.AddCollectionInternal(name, collection, null);
 
-        public void AddObject(string name, Database.IObject @object)
-        {
-            this.AddObjectInternal(name, @object, null);
-        }
+        public void AddObject(string name, Database.IObject @object) => this.AddObjectInternal(name, @object, null);
 
         private void AddObjectInternal(string name, Database.IObject @object, Node[] tree)
         {
@@ -174,18 +174,10 @@ namespace Allors.Workspace.Adapters.Local
                 return;
             }
 
-            if (tree != null)
-            {
-                // TODO: 
-                // Prefetch
-                //    var session = @object.Strategy.Transaction;
-                //    var prefetcher = tree.BuildPrefetchPolicy();
-                //    session.Prefetch(prefetcher, @object);
-            }
 
             this.DatabaseObjects.Add(@object);
             this.DatabaseObjectByName[name] = @object;
-            tree?.Resolve(@object, this.AccessControl, this.Add);
+            tree?.Resolve(@object, this.AccessControl, this.Add, this.PrefetchPolicyCache, this.Transaction);
         }
 
         private void AddCollectionInternal(string name, in ICollection<Database.IObject> collection, Node[] tree)
@@ -220,10 +212,7 @@ namespace Allors.Workspace.Adapters.Local
 
                     this.DatabaseObjects.UnionWith(newCollection);
 
-                    foreach (var newObject in newCollection)
-                    {
-                        tree.Resolve(newObject, this.AccessControl, this.Add);
-                    }
+                    tree.Resolve(newCollection, this.AccessControl, this.Add, this.PrefetchPolicyCache, this.Transaction);
                 }
                 else if (existingCollection != null)
                 {

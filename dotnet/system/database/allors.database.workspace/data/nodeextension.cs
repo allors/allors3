@@ -6,12 +6,51 @@
 namespace Allors.Database.Data
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using Domain;
     using Meta;
     using Security;
 
     public static class NodeExtensions
     {
-        public static void Resolve(this Node @this, IObject @object, IAccessControl acls, Action<IObject> add)
+        public static void Resolve(this Node[] treeNodes, ICollection<IObject> collection, IAccessControl acls, Action<IObject> add, IPrefetchPolicyCache prefetchPolicyCache, ITransaction transaction)
+        {
+            if (treeNodes.Length == 0 || collection == null || collection.Count == 0)
+            {
+                return;
+            }
+
+            var prefetchPolicy = prefetchPolicyCache.ForNodes(treeNodes);
+            transaction.Prefetch(prefetchPolicy, collection);
+
+            foreach (var node in treeNodes)
+            {
+                foreach (var @object in collection)
+                {
+                    node.Resolve(@object, acls, add, prefetchPolicyCache, transaction);
+                }
+            }
+        }
+
+        public static void Resolve(this Node[] treeNodes, IObject @object, IAccessControl acls, Action<IObject> add, IPrefetchPolicyCache prefetchPolicyCache, ITransaction transaction)
+        {
+            if (treeNodes.Length == 0 || @object == null)
+            {
+                return;
+            }
+
+            var prefetchPolicy = prefetchPolicyCache.ForNodes(treeNodes);
+            transaction.Prefetch(prefetchPolicy, new[] { @object });
+
+            foreach (var node in treeNodes)
+            {
+                node.Resolve(@object, acls, add, prefetchPolicyCache, transaction);
+            }
+        }
+
+        private static void Resolve(this Node @this, IObject @object, IAccessControl acls, Action<IObject> add, IPrefetchPolicyCache prefetchPolicyCache, ITransaction transaction)
         {
             if (@object == null)
             {
@@ -31,26 +70,23 @@ namespace Allors.Database.Data
                 {
                     if (roleType.IsOne)
                     {
-                        var role = @object.Strategy.GetCompositeRole(roleType);
-                        if (role != null)
+                        var compositeRole = @object.Strategy.GetCompositeRole(roleType);
+                        if (compositeRole != null)
                         {
-                            add(role);
-                            foreach (var node in @this.Nodes)
-                            {
-                                node.Resolve(role, acls, add);
-                            }
+                            add(compositeRole);
                         }
+
+                        @this.Nodes.Resolve(compositeRole, acls, add, prefetchPolicyCache, transaction);
                     }
                     else
                     {
-                        foreach (var role in @object.Strategy.GetCompositesRole<IObject>(roleType))
+                        var compositesRole = @object.Strategy.GetCompositesRole<IObject>(roleType).ToArray();
+                        foreach (var role in compositesRole)
                         {
                             add(role);
-                            foreach (var node in @this.Nodes)
-                            {
-                                node.Resolve(role, acls, add);
-                            }
                         }
+
+                        @this.Nodes.Resolve(compositesRole, acls, add, prefetchPolicyCache, transaction);
                     }
                 }
             }
@@ -58,26 +94,24 @@ namespace Allors.Database.Data
             {
                 if (associationType.IsOne)
                 {
-                    var association = @object.Strategy.GetCompositeAssociation(associationType);
-                    if (association != null)
+                    var compositeAssociation = @object.Strategy.GetCompositeAssociation(associationType);
+                    if (compositeAssociation != null)
                     {
-                        add(association);
-                        foreach (var node in @this.Nodes)
-                        {
-                            node.Resolve(association, acls, add);
-                        }
+                        add(compositeAssociation);
                     }
+
+                    @this.Nodes.Resolve(compositeAssociation, acls, add, prefetchPolicyCache, transaction);
                 }
                 else
                 {
-                    foreach (var association in @object.Strategy.GetCompositesAssociation<IObject>(associationType))
+                    var compositesAssociation = @object.Strategy.GetCompositesAssociation<IObject>(associationType)
+                        .ToArray();
+                    foreach (var association in compositesAssociation)
                     {
                         add(association);
-                        foreach (var node in @this.Nodes)
-                        {
-                            node.Resolve(association, acls, add);
-                        }
                     }
+
+                    @this.Nodes.Resolve(compositesAssociation, acls, add, prefetchPolicyCache, transaction);
                 }
             }
         }

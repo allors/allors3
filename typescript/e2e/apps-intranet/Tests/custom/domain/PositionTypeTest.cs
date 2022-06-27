@@ -14,19 +14,17 @@ namespace Tests.E2E.Objects
     using NUnit.Framework;
     using Task = System.Threading.Tasks.Task;
 
-    public class SerialisedItemCharacteristicsTest : Test
+    public class PositionTypeTest : Test
     {
         [SetUp]
         public async Task Setup() => await this.LoginAsync("jane@example.com");
 
         [Test]
-        public async Task CreateMinimal()
+        public async Task CreatePositionTypeMinimal()
         {
-            //TODO: Koen route aanpassen
+            var before = new PositionTypes(this.Transaction).Extent().ToArray();
 
-            var before = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().ToArray();
-
-            var @class = this.M.SerialisedItemCharacteristic;
+            var @class = this.M.PositionType;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -36,9 +34,7 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new SerialiseditemcharacteristictypeFormComponent(this.OverlayContainer);
-
-            await form.NameInput.SetValueAsync("Joren");
+            var form = new PositiontypeFormComponent(this.OverlayContainer);
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -47,23 +43,19 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().ToArray();
+            var after = new PositionTypes(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var serialisedItemCharacteristicType = after.Except(before).First();
-
-            Assert.AreEqual("Joren", serialisedItemCharacteristicType.Name);
+            var positionType = after.Except(before).First();
         }
 
         [Test]
-        public async Task CreateMaximum()
+        public async Task CreatePositionTypeMaximal()
         {
+            var before = new PositionTypes(this.Transaction).Extent().ToArray();
 
-            var before = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().ToArray();
-            var unitOfMeasure = new UnitsOfMeasure(this.Transaction).Kilogram;
-
-            var @class = this.M.SerialisedItemCharacteristic;
+            var @class = this.M.PositionType;
 
             var list = this.Application.GetList(@class);
             await this.Page.GotoAsync(list.RouteInfo.FullPath);
@@ -73,10 +65,10 @@ namespace Tests.E2E.Objects
             await factory.Create(@class);
             await this.Page.WaitForAngular();
 
-            var form = new SerialiseditemcharacteristictypeFormComponent(this.OverlayContainer);
+            var form = new PositiontypeFormComponent(this.OverlayContainer);
 
-            await form.NameInput.SetValueAsync("Joren");
-            await form.UnitOfMeasureSelect.SelectAsync(unitOfMeasure);
+            await form.TitleInput.SetAsync("Title");
+            await form.DescriptionInput.SetAsync("Description");
 
             var saveComponent = new Button(form, "text=SAVE");
             await saveComponent.ClickAsync();
@@ -85,14 +77,14 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            var after = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().ToArray();
+            var after = new PositionTypes(this.Transaction).Extent().ToArray();
 
             Assert.AreEqual(before.Length + 1, after.Length);
 
-            var serialisedItemCharacteristicType = after.Except(before).First();
+            var positionType = after.Except(before).First();
 
-            Assert.AreEqual("Joren", serialisedItemCharacteristicType.Name);
-            Assert.AreEqual(unitOfMeasure, serialisedItemCharacteristicType.UnitOfMeasure);
+            Assert.AreEqual("Title", positionType.Title);
+            Assert.AreEqual("Description", positionType.Description);
         }
     }
 }
