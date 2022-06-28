@@ -104,6 +104,42 @@ namespace Allors.Database.Domain
             }
         }
 
+        public void Grant(IObjectType objectType, ObjectState objectState, IEnumerable<IOperandType> grants, params Operations[] operations)
+        {
+            if (objectState != null)
+            {
+                foreach (var operation in operations ?? ReadWriteExecute)
+                {
+                    Dictionary<IOperandType, Permission> permissionByOperandType;
+                    switch (operation)
+                    {
+                        case Operations.Read:
+                            this.readPermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        case Operations.Write:
+                            this.writePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        case Operations.Execute:
+                            this.executePermissionsByObjectTypeId.TryGetValue(objectType.Id, out permissionByOperandType);
+                            break;
+
+                        default:
+                            throw new Exception("Unkown operation: " + operations);
+                    }
+
+                    if (permissionByOperandType != null)
+                    {
+                        foreach (var dictionaryEntry in permissionByOperandType.Where(v => grants.Contains(v.Key)))
+                        {
+                            objectState.ObjectRevocation.RemoveDeniedPermission(dictionaryEntry.Value);
+                        }
+                    }
+                }
+            }
+        }
+
         private void BaseOnPreSetup()
         {
             foreach (var revocation in this.transaction.Extent<Revocation>().Where(v => v.ExistObjectStatesWhereObjectRevocation))
