@@ -90,10 +90,10 @@ export class AllorsMaterialFilterFieldDialogComponent
 
   focus() {
     setTimeout(() => {
-      this.focus1?.nativeElement.focus();
-      this.focus2?.nativeElement.focus();
-      this.focus3?.nativeElement.focus();
-      this.focus4?.nativeElement.focus();
+      this.focus1?.nativeElement?.focus();
+      this.focus2?.nativeElement?.focus();
+      this.focus3?.nativeElement?.focus();
+      this.focus4?.nativeElement?.focus();
     }, 0);
   }
 

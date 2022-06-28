@@ -23,7 +23,7 @@
           <a-mat-filter-field-search [parent]="formGroup" [filterFieldDefinition]="fieldDefinition" (apply)="apply(); (false)"></a-mat-filter-field-search>
         </div>
 
-        <mat-form-field *ngIf="useInput">
+        <mat-form-field *ngIf="useInput && !useToggle">
           <input #focus1 matInput [placeholder]="placeholder" formControlName="value" required (keyup.enter)="apply(); (false)" />
         </mat-form-field>
 
