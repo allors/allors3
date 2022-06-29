@@ -101,5 +101,13 @@
     <button *ngIf="order.canExecuteReturn" mat-button (click)="quickReturn()">
       Return all items
     </button>
+    <button
+      *ngIf="order.canExecuteCopy"
+      mat-button
+      type="button"
+      (click)="copy()"
+    >
+      Copy
+    </button>
   </mat-card-actions>
 </mat-card>

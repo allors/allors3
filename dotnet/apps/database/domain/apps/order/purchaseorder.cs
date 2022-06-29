@@ -472,5 +472,172 @@ namespace Allors.Database.Domain
 
             method.StopPropagation = true;
         }
+
+        public PurchaseOrder AppsCopy(PurchaseOrderCopy method)
+        {
+            var copy = new PurchaseOrderBuilder(this.Strategy.Transaction)
+                .WithOrderKind(this.OrderKind)
+                .WithOrderedBy(this.OrderedBy)
+                .WithTakenViaSupplier(this.TakenViaSupplier)
+                .WithTakenViaSubcontractor(this.TakenViaSubcontractor)
+                .WithAssignedTakenViaContactMechanism(this.AssignedTakenViaContactMechanism)
+                .WithTakenViaContactPerson(this.TakenViaContactPerson)
+                .WithAssignedBillToContactMechanism(this.AssignedBillToContactMechanism)
+                .WithBillToContactPerson(this.BillToContactPerson)
+                .WithAssignedShipToAddress(this.AssignedShipToAddress)
+                .WithShipToContactPerson(this.ShipToContactPerson)
+                .WithAssignedCurrency(this.AssignedCurrency)
+                .WithAssignedVatRegime(this.AssignedVatRegime)
+                .WithAssignedIrpfRegime(this.AssignedIrpfRegime)
+                .WithStoredInFacility(this.StoredInFacility)
+                .WithLocale(this.Locale)
+                .WithInternalComment(this.InternalComment)
+                .WithMessage(this.Message)
+                .WithDescription(this.Description)
+                .WithComment(this.Comment)
+                .Build();
+
+            foreach (var localisedComment in this.LocalisedComments)
+            {
+                copy.AddLocalisedComment(new LocalisedTextBuilder(this.strategy.Transaction).WithLocale(localisedComment.Locale).WithText(localisedComment.Text).Build());
+            }
+
+            foreach (var orderAdjustment in this.OrderAdjustments)
+            {
+                OrderAdjustment newAdjustment = null;
+                if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
+                {
+                    newAdjustment = new DiscountAdjustmentBuilder(this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
+                {
+                    newAdjustment = new SurchargeAdjustmentBuilder(this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
+                {
+                    newAdjustment = new FeeBuilder(this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
+                {
+                    newAdjustment = new ShippingAndHandlingChargeBuilder(this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
+                {
+                    newAdjustment = new MiscellaneousChargeBuilder(this.Transaction()).Build();
+                }
+
+                newAdjustment.Amount ??= orderAdjustment.Amount;
+                newAdjustment.Percentage ??= orderAdjustment.Percentage;
+                copy.AddOrderAdjustment(newAdjustment);
+            }
+
+            foreach (var purchaseOrderItem in this.PurchaseOrderItems)
+            {
+                var item = new PurchaseOrderItemBuilder(this.Strategy.Transaction)
+                    .WithInvoiceItemType(purchaseOrderItem.InvoiceItemType)
+                    .WithPart(purchaseOrderItem.Part)
+                    .WithSerialisedItem(purchaseOrderItem.SerialisedItem)
+                    .WithQuantityOrdered(purchaseOrderItem.QuantityOrdered)
+                    .WithAssignedUnitPrice(purchaseOrderItem.AssignedUnitPrice)
+                    .WithStoredInFacility(purchaseOrderItem.StoredInFacility)
+                    .WithAssignedVatRegime(purchaseOrderItem.AssignedVatRegime)
+                    .WithAssignedIrpfRegime(purchaseOrderItem.AssignedIrpfRegime)
+                    .WithDescription(purchaseOrderItem.Description)
+                    .WithMessage(purchaseOrderItem.Message)
+                    .WithComment(purchaseOrderItem.Comment)
+                    .WithInternalComment(purchaseOrderItem.InternalComment)
+                    .WithShippingInstruction(purchaseOrderItem.ShippingInstruction)
+                    .Build();
+
+                copy.AddPurchaseOrderItem(item);
+
+                foreach (var localisedComment in purchaseOrderItem.LocalisedComments)
+                {
+                    item.AddLocalisedComment(new LocalisedTextBuilder(this.strategy.Transaction).WithLocale(localisedComment.Locale).WithText(localisedComment.Text).Build());
+                }
+
+                foreach (var orderAdjustment in purchaseOrderItem.DiscountAdjustments)
+                {
+                    item.AddDiscountAdjustment(new DiscountAdjustmentBuilder(this.Transaction())
+                        .WithAmount(orderAdjustment.Amount)
+                        .WithPercentage(orderAdjustment.Percentage)
+                        .Build());
+                }
+
+                foreach (var orderAdjustment in purchaseOrderItem.SurchargeAdjustments)
+                {
+                    item.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(this.Transaction())
+                        .WithAmount(orderAdjustment.Amount)
+                        .WithPercentage(orderAdjustment.Percentage)
+                        .Build());
+                }
+
+                foreach (var salesTerm in purchaseOrderItem.SalesTerms)
+                {
+                    if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
+                    {
+                        purchaseOrderItem.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
+                            .WithTermType(salesTerm.TermType)
+                            .WithTermValue(salesTerm.TermValue)
+                            .WithDescription(salesTerm.Description)
+                            .Build());
+                    }
+
+                    if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
+                    {
+                        purchaseOrderItem.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
+                            .WithTermType(salesTerm.TermType)
+                            .WithTermValue(salesTerm.TermValue)
+                            .WithDescription(salesTerm.Description)
+                            .Build());
+                    }
+
+                    if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
+                    {
+                        purchaseOrderItem.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
+                            .WithTermType(salesTerm.TermType)
+                            .WithTermValue(salesTerm.TermValue)
+                            .WithDescription(salesTerm.Description)
+                            .Build());
+                    }
+                }
+            }
+
+            foreach (var salesTerm in this.SalesTerms)
+            {
+                if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
+                {
+                    copy.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
+                                                .WithTermType(salesTerm.TermType)
+                                                .WithTermValue(salesTerm.TermValue)
+                                                .WithDescription(salesTerm.Description)
+                                                .Build());
+                }
+
+                if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
+                {
+                    copy.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
+                {
+                    copy.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+            }
+
+            return copy;
+        }
     }
 }

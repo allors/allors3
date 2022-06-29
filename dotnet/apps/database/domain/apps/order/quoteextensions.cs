@@ -126,6 +126,152 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
+        public static Quote AppsCopy(this Quote @this, QuoteCopy method)
+        {
+            Quote copy = null;
+            if (@this.GetType().Name.Equals(typeof(ProductQuote).Name))
+            {
+                copy = new ProductQuoteBuilder(@this.Transaction()).Build();
+            }
+
+            if (@this.GetType().Name.Equals(typeof(Proposal).Name))
+            {
+                copy = new ProposalBuilder(@this.Transaction()).Build();
+            }
+
+            if (@this.GetType().Name.Equals(typeof(StatementOfWork).Name))
+            {
+                copy = new StatementOfWorkBuilder(@this.Transaction()).Build();
+            }
+
+            copy.Issuer = @this.Issuer;
+            copy.Receiver = @this.Receiver;
+            copy.ContactPerson = @this.ContactPerson;
+            copy.ValidFromDate = @this.ValidFromDate;
+            copy.ValidThroughDate = @this.ValidThroughDate;
+            copy.RequiredResponseDate = @this.RequiredResponseDate;
+            copy.FullfillContactMechanism = @this.FullfillContactMechanism;
+            copy.AssignedCurrency = @this.AssignedCurrency;
+            copy.AssignedVatRegime = @this.AssignedVatRegime;
+            copy.AssignedIrpfRegime = @this.AssignedIrpfRegime;
+            copy.AssignedVatClause = @this.AssignedVatClause;
+            copy.Description = @this.Description;
+            copy.InternalComment = @this.InternalComment;
+
+            foreach (var localisedComment in @this.LocalisedComments)
+            {
+                copy.AddLocalisedComment(new LocalisedTextBuilder(@this.Transaction()).WithLocale(localisedComment.Locale).WithText(localisedComment.Text).Build());
+            }
+
+            foreach (var term in @this.QuoteTerms)
+            {
+                copy.AddQuoteTerm(new QuoteTermBuilder(@this.Transaction())
+                    .WithTermType(term.TermType)
+                    .WithTermValue(term.TermValue)
+                    .WithDescription(term.Description)
+                    .Build());
+            }
+
+            foreach (var orderAdjustment in @this.OrderAdjustments)
+            {
+                OrderAdjustment newAdjustment = null;
+                if (orderAdjustment.GetType().Name.Equals(typeof(DiscountAdjustment).Name))
+                {
+                    newAdjustment = new DiscountAdjustmentBuilder(@this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(SurchargeAdjustment).Name))
+                {
+                    newAdjustment = new SurchargeAdjustmentBuilder(@this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(Fee).Name))
+                {
+                    newAdjustment = new FeeBuilder(@this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(ShippingAndHandlingCharge).Name))
+                {
+                    newAdjustment = new ShippingAndHandlingChargeBuilder(@this.Transaction()).Build();
+                }
+
+                if (orderAdjustment.GetType().Name.Equals(typeof(MiscellaneousCharge).Name))
+                {
+                    newAdjustment = new MiscellaneousChargeBuilder(@this.Transaction()).Build();
+                }
+
+                newAdjustment.Amount ??= orderAdjustment.Amount;
+                newAdjustment.Percentage ??= orderAdjustment.Percentage;
+                copy.AddOrderAdjustment(newAdjustment);
+            }
+
+            foreach (var quoteItem in @this.QuoteItems.Where(v => !v.ExistQuoteItemWhereQuotedWithFeature))
+            {
+                CopyQuoteItem(@this, copy, quoteItem);
+            }
+
+            return copy;
+        }
+
+        private static QuoteItem CopyQuoteItem(Quote @this, Quote copy, QuoteItem quoteItem)
+        {
+            var itemCopy = new QuoteItemBuilder(@this.Strategy.Transaction)
+                .WithInvoiceItemType(quoteItem.InvoiceItemType)
+                .WithProduct(quoteItem.Product)
+                .WithSerialisedItem(quoteItem.SerialisedItem)
+                .WithUnitOfMeasure(quoteItem.UnitOfMeasure)
+                .WithQuantity(quoteItem.Quantity)
+                .WithAssignedUnitPrice(quoteItem.AssignedUnitPrice)
+                .WithAssignedVatRegime(quoteItem.AssignedVatRegime)
+                .WithAssignedIrpfRegime(quoteItem.AssignedIrpfRegime)
+                .WithAuthorizer(quoteItem.Authorizer)
+                .WithDetails(quoteItem.Details)
+                .WithInternalComment(quoteItem.InternalComment)
+                .WithDeliverable(quoteItem.Deliverable)
+                .WithSkill(quoteItem.Skill)
+                .WithWorkEffort(quoteItem.WorkEffort)
+                .Build();
+
+            copy.AddQuoteItem(itemCopy);
+
+            foreach (var featureItem in quoteItem.QuotedWithFeatures)
+            {
+                CopyQuoteItem(@this, copy, featureItem);
+            }
+
+            foreach (var orderAdjustment in quoteItem.DiscountAdjustments)
+            {
+                itemCopy.AddDiscountAdjustment(new DiscountAdjustmentBuilder(@this.Transaction())
+                    .WithAmount(orderAdjustment.Amount)
+                    .WithPercentage(orderAdjustment.Percentage)
+                    .Build());
+            }
+
+            foreach (var orderAdjustment in quoteItem.SurchargeAdjustments)
+            {
+                itemCopy.AddSurchargeAdjustment(new SurchargeAdjustmentBuilder(@this.Transaction())
+                    .WithAmount(orderAdjustment.Amount)
+                    .WithPercentage(orderAdjustment.Percentage)
+                    .Build());
+            }
+
+            foreach (var localisedComment in quoteItem.LocalisedComments)
+            {
+                itemCopy.AddLocalisedComment(new LocalisedTextBuilder(@this.Transaction()).WithLocale(localisedComment.Locale).WithText(localisedComment.Text).Build());
+            }
+
+            foreach (var term in quoteItem.QuoteTerms)
+            {
+                itemCopy.AddQuoteTerm(new QuoteTermBuilder(@this.Transaction())
+                    .WithTermType(term.TermType)
+                    .WithTermValue(term.TermValue)
+                    .WithDescription(term.Description)
+                    .Build());
+            }
+
+            return itemCopy;
+        }
+
         public static void SetItemState(this Quote @this)
         {
             var quoteItemStates = new QuoteItemStates(@this.Strategy.Transaction);

@@ -196,4 +196,11 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
       });
     }, this.errorService.errorHandler);
   }
+
+  public copy(): void {
+    this.invokeService.invoke(this.productQuote.Copy).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully copied.', 'close', { duration: 5000 });
+    }, this.errorService.errorHandler);
+  }
 }

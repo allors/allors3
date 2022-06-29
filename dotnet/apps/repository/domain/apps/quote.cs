@@ -583,5 +583,11 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         void Cancel();
+
+        #region Allors
+        [Id("dd5a9861-7503-4533-96df-c087dc1974c5")]
+        #endregion
+        [Workspace(Default)]
+        void Copy() { }
     }
 }
