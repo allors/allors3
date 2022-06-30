@@ -33,6 +33,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
+import { isAfter, isBefore } from 'date-fns';
 
 @Component({
   templateUrl: './purchaseorder-create-form.component.html',
@@ -135,6 +136,11 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
         }),
         p.NonUnifiedPart({
           objectId: initializer.id,
+          include: {
+            SupplierOfferingsWherePart: {
+              Supplier: {},
+            },
+          },
         })
       );
     }
@@ -186,6 +192,14 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     }
 
     if (part !== undefined) {
+      const offerings = part.SupplierOfferingsWherePart.filter(
+        (v) =>
+          isBefore(new Date(v.FromDate), new Date()) &&
+          (!v.ThroughDate || isAfter(new Date(v.ThroughDate), new Date()))
+      ).sort((a, b) => Number(a.Price) - Number(b.Price));
+
+      this.object.TakenViaSupplier = offerings[0]?.Supplier;
+
       const purchaseOrderItem = this.allors.context.create<PurchaseOrderItem>(
         this.m.PurchaseOrderItem
       );
@@ -193,7 +207,9 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
       purchaseOrderItem.InvoiceItemType = this.partItemType;
       purchaseOrderItem.Part = part;
       purchaseOrderItem.QuantityOrdered = '1';
-      purchaseOrderItem.AssignedUnitPrice = '0';
+      purchaseOrderItem.AssignedUnitPrice = offerings
+        ? offerings[0].Price
+        : '0';
 
       this.object.addPurchaseOrderItem(purchaseOrderItem);
     }
