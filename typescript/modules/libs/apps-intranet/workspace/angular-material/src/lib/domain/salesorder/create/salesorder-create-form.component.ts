@@ -7,7 +7,9 @@ import {
   Currency,
   CustomerRelationship,
   InternalOrganisation,
+  InvoiceItemType,
   IrpfRegime,
+  NonUnifiedPart,
   Organisation,
   OrganisationContactRelationship,
   Party,
@@ -15,6 +17,9 @@ import {
   Person,
   PostalAddress,
   SalesOrder,
+  SalesOrderItem,
+  SerialisedItem,
+  SerialisedItemAvailability,
   Store,
   VatRegime,
 } from '@allors/default/workspace/domain';
@@ -83,6 +88,9 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
   shipFromAddressInitialRole: PostalAddress;
   shipToAddressInitialRole: PostalAddress;
   showIrpf: boolean;
+  partItemType: InvoiceItemType;
+  productItemType: InvoiceItemType;
+  sold: SerialisedItemAvailability;
 
   get billToCustomerIsPerson(): boolean {
     return (
@@ -166,15 +174,35 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
       })
     );
 
-    this.onPrePullInitialize(pulls);
+    const initializer = this.createRequest?.initializer;
+    if (initializer) {
+      pulls.push(
+        p.SerialisedItemAvailability({}),
+        p.InvoiceItemType({
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.InvoiceItemType.IsActive,
+            value: true,
+          },
+          sorting: [{ roleType: m.InvoiceItemType.Name }],
+        }),
+        p.SerialisedItem({
+          objectId: initializer.id,
+          include: {
+            PartWhereSerialisedItem: {},
+          },
+        }),
+        p.NonUnifiedPart({
+          objectId: initializer.id,
+        })
+      );
+    }
   }
 
   onPostPull(pullResult: IPullResult) {
     this.object = this.editRequest
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
-
-    this.onPostPullInitialize(pullResult);
 
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
@@ -183,8 +211,6 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
     this.stores = pullResult.collection<Store>(this.m.Store);
     this.currencies = pullResult.collection<Currency>(this.m.Currency);
     this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
-
-    this.object.TakenBy = this.internalOrganisation;
 
     const partyContactMechanisms: PartyContactMechanism[] =
       pullResult.collection<PartyContactMechanism>(
@@ -196,6 +222,64 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
           v.ContactMechanism.strategy.cls === this.m.PostalAddress
       )
       ?.map((v: PartyContactMechanism) => v.ContactMechanism);
+
+    const invoiceItemTypes = pullResult.collection<InvoiceItemType>(
+      this.m.InvoiceItemType
+    );
+    this.partItemType = invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
+    );
+    this.productItemType = invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad'
+    );
+
+    const serialisedItemAvailabilities =
+      pullResult.collection<SerialisedItemAvailability>(
+        this.m.SerialisedItemAvailability
+      );
+
+    this.sold = serialisedItemAvailabilities?.find(
+      (v: SerialisedItemAvailability) =>
+        v.UniqueId === '9bdc0a55-4e3c-4604-b054-2441a551aa1c'
+    );
+
+    const serialisedItem = pullResult.object<SerialisedItem>(
+      this.m.SerialisedItem
+    );
+
+    const part = pullResult.object<NonUnifiedPart>(this.m.NonUnifiedPart);
+
+    if (serialisedItem !== undefined) {
+      const salesOrderItem = this.allors.context.create<SalesOrderItem>(
+        this.m.SalesOrderItem
+      );
+
+      salesOrderItem.InvoiceItemType = this.productItemType;
+      salesOrderItem.SerialisedItem = serialisedItem;
+      salesOrderItem.Product = serialisedItem.PartWhereSerialisedItem;
+      salesOrderItem.NextSerialisedItemAvailability = this.sold;
+      salesOrderItem.QuantityOrdered = '1';
+      salesOrderItem.AssignedUnitPrice = '0';
+
+      this.object.addSalesOrderItem(salesOrderItem);
+    }
+
+    if (part !== undefined) {
+      const salesOrderItem = this.allors.context.create<SalesOrderItem>(
+        this.m.SalesOrderItem
+      );
+
+      salesOrderItem.InvoiceItemType = this.partItemType;
+      salesOrderItem.Product = part;
+      salesOrderItem.QuantityOrdered = '1';
+      salesOrderItem.AssignedUnitPrice = '0';
+
+      this.object.addSalesOrderItem(salesOrderItem);
+    }
+
+    this.object.TakenBy = this.internalOrganisation;
 
     if (this.stores.length === 1) {
       this.object.Store = this.stores[0];
