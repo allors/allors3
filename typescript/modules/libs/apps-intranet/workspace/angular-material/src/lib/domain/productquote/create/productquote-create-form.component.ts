@@ -7,14 +7,18 @@ import {
   Currency,
   CustomerRelationship,
   InternalOrganisation,
+  InvoiceItemType,
   IrpfRegime,
+  NonUnifiedPart,
   Organisation,
   OrganisationContactRelationship,
   Party,
   PartyContactMechanism,
   Person,
   ProductQuote,
+  QuoteItem,
   RequestForQuote,
+  SerialisedItem,
   VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -50,6 +54,8 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
 
   customersFilter: SearchFactory;
   currencyInitialRole: Currency;
+  partItemType: InvoiceItemType;
+  productItemType: InvoiceItemType;
 
   constructor(
     @Self() public allors: ContextService,
@@ -77,13 +83,31 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
       p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] })
     );
 
-    this.onPrePullInitialize(pulls);
+    const initializer = this.createRequest?.initializer;
+    if (initializer) {
+      pulls.push(
+        p.InvoiceItemType({
+          predicate: {
+            kind: 'Equals',
+            propertyType: m.InvoiceItemType.IsActive,
+            value: true,
+          },
+        }),
+        p.SerialisedItem({
+          objectId: initializer.id,
+          include: {
+            PartWhereSerialisedItem: {},
+          },
+        }),
+        p.NonUnifiedPart({
+          objectId: initializer.id,
+        })
+      );
+    }
   }
 
   onPostPull(pullResult: IPullResult) {
     this.object = this.context.create(this.createRequest.objectType);
-
-    this.onPostPullInitialize(pullResult);
 
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
@@ -92,9 +116,50 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
     this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
     this.currencies = pullResult.collection<Currency>(this.m.Currency);
 
+    const invoiceItemTypes = pullResult.collection<InvoiceItemType>(
+      this.m.InvoiceItemType
+    );
+    this.partItemType = invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === 'ff2b943d-57c9-4311-9c56-9ff37959653b'
+    );
+    this.productItemType = invoiceItemTypes?.find(
+      (v: InvoiceItemType) =>
+        v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad'
+    );
+
     this.object.Issuer = this.internalOrganisation;
     this.object.IssueDate = new Date();
     this.object.ValidFromDate = new Date();
+
+    const serialisedItem = pullResult.object<SerialisedItem>(
+      this.m.SerialisedItem
+    );
+
+    const part = pullResult.object<NonUnifiedPart>(this.m.NonUnifiedPart);
+
+    if (serialisedItem !== undefined) {
+      const quoteItem = this.allors.context.create<QuoteItem>(this.m.QuoteItem);
+
+      quoteItem.InvoiceItemType = this.productItemType;
+      quoteItem.SerialisedItem = serialisedItem;
+      quoteItem.Product = serialisedItem.PartWhereSerialisedItem;
+      quoteItem.Quantity = '1';
+      quoteItem.AssignedUnitPrice = serialisedItem.ExpectedSalesPrice ?? '0';
+
+      this.object.addQuoteItem(quoteItem);
+    }
+
+    if (part !== undefined) {
+      const quoteItem = this.allors.context.create<QuoteItem>(this.m.QuoteItem);
+
+      quoteItem.InvoiceItemType = this.partItemType;
+      quoteItem.Product = part;
+      quoteItem.Quantity = '1';
+      quoteItem.AssignedUnitPrice = '0';
+
+      this.object.addQuoteItem(quoteItem);
+    }
   }
 
   get receiverIsPerson(): boolean {

@@ -184,7 +184,6 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
             propertyType: m.InvoiceItemType.IsActive,
             value: true,
           },
-          sorting: [{ roleType: m.InvoiceItemType.Name }],
         }),
         p.SerialisedItem({
           objectId: initializer.id,
@@ -261,7 +260,8 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
       salesOrderItem.Product = serialisedItem.PartWhereSerialisedItem;
       salesOrderItem.NextSerialisedItemAvailability = this.sold;
       salesOrderItem.QuantityOrdered = '1';
-      salesOrderItem.AssignedUnitPrice = '0';
+      salesOrderItem.AssignedUnitPrice =
+        serialisedItem.ExpectedSalesPrice ?? '0';
 
       this.object.addSalesOrderItem(salesOrderItem);
     }
