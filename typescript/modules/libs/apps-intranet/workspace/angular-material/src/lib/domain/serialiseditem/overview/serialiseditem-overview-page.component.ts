@@ -32,8 +32,9 @@ export class SerialisedItemOverviewPageComponent extends AllorsOverviewPageCompo
   serialisedItem: SerialisedItem;
 
   workEffortTarget: Path;
-  workrequirementfulfillmentTarget: Path;
+  workRequirementTarget: Path;
   salesInvoiceTarget: Path;
+  purchaseOrderTarget: Path;
   salesOrderTarget: Path;
   quoteTarget: Path;
   requestTarget: Path;
@@ -64,15 +65,19 @@ export class SerialisedItemOverviewPageComponent extends AllorsOverviewPageCompo
       },
     });
 
-    this.workrequirementfulfillmentTarget = p.FixedAsset({
-      WorkRequirementsWhereFixedAsset: {
-        WorkRequirementFulfillmentWhereFullfilledBy: {},
-      },
+    this.workRequirementTarget = p.FixedAsset({
+      WorkRequirementsWhereFixedAsset: {},
     });
 
     this.salesInvoiceTarget = p.SerialisedItem({
       SalesInvoiceItemsWhereSerialisedItem: {
         SalesInvoiceWhereSalesInvoiceItem: {},
+      },
+    });
+
+    this.purchaseOrderTarget = p.SerialisedItem({
+      PurchaseOrderItemsWhereSerialisedItem: {
+        PurchaseOrderWherePurchaseOrderItem: {},
       },
     });
 

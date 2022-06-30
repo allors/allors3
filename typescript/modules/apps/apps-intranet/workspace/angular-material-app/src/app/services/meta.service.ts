@@ -56,12 +56,15 @@ export class AppMetaService implements MetaService {
       [m.Organisation, 'Companies'],
       [m.Part.InventoryItemsWherePart, 'Inventory'],
       [m.Party.RequestsWhereOriginator, 'Requests for Quote'],
+      [m.Product.PriceComponentsWhereProduct, 'Price Components'],
       [m.RequestItem.RequestWhereRequestItem, 'Requests for Quote'],
       [
         m.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem,
         'Inventory',
       ],
+      [m.SerialisedItem.WorkRequirementsWhereFixedAsset, 'Work Requirements'],
       [m.WorkEffort.ServiceEntriesWhereWorkEffort, 'Time Entries'],
+      [m.WorkEffortInventoryAssignment.InventoryItem, 'Parts used'],
     ]);
   }
 
