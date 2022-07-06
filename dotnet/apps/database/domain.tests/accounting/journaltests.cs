@@ -391,7 +391,7 @@ namespace Allors.Database.Domain.Tests
             journal.AddAccountingTransaction(new DepreciationBuilder(this.Transaction)
                                         .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
-                                                                    .WithDebit(true)
+                                                                    .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                                                                     .WithOrganisationGlAccount(internalOrganisationGlAccount1)
                                                                     .Build())
                                         .Build());
@@ -482,7 +482,7 @@ namespace Allors.Database.Domain.Tests
             journal.AddAccountingTransaction(new DepreciationBuilder(this.Transaction)
                                         .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
-                                                                    .WithDebit(true)
+                                                                    .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                                                                     .WithOrganisationGlAccount(internalOrganisationGlAccount)
                                                                     .Build())
                                         .Build());
