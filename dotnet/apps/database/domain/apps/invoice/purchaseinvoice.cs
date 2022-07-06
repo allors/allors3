@@ -304,7 +304,7 @@ namespace Allors.Database.Domain
                 var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                     .WithInvoiceItemType(purchaseInvoiceItem.InvoiceItemType)
                     .WithAssignedUnitPrice(purchaseInvoiceItem.AssignedUnitPrice)
-                    .WithProduct(purchaseInvoiceItem.Part as UnifiedGood)
+                    .WithProduct(purchaseInvoiceItem.Part)
                     .WithSerialisedItem(purchaseInvoiceItem.SerialisedItem)
                     .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction()).Sold)
                     .WithQuantity(purchaseInvoiceItem.Quantity)

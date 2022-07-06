@@ -174,12 +174,17 @@ namespace Allors.Database.Domain
 
                     foreach (var salesInvoiceItem in @this.SalesInvoiceItems)
                     {
+                        var nonUnifiedGood = salesInvoiceItem.Product as NonUnifiedGood;
+                        var unifiedGood = salesInvoiceItem.Product as UnifiedGood;
+                        var nonUnifiedPart = salesInvoiceItem.Product as NonUnifiedPart;
+                        var part = unifiedGood ?? nonUnifiedGood?.Part ?? nonUnifiedPart;
+
                         var invoiceItem = new PurchaseInvoiceItemBuilder(transaction)
                             .WithInvoiceItemType(salesInvoiceItem.InvoiceItemType)
                             .WithAssignedUnitPrice(salesInvoiceItem.AssignedUnitPrice)
                             .WithAssignedVatRegime(salesInvoiceItem.AssignedVatRegime)
                             .WithAssignedIrpfRegime(salesInvoiceItem.AssignedIrpfRegime)
-                            .WithPart(salesInvoiceItem.Product as UnifiedGood)
+                            .WithPart(part)
                             .WithSerialisedItem(salesInvoiceItem.SerialisedItem)
                             .WithQuantity(salesInvoiceItem.Quantity)
                             .WithDescription(salesInvoiceItem.Description)
