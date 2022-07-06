@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
                 {
                     if (supplierOffering.ExistPart && supplierOffering.Part.Equals(part))
                     {
-                        if (supplierOffering.FromDate <= orderDate && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate >= orderDate))
+                        if (supplierOffering.FromDate.Date <= orderDate.Date && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate.Value.Date >= orderDate.Date))
                         {
                             price = supplierOffering.Price;
                             break;
