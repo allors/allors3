@@ -27,6 +27,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Workspace]
         public AccountingTransactionDetail AssociatedWith { get; set; }
 
         #region Allors
@@ -35,6 +36,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
+        [Workspace]
         public OrganisationGlAccount OrganisationGlAccount { get; set; }
 
         #region Allors
@@ -43,13 +45,16 @@ namespace Allors.Repository
         [Required]
         [Precision(19)]
         [Scale(2)]
+        [Workspace]
         public decimal Amount { get; set; }
 
         #region Allors
-        [Id("d04a0632-e5ec-4a06-bc57-413cf58d2086")]
+        [Id("4a3c1ca1-049f-4c41-aa8d-44a2d02ff09e")]
         #endregion
-        [Required]
-        public bool Debit { get; set; }
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace]
+        public BalanceSide BalanceSide { get; set; }
 
         #region inherited methods
 
