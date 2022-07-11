@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
                 m.InternalOrganisation.RolePattern(v => v.CustomerReturnSequence),
                 m.InternalOrganisation.RolePattern(v => v.PurchaseReturnNumberPrefix),
                 m.InternalOrganisation.RolePattern(v => v.IncomingTransferSequence),
+                m.InternalOrganisation.AssociationPattern(v => v.OrganisationGlAccountsWhereInternalOrganisation),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -44,6 +45,11 @@ namespace Allors.Database.Domain
                     if (@this.IncomingTransferSequence != new IncomingTransferSequences(@this.Strategy.Transaction).RestartOnFiscalYear && !@this.ExistIncomingTransferNumberCounter)
                     {
                         @this.IncomingTransferNumberCounter = new CounterBuilder(@this.Strategy.Transaction).Build();
+                    }
+
+                    if (@this.ExistOrganisationGlAccountsWhereInternalOrganisation && !@this.ExistSettingsForAccounting)
+                    {
+                        @this.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(@this.Strategy.Transaction).Build();
                     }
                 }
             }

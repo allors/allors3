@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<OwnCreditCard>())
             {
                 if (@this.ExistInternalOrganisationWherePaymentMethod
-                    && @this.InternalOrganisationWhereDerivedActiveCollectionMethod.ExistOrganisationGlAccountsWhereInternalOrganisation)
+                    && @this.InternalOrganisationWherePaymentMethod.ExistOrganisationGlAccountsWhereInternalOrganisation)
                 {
                     validation.AssertAtLeastOne(@this, @this.M.PaymentMethod.GeneralLedgerAccount, @this.M.PaymentMethod.Journal);
                 }

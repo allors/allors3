@@ -103,6 +103,7 @@ namespace Allors.Database.Domain.Tests
                 .WithIsInternalOrganisation(true)
                 .WithName("internalOrganisation2")
                 .WithDefaultCollectionMethod(ownBankAccount)
+                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build())
                 .Build();
 
             this.Derive();

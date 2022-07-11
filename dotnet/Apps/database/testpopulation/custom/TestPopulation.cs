@@ -150,29 +150,6 @@ namespace Allors
 
             var bank = new BankBuilder(this.Transaction).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
 
-            var accountClassification = new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                .WithName("accountGroup")
-                .WithReferenceCode("AA")
-                .WithSortCode("AA")
-                .WithReferenceNumber("A1")
-                .Build();
-
-            var glAccount0001 = new GeneralLedgerAccountBuilder(this.Transaction)
-                .WithReferenceCode("A")
-                .WithSortCode("A")
-                .WithReferenceNumber("0001")
-                .WithName("GeneralLedgerAccount")
-                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
-                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
-                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
-                .WithGeneralLedgerAccountClassification(accountClassification)
-                .Build();
-
-            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
-                .WithInternalOrganisation(internalOrganisation)
-                .WithGeneralLedgerAccount(glAccount0001)
-                .Build();
-
             internalOrganisation.DefaultCollectionMethod = new OwnBankAccountBuilder(this.Transaction)
                 .WithBankAccount(new BankAccountBuilder(this.Transaction).WithBank(bank)
                                     .WithCurrency(euro)
@@ -180,12 +157,6 @@ namespace Allors
                                     .WithNameOnAccount("Koen")
                                     .Build())
                 .WithDescription("Main bank account")
-                .WithJournal(new JournalBuilder(this.Transaction)
-                                .WithName("name")
-                                .WithCurrency(euro)
-                                .WithJournalType(new JournalTypes(this.Transaction).Bank)
-                                .WithContraAccount(organisationGlAccount)
-                                .Build())
                 .Build();
 
             new PartyContactMechanismBuilder(this.Transaction)

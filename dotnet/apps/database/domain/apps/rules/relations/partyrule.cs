@@ -25,6 +25,7 @@ namespace Allors.Database.Domain
                 m.Party.AssociationPattern(v => v.PartyRelationshipsWhereParty),
                 m.PartyRelationship.RolePattern(v => v.FromDate, v => v.Parties),
                 m.PartyRelationship.RolePattern(v => v.ThroughDate, v => v.Parties),
+                m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -165,11 +166,11 @@ namespace Allors.Database.Domain
 
                 @this.DeriveRelationships();
 
-                var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.ExistOrganisationGlAccountsWhereInternalOrganisation);
+                var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.ExistSettingsForAccounting);
 
                 if (!internalOrganisations.Contains(@this))
                 {
-                    foreach (var internalOrganisation in internalOrganisations.Where(v => v.ExistOrganisationGlAccountsWhereInternalOrganisation))
+                    foreach (var internalOrganisation in internalOrganisations.Where(v => v.ExistSettingsForAccounting))
                     {
                         var partyFinancial = @this.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
 
