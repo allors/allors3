@@ -105,11 +105,6 @@ namespace Allors.Database.Domain
                 {
                     @this.DefaultCollectionMethod = @this.Strategy.Transaction.Extent<PaymentMethod>().First;
                 }
-
-                if (@this.ExistOrganisationGlAccountsWhereInternalOrganisation && !@this.ExistSettingsForAccounting)
-                {
-                    @this.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(@this.Strategy.Transaction).Build();
-                }
             }
         }
         public static void AppsStartNewFiscalYear(this InternalOrganisation @this, InternalOrganisationStartNewFiscalYear method)

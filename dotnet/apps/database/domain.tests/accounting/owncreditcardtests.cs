@@ -44,6 +44,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOwnCreditCardForSingleton_WhenDeriving_ThenCreditCardIsActivePaymentMethod()
         {
+            this.InternalOrganisation.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build();
+            this.Derive();
+
             var creditCard = new CreditCardBuilder(this.Transaction)
                 .WithCardNumber("4012888888881881")
                 .WithExpirationYear(this.Transaction.Now().Year + 1)
@@ -189,6 +192,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()
         {
+            this.InternalOrganisation.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build();
             var ownCreditCard = new OwnCreditCardBuilder(this.Transaction).Build();
             this.Derive();
 
