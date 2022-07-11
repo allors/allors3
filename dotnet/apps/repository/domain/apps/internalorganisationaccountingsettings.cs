@@ -134,10 +134,10 @@ namespace Allors.Repository
         #region Allors
         [Id("4a95ad2c-63ba-481c-9698-5d2094df6ed4")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
+        [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
-        public RgsFilter[] RgsFilters { get; set; }
+        public RgsFilter RgsFilter { get; set; }
 
         #region inherited methods
 

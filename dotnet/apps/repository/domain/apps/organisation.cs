@@ -91,8 +91,6 @@ namespace Allors.Repository
 
         public Counter RequestNumberCounter { get; set; }
 
-        public bool DoAccounting { get; set; }
-
         public string RequestNumberPrefix { get; set; }
 
         public Party[] ObsoleteCurrentCustomers { get; set; }

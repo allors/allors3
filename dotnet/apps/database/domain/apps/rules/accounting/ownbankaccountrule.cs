@@ -28,7 +28,8 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<OwnBankAccount>())
             {
-                if (@this.ExistInternalOrganisationWhereDerivedActiveCollectionMethod && @this.InternalOrganisationWhereDerivedActiveCollectionMethod.DoAccounting)
+                if (@this.ExistInternalOrganisationWhereDerivedActiveCollectionMethod
+                    && @this.InternalOrganisationWhereDerivedActiveCollectionMethod.ExistOrganisationGlAccountsWhereInternalOrganisation)
                 {
                     validation.AssertAtLeastOne(@this, @this.M.Cash.GeneralLedgerAccount, @this.M.Cash.Journal);
                 }

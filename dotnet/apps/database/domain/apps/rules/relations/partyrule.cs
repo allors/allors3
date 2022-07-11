@@ -165,11 +165,11 @@ namespace Allors.Database.Domain
 
                 @this.DeriveRelationships();
 
-                var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.DoAccounting);
+                var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.ExistOrganisationGlAccountsWhereInternalOrganisation);
 
                 if (!internalOrganisations.Contains(@this))
                 {
-                    foreach (var internalOrganisation in internalOrganisations.Where(v => v.DoAccounting))
+                    foreach (var internalOrganisation in internalOrganisations.Where(v => v.ExistOrganisationGlAccountsWhereInternalOrganisation))
                     {
                         var partyFinancial = @this.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
 

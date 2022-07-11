@@ -118,7 +118,6 @@ namespace Allors.Database.Domain.Tests
 
             var anotherInternalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
-                .WithDoAccounting(false)
                 .WithName("internalOrganisation")
                 .WithPreferredCurrency(new Currencies(this.Transaction).CurrencyByCode["EUR"])
                 .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")

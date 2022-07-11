@@ -40,7 +40,6 @@ namespace Allors.Database.Domain.Tests
                 .Build();
 
             var internalOrganisation = this.InternalOrganisation;
-            internalOrganisation.DoAccounting = true;
             internalOrganisation.DefaultCollectionMethod = cash;
 
             Assert.False(this.Derive().HasErrors);
@@ -82,7 +81,6 @@ namespace Allors.Database.Domain.Tests
                 .WithDescription("description")
                 .Build();
 
-            internalOrganisation.DoAccounting = true;
             internalOrganisation.AddAssignedActiveCollectionMethod(cash);
 
             Assert.True(this.Derive().HasErrors);
@@ -105,8 +103,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()
         {
-            this.InternalOrganisation.DoAccounting = true;
-
             var cash = new CashBuilder(this.Transaction).Build();
             this.Derive();
 

@@ -45,29 +45,12 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenInternalOrganisation_WhenBuildWithout_ThenDoAccountingIsFalse()
-        {
-            this.InstantiateObjects(this.Transaction);
-
-            var internalOrganisation = new OrganisationBuilder(this.Transaction)
-                .WithIsInternalOrganisation(true)
-                .WithName("Internal")
-                .WithDefaultCollectionMethod(this.ownBankAccount)
-                .Build();
-
-            this.Transaction.Derive();
-
-            Assert.False(internalOrganisation.DoAccounting);
-        }
-
-        [Fact]
         public void GivenInternalOrganisation_WhenBuildWithout_ThenFiscalYearStartMonthIsJanuary()
         {
             this.InstantiateObjects(this.Transaction);
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
-                .WithDoAccounting(true)
                 .WithName("Internal")
                 .WithDefaultCollectionMethod(this.ownBankAccount)
                 .Build();
@@ -84,7 +67,6 @@ namespace Allors.Database.Domain.Tests
 
             var internalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
-                .WithDoAccounting(true)
                 .WithName("Internal")
                 .WithDefaultCollectionMethod(this.ownBankAccount)
                 .Build();
@@ -117,7 +99,6 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
-                .WithDoAccounting(true)
                 .WithName("Internal")
                 .Build();
 
@@ -166,7 +147,6 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
-                .WithDoAccounting(true)
                 .WithName("Internal")
                 .Build();
 
@@ -220,7 +200,6 @@ namespace Allors.Database.Domain.Tests
 
             var organisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
-                .WithDoAccounting(true)
                 .WithName("Internal")
                 .Build();
 

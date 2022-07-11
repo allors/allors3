@@ -134,7 +134,6 @@ namespace Allors.Database.Domain
                 .WithIncomingTransferSequence(new IncomingTransferSequences(transaction).EnforcedSequence)
                 .WithOutgoingTransferSequence(new OutgoingTransferSequences(transaction).EnforcedSequence)
                 .WithWorkEffortSequence(workEffortSequence)
-                .WithDoAccounting(false)
                 .WithPurchaseOrderNeedsApproval(purchaseOrderNeedsApproval)
                 .WithPurchaseOrderApprovalThresholdLevel1(purchaseOrderApprovalThresholdLevel1)
                 .WithPurchaseOrderApprovalThresholdLevel2(purchaseOrderApprovalThresholdLevel2)

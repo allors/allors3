@@ -120,7 +120,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             var internalOrganisation = this.InternalOrganisation;
-            internalOrganisation.DoAccounting = true;
             internalOrganisation.DefaultCollectionMethod = paymentMethod;
 
             Assert.False(this.Derive().HasErrors);
@@ -166,8 +165,6 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Commit();
 
-            internalOrganisation.DoAccounting = true;
-
             internalOrganisation.AddAssignedActiveCollectionMethod(collectionMethod);
 
             Assert.True(this.Derive().HasErrors);
@@ -190,8 +187,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()
         {
-            this.InternalOrganisation.DoAccounting = true;
-
             var ownBankAccount = new OwnBankAccountBuilder(this.Transaction).Build();
             this.Derive();
 

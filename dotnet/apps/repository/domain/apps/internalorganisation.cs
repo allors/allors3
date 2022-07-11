@@ -226,13 +226,6 @@ namespace Allors.Repository
         public Counter IncomingTransferNumberCounter { get; set; }
 
         #region Allors
-        [Id("d5645df8-2b10-435d-8e47-57b5d268541a")]
-        #endregion
-        [Required]
-        [Workspace(Default)]
-        bool DoAccounting { get; set; }
-
-        #region Allors
         [Id("16dced57-0262-4d44-89bf-9f39270f17e0")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]

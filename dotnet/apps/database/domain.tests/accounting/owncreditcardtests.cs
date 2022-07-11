@@ -93,10 +93,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOwnCreditCard_WhenDeriving_ThenGeneralLedgerAccountAndJournalAtMostOne()
         {
-            this.InternalOrganisation.DoAccounting = true;
-
-            this.Derive();
-
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
                 .WithReferenceCode("ReferenceCode")
@@ -129,7 +125,6 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Commit();
 
             var internalOrganisation = this.InternalOrganisation;
-            internalOrganisation.DoAccounting = true;
             internalOrganisation.DefaultCollectionMethod = collectionMethod;
 
             Assert.False(this.Derive().HasErrors);
@@ -146,10 +141,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenOwnCreditCardForSingletonThatDoesAccounting_WhenDeriving_ThenEitherGeneralLedgerAccountOrJournalMustExist()
         {
-            this.InternalOrganisation.DoAccounting = true;
-
-            this.Derive();
-
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceNumber("ReferenceNumber")
                 .WithReferenceCode("ReferenceCode")
@@ -198,8 +189,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedInternalOrganisationDerivedCollectionMethodsThrowValidation()
         {
-            this.InternalOrganisation.DoAccounting = true;
-
             var ownCreditCard = new OwnCreditCardBuilder(this.Transaction).Build();
             this.Derive();
 

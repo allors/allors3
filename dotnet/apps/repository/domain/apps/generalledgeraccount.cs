@@ -93,6 +93,13 @@ namespace Allors.Repository
         public GeneralLedgerAccount CounterPartAccount { get; set; }
 
         #region Allors
+        [Id("b6ad3beb-e9cf-492e-b996-969d42c308ea")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        public GeneralLedgerAccount Parent { get; set; }
+
+        #region Allors
         [Id("2e6545f8-5fcf-4129-99f6-1f41280cd02d")]
         #endregion
         [Required]
@@ -215,6 +222,48 @@ namespace Allors.Repository
         [Required]
         [Workspace(Default)]
         public bool Compressed { get; set; }
+
+        #region Allors
+        [Id("266b3a2a-48f3-409b-95ad-570661ae833d")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool IsRgsExcluded { get; set; }
+
+        #region Allors
+        [Id("4e7d7e63-1221-47bf-8cb3-a09fe1189d9e")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool IsRgsBase{ get; set; }
+
+        #region Allors
+        [Id("2f6a3db9-9860-4a0f-a909-efecf8d653cb")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool IsRgsExtended { get; set; }
+
+        #region Allors
+        [Id("3461443f-77da-427c-8eff-6d3031f6ac83")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool IsRgsUseWithEZ{ get; set; }
+
+        #region Allors
+        [Id("1af4092a-e09a-4e23-ad69-2598eb323ed9")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool IsRgsUseWithZzp { get; set; }
+
+        #region Allors
+        [Id("dd717afe-259c-4cff-ad6e-94ecd127a89f")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool IsRgsUseWithWoco { get; set; }
 
         #region inherited methods
 

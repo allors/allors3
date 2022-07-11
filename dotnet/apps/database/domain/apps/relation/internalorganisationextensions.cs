@@ -106,7 +106,7 @@ namespace Allors.Database.Domain
                     @this.DefaultCollectionMethod = @this.Strategy.Transaction.Extent<PaymentMethod>().First;
                 }
 
-                if (@this.DoAccounting && !@this.ExistSettingsForAccounting)
+                if (@this.ExistOrganisationGlAccountsWhereInternalOrganisation && !@this.ExistSettingsForAccounting)
                 {
                     @this.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(@this.Strategy.Transaction).Build();
                 }

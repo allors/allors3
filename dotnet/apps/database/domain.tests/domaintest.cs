@@ -117,7 +117,6 @@ namespace Allors.Database.Domain.Tests
 
             this.InternalOrganisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
-                .WithDoAccounting(true)
                 .WithName("internalOrganisation")
                 .WithPreferredCurrency(new Currencies(this.Transaction).CurrencyByCode["EUR"])
                 .WithInvoiceSequence(new InvoiceSequences(this.Transaction).EnforcedSequence)
