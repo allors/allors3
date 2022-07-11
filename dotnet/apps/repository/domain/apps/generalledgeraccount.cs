@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("1a0e396b-69bd-4e77-a602-3d7f7938fd74")]
     #endregion
-    public partial class GeneralLedgerAccount : UniquelyIdentifiable, Object
+    public partial class GeneralLedgerAccount : UniquelyIdentifiable, Object, ExternalWithPrimaryKey
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
@@ -22,6 +22,7 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        public string ExternalPrimaryKey { get; set; }
         #endregion
 
         #region Allors
@@ -224,6 +225,12 @@ namespace Allors.Repository
         public bool Compressed { get; set; }
 
         #region Allors
+        [Id("02ccb73a-62f2-438d-9839-b5b0de62802d")]
+        #endregion
+        [Workspace(Default)]
+        public int RgsLevel { get; set; }
+
+        #region Allors
         [Id("266b3a2a-48f3-409b-95ad-570661ae833d")]
         #endregion
         [Required]
@@ -265,6 +272,83 @@ namespace Allors.Repository
         [Workspace(Default)]
         public bool IsRgsUseWithWoco { get; set; }
 
+        #region Allors
+        [Id("21c0feea-8912-49ad-b986-31267d44242a")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsBB { get; set; }
+
+        #region Allors
+        [Id("91b43350-5032-422a-971b-000a2a2d149b")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsAgro { get; set; }
+
+        #region Allors
+        [Id("73987542-9efe-4ef6-b5c5-5a257dcfd623")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsWKR { get; set; }
+
+        #region Allors
+        [Id("d79f31a5-32ed-47d9-b9d9-99553a015381")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsEZVOF { get; set; }
+
+        #region Allors
+        [Id("fbd8c25f-39f3-4ebc-a36c-6d599a75e48d")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsBV { get; set; }
+
+        #region Allors
+        [Id("5a0efef2-a7ea-49b1-bc16-f6a4304edd20")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsWoco { get; set; }
+
+        #region Allors
+        [Id("ef10ad7c-fd50-4e47-8d98-b122629f73c4")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsBank { get; set; }
+
+        #region Allors
+        [Id("228cc6dc-dd15-46e5-94fd-5cf44864d49a")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsOZW { get; set; }
+
+        #region Allors
+        [Id("5dc266df-5de3-446d-9152-133738adef25")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsAfrekSyst { get; set; }
+
+        #region Allors
+        [Id("d31494bf-749a-4129-9047-b4915c81c40f")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsNivo5 { get; set; }
+
+        #region Allors
+        [Id("21092dff-29d1-4746-984f-42748a5a435c")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public bool ExcludeRgsUitbr5 { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }
@@ -278,6 +362,5 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
-
     }
 }
