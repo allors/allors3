@@ -48,35 +48,35 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Workspace(Default)]
-        public bool UseRgsBase { get; set; }
+        public bool UseBase { get; set; }
 
         #region Allors
         [Id("1237f6a0-f0e6-4974-acd6-c3cd4855ed9f")]
         #endregion
         [Required]
         [Workspace(Default)]
-        public bool UseRgsExtended { get; set; }
+        public bool UseExtended { get; set; }
 
         #region Allors
         [Id("545fa8c9-9ee1-421c-b126-7d80a54229a7")]
         #endregion
         [Required]
         [Workspace(Default)]
-        public bool UseRgsEz { get; set; }
+        public bool UseEz { get; set; }
 
         #region Allors
         [Id("1488b378-7d55-4402-9737-3b90dfa1c4d1")]
         #endregion
         [Required]
         [Workspace(Default)]
-        public bool UseRgsZzp { get; set; }
+        public bool UseZzp { get; set; }
 
         #region Allors
         [Id("74087097-b9f1-4e8e-aa2c-59b52cbfc343")]
         #endregion
         [Required]
         [Workspace(Default)]
-        public bool UseRgsWoCo { get; set; }
+        public bool UseWoCo { get; set; }
 
         #region Allors
         [Id("9bde6a25-f8eb-4d61-a98b-eeeee3e947ed")]
