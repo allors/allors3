@@ -23,5 +23,6 @@ namespace Allors.Integration.Source
     public partial class Source
     {
         public Customer[] Customers { get; set; }
+        public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
     }
 }

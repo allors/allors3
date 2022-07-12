@@ -18,19 +18,21 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Linq;
 using Allors.Database.Domain;
-using Allors.Database.Meta;
+using Allors.Integration.Staging;
 using Microsoft.Extensions.Logging;
 
 namespace Allors.Integration.Transform
 {
-    public partial class Transform
+    public partial class GeneralLedgerAccountTransformer
     {
-        public Transform(Source.Source source, Population population, ILoggerFactory loggerFactory)
+        public GeneralLedgerAccountTransformer(Source.Source source, Population population, ILoggerFactory loggerFactory)
         {
-            this.LoggerFactory = loggerFactory;
             this.Source = source;
             this.Population = population;
+            this.LoggerFactory = loggerFactory;
+            this.Logger = loggerFactory.CreateLogger<GeneralLedgerAccount>();
         }
 
         public Source.Source Source { get; }
@@ -39,21 +41,17 @@ namespace Allors.Integration.Transform
 
         public ILoggerFactory LoggerFactory { get; }
 
-        public Staging.Staging Execute()
+        public ILogger<GeneralLedgerAccount> Logger { get; set; }
+
+        public void Execute(out BalanceSide[] balanceSides)
         {
-            var customerTransformer = new CustomerTransformer(this.Source, this.Population, this.LoggerFactory);
-            customerTransformer.Execute(out var postalAddresses, out var people, out var organisations);
-
-            var generalLedgerAccountTransformer = new GeneralLedgerAccountTransformer(this.Source, this.Population, this.LoggerFactory);
-            generalLedgerAccountTransformer.Execute(out var balanceSides);
-
-            return new Staging.Staging
-            {
-                PostalAddresses = postalAddresses,
-                People = people,
-                Organisations = organisations,
-                BalanceSides = balanceSides
-            };
+            var transaction = this.Population.Transaction;
+            
+            balanceSides = this.Source.GeneralLedgerAccounts
+                .Select(v => v.BalanceSide.Equals("Debit") ?
+                new BalanceSides(transaction).Debit :
+                new BalanceSides(transaction).Credit
+                ).ToArray();
         }
     }
 }

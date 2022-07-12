@@ -32,6 +32,7 @@ namespace Allors.Integration.Load
             this.Loaders = new Loader[]
             {
                 new PersonLoader(staging, population, loggerFactory),
+                new GeneralLedgerAccountLoader(staging, population, loggerFactory),
             };
         }
         

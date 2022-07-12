@@ -37,6 +37,8 @@ namespace Allors.Integration.Staging
         public Database.Domain.Person[] People { get; set; }
 
         public Organisation[] Organisations { get; set; }
+        
+        public BalanceSide[] BalanceSides { get; set; }
 
     }
 }
