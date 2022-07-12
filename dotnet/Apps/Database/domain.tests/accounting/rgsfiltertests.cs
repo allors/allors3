@@ -46,5 +46,48 @@ namespace Allors.Database.Domain.Tests
             errors = this.Derive().Errors.ToList();
             Assert.Single(errors);
         }
+
+        [Fact]
+        public void RgsFilterUseBaseAndUseExtendedCanNotBeBothTrue()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseBase = true;
+            rgsFilter.UseExtended = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Single(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseEZAndUseZzpAndUseWoCoCanNotAllBeTrue()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseEz = true;
+            rgsFilter.UseZzp = true;
+            rgsFilter.UseWoCo = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Single(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseWoCoAndUseExcludeWoCoCanNotBeBothTrue()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseWoCo = true;
+            rgsFilter.ExcludeWoCo = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Single(errors);
+        }
     }
 }
