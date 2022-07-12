@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Accounting\Overview.cd" />
+    <None Include="Accounting\ChartOfAccounts.cd" />
     <None Include="Accounting\RGS.cd" />
     <None Include="Accounting\VAT.cd" />
     <None Include="Content\Print.cd" />
