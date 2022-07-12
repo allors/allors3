@@ -60,9 +60,14 @@ namespace Allors.Integration
                 source = extraction.Execute();
             }
 
+            this.Integrate(source);
+        }
+
+        public void Integrate(Source.Source source)
+        {
             using (var transaction = this.Database.CreateTransaction())
             {
-                //transaction.SetUser(new AutomatedAgents(transaction).System);
+                transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
 
                 var population = new Population { Transaction = transaction };
 
@@ -80,109 +85,6 @@ namespace Allors.Integration
 
                 this.Logger.LogInformation("End Derivation");
 
-                transaction.Commit();
-
-                var invalidFileNameChars = Path.GetInvalidFileNameChars();
-                var directory = new DirectoryInfo(Path.Combine(this.DataPath.FullName, "images/employees"));
-
-                //foreach (Employment employment in new Employments(transaction).Extent())
-                //{
-                //    if (!employment.Employee.ExistPicture)
-                //    {
-                //        var fileName = string.Join("_", employment.Employee.PartyName.Split(invalidFileNameChars, StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
-                //        var fileInfo = directory.GetFiles(fileName + "*.*").FirstOrDefault();
-                //        if (fileInfo != null)
-                //        {
-                //            var content = File.ReadAllBytes(fileInfo.FullName);
-                //            var image = new MediaBuilder(transaction).WithInFileName(fileInfo.Name).WithInData(content).Build();
-                //            employment.Employee.Picture = image;
-                //        }
-                //    }
-                //}
-
-                transaction.Derive();
-                transaction.Commit();
-
-                var productImagesRootPath = new DirectoryInfo(Path.Combine(this.DataPath.FullName, "images/products"));
-
-                foreach (UnifiedGood unifiedGood in new UnifiedGoods(transaction).Extent())
-                {
-                    var folderName = unifiedGood.Name
-                       .Replace("-", "")
-                       .Replace(" ", "")
-                       .Replace("/", "")
-                       .Replace(".", "")
-                       .Replace("(", "")
-                       .Replace(")", "")
-                       .Replace("---", "")
-                       .Replace("--", "")
-                       .Replace(",", "");
-
-                    if (!unifiedGood.ExistPhotos)
-                    {
-                        var productImagePath = Path.Combine(productImagesRootPath.FullName, folderName);
-                        var imageDirectoryInfo = new DirectoryInfo(productImagePath);
-
-                        if (imageDirectoryInfo.Exists)
-                        {
-                            var imageFiles = Directory.EnumerateFiles(productImagePath, "*.*")
-                                .Where(s => s.EndsWith(".jpg") || s.EndsWith(".jpeg") || s.EndsWith(".png") ||
-                                            s.EndsWith(".JPG") || s.EndsWith(".JPEG") || s.EndsWith(".PNG"));
-
-                            foreach (var fullPathFileName in imageFiles)
-                            {
-                                var fileInfo = new FileInfo(fullPathFileName);
-                                var content = File.ReadAllBytes(fileInfo.FullName);
-
-                                var fileName = fileInfo.Name;
-                                var image = new MediaBuilder(transaction).WithInFileName(fileName).WithInData(content).Build();
-
-                                if (fileName.Contains("_0.") || fileName.Contains("-0.") || fileName.StartsWith("0."))
-                                {
-                                    unifiedGood.PrimaryPhoto = image;
-                                }
-                                else 
-                                {
-                                    unifiedGood.AddPhoto(image);
-                                }
-                            }
-                        }
-
-                        transaction.Derive();
-                        transaction.Commit();
-
-                        if (!unifiedGood.ExistPrimaryPhoto)
-                        {
-                            var photo = unifiedGood.SerialisedItems.FirstOrDefault(v => v.ExistPrimaryPhoto)?.PrimaryPhoto;
-
-                            if (photo != null)
-                            {
-                                var copy = new MediaBuilder(transaction).WithInFileName(photo.FileName).WithInData(photo.MediaContent.Data).Build();
-                                unifiedGood.PrimaryPhoto = copy;
-                                transaction.Derive();
-                            }
-                        }
-                    }
-
-                    if (unifiedGood.ExistPrimaryPhoto)
-                    {
-                        foreach (var item in unifiedGood.SerialisedItems.Where(v => !v.ExistPrimaryPhoto))
-                        {
-                            var photo = unifiedGood.PrimaryPhoto;
-                            var copy = new MediaBuilder(transaction).WithInFileName(photo.FileName).WithInData(photo.MediaContent.Data).Build();
-
-                            item.PrimaryPhoto = copy;
-                        }
-                    }
-
-                    if (!unifiedGood.ExistPrimaryPhoto)
-                    {
-                        Console.WriteLine("Missing product image " + folderName);
-                    }
-                    //                    Console.Write(unifiedGood.ExistPrimaryPhoto? "+" : "-");
-                }
-
-                transaction.Derive();
                 transaction.Commit();
             }
         }
