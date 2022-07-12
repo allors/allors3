@@ -33,6 +33,35 @@ namespace Allors.Database.Domain.Tests
             Assert.Single(errors);
         }
 
+
+        [Fact]
+        public void RgsFilterUseEzTrueAndExcludeEzFalseShouldNotGiveErrors()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseEz = true;
+            rgsFilter.ExcludeEz = false;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseEzFlaseAndExcludeEzTrueShouldNotGiveErrors()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseEz = false;
+            rgsFilter.ExcludeEz = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+        }
+
         [Fact]
         public void RgsFilterUseZzpAndExcludeZzpCanNotBeBothTrue()
         {
@@ -45,6 +74,34 @@ namespace Allors.Database.Domain.Tests
 
             errors = this.Derive().Errors.ToList();
             Assert.Single(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseZzpTrueAndExcludeZzpFalseShouldNotGiveErrors()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseZzp = true;
+            rgsFilter.ExcludeZzp = false;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseZzpFlaseAndExcludeZzpTrueShouldNotGiveErrors()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseZzp = false;
+            rgsFilter.ExcludeZzp = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
         }
 
         [Fact]
