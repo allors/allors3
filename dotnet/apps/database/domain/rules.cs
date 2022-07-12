@@ -322,6 +322,8 @@ namespace Allors.Database.Domain
                 new RequirementRequirementStateNameRule(m),
                 new RequirementRequirementTypeNameRule(m),
                 new RequirementServicedByNameRule(m),
+                new RgsFilterEzRule(m),
+                new RgsFilterZzpRule(m),
                 new SalesInvoiceBilledFromValidationRule(m),
                 new SalesInvoiceBillingOrderItemBillingRule(m),
                 new SalesInvoiceBillingShipmentItemBillingRule(m),
