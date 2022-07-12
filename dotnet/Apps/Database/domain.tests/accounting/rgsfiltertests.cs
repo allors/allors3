@@ -119,7 +119,35 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void RgsFilterUseEZAndUseZzpAndUseWoCoCanNotAllBeTrue()
+        public void RgsFilterUseBaseTrueAndUseExtendedFalseShouldNotGiveError()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseBase = true;
+            rgsFilter.UseExtended = false;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseBaseFalseAndUseExtendedTrueShouldNotGiveError()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseBase = false;
+            rgsFilter.UseExtended = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+        }
+        
+        [Fact]
+        public void RgsFilterUseEZAndUseZzpAndUseWoCoWithAllTrueCanNotBeTwoTrue()
         {
             var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
             var errors = this.Derive().Errors.ToList();
@@ -134,6 +162,36 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void RgsFilterUseEZAndUseZzpAndUseWoCoWithTwoTrueCanNotBeTwoTrue()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseEz = true;
+            rgsFilter.UseZzp = false;
+            rgsFilter.UseWoCo = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Single(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseEZAndUseZzpAndUseWoCoWithOneTrueShouldNotGiveError()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseEz = true;
+            rgsFilter.UseZzp = false;
+            rgsFilter.UseWoCo = false;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+        }
+
+        [Fact]
         public void RgsFilterUseWoCoAndUseExcludeWoCoCanNotBeBothTrue()
         {
             var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
@@ -145,6 +203,34 @@ namespace Allors.Database.Domain.Tests
 
             errors = this.Derive().Errors.ToList();
             Assert.Single(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseWoCoFalseAndUseExcludeWoCoTrueShouldNotGiveError()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseWoCo = false;
+            rgsFilter.ExcludeWoCo = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void RgsFilterUseWoCoTrueAndUseExcludeWoCoFalseShouldNotGiveError()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.UseWoCo = false;
+            rgsFilter.ExcludeWoCo = true;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
         }
     }
 }
