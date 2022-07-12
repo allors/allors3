@@ -29,9 +29,12 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<RgsFilter>())
             {
-                if (@this.UseEz && @this.UseZzp && @this.UseWoCo)
+                bool[] list = { @this.UseEz, @this.UseZzp, @this.UseWoCo };
+
+
+                if (list.Count(x => x) > 1)
                 {
-                    validation.AddError(@this, @this.Meta.UseEz, "UseEz, UseZzp and UseWoCo can't all be True");
+                    validation.AddError(@this, @this.Meta.UseEz, "UseEz, UseZzp and UseWoCo, There can only be 1 True");
                 }
             }
         }
