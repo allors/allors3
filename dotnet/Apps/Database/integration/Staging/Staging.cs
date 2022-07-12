@@ -17,28 +17,10 @@
 // For more information visit http://www.allors.com/legal
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
-using System.Collections;
-using Allors.Database.Domain;
-
 namespace Allors.Integration.Staging
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
     public partial class Staging
     {
-        //public Dictionary<string, string> ExternalPrimaryKeyBySupplierName => this.Organisations
-        //    .Where(v => v.IsSupplier)
-        //    .ToDictionary(v => v.Name, v => v.ExternalPrimaryKey);
-
-        public PostalAddress[] PostalAddresses { get; set; }
-
-        public Database.Domain.Person[] People { get; set; }
-
-        public Organisation[] Organisations { get; set; }
-        
-        public BalanceSide[] BalanceSides { get; set; }
-
+        public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
     }
 }

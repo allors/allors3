@@ -31,11 +31,11 @@ namespace Allors.Integration.Load
 
             this.Loaders = new Loader[]
             {
-                new PersonLoader(staging, population, loggerFactory),
+                //new PersonLoader(staging, population, loggerFactory),
                 new GeneralLedgerAccountLoader(staging, population, loggerFactory),
             };
         }
-        
+
         public Loader[] Loaders { get; }
 
         public ILoggerFactory LoggerFactory { get; }

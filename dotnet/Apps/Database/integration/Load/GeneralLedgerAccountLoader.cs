@@ -22,9 +22,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Allors.Integration.Load
 {
-    using System.Linq;
-    using Allors.Database.Domain;
-    
     public partial class GeneralLedgerAccountLoader : Loader
     {
         public GeneralLedgerAccountLoader(Staging.Staging staging, Population population, ILoggerFactory loggerFactory)
@@ -37,8 +34,7 @@ namespace Allors.Integration.Load
 
         public override void OnBuild()
         {
-            var balanceSides = this.Staging.BalanceSides;
-
+            var generalLedgerAccounts = this.Staging.GeneralLedgerAccounts;
 
             //foreach (var generalLedgerAccount in )
             //{
@@ -48,13 +44,13 @@ namespace Allors.Integration.Load
 
         public override void OnUpdate()
         {
-            foreach (var stagingPerson in this.Staging.People)
-            {
-                //var person = personByExternalPersonKey[stagingPerson.ExternalPersonKey];
-                //person.FirstName = stagingPerson.FirstName;
-                //person.LastName = stagingPerson.LastName;
-                //person.Salutation = salutationByName.Get(stagingPerson.Salutation);
-            }
+            //foreach (var stagingPerson in this.Staging.People)
+            //{
+            //var person = personByExternalPersonKey[stagingPerson.ExternalPersonKey];
+            //person.FirstName = stagingPerson.FirstName;
+            //person.LastName = stagingPerson.LastName;
+            //person.Salutation = salutationByName.Get(stagingPerson.Salutation);
+            //}
         }
     }
 }

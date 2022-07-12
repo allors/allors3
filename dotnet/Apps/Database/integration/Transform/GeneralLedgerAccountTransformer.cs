@@ -18,9 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-using System.Linq;
-using Allors.Database.Domain;
-using Allors.Integration.Staging;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
 namespace Allors.Integration.Transform
@@ -32,7 +30,7 @@ namespace Allors.Integration.Transform
             this.Source = source;
             this.Population = population;
             this.LoggerFactory = loggerFactory;
-            this.Logger = loggerFactory.CreateLogger<GeneralLedgerAccount>();
+            this.Logger = loggerFactory.CreateLogger<GeneralLedgerAccountTransformer>();
         }
 
         public Source.Source Source { get; }
@@ -41,30 +39,58 @@ namespace Allors.Integration.Transform
 
         public ILoggerFactory LoggerFactory { get; }
 
-        public ILogger<GeneralLedgerAccount> Logger { get; set; }
+        public ILogger<GeneralLedgerAccountTransformer> Logger { get; set; }
 
-        public void Execute(out BalanceSide[] balanceSides)
+        public void Execute(out Staging.GeneralLedgerAccount[] generalLedgerAccounts)
         {
-            var transaction = this.Population.Transaction;
+            var generalLedgerAccountsList = new List<Staging.GeneralLedgerAccount>();
+            Staging.GeneralLedgerAccount latestNiveau2Account = null;
+            Staging.GeneralLedgerAccount previousNiveau2Account = null;
 
-            //generalLedgerAccounts = this.Source.GeneralLedgerAccounts
-            //    .Select(v => new GeneralLedgerAccountBuilder(transaction)
-            //    .WithReferenceCode(v.ReferenceCode)
-            //    .WithSortCode(v.SortCode)
-            //    .WithReferenceNumber(v.ReferenceNumber)
-            //    .WithName(v.Name)
-            //    .WithDescription(v.Description)
-            //    .WithBalanceSide(v.BalanceSide.Equals("Debit") ?
-            //        new BalanceSides(transaction).Debit :
-            //        new BalanceSides(transaction).Credit)
-            //    .Build())
-            //    .ToArray();
+            foreach (var generalLedgerAccount in this.Source.GeneralLedgerAccounts)
+            {
+                var newGeneralLedgerAccount = new Staging.GeneralLedgerAccount()
+                {
+                    ReferenceCode = generalLedgerAccount.ReferenceCode,
+                    SortCode = generalLedgerAccount.SortCode,
+                    ReferenceNumber = generalLedgerAccount.ReferenceNumber,
+                    Name = generalLedgerAccount.Name,
+                    Description = generalLedgerAccount.Description,
+                    GeneralLedgerAccountType = latestNiveau2Account.ReferenceCode,
+                    CounterPartAccount = generalLedgerAccount.CounterPartAccount,
+                    Parent = previousNiveau2Account.ReferenceCode,
+                    BalanceSide = generalLedgerAccount.BalanceSide,
+                    BalanceType = (generalLedgerAccount.ReferenceCode[0] == 'B') ? "Balance" : "ProfitLoss",
+                    RgsLevel = generalLedgerAccount.Level,
+                    IsRgsUseWithZzp = generalLedgerAccount.IsRgsUseWithZzp,
+                    IsRgsBase = generalLedgerAccount.IsRgsBase,
+                    IsRgsExtended = generalLedgerAccount.IsRgsExtended,
+                    IsRgsUseWithEZ = generalLedgerAccount.IsRgsUseWithEZ,
+                    IsRgsUseWithWoco = generalLedgerAccount.IsRgsUseWithWoco,
+                    ExcludeRgsBB = generalLedgerAccount.ExcludeRgsBB,
+                    ExcludeRgsAgro = generalLedgerAccount.ExcludeRgsAgro,
+                    ExcludeRgsWKR = generalLedgerAccount.ExcludeRgsWKR,
+                    ExcludeRgsEZVOF = generalLedgerAccount.ExcludeRgsEZVOF,
+                    ExcludeRgsBV = generalLedgerAccount.ExcludeRgsBV,
+                    ExcludeRgsWoco = generalLedgerAccount.ExcludeRgsWoco,
+                    ExcludeRgsBank = generalLedgerAccount.ExcludeRgsBank,
+                    ExcludeRgsOZW = generalLedgerAccount.ExcludeRgsOZW,
+                    ExcludeRgsAfrekSyst = generalLedgerAccount.ExcludeRgsAfrekSyst,
+                    ExcludeRgsNivo5 = generalLedgerAccount.ExcludeRgsNivo5,
+                    ExcludeRgsUitbr5 = generalLedgerAccount.ExcludeRgsUitbr5,
+                };
 
-            balanceSides = this.Source.GeneralLedgerAccounts
-                .Select(v => v.BalanceSide.Equals("Debit") ?
-                new BalanceSides(transaction).Debit :
-                new BalanceSides(transaction).Credit
-                ).ToArray();
+                if (generalLedgerAccount.Level == 2)
+                {
+                    newGeneralLedgerAccount.GeneralLedgerAccountType = newGeneralLedgerAccount.ReferenceCode;
+                    latestNiveau2Account = newGeneralLedgerAccount;
+                }
+
+                generalLedgerAccountsList.Add(newGeneralLedgerAccount);
+                previousNiveau2Account = newGeneralLedgerAccount;
+            }
+
+            generalLedgerAccounts = generalLedgerAccountsList.ToArray();
         }
     }
 }

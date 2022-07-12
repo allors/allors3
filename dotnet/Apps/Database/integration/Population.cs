@@ -35,5 +35,7 @@ namespace Allors.Integration
         //public Dictionary<string, Person> PersonByExternalPersonKey => new People(this.Transaction).Extent().Where(v => v.ExistExternalPrimaryKey).GroupBy(v => v.ExternalPersonKey).Select(v => v.First()).ToDictionary(v => v.ExternalPersonKey);
 
         public Dictionary<string, Salutation> SalutationByName => new Salutations(this.Transaction).Extent().Where(v => v.ExistName).ToDictionary(v => v.Name);
+
+        public GeneralLedgerAccount[] GeneralLedgerAccounts => new GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
     }
 }

@@ -34,6 +34,8 @@ namespace Allors.Integration.Source
 
         public string Description { get; set; } // ex. Investeringen kosten van oprichting en van uitgifte van aandelen
 
+        public string CounterPartAccount { get; set; } // ex. BSchSagSg1
+
         public string BalanceSide { get; set; } // ex. Debit or Credit
 
         public int Level { get; set; } // ex. 1 -> 5

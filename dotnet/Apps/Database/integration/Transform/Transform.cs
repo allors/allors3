@@ -41,18 +41,12 @@ namespace Allors.Integration.Transform
 
         public Staging.Staging Execute()
         {
-            var customerTransformer = new CustomerTransformer(this.Source, this.Population, this.LoggerFactory);
-            customerTransformer.Execute(out var postalAddresses, out var people, out var organisations);
-
             var generalLedgerAccountTransformer = new GeneralLedgerAccountTransformer(this.Source, this.Population, this.LoggerFactory);
-            generalLedgerAccountTransformer.Execute(out var balanceSides);
+            generalLedgerAccountTransformer.Execute(out var generalLedgerAccounts);
 
             return new Staging.Staging
             {
-                PostalAddresses = postalAddresses,
-                People = people,
-                Organisations = organisations,
-                BalanceSides = balanceSides
+                GeneralLedgerAccounts = generalLedgerAccounts
             };
         }
     }
