@@ -46,7 +46,20 @@ namespace Allors.Integration.Transform
         public void Execute(out BalanceSide[] balanceSides)
         {
             var transaction = this.Population.Transaction;
-            
+
+            //generalLedgerAccounts = this.Source.GeneralLedgerAccounts
+            //    .Select(v => new GeneralLedgerAccountBuilder(transaction)
+            //    .WithReferenceCode(v.ReferenceCode)
+            //    .WithSortCode(v.SortCode)
+            //    .WithReferenceNumber(v.ReferenceNumber)
+            //    .WithName(v.Name)
+            //    .WithDescription(v.Description)
+            //    .WithBalanceSide(v.BalanceSide.Equals("Debit") ?
+            //        new BalanceSides(transaction).Debit :
+            //        new BalanceSides(transaction).Credit)
+            //    .Build())
+            //    .ToArray();
+
             balanceSides = this.Source.GeneralLedgerAccounts
                 .Select(v => v.BalanceSide.Equals("Debit") ?
                 new BalanceSides(transaction).Debit :
