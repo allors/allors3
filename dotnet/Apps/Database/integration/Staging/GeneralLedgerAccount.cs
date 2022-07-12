@@ -65,7 +65,7 @@ namespace Allors.Integration.Staging
         public bool IsRgsUseWithEZ { get; set; }
 
         public bool IsRgsUseWithWoco { get; set; }
-            
+
         public bool ExcludeRgsBB { get; set; }
 
         public bool ExcludeRgsAgro { get; set; }

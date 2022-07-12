@@ -60,7 +60,7 @@ namespace Allors.Integration.Transform
                     CounterPartAccount = generalLedgerAccount.CounterPartAccount,
                     Parent = previousNiveau2Account.ReferenceCode,
                     BalanceSide = generalLedgerAccount.BalanceSide,
-                    BalanceType = (generalLedgerAccount.ReferenceCode[0] == 'B') ? "Balance" : "ProfitLoss",
+                    BalanceType = generalLedgerAccount.ReferenceCode[0].ToString(),
                     RgsLevel = generalLedgerAccount.Level,
                     IsRgsUseWithZzp = generalLedgerAccount.IsRgsUseWithZzp,
                     IsRgsBase = generalLedgerAccount.IsRgsBase,
