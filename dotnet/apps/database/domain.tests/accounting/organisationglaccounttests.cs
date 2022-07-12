@@ -31,9 +31,7 @@ namespace Allors.Database.Domain.Tests
                                                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                                                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
                                                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                                                            .WithReferenceNumber("RNumber")
-                                                                                            .WithReferenceCode("RCode")
-                                                                                            .WithSortCode("SCode")
+                                                            .WithCode("SCode")
                                                                                             .WithName("accountGroup")
                                                                                             .Build())
                                                 .Build());
@@ -54,9 +52,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                            .WithReferenceNumber("RNumber")
-                                                            .WithReferenceCode("RCode")
-                                                            .WithSortCode("SCode")
+                                                            .WithCode("SCode")
                                                             .WithName("accountGroup")
                                                             .Build())
                 .Build();
@@ -82,9 +78,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                            .WithReferenceNumber("RNumber")
-                                                            .WithReferenceCode("RCode")
-                                                            .WithSortCode("SCode")
+                                                            .WithCode("SCode")
                                                             .WithName("accountGroup")
                                                             .Build())
                 .Build();

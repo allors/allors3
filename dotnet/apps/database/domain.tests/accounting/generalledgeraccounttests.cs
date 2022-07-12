@@ -15,79 +15,6 @@ namespace Allors.Database.Domain.Tests
         public GeneralLedgerAccountTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void GivenGeneralLedgerAccount_WhenDeriving_ThenRequiredRelationsMustExist()
-        {
-            var accountType = new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build();
-            var accountGroup = new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                    .WithReferenceNumber("RNumber")
-                                    .WithReferenceCode("RCode")
-                                    .WithSortCode("SCode")
-                                    .WithName("accountGroup")
-                                    .Build();
-
-            this.Transaction.Commit();
-
-            var builder = new GeneralLedgerAccountBuilder(this.Transaction);
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithReferenceNumber("ReferenceNumber");
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithReferenceCode("ReferenceCode");
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithSortCode("SortCode");
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithName("GeneralLedgerAccount");
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithBalanceType(new BalanceTypes(this.Transaction).Balance);
-            builder.Build();
-
-            this.Transaction.Rollback();
-
-            builder.WithBalanceSide(new BalanceSides(this.Transaction).Debit);
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithGeneralLedgerAccountClassification(accountGroup);
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithGeneralLedgerAccountType(accountType);
-            builder.Build();
-
-            Assert.False(this.Derive().HasErrors);
-        }
-
-        [Fact]
         public void GivenGeneralLedgerAccount_WhenBuild_ThenPostBuildRelationsMustExist()
         {
             var generalLedgerAccount = new GeneralLedgerAccountBuilder(this.Transaction)
@@ -120,9 +47,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                            .WithReferenceNumber("RNumber")
-                                                            .WithReferenceCode("RCode")
-                                                            .WithSortCode("SCode")
+                                                            .WithCode("SCode")
                                                             .WithName("accountGroup")
                                                             .Build())
                 .Build();
@@ -136,9 +61,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                            .WithReferenceNumber("RNumber")
-                                                            .WithReferenceCode("RCode")
-                                                            .WithSortCode("SCode")
+                                                            .WithCode("SCode")
                                                             .WithName("accountGroup")
                                                             .Build())
                 .Build();
@@ -170,9 +93,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                            .WithReferenceNumber("RNumber")
-                                                            .WithReferenceCode("RCode")
-                                                            .WithSortCode("SCode")
+                                                            .WithCode("SCode")
                                                             .WithName("accountGroup")
                                                             .Build())
                 .Build();
@@ -194,9 +115,7 @@ namespace Allors.Database.Domain.Tests
                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                            .WithReferenceNumber("RNumber")
-                                                            .WithReferenceCode("RCode")
-                                                            .WithSortCode("SCode")
+                                                            .WithCode("SCode")
                                                             .WithName("accountGroup")
                                                             .Build())
                 .Build();

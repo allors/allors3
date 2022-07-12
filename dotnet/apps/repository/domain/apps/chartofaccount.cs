@@ -43,6 +43,13 @@ namespace Allors.Repository
         [Indexed]
         public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
 
+        #region Allors
+        [Id("52220446-2480-469c-98d0-a9d36ea77220")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        public GeneralLedgerAccountClassification[] GeneralLedgerAccountClassifications { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

@@ -185,7 +185,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public Product DefaultCostUnit { get; set; }
+        public CostUnit DefaultCostUnit { get; set; }
 
         #region Allors
         [Id("d2078f49-9745-48e5-bdd2-7d7738f25d4e")]
@@ -193,7 +193,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Workspace(Default)]
-        public Product[] AssignedCostUnitsAllowed { get; set; }
+        public CostUnit[] AssignedCostUnitsAllowed { get; set; }
 
         #region Allors
         [Id("b8e82b04-f4bf-4d2f-acb9-ceb7b3b11a12")]
@@ -202,7 +202,7 @@ namespace Allors.Repository
         [Derived]
         [Indexed]
         [Workspace(Default)]
-        public Product[] DerivedCostUnitsAllowed { get; set; }
+        public CostUnit[] DerivedCostUnitsAllowed { get; set; }
 
         #region Allors
         [Id("bfe446ee-f9ff-462f-bb45-9bf52d61daa4")]
