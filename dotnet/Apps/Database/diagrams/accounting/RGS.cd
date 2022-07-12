@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Interface Name="Allors.Domain.GeneralLedgerAccount">
-    <Position X="10.25" Y="1" Width="2" />
+    <Position X="10.25" Y="1" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAABQQAQAiEgKQAEQAhAQAUAA44AAAAAQMMAQQAAIEA=</HashCode>
+      <HashCode>ACABUQAQBiEgawAEQBhAQAUEC44AAAAAQMMAYQAAIEA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.ChartOfAccounts">
-    <Position X="14.25" Y="1" Width="1.5" />
+    <Position X="14.75" Y="1" Width="1.5" />
     <AssociationLine Name="GeneralLedgerAccounts" Type="Allors.Domain.GeneralLedgerAccount">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.193" Y="0.06" />
@@ -44,7 +44,7 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.RgsFilter">
-    <Position X="10.25" Y="8.75" Width="1.5" />
+    <Position X="10.25" Y="11.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAghAABAAAAAAAAGAABAAAAAQggAMAAAAAQEQACAAIA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
