@@ -3,12 +3,12 @@ namespace Allors.Repository
     using Attributes;
 
     #region Allors
-    [Id("0915d423-4fba-4b9c-bc0d-6378ec539985")]
+    [Id("7a569bda-923f-4466-bef6-5a9ac91c9d89")]
     #endregion
     public partial interface ExternalWithPrimaryKey : Object
     {
         #region Allors
-        [Id("3bf14c47-4f21-4fa4-a7f0-28a737b514f3")]
+        [Id("f6338fcf-0aec-4658-84ac-d45d38bf4098")]
         [Indexed]
         [Size(256)]
         #endregion
