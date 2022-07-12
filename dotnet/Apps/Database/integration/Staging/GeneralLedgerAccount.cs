@@ -40,7 +40,7 @@ namespace Allors.Integration.Staging
 
         public string GeneralLedgerAccountType { get; set; }
 
-        //GeneralLedgerAccountClassification?
+        public string GeneralLedgerAccountClassification { get; set; }
 
         public string CounterPartAccount { get; set; }
 
