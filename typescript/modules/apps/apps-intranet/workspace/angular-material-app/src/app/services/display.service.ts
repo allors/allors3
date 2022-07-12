@@ -124,7 +124,6 @@ export class AppDisplayService implements DisplayService {
       [m.RequirementSequence, m.RequirementSequence.Name],
       [m.RequirementState, m.RequirementState.Name],
       [m.RequirementType, m.RequirementType.Name],
-      [m.RgsFilter, m.RgsFilter.Name],
       [m.SalesChannel, m.SalesChannel.Name],
       [m.SalesInvoice, m.SalesInvoice.InvoiceNumber],
       [m.SalesInvoiceItemState, m.SalesInvoiceItemState.Name],
