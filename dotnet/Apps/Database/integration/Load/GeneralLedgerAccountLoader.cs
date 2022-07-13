@@ -18,6 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using Allors.Database.Domain;
 using Microsoft.Extensions.Logging;
 
 namespace Allors.Integration.Load
@@ -35,11 +36,40 @@ namespace Allors.Integration.Load
         public override void OnBuild()
         {
             var generalLedgerAccounts = this.Staging.GeneralLedgerAccounts;
+            //var balanceSides = this.Population.
 
-            //foreach (var generalLedgerAccount in )
-            //{
-            //  new GeneralLedgerAccountBuilder(this.Transaction).WithBalanceSide(balanceSides.First()).Build();
-            //}
+            foreach (var generalLedgerAccount in generalLedgerAccounts)
+            {
+                new GeneralLedgerAccountBuilder(this.Transaction)
+                    .WithReferenceCode(generalLedgerAccount.ReferenceCode)
+                    .WithSortCode(generalLedgerAccount.SortCode)
+                    .WithReferenceNumber(generalLedgerAccount.ReferenceNumber)
+                    .WithName(generalLedgerAccount.Name)
+                    .WithDescription(generalLedgerAccount.Description)
+                    //.WithGeneralLedgerAccountType(generalLedgerAccount.GeneralLedgerAccountType)
+                    //.WithCounterPartAccount()
+                    //.WithParent()
+                    .WithBalanceSide(this.Population.BalanceSideByName.Get(generalLedgerAccount.BalanceSide))
+                    .WithBalanceType(this.Population.BalanceTypesByName.Get(generalLedgerAccount.BalanceType))
+                    .WithRgsLevel(generalLedgerAccount.RgsLevel)
+                    .WithIsRgsUseWithZzp(generalLedgerAccount.IsRgsUseWithZzp)
+                    .WithIsRgsBase(generalLedgerAccount.IsRgsBase)
+                    .WithIsRgsExtended(generalLedgerAccount.IsRgsExtended)
+                    .WithIsRgsUseWithEZ(generalLedgerAccount.IsRgsUseWithEZ)
+                    .WithIsRgsUseWithWoco(generalLedgerAccount.IsRgsUseWithWoco)
+                    .WithExcludeRgsBB(generalLedgerAccount.ExcludeRgsBB)
+                    .WithExcludeRgsAgro(generalLedgerAccount.ExcludeRgsAgro)
+                    .WithExcludeRgsWKR(generalLedgerAccount.ExcludeRgsWKR)
+                    .WithExcludeRgsEZVOF(generalLedgerAccount.ExcludeRgsEZVOF)
+                    .WithExcludeRgsBV(generalLedgerAccount.ExcludeRgsBV)
+                    .WithExcludeRgsWoco(generalLedgerAccount.ExcludeRgsWoco)
+                    .WithExcludeRgsBank(generalLedgerAccount.ExcludeRgsBank)
+                    .WithExcludeRgsOZW(generalLedgerAccount.ExcludeRgsOZW)
+                    .WithExcludeRgsAfrekSyst(generalLedgerAccount.ExcludeRgsAfrekSyst)
+                    .WithExcludeRgsNivo5(generalLedgerAccount.ExcludeRgsNivo5)
+                    .WithExcludeRgsUitbr5(generalLedgerAccount.ExcludeRgsUitbr5)
+                    .Build();
+            }
         }
 
         public override void OnUpdate()

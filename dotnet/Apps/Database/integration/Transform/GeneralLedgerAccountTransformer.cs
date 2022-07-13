@@ -45,7 +45,8 @@ namespace Allors.Integration.Transform
         {
             var generalLedgerAccountsList = new List<Staging.GeneralLedgerAccount>();
             Staging.GeneralLedgerAccount latestNiveau2Account = null;
-            Staging.GeneralLedgerAccount previousNiveau2Account = null;
+            Staging.GeneralLedgerAccount latestNiveau3Account = null;
+            Staging.GeneralLedgerAccount previousGeneralLedgerAccount = null;
 
             foreach (var generalLedgerAccount in this.Source.GeneralLedgerAccounts)
             {
@@ -57,10 +58,11 @@ namespace Allors.Integration.Transform
                     Name = generalLedgerAccount.Name,
                     Description = generalLedgerAccount.Description,
                     GeneralLedgerAccountType = latestNiveau2Account.ReferenceCode,
+                    GeneralLedgerAccountClassification = latestNiveau3Account.ReferenceCode,
                     CounterPartAccount = generalLedgerAccount.CounterPartAccount,
-                    Parent = previousNiveau2Account.ReferenceCode,
+                    Parent = previousGeneralLedgerAccount.ReferenceCode,
                     BalanceSide = generalLedgerAccount.BalanceSide,
-                    BalanceType = (generalLedgerAccount.ReferenceCode[0] == 'B') ? "Balance" : "ProfitLoss",
+                    BalanceType = generalLedgerAccount.ReferenceCode[0].ToString(),
                     RgsLevel = generalLedgerAccount.Level,
                     IsRgsUseWithZzp = generalLedgerAccount.IsRgsUseWithZzp,
                     IsRgsBase = generalLedgerAccount.IsRgsBase,
@@ -83,11 +85,18 @@ namespace Allors.Integration.Transform
                 if (generalLedgerAccount.Level == 2)
                 {
                     newGeneralLedgerAccount.GeneralLedgerAccountType = newGeneralLedgerAccount.ReferenceCode;
+                    newGeneralLedgerAccount.GeneralLedgerAccountClassification = null;
                     latestNiveau2Account = newGeneralLedgerAccount;
                 }
 
+                if (generalLedgerAccount.Level == 3)
+                {
+                    newGeneralLedgerAccount.GeneralLedgerAccountClassification = latestNiveau2Account.ReferenceCode;
+                    latestNiveau3Account = newGeneralLedgerAccount;
+                }
+
                 generalLedgerAccountsList.Add(newGeneralLedgerAccount);
-                previousNiveau2Account = newGeneralLedgerAccount;
+                previousGeneralLedgerAccount = newGeneralLedgerAccount;
             }
 
             generalLedgerAccounts = generalLedgerAccountsList.ToArray();

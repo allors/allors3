@@ -37,5 +37,9 @@ namespace Allors.Integration
         public Dictionary<string, Salutation> SalutationByName => new Salutations(this.Transaction).Extent().Where(v => v.ExistName).ToDictionary(v => v.Name);
 
         public GeneralLedgerAccount[] GeneralLedgerAccounts => new GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
+
+        public Dictionary<string, BalanceSide> BalanceSideByName => new BalanceSides(this.Transaction).Extent().ToDictionary(v => v.Name[0].ToString());
+
+        public Dictionary<string, BalanceType> BalanceTypesByName => new BalanceTypes(this.Transaction).Extent().ToDictionary(v => v.Name[0].ToString());
     }
 }
