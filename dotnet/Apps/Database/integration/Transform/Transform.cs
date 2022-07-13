@@ -17,9 +17,6 @@
 // For more information visit http://www.allors.com/legal
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
-using Allors.Database.Domain;
-using Allors.Database.Meta;
 using Microsoft.Extensions.Logging;
 
 namespace Allors.Integration.Transform
@@ -42,11 +39,13 @@ namespace Allors.Integration.Transform
         public Staging.Staging Execute()
         {
             var generalLedgerAccountTransformer = new GeneralLedgerAccountTransformer(this.Source, this.Population, this.LoggerFactory);
-            generalLedgerAccountTransformer.Execute(out var generalLedgerAccounts);
+            generalLedgerAccountTransformer.Execute(out var generalLedgerAccounts, out var generalLedgerAccountClassifications, out var generalLedgerAccountTypes);
 
             return new Staging.Staging
             {
-                GeneralLedgerAccounts = generalLedgerAccounts
+                GeneralLedgerAccounts = generalLedgerAccounts,
+                GeneralLedgerAccountClassifications = generalLedgerAccountClassifications,
+                GeneralLedgerAccountTypes = generalLedgerAccountTypes
             };
         }
     }

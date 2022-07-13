@@ -35,10 +35,7 @@ namespace Allors.Integration.Load
 
         public override void OnBuild()
         {
-            var generalLedgerAccounts = this.Staging.GeneralLedgerAccounts;
-            //var balanceSides = this.Population.
-
-            foreach (var generalLedgerAccount in generalLedgerAccounts)
+            foreach (var generalLedgerAccount in this.Staging.GeneralLedgerAccounts)
             {
                 new GeneralLedgerAccountBuilder(this.Transaction)
                     .WithReferenceCode(generalLedgerAccount.ReferenceCode)
@@ -46,7 +43,8 @@ namespace Allors.Integration.Load
                     .WithReferenceNumber(generalLedgerAccount.ReferenceNumber)
                     .WithName(generalLedgerAccount.Name)
                     .WithDescription(generalLedgerAccount.Description)
-                    //.WithGeneralLedgerAccountType(generalLedgerAccount.GeneralLedgerAccountType)
+                    .WithGeneralLedgerAccountType(this.Population.GeneralLedgerAccountTypesByDescription.Get(generalLedgerAccount.GeneralLedgerAccountType))
+                    .WithGeneralLedgerAccountClassification(this.Population.GeneralLedgerAccountClassificationsByReferenceCode.Get(generalLedgerAccount.GeneralLedgerAccountClassification))
                     //.WithCounterPartAccount()
                     //.WithParent()
                     .WithBalanceSide(this.Population.BalanceSideByName.Get(generalLedgerAccount.BalanceSide))

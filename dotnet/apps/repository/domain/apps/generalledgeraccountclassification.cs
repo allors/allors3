@@ -40,7 +40,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         public string SortCode { get; set; }
 
-
         #region Allors
         [Id("e43a6308-cb95-474e-aacb-038855fcccfe")]
         #endregion

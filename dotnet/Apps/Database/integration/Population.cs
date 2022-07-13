@@ -30,13 +30,11 @@ namespace Allors.Integration
     {
         public ITransaction Transaction { get; set; }
 
-        public Country[] Countries => new Countries(this.Transaction).Extent().ToArray();
-
-        //public Dictionary<string, Person> PersonByExternalPersonKey => new People(this.Transaction).Extent().Where(v => v.ExistExternalPrimaryKey).GroupBy(v => v.ExternalPersonKey).Select(v => v.First()).ToDictionary(v => v.ExternalPersonKey);
-
-        public Dictionary<string, Salutation> SalutationByName => new Salutations(this.Transaction).Extent().Where(v => v.ExistName).ToDictionary(v => v.Name);
-
         public GeneralLedgerAccount[] GeneralLedgerAccounts => new GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
+
+        public Dictionary<string, GeneralLedgerAccountType> GeneralLedgerAccountTypesByDescription => new GeneralLedgerAccountTypes(this.Transaction).Extent().ToDictionary(v => v.Description);
+
+        public Dictionary<string, GeneralLedgerAccountClassification> GeneralLedgerAccountClassificationsByReferenceCode => new GeneralLedgerAccountClassifications(this.Transaction).Extent().ToDictionary(v => v.ReferenceCode);
 
         public Dictionary<string, BalanceSide> BalanceSideByName => new BalanceSides(this.Transaction).Extent().ToDictionary(v => v.Name[0].ToString());
 
