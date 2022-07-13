@@ -142,6 +142,8 @@ namespace Allors.Database.Domain.Tests
             var accountClassification = new GeneralLedgerAccountClassificationBuilder(this.Transaction)
                 .WithName("accountGroup")
                 .WithCode("SCode")
+                .WithReferenceCode("001")
+                .WithSortCode("A")
                 .Build();
 
             var glAccount0001 = new GeneralLedgerAccountBuilder(this.Transaction)
