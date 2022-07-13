@@ -42,7 +42,7 @@ namespace Allors.Repository
 
 
         #region Allors
-        [Id("f2d02d7a-e536-49e9-8fa0-2f4e644a8ad9")]
+        [Id("e43a6308-cb95-474e-aacb-038855fcccfe")]
         #endregion
         [Required]
         [Workspace(Default)]
