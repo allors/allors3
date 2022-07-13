@@ -17,12 +17,23 @@
 // For more information visit http://www.allors.com/legal
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Allors.Integration.Staging
 {
-    public partial class Staging
+    using Allors.Database.Domain;
+
+    public partial class GeneralLedgerAccountClassification
     {
-        public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
-        public GeneralLedgerAccountClassification[] GeneralLedgerAccountClassifications { get; set; }
-        public GeneralLedgerAccountType[] GeneralLedgerAccountTypes { get; set; }
+        public int RgsLevel { get; set; }
+
+        public string ReferenceCode { get; set; }
+
+        public string SortCode { get; set; }
+
+        public string Code { get; set; }
+
+        public string Parent { get; set; }
+        
+        public string Name { get; set; }
     }
 }

@@ -41,65 +41,100 @@ namespace Allors.Integration.Transform
 
         public ILogger<GeneralLedgerAccountTransformer> Logger { get; set; }
 
-        public void Execute(out Staging.GeneralLedgerAccount[] generalLedgerAccounts)
+        public void Execute(out Staging.GeneralLedgerAccount[] generalLedgerAccounts, out Staging.GeneralLedgerAccountClassification[] generalLedgerAccountClassifications, out Staging.GeneralLedgerAccountType[] generalLedgerAccountTypes)
         {
             var generalLedgerAccountsList = new List<Staging.GeneralLedgerAccount>();
-            Staging.GeneralLedgerAccount latestNiveau2Account = null;
-            Staging.GeneralLedgerAccount latestNiveau3Account = null;
-            Staging.GeneralLedgerAccount previousGeneralLedgerAccount = null;
+            var generalLedgerAccountClassificationsList = new List<Staging.GeneralLedgerAccountClassification>();
+            var generalLedgerAccountTypesList = new List<Staging.GeneralLedgerAccountType>();
+
+            Staging.GeneralLedgerAccountClassification latestNiveau2AccountClassification = null;
+            Staging.GeneralLedgerAccountType latestNiveau2AccountType = null;
+
+            Staging.GeneralLedgerAccountClassification latestNiveau3AccountClassification = null;
 
             foreach (var generalLedgerAccount in this.Source.GeneralLedgerAccounts)
             {
-                var newGeneralLedgerAccount = new Staging.GeneralLedgerAccount()
-                {
-                    ReferenceCode = generalLedgerAccount.ReferenceCode,
-                    SortCode = generalLedgerAccount.SortCode,
-                    ReferenceNumber = generalLedgerAccount.ReferenceNumber,
-                    Name = generalLedgerAccount.Name,
-                    Description = generalLedgerAccount.Description,
-                    GeneralLedgerAccountType = latestNiveau2Account?.ReferenceCode,
-                    GeneralLedgerAccountClassification = latestNiveau3Account?.ReferenceCode,
-                    CounterPartAccount = generalLedgerAccount.CounterPartAccount,
-                    Parent = previousGeneralLedgerAccount?.ReferenceCode,
-                    BalanceSide = generalLedgerAccount.BalanceSide,
-                    BalanceType = generalLedgerAccount.ReferenceCode[0].ToString(),
-                    RgsLevel = generalLedgerAccount.Level,
-                    IsRgsUseWithZzp = generalLedgerAccount.IsRgsUseWithZzp,
-                    IsRgsBase = generalLedgerAccount.IsRgsBase,
-                    IsRgsExtended = generalLedgerAccount.IsRgsExtended,
-                    IsRgsUseWithEZ = generalLedgerAccount.IsRgsUseWithEZ,
-                    IsRgsUseWithWoco = generalLedgerAccount.IsRgsUseWithWoco,
-                    ExcludeRgsBB = generalLedgerAccount.ExcludeRgsBB,
-                    ExcludeRgsAgro = generalLedgerAccount.ExcludeRgsAgro,
-                    ExcludeRgsWKR = generalLedgerAccount.ExcludeRgsWKR,
-                    ExcludeRgsEZVOF = generalLedgerAccount.ExcludeRgsEZVOF,
-                    ExcludeRgsBV = generalLedgerAccount.ExcludeRgsBV,
-                    ExcludeRgsWoco = generalLedgerAccount.ExcludeRgsWoco,
-                    ExcludeRgsBank = generalLedgerAccount.ExcludeRgsBank,
-                    ExcludeRgsOZW = generalLedgerAccount.ExcludeRgsOZW,
-                    ExcludeRgsAfrekSyst = generalLedgerAccount.ExcludeRgsAfrekSyst,
-                    ExcludeRgsNivo5 = generalLedgerAccount.ExcludeRgsNivo5,
-                    ExcludeRgsUitbr5 = generalLedgerAccount.ExcludeRgsUitbr5,
-                };
-
                 if (generalLedgerAccount.Level == 2)
                 {
-                    newGeneralLedgerAccount.GeneralLedgerAccountType = newGeneralLedgerAccount.ReferenceCode;
-                    newGeneralLedgerAccount.GeneralLedgerAccountClassification = null;
-                    latestNiveau2Account = newGeneralLedgerAccount;
-                }
+                    var classification = new Staging.GeneralLedgerAccountClassification()
+                    {
+                        ReferenceCode = generalLedgerAccount.ReferenceCode,
+                        //Code = generalLedgerAccount.ReferenceNumber,
+                        Name = generalLedgerAccount.Name,
+                        RgsLevel = generalLedgerAccount.Level,
+                        SortCode = generalLedgerAccount.SortCode,
+                        Parent = null,
+                    };
 
-                if (generalLedgerAccount.Level == 3)
+                    var type = new Staging.GeneralLedgerAccountType()
+                    {
+                        Description = generalLedgerAccount.Name,
+                    };
+
+                    latestNiveau2AccountClassification = classification;
+                    latestNiveau2AccountType = type;
+
+                    generalLedgerAccountClassificationsList.Add(classification);
+                    generalLedgerAccountTypesList.Add(type);
+                }
+                else if (generalLedgerAccount.Level == 3)
                 {
-                    newGeneralLedgerAccount.GeneralLedgerAccountClassification = latestNiveau2Account.ReferenceCode;
-                    latestNiveau3Account = newGeneralLedgerAccount;
+                    var classification = new Staging.GeneralLedgerAccountClassification()
+                    {
+                        ReferenceCode = generalLedgerAccount.ReferenceCode,
+                        //Code = generalLedgerAccount.ReferenceNumber,
+                        Name = generalLedgerAccount.Name,
+                        RgsLevel = generalLedgerAccount.Level,
+                        SortCode = generalLedgerAccount.SortCode,
+                        Parent = latestNiveau2AccountClassification.ReferenceCode,
+                    };
+
+                    latestNiveau3AccountClassification = classification;
+
+                    generalLedgerAccountClassificationsList.Add(classification);
+                }
+                else if (generalLedgerAccount.Level == 4)
+                {
+                    var newGeneralLedgerAccount = new Staging.GeneralLedgerAccount()
+                    {
+                        ReferenceCode = generalLedgerAccount.ReferenceCode,
+                        SortCode = generalLedgerAccount.SortCode,
+                        ReferenceNumber = generalLedgerAccount.ReferenceNumber,
+                        Name = generalLedgerAccount.Name,
+                        Description = generalLedgerAccount.Description,
+                        GeneralLedgerAccountType = latestNiveau2AccountType.Description,
+                        GeneralLedgerAccountClassification = latestNiveau3AccountClassification.ReferenceCode,
+                        CounterPartAccount = generalLedgerAccount.CounterPartAccount,
+                        Parent = latestNiveau3AccountClassification.ReferenceCode,
+                        BalanceSide = generalLedgerAccount.BalanceSide,
+                        BalanceType = generalLedgerAccount.ReferenceCode[0].ToString(),
+                        RgsLevel = generalLedgerAccount.Level,
+                        IsRgsUseWithZzp = generalLedgerAccount.IsRgsUseWithZzp,
+                        IsRgsBase = generalLedgerAccount.IsRgsBase,
+                        IsRgsExtended = generalLedgerAccount.IsRgsExtended,
+                        IsRgsUseWithEZ = generalLedgerAccount.IsRgsUseWithEZ,
+                        IsRgsUseWithWoco = generalLedgerAccount.IsRgsUseWithWoco,
+                        ExcludeRgsBB = generalLedgerAccount.ExcludeRgsBB,
+                        ExcludeRgsAgro = generalLedgerAccount.ExcludeRgsAgro,
+                        ExcludeRgsWKR = generalLedgerAccount.ExcludeRgsWKR,
+                        ExcludeRgsEZVOF = generalLedgerAccount.ExcludeRgsEZVOF,
+                        ExcludeRgsBV = generalLedgerAccount.ExcludeRgsBV,
+                        ExcludeRgsWoco = generalLedgerAccount.ExcludeRgsWoco,
+                        ExcludeRgsBank = generalLedgerAccount.ExcludeRgsBank,
+                        ExcludeRgsOZW = generalLedgerAccount.ExcludeRgsOZW,
+                        ExcludeRgsAfrekSyst = generalLedgerAccount.ExcludeRgsAfrekSyst,
+                        ExcludeRgsNivo5 = generalLedgerAccount.ExcludeRgsNivo5,
+                        ExcludeRgsUitbr5 = generalLedgerAccount.ExcludeRgsUitbr5,
+                    };
+
+                    generalLedgerAccountsList.Add(newGeneralLedgerAccount);
                 }
 
-                generalLedgerAccountsList.Add(newGeneralLedgerAccount);
-                previousGeneralLedgerAccount = newGeneralLedgerAccount;
             }
 
             generalLedgerAccounts = generalLedgerAccountsList.ToArray();
+            generalLedgerAccountClassifications = generalLedgerAccountClassificationsList.ToArray();
+            generalLedgerAccountTypes = generalLedgerAccountTypesList.ToArray();
         }
     }
 }
