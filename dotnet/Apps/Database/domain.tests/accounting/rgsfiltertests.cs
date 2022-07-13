@@ -145,7 +145,7 @@ namespace Allors.Database.Domain.Tests
             errors = this.Derive().Errors.ToList();
             Assert.Empty(errors);
         }
-        
+
         [Fact]
         public void RgsFilterUseEZAndUseZzpAndUseWoCoWithAllTrueCanNotBeTwoTrue()
         {
@@ -231,6 +231,32 @@ namespace Allors.Database.Domain.Tests
 
             errors = this.Derive().Errors.ToList();
             Assert.Empty(errors);
+        }
+
+        [Fact]
+        public void RgsFilterExcludeLevel5CanNotBeFalse()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.ExcludeLevel5 = false;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Single(errors);
+        }
+
+        [Fact]
+        public void RgsFilterExcludeLevel5ExtensionCanNotBeFalse()
+        {
+            var rgsFilter = new RgsFilterBuilder(this.Transaction).Build();
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors);
+
+            rgsFilter.ExcludeLevel5Extension = false;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Single(errors);
         }
     }
 }
