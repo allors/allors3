@@ -325,6 +325,7 @@ namespace Allors.Database.Domain
                 new RgsFilterBaseRule(m),
                 new RgsFilterEzRule(m),
                 new RgsFilterEzZzpWoCoRule(m),
+                new RgsFilterLevel5Rule(m),
                 new RgsFilterWoCoRule(m),
                 new RgsFilterZzpRule(m),
                 new SalesInvoiceBilledFromValidationRule(m),
