@@ -52,6 +52,8 @@ namespace Allors.Integration.Transform
 
             Staging.GeneralLedgerAccountClassification latestNiveau3AccountClassification = null;
 
+            Staging.GeneralLedgerAccount latestNiveau4Account = null;
+
             foreach (var generalLedgerAccount in this.Source.GeneralLedgerAccounts)
             {
                 if (generalLedgerAccount.Level == 2)
@@ -94,7 +96,7 @@ namespace Allors.Integration.Transform
 
                     generalLedgerAccountClassificationsList.Add(classification);
                 }
-                else if (generalLedgerAccount.Level == 4)
+                else if (generalLedgerAccount.Level > 3)
                 {
                     var balanceType = generalLedgerAccount.ReferenceCode[0].ToString();
 
@@ -135,7 +137,13 @@ namespace Allors.Integration.Transform
                         ExcludeRgsUitbr5 = generalLedgerAccount.ExcludeRgsUitbr5,
                     };
 
+                    if (generalLedgerAccount.Level == 5)
+                    {
+                        newGeneralLedgerAccount.ParentExternalPrimaryKey = latestNiveau4Account.ExternalPrimaryKey;
+                    }
+
                     generalLedgerAccountsList.Add(newGeneralLedgerAccount);
+                    latestNiveau4Account = newGeneralLedgerAccount;
                 }
 
             }

@@ -85,6 +85,11 @@ namespace Allors.Integration.Load
                 generalLedgerAccountToUpdate.ExcludeRgsAfrekSyst = generalLedgerAccount.ExcludeRgsAfrekSyst;
                 generalLedgerAccountToUpdate.ExcludeRgsNivo5 = generalLedgerAccount.ExcludeRgsNivo5;
                 generalLedgerAccountToUpdate.ExcludeRgsUitbr5 = generalLedgerAccount.ExcludeRgsUitbr5;
+
+                if(generalLedgerAccount.RgsLevel == 5)
+                {
+                    generalLedgerAccountToUpdate.Parent = this.Population.GeneralLedgerAccountsByExternalPrimaryKey[generalLedgerAccount.ParentExternalPrimaryKey];
+                }
             }
         }
     }
