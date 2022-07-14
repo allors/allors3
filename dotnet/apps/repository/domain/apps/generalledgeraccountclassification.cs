@@ -42,7 +42,7 @@ namespace Allors.Repository
         [Id("e43a6308-cb95-474e-aacb-038855fcccfe")]
         #endregion
         [Workspace(Default)]
-        public string Code { get; set; }
+        public string ReferenceNumber { get; set; }
 
         #region Allors
         [Id("3ab2ad60-3560-4817-9862-7f60c55bbc32")]

@@ -30,7 +30,7 @@ namespace Allors.Integration.Staging
 
         public string SortCode { get; set; }
 
-        public string Code { get; set; }
+        public string ReferenceNumber { get; set; }
 
         public string Parent { get; set; }
 

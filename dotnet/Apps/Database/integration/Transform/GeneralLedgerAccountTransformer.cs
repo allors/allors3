@@ -59,7 +59,7 @@ namespace Allors.Integration.Transform
                     var classification = new Staging.GeneralLedgerAccountClassification()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
-                        Code = generalLedgerAccount.ReferenceNumber, // TODO:
+                        ReferenceNumber = generalLedgerAccount.ReferenceNumber, // TODO:
                         Name = generalLedgerAccount.Name,
                         RgsLevel = generalLedgerAccount.Level,
                         SortCode = generalLedgerAccount.SortCode,
@@ -82,7 +82,7 @@ namespace Allors.Integration.Transform
                     var classification = new Staging.GeneralLedgerAccountClassification()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
-                        Code = generalLedgerAccount.ReferenceNumber, // TODO:
+                        ReferenceNumber = generalLedgerAccount.ReferenceNumber, // TODO:
                         Name = generalLedgerAccount.Name,
                         RgsLevel = generalLedgerAccount.Level,
                         SortCode = generalLedgerAccount.SortCode,

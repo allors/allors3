@@ -41,7 +41,7 @@ namespace Allors.Integration.Load
                     .WithRgsLevel(generalLedgerAccountClassification.RgsLevel)
                     .WithReferenceCode(generalLedgerAccountClassification.ReferenceCode)
                     .WithSortCode(generalLedgerAccountClassification.SortCode)
-                    .WithCode(generalLedgerAccountClassification.Code)
+                    .WithReferenceNumber(generalLedgerAccountClassification.ReferenceNumber)
                     //.WithParent()
                     .WithName(generalLedgerAccountClassification.Name)
                     .Build();
