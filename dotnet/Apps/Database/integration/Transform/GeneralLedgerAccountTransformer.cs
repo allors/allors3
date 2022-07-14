@@ -59,11 +59,11 @@ namespace Allors.Integration.Transform
                     var classification = new Staging.GeneralLedgerAccountClassification()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
-                        ReferenceNumber = generalLedgerAccount.ReferenceNumber, // TODO:
+                        ReferenceNumber = generalLedgerAccount.ReferenceNumber,
                         Name = generalLedgerAccount.Name,
                         RgsLevel = generalLedgerAccount.Level,
                         SortCode = generalLedgerAccount.SortCode,
-                        Parent = null,
+                        ParentExternalPrimaryKey = null,
                     };
 
                     var type = new Staging.GeneralLedgerAccountType()
@@ -82,11 +82,11 @@ namespace Allors.Integration.Transform
                     var classification = new Staging.GeneralLedgerAccountClassification()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
-                        ReferenceNumber = generalLedgerAccount.ReferenceNumber, // TODO:
+                        ReferenceNumber = generalLedgerAccount.ReferenceNumber,
                         Name = generalLedgerAccount.Name,
                         RgsLevel = generalLedgerAccount.Level,
                         SortCode = generalLedgerAccount.SortCode,
-                        Parent = latestNiveau2AccountClassification.ReferenceCode,
+                        ParentExternalPrimaryKey = latestNiveau2AccountClassification.ExternalPrimaryKey,
                     };
 
                     latestNiveau3AccountClassification = classification;
@@ -102,10 +102,9 @@ namespace Allors.Integration.Transform
                         ReferenceNumber = generalLedgerAccount.ReferenceNumber,
                         Name = generalLedgerAccount.Name,
                         Description = generalLedgerAccount.Description,
-                        GeneralLedgerAccountType = latestNiveau2AccountType.Description,
-                        GeneralLedgerAccountClassification = latestNiveau3AccountClassification.ReferenceCode,
-                        CounterPartAccount = generalLedgerAccount.CounterPartAccount,
-                        Parent = latestNiveau3AccountClassification.ReferenceCode,
+                        GeneralLedgerAccountTypeDescription = latestNiveau2AccountType.Description,
+                        GeneralLedgerAccountClassificationExternalPrimaryKey = latestNiveau3AccountClassification.ExternalPrimaryKey,
+                        CounterPartAccountExternalPrimaryKey = generalLedgerAccount.CounterPartAccount,
                         BalanceSide = generalLedgerAccount.BalanceSide,
                         BalanceType = generalLedgerAccount.ReferenceCode[0].ToString(),
                         RgsLevel = generalLedgerAccount.Level,

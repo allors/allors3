@@ -18,6 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Linq;
 using Allors.Database.Domain;
 using Microsoft.Extensions.Logging;
 
@@ -35,14 +36,15 @@ namespace Allors.Integration.Load
 
         public override void OnBuild()
         {
-            foreach (var generalLedgerAccountClassification in this.Staging.GeneralLedgerAccountClassifications)
+            var generalLedgerAccountClassificationsByExternalPrimaryKey = this.Population.GeneralLedgerAccountClassificationsByExternalPrimaryKey;
+            foreach (var generalLedgerAccountClassification in this.Staging.GeneralLedgerAccountClassifications.Where(v => !generalLedgerAccountClassificationsByExternalPrimaryKey.ContainsKey(v.ExternalPrimaryKey)))
             {
                 new GeneralLedgerAccountClassificationBuilder(this.Transaction)
+                    .WithExternalPrimaryKey(generalLedgerAccountClassification.ExternalPrimaryKey)
                     .WithRgsLevel(generalLedgerAccountClassification.RgsLevel)
                     .WithReferenceCode(generalLedgerAccountClassification.ReferenceCode)
                     .WithSortCode(generalLedgerAccountClassification.SortCode)
                     .WithReferenceNumber(generalLedgerAccountClassification.ReferenceNumber)
-                    //.WithParent()
                     .WithName(generalLedgerAccountClassification.Name)
                     .Build();
             }
@@ -50,13 +52,19 @@ namespace Allors.Integration.Load
 
         public override void OnUpdate()
         {
-            //foreach (var generalLedgerAccountClassification in this.Staging.GeneralLedgerAccountClassifications)
-            //{
-            //    var person = personByExternalPersonKey[generalLedgerAccountClassification];
-            //    person.FirstName = stagingPerson.FirstName;
-            //    person.LastName = stagingPerson.LastName;
-            //    person.Salutation = salutationByName.Get(stagingPerson.Salutation);
-            //}
+            var generalLedgerAccountClassificationsByExternalPrimaryKey = this.Population.GeneralLedgerAccountClassificationsByExternalPrimaryKey;
+            foreach (var generalLedgerAccountClassification in this.Staging.GeneralLedgerAccountClassifications)
+            {
+                var generalLedgerAccountClassificationToUpdate = generalLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccountClassification.ExternalPrimaryKey];
+
+                generalLedgerAccountClassificationToUpdate.Parent = generalLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccountClassification.ParentExternalPrimaryKey] ?? null;
+
+                generalLedgerAccountClassificationToUpdate.RgsLevel = generalLedgerAccountClassification.RgsLevel;
+                generalLedgerAccountClassificationToUpdate.ReferenceCode = generalLedgerAccountClassification.ReferenceCode;
+                generalLedgerAccountClassificationToUpdate.SortCode = generalLedgerAccountClassification.SortCode;
+                generalLedgerAccountClassificationToUpdate.ReferenceNumber = generalLedgerAccountClassification.ReferenceNumber;
+                generalLedgerAccountClassificationToUpdate.Name = generalLedgerAccountClassification.Name;
+            }
         }
     }
 }
