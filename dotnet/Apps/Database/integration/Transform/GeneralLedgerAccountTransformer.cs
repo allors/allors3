@@ -95,6 +95,13 @@ namespace Allors.Integration.Transform
                 }
                 else if (generalLedgerAccount.Level == 4)
                 {
+                    var balanceType = generalLedgerAccount.ReferenceCode[0].ToString();
+
+                    if (balanceType == "W")
+                    {
+                        balanceType = "P";
+                    }
+                    
                     var newGeneralLedgerAccount = new Staging.GeneralLedgerAccount()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
@@ -107,7 +114,7 @@ namespace Allors.Integration.Transform
                         CounterPartAccount = generalLedgerAccount.CounterPartAccount,
                         Parent = latestNiveau3AccountClassification.ReferenceCode,
                         BalanceSide = generalLedgerAccount.BalanceSide,
-                        BalanceType = generalLedgerAccount.ReferenceCode[0].ToString(),
+                        BalanceType = balanceType,
                         RgsLevel = generalLedgerAccount.Level,
                         IsRgsExcluded = generalLedgerAccount.IsRgsExcluded,
                         IsRgsBase = generalLedgerAccount.IsRgsBase,

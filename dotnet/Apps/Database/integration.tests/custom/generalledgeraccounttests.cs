@@ -122,5 +122,60 @@ namespace Integration.Tests.custom
             Assert.AreEqual(newGeneralLedgerAccountClassificationLevel3, newGeneralLedgerAccount.GeneralLedgerAccountClassification);
             // TODO: Parent
         }
+
+        [Test]
+        public async System.Threading.Tasks.Task Test()
+        {
+            var generalLedgerAccounts = new Allors.Database.Domain.GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
+            var generalLedgerAccountTypes = new GeneralLedgerAccountTypes(this.Transaction).Extent().ToArray();
+            var generalLedgerAccountClassifications = new GeneralLedgerAccountClassifications(this.Transaction).Extent().ToArray();
+
+            var integration = new Allors.Integration.Integration(this.Database, new System.IO.DirectoryInfo("C:/Temp"), new NullLoggerFactory());
+
+            integration.Integrate();
+
+            var newGeneralLedgerAccounts = new Allors.Database.Domain.GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
+            var newGeneralLedgerAccountTypes = new GeneralLedgerAccountTypes(this.Transaction).Extent().ToArray();
+            var newGeneralLedgerAccountClassifications = new GeneralLedgerAccountClassifications(this.Transaction).Extent().ToArray();
+
+            Assert.AreEqual(generalLedgerAccounts.Length + 1348, newGeneralLedgerAccounts.Length);
+            Assert.AreEqual(generalLedgerAccountTypes.Length + 42, newGeneralLedgerAccountTypes.Length);
+            Assert.AreEqual(generalLedgerAccountClassifications.Length + 288 + 42, newGeneralLedgerAccountClassifications.Length);
+
+            //var newGeneralLedgerAccount = newGeneralLedgerAccounts.Except(generalLedgerAccounts).First();
+            //var newGeneralLedgerAccountType = newGeneralLedgerAccountTypes.Except(generalLedgerAccountTypes).First();
+            //var newGeneralLedgerAccountClassificationLevel2 = newGeneralLedgerAccountClassifications.Except(generalLedgerAccountClassifications).First(v => v.RgsLevel == 2);
+            //var newGeneralLedgerAccountClassificationLevel3 = newGeneralLedgerAccountClassifications.Except(generalLedgerAccountClassifications).First(v => v.RgsLevel == 3);
+
+            ////Level 2 Assert
+            //Assert.AreEqual(generalLedgerAccountLevel2.Name, newGeneralLedgerAccountType.Description);
+
+            //Assert.AreEqual(generalLedgerAccountLevel2.Level, newGeneralLedgerAccountClassificationLevel2.RgsLevel);
+            //Assert.AreEqual(generalLedgerAccountLevel2.ReferenceCode, newGeneralLedgerAccountClassificationLevel2.ReferenceCode);
+            //Assert.AreEqual(generalLedgerAccountLevel2.SortCode, newGeneralLedgerAccountClassificationLevel2.SortCode);
+            //Assert.AreEqual(generalLedgerAccountLevel2.ReferenceNumber, newGeneralLedgerAccountClassificationLevel2.ReferenceNumber); // TODO:
+            //Assert.AreEqual(generalLedgerAccountLevel2.Name, newGeneralLedgerAccountClassificationLevel2.Name);
+
+            ////Level 3 Asserts
+            //Assert.AreEqual(generalLedgerAccountLevel3.Level, newGeneralLedgerAccountClassificationLevel3.RgsLevel);
+            //Assert.AreEqual(generalLedgerAccountLevel3.ReferenceCode, newGeneralLedgerAccountClassificationLevel3.ReferenceCode);
+            //Assert.AreEqual(generalLedgerAccountLevel3.SortCode, newGeneralLedgerAccountClassificationLevel3.SortCode);
+            //Assert.AreEqual(generalLedgerAccountLevel3.ReferenceNumber, newGeneralLedgerAccountClassificationLevel3.ReferenceNumber); // TODO:
+            //Assert.AreEqual(generalLedgerAccountLevel3.Name, newGeneralLedgerAccountClassificationLevel3.Name);
+
+            ////Level 4 Asserts
+            //Assert.AreEqual(generalLedgerAccountLevel4.ReferenceCode, newGeneralLedgerAccount.ReferenceCode);
+            //Assert.AreEqual(generalLedgerAccountLevel4.SortCode, newGeneralLedgerAccount.SortCode);
+            //Assert.AreEqual(generalLedgerAccountLevel4.ReferenceNumber, newGeneralLedgerAccount.ReferenceNumber);
+            //Assert.AreEqual(generalLedgerAccountLevel4.Name, newGeneralLedgerAccount.Name);
+            //Assert.AreEqual(generalLedgerAccountLevel4.Description, newGeneralLedgerAccount.Description);
+            //Assert.AreEqual(new BalanceSides(this.Transaction).Debit, newGeneralLedgerAccount.BalanceSide);
+            //Assert.AreEqual(generalLedgerAccountLevel4.Level, newGeneralLedgerAccount.RgsLevel);
+            //Assert.AreEqual(generalLedgerAccountLevel4.IsRgsBase, newGeneralLedgerAccount.IsRgsBase);
+            //Assert.AreEqual(generalLedgerAccountLevel4.ExcludeRgsUitbr5, newGeneralLedgerAccount.ExcludeRgsUitbr5);
+            //Assert.AreEqual(generalLedgerAccountLevel4.ExcludeRgsBV, newGeneralLedgerAccount.ExcludeRgsBV);
+            //Assert.AreEqual(newGeneralLedgerAccountType, newGeneralLedgerAccount.GeneralLedgerAccountType);
+            //Assert.AreEqual(newGeneralLedgerAccountClassificationLevel3, newGeneralLedgerAccount.GeneralLedgerAccountClassification);
+        }
     }
 }

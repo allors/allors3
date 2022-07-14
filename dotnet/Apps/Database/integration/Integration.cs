@@ -51,12 +51,9 @@ namespace Allors.Integration
         {
             // Extract
             Source.Source source;
-            using (var equipmentStockList = new ExcelPackage(this.GetFile("Equipment Stock List.xlsx")))
-            using (var customerList = new ExcelPackage(this.GetFile("AVIACO_Customers_new.xlsx")))
-            using (var partsList = new ExcelPackage(this.GetFile("FICHERO RECAMBIO.xlsx")))
-            using (var partCategoryList = new ExcelPackage(this.GetFile("SPARE PARTS - ITEM CATEGORIES DESCRIPTION.xlsx")))
+            using (var generalLedgerAccountList = new StreamReader("Data/RGS.xml"))
             {
-                var extraction = new Extract.Extract(equipmentStockList, customerList, partsList, partCategoryList, this.LoggerFactory);
+                var extraction = new Extract.Extract(generalLedgerAccountList, this.LoggerFactory);
                 source = extraction.Execute();
             }
 

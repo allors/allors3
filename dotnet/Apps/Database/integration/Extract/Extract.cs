@@ -20,28 +20,20 @@
 
 namespace Allors.Integration.Extract
 {
+    using System.IO;
+    using global::Integration.Extract;
     using Microsoft.Extensions.Logging;
-    using OfficeOpenXml;
 
     public partial class Extract
     {
-        public Extract(ExcelPackage equipmentStockList, ExcelPackage customerList, ExcelPackage partsList, ExcelPackage partCategoryList, ILoggerFactory loggerFactory)
+        public Extract(StreamReader generalLedgerAccountList, ILoggerFactory loggerFactory)
         {
-            this.PartsList = partsList;
-            this.PartCategoryList = partCategoryList;
-            this.EquipmentStockList = equipmentStockList;
-            this.CustomerList = customerList;
+            this.GeneralLedgerAccountList = generalLedgerAccountList;
             this.LoggerFactory = loggerFactory;
             this.Logger = loggerFactory.CreateLogger<Extract>();
         }
 
-        public ExcelPackage EquipmentStockList { get; }
-
-        public ExcelPackage CustomerList { get; }
-
-        public ExcelPackage PartsList { get; }
-
-        public ExcelPackage PartCategoryList { get; }
+        public StreamReader GeneralLedgerAccountList { get; }
 
         public ILoggerFactory LoggerFactory { get; }
 
@@ -49,11 +41,11 @@ namespace Allors.Integration.Extract
 
         public Source.Source Execute()
         {
-            //var customerExtractor = new CustomerExtractor(this.CustomerList, this.LoggerFactory);
+            var generalLedgerAccountExtractor = new GeneralLedgerAccountExtractor(this.GeneralLedgerAccountList, this.LoggerFactory);
 
             return new Source.Source
             {
-                //Customers = customerExtractor.Execute(),
+                GeneralLedgerAccounts = generalLedgerAccountExtractor.Execute(),
             };
         }
     }
