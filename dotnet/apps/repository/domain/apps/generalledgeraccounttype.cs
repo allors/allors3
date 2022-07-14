@@ -11,13 +11,14 @@ namespace Allors.Repository
     #region Allors
     [Id("ce5c78ee-f892-4ced-9b21-51d84c77127f")]
     #endregion
-    public partial class GeneralLedgerAccountType : Object
+    public partial class GeneralLedgerAccountType : Object, ExternalWithPrimaryKey
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
 
         public SecurityToken[] SecurityTokens { get; set; }
 
+        public string ExternalPrimaryKey { get; set; }
         #endregion
 
         #region Allors

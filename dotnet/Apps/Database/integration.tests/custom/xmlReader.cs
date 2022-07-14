@@ -26,6 +26,7 @@ namespace Integration.Tests.custom
             Assert.AreEqual("Kosten van oprichting en van uitgifte van aandelen", firstElement.Description);
             Assert.AreEqual("D", firstElement.BalanceSide);
             Assert.AreEqual(3, firstElement.Level);
+            Assert.IsFalse(firstElement.IsRgsExcluded);
             Assert.IsTrue(firstElement.IsRgsBase);
             Assert.IsTrue(firstElement.IsRgsExtended);
             Assert.IsFalse(firstElement.IsRgsUseWithEZ);

@@ -146,7 +146,7 @@ namespace Allors.Database.Domain.Tests
                                                                                 .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
                                                                                 .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("desc").Build())
                                                                                 .WithGeneralLedgerAccountClassification(new GeneralLedgerAccountClassificationBuilder(this.Transaction)
-                                                                                                                            .WithCode("SCode")
+                                                                                                                            .WithReferenceNumber("SCode")
                                                                                                                             .WithName("accountGroup")
                                                                                                                             .Build())
                                                                                 .Build())

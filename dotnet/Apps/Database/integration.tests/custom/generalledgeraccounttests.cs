@@ -95,7 +95,7 @@ namespace Integration.Tests.custom
             Assert.AreEqual(generalLedgerAccountLevel2.Level, newGeneralLedgerAccountClassificationLevel2.RgsLevel);
             Assert.AreEqual(generalLedgerAccountLevel2.ReferenceCode, newGeneralLedgerAccountClassificationLevel2.ReferenceCode);
             Assert.AreEqual(generalLedgerAccountLevel2.SortCode, newGeneralLedgerAccountClassificationLevel2.SortCode);
-            Assert.AreEqual(generalLedgerAccountLevel2.ReferenceNumber, newGeneralLedgerAccountClassificationLevel2.Code); // TODO:
+            Assert.AreEqual(generalLedgerAccountLevel2.ReferenceNumber, newGeneralLedgerAccountClassificationLevel2.ReferenceNumber); // TODO:
             Assert.AreEqual(generalLedgerAccountLevel2.Name, newGeneralLedgerAccountClassificationLevel2.Name);
             // TODO: Parent
 
@@ -103,7 +103,7 @@ namespace Integration.Tests.custom
             Assert.AreEqual(generalLedgerAccountLevel3.Level, newGeneralLedgerAccountClassificationLevel3.RgsLevel);
             Assert.AreEqual(generalLedgerAccountLevel3.ReferenceCode, newGeneralLedgerAccountClassificationLevel3.ReferenceCode);
             Assert.AreEqual(generalLedgerAccountLevel3.SortCode, newGeneralLedgerAccountClassificationLevel3.SortCode);
-            Assert.AreEqual(generalLedgerAccountLevel3.ReferenceNumber, newGeneralLedgerAccountClassificationLevel3.Code); // TODO:
+            Assert.AreEqual(generalLedgerAccountLevel3.ReferenceNumber, newGeneralLedgerAccountClassificationLevel3.ReferenceNumber); // TODO:
             Assert.AreEqual(generalLedgerAccountLevel3.Name, newGeneralLedgerAccountClassificationLevel3.Name);
             // TODO: Parent
 

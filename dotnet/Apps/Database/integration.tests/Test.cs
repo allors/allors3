@@ -110,7 +110,7 @@ namespace Integration.Tests
 
             var accountClassification = new GeneralLedgerAccountClassificationBuilder(this.Transaction)
                 .WithName("accountGroup")
-                .WithCode("SCode")
+                .WithReferenceNumber("SCode")
                 .WithReferenceCode("00001")
                 .WithSortCode("A.A")
                 .Build();

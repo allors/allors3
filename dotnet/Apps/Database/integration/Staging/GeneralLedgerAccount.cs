@@ -24,7 +24,7 @@ namespace Allors.Integration.Staging
 
     public partial class GeneralLedgerAccount
     {
-        public string ExternalPrimaryKey { get; set; }
+        public string ExternalPrimaryKey => this.ReferenceCode;
 
         public string ReferenceCode { get; set; }
 
@@ -38,17 +38,11 @@ namespace Allors.Integration.Staging
 
         //public string SearchCode { get; set; }
 
-        public string GeneralLedgerAccountType { get; set; }
+        public string GeneralLedgerAccountTypeDescription { get; set; }
 
-        public string GeneralLedgerAccountClassification { get; set; }
+        public string GeneralLedgerAccountClassificationExternalPrimaryKey { get; set; }
 
-        public string CounterPartAccount { get; set; }
-
-        public string Parent { get; set; }
-
-        //CashAccount
-
-        //CostCenterAccount
+        public string CounterPartAccountExternalPrimaryKey { get; set; }
 
         public string BalanceSide { get; set; }
 
@@ -56,13 +50,15 @@ namespace Allors.Integration.Staging
 
         public int RgsLevel { get; set; }
 
-        public bool IsRgsUseWithZzp { get; set; }
+        public bool IsRgsExcluded { get; set; }
 
         public bool IsRgsBase { get; set; }
 
         public bool IsRgsExtended { get; set; }
 
         public bool IsRgsUseWithEZ { get; set; }
+
+        public bool IsRgsUseWithZzp { get; set; }
 
         public bool IsRgsUseWithWoco { get; set; }
 

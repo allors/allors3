@@ -43,13 +43,15 @@ namespace Allors.Integration.Source
 
         public int Level { get; set; } // ex. 1 -> 5
 
-        public bool IsRgsUseWithZzp { get; set; } // ex. 1 or Blank
+        public bool IsRgsExcluded { get; set; } // ex. 1 or Blank
 
         public bool IsRgsBase { get; set; } // ex. 1 or Blank
 
         public bool IsRgsExtended { get; set; } // ex. 1 or Blank
 
         public bool IsRgsUseWithEZ { get; set; } // ex. 1 or Blank
+
+        public bool IsRgsUseWithZzp { get; set; } // ex. 1 or Blank
 
         public bool IsRgsUseWithWoco { get; set; } // ex. 1 or Blank
 
