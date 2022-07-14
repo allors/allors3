@@ -57,7 +57,10 @@ namespace Allors.Integration.Load
             {
                 var generalLedgerAccountClassificationToUpdate = generalLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccountClassification.ExternalPrimaryKey];
 
-                generalLedgerAccountClassificationToUpdate.Parent = generalLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccountClassification.ParentExternalPrimaryKey] ?? null;
+                if(generalLedgerAccountClassification.ParentExternalPrimaryKey != null)
+                {
+                    generalLedgerAccountClassificationToUpdate.Parent = generalLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccountClassification.ParentExternalPrimaryKey];
+                }
 
                 generalLedgerAccountClassificationToUpdate.RgsLevel = generalLedgerAccountClassification.RgsLevel;
                 generalLedgerAccountClassificationToUpdate.ReferenceCode = generalLedgerAccountClassification.ReferenceCode;

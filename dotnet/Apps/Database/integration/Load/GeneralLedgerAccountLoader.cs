@@ -79,7 +79,11 @@ namespace Allors.Integration.Load
 
                 generalLedgerAccountToUpdate.GeneralLedgerAccountType = this.Population.GeneralLedgerAccountTypesByDescription[generalLedgerAccount.GeneralLedgerAccountTypeDescription];
                 generalLedgerAccountToUpdate.GeneralLedgerAccountClassification = this.Population.GeneralLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccount.GeneralLedgerAccountClassificationExternalPrimaryKey];
-                generalLedgerAccountToUpdate.CounterPartAccount = this.Population.GeneralLedgerAccountsByExternalPrimaryKey[generalLedgerAccount.CounterPartAccountExternalPrimaryKey];
+
+                if (generalLedgerAccountToUpdate.CounterPartAccount != null)
+                {
+                    generalLedgerAccountToUpdate.CounterPartAccount = this.Population.GeneralLedgerAccountsByExternalPrimaryKey[generalLedgerAccount.CounterPartAccountExternalPrimaryKey];
+                }
 
                 generalLedgerAccountToUpdate.ReferenceCode = generalLedgerAccount.ReferenceCode;
                 generalLedgerAccountToUpdate.SortCode = generalLedgerAccount.SortCode;
