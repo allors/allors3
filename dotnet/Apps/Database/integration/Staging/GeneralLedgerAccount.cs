@@ -56,13 +56,15 @@ namespace Allors.Integration.Staging
 
         public int RgsLevel { get; set; }
 
-        public bool IsRgsUseWithZzp { get; set; }
+        public bool IsRgsExcluded { get; set; }
 
         public bool IsRgsBase { get; set; }
 
         public bool IsRgsExtended { get; set; }
 
         public bool IsRgsUseWithEZ { get; set; }
+
+        public bool IsRgsUseWithZzp { get; set; }
 
         public bool IsRgsUseWithWoco { get; set; }
 
