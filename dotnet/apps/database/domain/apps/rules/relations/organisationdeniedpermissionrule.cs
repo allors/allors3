@@ -18,8 +18,9 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.Organisation.RolePattern(v => v.IsInternalOrganisation),
-            m.Party.AssociationPattern(v => v.ExternalAccountingTransactionsWhereFromParty ,m.Organisation),
-            m.Party.AssociationPattern(v => v.ExternalAccountingTransactionsWhereToParty,m.Organisation),
+            m.Organisation.AssociationPattern(v => v.AccountingTransactionsWhereInternalOrganisation ,m.Organisation),
+            m.Party.AssociationPattern(v => v.AccountingTransactionsWhereFromParty ,m.Organisation),
+            m.Party.AssociationPattern(v => v.AccountingTransactionsWhereToParty,m.Organisation),
             m.Party.AssociationPattern(v => v.ShipmentsWhereShipFromParty,m.Organisation),
             m.Party.AssociationPattern(v => v.ShipmentsWhereShipToParty,m.Organisation),
             m.Party.AssociationPattern(v => v.PaymentsWhereReceiver,m.Organisation),

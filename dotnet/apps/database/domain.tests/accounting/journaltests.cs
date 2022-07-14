@@ -345,7 +345,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            journal.AddAccountingTransaction(new DepreciationBuilder(this.Transaction)
+            journal.AddAccountingTransaction(new AccountingTransactionBuilder(this.Transaction)
                                         .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
                                                                     .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
@@ -426,7 +426,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            journal.AddAccountingTransaction(new DepreciationBuilder(this.Transaction)
+            journal.AddAccountingTransaction(new AccountingTransactionBuilder(this.Transaction)
                                         .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction)
                                                                     .WithAmount(1)
                                                                     .WithBalanceSide(new BalanceSides(this.Transaction).Debit)

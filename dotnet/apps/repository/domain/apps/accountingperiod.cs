@@ -110,6 +110,14 @@ namespace Allors.Repository
         [Required]
         public TimeFrequency Frequency { get; set; }
 
+        #region Allors
+        [Id("57eabaf2-e31f-47e1-b453-31d44cc74c93")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Required]
+        public InternalOrganisation InternalOrganisation { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

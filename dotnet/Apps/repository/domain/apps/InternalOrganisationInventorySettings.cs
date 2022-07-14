@@ -1,4 +1,4 @@
-// <copyright file="AccountingPeriod.cs" company="Allors bvba">
+// <copyright file="InternalOrganisationInventorySettings.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -6,11 +6,13 @@
 namespace Allors.Repository
 {
     using Allors.Repository.Attributes;
+    using static Workspaces;
 
     #region Allors
-    [Id("dbf992ec-005e-430e-95f8-db05ce7f023c")]
+    [Id("17b982f7-5184-4590-b15f-849ccd65695a")]
     #endregion
-    public partial class FiscalYear : Object
+    [Plural("InternalOrganisationInventorySettingses")]
+    public partial class InternalOrganisationInventorySettings : Object
     {
         #region inherited properties
 
@@ -21,20 +23,20 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("c682f15e-15b1-4a31-8b7d-bf29a6cf3a55")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
-        [Required]
-        public AccountingPeriod[] AccountingPeriods { get; set; }
-
-        #region Allors
-        [Id("57eabaf2-e31f-47e1-b453-31d44cc74c93")]
+        [Id("7957426a-582f-4160-b330-eb12d9d743da")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
-        public InternalOrganisation InternalOrganisation { get; set; }  
+        [Workspace(Default)]
+        public InventoryTransactionReason InventoryTransactionReason { get; set; }
+
+        #region Allors
+        [Id("b3e0675e-0937-4f3c-bb5e-67f9e3aa6afd")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount GeneralLedgerAccount { get; set; }
 
         #region inherited methods
 
