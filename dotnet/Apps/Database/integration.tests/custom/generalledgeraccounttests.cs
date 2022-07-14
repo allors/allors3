@@ -15,7 +15,7 @@ namespace Integration.Tests.custom
         [Test]
         public async System.Threading.Tasks.Task ValidGeneralLedgerAccountIntegrationTest()
         {
-            var generalLedgerAccounts = new GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
+            var generalLedgerAccounts = new Allors.Database.Domain.GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
             var generalLedgerAccountTypes = new GeneralLedgerAccountTypes(this.Transaction).Extent().ToArray();
             var generalLedgerAccountClassifications = new GeneralLedgerAccountClassifications(this.Transaction).Extent().ToArray();
 
@@ -76,7 +76,7 @@ namespace Integration.Tests.custom
 
             integration.Integrate(source);
 
-            var newGeneralLedgerAccounts = new GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
+            var newGeneralLedgerAccounts = new Allors.Database.Domain.GeneralLedgerAccounts(this.Transaction).Extent().ToArray();
             var newGeneralLedgerAccountTypes = new GeneralLedgerAccountTypes(this.Transaction).Extent().ToArray();
             var newGeneralLedgerAccountClassifications = new GeneralLedgerAccountClassifications(this.Transaction).Extent().ToArray();
 

@@ -50,12 +50,12 @@ namespace Allors.Integration.Load
 
         public override void OnUpdate()
         {
-            //foreach (var stagingPerson in this.Staging.People)
+            //foreach (var generalLedgerAccountClassification in this.Staging.GeneralLedgerAccountClassifications)
             //{
-            //var person = personByExternalPersonKey[stagingPerson.ExternalPersonKey];
-            //person.FirstName = stagingPerson.FirstName;
-            //person.LastName = stagingPerson.LastName;
-            //person.Salutation = salutationByName.Get(stagingPerson.Salutation);
+            //    var person = personByExternalPersonKey[generalLedgerAccountClassification];
+            //    person.FirstName = stagingPerson.FirstName;
+            //    person.LastName = stagingPerson.LastName;
+            //    person.Salutation = salutationByName.Get(stagingPerson.Salutation);
             //}
         }
     }

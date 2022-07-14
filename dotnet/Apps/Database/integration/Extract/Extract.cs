@@ -49,11 +49,11 @@ namespace Allors.Integration.Extract
 
         public Source.Source Execute()
         {
-            var customerExtractor = new CustomerExtractor(this.CustomerList, this.LoggerFactory);
+            //var customerExtractor = new CustomerExtractor(this.CustomerList, this.LoggerFactory);
 
             return new Source.Source
             {
-                Customers = customerExtractor.Execute(),
+                //Customers = customerExtractor.Execute(),
             };
         }
     }

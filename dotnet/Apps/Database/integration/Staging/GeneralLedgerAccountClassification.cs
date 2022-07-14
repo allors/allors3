@@ -33,7 +33,7 @@ namespace Allors.Integration.Staging
         public string Code { get; set; }
 
         public string Parent { get; set; }
-        
+
         public string Name { get; set; }
     }
 }

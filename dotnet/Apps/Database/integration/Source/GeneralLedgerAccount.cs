@@ -20,6 +20,9 @@
 
 namespace Allors.Integration.Source
 {
+    using System.Xml.Serialization;
+
+    [XmlRoot(ElementName = "GeneralLedgerAccount")]
     public partial class GeneralLedgerAccount
     {
         public string ExternalPrimaryKey => this.ReferenceCode;
