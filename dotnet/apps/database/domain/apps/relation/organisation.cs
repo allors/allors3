@@ -42,8 +42,9 @@ namespace Allors.Database.Domain
         public List<string> Roles => new List<string>() { "Internal organisation" };
 
         public bool IsDeletable =>
-            !this.ExistExternalAccountingTransactionsWhereFromParty
-            && !this.ExistExternalAccountingTransactionsWhereToParty
+            !this.ExistAccountingTransactionsWhereInternalOrganisation
+            && !this.ExistAccountingTransactionsWhereFromParty
+            && !this.ExistAccountingTransactionsWhereToParty
             && !this.ExistShipmentsWhereShipFromParty
             && !this.ExistShipmentsWhereShipToParty
             && !this.ExistPaymentsWhereReceiver

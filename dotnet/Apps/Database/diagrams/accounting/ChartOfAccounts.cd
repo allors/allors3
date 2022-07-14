@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Interface Name="Allors.Domain.GeneralLedgerAccount">
-    <Position X="8.75" Y="1.25" Width="2.75" />
+    <Position X="8.75" Y="0.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>ACABUQAQBiEgawAEQBhAQAUEC44AAAAAQMMAYQAAIEA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
@@ -13,7 +13,7 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.ChartOfAccounts">
-    <Position X="15.25" Y="1" Width="1.5" />
+    <Position X="15.25" Y="0.5" Width="1.5" />
     <AssociationLine Name="GeneralLedgerAccounts" Type="Allors.Domain.GeneralLedgerAccount">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.193" Y="0.06" />
@@ -29,7 +29,7 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.InternalOrganisation" Collapsed="true">
-    <Position X="0.5" Y="1.75" Width="1.75" />
+    <Position X="0.5" Y="1.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>QyDCogGEigAQQDMAEEROIREABgqoYqAQAAAigEgQWAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
@@ -39,7 +39,7 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.OrganisationGlAccount" Collapsed="true">
-    <Position X="4.5" Y="1.75" Width="2" />
+    <Position X="5" Y="1.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AEACAAAAAAACAACAAAAAAAAAAAEAAACAAAAAAAAAEAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
@@ -50,116 +50,147 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.InternalOrganisationAccountingSettings">
-    <Position X="0.5" Y="3.75" Width="3.25" />
+    <Position X="0.5" Y="3.25" Width="3" />
     <TypeIdentifier>
-      <HashCode>GAQAAAEAABIAAAAAAAgAAgAAIgEIAAIACAAIAAAAAAA=</HashCode>
+      <HashCode>AAQAAAAAQAIAQACAAAAEBiACIgEAgUAAAQAIAgAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="AccountsPayable" />
+      <Property Name="AccountsReceivable" />
+      <Property Name="OpeningBalance" />
+      <Property Name="SettingsForInvoiceItemType" />
+      <Property Name="SettingsForInventoryVariance" />
+    </ShowAsAssociation>
   </Interface>
   <Interface Name="Allors.Domain.GeneralLedgerAccountClassification" Collapsed="true">
-    <Position X="14.75" Y="4" Width="2.25" />
+    <Position X="14.75" Y="3.5" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAgQAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAAAAAAggQAQAAAAAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.CostCenter">
-    <Position X="15.25" Y="5.25" Width="1.5" />
+    <Position X="15.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAAAAAAgAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.CostUnit" Collapsed="true">
-    <Position X="15.25" Y="7.5" Width="1.5" />
+    <Position X="15.25" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.FixedAsset" Collapsed="true">
-    <Position X="14.25" Y="8.75" Width="1.5" />
+    <Position X="14.25" Y="8.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAIAAAAAQAoAAAAIAQAACQAAAAAAAAASAIIAAAAgAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.UnifiedProduct" Collapsed="true">
-    <Position X="22.25" Y="8.75" Width="1.5" />
+    <Position X="22.25" Y="8.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAIIBABAQAgACCAMAQAACQAAAABAAADQAIAAAAEggA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.Equipment" Collapsed="true">
-    <Position X="13" Y="10.75" Width="1.5" />
+    <Position X="13" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.Property" Collapsed="true">
-    <Position X="14.75" Y="10.75" Width="1.5" />
+    <Position X="14.75" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.SerialisedItem" Collapsed="true">
-    <Position X="16.5" Y="10.75" Width="1.5" />
+    <Position X="16.5" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABAIECwANQkIAFBgSAIQACAAgAEAYCiDINVRgfoCGQA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.Vehicle" Collapsed="true">
-    <Position X="18.25" Y="10.75" Width="1.5" />
+    <Position X="18.25" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.Part" Collapsed="true">
-    <Position X="23.5" Y="10.75" Width="1.5" />
+    <Position X="23.5" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEQAQBAEAAAAQEAAEUQGAQAAAAADCEIkBAKgBAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.Product" Collapsed="true">
-    <Position X="21.25" Y="10.75" Width="1.5" />
+    <Position X="21.25" Y="10.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAEAAQAAAAAAABAAAAAAAFAQAAAAAAAAACAEIgA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.Good" Collapsed="true">
-    <Position X="22.5" Y="12.5" Width="1.5" />
+    <Position X="22.5" Y="12" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACCAABAAAAAAQABAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.Service" Collapsed="true">
-    <Position X="19.75" Y="12.5" Width="1.5" />
+    <Position X="19.75" Y="12" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.NonUnifiedPart" Collapsed="true">
-    <Position X="28" Y="12.25" Width="1.5" />
+    <Position X="28" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Allors.Domain.UnifiedGood" Collapsed="true">
-    <Position X="25" Y="12.25" Width="1.5" />
+    <Position X="25" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAgAABAAAgAAAAA=</HashCode>
       <FileName>Generated\domain.g.cs</FileName>
     </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.InternalOrganisationInvoiceSettings">
+    <Position X="5" Y="3.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.InternalOrganisationInventorySettings">
+    <Position X="4.25" Y="8.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.AccountingPeriod" Collapsed="true">
+    <Position X="5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAgQAAAAIAAAAigAAAAAAAAAAA=</HashCode>
+      <FileName>Generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="InternalOrganisation" />
+    </ShowAsAssociation>
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

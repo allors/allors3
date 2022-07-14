@@ -405,7 +405,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Derive();
 
-            var accountingTransaction = new SalesAccountingTransactionBuilder(this.Transaction).Build();
+            var accountingTransaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 
             accountingTransaction.FromParty = organisation;
@@ -420,7 +420,7 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction).Build();
             this.Derive();
 
-            var accountingTransaction = new SalesAccountingTransactionBuilder(this.Transaction).Build();
+            var accountingTransaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 
             accountingTransaction.ToParty = organisation;
