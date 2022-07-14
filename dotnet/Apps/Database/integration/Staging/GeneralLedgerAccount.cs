@@ -38,7 +38,7 @@ namespace Allors.Integration.Staging
 
         //public string SearchCode { get; set; }
 
-        public string GeneralLedgerAccountTypeDescription { get; set; }
+        public string GeneralLedgerAccountTypeExternalPrimaryKey { get; set; }
 
         public string GeneralLedgerAccountClassificationExternalPrimaryKey { get; set; }
 

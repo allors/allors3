@@ -68,6 +68,7 @@ namespace Allors.Integration.Transform
 
                     var type = new Staging.GeneralLedgerAccountType()
                     {
+                        ExternalPrimaryKey = generalLedgerAccount.ReferenceCode,
                         Description = generalLedgerAccount.Name,
                     };
 
@@ -101,7 +102,7 @@ namespace Allors.Integration.Transform
                     {
                         balanceType = "P";
                     }
-                    
+
                     var newGeneralLedgerAccount = new Staging.GeneralLedgerAccount()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
@@ -109,7 +110,7 @@ namespace Allors.Integration.Transform
                         ReferenceNumber = generalLedgerAccount.ReferenceNumber,
                         Name = generalLedgerAccount.Name,
                         Description = generalLedgerAccount.Description,
-                        GeneralLedgerAccountTypeDescription = latestNiveau2AccountType.Description,
+                        GeneralLedgerAccountTypeExternalPrimaryKey = latestNiveau2AccountType.ExternalPrimaryKey,
                         GeneralLedgerAccountClassificationExternalPrimaryKey = latestNiveau3AccountClassification.ExternalPrimaryKey,
                         CounterPartAccountExternalPrimaryKey = generalLedgerAccount.CounterPartAccount,
                         BalanceSide = generalLedgerAccount.BalanceSide,

@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="DomainErrors.Designer.cs">
+    <Compile Update="DomainErrors.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>DomainErrors.resx</DependentUpon>

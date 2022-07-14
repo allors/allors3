@@ -41,31 +41,6 @@ namespace Allors.Integration.Load
             {
                 new GeneralLedgerAccountBuilder(this.Transaction)
                     .WithExternalPrimaryKey(generalLedgerAccount.ExternalPrimaryKey)
-                    .WithReferenceCode(generalLedgerAccount.ReferenceCode)
-                    .WithSortCode(generalLedgerAccount.SortCode)
-                    .WithReferenceNumber(generalLedgerAccount.ReferenceNumber)
-                    .WithName(generalLedgerAccount.Name)
-                    .WithDescription(generalLedgerAccount.Description)
-                    .WithBalanceSide(this.Population.BalanceSideByName.Get(generalLedgerAccount.BalanceSide))
-                    .WithBalanceType(this.Population.BalanceTypesByName.Get(generalLedgerAccount.BalanceType))
-                    .WithRgsLevel(generalLedgerAccount.RgsLevel)
-                    .WithIsRgsExcluded(generalLedgerAccount.IsRgsExcluded)
-                    .WithIsRgsBase(generalLedgerAccount.IsRgsBase)
-                    .WithIsRgsExtended(generalLedgerAccount.IsRgsExtended)
-                    .WithIsRgsUseWithEZ(generalLedgerAccount.IsRgsUseWithEZ)
-                    .WithIsRgsUseWithZzp(generalLedgerAccount.IsRgsUseWithZzp)
-                    .WithIsRgsUseWithWoco(generalLedgerAccount.IsRgsUseWithWoco)
-                    .WithExcludeRgsBB(generalLedgerAccount.ExcludeRgsBB)
-                    .WithExcludeRgsAgro(generalLedgerAccount.ExcludeRgsAgro)
-                    .WithExcludeRgsWKR(generalLedgerAccount.ExcludeRgsWKR)
-                    .WithExcludeRgsEZVOF(generalLedgerAccount.ExcludeRgsEZVOF)
-                    .WithExcludeRgsBV(generalLedgerAccount.ExcludeRgsBV)
-                    .WithExcludeRgsWoco(generalLedgerAccount.ExcludeRgsWoco)
-                    .WithExcludeRgsBank(generalLedgerAccount.ExcludeRgsBank)
-                    .WithExcludeRgsOZW(generalLedgerAccount.ExcludeRgsOZW)
-                    .WithExcludeRgsAfrekSyst(generalLedgerAccount.ExcludeRgsAfrekSyst)
-                    .WithExcludeRgsNivo5(generalLedgerAccount.ExcludeRgsNivo5)
-                    .WithExcludeRgsUitbr5(generalLedgerAccount.ExcludeRgsUitbr5)
                     .Build();
             }
         }
@@ -77,7 +52,7 @@ namespace Allors.Integration.Load
             {
                 var generalLedgerAccountToUpdate = generalLedgerAccountsByExternalPrimaryKey[generalLedgerAccount.ExternalPrimaryKey];
 
-                generalLedgerAccountToUpdate.GeneralLedgerAccountType = this.Population.GeneralLedgerAccountTypesByDescription[generalLedgerAccount.GeneralLedgerAccountTypeDescription];
+                generalLedgerAccountToUpdate.GeneralLedgerAccountType = this.Population.GeneralLedgerAccountTypesByExternalPrimaryKey[generalLedgerAccount.GeneralLedgerAccountTypeExternalPrimaryKey];
                 generalLedgerAccountToUpdate.GeneralLedgerAccountClassification = this.Population.GeneralLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccount.GeneralLedgerAccountClassificationExternalPrimaryKey];
 
                 if (generalLedgerAccountToUpdate.CounterPartAccount != null)
