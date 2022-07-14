@@ -51,7 +51,7 @@ namespace Allors.Integration
         {
             // Extract
             Source.Source source;
-            using (var generalLedgerAccountList = new StreamReader("Data/RGS.xml"))
+            using (var generalLedgerAccountList = new StreamReader(this.DataPath + "/RGS.xml"))
             {
                 var extraction = new Extract.Extract(generalLedgerAccountList, this.LoggerFactory);
                 source = extraction.Execute();
