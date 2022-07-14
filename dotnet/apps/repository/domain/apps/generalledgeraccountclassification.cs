@@ -29,21 +29,18 @@ namespace Allors.Repository
         #region Allors
         [Id("250619a1-fd18-4103-9817-346e25ac7f03")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public string ReferenceCode { get; set; }
 
         #region Allors
         [Id("f2d02d7a-e536-49e9-8fa0-2f4e644a8ad9")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public string SortCode { get; set; }
 
         #region Allors
         [Id("e43a6308-cb95-474e-aacb-038855fcccfe")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public string Code { get; set; }
 

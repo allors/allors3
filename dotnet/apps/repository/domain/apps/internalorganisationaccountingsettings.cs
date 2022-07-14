@@ -76,14 +76,6 @@ namespace Allors.Repository
         public GeneralLedgerAccount SalesPaymentDifferencesAccount { get; set; }
 
         #region Allors
-        [Id("0ddaf8c4-d83a-4a41-a2bb-aade7ff1bc4e")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public GeneralLedgerAccount SalesPaymentDiscountDifferencesAccount { get; set; }
-
-        #region Allors
         [Id("33998581-8a35-45bc-a833-ce0bfe8f29ec")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -92,20 +84,20 @@ namespace Allors.Repository
         public GeneralLedgerAccount PurchasePaymentDifferencesAccount { get; set; }
 
         #region Allors
-        [Id("55573252-d587-4832-bc6f-7b663fc0903f")]
+        [Id("24f7fabb-a87e-48be-ba8c-054be3f97014")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount PurchasePaymentDiscountDifferencesAccount { get; set; }
+        public GeneralLedgerAccount CalculationDifferencesAccount { get; set; }
 
         #region Allors
-        [Id("4c1bee9b-96b2-4415-ad89-a53d9caf60c1")]
+        [Id("cf2950de-3f62-4a54-8ca7-117f95a8795f")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount RetainedEarningsAccount { get; set; }
+        public GeneralLedgerAccount ExhangeRateDifferencesAccount { get; set; }
 
         #region Allors
         [Id("97d14708-613b-409b-8b68-51c160dfcea4")]
@@ -113,23 +105,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount SuspenceAccount { get; set; }
-
-        #region Allors
-        [Id("679187d6-eb6f-4eaa-9fcb-a635de336759")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public GeneralLedgerAccount NetIncomeAccount { get; set; }
-
-        #region Allors
-        [Id("24f7fabb-a87e-48be-ba8c-054be3f97014")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public GeneralLedgerAccount CalculationDifferencesAccount { get; set; }
+        public GeneralLedgerAccount OpeningBalanceSuspenceAccount { get; set; }
 
         #region Allors
         [Id("4a95ad2c-63ba-481c-9698-5d2094df6ed4")]
