@@ -97,7 +97,7 @@ namespace Integration.Tests.custom
             Assert.AreEqual(generalLedgerAccountLevel2.SortCode, newGeneralLedgerAccountClassificationLevel2.SortCode);
             Assert.AreEqual(generalLedgerAccountLevel2.ReferenceNumber, newGeneralLedgerAccountClassificationLevel2.ReferenceNumber); // TODO:
             Assert.AreEqual(generalLedgerAccountLevel2.Name, newGeneralLedgerAccountClassificationLevel2.Name);
-            // TODO: Parent
+            Assert.IsNull(newGeneralLedgerAccountClassificationLevel2.Parent);
 
             //Level 3 Asserts
             Assert.AreEqual(generalLedgerAccountLevel3.Level, newGeneralLedgerAccountClassificationLevel3.RgsLevel);
@@ -105,7 +105,7 @@ namespace Integration.Tests.custom
             Assert.AreEqual(generalLedgerAccountLevel3.SortCode, newGeneralLedgerAccountClassificationLevel3.SortCode);
             Assert.AreEqual(generalLedgerAccountLevel3.ReferenceNumber, newGeneralLedgerAccountClassificationLevel3.ReferenceNumber); // TODO:
             Assert.AreEqual(generalLedgerAccountLevel3.Name, newGeneralLedgerAccountClassificationLevel3.Name);
-            // TODO: Parent
+            Assert.AreEqual(newGeneralLedgerAccountClassificationLevel2, newGeneralLedgerAccountClassificationLevel3.Parent);
 
             //Level 4 Asserts
             Assert.AreEqual(generalLedgerAccountLevel4.ReferenceCode, newGeneralLedgerAccount.ReferenceCode);
@@ -120,7 +120,7 @@ namespace Integration.Tests.custom
             Assert.AreEqual(generalLedgerAccountLevel4.ExcludeRgsBV, newGeneralLedgerAccount.ExcludeRgsBV);
             Assert.AreEqual(newGeneralLedgerAccountType, newGeneralLedgerAccount.GeneralLedgerAccountType);
             Assert.AreEqual(newGeneralLedgerAccountClassificationLevel3, newGeneralLedgerAccount.GeneralLedgerAccountClassification);
-            // TODO: Parent
+            Assert.IsNull(newGeneralLedgerAccount.CounterPartAccount);
         }
 
         [Test]

@@ -19,8 +19,8 @@ namespace Allors.Database.Domain
 
         public bool IsDeletable =>
             (!this.ExistTimeSheetWhereWorker || !this.TimeSheetWhereWorker.ExistTimeEntries)
-            && !this.ExistExternalAccountingTransactionsWhereFromParty
-            && !this.ExistExternalAccountingTransactionsWhereToParty
+            && !this.ExistAccountingTransactionsWhereFromParty
+            && !this.ExistAccountingTransactionsWhereToParty
             && !this.ExistShipmentsWhereShipFromParty
             && !this.ExistShipmentsWhereShipToParty
             && !this.ExistPaymentsWhereReceiver

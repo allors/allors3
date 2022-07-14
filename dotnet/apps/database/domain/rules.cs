@@ -28,6 +28,7 @@ namespace Allors.Database.Domain
 
                 // Apps
                 new AccountingPeriodRule(m),
+                new AccountingTransactionRule(m),
                 new AgreementProductApplicabilityRule(m),
                 new AgreementTermRule(m),
                 new AutomatedAgentDisplayNameRule(m),

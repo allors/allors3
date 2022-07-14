@@ -18,6 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Linq;
 using Allors.Database.Domain;
 using Microsoft.Extensions.Logging;
 
@@ -33,9 +34,12 @@ namespace Allors.Integration.Load
 
         public ILogger<GeneralLedgerAccountTypeLoader> Logger { get; set; }
 
+        // TODO: ExternalPrimaryKey? (How to match on change?)
+
         public override void OnBuild()
         {
-            foreach (var generalLedgerAccountType in this.Staging.GeneralLedgerAccountTypes)
+            var generalLedgerAccountTypesByDescription = this.Population.GeneralLedgerAccountTypesByDescription;
+            foreach (var generalLedgerAccountType in this.Staging.GeneralLedgerAccountTypes.Where(v => !generalLedgerAccountTypesByDescription.ContainsKey(v.Description)))
             {
                 new GeneralLedgerAccountTypeBuilder(this.Transaction)
                     .WithDescription(generalLedgerAccountType.Description)
@@ -45,13 +49,13 @@ namespace Allors.Integration.Load
 
         public override void OnUpdate()
         {
-            //foreach (var stagingPerson in this.Staging.People)
-            //{
-            //var person = personByExternalPersonKey[stagingPerson.ExternalPersonKey];
-            //person.FirstName = stagingPerson.FirstName;
-            //person.LastName = stagingPerson.LastName;
-            //person.Salutation = salutationByName.Get(stagingPerson.Salutation);
-            //}
+            var generalLedgerAccountTypesByDescription = this.Population.GeneralLedgerAccountTypesByDescription;
+            foreach (var generalLedgerAccountType in this.Staging.GeneralLedgerAccountTypes)
+            {
+                var generalLedgerAccountTypeToUpdate = generalLedgerAccountTypesByDescription[generalLedgerAccountType.Description];
+
+                generalLedgerAccountTypeToUpdate.Description = generalLedgerAccountType.Description;
+            }
         }
     }
 }

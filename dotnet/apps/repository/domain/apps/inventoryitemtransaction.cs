@@ -124,13 +124,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         public ShipmentItem ShipmentItem { get; set; }
 
-        #region Allors
-        [Id("58ead8d2-c9c3-4092-b5d1-79af4811f43c")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        public ItemVarianceAccountingTransaction ItemVarianceAccountingTransaction { get; set; }
-
         /// <summary>
         /// Gets or Sets the Facility where this InventoryItemTransaction applies.
         /// If not provided, the DefaultFacility from the Part will be used for this InventoryItemTransaction.

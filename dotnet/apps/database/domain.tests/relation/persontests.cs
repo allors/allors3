@@ -422,7 +422,7 @@ namespace Allors.Database.Domain.Tests
             var person = new PersonBuilder(this.Transaction).Build();
             this.Derive();
 
-            var externalAccountingTransaction = new CreditLineBuilder(this.Transaction).Build();
+            var externalAccountingTransaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 
             externalAccountingTransaction.FromParty = person;
@@ -437,7 +437,7 @@ namespace Allors.Database.Domain.Tests
             var person = new PersonBuilder(this.Transaction).Build();
             this.Derive();
 
-            var externalAccountingTransaction = new CreditLineBuilder(this.Transaction).Build();
+            var externalAccountingTransaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 
             externalAccountingTransaction.ToParty = person;

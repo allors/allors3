@@ -18,6 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System.Linq;
 using Allors.Database.Domain;
 using Microsoft.Extensions.Logging;
 
@@ -35,18 +36,16 @@ namespace Allors.Integration.Load
 
         public override void OnBuild()
         {
-            foreach (var generalLedgerAccount in this.Staging.GeneralLedgerAccounts)
+            var generalLedgerAccountsByExternalPrimaryKey = this.Population.GeneralLedgerAccountsByExternalPrimaryKey;
+            foreach (var generalLedgerAccount in this.Staging.GeneralLedgerAccounts.Where(v => !generalLedgerAccountsByExternalPrimaryKey.ContainsKey(v.ExternalPrimaryKey)))
             {
                 new GeneralLedgerAccountBuilder(this.Transaction)
+                    .WithExternalPrimaryKey(generalLedgerAccount.ExternalPrimaryKey)
                     .WithReferenceCode(generalLedgerAccount.ReferenceCode)
                     .WithSortCode(generalLedgerAccount.SortCode)
                     .WithReferenceNumber(generalLedgerAccount.ReferenceNumber)
                     .WithName(generalLedgerAccount.Name)
                     .WithDescription(generalLedgerAccount.Description)
-                    .WithGeneralLedgerAccountType(this.Population.GeneralLedgerAccountTypesByDescription.Get(generalLedgerAccount.GeneralLedgerAccountType))
-                    .WithGeneralLedgerAccountClassification(this.Population.GeneralLedgerAccountClassificationsByReferenceCode.Get(generalLedgerAccount.GeneralLedgerAccountClassification))
-                    //.WithCounterPartAccount()
-                    //.WithParent()
                     .WithBalanceSide(this.Population.BalanceSideByName.Get(generalLedgerAccount.BalanceSide))
                     .WithBalanceType(this.Population.BalanceTypesByName.Get(generalLedgerAccount.BalanceType))
                     .WithRgsLevel(generalLedgerAccount.RgsLevel)
@@ -73,13 +72,45 @@ namespace Allors.Integration.Load
 
         public override void OnUpdate()
         {
-            //foreach (var stagingPerson in this.Staging.People)
-            //{
-            //var person = personByExternalPersonKey[stagingPerson.ExternalPersonKey];
-            //person.FirstName = stagingPerson.FirstName;
-            //person.LastName = stagingPerson.LastName;
-            //person.Salutation = salutationByName.Get(stagingPerson.Salutation);
-            //}
+            var generalLedgerAccountsByExternalPrimaryKey = this.Population.GeneralLedgerAccountsByExternalPrimaryKey;
+            foreach (var generalLedgerAccount in this.Staging.GeneralLedgerAccounts)
+            {
+                var generalLedgerAccountToUpdate = generalLedgerAccountsByExternalPrimaryKey[generalLedgerAccount.ExternalPrimaryKey];
+
+                generalLedgerAccountToUpdate.GeneralLedgerAccountType = this.Population.GeneralLedgerAccountTypesByDescription[generalLedgerAccount.GeneralLedgerAccountTypeDescription];
+                generalLedgerAccountToUpdate.GeneralLedgerAccountClassification = this.Population.GeneralLedgerAccountClassificationsByExternalPrimaryKey[generalLedgerAccount.GeneralLedgerAccountClassificationExternalPrimaryKey];
+
+                if (generalLedgerAccountToUpdate.CounterPartAccount != null)
+                {
+                    generalLedgerAccountToUpdate.CounterPartAccount = this.Population.GeneralLedgerAccountsByExternalPrimaryKey[generalLedgerAccount.CounterPartAccountExternalPrimaryKey];
+                }
+
+                generalLedgerAccountToUpdate.ReferenceCode = generalLedgerAccount.ReferenceCode;
+                generalLedgerAccountToUpdate.SortCode = generalLedgerAccount.SortCode;
+                generalLedgerAccountToUpdate.ReferenceNumber = generalLedgerAccount.ReferenceNumber;
+                generalLedgerAccountToUpdate.Name = generalLedgerAccount.Name;
+                generalLedgerAccountToUpdate.Description = generalLedgerAccount.Description;
+                generalLedgerAccountToUpdate.BalanceSide = this.Population.BalanceSideByName.Get(generalLedgerAccount.BalanceSide);
+                generalLedgerAccountToUpdate.BalanceType = this.Population.BalanceTypesByName.Get(generalLedgerAccount.BalanceType);
+                generalLedgerAccountToUpdate.RgsLevel = generalLedgerAccount.RgsLevel;
+                generalLedgerAccountToUpdate.IsRgsExcluded = generalLedgerAccount.IsRgsExcluded;
+                generalLedgerAccountToUpdate.IsRgsBase = generalLedgerAccount.IsRgsBase;
+                generalLedgerAccountToUpdate.IsRgsExtended = generalLedgerAccount.IsRgsExtended;
+                generalLedgerAccountToUpdate.IsRgsUseWithEZ = generalLedgerAccount.IsRgsUseWithEZ;
+                generalLedgerAccountToUpdate.IsRgsUseWithZzp = generalLedgerAccount.IsRgsUseWithZzp;
+                generalLedgerAccountToUpdate.IsRgsUseWithWoco = generalLedgerAccount.IsRgsUseWithWoco;
+                generalLedgerAccountToUpdate.ExcludeRgsBB = generalLedgerAccount.ExcludeRgsBB;
+                generalLedgerAccountToUpdate.ExcludeRgsAgro = generalLedgerAccount.ExcludeRgsAgro;
+                generalLedgerAccountToUpdate.ExcludeRgsWKR = generalLedgerAccount.ExcludeRgsWKR;
+                generalLedgerAccountToUpdate.ExcludeRgsEZVOF = generalLedgerAccount.ExcludeRgsEZVOF;
+                generalLedgerAccountToUpdate.ExcludeRgsBV = generalLedgerAccount.ExcludeRgsBV;
+                generalLedgerAccountToUpdate.ExcludeRgsWoco = generalLedgerAccount.ExcludeRgsWoco;
+                generalLedgerAccountToUpdate.ExcludeRgsBank = generalLedgerAccount.ExcludeRgsBank;
+                generalLedgerAccountToUpdate.ExcludeRgsOZW = generalLedgerAccount.ExcludeRgsOZW;
+                generalLedgerAccountToUpdate.ExcludeRgsAfrekSyst = generalLedgerAccount.ExcludeRgsAfrekSyst;
+                generalLedgerAccountToUpdate.ExcludeRgsNivo5 = generalLedgerAccount.ExcludeRgsNivo5;
+                generalLedgerAccountToUpdate.ExcludeRgsUitbr5 = generalLedgerAccount.ExcludeRgsUitbr5;
+            }
         }
     }
 }
