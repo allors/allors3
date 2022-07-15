@@ -65,7 +65,7 @@ namespace Allors.Integration.Load
                 generalLedgerAccountToUpdate.ReferenceNumber = generalLedgerAccount.ReferenceNumber;
                 generalLedgerAccountToUpdate.Name = generalLedgerAccount.Name;
                 generalLedgerAccountToUpdate.Description = generalLedgerAccount.Description;
-                generalLedgerAccountToUpdate.BalanceSide = this.Population.BalanceSideByName.Get(generalLedgerAccount.BalanceSide);
+                generalLedgerAccountToUpdate.BalanceSide = this.Population.BalanceSideByName.Get(generalLedgerAccount.BalanceSide.ToUpper());
                 generalLedgerAccountToUpdate.BalanceType = this.Population.BalanceTypesByName.Get(generalLedgerAccount.BalanceType);
                 generalLedgerAccountToUpdate.RgsLevel = generalLedgerAccount.RgsLevel;
                 generalLedgerAccountToUpdate.IsRgsExcluded = generalLedgerAccount.IsRgsExcluded;

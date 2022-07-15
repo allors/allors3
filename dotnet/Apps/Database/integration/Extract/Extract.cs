@@ -48,11 +48,12 @@ namespace Allors.Integration.Extract
         public Source.Source Execute()
         {
             var generalLedgerAccountExtractor = new GeneralLedgerAccountExtractor(this.GeneralLedgerAccountList, this.LoggerFactory);
-            var MarGeneralLedgerAccountExtractor = new MarGeneralLedgerAccountExtractor(this.DocBalansNL, this.DocProfitLossNL, this.LoggerFactory);
+            var marGeneralLedgerAccountExtractor = new MarGeneralLedgerAccountExtractor(this.DocBalansNL, this.DocProfitLossNL, this.LoggerFactory);
 
             return new Source.Source
             {
                 GeneralLedgerAccounts = generalLedgerAccountExtractor.Execute(),
+                MarGeneralLedgerAccounts = marGeneralLedgerAccountExtractor.Execute(),
             };
         }
     }

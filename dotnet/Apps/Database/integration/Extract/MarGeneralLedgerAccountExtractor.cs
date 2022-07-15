@@ -31,8 +31,8 @@ namespace Integration.Extract
 
         private List<MarGeneralLedgerAccount> ExtractItems(HtmlDocument htmlDocument, string balanceType)
         {
-            var MarGeneralLedgerAccounts = new List<MarGeneralLedgerAccount>();
-            
+            var marGeneralLedgerAccounts = new List<MarGeneralLedgerAccount>();
+
             var rows = htmlDocument.DocumentNode.SelectNodes("/html/body/table/tbody/tr");
 
             foreach (var row in rows.Skip(2))
@@ -47,17 +47,20 @@ namespace Integration.Extract
 
                 var marGeneralLedgerAccount = new MarGeneralLedgerAccount
                 {
-                    ReferenceCode = paragraphs[0].InnerText,
-                    Name = paragraphs[1].InnerText,
-                    IsActiva = paragraphs[2].InnerText,
-                    IsPassiva = paragraphs[3].InnerText,
+                    ReferenceCode = paragraphs[0].InnerText.Replace("&nbsp;", string.Empty),
+                    Name = paragraphs[1].InnerText.Replace("&nbsp;", string.Empty),
+                    IsActiva = paragraphs[2].InnerText.Replace("&nbsp;", string.Empty),
+                    IsPassiva = paragraphs[3].InnerText.Replace("&nbsp;", string.Empty),
                     BalanceType = balanceType
                 };
 
-                MarGeneralLedgerAccounts.Add(marGeneralLedgerAccount);
+                if (!marGeneralLedgerAccount.IsEmpty())
+                {
+                    marGeneralLedgerAccounts.Add(marGeneralLedgerAccount);
+                }
             }
 
-            return MarGeneralLedgerAccounts;
+            return marGeneralLedgerAccounts;
         }
     }
 }

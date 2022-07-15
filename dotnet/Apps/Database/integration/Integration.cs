@@ -53,10 +53,10 @@ namespace Allors.Integration
             Source.Source source;
 
             var docBalansNL = new HtmlDocument();
-            docBalansNL.Load(this.DataPath + "/MarNL.html");
+            docBalansNL.Load(this.DataPath + "/MarBalansNL.html");
 
             var docProfitLossNL = new HtmlDocument();
-            docProfitLossNL.Load(this.DataPath + "/MarNL.html");
+            docProfitLossNL.Load(this.DataPath + "/MarProfitLossNL.html");
 
             using (var generalLedgerAccountList = new StreamReader(this.DataPath + "/RGS.xml"))
             {

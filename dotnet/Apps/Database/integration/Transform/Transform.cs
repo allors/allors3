@@ -41,11 +41,16 @@ namespace Allors.Integration.Transform
             var generalLedgerAccountTransformer = new GeneralLedgerAccountTransformer(this.Source, this.Population, this.LoggerFactory);
             generalLedgerAccountTransformer.Execute(out var generalLedgerAccounts, out var generalLedgerAccountClassifications, out var generalLedgerAccountTypes);
 
+            var marGeneralLedgerAccountTransformer = new MarGeneralLedgerAccountTransformer(this.Source, this.Population, this.LoggerFactory);
+            marGeneralLedgerAccountTransformer.Execute(out var marGeneralLedgerAccountClassifications, out var marGeneralLedgerAccountTypes);
+
             return new Staging.Staging
             {
                 GeneralLedgerAccounts = generalLedgerAccounts,
                 GeneralLedgerAccountClassifications = generalLedgerAccountClassifications,
-                GeneralLedgerAccountTypes = generalLedgerAccountTypes
+                GeneralLedgerAccountTypes = generalLedgerAccountTypes,
+                MarGeneralLedgerAccountClassifications = marGeneralLedgerAccountClassifications,
+                MarGeneralLedgerAccountTypes = marGeneralLedgerAccountTypes,
             };
         }
     }

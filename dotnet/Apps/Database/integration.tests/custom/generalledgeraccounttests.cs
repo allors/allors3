@@ -1,5 +1,6 @@
 namespace Integration.Tests.custom
 {
+    using System;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.Integration.Source;
@@ -71,7 +72,8 @@ namespace Integration.Tests.custom
                     generalLedgerAccountLevel2,
                     generalLedgerAccountLevel3,
                     generalLedgerAccountLevel4,
-                }
+                },
+                MarGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
             };
 
             var integration = new Allors.Integration.Integration(this.Database, new System.IO.DirectoryInfo("C:/Temp"), new NullLoggerFactory());
@@ -158,6 +160,13 @@ namespace Integration.Tests.custom
             var result = extractor.Execute();
 
             Assert.IsNotEmpty(result);
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task MarGeneralLedgerAccountTransformerTest()
+        {
+            var integration = new Allors.Integration.Integration(this.Database, new System.IO.DirectoryInfo("C:/Temp"), new NullLoggerFactory());
+            integration.Integrate();
         }
     }
 }
