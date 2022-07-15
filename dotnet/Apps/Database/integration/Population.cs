@@ -24,7 +24,6 @@ namespace Allors.Integration
     using System.Linq;
     using Allors.Database;
     using Allors.Database.Domain;
-    //using Allors.Database.Meta;
 
     public partial class Population
     {
@@ -32,7 +31,7 @@ namespace Allors.Integration
 
         public Dictionary<string, GeneralLedgerAccount> GeneralLedgerAccountsByExternalPrimaryKey => new GeneralLedgerAccounts(this.Transaction).Extent().Where(v => v.ExistExternalPrimaryKey).ToDictionary(v => v.ExternalPrimaryKey);
 
-        public Dictionary<string, GeneralLedgerAccountType> GeneralLedgerAccountTypesByDescription => new GeneralLedgerAccountTypes(this.Transaction).Extent().ToDictionary(v => v.Description);
+        public Dictionary<string, GeneralLedgerAccountType> GeneralLedgerAccountTypesByExternalPrimaryKey => new GeneralLedgerAccountTypes(this.Transaction).Extent().Where(v => v.ExistExternalPrimaryKey).ToDictionary(v => v.ExternalPrimaryKey);
 
         public Dictionary<string, GeneralLedgerAccountClassification> GeneralLedgerAccountClassificationsByExternalPrimaryKey => new GeneralLedgerAccountClassifications(this.Transaction).Extent().Where(v => v.ExistExternalPrimaryKey).ToDictionary(v => v.ExternalPrimaryKey);
 

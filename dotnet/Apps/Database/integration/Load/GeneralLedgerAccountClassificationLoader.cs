@@ -41,11 +41,6 @@ namespace Allors.Integration.Load
             {
                 new GeneralLedgerAccountClassificationBuilder(this.Transaction)
                     .WithExternalPrimaryKey(generalLedgerAccountClassification.ExternalPrimaryKey)
-                    .WithRgsLevel(generalLedgerAccountClassification.RgsLevel)
-                    .WithReferenceCode(generalLedgerAccountClassification.ReferenceCode)
-                    .WithSortCode(generalLedgerAccountClassification.SortCode)
-                    .WithReferenceNumber(generalLedgerAccountClassification.ReferenceNumber)
-                    .WithName(generalLedgerAccountClassification.Name)
                     .Build();
             }
         }

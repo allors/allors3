@@ -43,7 +43,6 @@ namespace Allors.Repository
         #region Allors
         [Id("cedccf34-0386-4be3-aa77-6ec0a9032c15")]
         #endregion
-        [Required]
         [Size(256)]
         [Workspace(Default)]
         public string ReferenceNumber { get; set; }
@@ -84,7 +83,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         public GeneralLedgerAccountClassification GeneralLedgerAccountClassification { get; set; }
 
         #region Allors

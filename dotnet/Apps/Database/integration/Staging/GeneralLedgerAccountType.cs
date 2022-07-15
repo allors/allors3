@@ -25,6 +25,8 @@ namespace Allors.Integration.Staging
 
     public partial class GeneralLedgerAccountType
     {
+        public string ExternalPrimaryKey { get; set; }
+
         public string Description { get; set; }
     }
 }

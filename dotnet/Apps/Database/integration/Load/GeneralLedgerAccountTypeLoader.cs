@@ -34,25 +34,23 @@ namespace Allors.Integration.Load
 
         public ILogger<GeneralLedgerAccountTypeLoader> Logger { get; set; }
 
-        // TODO: ExternalPrimaryKey? (How to match on change?)
-
         public override void OnBuild()
         {
-            var generalLedgerAccountTypesByDescription = this.Population.GeneralLedgerAccountTypesByDescription;
-            foreach (var generalLedgerAccountType in this.Staging.GeneralLedgerAccountTypes.Where(v => !generalLedgerAccountTypesByDescription.ContainsKey(v.Description)))
+            var generalLedgerAccountTypesByDescription = this.Population.GeneralLedgerAccountTypesByExternalPrimaryKey;
+            foreach (var generalLedgerAccountType in this.Staging.GeneralLedgerAccountTypes.Where(v => !generalLedgerAccountTypesByDescription.ContainsKey(v.ExternalPrimaryKey)))
             {
                 new GeneralLedgerAccountTypeBuilder(this.Transaction)
-                    .WithDescription(generalLedgerAccountType.Description)
+                    .WithExternalPrimaryKey(generalLedgerAccountType.ExternalPrimaryKey)
                     .Build();
             }
         }
 
         public override void OnUpdate()
         {
-            var generalLedgerAccountTypesByDescription = this.Population.GeneralLedgerAccountTypesByDescription;
+            var generalLedgerAccountTypesByDescription = this.Population.GeneralLedgerAccountTypesByExternalPrimaryKey;
             foreach (var generalLedgerAccountType in this.Staging.GeneralLedgerAccountTypes)
             {
-                var generalLedgerAccountTypeToUpdate = generalLedgerAccountTypesByDescription[generalLedgerAccountType.Description];
+                var generalLedgerAccountTypeToUpdate = generalLedgerAccountTypesByDescription[generalLedgerAccountType.ExternalPrimaryKey];
 
                 generalLedgerAccountTypeToUpdate.Description = generalLedgerAccountType.Description;
             }
