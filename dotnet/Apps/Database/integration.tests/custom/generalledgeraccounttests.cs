@@ -164,26 +164,25 @@ namespace Integration.Tests.custom
             Assert.IsNotEmpty(result);
         }
 
-        [Test]
-        public async System.Threading.Tasks.Task RunDezeTestNiet()
-        {
-            var docBalansNL = new HtmlDocument();
-            docBalansNL.Load("c:/Temp/MarVerenigingenEnStichtingenBalansNL.html");
+        //[Test]
+        //public async System.Threading.Tasks.Task RunDezeTestNiet()
+        //{
+        //    var docBalansNL = new HtmlDocument();
+        //    docBalansNL.Load("c:/Temp/MarVerenigingenEnStichtingenBalansNL.html");
 
-            var docProfitLossNL = new HtmlDocument();
-            docProfitLossNL.Load("c:/Temp/MarVerenigingenEnStichtingenProfitLossNL.html");
+        //    var docProfitLossNL = new HtmlDocument();
+        //    docProfitLossNL.Load("c:/Temp/MarVerenigingenEnStichtingenProfitLossNL.html");
 
-            var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
-            var result = extractor.Execute();
+        //    var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
+        //    var result = extractor.Execute();
 
-            using (var writer = new StreamWriter("c:/Temp/mar.csv"))
-            using (var csv = new CsvWriter(writer, CultureInfo.CurrentCulture))
-            {
-                csv.Context.RegisterClassMap<FooMap>();
-                csv.WriteRecords(result);
-            }
-
-        }
+        //    using (var writer = new StreamWriter("c:/Temp/mar.csv"))
+        //    using (var csv = new CsvWriter(writer, CultureInfo.CurrentCulture))
+        //    {
+        //        csv.Context.RegisterClassMap<FooMap>();
+        //        csv.WriteRecords(result);
+        //    }
+        //}
     }
 
     public sealed class FooMap : ClassMap<MarGeneralLedgerAccount>
