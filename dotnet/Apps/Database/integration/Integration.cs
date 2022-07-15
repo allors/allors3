@@ -26,8 +26,8 @@ namespace Allors.Integration
     using System.Linq;
     using Allors.Database;
     using Allors.Database.Domain;
+    using HtmlAgilityPack;
     using Microsoft.Extensions.Logging;
-    using OfficeOpenXml;
 
     public partial class Integration
     {
@@ -51,9 +51,16 @@ namespace Allors.Integration
         {
             // Extract
             Source.Source source;
+
+            var docBalansNL = new HtmlDocument();
+            docBalansNL.Load(this.DataPath + "/MarNL.html");
+
+            var docProfitLossNL = new HtmlDocument();
+            docProfitLossNL.Load(this.DataPath + "/MarNL.html");
+
             using (var generalLedgerAccountList = new StreamReader(this.DataPath + "/RGS.xml"))
             {
-                var extraction = new Extract.Extract(generalLedgerAccountList, this.LoggerFactory);
+                var extraction = new Extract.Extract(generalLedgerAccountList, docBalansNL, docProfitLossNL, this.LoggerFactory);
                 source = extraction.Execute();
             }
 

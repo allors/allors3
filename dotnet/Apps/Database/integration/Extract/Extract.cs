@@ -22,16 +22,22 @@ namespace Allors.Integration.Extract
 {
     using System.IO;
     using global::Integration.Extract;
+    using HtmlAgilityPack;
     using Microsoft.Extensions.Logging;
 
     public partial class Extract
     {
-        public Extract(StreamReader generalLedgerAccountList, ILoggerFactory loggerFactory)
+
+        public Extract(StreamReader generalLedgerAccountList, HtmlDocument docBalansNL, HtmlDocument docProfitLossNL, ILoggerFactory loggerFactory)
         {
             this.GeneralLedgerAccountList = generalLedgerAccountList;
+            this.DocBalansNL = docBalansNL;
+            this.DocProfitLossNL = docProfitLossNL;
             this.LoggerFactory = loggerFactory;
-            this.Logger = loggerFactory.CreateLogger<Extract>();
+
         }
+        public HtmlDocument DocBalansNL { get; }
+        public HtmlDocument DocProfitLossNL { get; }
 
         public StreamReader GeneralLedgerAccountList { get; }
 
@@ -42,6 +48,7 @@ namespace Allors.Integration.Extract
         public Source.Source Execute()
         {
             var generalLedgerAccountExtractor = new GeneralLedgerAccountExtractor(this.GeneralLedgerAccountList, this.LoggerFactory);
+            var MarGeneralLedgerAccountExtractor = new MarGeneralLedgerAccountExtractor(this.DocBalansNL, this.DocProfitLossNL, this.LoggerFactory);
 
             return new Source.Source
             {

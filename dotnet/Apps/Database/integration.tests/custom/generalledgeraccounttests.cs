@@ -3,6 +3,8 @@ namespace Integration.Tests.custom
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.Integration.Source;
+    using HtmlAgilityPack;
+    using Integration.Extract;
     using Microsoft.Extensions.Logging.Abstractions;
     using NUnit.Framework;
 
@@ -141,6 +143,21 @@ namespace Integration.Tests.custom
             Assert.Greater(newGeneralLedgerAccounts.Length, generalLedgerAccounts.Length);
             Assert.Greater(newGeneralLedgerAccountTypes.Length, generalLedgerAccountTypes.Length);
             Assert.Greater(newGeneralLedgerAccountClassifications.Length, generalLedgerAccountClassifications.Length);
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task MarGeneralLedgerAccountExtractorTest()
+        {
+            var docBalansNL = new HtmlDocument();
+            docBalansNL.Load("c:/Temp/MarBalansNL.html");
+
+            var docProfitLossNL = new HtmlDocument();
+            docProfitLossNL.Load("c:/Temp/MarProfitLossNL.html");
+
+            var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
+            var result = extractor.Execute();
+
+            Assert.IsNotEmpty(result);
         }
     }
 }
