@@ -1,8 +1,12 @@
 namespace Integration.Tests.custom
 {
+    using System.Globalization;
+    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.Integration.Source;
+    using CsvHelper;
+    using CsvHelper.Configuration;
     using HtmlAgilityPack;
     using Integration.Extract;
     using Microsoft.Extensions.Logging.Abstractions;
@@ -158,6 +162,39 @@ namespace Integration.Tests.custom
             var result = extractor.Execute();
 
             Assert.IsNotEmpty(result);
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task RunDezeTestNiet()
+        {
+            var docBalansNL = new HtmlDocument();
+            docBalansNL.Load("c:/Temp/MarVerenigingenEnStichtingenBalansNL.html");
+
+            var docProfitLossNL = new HtmlDocument();
+            docProfitLossNL.Load("c:/Temp/MarVerenigingenEnStichtingenProfitLossNL.html");
+
+            var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
+            var result = extractor.Execute();
+
+            using (var writer = new StreamWriter("c:/Temp/mar.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.CurrentCulture))
+            {
+                csv.Context.RegisterClassMap<FooMap>();
+                csv.WriteRecords(result);
+            }
+
+        }
+    }
+
+    public sealed class FooMap : ClassMap<MarGeneralLedgerAccount>
+    {
+        public FooMap()
+        {
+            this.Map(m => m.ReferenceCode);
+            this.Map(m => m.Name);
+            this.Map(m => m.IsActiva);
+            this.Map(m => m.IsPassiva);
+            this.Map(m => m.BalanceType);
         }
     }
 }
