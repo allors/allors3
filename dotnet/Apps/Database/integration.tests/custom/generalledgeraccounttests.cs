@@ -1,12 +1,10 @@
 namespace Integration.Tests.custom
 {
-    using System.Globalization;
-    using System.IO;
     using System;
+    using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.Integration.Source;
-    using CsvHelper;
     using CsvHelper.Configuration;
     using HtmlAgilityPack;
     using Integration.Extract;
@@ -185,25 +183,27 @@ namespace Integration.Tests.custom
         //        csv.WriteRecords(result);
         //    }
         //}
-    }
-
-    public sealed class FooMap : ClassMap<MarGeneralLedgerAccount>
-    {
-        public FooMap()
-        {
-            this.Map(m => m.ReferenceCode);
-            this.Map(m => m.Name);
-            this.Map(m => m.IsActiva);
-            this.Map(m => m.IsPassiva);
-            this.Map(m => m.BalanceType);
-
-        }
-    }
 
         [Test]
-        public async System.Threading.Tasks.Task MarGeneralLedgerAccountTransformerTest()
+        public System.Threading.Tasks.Task MarGeneralLedgerAccountTransformerTest()
         {
-            var integration = new Allors.Integration.Integration(this.Database, new System.IO.DirectoryInfo("C:/Temp"), new NullLoggerFactory());
+            var integration = new Allors.Integration.Integration(this.Database, new DirectoryInfo("C:/Temp"), new NullLoggerFactory());
             integration.Integrate();
+            return System.Threading.Tasks.Task.CompletedTask;
         }
+
+        public sealed class FooMap : ClassMap<MarGeneralLedgerAccount>
+        {
+            public FooMap()
+            {
+                this.Map(m => m.ReferenceCode);
+                this.Map(m => m.Name);
+                this.Map(m => m.IsActiva);
+                this.Map(m => m.IsPassiva);
+                this.Map(m => m.BalanceType);
+
+            }
+        }
+
+    }
 }
