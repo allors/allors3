@@ -11,12 +11,9 @@ namespace Allors.Database.Domain.Tests.Sandbox
     {
         public SandboxTests(Fixture fixture) : base(fixture) { }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void Dummy(object data)
+        [Fact]
+        public void Dummy()
         {
-            this.SelectDerivationType((DerivationTypes)data);
-
             // arrange
 
             // act

@@ -10,8 +10,6 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
     public class SoloAndProposalAndAcceptanceAndTroelTests : DomainTest, IClassFixture<Fixture>
     {
-        public SoloAndProposalAndAcceptanceAndTroelTests(Fixture fixture) : base(fixture) { }
-
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -20,10 +18,8 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
         private GameModes GameModes;
 
-        public void Setup(DerivationTypes data)
+        public SoloAndProposalAndAcceptanceAndTroelTests(Fixture fixture) : base(fixture)
         {
-            this.SelectDerivationType(data);
-
             var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
@@ -42,13 +38,10 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
             this.Transaction.Derive();
         }
-
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloWithOneDeclarerAndNoWinnerAndNoTricks(object data)
+        
+        [Fact]
+        public void TestSoloWithOneDeclarerAndNoWinnerAndNoTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -70,12 +63,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloWithOneDeclarerAndNoWinnerAndTricks(object data)
+        [Fact]
+        public void TestSoloWithOneDeclarerAndNoWinnerAndTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -98,12 +88,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloWithOneDeclarerAndOneWinnerAndNoTricks(object data)
+        [Fact]
+        public void TestSoloWithOneDeclarerAndOneWinnerAndNoTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -126,12 +113,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloWithOneDeclarerAndOneWinnerAndTricks(object data)
+        [Fact]
+        public void TestSoloWithOneDeclarerAndOneWinnerAndTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -155,12 +139,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSoloWithOneDeclarerAndOneWinnerAndAllTricks(object data)
+        [Fact]
+        public void TestSoloWithOneDeclarerAndOneWinnerAndAllTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -184,12 +165,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestProposalAndAcceptanceWithTwoDeclarersAndNoWinnersAndNoTricks(object data)
+        [Fact]
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndNoWinnersAndNoTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -212,12 +190,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestProposalAndAcceptanceWithTwoDeclarersAndNoWinnersAndTricks(object data)
+        [Fact]
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndNoWinnersAndTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -242,12 +217,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndNoTricks(object data)
+        [Fact]
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndNoTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -273,12 +245,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndTricks(object data)
+        [Fact]
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -306,12 +275,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndAllTricks(object data)
+        [Fact]
+        public void TestProposalAndAcceptanceWithTwoDeclarersAndTwoWinnersAndAllTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -339,12 +305,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestTrullWithTwoDeclarersAndTwoWinnersAndAllTricks(object data)
+        [Fact]
+        public void TestTrullWithTwoDeclarersAndTwoWinnersAndAllTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -372,12 +335,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestTrullWithTwoDeclarersAndTwoWinnersAndTricks(object data)
+        [Fact]
+        public void TestTrullWithTwoDeclarersAndTwoWinnersAndTricks()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);

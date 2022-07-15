@@ -10,8 +10,6 @@ namespace Allors.Database.Domain.Tests.Whist
 
     public class ScoreboardTests : DomainTest, IClassFixture<Fixture>
     {
-        public ScoreboardTests(Fixture fixture) : base(fixture) { }
-
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -20,10 +18,9 @@ namespace Allors.Database.Domain.Tests.Whist
 
         private GameModes GameTypes;
 
-        private void Setup(DerivationTypes data)
-        {
-            this.SelectDerivationType(data);
 
+        public ScoreboardTests(Fixture fixture) : base(fixture)
+        {
             var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
@@ -43,12 +40,9 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Transaction.Derive();
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestZeroTestWithValues(object data)
+        [Fact]
+        public void TestZeroTestWithValues()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -67,12 +61,9 @@ namespace Allors.Database.Domain.Tests.Whist
             Assert.True(scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestZeroTestWithoutValues(object data)
+        [Fact]
+        public void TestZeroTestWithoutValues()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -91,12 +82,9 @@ namespace Allors.Database.Domain.Tests.Whist
             Assert.True(scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAccumulatedScoresWithOneGame(object data)
+        [Fact]
+        public void TestAccumulatedScoresWithOneGame()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -121,12 +109,9 @@ namespace Allors.Database.Domain.Tests.Whist
             Assert.Equal(-2, scoreboard.AccumulatedScores.First(v => v.Player == player4).Value);
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAccumulatedScoresWithTwoGames(object data)
+        [Fact]
+        public void TestAccumulatedScoresWithTwoGames()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -164,12 +149,9 @@ namespace Allors.Database.Domain.Tests.Whist
             Assert.Equal(-4, scoreboard.AccumulatedScores.First(v => v.Player == player4).Value);
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAccumulatedScoresWithNoGames(object data)
+        [Fact]
+        public void TestAccumulatedScoresWithNoGames()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
 
             //Act
@@ -182,12 +164,9 @@ namespace Allors.Database.Domain.Tests.Whist
             Assert.Equal(0, scoreboard.AccumulatedScores.First(v => v.Player == player4).Value);
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAccumulatedScoresWithMultipleGameTypes(object data)
+        [Fact]
+        public void TestAccumulatedScoresWithMultipleGameTypes()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);

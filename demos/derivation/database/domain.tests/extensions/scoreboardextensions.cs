@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
         {
             var games = @this.Games;
             
-            foreach (Game game in games)
+            foreach (var game in games)
             {
                 var scores = game.Scores;
                 var sum = 0;

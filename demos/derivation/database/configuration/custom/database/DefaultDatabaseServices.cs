@@ -12,9 +12,9 @@ namespace Allors.Database.Configuration
     using Domain;
     using Domain.Derivations.Rules;
 
-    public class FineDatabaseServices : DatabaseServices
+    public class DefaultDatabaseServices : DatabaseServices
     {
-        public FineDatabaseServices(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
+        public DefaultDatabaseServices(IHttpContextAccessor httpContextAccessor = null) : base(httpContextAccessor) { }
 
         public override void OnInit(IDatabase database)
         {

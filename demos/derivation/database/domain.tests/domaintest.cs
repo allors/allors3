@@ -16,21 +16,21 @@ namespace Allors.Database.Domain.Tests
 
     public abstract class DomainTest : IDisposable
     {
-        private readonly Fixture fixture;
-        private readonly bool populate;
-
         protected DomainTest(Fixture fixture, bool populate = true)
         {
-            this.fixture = fixture;
-            this.populate = populate;
-        }
+            DatabaseServices databaseServices = new DefaultDatabaseServices();
 
-        public static IEnumerable<object[]> TestedDerivationTypes
-            => new[]
-            {
-                new object[] {DerivationTypes.Coarse },
-                new object[] {DerivationTypes.Fine },
-            };
+            var database = new Database(
+                databaseServices,
+                new Configuration
+                {
+                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
+                });
+
+            this.M = database.Services.Get<MetaPopulation>();
+
+            this.Setup(database, populate);
+        }
 
         public MetaPopulation M { get; private set; }
 
@@ -46,7 +46,6 @@ namespace Allors.Database.Domain.Tests
 
             set => this.Time.Shift = value;
         }
-
 
         public void Dispose()
         {
@@ -64,26 +63,6 @@ namespace Allors.Database.Domain.Tests
             }
 
             this.Transaction = database.CreateTransaction();
-        }
-
-        protected void SelectDerivationType(DerivationTypes derivationType)
-        {
-            DatabaseServices databaseServices = derivationType switch
-            {
-                DerivationTypes.Fine => new FineDatabaseServices(),
-                _ => new CourseDatabaseServices()
-            };
-
-            var database = new Database(
-                databaseServices,
-                new Configuration
-                {
-                    ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
-                });
-
-            this.M = database.Services.Get<MetaPopulation>();
-
-            this.Setup(database, populate);
         }
     }
 }

@@ -10,8 +10,6 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
     public class SmallSlamAndGrandSlamAndAbondanceTests : DomainTest, IClassFixture<Fixture>
     {
-        public SmallSlamAndGrandSlamAndAbondanceTests(Fixture fixture) : base(fixture) { }
-
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -20,10 +18,8 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
         private GameModes GameModes;
 
-        public void Setup(DerivationTypes data)
+        public SmallSlamAndGrandSlamAndAbondanceTests(Fixture fixture) : base(fixture)
         {
-            this.SelectDerivationType(data);
-
             var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
@@ -43,12 +39,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             this.Transaction.Derive();
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSmallSlamWithOneDeclarerAndOneWinner(object data)
+        [Fact]
+        public void TestSmallSlamWithOneDeclarerAndOneWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -71,12 +64,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSmallSlamWithOneDeclarerAndNoWinner(object data)
+        [Fact]
+        public void TestSmallSlamWithOneDeclarerAndNoWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -97,12 +87,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestGrandSlamWithOneDeclarerAndNoWinner(object data)
+        [Fact]
+        public void TestGrandSlamWithOneDeclarerAndNoWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -123,12 +110,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestGrandSlamWithOneDeclarerAndOneWinner(object data)
+        [Fact]
+        public void TestGrandSlamWithOneDeclarerAndOneWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -150,12 +134,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAbondanceWithOneDeclarerAndOneWinner(object data)
+        [Fact]
+        public void TestAbondanceWithOneDeclarerAndOneWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -177,12 +158,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestAbondanceWithOneDeclarerAndNoWinner(object data)
+        [Fact]
+        public void TestAbondanceWithOneDeclarerAndNoWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);

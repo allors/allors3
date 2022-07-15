@@ -11,39 +11,33 @@ namespace Allors.Database.Domain.Tests.Relation
     {
         public PersonTests(Fixture fixture) : base(fixture) { }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist(object data)
+        [Fact]
+        public void GivenPerson_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            this.SelectDerivationType((DerivationTypes)data);
-
             var builder = new PersonBuilder(this.Transaction);
             builder.Build();
 
             Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void OneDeclarerAndThreeDefenderDerivationTest(object data)
+        [Fact]
+        public void OneDeclarerAndThreeDefenderDerivationTest()
         {
-            this.SelectDerivationType((DerivationTypes) data);
-
             var people = new People(this.Transaction);
 
-            Person player1 = people.FindBy(M.Person.UserName, "player1");
-            Person player2 = people.FindBy(M.Person.UserName, "player2");
-            Person player3 = people.FindBy(M.Person.UserName, "player3");
-            Person player4 = people.FindBy(M.Person.UserName, "player4");
+            var player1 = people.FindBy(M.Person.UserName, "player1");
+            var player2 = people.FindBy(M.Person.UserName, "player2");
+            var player3 = people.FindBy(M.Person.UserName, "player3");
+            var player4 = people.FindBy(M.Person.UserName, "player4");
 
-            Scoreboard scoreboard = new ScoreboardBuilder(this.Transaction)
+            var scoreboard = new ScoreboardBuilder(this.Transaction)
                 .WithPlayer(player1)
                 .WithPlayer(player2)
                 .WithPlayer(player3)
                 .WithPlayer(player4)
                 .Build();
 
-            GameModes GameTypes = new GameModes(this.Transaction);
+            var GameTypes = new GameModes(this.Transaction);
 
             this.Transaction.Derive();
 
@@ -65,27 +59,25 @@ namespace Allors.Database.Domain.Tests.Relation
             Assert.Contains(player4, game.Defenders);
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TwoDeclarerAndTwoDefenderDerivationTest(object data)
+        [Fact]
+        
+        public void TwoDeclarerAndTwoDefenderDerivationTest()
         {
-            this.SelectDerivationType((DerivationTypes)data);
-
             var people = new People(this.Transaction);
 
-            Person player1 = people.FindBy(M.Person.UserName, "player1");
-            Person player2 = people.FindBy(M.Person.UserName, "player2");
-            Person player3 = people.FindBy(M.Person.UserName, "player3");
-            Person player4 = people.FindBy(M.Person.UserName, "player4");
+            var player1 = people.FindBy(M.Person.UserName, "player1");
+            var player2 = people.FindBy(M.Person.UserName, "player2");
+            var player3 = people.FindBy(M.Person.UserName, "player3");
+            var player4 = people.FindBy(M.Person.UserName, "player4");
 
-            Scoreboard scoreboard = new ScoreboardBuilder(this.Transaction)
+            var scoreboard = new ScoreboardBuilder(this.Transaction)
                 .WithPlayer(player1)
                 .WithPlayer(player2)
                 .WithPlayer(player3)
                 .WithPlayer(player4)
                 .Build();
 
-            GameModes GameTypes = new GameModes(this.Transaction);
+            var GameTypes = new GameModes(this.Transaction);
 
             this.Transaction.Derive();
 

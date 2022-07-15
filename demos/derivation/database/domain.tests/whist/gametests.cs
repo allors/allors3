@@ -9,8 +9,6 @@ namespace Allors.Database.Domain.Tests.Whist
 
     public class GameTests : DomainTest, IClassFixture<Fixture>
     {
-        public GameTests(Fixture fixture) : base(fixture) { }
-
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -19,10 +17,8 @@ namespace Allors.Database.Domain.Tests.Whist
 
         private GameModes GameTypes;
 
-        public void Setup(DerivationTypes data)
+        public GameTests(Fixture fixture) : base(fixture)
         {
-            this.SelectDerivationType(data);
-
             var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
@@ -42,12 +38,9 @@ namespace Allors.Database.Domain.Tests.Whist
             this.Transaction.Derive();
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestStartDateBeforeEndDate(object data)
+        [Fact]
+        public void TestStartDateBeforeEndDate()
         {
-            this.Setup((DerivationTypes)data);
-
             // Arrange
             var game = new GameBuilder(this.Transaction).Build();
             this.scoreboard.AddGame(game);
@@ -64,12 +57,9 @@ namespace Allors.Database.Domain.Tests.Whist
             Assert.True(validation.HasErrors);
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestStartDateDoesNotEqualsEndDate(object data)
+        [Fact]
+        public void TestStartDateDoesNotEqualsEndDate()
         {
-            this.Setup((DerivationTypes)data);
-
             // Arrange
             var game = new GameBuilder(this.Transaction).Build();
             this.scoreboard.AddGame(game);
