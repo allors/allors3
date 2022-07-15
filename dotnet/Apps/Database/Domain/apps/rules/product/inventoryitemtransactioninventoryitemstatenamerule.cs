@@ -27,14 +27,14 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<InventoryItemTransaction>())
             {
-                @this.DeriveInventoryItemTransactionFacilityName(validation);
+                @this.DeriveInventoryItemTransactionInventoryItemStateName(validation);
             }
         }
     }
 
     public static class InventoryItemTransactionInventoryItemStateNameRuleExtensions
     {
-        public static void DeriveInventoryItemTransactionInventoryItemStateNameRule(this InventoryItemTransaction @this, IValidation validation)
+        public static void DeriveInventoryItemTransactionInventoryItemStateName(this InventoryItemTransaction @this, IValidation validation)
         {
             if (@this.ExistNonSerialisedInventoryItemState)
             {

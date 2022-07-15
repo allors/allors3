@@ -36,10 +36,11 @@ namespace Allors.Database.Domain
                                                 && i.ExistUnitOfMeasure && i.UnitOfMeasure.Equals(@this.UnitOfMeasure)))
                     {
                         var inventoryItem = (InventoryItem)new NonSerialisedInventoryItemBuilder(@this.Strategy.Transaction)
-                          .WithFacility(@this.DefaultFacility)
-                          .WithUnitOfMeasure(@this.UnitOfMeasure)
-                          .WithPart(@this)
-                          .Build();
+                            .WithFacility(@this.DefaultFacility)
+                            .WithUnitOfMeasure(@this.UnitOfMeasure)
+                            .WithPart(@this)
+                            .WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(@this.Strategy.Transaction).Good)
+                            .Build();
                     }
                 }
             }

@@ -62,6 +62,7 @@ namespace Allors.Database.Domain
                                 .WithSerialisedItem(@this.ShipmentItem.SerialisedItem)
                                 .WithFacility(@this.Facility)
                                 .WithUnitOfMeasure(@this.ShipmentItem.Part.UnitOfMeasure)
+                                .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(@this.Strategy.Transaction).Good)
                                 .Build();
                         }
                     }
@@ -76,6 +77,7 @@ namespace Allors.Database.Domain
                                 .WithPart(@this.ShipmentItem.Part)
                                 .WithFacility(@this.Facility)
                                 .WithUnitOfMeasure(@this.ShipmentItem.Part.UnitOfMeasure)
+                                .WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(@this.Strategy.Transaction).Good)
                                 .Build();
                         }
                     }

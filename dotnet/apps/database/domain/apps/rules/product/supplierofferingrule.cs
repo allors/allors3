@@ -38,7 +38,12 @@ namespace Allors.Database.Domain
                         var inventoryItem = @this.Part.InventoryItemsWherePart.FirstOrDefault(v => Equals(facility, v.Facility));
                         if (inventoryItem == null)
                         {
-                            new NonSerialisedInventoryItemBuilder(@this.Strategy.Transaction).WithPart(@this.Part).WithFacility(facility).WithUnitOfMeasure(@this.Part.UnitOfMeasure).Build();
+                            new NonSerialisedInventoryItemBuilder(@this.Strategy.Transaction)
+                                .WithPart(@this.Part)
+                                .WithFacility(facility)
+                                .WithUnitOfMeasure(@this.Part.UnitOfMeasure)
+                                .WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(@this.Strategy.Transaction).Good)
+                                .Build();
                         }
                     }
                 }
