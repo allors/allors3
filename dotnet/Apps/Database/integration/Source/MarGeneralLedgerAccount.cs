@@ -20,6 +20,8 @@
 
 namespace Allors.Integration.Source
 {
+    using System;
+
     public partial class MarGeneralLedgerAccount
     {
         public string ExternalPrimaryKey => this.ReferenceCode;
@@ -30,8 +32,38 @@ namespace Allors.Integration.Source
 
         public string IsActiva { get; set; } // ex. IV.A.1
 
-        public string IsPassiva { get; set; } // ex. VIII.A.5	
+        public string IsPassiva { get; set; } // ex. VIII.A.5
+
         public string BalanceType { get; set; } // ex. VIII.A.5	
+
+        public string FirstCharFromReferenceCode()
+        {
+            if(this.ReferenceCode.Length == 0)
+            {
+                return "";
+            }
+
+            return this.ReferenceCode[0].ToString();
+        }
+        public string GetBalanceSide()
+        {
+            if (!string.IsNullOrWhiteSpace(this.IsActiva))
+            {
+                return "Debit";
+            }
+            else if (!string.IsNullOrWhiteSpace(this.IsPassiva))
+            {
+                return "Credit";
+            }
+
+            return "";
+        }
+
+        public bool IsEmpty() =>
+            string.IsNullOrWhiteSpace(this.ReferenceCode) &&
+            string.IsNullOrWhiteSpace(this.Name) &&
+            string.IsNullOrWhiteSpace(this.IsActiva) &&
+            string.IsNullOrWhiteSpace(this.IsPassiva);
 
         public override string ToString() => this.ReferenceCode;
     }
