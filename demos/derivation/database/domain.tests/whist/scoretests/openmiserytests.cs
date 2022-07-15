@@ -10,8 +10,6 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
     public class OpenMiseryTests : DomainTest, IClassFixture<Fixture>
     {
-        public OpenMiseryTests(Fixture fixture) : base(fixture) { }
-
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -20,10 +18,8 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
         private GameModes GameModes;
 
-        public void Setup(DerivationTypes data)
+        public OpenMiseryTests(Fixture fixture) : base(fixture)
         {
-            this.SelectDerivationType(data);
-
             var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
@@ -43,12 +39,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             this.Transaction.Derive();
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TesOpenMiseryWithOneDeclarerAndOneWinner(object data)
+        [Fact]
+        public void TesOpenMiseryWithOneDeclarerAndOneWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);

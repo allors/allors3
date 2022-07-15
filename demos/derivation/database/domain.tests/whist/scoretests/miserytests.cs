@@ -26,8 +26,6 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
     public class MiseryTests : DomainTest, IClassFixture<Fixture>
     {
-        public MiseryTests(Fixture fixture) : base(fixture) { }
-
         private Scoreboard scoreboard;
         private Person player1;
         private Person player2;
@@ -36,10 +34,8 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
         private GameModes GameModes;
 
-        public void Setup(DerivationTypes data)
+        public MiseryTests(Fixture fixture) : base(fixture)
         {
-            this.SelectDerivationType(data);
-
             var people = new People(this.Transaction);
 
             this.player1 = people.FindBy(M.Person.UserName, "player1");
@@ -59,12 +55,10 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             this.Transaction.Derive();
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestSync(object data)
-        {
-            this.Setup((DerivationTypes)data);
 
+        [Fact]
+        public void TestSync()
+        {
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
 
@@ -74,15 +68,11 @@ namespace Allors.Database.Domain.Tests.Whist.Score
 
             //Assert
             Assert.Equal(4, game.Scores.Count());
-
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithoutDeclarers(object data)
+        [Fact]
+        public void TestMiseryWithoutDeclarers()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -99,12 +89,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithOneDeclarerAndOneWinner(object data)
+        [Fact]
+        public void TestMiseryWithOneDeclarerAndOneWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -127,12 +114,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithOneDeclarerAndZeroWinner(object data)
+        [Fact]
+        public void TestMiseryWithOneDeclarerAndZeroWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -154,12 +138,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithTwoDeclarersAndZeroWinners(object data)
+        [Fact]
+        public void TestMiseryWithTwoDeclarersAndZeroWinners()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -182,12 +163,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithTwoDeclarersAndOneWinner(object data)
+        [Fact]
+        public void TestMiseryWithTwoDeclarersAndOneWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -212,12 +190,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithTwoDeclarersAndTwoWinners(object data)
+        [Fact]
+        public void TestMiseryWithTwoDeclarersAndTwoWinners()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -243,12 +218,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithFourDeclarersAndZeroWinners(object data)
+        [Fact]
+        public void TestMiseryWithFourDeclarersAndZeroWinners()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -273,12 +245,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithFourDeclarersAndOneWinner(object data)
+        [Fact]
+        public void TestMiseryWithFourDeclarersAndOneWinner()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -305,12 +274,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithFourDeclarersAndTwoWinners(object data)
+        [Fact]
+        public void TestMiseryWithFourDeclarersAndTwoWinners()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
@@ -338,12 +304,9 @@ namespace Allors.Database.Domain.Tests.Whist.Score
             Assert.True(this.scoreboard.ZeroTest());
         }
 
-        [Theory]
-        [MemberData(nameof(TestedDerivationTypes))]
-        public void TestMiseryWithFourDeclarersAndThreeWinners(object data)
+        [Fact]
+        public void TestMiseryWithFourDeclarersAndThreeWinners()
         {
-            this.Setup((DerivationTypes)data);
-
             //Arrange
             var game = new GameBuilder(this.Transaction).Build();
             scoreboard.AddGame(game);
