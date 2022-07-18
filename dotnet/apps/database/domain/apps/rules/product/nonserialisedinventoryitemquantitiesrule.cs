@@ -29,73 +29,84 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
             foreach (var @this in matches.Cast<NonSerialisedInventoryItem>())
             {
-                var settings = @this.Strategy.Transaction.GetSingleton().Settings;
+                @this.DeriveNonSerialisedInventoryItemQuantities(validation);
+            }
+        }
+    }
 
-                var quantityOnHand = @this.CalculateQuantityOnHand(settings);
-                if (quantityOnHand != @this.QuantityOnHand)
+    public static class NonSerialisedInventoryItemQuantitiesRuleExtensions
+    {
+        public static void DeriveNonSerialisedInventoryItemQuantities(this NonSerialisedInventoryItem @this, IValidation validation)
+        {
+            var settings = @this.Strategy.Transaction.GetSingleton().Settings;
+
+            var quantityOnHand = @this.CalculateQuantityOnHand(settings);
+            if (quantityOnHand != @this.QuantityOnHand)
+            {
+                @this.QuantityOnHand = quantityOnHand;
+            }
+
+            var quantityCommittedOut = @this.CalculateQuantityCommittedOut();
+            if (quantityCommittedOut != @this.QuantityCommittedOut)
+            {
+                @this.QuantityCommittedOut = quantityCommittedOut;
+            }
+
+            var availableToPromise = @this.CalculateAvailableToPromise(settings);
+            if (availableToPromise != @this.AvailableToPromise)
+            {
+                @this.AvailableToPromise = availableToPromise;
+            }
+
+            if (@this.ExistPart && @this.Part.ExistPurchaseOrderItemsWherePart)
+            {
+                // QuantityExpectedIn
+                var quantityExpectedIn = 0M;
+
+                foreach (var purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
                 {
-                    @this.QuantityOnHand = quantityOnHand;
-                }
-
-                var quantityCommittedOut = @this.CalculateQuantityCommittedOut();
-                if (quantityCommittedOut != @this.QuantityCommittedOut)
-                {
-                    @this.QuantityCommittedOut = quantityCommittedOut;
-                }
-
-                var availableToPromise = @this.CalculateAvailableToPromise(settings);
-                if (availableToPromise != @this.AvailableToPromise)
-                {
-                    @this.AvailableToPromise = availableToPromise;
-                }
-
-                if (@this.ExistPart && @this.Part.ExistPurchaseOrderItemsWherePart)
-                {
-                    // QuantityExpectedIn
-                    var quantityExpectedIn = 0M;
-
-                    foreach (var purchaseOrderItem in @this.Part.PurchaseOrderItemsWherePart)
+                    var facility = purchaseOrderItem.StoredInFacility;
+                    if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).InProcess)
+                         || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).Sent))
+                        && @this.Facility.Equals(facility))
                     {
-                        var facility = purchaseOrderItem.StoredInFacility;
-                        if ((purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).InProcess)
-                             || purchaseOrderItem.PurchaseOrderItemState.Equals(new PurchaseOrderItemStates(@this.Strategy.Transaction).Sent))
-                            && @this.Facility.Equals(facility))
-                        {
-                            quantityExpectedIn += purchaseOrderItem.QuantityOrdered;
-                            quantityExpectedIn -= purchaseOrderItem.QuantityReceived;
-                        }
-                    }
-
-                    if (quantityExpectedIn != @this.QuantityExpectedIn)
-                    {
-                        @this.QuantityExpectedIn = quantityExpectedIn;
+                        quantityExpectedIn += purchaseOrderItem.QuantityOrdered;
+                        quantityExpectedIn -= purchaseOrderItem.QuantityReceived;
                     }
                 }
 
-                if (@this.ExistPreviousQuantityOnHand && @this.QuantityOnHand > @this.PreviousQuantityOnHand)
+                if (quantityExpectedIn != @this.QuantityExpectedIn)
                 {
-                    this.ReplenishSalesOrders(@this);
+                    @this.QuantityExpectedIn = quantityExpectedIn;
                 }
+            }
 
-                if (@this.ExistPreviousQuantityOnHand && @this.QuantityOnHand < @this.PreviousQuantityOnHand)
-                {
-                    this.DepleteSalesOrders(@this);
-                }
+            if (@this.ExistPreviousQuantityOnHand && @this.QuantityOnHand > @this.PreviousQuantityOnHand)
+            {
+                ReplenishSalesOrders(@this);
+            }
 
-                if (@this.QuantityOnHand != @this.PreviousQuantityOnHand)
-                {
-                    @this.PreviousQuantityOnHand = @this.QuantityOnHand;
-                }
+            if (@this.ExistPreviousQuantityOnHand && @this.QuantityOnHand < @this.PreviousQuantityOnHand)
+            {
+                DepleteSalesOrders(@this);
+            }
+
+            if (@this.QuantityOnHand != @this.PreviousQuantityOnHand)
+            {
+                @this.PreviousQuantityOnHand = @this.QuantityOnHand;
             }
         }
 
-        private void ReplenishSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)
+        private static void ReplenishSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)
         {
+            var m = nonSerialisedInventoryItem.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
+
             var salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Extent<SalesOrderItem>();
-            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Transaction).InProcess);
-            salesOrderItems.AddSort(this.M.OrderItem.DerivedDeliveryDate, SortDirection.Ascending);
+            salesOrderItems.Filter.AddEquals(m.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Transaction).InProcess);
+            salesOrderItems.AddSort(m.OrderItem.DerivedDeliveryDate, SortDirection.Ascending);
             var nonUnifiedGoods = nonSerialisedInventoryItem.Part.NonUnifiedGoodsWherePart.ToArray();
             var unifiedGood = nonSerialisedInventoryItem.Part as UnifiedGood;
 
@@ -103,12 +114,12 @@ namespace Allors.Database.Domain
             {
                 if (unifiedGood != null)
                 {
-                    salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.Product, unifiedGood);
+                    salesOrderItems.Filter.AddEquals(m.SalesOrderItem.Product, unifiedGood);
                 }
 
                 if (nonUnifiedGoods.Length > 0)
                 {
-                    salesOrderItems.Filter.AddContainedIn(this.M.SalesOrderItem.Product, (IEnumerable<IObject>)nonUnifiedGoods);
+                    salesOrderItems.Filter.AddContainedIn(m.SalesOrderItem.Product, (IEnumerable<IObject>)nonUnifiedGoods);
                 }
 
                 salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Instantiate(salesOrderItems);
@@ -146,12 +157,14 @@ namespace Allors.Database.Domain
             }
         }
 
-        private void DepleteSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)
+        private static void DepleteSalesOrders(NonSerialisedInventoryItem nonSerialisedInventoryItem)
         {
+            var m = nonSerialisedInventoryItem.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
+
             var salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Extent<SalesOrderItem>();
-            salesOrderItems.Filter.AddEquals(this.M.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Transaction).InProcess);
-            salesOrderItems.Filter.AddExists(this.M.OrderItem.DerivedDeliveryDate);
-            salesOrderItems.AddSort(this.M.OrderItem.DerivedDeliveryDate, SortDirection.Descending);
+            salesOrderItems.Filter.AddEquals(m.SalesOrderItem.SalesOrderItemState, new SalesOrderItemStates(nonSerialisedInventoryItem.Strategy.Transaction).InProcess);
+            salesOrderItems.Filter.AddExists(m.OrderItem.DerivedDeliveryDate);
+            salesOrderItems.AddSort(m.OrderItem.DerivedDeliveryDate, SortDirection.Descending);
 
             salesOrderItems = nonSerialisedInventoryItem.Strategy.Transaction.Instantiate(salesOrderItems);
 

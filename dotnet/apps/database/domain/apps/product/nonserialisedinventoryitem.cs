@@ -15,6 +15,20 @@ namespace Allors.Database.Domain
             new TransitionalConfiguration(this.M.NonSerialisedInventoryItem, this.M.NonSerialisedInventoryItem.NonSerialisedInventoryItemState),
         };
 
+        public bool IsDeletable => !this.ExistSalesOrderItemsWhereReservedFromNonSerialisedInventoryItem
+            && !this.ExistSalesOrderItemsWherePreviousReservedFromNonSerialisedInventoryItem
+            && !this.ExistSalesOrderItemVersionsWhereReservedFromNonSerialisedInventoryItem
+            && !this.ExistSalesOrderItemVersionsWherePreviousReservedFromNonSerialisedInventoryItem
+            && !this.ExistInventoryItemTransactionsWhereInventoryItem
+            && !this.ExistItemIssuancesWhereInventoryItem
+            && !this.ExistPickListItemsWhereInventoryItem
+            && !this.ExistSalesOrderItemInventoryAssignmentsWhereInventoryItem
+            && !this.ExistSalesOrderItemInventoryAssignmentVersionsWhereInventoryItem
+            && !this.ExistShipmentItemsWhereReservedFromInventoryItem
+            && !this.ExistShipmentReceiptsWhereInventoryItem
+            && !this.ExistWorkEffortInventoryAssignmentsWhereInventoryItem
+            && !this.ExistWorkEffortInventoryAssignmentVersionsWhereInventoryItem;
+
         public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistNonSerialisedInventoryItemState)
@@ -25,9 +39,12 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
-            foreach (var deletable in this.AllVersions)
+            if (this.IsDeletable)
             {
-                deletable.Strategy.Delete();
+                foreach (var deletable in this.AllVersions)
+                {
+                    deletable.Strategy.Delete();
+                }
             }
         }
 
