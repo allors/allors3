@@ -26,69 +26,81 @@ namespace Allors.Database.Domain
                 m.NonUnifiedPart.RolePattern(v => v.Brand),
                 m.NonUnifiedPart.RolePattern(v => v.Model),
                 m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedName, m.NonUnifiedPart),
+                m.SupplierOffering.RolePattern(v => v.SupplierProductId, v => v.Part, m.NonUnifiedPart),
+                m.SupplierOffering.RolePattern(v => v.SupplierProductName, v => v.Part, m.NonUnifiedPart),
                 m.Part.AssociationPattern(v => v.PartCategoriesWherePart, m.NonUnifiedPart),
                 m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, m.NonUnifiedPart),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<NonUnifiedPart>())
             {
-                if (!@this.ExistName)
-                {
-                    @this.Name = "Part " + (@this.PartIdentification() ?? @this.UniqueId.ToString());
-                }
-
-                var builder = new StringBuilder();
-
-                builder.Append(@this.Name);
-
-                foreach (var localisedText in @this.LocalisedNames)
-                {
-                    builder.Append(string.Join(", ", localisedText.Text));
-                }
-
-                if (@this.ExistProductIdentifications)
-                {
-                    builder.Append(string.Join(", ", @this.ProductIdentifications.Select(v => v.Identification)));
-                }
-
-                if (@this.ExistPartCategoriesWherePart)
-                {
-                    builder.Append(string.Join(", ", @this.PartCategoriesWherePart.Select(v => v.Name)));
-                }
-
-                if (@this.ExistSupplierOfferingsWherePart)
-                {
-                    builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.Supplier?.DisplayName)));
-                    builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.SupplierProductId)));
-                    builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.SupplierProductName)));
-                }
-
-                if (@this.ExistSerialisedItems)
-                {
-                    builder.Append(string.Join(", ", @this.SerialisedItems.Select(v => v.SerialNumber)));
-                }
-
-                if (@this.ExistProductType)
-                {
-                    builder.Append(string.Join(", ", @this.ProductType.Name));
-                }
-
-                if (@this.ExistBrand)
-                {
-                    builder.Append(string.Join(", ", @this.Brand.Name));
-                }
-
-                if (@this.ExistModel)
-                {
-                    builder.Append(string.Join(", ", @this.Model.Name));
-                }
-
-                builder.Append(string.Join(", ", @this.Keywords));
-
-                @this.SearchString = builder.ToString();
+                @this.DeriveNonUnifiedPart(validation);
             }
+        }
+    }
+
+    public static class NonUnifiedPartRuleExtensions
+    {
+        public static void DeriveNonUnifiedPart(this NonUnifiedPart @this, IValidation validation)
+        {
+            if (!@this.ExistName)
+            {
+                @this.Name = "Part " + (@this.PartIdentification() ?? @this.UniqueId.ToString());
+            }
+
+            var builder = new StringBuilder();
+
+            builder.Append(@this.Name);
+
+            foreach (var localisedText in @this.LocalisedNames)
+            {
+                builder.Append(string.Join(", ", localisedText.Text));
+            }
+
+            if (@this.ExistProductIdentifications)
+            {
+                builder.Append(string.Join(", ", @this.ProductIdentifications.Select(v => v.Identification)));
+            }
+
+            if (@this.ExistPartCategoriesWherePart)
+            {
+                builder.Append(string.Join(", ", @this.PartCategoriesWherePart.Select(v => v.Name)));
+            }
+
+            if (@this.ExistSupplierOfferingsWherePart)
+            {
+                builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.Supplier?.DisplayName)));
+                builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.SupplierProductId)));
+                builder.Append(string.Join(", ", @this.SupplierOfferingsWherePart.Select(v => v.SupplierProductName)));
+            }
+
+            if (@this.ExistSerialisedItems)
+            {
+                builder.Append(string.Join(", ", @this.SerialisedItems.Select(v => v.SerialNumber)));
+            }
+
+            if (@this.ExistProductType)
+            {
+                builder.Append(string.Join(", ", @this.ProductType.Name));
+            }
+
+            if (@this.ExistBrand)
+            {
+                builder.Append(string.Join(", ", @this.Brand.Name));
+            }
+
+            if (@this.ExistModel)
+            {
+                builder.Append(string.Join(", ", @this.Model.Name));
+            }
+
+            builder.Append(string.Join(", ", @this.Keywords));
+
+            @this.SearchString = builder.ToString();
         }
     }
 }
