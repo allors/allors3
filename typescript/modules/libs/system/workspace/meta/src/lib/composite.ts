@@ -21,7 +21,6 @@ export interface Composite extends ObjectType {
   methodTypes: Set<MethodType>;
 
   databaseOriginRoleTypes: Set<RoleType>;
-  workspaceOriginRoleTypes: Set<RoleType>;
 
   dependencyByPropertyType: Map<PropertyType, Dependency>;
 

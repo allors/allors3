@@ -18,9 +18,6 @@ namespace Allors.Workspace.Meta
         IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
         string IMetaObject.Tag => this.Tag;
-
-        Origin IMetaObject.Origin => Origin.Database;
-
         #endregion
 
         #region IOperandType

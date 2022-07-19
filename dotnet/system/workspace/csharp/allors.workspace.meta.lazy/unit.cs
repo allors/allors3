@@ -29,7 +29,6 @@ namespace Allors.Workspace.Meta
 
         IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
 
-        Origin IMetaObject.Origin => Origin.Database;
         #endregion
 
         #region IMetaIdentifiableObject

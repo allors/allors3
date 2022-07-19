@@ -31,7 +31,6 @@ import { SessionOriginState } from './originstate/session-origin-state';
 import { Strategy } from './strategy';
 import { ChangeSetTracker } from './trackers/change-set-tracker';
 import { PushToDatabaseTracker } from './trackers/push-to-database-tracker';
-import { PushToWorkspaceTracker } from './trackers/push-to-workspace-tracker';
 import { ChangeSet } from './change-set';
 
 export function isNewId(id: number): boolean {
@@ -44,8 +43,6 @@ export abstract class Session implements ISession {
   changeSetTracker: ChangeSetTracker;
 
   pushToDatabaseTracker: PushToDatabaseTracker;
-
-  pushToWorkspaceTracker: PushToWorkspaceTracker;
 
   sessionOriginState: SessionOriginState;
 
@@ -68,7 +65,6 @@ export abstract class Session implements ISession {
 
     this.changeSetTracker = new ChangeSetTracker();
     this.pushToDatabaseTracker = new PushToDatabaseTracker();
-    this.pushToWorkspaceTracker = new PushToWorkspaceTracker();
 
     this.activeRulesByRoleType = new Map();
     this.dependencies = new Set();
@@ -148,43 +144,6 @@ export abstract class Session implements ISession {
 
   abstract create<T extends IObject>(cls: Composite): T;
 
-  pullFromWorkspace(): IWorkspaceResult {
-    const result = new WorkspaceResult();
-
-    for (const [, object] of this.objectByWorkspaceId) {
-      if (object.strategy.cls.origin != Origin.Session) {
-        (object.strategy as Strategy).WorkspaceOriginState.onPulled(result);
-      }
-    }
-
-    return result;
-  }
-
-  pushToWorkspace(): IWorkspaceResult {
-    const pushResult = new WorkspaceResult();
-
-    if (this.pushToWorkspaceTracker.created != null) {
-      for (const object of this.pushToWorkspaceTracker.created) {
-        (object.strategy as Strategy).WorkspaceOriginState.push();
-      }
-    }
-
-    if (this.pushToWorkspaceTracker.changed != null) {
-      for (const state of this.pushToWorkspaceTracker.changed) {
-        if (this.pushToWorkspaceTracker.created?.has(state.object) == true) {
-          continue;
-        }
-
-        state.push();
-      }
-    }
-
-    this.pushToWorkspaceTracker.created = null;
-    this.pushToWorkspaceTracker.changed = null;
-
-    return pushResult;
-  }
-
   checkpoint(): IChangeSet {
     const changeSet = new ChangeSet(this, this.changeSetTracker.created);
     if (this.changeSetTracker.databaseOriginStates != null) {
@@ -194,18 +153,10 @@ export abstract class Session implements ISession {
       }
     }
 
-    if (this.changeSetTracker.workspaceOriginStates != null) {
-      for (const workspaceOriginState of this.changeSetTracker
-        .workspaceOriginStates) {
-        workspaceOriginState.checkpoint(changeSet);
-      }
-    }
-
     this.sessionOriginState.checkpoint(changeSet);
 
     this.changeSetTracker.created = null;
     this.changeSetTracker.databaseOriginStates = null;
-    this.changeSetTracker.workspaceOriginStates = null;
 
     return changeSet;
   }
@@ -233,35 +184,11 @@ export abstract class Session implements ISession {
       const all: T[] = [];
 
       for (const cls of (args as Composite).classes) {
-        switch (cls.origin) {
-          case Origin.Workspace:
-            if (this.workspace.workspaceIdsByWorkspaceClass.has(cls)) {
-              const ids = this.workspace.workspaceIdsByWorkspaceClass.get(cls);
-              for (const id of ids) {
-                if (this.objectByWorkspaceId.has(id)) {
-                  const object = this.objectByWorkspaceId.get(id);
-                  all.push(object as T);
-                } else {
-                  const object = this.instantiateWorkspaceStrategy(id);
-                  all.push(object as T);
-                }
-              }
-            }
-
-            break;
-          case Origin.Database:
-          case Origin.Session:
-            if (this.objectsByClass.has(cls)) {
-              const strategies = this.objectsByClass.get(cls);
-              strategies.forEach((v) => {
-                all.push(v as T);
-              });
-            }
-
-            break;
-
-          default:
-            throw new Error(`Unknown Origin {@class.Origin}`);
+        if (this.objectsByClass.has(cls)) {
+          const strategies = this.objectsByClass.get(cls);
+          strategies.forEach((v) => {
+            all.push(v as T);
+          });
         }
       }
 
@@ -282,9 +209,7 @@ export abstract class Session implements ISession {
       return this.objectByWorkspaceId.get(id);
     }
 
-    return isNewId(id)
-      ? this.instantiateWorkspaceStrategy(id)
-      : this.instantiateDatabaseStrategy(id);
+    return this.instantiateDatabaseStrategy(id);
   }
 
   public getCompositeAssociation(
@@ -392,8 +317,6 @@ export abstract class Session implements ISession {
   abstract pull(pulls: Pull | Pull[]): Promise<IPullResult>;
 
   abstract push(): Promise<IPushResult>;
-
-  abstract instantiateWorkspaceStrategy(id: number): IObject;
 
   abstract instantiateDatabaseStrategy(id: number): IObject;
 }

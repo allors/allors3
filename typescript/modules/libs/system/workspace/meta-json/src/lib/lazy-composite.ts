@@ -42,7 +42,6 @@ export abstract class LazyComposite implements InternalComposite {
   directMethodTypes: Set<MethodType> = new Set();
 
   databaseOriginRoleTypes: Set<RoleType>;
-  workspaceOriginRoleTypes: Set<RoleType>;
 
   dependencyByPropertyType: Map<PropertyType, Dependency>;
 
@@ -135,9 +134,6 @@ export abstract class LazyComposite implements InternalComposite {
     this.databaseOriginRoleTypes = new Set(
       this.databaseOriginRoleTypesGenerator()
     );
-    this.workspaceOriginRoleTypes = new Set(
-      this.workspaceOriginRoleTypesGenerator()
-    );
   }
 
   abstract derivePropertyTypeByPropertyName();
@@ -207,14 +203,6 @@ export abstract class LazyComposite implements InternalComposite {
   *databaseOriginRoleTypesGenerator(): IterableIterator<RoleType> {
     for (const roleType of this.roleTypes) {
       if (roleType.origin === Origin.Database) {
-        yield roleType;
-      }
-    }
-  }
-
-  *workspaceOriginRoleTypesGenerator(): IterableIterator<RoleType> {
-    for (const roleType of this.roleTypes) {
-      if (roleType.origin === Origin.Workspace) {
         yield roleType;
       }
     }

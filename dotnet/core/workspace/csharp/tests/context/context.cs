@@ -46,10 +46,6 @@ namespace Tests.Workspace
         public async Task<T> Create<T>(ISession session, DatabaseMode mode) where T : class, IObject
         {
             var @class = (IClass)session.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
-            if (@class.Origin != Origin.Database)
-            {
-                throw new ArgumentException($@"Origin is not {Origin.Database}", nameof(mode));
-            }
 
             T result;
             switch (mode)
@@ -87,38 +83,7 @@ namespace Tests.Workspace
             Assert.NotNull(result);
             return result;
         }
-
-        public T Create<T>(ISession session, WorkspaceMode mode) where T : class, IObject
-        {
-            var @class = (IClass)session.Workspace.Configuration.ObjectFactory.GetObjectType<T>();
-            if (@class.Origin == Origin.Database)
-            {
-                throw new ArgumentException($@"Origin is {Origin.Database}", nameof(mode));
-            }
-
-            T result;
-            switch (mode)
-            {
-                case WorkspaceMode.NoPush:
-                    result = session.Create<T>();
-                    break;
-                case WorkspaceMode.Push:
-                    result = session.Create<T>();
-                    session.PushToWorkspace();
-                    break;
-                case WorkspaceMode.PushAndPull:
-                    result = session.Create<T>();
-                    session.PushToWorkspace();
-                    session.PullFromWorkspace();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(mode), mode, $@"Mode [{string.Join(", ", Enum.GetNames(typeof(DatabaseMode)))}]");
-            }
-
-            Assert.NotNull(result);
-            return result;
-        }
-
+        
         public override string ToString() => this.Name;
     }
 }

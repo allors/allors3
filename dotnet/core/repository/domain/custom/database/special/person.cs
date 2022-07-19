@@ -106,16 +106,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public DateTime BirthDate { get; set; }
-
-        #region Allors
-        [Id("0521122D-1C45-41DC-804C-330FE81136C6")]
-        [Size(256)]
-        #endregion
-        [Workspace(Default)]
-        [Origin(Origin.Workspace)]
-        [Derived]
-        public string WorkspaceFullName { get; set; }
-
+        
         #region Allors
         [Id("4F2E08E1-2892-41F9-A71F-4148AD9803F4")]
         [Size(256)]

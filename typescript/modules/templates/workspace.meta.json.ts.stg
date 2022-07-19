@@ -48,11 +48,7 @@ $meta.WorkspaceInterfacesByWorkspaceName.(workspaceName):{objectType|$data_objec
   [
 $meta.WorkspaceClassesByWorkspaceName.(workspaceName):{objectType|$data_objectType(objectType)$}; separator=",\n"$
   ],
-  o:
-  [
-    [$meta.WorkspaceWorkspaceOriginTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
-    [$meta.WorkspaceSessionOriginTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$]
-  ],
+  o: [$meta.WorkspaceSessionOriginTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],
   m:
   [
     [$meta.WorkspaceOneToOneTagsByWorkspaceName.(workspaceName):{tag|'$tag$'}; separator=","$],

@@ -25,10 +25,6 @@ namespace Allors.Workspace
 
         void Reset();
 
-        IWorkspaceResult PullFromWorkspace();
-
-        IWorkspaceResult PushToWorkspace();
-
         IChangeSet Checkpoint();
 
         T Create<T>() where T : class, IObject;

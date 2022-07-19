@@ -22,8 +22,6 @@ namespace Allors.Workspace.Meta
 
         IEnumerable<IRoleType> DatabaseOriginRoleTypes { get; }
 
-        IEnumerable<IRoleType> WorkspaceOriginRoleTypes { get; }
-
         IEnumerable<IMethodType> MethodTypes { get; }
 
         bool IsAssignableFrom(IComposite objectType);

@@ -23,9 +23,8 @@ export class Lookup {
     });
 
     this.o = new Map();
-    data.o?.forEach((v, i) => {
-      const origin = i == 0 ? Origin.Workspace : Origin.Session;
-      v.forEach((w) => this.o.set(w, origin));
+    data.o?.forEach((v) => {
+      this.o.set(v, Origin.Session);
     });
 
     this.d = new Set(data.d ?? []);

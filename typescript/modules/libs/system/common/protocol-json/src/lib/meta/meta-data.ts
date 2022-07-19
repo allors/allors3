@@ -47,7 +47,7 @@ export interface MetaData {
   /**
    * Origin
    */
-  o?: string[][];
+  o?: string[];
 
   /**
    * Multiplicity

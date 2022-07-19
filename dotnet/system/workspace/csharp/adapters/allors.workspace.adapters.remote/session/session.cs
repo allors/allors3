@@ -33,16 +33,7 @@ namespace Allors.Workspace.Adapters.Remote
             var workspaceId = base.Workspace.DatabaseConnection.NextId();
             var strategy = new Strategy(this, @class, workspaceId);
             this.AddStrategy(strategy);
-
-            if (@class.Origin != Origin.Session)
-            {
-                this.PushToWorkspaceTracker.OnCreated(strategy);
-                if (@class.Origin == Origin.Database)
-                {
-                    this.PushToDatabaseTracker.OnCreated(strategy);
-                }
-            }
-
+            this.PushToDatabaseTracker.OnCreated(strategy);
             this.ChangeSetTracker.OnCreated(strategy);
             return (T)strategy.Object;
         }
@@ -54,21 +45,6 @@ namespace Allors.Workspace.Adapters.Remote
             this.AddStrategy(strategy);
 
             this.ChangeSetTracker.OnInstantiated(strategy);
-        }
-
-        protected override Adapters.Strategy InstantiateWorkspaceStrategy(long id)
-        {
-            if (!base.Workspace.WorkspaceClassByWorkspaceId.TryGetValue(id, out var @class))
-            {
-                return null;
-            }
-
-            var strategy = new Strategy(this, @class, id);
-            this.AddStrategy(strategy);
-
-            this.ChangeSetTracker.OnInstantiated(strategy);
-
-            return strategy;
         }
 
         internal async Task<IPullResult> OnPull(PullResponse pullResponse)
@@ -152,11 +128,6 @@ namespace Allors.Workspace.Adapters.Remote
                 if (pull.ObjectId < 0 || pull.Object?.Id < 0)
                 {
                     throw new ArgumentException($"Id is not in the database");
-                }
-
-                if (pull.Object != null && pull.Object.Strategy.Class.Origin != Origin.Database)
-                {
-                    throw new ArgumentException($"Origin is not Database");
                 }
             }
 

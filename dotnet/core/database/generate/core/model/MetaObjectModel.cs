@@ -18,8 +18,6 @@ namespace Allors.Meta.Generation.Model
 
         public bool HasDatabaseOrigin => this.Origin == Origin.Database;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
-
         public bool HasSessionOrigin => this.Origin == Origin.Session;
 
         public bool IsDefaultOrigin => this.Origin == DefaultOrigin;

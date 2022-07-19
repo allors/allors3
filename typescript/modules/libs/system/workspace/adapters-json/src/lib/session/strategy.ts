@@ -2,7 +2,7 @@ import {
   Session,
   Strategy as SystemStrategy,
 } from '@allors/system/workspace/adapters';
-import { Class, Origin } from '@allors/system/workspace/meta';
+import { Class } from '@allors/system/workspace/meta';
 import { DatabaseOriginState } from './originstate/database-origin-state';
 import { DatabaseRecord } from '../database/database-record';
 
@@ -14,12 +14,10 @@ export class Strategy extends SystemStrategy {
   ) {
     super(session, cls, id);
 
-    if (this.cls.origin === Origin.Database) {
-      this.DatabaseOriginState = new DatabaseOriginState(
-        this.object,
-        session.workspace.database.getRecord(this.id)
-      );
-    }
+    this.DatabaseOriginState = new DatabaseOriginState(
+      this.object,
+      session.workspace.database.getRecord(this.id)
+    );
   }
 
   static fromDatabaseRecord(session: Session, databaseRecord: DatabaseRecord) {

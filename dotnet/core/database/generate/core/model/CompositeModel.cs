@@ -106,13 +106,9 @@ namespace Allors.Meta.Generation.Model
 
         public IEnumerable<RoleTypeModel> ExclusiveRoleTypesWithDatabaseOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.Origin == Origin.Database);
 
-        public IEnumerable<RoleTypeModel> ExclusiveRoleTypesWithWorkspaceOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.Origin == Origin.Workspace);
-
         public IEnumerable<RoleTypeModel> ExclusiveRoleTypesWithSessionOrigin => this.ExclusiveRoleTypes.Where(roleType => roleType.RelationType.Origin == Origin.Session);
 
         public IEnumerable<AssociationTypeModel> ExclusiveAssociationTypesWithDatabaseOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.Origin == Origin.Database);
-
-        public IEnumerable<AssociationTypeModel> ExclusiveAssociationTypesWithWorkspaceOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.Origin == Origin.Workspace);
 
         public IEnumerable<AssociationTypeModel> ExclusiveAssociationTypesWithSessionOrigin => this.ExclusiveAssociationTypes.Where(roleType => roleType.RelationType.Origin == Origin.Session);
 
@@ -156,7 +152,7 @@ namespace Allors.Meta.Generation.Model
         public IReadOnlyDictionary<string, IOrderedEnumerable<RoleTypeModel>> WorkspaceExclusiveRoleTypesWithWorkspaceOrSessionOriginByWorkspaceName =>
             this.WorkspaceNames
                 .ToDictionary(v => v,
-                    v => this.ExclusiveRoleTypes.Where(w => (w.Origin == Origin.Workspace || w.Origin == Origin.Session) && w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Tag));
+                    v => this.ExclusiveRoleTypes.Where(w => (w.Origin == Origin.Session) && w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Tag));
 
         public IReadOnlyDictionary<string, IOrderedEnumerable<RoleTypeModel>> WorkspaceExclusiveCompositeRoleTypesByWorkspaceName =>
             this.WorkspaceNames

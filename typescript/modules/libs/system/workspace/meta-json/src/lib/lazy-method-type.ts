@@ -1,5 +1,5 @@
 import { MethodTypeData } from '@allors/system/common/protocol-json';
-import { MethodType, Origin } from '@allors/system/workspace/meta';
+import { MethodType } from '@allors/system/workspace/meta';
 
 import { InternalComposite } from './internal/internal-composite';
 import { InternalMetaPopulation } from './internal/internal-meta-population';
@@ -14,7 +14,6 @@ export class LazyMethodType implements MethodType {
   metaPopulation: InternalMetaPopulation;
   tag: string;
   name: string;
-  origin = Origin.Database;
   operandTag: string;
 
   constructor(public objectType: InternalComposite, d: MethodTypeData) {

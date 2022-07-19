@@ -11,20 +11,8 @@ namespace Tests.Workspace
         public static void ShouldEqual(this object actual, object expected, Context context, DatabaseMode mode1, DatabaseMode mode2)
             => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
 
-        public static void ShouldEqual(this object actual, object expected, Context context, DatabaseMode mode1, WorkspaceMode mode2)
-            => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldEqual(this object actual, object expected, Context context, WorkspaceMode mode1, WorkspaceMode mode2)
-        => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldEqual(this object actual, object expected, Context context, WorkspaceMode mode1, DatabaseMode mode2)
-        => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
         public static void ShouldEqual(this object actual, object expected, Context context, DatabaseMode mode)
             => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode}");
-
-        public static void ShouldEqual(this object actual, object expected, Context context, WorkspaceMode mode)
-          => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context} with mode1 {mode}");
 
         public static void ShouldEqual(this object actual, object expected, Context context)
           => Assert.True(Equals(actual, expected), $"{actual} should equal {expected} on context {context}");
@@ -35,20 +23,8 @@ namespace Tests.Workspace
         public static void ShouldNotEqual(this object actual, object expected, Context context, DatabaseMode mode1, DatabaseMode mode2)
             => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
 
-        public static void ShouldNotEqual(this object actual, object expected, Context context, DatabaseMode mode1, WorkspaceMode mode2)
-            => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode1, WorkspaceMode mode2)
-        => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode1, DatabaseMode mode2)
-        => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
         public static void ShouldNotEqual(this object actual, object expected, Context context, DatabaseMode mode)
             => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode}");
-
-        public static void ShouldNotEqual(this object actual, object expected, Context context, WorkspaceMode mode)
-          => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context} with mode1 {mode}");
 
         public static void ShouldNotEqual(this object actual, object expected, Context context)
           => Assert.True(!Equals(actual, expected), $"{actual} should not equal: {expected} on context {context}");
@@ -60,20 +36,8 @@ namespace Tests.Workspace
         public static void ShouldNotBeNull(this object actual, Context context, DatabaseMode mode1, DatabaseMode mode2)
             => Assert.True(!(actual is null), $"{actual} should not be null on context {context} with mode1 {mode1} and mode2 {mode2}");
 
-        public static void ShouldNotBeNull(this object actual, Context context, DatabaseMode mode1, WorkspaceMode mode2)
-            => Assert.True(!(actual is null), $"{actual} should not be null on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldNotBeNull(this object actual, Context context, WorkspaceMode mode1, DatabaseMode mode2)
-            => Assert.True(!(actual is null), $"{actual} should not be null on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldNotBeNull(this object actual, Context context, WorkspaceMode mode1, WorkspaceMode mode2)
-             => Assert.True(!(actual is null), $"{actual} should not be null on context {context} with mode1 {mode1} and mode2 {mode2}");
-
         public static void ShouldNotBeNull(this object actual, Context context, DatabaseMode mode)
             => Assert.True(!(actual is null), $"{actual} should not be null on context {context} with mode1 {mode}");
-
-        public static void ShouldNotBeNull(this object actual, Context context, WorkspaceMode mode)
-       => Assert.True(!(actual is null), $"{actual} should not be null on context {context} with mode1 {mode}");
 
         public static void ShouldNotBeNull(this object actual, Context context)
             => Assert.True(!(actual is null), $"{actual} should not be null on context {context}");
@@ -85,20 +49,8 @@ namespace Tests.Workspace
         public static void ShouldContain(this IEnumerable<IObject> collection, IObject expected, Context context, DatabaseMode mode1, DatabaseMode mode2)
             => Assert.True(collection.Contains(expected), $"{collection.Dump()} should contain {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
 
-        public static void ShouldContain(this IEnumerable<IObject> collection, IObject expected, Context context, DatabaseMode mode1, WorkspaceMode mode2)
-            => Assert.True(collection.Contains(expected), $"{collection.Dump()} should contain {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldContain(this IEnumerable<IObject> collection, IObject expected, Context context, WorkspaceMode mode1, WorkspaceMode mode2)
-            => Assert.True(collection.Contains(expected), $"{collection.Dump()} should contain {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
-        public static void ShouldContain(this IEnumerable<IObject> collection, IObject expected, Context context, WorkspaceMode mode1, DatabaseMode mode2)
-            => Assert.True(collection.Contains(expected), $"{collection.Dump()} should contain {expected} on context {context} with mode1 {mode1} and mode2 {mode2}");
-
         public static void ShouldContain(this IEnumerable<IObject> collection, IObject expected, Context context, DatabaseMode mode)
             => Assert.True(collection.Contains(expected), $"{collection.Dump()} should contain {expected} on context {context} with mode1 {mode}");
-
-        public static void ShouldContain(this IEnumerable<IObject> collection, IObject expected, Context context, WorkspaceMode mode)
-        => Assert.True(collection.Contains(expected), $"{collection.Dump()} should contain {expected} on context {context} with mode1 {mode}");
 
         public static void ShouldContain(this IEnumerable<IObject> collection, IObject expected, Context context)
         => Assert.True(collection.Contains(expected), $"{collection.Dump()} should contain {expected} on context {context}");
@@ -112,20 +64,8 @@ namespace Tests.Workspace
         public static void ShouldNotContain(this IEnumerable<IObject> collection, IObject expected, Context context, DatabaseMode mode)
             => Assert.True(!collection.Contains(expected), $"{collection.Dump()} should not contain {expected} on context {context} with mode {mode}");
 
-        public static void ShouldNotContain(this IEnumerable<IObject> collection, IObject expected, Context context, WorkspaceMode mode)
-            => Assert.True(!collection.Contains(expected), $"{collection.Dump()} should not contain {expected} on context {context} with mode {mode}");
-
         public static void ShouldNotContain(this IEnumerable<IObject> collection, IObject expected, Context context, DatabaseMode mode1, DatabaseMode mode2)
-            => Assert.True(!collection.Contains(expected), $"{collection.Dump()} should not contain {expected} on context {context} with mode& {mode1} and mode2 {mode2}");
-
-        public static void ShouldNotContain(this IEnumerable<IObject> collection, IObject expected, Context context, DatabaseMode mode1, WorkspaceMode mode2)
-            => Assert.True(!collection.Contains(expected), $"{collection.Dump()} should not contain {expected} on context {context} with mode& {mode1} and mode2 {mode2}");
-
-        public static void ShouldNotContain(this IEnumerable<IObject> collection, IObject expected, Context context, WorkspaceMode mode1, DatabaseMode mode2)
-        => Assert.True(!collection.Contains(expected), $"{collection.Dump()} should not contain {expected} on context {context} with mode& {mode1} and mode2 {mode2}");
-
-        public static void ShouldNotContain(this IEnumerable<IObject> collection, IObject expected, Context context, WorkspaceMode mode1, WorkspaceMode mode2)
-            => Assert.True(!collection.Contains(expected), $"{collection.Dump()} should not contain {expected} on context {context} with mode& {mode1} and mode2 {mode2}");
+                => Assert.True(!collection.Contains(expected), $"{collection.Dump()} should not contain {expected} on context {context} with mode& {mode1} and mode2 {mode2}");
 
         #endregion
     }

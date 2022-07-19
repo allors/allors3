@@ -1,4 +1,4 @@
-import { C1, SC1 } from '@allors/default/workspace/domain';
+import { C1 } from '@allors/default/workspace/domain';
 import { Pull } from '@allors/system/workspace/domain';
 import { Fixture } from '../fixture';
 import '../matchers';
@@ -881,65 +881,6 @@ test('changeSetAfterPullInNewSessionButNoPush', async () => {
   expect(changeSet.created.size).toBe(0);
   expect(changeSet.associationsByRoleType.size).toBe(0);
   expect(changeSet.rolesByAssociationType.size).toBe(0);
-});
-
-test('changeSetBeforeAndAfterResetWithSessionObject', async () => {
-  const { workspace, m } = fixture;
-  const session = workspace.createSession();
-
-  const sc1a = session.create<SC1>(m.SC1);
-
-  sc1a.SessionAllorsString = 'X';
-
-  await session.push();
-
-  let changeSet = session.checkpoint();
-
-  expect(changeSet.created.size).toBe(1);
-  expect(changeSet.associationsByRoleType.size).toBe(1);
-  expect(changeSet.rolesByAssociationType.size).toBe(0);
-
-  expect(
-    changeSet.associationsByRoleType
-      .get(m.SC1.SessionAllorsString)
-      .values()
-      .next().value
-  ).toBe(sc1a);
-
-  sc1a.strategy.reset();
-
-  changeSet = session.checkpoint();
-
-  expect(changeSet.created.size).toBe(0);
-  expect(changeSet.associationsByRoleType.size).toBe(0);
-  expect(changeSet.rolesByAssociationType.size).toBe(0);
-});
-
-test('changeSetBeforeAndAfterResetWithChangeSessionObject', async () => {
-  const { workspace, m } = fixture;
-  const session = workspace.createSession();
-
-  const sc1a = session.create<SC1>(m.SC1);
-
-  sc1a.SessionAllorsString = 'X';
-
-  await session.push();
-
-  let changeSet = session.checkpoint();
-
-  sc1a.SessionAllorsString = 'Y';
-
-  changeSet = session.checkpoint();
-
-  sc1a.strategy.reset();
-
-  changeSet = session.checkpoint();
-
-  expect(changeSet.created.size).toBe(0);
-  expect(changeSet.associationsByRoleType.size).toBe(0);
-  expect(changeSet.rolesByAssociationType.size).toBe(0);
-
-  expect(sc1a.SessionAllorsString).toBe('Y');
 });
 
 test('changeSetAfterDoubleReset', async () => {

@@ -16,11 +16,6 @@ namespace Allors
         Database = 1,
 
         /// <summary>
-        /// Local origin.
-        /// </summary>
-        Workspace = 2,
-
-        /// <summary>
         /// Session origin.
         /// </summary>
         Session = 4,

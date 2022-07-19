@@ -33,7 +33,6 @@ namespace Allors.Workspace.Adapters
 
             this.ChangeSetTracker = new ChangeSetTracker();
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
-            this.PushToWorkspaceTracker = new PushToWorkspaceTracker();
 
             this.Services.OnInit(this);
         }
@@ -51,8 +50,6 @@ namespace Allors.Workspace.Adapters
         public ChangeSetTracker ChangeSetTracker { get; }
 
         public PushToDatabaseTracker PushToDatabaseTracker { get; }
-
-        public PushToWorkspaceTracker PushToWorkspaceTracker { get; }
 
         public SessionOriginState SessionOriginState { get; }
 
@@ -130,55 +127,6 @@ namespace Allors.Workspace.Adapters
         public abstract T Create<T>(IClass @class) where T : class, IObject;
 
         public T Create<T>() where T : class, IObject => this.Create<T>((IClass)this.Workspace.DatabaseConnection.Configuration.ObjectFactory.GetObjectType<T>());
-
-        public IWorkspaceResult PullFromWorkspace()
-        {
-            var result = new WorkspaceResult();
-
-            // TODO: Optimize
-            foreach (var kvp in this.StrategyByWorkspaceId)
-            {
-                var strategy = kvp.Value;
-                if (strategy.Class.Origin != Origin.Session)
-                {
-                    strategy.WorkspaceOriginState.OnPulled(result);
-                }
-            }
-
-            return result;
-        }
-
-        public IWorkspaceResult PushToWorkspace()
-        {
-            var pushResult = new WorkspaceResult();
-
-            if (this.PushToWorkspaceTracker.Created != null)
-            {
-                foreach (var strategy in this.PushToWorkspaceTracker.Created)
-                {
-                    strategy.WorkspaceOriginState.Push();
-                }
-            }
-
-            if (this.PushToWorkspaceTracker.Changed != null)
-            {
-                foreach (var state in this.PushToWorkspaceTracker.Changed)
-                {
-                    if (this.PushToWorkspaceTracker.Created?.Contains(state.Strategy) == true)
-                    {
-                        continue;
-                    }
-
-                    state.Push();
-                }
-            }
-
-            this.PushToWorkspaceTracker.Created = null;
-            this.PushToWorkspaceTracker.Changed = null;
-
-            return pushResult;
-        }
-
         public IChangeSet Checkpoint()
         {
             var changeSet = new ChangeSet(this, this.ChangeSetTracker.Created, this.ChangeSetTracker.Instantiated);
@@ -191,20 +139,11 @@ namespace Allors.Workspace.Adapters
                 }
             }
 
-            if (this.ChangeSetTracker.WorkspaceOriginStates != null)
-            {
-                foreach (var workspaceOriginState in this.ChangeSetTracker.WorkspaceOriginStates)
-                {
-                    workspaceOriginState.Checkpoint(changeSet);
-                }
-            }
-
             this.SessionOriginState.Checkpoint(changeSet);
 
             this.ChangeSetTracker.Created = null;
             this.ChangeSetTracker.Instantiated = null;
             this.ChangeSetTracker.DatabaseOriginStates = null;
-            this.ChangeSetTracker.WorkspaceOriginStates = null;
 
             return changeSet;
         }
@@ -243,39 +182,12 @@ namespace Allors.Workspace.Adapters
         {
             foreach (var @class in objectType.Classes)
             {
-                switch (@class.Origin)
+                if (this.strategiesByClass.TryGetValue(@class, out var strategies))
                 {
-                    case Origin.Workspace:
-                        if (this.Workspace.WorkspaceIdsByWorkspaceClass.TryGetValue(@class, out var ids))
-                        {
-                            foreach (var id in ids)
-                            {
-                                if (this.StrategyByWorkspaceId.TryGetValue(id, out var strategy))
-                                {
-                                    yield return (T)strategy.Object;
-                                }
-                                else
-                                {
-                                    strategy = this.InstantiateWorkspaceStrategy(id);
-                                    yield return (T)strategy.Object;
-                                }
-                            }
-                        }
-
-                        break;
-                    case Origin.Database:
-                    case Origin.Session:
-                        if (this.strategiesByClass.TryGetValue(@class, out var strategies))
-                        {
-                            foreach (var strategy in strategies)
-                            {
-                                yield return (T)strategy.Object;
-                            }
-                        }
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException($"Origin {@class.Origin}");
+                    foreach (var strategy in strategies)
+                    {
+                        yield return (T)strategy.Object;
+                    }
                 }
             }
         }
@@ -289,12 +201,7 @@ namespace Allors.Workspace.Adapters
                 return null;
             }
 
-            if (this.StrategyByWorkspaceId.TryGetValue(id, out var sessionStrategy))
-            {
-                return sessionStrategy;
-            }
-
-            return IsNewId(id) ? this.InstantiateWorkspaceStrategy(id) : null;
+            return this.StrategyByWorkspaceId.TryGetValue(id, out var sessionStrategy) ? sessionStrategy : null;
         }
 
         public Strategy GetCompositeAssociation(Strategy role, IAssociationType associationType)
@@ -366,7 +273,6 @@ namespace Allors.Workspace.Adapters
             return this.StrategyByWorkspaceId.Where(v => classes.Contains(v.Value.Class)).Select(v => v.Value).Distinct();
         }
 
-        protected abstract Strategy InstantiateWorkspaceStrategy(long id);
         public abstract Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
         public abstract Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
         public abstract Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);

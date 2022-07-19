@@ -13,7 +13,5 @@ namespace Allors.Workspace.Meta
         IMetaPopulation MetaPopulation { get; }
 
         string Tag { get; }
-
-        Origin Origin { get; }
     }
 }

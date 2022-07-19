@@ -8,7 +8,7 @@ namespace Allors.Repository.Attributes
 {
     using System;
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class OriginAttribute : RepositoryAttribute
     {
         public OriginAttribute(Origin value) => this.Value = value;

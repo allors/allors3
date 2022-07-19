@@ -216,8 +216,6 @@ namespace Allors.Database.Meta
 
         public bool HasDatabaseOrigin => this.Origin == Origin.Database;
 
-        public bool HasWorkspaceOrigin => this.Origin == Origin.Workspace;
-
         public bool HasSessionOrigin => this.Origin == Origin.Session;
     }
 }

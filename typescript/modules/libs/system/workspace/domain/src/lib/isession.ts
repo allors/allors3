@@ -3,7 +3,6 @@ import { Class, Composite } from '@allors/system/workspace/meta';
 import { IObject } from './iobject';
 import { IWorkspace } from './iworkspace';
 import { IChangeSet } from './ichange-set';
-import { IWorkspaceResult } from './iworkspace-result';
 import { IRule } from './derivation/irule';
 import { Method } from './method';
 import { InvokeOptions } from './api/pull/invoke-options';
@@ -23,10 +22,6 @@ export interface ISession {
   activate(rules: IRule<IObject>[]): void;
 
   reset(): void;
-
-  pullFromWorkspace(): IWorkspaceResult;
-
-  pushToWorkspace(): IWorkspaceResult;
 
   checkpoint(): IChangeSet;
 

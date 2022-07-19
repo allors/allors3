@@ -36,8 +36,6 @@ namespace Allors.Workspace.Meta
 
         public IMetaPopulation MetaPopulation { get; }
 
-        Origin IMetaObject.Origin => this.Origin;
-
         #endregion
 
         #region IMetaIdentifiableObject
@@ -47,6 +45,8 @@ namespace Allors.Workspace.Meta
         #endregion
 
         #region IRelationType
+
+        Origin IRelationType.Origin => this.Origin;
 
         IAssociationType IRelationType.AssociationType => this.AssociationType;
 

@@ -82,8 +82,6 @@ namespace Allors.Meta.Generation.Model
                     this.MethodTypes.Where(w => w.Origin == origin && w.WorkspaceNames.Contains(v)).Select(w => w.Tag))
                         .OrderBy(w => w));
 
-        public IReadOnlyDictionary<string, IOrderedEnumerable<string>> WorkspaceWorkspaceOriginTagsByWorkspaceName => this.WorkspaceOriginTagsByWorkspaceName(Origin.Workspace);
-
         public IReadOnlyDictionary<string, IOrderedEnumerable<string>> WorkspaceSessionOriginTagsByWorkspaceName => this.WorkspaceOriginTagsByWorkspaceName(Origin.Session);
 
         public IReadOnlyDictionary<string, IOrderedEnumerable<string>> WorkspaceMultiplicityTagsByWorkspaceName(Multiplicity multiplicity) =>

@@ -44,28 +44,14 @@ export class Session extends SystemSession {
     const workspaceId = this.workspace.database.nextId();
     const strategy = new Strategy(this, cls, workspaceId);
     this.addObject(strategy.object);
-
-    if (cls.origin != Origin.Session) {
-      this.pushToWorkspaceTracker.onCreated(strategy.object);
-      if (cls.origin == Origin.Database) {
-        this.pushToDatabaseTracker.onCreated(strategy.object);
-      }
-    }
-
+    this.pushToDatabaseTracker.onCreated(strategy.object);
     this.changeSetTracker.onCreated(strategy.object);
     return strategy.object as T;
   }
 
   onDelete(strategy: Strategy) {
     this.removeObject(strategy.object);
-
-    if (strategy.cls.origin != Origin.Session) {
-      this.pushToWorkspaceTracker.onDelete(strategy.object);
-      if (strategy.cls.origin == Origin.Database) {
-        this.pushToDatabaseTracker.onDelete(strategy.object);
-      }
-    }
-
+    this.pushToDatabaseTracker.onDelete(strategy.object);
     this.changeSetTracker.onDelete(strategy.object);
   }
 
@@ -80,19 +66,6 @@ export class Session extends SystemSession {
 
     const strategy = Strategy.fromDatabaseRecord(this, databaseRecord);
     this.addObject(strategy.object);
-    return strategy.object;
-  }
-
-  instantiateWorkspaceStrategy(id: number): IObject {
-    if (!this.workspace.workspaceClassByWorkspaceId.has(id)) {
-      return null;
-    }
-
-    const cls = this.workspace.workspaceClassByWorkspaceId.get(id);
-
-    const strategy = new Strategy(this, cls, id);
-    this.addObject(strategy.object);
-
     return strategy.object;
   }
 
@@ -149,13 +122,6 @@ export class Session extends SystemSession {
     for (const pull of pulls) {
       if (pull.objectId < 0 || pull.object?.id < 0) {
         throw new Error('Id is not in the database');
-      }
-
-      if (
-        pull.object != null &&
-        pull.object.strategy?.cls.origin != Origin.Database
-      ) {
-        throw new Error('Origin is not Database');
       }
     }
 

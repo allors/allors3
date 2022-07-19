@@ -15,8 +15,6 @@ namespace Tests.Workspace
 
     public abstract class SandboxTests : Test
     {
-        private Func<ISession, Task>[] pushes;
-
         private Func<Context>[] contextFactories;
 
         protected SandboxTests(Fixture fixture) : base(fixture)
@@ -27,28 +25,6 @@ namespace Tests.Workspace
         {
             await base.InitializeAsync();
             await this.Login("administrator");
-
-            this.pushes = new Func<ISession, Task>[]
-            {
-                (_) => Task.CompletedTask,
-                (session) =>
-                {
-                    session.PushToWorkspace();
-                    return Task.CompletedTask;
-                },
-                (session) =>
-                {
-                    session.PullFromWorkspace();
-                    return Task.CompletedTask;
-                },
-                (session) =>
-                {
-                    session.PushToWorkspace();
-                    session.PullFromWorkspace();
-                    return Task.CompletedTask;
-                },
-                async (session) => await session.PushAsync(),
-            };
 
             var singleSessionContext = new SingleSessionContext(this, "Single shared");
             var multipleSessionContext = new MultipleSessionContext(this, "Multiple shared");
@@ -65,7 +41,6 @@ namespace Tests.Workspace
         [Fact]
         public async void Test()
         {
-            var push = this.pushes[0];
             var contextFactory = this.contextFactories[0];
 
             {
@@ -98,11 +73,6 @@ namespace Tests.Workspace
                 c1x_1.C1C1Many2One = c1y_1;
 
                 c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
-
-                await push(session1);
-
-                c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1);
                 c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                 pushResult = await session1.PushAsync();
@@ -142,11 +112,6 @@ namespace Tests.Workspace
                 c1x_1.C1C1Many2One = c1y_1;
 
                 c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
-
-                await push(session1);
-
-                c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1);
                 c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                 pushResult = await session1.PushAsync();

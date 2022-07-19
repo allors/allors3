@@ -17,13 +17,11 @@ namespace Allors.Workspace.Meta
 
         private HashSet<IAssociationTypeInternals> lazyAssociationTypes;
         private HashSet<IRoleTypeInternals> lazyRoleTypes;
-        private HashSet<IRoleTypeInternals> lazyWorkspaceRoleTypes;
         private HashSet<IRoleTypeInternals> lazyDatabaseRoleTypes;
         private HashSet<IMethodTypeInternals> lazyMethodTypes;
 
         private HashSet<IAssociationTypeInternals> LazyAssociationTypes => this.lazyAssociationTypes ??= new HashSet<IAssociationTypeInternals>(this.ExclusiveAssociationTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveAssociationTypes)));
         private HashSet<IRoleTypeInternals> LazyRoleTypes => this.lazyRoleTypes ??= new HashSet<IRoleTypeInternals>(this.ExclusiveRoleTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveRoleTypes)));
-        private HashSet<IRoleTypeInternals> LazyWorkspaceRoleTypes => this.lazyWorkspaceRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.Origin == Origin.Workspace));
         private HashSet<IRoleTypeInternals> LazyDatabaseRoleTypes => this.lazyDatabaseRoleTypes ??= new HashSet<IRoleTypeInternals>(this.LazyRoleTypes.Where(v => v.RelationType.Origin == Origin.Database));
         private HashSet<IMethodTypeInternals> LazyMethodTypes => this.lazyMethodTypes ??= new HashSet<IMethodTypeInternals>(this.ExclusiveMethodTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveMethodTypes)));
 
@@ -49,9 +47,6 @@ namespace Allors.Workspace.Meta
         #region IMetaObject
 
         IMetaPopulation IMetaObject.MetaPopulation => this.MetaPopulation;
-
-        Origin IMetaObject.Origin => this.Origin;
-
         #endregion
 
         #region IMetaIdentifiableObject
@@ -85,8 +80,6 @@ namespace Allors.Workspace.Meta
         IEnumerable<IAssociationType> IComposite.AssociationTypes => this.LazyAssociationTypes;
 
         IEnumerable<IRoleType> IComposite.RoleTypes => this.LazyRoleTypes ?? new HashSet<IRoleTypeInternals>(this.ExclusiveRoleTypes.Union(this.Supertypes.SelectMany(v => v.ExclusiveRoleTypes)));
-
-        IEnumerable<IRoleType> IComposite.WorkspaceOriginRoleTypes => this.LazyWorkspaceRoleTypes;
 
         IEnumerable<IRoleType> IComposite.DatabaseOriginRoleTypes => this.LazyDatabaseRoleTypes;
 
