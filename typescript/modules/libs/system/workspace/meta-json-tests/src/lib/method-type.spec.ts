@@ -33,7 +33,6 @@ describe('MethodType in MetaPopulation', () => {
       expect(methodType).toBeDefined();
       expect(methodType.objectType).toBe(Organisation);
       expect(methodType.name).toBe('Do');
-      expect(methodType.origin).toBe(Origin.Database);
     });
   });
 

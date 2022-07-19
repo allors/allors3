@@ -19,7 +19,6 @@ describe('Class in MetaPopulation', () => {
       expect(Organisation).toBeDefined();
       expect(Organisation.metaPopulation).toBe(metaPopulation);
       expect(Organisation.tag).toBe('10');
-      expect(Organisation.origin).toBe(Origin.Database);
       expect(Organisation.singularName).toBe('Organisation');
       expect(Organisation.pluralName).toBe('Organisations');
       expect(Organisation.isUnit).toBeFalsy();
@@ -44,7 +43,7 @@ describe('Class in MetaPopulation', () => {
         ['10', 'C1', [], [], [], 'PluralC1'],
         ['11', 'C2', [], [], [], 'PluralC2'],
       ],
-      o: [['10'], ['11']],
+      o: ['10', '11'],
     }) as M;
 
     const { C1, C2 } = metaPopulation;
@@ -53,7 +52,6 @@ describe('Class in MetaPopulation', () => {
       expect(C1).toBeDefined();
       expect(C1.metaPopulation).toBe(metaPopulation);
       expect(C1.tag).toBe('10');
-      expect(C1.origin).toBe(Origin.Workspace);
       expect(C1.singularName).toBe('C1');
       expect(C1.pluralName).toBe('PluralC1');
       expect(C1.isUnit).toBeFalsy();
@@ -65,7 +63,6 @@ describe('Class in MetaPopulation', () => {
       expect(C2).toBeDefined();
       expect(C2.metaPopulation).toBe(metaPopulation);
       expect(C2.tag).toBe('11');
-      expect(C2.origin).toBe(Origin.Session);
       expect(C2.singularName).toBe('C2');
       expect(C2.pluralName).toBe('PluralC2');
       expect(C2.isUnit).toBeFalsy();

@@ -79,7 +79,7 @@ describe('Unit Relation in MetaPopulation', () => {
           [['11', UnitTags.String, 'Name', 'Names', 1024]],
         ],
       ],
-      o: [['11']],
+      o: ['11'],
       m: [['11']],
       d: ['11'],
       r: ['11'],
@@ -97,7 +97,7 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(roleType.singularName).toBe('Name');
       expect(roleType.pluralName).toBe('Names');
       expect(roleType.name).toBe('Name');
-      expect(roleType.origin).toBe(Origin.Workspace);
+      expect(roleType.origin).toBe(Origin.Session);
       expect(roleType.isRequired).toBeTruthy();
       expect(roleType.size).toBeDefined();
       expect(roleType.size).toBe(1024);
@@ -110,7 +110,7 @@ describe('Unit Relation in MetaPopulation', () => {
 
       expect(relationType).toBeDefined;
       expect(relationType.multiplicity).toBe(Multiplicity.OneToOne);
-      expect(relationType.origin).toBe(Origin.Workspace);
+      expect(relationType.origin).toBe(Origin.Session);
       expect(relationType.isDerived).toBeTruthy();
       expect(relationType).not.toBeNull();
 
@@ -118,7 +118,7 @@ describe('Unit Relation in MetaPopulation', () => {
       expect(associationType.objectType).toBe(Organisation);
       expect(associationType.isOne).toBeTruthy(); // Always for Unit
       expect(associationType.isMany).toBeFalsy();
-      expect(associationType.origin).toBe(Origin.Workspace);
+      expect(associationType.origin).toBe(Origin.Session);
     });
   });
 
