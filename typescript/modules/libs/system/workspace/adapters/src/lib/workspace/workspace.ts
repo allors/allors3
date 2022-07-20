@@ -54,8 +54,8 @@ export abstract class Workspace implements IWorkspace {
   rule(roleType: RoleType, strategy: Strategy): IRule<IObject> {
     if (roleType.associationType.objectType.isClass) {
       return this.ruleByRoleType.get(roleType);
-    } else {
-      return this.rulesByClassByRoleType.get(roleType)?.get(strategy.cls);
     }
+
+    return this.rulesByClassByRoleType.get(roleType)?.get(strategy.cls);
   }
 }

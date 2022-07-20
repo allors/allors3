@@ -5,27 +5,26 @@
 
 namespace Allors.Workspace.Domain
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Derivations;
     using Meta;
-    using Workspace.Derivations;
 
     public class PersonSessionFullNameRule : Rule
     {
-        public PersonSessionFullNameRule(M m) : base(m) =>
-            this.Patterns = new Pattern[]
-            {
-                new RolePattern(m.Person, m.Person.FirstName),
-                new RolePattern(m.Person, m.Person.LastName),
-            };
-
-        public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
+        public PersonSessionFullNameRule(M m) : base(m)
         {
-            foreach (var person in matches.Cast<Person>())
+            this.ObjectType = m.Person;
+            this.RoleType = m.Person.SessionFullName;
+            this.Dependencies = new IDependency[]
             {
-                person.SessionFullName = $"{person.FirstName} {person.LastName}";
-            }
+                new Dependency(m.Person, m.Person.FirstName),
+                new Dependency(m.Person, m.Person.LastName),
+            };
+        }
+
+        public override object Derive(IObject match)
+        {
+            var person = (Person)match;
+            return $"{person.FirstName} {person.LastName}";
         }
     }
 }

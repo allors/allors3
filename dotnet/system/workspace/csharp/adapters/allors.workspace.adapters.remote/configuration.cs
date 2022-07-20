@@ -5,10 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
+    using Derivations;
     using Meta;
 
     public class Configuration : Adapters.Configuration
     {
-        public Configuration(string name, IMetaPopulation metaPopulation, ReflectionObjectFactory objectFactory) : base(name, metaPopulation, objectFactory) { }
+        public Configuration(string name, IMetaPopulation metaPopulation, ReflectionObjectFactory objectFactory, IRule[] rules) : base(name, metaPopulation, objectFactory, rules) { }
     }
 }

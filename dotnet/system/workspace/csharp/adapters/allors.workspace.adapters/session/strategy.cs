@@ -124,29 +124,67 @@ namespace Allors.Workspace.Adapters
             return this.GetCompositesRole<IObject>(roleType);
         }
 
-        public object GetUnitRole(IRoleType roleType) =>
-            roleType.Origin switch
+        public object GetUnitRole(IRoleType roleType)
+        {
+            if (roleType.RelationType.IsDerived)
+            {
+                var rule = this.Session.Resolve(this, roleType);
+                if (rule != null)
+                {
+                    return rule.Derive(this.Object);
+                }
+            }
+
+            return roleType.Origin switch
             {
                 Origin.Session => this.Session.SessionOriginState.GetUnitRole(this, roleType),
                 Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState.GetUnitRole(roleType) : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
+        }
 
-        public T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject =>
-            roleType.Origin switch
+        public T GetCompositeRole<T>(IRoleType roleType) where T : class, IObject
+        {
+            if (roleType.RelationType.IsDerived)
+            {
+                var rule = this.Session.Resolve(this, roleType);
+                if (rule != null)
+                {
+                    return (T)rule.Derive(this.Object);
+                }
+            }
+
+            return roleType.Origin switch
             {
                 Origin.Session => (T)this.Session.SessionOriginState.GetCompositeRole(this, roleType)?.Object,
-                Origin.Database => this.CanRead(roleType) ? (T)this.DatabaseOriginState.GetCompositeRole(roleType)?.Object : null,
+                Origin.Database => this.CanRead(roleType)
+                    ? (T)this.DatabaseOriginState.GetCompositeRole(roleType)?.Object
+                    : null,
                 _ => throw new ArgumentException("Unsupported Origin")
             };
+        }
 
-        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject =>
-            roleType.Origin switch
+        public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : class, IObject
+        {
+            if (roleType.RelationType.IsDerived)
             {
-                Origin.Session => this.Session.SessionOriginState.GetCompositesRole(this, roleType).Select(v => (T)v.Object),
-                Origin.Database => this.CanRead(roleType) ? this.DatabaseOriginState.GetCompositesRole(roleType).Select(v => (T)v.Object) : Array.Empty<T>(),
+                var rule = this.Session.Resolve(this, roleType);
+                if (rule != null)
+                {
+                    return (IEnumerable<T>)rule.Derive(this.Object);
+                }
+            }
+
+            return roleType.Origin switch
+            {
+                Origin.Session => this.Session.SessionOriginState.GetCompositesRole(this, roleType)
+                    .Select(v => (T)v.Object),
+                Origin.Database => this.CanRead(roleType)
+                    ? this.DatabaseOriginState.GetCompositesRole(roleType).Select(v => (T)v.Object)
+                    : Array.Empty<T>(),
                 _ => throw new ArgumentException("Unsupported Origin")
             };
+        }
 
         public void SetRole(IRoleType roleType, object value)
         {

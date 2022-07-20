@@ -12,4 +12,17 @@ namespace Allors.Workspace.Meta
 
         IPropertyType PropertyType { get; }
     }
+
+    public class Dependency : IDependency
+    {
+        public Dependency(IComposite objectType, IPropertyType propertyType)
+        {
+            this.ObjectType = objectType;
+            this.PropertyType = propertyType;
+        }
+
+        public IComposite ObjectType { get; }
+
+        public IPropertyType PropertyType { get; }
+    }
 }

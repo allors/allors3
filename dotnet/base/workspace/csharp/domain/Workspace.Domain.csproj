@@ -16,11 +16,4 @@
   <ItemGroup>
     <Compile Include="..\..\..\..\Core\Workspace\CSharp\Domain\Core*\**\*.cs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\core\derivations\default\DerivationFactory.cs" />
-    <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\core\services\derivationfactory\IDerivationFactory.cs" />
-    <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\Core\State\ISessionStateState.cs" />
-    <Compile Remove="..\..\..\..\Core\Workspace\CSharp\Domain\Core\State\IWorkspaceState.cs" />
-  </ItemGroup>
 </Project>

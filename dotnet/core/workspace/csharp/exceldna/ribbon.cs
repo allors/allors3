@@ -11,6 +11,8 @@ namespace ExcelDNA
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Adapters.Remote.ResthSharp;
+    using Allors.Workspace.Derivations;
+    using Allors.Workspace.Domain;
     using Allors.Workspace.Meta.Lazy;
     using Application;
     using RestSharp;
@@ -49,8 +51,9 @@ namespace ExcelDNA
                 this.AppConfig = new AppConfig();
 
                 var metaPopulation = new MetaBuilder().Build();
-                var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-                var configuration = new Configuration("Default", metaPopulation, objectFactory);
+                var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
+                var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
+                var configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
                 var idGenerator = new IdGenerator();
                 var defaultRanges = new DefaultStructRanges<long>();
 

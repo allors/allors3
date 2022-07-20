@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="..\..\..\Base\Repository\Domain\Base\Data\PersistentPreparedFetch.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\System\Shared\Allors.Shared.csproj" />
   </ItemGroup>
  

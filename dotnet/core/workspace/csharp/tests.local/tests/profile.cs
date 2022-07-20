@@ -15,6 +15,8 @@ namespace Tests.Workspace.Local
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
+    using Allors.Workspace.Derivations;
+    using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
     using Configuration = Allors.Workspace.Adapters.Local.Configuration;
@@ -48,7 +50,8 @@ namespace Tests.Workspace.Local
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
-            this.configuration = new Configuration("Default", metaPopulation, objectFactory);
+            var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
+            this.configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
 
             this.Database = new Database(
                 new DefaultDatabaseServices(fixture.Engine),

@@ -6,25 +6,10 @@
 namespace Allors.Workspace.Domain
 {
     using System;
-    using Derivations;
     using Workspace;
-    using Workspace.Derivations;
 
     public static partial class ISessionExtensions
     {
-        public static IValidation Derive(this ISession session, bool throwExceptionOnError = true)
-        {
-            var derivationService = ((IWorkspaceServices)session.Workspace.Services).Get<IDerivationService>();
-            var derivation = derivationService.CreateDerivation(session);
-            var validation = derivation.Execute();
-            if (throwExceptionOnError && validation.HasErrors)
-            {
-                throw new DerivationException(validation);
-            }
-
-            return validation;
-        }
-
         public static DateTime Now(this ISession transaction)
         {
             var now = DateTime.UtcNow;

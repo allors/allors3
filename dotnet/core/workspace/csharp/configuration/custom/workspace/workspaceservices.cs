@@ -7,7 +7,6 @@ namespace Allors.Workspace
 {
     using System;
     using Configuration;
-    using Configuration.Derivations.Default;
     using Derivations;
     using Domain;
     using Excel;
@@ -21,17 +20,11 @@ namespace Allors.Workspace
 
         public M M { get; private set; }
 
-        public IDerivationService DerivationService { get; private set; }
-
         public ITime Time { get; private set; }
 
         public void OnInit(IWorkspace workspace)
         {
             this.M = (M)workspace.Configuration.MetaPopulation;
-
-            var engine = new Engine(this.CreateRules());
-            this.DerivationService = new DerivationService(engine);
-
             this.Time = new Time();
         }
 
@@ -47,7 +40,6 @@ namespace Allors.Workspace
                // Core
                { } type when type == typeof(M) => (T)this.M,
                { } type when type == typeof(ITime) => (T)this.Time,
-               { } type when type == typeof(IDerivationService) => (T)this.DerivationService,
                // Excel
                { } type when type == typeof(IErrorService) => (T)this.excelServices.ErrorService,
                { } type when type == typeof(ILoggerService) => (T)this.excelServices.LoggerService,
@@ -56,15 +48,5 @@ namespace Allors.Workspace
                { } type when type == typeof(IRibbonService) => (T)this.excelServices.RibbonService,
                _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
            };
-
-        private IRule[] CreateRules()
-        {
-            var m = this.M;
-
-            return new IRule[]
-            {
-                new PersonSessionFullNameRule(m)
-            };
-        }
     }
 }

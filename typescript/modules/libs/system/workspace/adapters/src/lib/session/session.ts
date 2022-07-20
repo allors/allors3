@@ -7,7 +7,6 @@ import {
   IPushResult,
   IRule,
   ISession,
-  IWorkspaceResult,
   Method,
   Procedure,
   Pull,
@@ -17,12 +16,10 @@ import {
   Class,
   Composite,
   Dependency,
-  Origin,
   RoleType,
 } from '@allors/system/workspace/meta';
 
 import { Workspace } from '../workspace/workspace';
-import { WorkspaceResult } from '../workspace/workspace-result';
 import { ObjectBase } from '../object-base';
 import { DefaultObjectRanges } from '../collections/ranges/default-object-ranges';
 import { Ranges } from '../collections/ranges/ranges';

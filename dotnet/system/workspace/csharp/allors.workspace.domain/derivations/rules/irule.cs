@@ -11,10 +11,12 @@ namespace Allors.Workspace.Derivations
 
     public interface IRule
     {
-        IEnumerable<IPattern> Patterns { get; }
+        IComposite ObjectType { get; }
+
+        IRoleType RoleType { get; }
 
         IEnumerable<IDependency> Dependencies { get; }
 
-        void Derive(ICycle cycle, IEnumerable<IObject> matches);
+        object Derive(IObject match);
     }
 }

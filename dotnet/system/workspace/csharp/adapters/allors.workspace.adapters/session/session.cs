@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters
 
         protected ISet<IDependency> dependencies;
 
-        private ISet<IRule> activeRules;
+        private IDictionary<IRoleType, ISet<IRule>> activeRulesByRoleType;
 
         protected Session(Workspace workspace, ISessionServices sessionServices)
         {
@@ -67,16 +67,21 @@ namespace Allors.Workspace.Adapters
             }
 
 
-            if (this.activeRules == null)
+            if (this.activeRulesByRoleType == null)
             {
-                this.activeRules = new HashSet<IRule>();
+                this.activeRulesByRoleType = new Dictionary<IRoleType, ISet<IRule>>();
                 this.dependencies = new HashSet<IDependency>();
             }
 
-
             foreach (var rule in rules)
             {
-                this.activeRules.Add(rule);
+                if (!this.activeRulesByRoleType.TryGetValue(rule.RoleType, out var activeRules))
+                {
+                    activeRules = new HashSet<IRule>();
+                    this.activeRulesByRoleType.Add(rule.RoleType, activeRules);
+                }
+
+                activeRules.Add(rule);
                 if (rule.Dependencies == null)
                 {
                     continue;
@@ -89,16 +94,19 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public IValidation Derive()
+        public IRule Resolve(Strategy strategy, IRoleType roleType)
         {
-            if (this.activeRules == null)
+            if (this.activeRulesByRoleType != null && this.activeRulesByRoleType.TryGetValue(roleType, out var activeRules) && activeRules.Count > 0)
             {
-                return new NoActiveRulesValidation();
+                var rule = this.Workspace.GetRule(roleType, strategy);
+
+                if (rule != null && activeRules.Contains(rule))
+                {
+                    return rule;
+                }
             }
 
-            var derivationService = this.Workspace.Services.Get<IDerivationService>();
-            var derivation = derivationService.CreateDerivation(this);
-            return derivation.Execute();
+            return null;
         }
 
         public void Reset()
@@ -280,13 +288,6 @@ namespace Allors.Workspace.Adapters
         public abstract Task<IPullResult> PullAsync(params Pull[] pull);
         public abstract Task<IPushResult> PushAsync();
 
-        public class NoActiveRulesValidation : IValidation
-        {
-            public bool HasErrors => true;
 
-            public IEnumerable<string> Errors => new[] { "No active rules" };
-
-            public void AddError(string error) => throw new NotSupportedException();
-        }
     }
 }

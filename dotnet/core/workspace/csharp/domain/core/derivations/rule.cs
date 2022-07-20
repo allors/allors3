@@ -16,10 +16,12 @@ namespace Allors.Workspace.Domain.Derivations
 
         public M M { get; }
 
-        public IEnumerable<IPattern> Patterns { get; protected set; }
+        public IComposite ObjectType { get; protected set; }
+
+        public IRoleType RoleType { get; protected set; }
 
         public IEnumerable<IDependency> Dependencies { get; protected set; }
 
-        public abstract void Derive(ICycle cycle, IEnumerable<IObject> matches);
+        public abstract object Derive(IObject match);
     }
 }

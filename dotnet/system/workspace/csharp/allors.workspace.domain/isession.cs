@@ -21,8 +21,6 @@ namespace Allors.Workspace
 
         public void Activate(IEnumerable<IRule> rules);
 
-        public IValidation Derive();
-
         void Reset();
 
         IChangeSet Checkpoint();
