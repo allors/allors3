@@ -55,20 +55,13 @@ partial class Build
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
-
-    private Target DotnetSystemInstall => _ => _
-        .Executes(() => NpmInstall(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)));
-
     private Target DotnetSystemWorkspaceTypescript => _ => _
-        .After(DotnetSystemInstall)
-        .DependsOn(EnsureDirectories)
-        .Executes(() => NpmRun(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)
-            .SetCommand("test:all")));
-    
+    .DependsOn(EnsureDirectories)
+    .Executes(() => NpmRun(s => s
+        .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+        .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)
+        .SetCommand("test:all")));
+
     private Target DotnetSystemWorkspaceTest => _ => _
         .DependsOn(DotnetSystemWorkspaceTypescript);
 

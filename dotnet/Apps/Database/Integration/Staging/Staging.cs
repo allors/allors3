@@ -24,7 +24,7 @@ namespace Allors.Integration.Staging
         public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
         public GeneralLedgerAccountClassification[] GeneralLedgerAccountClassifications { get; set; }
         public GeneralLedgerAccountType[] GeneralLedgerAccountTypes { get; set; }
-        public GeneralLedgerAccountClassification[] MarGeneralLedgerAccountClassifications { get; set; }
-        public GeneralLedgerAccountType[] MarGeneralLedgerAccountTypes { get; set; }
+
+        public MarGeneralLedgerAccount[] MarGeneralLedgerAccount { get; set; }
     }
 }

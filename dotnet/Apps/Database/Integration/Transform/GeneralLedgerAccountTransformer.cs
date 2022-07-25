@@ -59,15 +59,7 @@ namespace Allors.Integration.Transform
             {
                 if (generalLedgerAccount.Level == 2)
                 {
-                    var classification = new Staging.GeneralLedgerAccountClassification()
-                    {
-                        ReferenceCode = generalLedgerAccount.ReferenceCode,
-                        ReferenceNumber = generalLedgerAccount.ReferenceNumber,
-                        Name = generalLedgerAccount.Name,
-                        RgsLevel = generalLedgerAccount.Level,
-                        SortCode = generalLedgerAccount.SortCode,
-                        ParentExternalPrimaryKey = null,
-                    };
+                    var classification = this.CreateGeneralLedgerAccountClassification(generalLedgerAccount, null);
 
                     var type = new Staging.GeneralLedgerAccountType()
                     {
@@ -83,15 +75,7 @@ namespace Allors.Integration.Transform
                 }
                 else if (generalLedgerAccount.Level == 3)
                 {
-                    var classification = new Staging.GeneralLedgerAccountClassification()
-                    {
-                        ReferenceCode = generalLedgerAccount.ReferenceCode,
-                        ReferenceNumber = generalLedgerAccount.ReferenceNumber,
-                        Name = generalLedgerAccount.Name,
-                        RgsLevel = generalLedgerAccount.Level,
-                        SortCode = generalLedgerAccount.SortCode,
-                        ParentExternalPrimaryKey = latestNiveau2AccountClassification.ExternalPrimaryKey,
-                    };
+                    var classification = this.CreateGeneralLedgerAccountClassification(generalLedgerAccount, latestNiveau2AccountClassification);
 
                     latestNiveau3AccountClassification = classification;
 
@@ -142,16 +126,31 @@ namespace Allors.Integration.Transform
                     {
                         newGeneralLedgerAccount.ParentExternalPrimaryKey = latestNiveau4Account.ExternalPrimaryKey;
                     }
+                    else
+                    {
+                        latestNiveau4Account = newGeneralLedgerAccount;
+                    }
 
                     generalLedgerAccountsList.Add(newGeneralLedgerAccount);
-                    latestNiveau4Account = newGeneralLedgerAccount;
                 }
-
             }
 
             generalLedgerAccounts = generalLedgerAccountsList.ToArray();
             generalLedgerAccountClassifications = generalLedgerAccountClassificationsList.ToArray();
             generalLedgerAccountTypes = generalLedgerAccountTypesList.ToArray();
+        }
+
+        private Staging.GeneralLedgerAccountClassification CreateGeneralLedgerAccountClassification(Source.GeneralLedgerAccount generalLedgerAccount, Staging.GeneralLedgerAccountClassification latestNiveau2AccountClassification)
+        {
+            return new Staging.GeneralLedgerAccountClassification()
+            {
+                ReferenceCode = generalLedgerAccount.ReferenceCode,
+                ReferenceNumber = generalLedgerAccount.ReferenceNumber,
+                Name = generalLedgerAccount.Name,
+                RgsLevel = generalLedgerAccount.Level,
+                SortCode = generalLedgerAccount.SortCode,
+                ParentExternalPrimaryKey = latestNiveau2AccountClassification?.ExternalPrimaryKey,
+            };
         }
     }
 }

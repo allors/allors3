@@ -19,8 +19,8 @@ namespace Allors.Meta.Generation
         {
             string[,] database =
             {
-                { "../../dotnet/Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated" },
-                { "../../dotnet/Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/generated" },
+                { "../../dotnet/Core/Database/Templates/domain.cs.stg", "Database/Domain/Generated" },
+                { "../../dotnet/Core/Database/Templates/uml.cs.stg", "Database/Diagrams/Generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

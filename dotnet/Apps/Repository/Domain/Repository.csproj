@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\System\Repository\Attributes\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\Core\Repository\Domain\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Repository\Domain\Base*\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Shared\Allors.Shared.csproj" />
+  </ItemGroup>
+ 
+</Project>

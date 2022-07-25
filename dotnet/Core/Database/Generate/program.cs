@@ -18,16 +18,16 @@ namespace Allors.Meta.Generation
         {
             string[,] database =
                 {
-                    { "Database/Templates/domain.cs.stg", "Database/Domain/generated" },
-                    { "Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/generated" },
+                    { "Database/Templates/domain.cs.stg", "Database/Domain/Generated" },
+                    { "Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/Generated" },
                 };
 
             string[,] workspace =
             {
-                //{ "Workspace/Csharp/Templates/uml.cs.stg", "Workspace/CSharp/Diagrams/generated" },
-                { "Workspace/Csharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/generated" },
-                { "Workspace/Csharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/generated" },
-                { "Workspace/Csharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/generated" },
+                //{ "Workspace/CSharp/Templates/uml.cs.stg", "Workspace/CSharp/Diagrams/Generated" },
+                { "Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/Generated" },
+                { "Workspace/CSharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/Generated" },
+                { "Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/Generated" },
 
                 { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/core/workspace/meta/src/lib/generated" },
                 { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/core/workspace/meta-json/src/lib/generated" },

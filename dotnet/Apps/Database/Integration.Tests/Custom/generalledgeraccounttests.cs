@@ -1,10 +1,13 @@
 namespace Integration.Tests.custom
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.Integration.Source;
+    using Allors.Integration.Transform;
+    using CsvHelper;
     using CsvHelper.Configuration;
     using HtmlAgilityPack;
     using Integration.Extract;
@@ -13,9 +16,6 @@ namespace Integration.Tests.custom
 
     public class GeneralLedgerAccountTests : Test
     {
-        public GeneralLedgerAccountTests() : base()
-        {
-        }
 
         [Test]
         public async System.Threading.Tasks.Task ValidGeneralLedgerAccountIntegrationTest()
@@ -78,7 +78,7 @@ namespace Integration.Tests.custom
                 MarGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
             };
 
-            var integration = new Allors.Integration.Integration(this.Database, new System.IO.DirectoryInfo("C:/Temp"), new NullLoggerFactory());
+            var integration = new Allors.Integration.Integration(this.Database, new DirectoryInfo("C:/Temp"), new NullLoggerFactory());
 
             integration.Integrate(source);
 
@@ -164,26 +164,6 @@ namespace Integration.Tests.custom
             Assert.IsNotEmpty(result);
         }
 
-        //[Test]
-        //public async System.Threading.Tasks.Task RunDezeTestNiet()
-        //{
-        //    var docBalansNL = new HtmlDocument();
-        //    docBalansNL.Load("c:/Temp/MarVerenigingenEnStichtingenBalansNL.html");
-
-        //    var docProfitLossNL = new HtmlDocument();
-        //    docProfitLossNL.Load("c:/Temp/MarVerenigingenEnStichtingenProfitLossNL.html");
-
-        //    var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
-        //    var result = extractor.Execute();
-
-        //    using (var writer = new StreamWriter("c:/Temp/mar.csv"))
-        //    using (var csv = new CsvWriter(writer, CultureInfo.CurrentCulture))
-        //    {
-        //        csv.Context.RegisterClassMap<FooMap>();
-        //        csv.WriteRecords(result);
-        //    }
-        //}
-
         [Test]
         public System.Threading.Tasks.Task MarGeneralLedgerAccountTransformerTest()
         {
@@ -202,6 +182,29 @@ namespace Integration.Tests.custom
                 this.Map(m => m.IsPassiva);
                 this.Map(m => m.BalanceType);
 
+            }
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task RunDezeTestNiet()
+        {
+            var docBalansNL = new HtmlDocument();
+            docBalansNL.Load("c:/Temp/MarVerenigingenEnStichtingenBalansNL.html");
+
+            var docProfitLossNL = new HtmlDocument();
+            docProfitLossNL.Load("c:/Temp/MarVerenigingenEnStichtingenProfitLossNL.html");
+
+            var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
+            var result = extractor.Execute();
+
+            var transformer = new MarGeneralLedgerAccountTransformer(new Source() { MarGeneralLedgerAccounts = result }, new Allors.Integration.Population(),new NullLoggerFactory());
+            transformer.Execute(out var marGeneralLedgerAccount);
+
+            using (var writer = new StreamWriter("c:/Temp/mar.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.CurrentCulture))
+            {
+                //csv.Context.RegisterClassMap<FooMap>();
+                csv.WriteRecords(marGeneralLedgerAccount);
             }
         }
 

@@ -12,5 +12,7 @@ namespace Allors.Database.Domain
         public DirectoryInfo DataPath { get; set; }
 
         public bool SetupSecurity { get; set; } = true;
+
+        public bool SetupAccounting { get; set; } = true;
     }
 }

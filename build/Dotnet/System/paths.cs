@@ -13,7 +13,7 @@ public partial class Paths
 
     public AbsolutePath DotnetSystemAdaptersRepositoryDomainRepository => DotnetSystemAdapters / "Repository/Domain/Repository.csproj";
 
-    public AbsolutePath DotnetSystemAdaptersMetaGenerated => DotnetSystemAdapters / "Meta/generated";
+    public AbsolutePath DotnetSystemAdaptersMetaGenerated => DotnetSystemAdapters / "Meta/Generated";
     public AbsolutePath DotnetSystemAdaptersGenerate => DotnetSystemAdapters / "Generate/Generate.csproj";
     public AbsolutePath DotnetSystemAdaptersStaticTests => DotnetSystemAdapters / "Tests.Static/Tests.Static.csproj";
 

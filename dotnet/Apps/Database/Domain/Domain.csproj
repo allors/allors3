@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
-    <ProjectReference Include="..\..\..\System\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>
@@ -27,26 +27,27 @@
 
   <ItemGroup>
     <None Remove="Templates\allors.png" />
-    <None Remove="Templates\No_image_available.svg" />
-    <None Remove="Templates\ProductQuote.odt" />
-    <None Remove="Templates\PurchaseInvoice.odt" />
-    <None Remove="Templates\PurchaseOrder.odt" />
-    <None Remove="Templates\SalesInvoice.odt" />
-    <None Remove="Templates\SalesOrder.odt" />
-    <None Remove="Templates\WorkTask.odt" />
-    <None Remove="Templates\WorkTaskWorker.odt" />
+    <None Remove="Templates\no_image_available.svg" />
+    <None Remove="Templates\productquote.odt" />
+    <None Remove="Templates\purchaseinvoice.odt" />
+    <None Remove="Templates\purchaseorder.odt" />
+    <None Remove="Templates\salesinvoice.odt" />
+    <None Remove="Templates\salesorder.odt" />
+    <None Remove="Templates\worktask.odt" />
+    <None Remove="Templates\worktaskworker.odt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\allors.png" />
-    <EmbeddedResource Include="Templates\No_image_available.svg" />
-    <EmbeddedResource Include="Templates\PurchaseInvoice.odt" />
-    <EmbeddedResource Include="Templates\PurchaseOrder.odt" />
-    <EmbeddedResource Include="Templates\WorkTask.odt" />
-    <EmbeddedResource Include="Templates\WorkTaskWorker.odt" />
-    <EmbeddedResource Include="Templates\SalesInvoice.odt" />
-    <EmbeddedResource Include="Templates\SalesOrder.odt" />
-    <EmbeddedResource Include="Templates\ProductQuote.odt" />
+    <EmbeddedResource Include="Templates\no_image_available.svg" />
+    <EmbeddedResource Include="Templates\productquote.odt" />
+    <EmbeddedResource Include="Templates\purchaseinvoice.odt" />
+    <EmbeddedResource Include="Templates\purchaseorder.odt" />
+    <EmbeddedResource Include="Templates\salesinvoice.odt" />
+    <EmbeddedResource Include="Templates\salesorder.odt" />
+    <EmbeddedResource Include="Templates\worktask.odt" />
+    <EmbeddedResource Include="Templates\worktaskworker.odt" />
   </ItemGroup>
+ 
 
 </Project>

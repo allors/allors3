@@ -28,12 +28,14 @@ namespace Allors
 
     public partial class TestPopulation
     {
-        public TestPopulation(ITransaction transaction)
+        public TestPopulation(ITransaction transaction, Config config)
         {
             this.Transaction = transaction;
+            this.Config = config;
         }
 
         public ITransaction Transaction { get; }
+        public Config Config { get; }
 
         public void Populate()
         {
@@ -277,6 +279,48 @@ namespace Allors
             this.Transaction.Derive();
             this.Transaction.Commit();
 
+            if (this.Config.SetupAccounting)
+            {
+                this.AccountingPopulate();
+            }
+        }
+
+        private void AccountingPopulate()
+        {
+            var debit = new BalanceSides(this.Transaction).Debit;
+            var credit = new BalanceSides(this.Transaction).Credit;
+
+            var BVrdHanVoo = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("BVrdHanVoo")
+                .WithSortCode("E.E.010")
+                .WithReferenceNumber("3001010")
+                .WithName("Handelsgoederen, bruto")
+                .WithDescription("Handelsgoederen, bruto handelsgoederen")
+                .WithBalanceSide(debit)
+                .WithRgsLevel(4)
+                .WithIsRgsBase(true)
+                .WithIsRgsExtended(true)
+                .WithIsRgsUseWithEZ(true)
+                .WithExcludeRgsAfrekSyst(true)
+                .Build();
+
+            var BVorDebHad = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("BVorDebHad")
+                .WithSortCode("G.A.010")
+                .WithReferenceNumber("1101010")
+                .WithName("Handelsdebiteuren nominaal")
+                .WithDescription("Handelsdebiteuren nominaal")
+                .WithBalanceSide(debit)
+                .WithRgsLevel(4)
+                .WithIsRgsUseWithZzp(true)
+                .WithIsRgsBase(true)
+                .WithIsRgsExtended(true)
+                .WithIsRgsUseWithEZ(true)
+                .WithIsRgsUseWithZzp(true)
+                .WithIsRgsUseWithWoco(true)
+                .WithExcludeRgsAfrekSyst(true)
+                .WithExcludeRgsUitbr5(true)
+                .Build();
         }
     }
 }
