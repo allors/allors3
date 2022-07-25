@@ -104,14 +104,6 @@ namespace Allors.Repository
         [Indexed]
         public VatClause VatClause { get; set; }
 
-        #region Allors
-        [Id("a037f9f0-1aff-4ad0-8ee9-36ae4609d398")]
-        #endregion
-        [Workspace(Default)]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        public OrganisationGlAccount GeneralLedgerAccount { get; set; }
-
         #region inherited methods
 
         public void OnBuild() { }
