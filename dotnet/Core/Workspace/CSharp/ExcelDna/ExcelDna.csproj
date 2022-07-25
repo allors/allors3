@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -7,19 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ExcelDna.AddIn" Version="1.6.0-preview3" PrivateAssets="All" />
-    <PackageReference Include="ExcelDna.Integration" Version="1.6.0-preview3" />
+    <PackageReference Include="ExcelDna.AddIn" Version="1.6.0-preview4" PrivateAssets="All" />
+    <PackageReference Include="ExcelDna.Integration" Version="1.6.0-preview4" />
     <PackageReference Include="NLog" Version="5.0.1" PrivateAssets="All" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="106.15.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\excel\src\Allors.Excel.Interop\Allors.Excel.Interop.csproj" />
-    <ProjectReference Include="..\..\..\..\System\protocol\Allors.protocol.json.restsharp\Allors.Protocol.Json.RestSharp.csproj" />
-    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.adapters.remote.restsharp\Allors.Workspace.Adapters.Remote.RestSharp.csproj" />
-    <ProjectReference Include="..\configuration\Workspace.Configuration.csproj" />
-    <ProjectReference Include="..\domain\Workspace.Domain.csproj" />
-    <ProjectReference Include="..\meta.lazy\Workspace.Meta.Lazy.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Protocol\Allors.Protocol.Json.RestSharp\Allors.Protocol.Json.RestSharp.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Remote.RestSharp\Allors.Workspace.Adapters.Remote.RestSharp.csproj" />
+    <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
+    <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
     <ProjectReference Include="..\Excel\Excel.csproj" />
   </ItemGroup>
 

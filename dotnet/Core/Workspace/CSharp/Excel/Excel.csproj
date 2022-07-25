@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\excel\src\Allors.Excel\Allors.Excel.csproj" />
-    <ProjectReference Include="..\domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

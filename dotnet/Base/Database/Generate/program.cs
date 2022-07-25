@@ -19,13 +19,13 @@ namespace Allors.Meta.Generation.Storage
             string[,] database =
             {
                 { "../Core/Database/Templates/domain.cs.stg", "Database/Domain/Generated" },
-                { "../Core/Database/Templates/uml.cs.stg", "Database/domain.diagrams/Generated" },
+                { "../Core/Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/Generated" },
             };
 
             string[,] workspace =
             {
                 { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/Generated" },
-                { "../Core/Workspace/Csharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/Generated" },
+                { "../Core/Workspace/CSharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/Generated" },
                 { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/Generated" },
                 { "../Core/Workspace/CSharp/Templates/uml.cs.stg", "Workspace/CSharp/Domain.Diagrams/Generated" },
 

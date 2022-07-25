@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Allors.Domain</RootNamespace>
@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.json\Allors.Database.Workspace.Json.csproj" />
-    <ProjectReference Include="..\..\..\System\protocol\Allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>

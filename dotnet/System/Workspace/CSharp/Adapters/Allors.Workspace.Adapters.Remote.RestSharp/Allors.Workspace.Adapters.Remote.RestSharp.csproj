@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\protocol\allors.protocol.json.restsharp\Allors.Protocol.Json.RestSharp.csproj" />
+    <ProjectReference Include="..\..\..\..\Protocol\Allors.Protocol.Json.RestSharp\Allors.Protocol.Json.RestSharp.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
   </ItemGroup>
