@@ -32,7 +32,7 @@ namespace Commands
             {
                 transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
 
-                new TestPopulation(transaction).Populate();
+                new TestPopulation(transaction, config).Populate();
 
                 transaction.Derive();
                 transaction.Commit();

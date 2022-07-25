@@ -28,12 +28,14 @@ namespace Allors
 
     public partial class TestPopulation
     {
-        public TestPopulation(ITransaction transaction)
+        public TestPopulation(ITransaction transaction, Config config)
         {
             this.Transaction = transaction;
+            this.Config = config;
         }
 
         public ITransaction Transaction { get; }
+        public Config Config { get; }
 
         public void Populate()
         {
