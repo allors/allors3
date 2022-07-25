@@ -5,19 +5,19 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Derivation\Database\Domain\Domain.csproj", "{8F092468-C72A-4156-A5A1-5058E5707EA7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "derivation\Database\Domain.Tests\Domain.Tests.csproj", "{866A4C8A-2AAF-4826-A2A9-05CC469DEAA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "Derivation\Database\Domain.Tests\Domain.Tests.csproj", "{866A4C8A-2AAF-4826-A2A9-05CC469DEAA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "derivation\Database\Generate\Generate.csproj", "{ACE5F3CE-CDDD-48F6-91B6-787CF1644FE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "Derivation\Database\Generate\Generate.csproj", "{ACE5F3CE-CDDD-48F6-91B6-787CF1644FE5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meta", "derivation\Database\Meta\Meta.csproj", "{E4552586-0C7F-4286-83F6-6F0820694760}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meta", "Derivation\Database\Meta\Meta.csproj", "{E4552586-0C7F-4286-83F6-6F0820694760}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resources", "derivation\Database\Resources\Resources.csproj", "{11FF267D-7A08-49FA-8C66-D0834171274E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resources", "Derivation\Database\Resources\Resources.csproj", "{11FF267D-7A08-49FA-8C66-D0834171274E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{BF7DC468-B9B1-4696-8E4D-7D108B8DF4D6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{0C8CDC26-1FF0-46CF-8371-A99C18300615}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "derivation\Repository\Domain\Repository.csproj", "{2A0A002E-1985-498F-8D52-7A64834E08F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Derivation\Repository\Domain\Repository.csproj", "{2A0A002E-1985-498F-8D52-7A64834E08F1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Allors", "Allors", "{F899580C-01C7-418D-8B5D-4E88580F0316}"
 EndProject

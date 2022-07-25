@@ -12,7 +12,6 @@ partial class Build
         .DependsOn(DotnetSystemAdaptersTestNpgsql);
 
     private Target CiDotnetSystemWorkspaceTest => _ => _
-        .DependsOn(DotnetSystemInstall)
         .DependsOn(DotnetSystemWorkspaceTest);
 
     private Target CiDotnetCoreDatabaseTest => _ => _
@@ -63,6 +62,5 @@ partial class Build
         .DependsOn(TypescriptE2EAngularAppsExtranetTest);
 
     private Target CiDemosTest => _ => _
-        .DependsOn(DemosDerivationTest)
-        .DependsOn(DemosSecurityTest);
+        .DependsOn(DemosDerivationTest);
 }
