@@ -97,20 +97,4 @@ namespace Allors.Database.Domain.Tests
             Assert.True(partyFinancial.AmountOverDue == 0);
         }
     }
-
-    public class PartyFinancialRelationshipOpenOrderAmountRuleTests : DomainTest, IClassFixture<Fixture>
-    {
-        public PartyFinancialRelationshipOpenOrderAmountRuleTests(Fixture fixture) : base(fixture) { }
-
-        [Fact]
-        public void DeriveOpenOrderAmount()
-        {
-            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
-            this.Transaction.Derive();
-
-            var partyFinancial = order.BillToCustomer.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, order.TakenBy));
-
-            Assert.True(partyFinancial.OpenOrderAmount == order.TotalIncVat);
-        }
-    }
 }
