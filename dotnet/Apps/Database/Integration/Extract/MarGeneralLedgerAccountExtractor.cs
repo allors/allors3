@@ -41,16 +41,16 @@ namespace Integration.Extract
 
                 var paragraphs = row.SelectNodes("*/p").ToArray();
 
-                //var temp = "";
-                //if (paragraphs.Length > 4)
-                //{
-                //    paragraphs = paragraphs.Skip(Math.Max(0, paragraphs.Length - 4)).ToArray();
+                var temp = "";
+                if (paragraphs.Length > 4)
+                {
+                    paragraphs = paragraphs.Skip(Math.Max(0, paragraphs.Length - 4)).ToArray();
 
-                //    if (!Regex.IsMatch(paragraphs[0].InnerText, "[0-9]"))
-                //    {
-                //        temp = row.SelectNodes("*/p").ToArray().Where(x => Regex.IsMatch(x.InnerText, "[0-9]")).FirstOrDefault()?.InnerText;
-                //    }
-                //}
+                    //if (!Regex.IsMatch(paragraphs[0].InnerText, "[0-9]"))
+                    //{
+                    //    temp = row.SelectNodes("*/p").ToArray().Where(x => Regex.IsMatch(x.InnerText, "[0-9]")).FirstOrDefault()?.InnerText;
+                    //}
+                }
 
                 var marGeneralLedgerAccount = new MarGeneralLedgerAccount
                 {

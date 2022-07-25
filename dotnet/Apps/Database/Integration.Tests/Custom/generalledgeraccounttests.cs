@@ -13,9 +13,6 @@ namespace Integration.Tests.custom
 
     public class GeneralLedgerAccountTests : Test
     {
-        public GeneralLedgerAccountTests() : base()
-        {
-        }
 
         [Test]
         public async System.Threading.Tasks.Task ValidGeneralLedgerAccountIntegrationTest()
@@ -78,7 +75,7 @@ namespace Integration.Tests.custom
                 MarGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
             };
 
-            var integration = new Allors.Integration.Integration(this.Database, new System.IO.DirectoryInfo("C:/Temp"), new NullLoggerFactory());
+            var integration = new Allors.Integration.Integration(this.Database, new DirectoryInfo("C:/Temp"), new NullLoggerFactory());
 
             integration.Integrate(source);
 

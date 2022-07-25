@@ -20,7 +20,8 @@ namespace Integration.Tests
         protected Allors.Database.Domain.Organisation InternalOrganisation { get; set; }
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
-        public Test(bool populate = true)
+        [SetUp]
+        protected void Setup()
         {
             var m = MetaBuilder.Build();
             var rules = Rules.Create(m);
@@ -35,19 +36,10 @@ namespace Integration.Tests
 
             this.M = this.Database.Services.Get<MetaPopulation>();
 
-            this.Setup(this.Database, populate);
-        }
+            this.Database.Init();
 
-        private void Setup(IDatabase database, bool populate)
-        {
-            database.Init();
-
-            if (populate)
-            {
-                this.Populate(database);
-            }
-
-            this.Transaction ??= database.CreateTransaction();
+            this.Populate(this.Database);
+            this.Transaction ??= this.Database.CreateTransaction();
         }
 
         private void Populate(IDatabase database)
@@ -271,7 +263,7 @@ namespace Integration.Tests
 
         public ITransaction Transaction { get; set; }
 
-        public Engine Engine { get; }
+        public Engine Engine { get; private set; }
 
         [SetUp]
         public async System.Threading.Tasks.Task TestSetup()
