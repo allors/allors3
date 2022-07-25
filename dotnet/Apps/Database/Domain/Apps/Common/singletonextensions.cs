@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         public static byte[] GetResourceBytes(this Singleton @this, string name)
         {
             var assembly = @this.GetType().GetTypeInfo().Assembly;
-            var manifestResourceName = assembly.GetManifestResourceNames().First(v => v.Contains(name));
+            var manifestResourceName = assembly.GetManifestResourceNames().First(v => v.ToLower().Contains(name.ToLower()));
             var resource = assembly.GetManifestResourceStream(manifestResourceName);
             if (resource != null)
             {
