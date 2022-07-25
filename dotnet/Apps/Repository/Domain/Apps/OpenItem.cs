@@ -89,12 +89,6 @@ namespace Allors.Repository
         public string Description { get; set; }
 
         #region Allors
-        [Id("a82696ac-6ac7-4e63-a665-b36b32bcaf24")]
-        #endregion
-        [Required]
-        public DateTime TransactionDate { get; set; }
-
-        #region Allors
         [Id("bc346c06-3d48-487a-9aa5-c72cd5abf268")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
@@ -115,10 +109,16 @@ namespace Allors.Repository
         public DateTime EntryDate { get; set; }
 
         #region Allors
-        [Id("c2e351a1-e5d0-4cde-9dbe-5d107be39899")]
+        [Id("a82696ac-6ac7-4e63-a665-b36b32bcaf24")]
         #endregion
-        [Workspace]
-        public bool Overdue { get; set; }
+        [Required]
+        public DateTime TransactionDate { get; set; }
+
+        #region Allors
+        [Id("d27dea46-bb5f-4542-8de2-3475249d88be")]
+        #endregion
+        [Required]
+        public DateTime DueDate { get; set; }
 
         #region Allors
         [Id("4b9115c0-803a-450a-8552-e05567c3992a")]
