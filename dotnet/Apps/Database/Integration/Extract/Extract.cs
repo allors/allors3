@@ -28,9 +28,10 @@ namespace Allors.Integration.Extract
     public partial class Extract
     {
 
-        public Extract(StreamReader generalLedgerAccountList, HtmlDocument docBalansNL, HtmlDocument docProfitLossNL, ILoggerFactory loggerFactory)
+        public Extract(StreamReader generalLedgerAccountList, StreamReader marGeneralLedgerAccountList, HtmlDocument docBalansNL, HtmlDocument docProfitLossNL, ILoggerFactory loggerFactory)
         {
             this.GeneralLedgerAccountList = generalLedgerAccountList;
+            this.MarGeneralLedgerAccountList = marGeneralLedgerAccountList;
             this.DocBalansNL = docBalansNL;
             this.DocProfitLossNL = docProfitLossNL;
             this.LoggerFactory = loggerFactory;
@@ -41,6 +42,8 @@ namespace Allors.Integration.Extract
 
         public StreamReader GeneralLedgerAccountList { get; }
 
+        public StreamReader MarGeneralLedgerAccountList { get; }
+
         public ILoggerFactory LoggerFactory { get; }
 
         public ILogger<Extract> Logger { get; set; }
@@ -48,7 +51,7 @@ namespace Allors.Integration.Extract
         public Source.Source Execute()
         {
             var generalLedgerAccountExtractor = new GeneralLedgerAccountExtractor(this.GeneralLedgerAccountList, this.LoggerFactory);
-            var marGeneralLedgerAccountExtractor = new MarGeneralLedgerAccountExtractor(this.DocBalansNL, this.DocProfitLossNL, this.LoggerFactory);
+            var marGeneralLedgerAccountExtractor = new MarGeneralLedgerAccountExtractor(this.MarGeneralLedgerAccountList, this.DocBalansNL, this.DocProfitLossNL, this.LoggerFactory);
 
             return new Source.Source
             {
