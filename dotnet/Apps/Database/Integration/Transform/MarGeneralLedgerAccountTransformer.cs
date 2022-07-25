@@ -18,6 +18,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -42,53 +43,50 @@ namespace Allors.Integration.Transform
 
         public ILogger<GeneralLedgerAccountTransformer> Logger { get; set; }
 
-        public void Execute(out Staging.GeneralLedgerAccountClassification[] generalLedgerAccountClassifications, out Staging.GeneralLedgerAccountType[] generalLedgerAccountTypes)
+        public void Execute(out Staging.MarGeneralLedgerAccount[] marGeneralLedgerAccount)
         {
-            var generalLedgerAccountTypesList = new List<Staging.GeneralLedgerAccountType>();
-            var generalLedgerAccountClassificationsList = new List<Staging.GeneralLedgerAccountClassification>();
+            var marGeneralLedgerAccountList = new List<Staging.MarGeneralLedgerAccount>();
+
 
             var marGeneralLedgerAccountsByType = this.Source.MarGeneralLedgerAccounts.GroupBy(v => v.FirstCharFromReferenceCode());
 
             foreach (var marGeneralLedgerAccountsTypeGroup in marGeneralLedgerAccountsByType.Where(v => !v.Key.StartsWith(".")))
             {
-                var generalLedgerAccountType = new Staging.GeneralLedgerAccountType()
-                {
-                    Description = marGeneralLedgerAccountsTypeGroup.First().Name,
-                };
-
-                generalLedgerAccountTypesList.Add(generalLedgerAccountType);
-
-                var parentStack = new Stack<Staging.GeneralLedgerAccountClassification>();
+                //var parentStack = new Stack<Staging.GeneralLedgerAccountClassification>();
 
                 foreach (var generalLedgerAccount in marGeneralLedgerAccountsTypeGroup)
                 {
-                    var generalLedgerAccountClassification = new Staging.GeneralLedgerAccountClassification()
+                    var generalLedgerAccountClassification = new Staging.MarGeneralLedgerAccount()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
                         Name = generalLedgerAccount.Name.Replace(@"\((.*?)\)", ""),
+                        Nivo = generalLedgerAccount.ReferenceCode.Length,
+                        Activa = generalLedgerAccount.IsActiva,
+                        Passiva = generalLedgerAccount.IsPassiva,
+                        BalanceType = generalLedgerAccount.BalanceType
                     };
 
-                    if (parentStack.Count == 0)
-                    {
-                        generalLedgerAccountClassificationsList.Add(generalLedgerAccountClassification);
-                        parentStack.Push(generalLedgerAccountClassification);
-                        continue;
-                    }
+                    //if (parentStack.Count == 0)
+                    //{
+                    //    generalLedgerAccountClassificationsList.Add(generalLedgerAccountClassification);
+                    //    parentStack.Push(generalLedgerAccountClassification);
+                    //    continue;
+                    //}
 
-                    while (generalLedgerAccountClassification.ReferenceCode.Length <= parentStack.Peek().ReferenceCode.Length)
-                    {
-                        parentStack.Pop();
-                    }
+                    //while (generalLedgerAccountClassification.ReferenceCode.Length <= parentStack.Peek().ReferenceCode.Length)
+                    //{
+                    //    parentStack.Pop();
+                    //}
 
-                    generalLedgerAccountClassification.ParentExternalPrimaryKey = parentStack.Peek().ExternalPrimaryKey;
 
-                    generalLedgerAccountClassificationsList.Add(generalLedgerAccountClassification);
-                    parentStack.Push(generalLedgerAccountClassification);
+                    //generalLedgerAccountClassification.ParentExternalPrimaryKey = parentStack.Peek().ExternalPrimaryKey;
+
+                    marGeneralLedgerAccountList.Add(generalLedgerAccountClassification);
+                    //parentStack.Push(generalLedgerAccountClassification);
                 }
             }
 
-            generalLedgerAccountTypes = generalLedgerAccountTypesList.ToArray();
-            generalLedgerAccountClassifications = generalLedgerAccountClassificationsList.ToArray();
+            marGeneralLedgerAccount = marGeneralLedgerAccountList.ToArray();
         }
     }
 }

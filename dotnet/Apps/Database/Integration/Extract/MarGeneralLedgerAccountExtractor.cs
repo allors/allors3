@@ -42,19 +42,15 @@ namespace Integration.Extract
                 var paragraphs = row.SelectNodes("*/p").ToArray();
 
                 var temp = "";
+
                 if (paragraphs.Length > 4)
                 {
                     paragraphs = paragraphs.Skip(Math.Max(0, paragraphs.Length - 4)).ToArray();
-
-                    //if (!Regex.IsMatch(paragraphs[0].InnerText, "[0-9]"))
-                    //{
-                    //    temp = row.SelectNodes("*/p").ToArray().Where(x => Regex.IsMatch(x.InnerText, "[0-9]")).FirstOrDefault()?.InnerText;
-                    //}
                 }
 
                 var marGeneralLedgerAccount = new MarGeneralLedgerAccount
                 {
-                    ReferenceCode = paragraphs[0].InnerText.Replace("&nbsp;", string.Empty), // temp.Equals("") ? temp : 
+                    ReferenceCode = paragraphs[0].InnerText.Replace("&nbsp;", string.Empty).Replace(".", ""), // temp.Equals("") ? temp : 
                     Name = paragraphs[1].InnerText.Replace("&nbsp;", string.Empty),
                     IsActiva = paragraphs[2].InnerText.Replace("&nbsp;", string.Empty),
                     IsPassiva = paragraphs[3].InnerText.Replace("&nbsp;", string.Empty),
