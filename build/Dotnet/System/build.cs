@@ -55,15 +55,6 @@ partial class Build
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
-    private Target DotnetSystemWorkspaceTypescript => _ => _
-    .DependsOn(EnsureDirectories)
-    .Executes(() => NpmRun(s => s
-        .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-        .SetProcessWorkingDirectory(Paths.DotnetSystemWorkspaceTypescript)
-        .SetCommand("test:all")));
-
-    private Target DotnetSystemWorkspaceTest => _ => _
-        .DependsOn(DotnetSystemWorkspaceTypescript);
 
     private Target DotnetSystemAdapters => _ => _
         .DependsOn(Clean)
