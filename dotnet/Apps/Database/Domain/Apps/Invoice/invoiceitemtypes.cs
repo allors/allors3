@@ -14,6 +14,8 @@ namespace Allors.Database.Domain
         public static readonly Guid ProductItemId = new Guid("0D07F778-2735-44cb-8354-FB887ADA42AD");
         public static readonly Guid ServiceId = new Guid("A4D2E6D0-C6C1-46EC-A1CF-3A64822E7A9E");
         public static readonly Guid TimeId = new Guid("DA178F93-234A-41ed-815C-819AF8CA4E6F");
+        public static readonly Guid DiscountId = new Guid("29AF6097-A7ED-4916-94DC-686E7E55E31E");
+        public static readonly Guid SurchargeId = new Guid("7B5AD1AC-BC9F-46ea-8FD3-01A9624D7E13");
 
         private UniquelyIdentifiableCache<InvoiceItemType> cache;
 
@@ -26,6 +28,10 @@ namespace Allors.Database.Domain
         public InvoiceItemType Service => this.Cache[ServiceId];
 
         public InvoiceItemType Time => this.Cache[TimeId];
+
+        public InvoiceItemType Discount => this.Cache[DiscountId];
+
+        public InvoiceItemType Surcharge => this.Cache[SurchargeId];
 
         private UniquelyIdentifiableCache<InvoiceItemType> Cache => this.cache ??= new UniquelyIdentifiableCache<InvoiceItemType>(this.Transaction);
 
@@ -68,6 +74,20 @@ namespace Allors.Database.Domain
             {
                 v.Name = "Time";
                 localisedName.Set(v, dutchLocale, "Tijd");
+                v.IsActive = true;
+            });
+
+            merge(DiscountId, v =>
+            {
+                v.Name = "Discount";
+                localisedName.Set(v, dutchLocale, "Korting");
+                v.IsActive = true;
+            });
+
+            merge(SurchargeId, v =>
+            {
+                v.Name = "Surcharge";
+                localisedName.Set(v, dutchLocale, "Toeslag");
                 v.IsActive = true;
             });
         }

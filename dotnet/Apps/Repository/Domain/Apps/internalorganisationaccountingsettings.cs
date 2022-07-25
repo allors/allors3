@@ -73,7 +73,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount TaxAuthorityAccount { get; set; }
+        public Organisation TaxAuthorityAccount { get; set; }
 
         #region Allors
         [Id("653b3939-15fd-492b-84a7-dd57321ead1e")]
@@ -140,28 +140,76 @@ namespace Allors.Repository
         public GeneralLedgerAccount Inventory { get; set; }
 
         #region Allors
+        [Id("524bf214-0937-4d95-ac4d-35676817ba37")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount DeferredExpense { get; set; }
+
+        #region Allors
+        [Id("f2930449-7cf9-45fe-b421-df2b54d08ae7")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount DeferredRevenue { get; set; }
+
+        #region Allors
+        [Id("cf34e1f5-4b8f-4a63-8eb8-52a8ffdb2f64")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount AccruedRevenue { get; set; }
+
+        #region Allors
+        [Id("3b70b1a6-47e3-49a4-bb14-e77d442733df")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount AccruedExpense { get; set; }
+
+        #region Allors
+        [Id("e28a17cb-8d7f-4134-912a-ad1f92c1b304")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount Equity { get; set; }
+
+        #region Allors
         [Id("7cf58a64-b08d-4655-ac0a-5410a39a1131")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount ProfitLoss { get; set; }
+        public GeneralLedgerAccount RetainedEarnings { get; set; }
 
         #region Allors
         [Id("35f7a894-704e-48ec-93e9-1a531fcb2a07")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public InternalOrganisationInvoiceSettings SettingsForInvoiceItemType { get; set; }
+        public InternalOrganisationInvoiceSettings[] SettingsForInvoiceItemType { get; set; }
 
         #region Allors
         [Id("3b8ebd9c-59d7-4389-80b6-5ccdd582197f")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public InternalOrganisationInventorySettings SettingsForInventoryVariance { get; set; }
+        public InternalOrganisationInventorySettings[] SettingsForInventoryVariance { get; set; }
+
+        #region Allors
+        [Id("3f624382-3398-4562-9483-e46946988632")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        public InternalOrganisationVatRegimeSettings[] SettingsForVatRegime{ get; set; }
 
         #region Allors
         [Id("4a95ad2c-63ba-481c-9698-5d2094df6ed4")]
