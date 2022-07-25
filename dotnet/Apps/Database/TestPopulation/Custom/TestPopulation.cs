@@ -316,11 +316,12 @@ namespace Allors
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
                 .WithIsRgsUseWithEZ(true)
-                .WithIsRgsUseWithZzp(true)
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsAfrekSyst(true)
                 .WithExcludeRgsUitbr5(true)
                 .Build();
+
+            
         }
     }
 }
