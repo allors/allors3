@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\system\database\Allors.Database.Meta.Props\props*\**\*.cs" />
+    <Compile Include="..\..\..\System\Database\Allors.Database.Meta.Props\props*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -12,11 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="generated\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\allors.database.workspace\Allors.Database.Workspace.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace\Allors.Database.Workspace.csproj" />
   </ItemGroup>
 
 </Project>

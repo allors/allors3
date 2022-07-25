@@ -43,7 +43,8 @@ namespace Allors.Meta.Generation
             this.fileInfo.Refresh();
             if (!this.fileInfo.Exists)
             {
-                throw new Exception("Template file not found: " + fileInfo.FullName);
+                var fullName = fileInfo.FullName;
+                throw new Exception("Template file not found: " + fullName);
             }
 
             TemplateGroup templateGroup = new TemplateGroupFile(this.fileInfo.FullName, '$', '$');

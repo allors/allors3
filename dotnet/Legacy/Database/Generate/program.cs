@@ -18,8 +18,8 @@ namespace Allors.Meta.Generation
         {
             string[,] database =
                 {
-                    { "../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated" },
-                    { "../Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/generated" },
+                    { "../Core/Database/Templates/domain.cs.stg", "Database/Domain/Generated" },
+                    { "../Core/Database/Templates/uml.cs.stg", "Database/Diagrams/Generated" },
                 };
 
             string[,] workspace =

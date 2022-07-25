@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.remote.systemtext\Allors.Workspace.Adapters.Remote.SystemText.csproj" />
-    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.remote\Allors.Workspace.Adapters.Remote.csproj" />
-    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters\Allors.Workspace.Adapters.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.adapters.remote.systemtext\Allors.Workspace.Adapters.Remote.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.adapters.remote\Allors.Workspace.Adapters.Remote.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.adapters\Allors.Workspace.Adapters.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
   </ItemGroup>
 

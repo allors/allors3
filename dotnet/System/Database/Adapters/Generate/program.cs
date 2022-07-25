@@ -21,7 +21,7 @@ namespace Allors.Meta.Generation.Storage
 
             string[,] config =
             {
-                { "Templates/adapters.cs.stg", "Domain/generated" },
+                { "Templates/adapters.cs.stg", "Domain/Generated" },
             };
 
             for (var i = 0; i < config.GetLength(0); i++)

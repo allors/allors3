@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -16,8 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
-    <ProjectReference Include="..\..\..\System\Database\allors.database.workspace.json\Allors.Database.Workspace.Json.csproj" />
-    <ProjectReference Include="..\..\..\System\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.json\Allors.Database.Workspace.Json.csproj" />
+    <ProjectReference Include="..\..\..\System\protocol\Allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\CSharp\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
     <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />

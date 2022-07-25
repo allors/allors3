@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -15,8 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\excel\src\Allors.Excel.Interop\Allors.Excel.Interop.csproj" />
-    <ProjectReference Include="..\..\..\..\system\protocol\allors.protocol.json.restsharp\Allors.Protocol.Json.RestSharp.csproj" />
-    <ProjectReference Include="..\..\..\..\system\workspace\csharp\adapters\allors.workspace.adapters.remote.restsharp\Allors.Workspace.Adapters.Remote.RestSharp.csproj" />
+    <ProjectReference Include="..\..\..\..\System\protocol\Allors.protocol.json.restsharp\Allors.Protocol.Json.RestSharp.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.adapters.remote.restsharp\Allors.Workspace.Adapters.Remote.RestSharp.csproj" />
     <ProjectReference Include="..\configuration\Workspace.Configuration.csproj" />
     <ProjectReference Include="..\domain\Workspace.Domain.csproj" />
     <ProjectReference Include="..\meta.lazy\Workspace.Meta.Lazy.csproj" />

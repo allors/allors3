@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
-    <ProjectReference Include="..\..\..\system\database\adapters\allors.database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.adapters.sql.sqlclient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
     <ProjectReference Include="..\Configuration.Tests\Configuration.Tests.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
