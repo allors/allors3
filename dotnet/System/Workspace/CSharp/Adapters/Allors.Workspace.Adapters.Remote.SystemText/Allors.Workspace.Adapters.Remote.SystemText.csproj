@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
@@ -8,7 +8,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\..\protocol\Allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Protocol.Json\Allors.Workspace.Protocol.Json.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Allors.Domain</RootNamespace>
@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\allors.database.workspace.json\Allors.Database.Workspace.Json.csproj" />
-    <ProjectReference Include="..\..\..\System\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.json\Allors.Database.Workspace.Json.csproj" />
+    <ProjectReference Include="..\..\..\System\protocol\Allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>
@@ -31,10 +31,6 @@
     <EmbeddedResource Include="Resources\about.md" />
     <EmbeddedResource Include="Resources\avatar.png" />
     <EmbeddedResource Include="Resources\madeliefje.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="generated\" />
   </ItemGroup>
 
 </Project>

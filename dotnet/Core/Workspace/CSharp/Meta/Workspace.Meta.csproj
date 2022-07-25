@@ -8,7 +8,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Meta\Allors.Workspace.Meta.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="generated\" />
-  </ItemGroup>
 </Project>

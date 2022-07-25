@@ -207,15 +207,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters.L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters.Remote", "System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj", "{7CE64CC4-F2B2-43EC-98D4-9166AF07E3F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters.Remote.Restsharp", "System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Remote.Restsharp\Allors.Workspace.Adapters.Remote.Restsharp.csproj", "{3B55B7BD-79D1-4292-8919-485E39F3E16B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters.Remote.RestSharp", "System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Remote.RestSharp\Allors.Workspace.Adapters.Remote.RestSharp.csproj", "{3B55B7BD-79D1-4292-8919-485E39F3E16B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json.Restsharp", "System\Protocol\Allors.Protocol.Json.Restsharp\Allors.Protocol.Json.Restsharp.csproj", "{D1681254-792A-453E-BA73-DDF4BF4A2175}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json.RestSharp", "System\Protocol\Allors.Protocol.Json.RestSharp\Allors.Protocol.Json.RestSharp.csproj", "{D1681254-792A-453E-BA73-DDF4BF4A2175}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Protocol.Json.SystemText", "System\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj", "{0AD34687-9B75-4086-B0CC-3DBFC5B4FEE6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Workspace.Adapters.Remote.SystemText", "System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Remote.SystemText\Allors.Workspace.Adapters.Remote.SystemText.csproj", "{500BADB0-E5B5-4C4B-A814-AEAC0C638DFB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote.Json.Restsharp", "Core\Workspace\CSharp\Tests.Remote.Json.Restsharp\Workspace.Tests.Remote.Json.Restsharp.csproj", "{CD78BBCD-5FEB-4116-8348-D61D4C1C5634}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote.Json.RestSharp", "Core\Workspace\CSharp\Tests.Remote.Json.RestSharp\Workspace.Tests.Remote.Json.RestSharp.csproj", "{CD78BBCD-5FEB-4116-8348-D61D4C1C5634}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Tests.Remote.Json.SystemText", "Core\Workspace\CSharp\Tests.Remote.Json.SystemText\Workspace.Tests.Remote.Json.SystemText.csproj", "{41F9151D-F84D-4FFF-87AE-E36139573228}"
 EndProject

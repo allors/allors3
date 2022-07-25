@@ -2,11 +2,11 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath DotnetLegacy => Dotnet / "legacy";
+    public AbsolutePath DotnetLegacy => Dotnet / "Legacy";
     public AbsolutePath DotnetLegacyRepositoryDomainRepository => DotnetLegacy / "Repository/Domain/Repository.csproj";
 
     public AbsolutePath DotnetLegacyDatabase => DotnetLegacy / "Database";
-    public AbsolutePath DotnetLegacyDatabaseMetaGenerated => DotnetLegacyDatabase / "Meta/generated";
+    public AbsolutePath DotnetLegacyDatabaseMetaGenerated => DotnetLegacyDatabase / "Meta/Generated";
     public AbsolutePath DotnetLegacyDatabaseGenerate => DotnetLegacyDatabase / "Generate/Generate.csproj";
     public AbsolutePath DotnetLegacyDatabaseCommands => DotnetLegacyDatabase / "Commands";
     public AbsolutePath DotnetLegacyDatabaseServer => DotnetLegacyDatabase / "Server";

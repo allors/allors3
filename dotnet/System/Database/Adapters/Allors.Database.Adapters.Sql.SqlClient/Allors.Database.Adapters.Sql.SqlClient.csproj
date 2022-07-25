@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
@@ -7,6 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Allors.Database\Allors.Database.csproj" />
-    <ProjectReference Include="..\allors.database.adapters.sql\Allors.Database.Adapters.Sql.csproj" />
+    <ProjectReference Include="..\Allors.Database.adapters.sql\Allors.Database.Adapters.Sql.csproj" />
   </ItemGroup>
 </Project>

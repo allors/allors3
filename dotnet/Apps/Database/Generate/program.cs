@@ -18,17 +18,17 @@ namespace Allors.Meta.Generation.Storage
         {
             string[,] database =
                 {
-                    { "../Core/Database/Templates/domain.cs.stg", "DataBase/Domain/generated" },
-                    { "../Core/Database/Templates/uml.cs.stg", "DataBase/Diagrams/generated" },
-                    // { "../Core/Database/Templates/uml.java.stg", "DataBase/Diagrams.java/allors" },
+                    { "../Core/Database/Templates/domain.cs.stg", "Database/Domain/Generated" },
+                    { "../Core/Database/Templates/uml.cs.stg", "Database/Diagrams/Generated" },
+                    // { "../Core/Database/Templates/uml.java.stg", "Database/Diagrams.java/allors" },
                 };
 
             string[,] workspace =
             {
-                { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/Meta/generated" },
-                { "../Core/Workspace/Csharp/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/generated" },
-                { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/Domain/generated" },
-                { "../Core/Workspace/CSharp/Templates/uml.cs.stg", "Workspace/Diagrams/generated" },
+                { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/Meta/Generated" },
+                { "../Core/Workspace/Csharp/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated" },
+                { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/Domain/Generated" },
+                { "../Core/Workspace/CSharp/Templates/uml.cs.stg", "Workspace/Diagrams/Generated" },
 
                 { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta/src/lib/generated" },
                 { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/apps-intranet/workspace/meta-json/src/lib/generated" },

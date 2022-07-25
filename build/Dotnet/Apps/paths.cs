@@ -2,11 +2,11 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath DotnetApps => Dotnet / "apps";
+    public AbsolutePath DotnetApps => Dotnet / "Apps";
     public AbsolutePath DotnetAppsRepositoryDomainRepository => DotnetApps / "Repository/Domain/Repository.csproj";
 
     public AbsolutePath DotnetAppsDatabase => DotnetApps / "Database";
-    public AbsolutePath DotnetAppsDatabaseMetaGenerated => DotnetAppsDatabase / "Meta/generated";
+    public AbsolutePath DotnetAppsDatabaseMetaGenerated => DotnetAppsDatabase / "Meta/Generated";
     public AbsolutePath DotnetAppsDatabaseGenerate => DotnetAppsDatabase / "Generate/Generate.csproj";
     public AbsolutePath DotnetAppsDatabaseCommands => DotnetAppsDatabase / "Commands";
     public AbsolutePath DotnetAppsDatabaseServer => DotnetAppsDatabase / "Server";

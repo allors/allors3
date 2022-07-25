@@ -3,7 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\System\Repository\attributes\Attributes*\**\*.cs" />
+    <Compile Include="..\..\..\System\Repository\Attributes\Attributes*\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Shared\Allors.Shared.csproj" />
