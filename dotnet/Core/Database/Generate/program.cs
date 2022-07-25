@@ -24,7 +24,7 @@ namespace Allors.Meta.Generation
 
             string[,] workspace =
             {
-                //{ "Workspace/Csharp/Templates/uml.cs.stg", "Workspace/CSharp/Diagrams/Generated" },
+                //{ "Workspace/CSharp/Templates/uml.cs.stg", "Workspace/CSharp/Diagrams/Generated" },
                 { "Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/Generated" },
                 { "Workspace/CSharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/Generated" },
                 { "Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/Generated" },

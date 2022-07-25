@@ -172,7 +172,6 @@ namespace Allors.Database.Domain
                 new PartSyncInventoryItemsRule(m),
                 new PartyContactMechanismRule(m),
                 new PartyFinancialRelationshipAmountDueRule(m),
-                new PartyFinancialRelationshipOpenOrderAmountRule(m),
                 new PartyRule(m),
                 new PayHistoryRule(m),
                 new PaymentApplicationRule(m),

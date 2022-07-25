@@ -166,6 +166,8 @@ namespace Allors.Database.Domain
 
                 @this.DeriveRelationships();
 
+                // TODO: Rule die op ExistSettingsForAccounting luistert, check dat alle PartyFinancialRelationships er zijn, indien die er niet zijn maak ze aan
+
                 var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.ExistSettingsForAccounting);
 
                 if (!internalOrganisations.Contains(@this))
@@ -176,6 +178,8 @@ namespace Allors.Database.Domain
 
                         if (partyFinancial == null)
                         {
+                            // Debtor false indien supplier, true indien customer
+
                             partyFinancial = new PartyFinancialRelationshipBuilder(@this.Strategy.Transaction)
                                 .WithFinancialParty(@this)
                                 .WithInternalOrganisation(internalOrganisation)

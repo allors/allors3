@@ -52,40 +52,18 @@ namespace Allors.Repository
         public InternalOrganisation InternalOrganisation { get; set; }
 
         #region Allors
-        [Id("01771db8-e79c-4ce4-9d81-db3675e8708a")]
+        [Id("e3a06a1c-998a-4871-8f0e-2f166eac6c7b")]
         #endregion
-        [Derived]
         [Required]
-        [Precision(19)]
-        [Scale(2)]
         [Workspace(Default)]
-        public decimal YTDRevenue { get; set; }
+        public int SubAccountNumber { get; set; }
 
         #region Allors
-        [Id("04bc4912-cd23-4b2e-973c-76bbf2f2de8d")]
+        [Id("332e5b2f-5285-49fe-935d-4abb99cc084b")]
         #endregion
-        [Derived]
         [Required]
-        [Precision(19)]
-        [Scale(2)]
         [Workspace(Default)]
-        public decimal LastYearsRevenue { get; set; }
-
-        #region Allors
-        [Id("52863081-34b7-48e2-a7ff-c6bd67172350")]
-        #endregion
-        [Workspace(Default)]
-        public bool ExcludeFromDunning { get; set; }
-
-        #region Allors
-        [Id("d05ee314-57be-4852-a3b5-62710df4d4b7")]
-        #endregion
-        [Derived]
-        [Required]
-        [Precision(19)]
-        [Scale(2)]
-        [Workspace(Default)]
-        public decimal OpenOrderAmount { get; set; }
+        public bool Debtor { get; set; }
 
         #region Allors
         [Id("d97ab83b-85dc-4877-8b49-1e552489bcb0")]
@@ -96,11 +74,14 @@ namespace Allors.Repository
         public PaymentMethod DefaultPaymentMethod { get; set; }
 
         #region Allors
-        [Id("B66127AF-F490-4BF0-B8F5-6EBA878B1314")]
+        [Id("894f4ff2-9c41-4201-ad36-ac10dafd65dd")]
         #endregion
+        [Derived]
+        [Required]
         [Precision(19)]
         [Scale(2)]
-        public decimal SimpleMovingAverage { get; set; }
+        [Workspace(Default)]
+        public decimal AmountDue { get; set; }
 
         #region Allors
         [Id("42e3b2c4-376d-4e8b-bb49-2af031881ed0")]
@@ -120,14 +101,10 @@ namespace Allors.Repository
         public DunningType DunningType { get; set; }
 
         #region Allors
-        [Id("894f4ff2-9c41-4201-ad36-ac10dafd65dd")]
+        [Id("52863081-34b7-48e2-a7ff-c6bd67172350")]
         #endregion
-        [Derived]
-        [Required]
-        [Precision(19)]
-        [Scale(2)]
         [Workspace(Default)]
-        public decimal AmountDue { get; set; }
+        public bool ExcludeFromDunning { get; set; }
 
         #region Allors
         [Id("af50ade8-5964-4963-819d-c87689c6434e")]
@@ -142,19 +119,6 @@ namespace Allors.Repository
         [Scale(2)]
         [Workspace(Default)]
         public decimal CreditLimit { get; set; }
-
-        #region Allors
-        [Id("e3a06a1c-998a-4871-8f0e-2f166eac6c7b")]
-        #endregion
-        [Required]
-        [Workspace(Default)]
-        public int SubAccountNumber { get; set; }
-
-        #region Allors
-        [Id("ee871786-8840-404d-9b41-932a9f59be13")]
-        #endregion
-        [Workspace(Default)]
-        public DateTime BlockedForDunning { get; set; }
 
         #region inherited methods
 

@@ -7,13 +7,13 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
-    using System.IO;
-    using System.Reflection;
-    using Allors;
-    using Allors.Database.Adapters.Memory;
-    using Allors.Database.Domain;
+    using Adapters.Memory;
     using Configuration;
+    using Database.Derivations;
     using Meta;
+    using Allors;
+    using Organisation = Domain.Organisation;
+    using Person = Domain.Person;
     using User = Domain.User;
 
     public class DomainTest : IDisposable
@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
         public DomainTest(Fixture fixture, bool populate = true)
         {
             var database = new Database(
-                new DefaultDatabaseServices(fixture.Engine),
+                new TestDatabaseServices(fixture.Engine),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.M, typeof(User)),
@@ -34,11 +34,13 @@ namespace Allors.Database.Domain.Tests
 
         public MetaPopulation M { get; }
 
-        public virtual Config Config { get; } = new Config { SetupSecurity = false };
+        public virtual Config Config { get; } = new Config { SetupSecurity = false, };
 
         public ITransaction Transaction { get; private set; }
 
         public ITime Time => this.Transaction.Database.Services.Get<ITime>();
+
+        public ISecurity Security => this.Transaction.Database.Services.Get<ISecurity>();
 
         public TimeSpan? TimeShift
         {
@@ -47,38 +49,29 @@ namespace Allors.Database.Domain.Tests
             set => this.Time.Shift = value;
         }
 
+        protected Organisation InternalOrganisation { get; set; }
+
         public void Dispose()
         {
             this.Transaction.Rollback();
             this.Transaction = null;
         }
 
+        protected IValidation Derive() => this.Transaction.Derive(false, true);
+
         protected void Setup(IDatabase database, bool populate)
         {
             database.Init();
 
+            this.Transaction ??= database.CreateTransaction();
+
             if (populate)
             {
-                new Setup(database, this.Config).Apply();
+                this.Transaction.Services.Get<IUserService>().User = new AutomatedAgents(this.Transaction).System;
+                this.Populate(database);
             }
-
-            this.Transaction = database.CreateTransaction();
         }
 
-        protected Stream GetResource(string name)
-        {
-            var assembly = this.GetType().GetTypeInfo().Assembly;
-            var resource = assembly.GetManifestResourceStream(name);
-            return resource;
-        }
-
-        protected byte[] GetResourceBytes(string name)
-        {
-            var assembly = this.GetType().GetTypeInfo().Assembly;
-            var resource = assembly.GetManifestResourceStream(name);
-            using var ms = new MemoryStream();
-            resource?.CopyTo(ms);
-            return ms.ToArray();
-        }
+        private void Populate(IDatabase database) => new TestPopulation(this.Transaction, this.Config).Populate(database);
     }
 }

@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.remote.restsharp\Allors.Workspace.Adapters.Remote.RestSharp.csproj" />
-    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters.remote\Allors.Workspace.Adapters.Remote.csproj" />
-    <ProjectReference Include="..\..\..\..\System\workspace\csharp\adapters\allors.workspace.adapters\Allors.Workspace.Adapters.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Remote.RestSharp\Allors.Workspace.Adapters.Remote.RestSharp.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Adapters\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
   </ItemGroup>
 

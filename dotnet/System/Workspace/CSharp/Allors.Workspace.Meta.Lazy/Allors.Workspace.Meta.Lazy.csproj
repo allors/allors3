@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Allors.Workspace.meta\Allors.Workspace.Meta.csproj" />
+    <ProjectReference Include="..\Allors.Workspace.Meta\Allors.Workspace.Meta.csproj" />
   </ItemGroup>
 
 </Project>

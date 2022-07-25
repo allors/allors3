@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\dotnet\System\Database\allors.database.workspace.json\Allors.Database.Workspace.Json.csproj" />
-    <ProjectReference Include="..\..\..\..\dotnet\System\protocol\allors.protocol.json.systemtext\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\System\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>

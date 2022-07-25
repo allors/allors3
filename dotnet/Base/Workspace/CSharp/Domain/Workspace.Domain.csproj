@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Allors.Workspace.domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\CSharp\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
     <ProjectReference Include="..\Meta\Workspace.Meta.csproj" />
   </ItemGroup>
 

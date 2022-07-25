@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Setup.cs" company="Allors bvba">
+// <copyright file="TestPopulation.cs" company="Allors bvba">
 //   Copyright 2002-2012 Allors bvba.
 //
 // Dual Licensed under
@@ -37,16 +37,15 @@ namespace Allors
         public ITransaction Transaction { get; }
         public Config Config { get; }
 
-        public void Populate()
+        public void Populate(IDatabase database)
         {
             CultureInfo.CurrentCulture = new CultureInfo("en-GB");
             CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
+            new Setup(database, this.Config).Apply();
+
             var administrator = new PersonBuilder(this.Transaction).WithUserName("jane@example.com").Build();
             administrator.SetPassword("letmein");
-
-            //var user = new PersonBuilder(this.Transaction).WithUserName("john@example.com").Build();
-            //user.SetPassword("letmein");
 
             this.Transaction.Derive();
             this.Transaction.Commit();
@@ -287,6 +286,108 @@ namespace Allors
 
         private void AccountingPopulate()
         {
+            var netherlands = new Countries(this.Transaction).CountryByIsoCode["NL"];
+            var euro = netherlands.Currency;
+
+            var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
+
+            var internalOrganisation = Organisations.CreateInternalOrganisation(
+                transaction: this.Transaction,
+                name: "dutchInternalOrganisation",
+                address1: "address",
+                postalCode: "code",
+                locality: "city",
+                country: netherlands,
+                phone1CountryCode: "+31",
+                phone1: "112",
+                phone1Purpose: new ContactMechanismPurposes(this.Transaction).GeneralPhoneNumber,
+                phone2CountryCode: string.Empty,
+                phone2: string.Empty,
+                phone2Purpose: null,
+                emailAddress: "email@dutchInternalOrganisation.com",
+                websiteAddress: "www.dutchInternalOrganisation.com",
+                taxNumber: "NL 1234567",
+                bankName: "ING",
+                facilityName: "Warehouse",
+                bic: "INGBNL2A",
+                iban: "NL39INGB3528973196",
+                currency: euro,
+                logo: "allors.png",
+                storeName: "Store",
+                billingProcess: new BillingProcesses(this.Transaction).BillingForOrderItems,
+                customerShipmentNumberPrefix: "i-CS",
+                customerReturnNumberPrefix: "i-CR",
+                purchaseShipmentNumberPrefix: "i-PS",
+                purchaseReturnNumberPrefix: "i-PR",
+                salesInvoiceNumberPrefix: "i-SI",
+                salesOrderNumberPrefix: "i-SO",
+                purchaseOrderNumberPrefix: "purchase orderno: ",
+                purchaseInvoiceNumberPrefix: "incoming invoiceno: ",
+                requestNumberPrefix: "i-RFQ",
+                productQuoteNumberPrefix: "i-PQ",
+                statementOfWorkNumberPrefix: "i-WQ",
+                productNumberPrefix: "i-",
+                workEffortPrefix: "i-WO-",
+                requirementPrefix: "i-REQ-",
+                creditNoteNumberPrefix: "i-CN-",
+                isImmediatelyPicked: true,
+                autoGenerateShipmentPackage: true,
+                isImmediatelyPacked: true,
+                isAutomaticallyShipped: true,
+                autoGenerateCustomerShipment: true,
+                isAutomaticallyReceived: false,
+                shipmentIsAutomaticallyReturned: false,
+                autoGeneratePurchaseShipment: false,
+                useCreditNoteSequence: true,
+                requestCounterValue: 0,
+                productQuoteCounterValue: 0,
+                statementOfWorkCounterValue: 0,
+                orderCounterValue: 0,
+                purchaseOrderCounterValue: 0,
+                invoiceCounterValue: 0,
+                purchaseInvoiceCounterValue: 0,
+                purchaseOrderNeedsApproval: false,
+                purchaseOrderApprovalThresholdLevel1: null,
+                purchaseOrderApprovalThresholdLevel2: null,
+                serialisedItemSoldOns: serialisedItemSoldOns,
+                collectiveWorkEffortInvoice: true,
+                invoiceSequence: new InvoiceSequences(this.Transaction).EnforcedSequence,
+                requestSequence: new RequestSequences(this.Transaction).EnforcedSequence,
+                quoteSequence: new QuoteSequences(this.Transaction).EnforcedSequence,
+                customerShipmentSequence: new CustomerShipmentSequences(this.Transaction).EnforcedSequence,
+                purchaseShipmentSequence: new PurchaseShipmentSequences(this.Transaction).EnforcedSequence,
+                workEffortSequence: new WorkEffortSequences(this.Transaction).EnforcedSequence,
+                requirementSequence: new RequirementSequences(this.Transaction).EnforcedSequence);
+
+            internalOrganisation.PurchaseShipmentNumberPrefix = "incoming shipmentno: ";
+            internalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.PurchaseReturnSequence = new PurchaseReturnSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.DropShipmentSequence = new DropShipmentSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.IncomingTransferSequence = new IncomingTransferSequences(this.Transaction).EnforcedSequence;
+            internalOrganisation.OutgoingTransferSequence = new OutgoingTransferSequences(this.Transaction).EnforcedSequence;
+
+            this.Transaction.Derive();
+
+            var nedBelastingdienst = new OrganisationBuilder(this.Transaction)
+                .WithName("Ned. Belastingdienst")
+                .WithEuListingState(netherlands)
+                .WithLegalForm(new LegalForms(this.Transaction).Extent().First)
+                .WithLocale(new Locales(this.Transaction).DutchNetherlands)
+                .WithTaxNumber("NL123123")
+                .WithComment("Comment")
+                .Build();
+
+            var federaleOverheidsDienst = new OrganisationBuilder(this.Transaction)
+                .WithName("Federale OverheidsDienst FINANCIËN")
+                .WithEuListingState(netherlands)
+                .WithLegalForm(new LegalForms(this.Transaction).Extent().First)
+                .WithLocale(new Locales(this.Transaction).DutchNetherlands)
+                .WithTaxNumber("NL12341234")
+                .WithComment("Comment")
+                .Build();
+
+            this.Transaction.Derive();
+
             var debit = new BalanceSides(this.Transaction).Debit;
             var credit = new BalanceSides(this.Transaction).Credit;
 

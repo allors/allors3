@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\System\Database\Allors.Database.Meta.Props\props*\**\*.cs" />
+    <Compile Include="..\..\..\System\Database\Allors.Database.Meta.Props\Props*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

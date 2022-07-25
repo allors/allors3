@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
-    <ProjectReference Include="..\excel\excel.csproj" />
+    <ProjectReference Include="..\Excel\Excel.csproj" />
   </ItemGroup>
 
 
