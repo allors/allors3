@@ -142,6 +142,7 @@ namespace Allors.Database.Domain
                 new OrganisationContactUserGroupRule(m),
                 new OrganisationDeniedPermissionRule(m),
                 new OrganisationDisplayNameRule(m),
+                new OrganisationGlAccountBalanceAmountRule(m),
                 new OrganisationRelationshipsRule(m),
                 new OrganisationRollupRule(m),
                 new OrganisationSearchStringRule(m),

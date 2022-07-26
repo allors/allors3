@@ -105,6 +105,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
           PurchaseOrderShipmentState: {},
           CreatedBy: {},
           LastModifiedBy: {},
+          ElectronicDocuments: {},
           DerivedShipToAddress: {
             Country: {},
           },
@@ -281,12 +282,12 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
         loaded.collection<PartyContactMechanism>(
           m.Party.CurrentPartyContactMechanisms
         );
-      this.takenViaContactMechanisms = partyContactMechanisms?.map(
-        (v: PartyContactMechanism) => v.ContactMechanism
-      ) ?? [];
-      this.takenViaContacts = loaded.collection<Person>(
-        m.Party.CurrentContacts
-      ) ?? [];
+      this.takenViaContactMechanisms =
+        partyContactMechanisms?.map(
+          (v: PartyContactMechanism) => v.ContactMechanism
+        ) ?? [];
+      this.takenViaContacts =
+        loaded.collection<Person>(m.Party.CurrentContacts) ?? [];
     });
   }
 
