@@ -291,7 +291,7 @@ namespace Allors
 
             var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
 
-            var internalOrganisation = Organisations.CreateInternalOrganisation(
+            var dutchInternalOrganisation = Organisations.CreateInternalOrganisation(
                 transaction: this.Transaction,
                 name: "dutchInternalOrganisation",
                 address1: "address",
@@ -359,12 +359,12 @@ namespace Allors
                 workEffortSequence: new WorkEffortSequences(this.Transaction).EnforcedSequence,
                 requirementSequence: new RequirementSequences(this.Transaction).EnforcedSequence);
 
-            internalOrganisation.PurchaseShipmentNumberPrefix = "incoming shipmentno: ";
-            internalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.PurchaseReturnSequence = new PurchaseReturnSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.DropShipmentSequence = new DropShipmentSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.IncomingTransferSequence = new IncomingTransferSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.OutgoingTransferSequence = new OutgoingTransferSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.PurchaseShipmentNumberPrefix = "incoming shipmentno: ";
+            dutchInternalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.PurchaseReturnSequence = new PurchaseReturnSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.DropShipmentSequence = new DropShipmentSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.IncomingTransferSequence = new IncomingTransferSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.OutgoingTransferSequence = new OutgoingTransferSequences(this.Transaction).EnforcedSequence;
 
             this.Transaction.Derive();
 
@@ -1025,6 +1025,7 @@ namespace Allors
                 .WithSortCode("O.C050")
                 .WithReferenceNumber("8003050")
                 .WithName("1e. Netto-omzet uit verleende diensten belast met 0% of niet bij u belast")
+                .WithDescription("1e. Netto-omzet uit verleende diensten belast met 0% of niet bij u belast")
                 .WithBalanceSide(credit)
                 .WithBalanceType(profitLoss)
                 .WithRgsLevel(4)
@@ -1032,6 +1033,86 @@ namespace Allors
                 .WithIsRgsExtended(true)
                 .WithIsRgsUseWithEZ(true)
                 .Build();
+
+            var WOmzNopNod = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("WOmzNopNod")
+                .WithSortCode("O.A150")
+                .WithReferenceNumber("8001150")
+                .WithName("Netto-omzet van onbelaste leveringen geproduceerde goederen")
+                .WithDescription("Netto-omzet van onbelaste leveringen geproduceerde goederen")
+                .WithBalanceSide(credit)
+                .WithBalanceType(profitLoss)
+                .WithRgsLevel(4)
+                .WithIsRgsBase(true)
+                .WithIsRgsExtended(true)
+                .WithIsRgsUseWithEZ(true)
+                .WithIsRgsUseWithZzp(true)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var discountSettings = new InternalOrganisationInvoiceSettingsBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Discount)
+                .WithSalesGeneralLedgerAccount(WKprBtkBed)
+                .WithPurchaseLedgerAccount(WKprBtkBec)
+                .Build();
+
+            var dutchStandardTariffSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).DutchStandardTariff)
+                .WithGeneralLedgerAccount(WOmzNopOlh)
+                .Build();
+
+            var dutchReducedTariffSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).DutchReducedTariff)
+                .WithGeneralLedgerAccount(WOmzNopOlv)
+                .Build();
+
+            var serviceB2BSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).ServiceB2B)
+                .WithGeneralLedgerAccount(WOmzNodOdg)
+                .Build();
+
+            var zeroRatedSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).ZeroRated)
+                .WithGeneralLedgerAccount(WOmzNopOlg)
+                .Build();
+
+            var exemptSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).Exempt)
+                .WithGeneralLedgerAccount(WOmzNopNod)
+                .Build();
+
+            var intraCommunautairSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).IntraCommunautair)
+                .WithGeneralLedgerAccount(WOmzNopOli)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var internalOrganisationAccountingSettings = new InternalOrganisationAccountingSettingsBuilder(this.Transaction)
+                .WithAccountsPayable(BVorDebHad)
+                .WithAccountsReceivable(BSchCreHac)
+                .WithSalesPaymentDifferences(WBedAdlBet)
+                .WithPurchasePaymentDifferences(WBedAdlBov)
+                .WithExhangeRateDifferences(WBedAdlVal)
+                .WithOpeningBalance(BSchTusTov)
+                .WithInventory(BVrdHanVoo)
+                .WithDeferredExpense(BVorOvaVof)
+                .WithDeferredRevenue(BSchOpaVgo)
+                .WithAccruedExpense(BSchOpaNto)
+                .WithAccruedRevenue(BVorOvaNtf)
+                .WithRetainedEarnings(BEivOreRvh)
+                .WithEquity(BEivKapOnd)
+                .WithSettingsForInvoiceItemType(discountSettings)
+                .WithSettingsForVatRegime(dutchStandardTariffSetting)
+                .WithSettingsForVatRegime(dutchReducedTariffSetting)
+                .WithSettingsForVatRegime(serviceB2BSetting)
+                .WithSettingsForVatRegime(zeroRatedSetting)
+                .WithSettingsForVatRegime(exemptSetting)
+                .WithSettingsForVatRegime(intraCommunautairSetting)
+                .Build();
+
+            dutchInternalOrganisation.SettingsForAccounting = internalOrganisationAccountingSettings;
 
             this.Transaction.Derive();
         }
