@@ -1158,6 +1158,31 @@ namespace Allors
 
             this.Transaction.Derive();
 
+            var yearPeriod = new AccountingPeriodBuilder(this.Transaction)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Year)
+                .WithPeriodNumber(2022)
+                .WithInternalOrganisation(dutchInternalOrganisation)
+                .Build();
+
+            var periode1 = new AccountingPeriodBuilder(this.Transaction)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Month)
+                .WithPeriodNumber(1)
+                .WithParent(yearPeriod)
+                .WithInternalOrganisation(dutchInternalOrganisation)
+                .Build();
+
+            for (var i = 1; i < 12; i++)
+            {
+                _ = new AccountingPeriodBuilder(this.Transaction)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Month)
+                .WithPeriodNumber(i + 1)
+                .WithParent(yearPeriod)
+                .WithInternalOrganisation(dutchInternalOrganisation)
+                .Build();
+            }
+
+            this.Transaction.Derive();
+
             var internalOrganisationAccountingSettings = new InternalOrganisationAccountingSettingsBuilder(this.Transaction)
                 .WithAccountsPayable(BVorDebHad)
                 .WithAccountsReceivable(BSchCreHac)
@@ -1179,6 +1204,7 @@ namespace Allors
                 .WithSettingsForVatRegime(zeroRatedSetting)
                 .WithSettingsForVatRegime(exemptSetting)
                 .WithSettingsForVatRegime(intraCommunautairSetting)
+                .WithActualAccountingPeriod(periode1)
                 .Build();
 
             dutchInternalOrganisation.SettingsForAccounting = internalOrganisationAccountingSettings;
