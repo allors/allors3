@@ -6,14 +6,14 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Resources\embeddedtemplate.odt" />
+    <None Remove="Resources\EmbeddedTemplate.odt" />
     <None Remove="Resources\logo.png" />
-    <None Remove="Resources\pdfas.jpg" />
+    <None Remove="Resources\PdfAs.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\embeddedtemplate.odt" />
+    <EmbeddedResource Include="Resources\EmbeddedTemplate.odt" />
     <EmbeddedResource Include="Resources\logo.png" />
-    <EmbeddedResource Include="Resources\pdfas.jpg" />
+    <EmbeddedResource Include="Resources\PdfAs.jpg" />
   </ItemGroup>
 
   <ItemGroup>

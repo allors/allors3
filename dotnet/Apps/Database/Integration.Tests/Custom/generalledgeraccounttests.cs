@@ -158,7 +158,7 @@ namespace Integration.Tests.custom
             var docProfitLossNL = new HtmlDocument();
             docProfitLossNL.Load("c:/Temp/MarProfitLossNL.html");
 
-            var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
+            var extractor = new MarGeneralLedgerAccountExtractor(null, docBalansNL, docProfitLossNL, new NullLoggerFactory());
             var result = extractor.Execute();
 
             Assert.IsNotEmpty(result);
@@ -172,29 +172,16 @@ namespace Integration.Tests.custom
             return System.Threading.Tasks.Task.CompletedTask;
         }
 
-        public sealed class FooMap : ClassMap<MarGeneralLedgerAccount>
-        {
-            public FooMap()
-            {
-                this.Map(m => m.ReferenceCode);
-                this.Map(m => m.Name);
-                this.Map(m => m.IsActiva);
-                this.Map(m => m.IsPassiva);
-                this.Map(m => m.BalanceType);
-
-            }
-        }
-
         [Test]
         public async System.Threading.Tasks.Task RunDezeTestNiet()
         {
             var docBalansNL = new HtmlDocument();
-            docBalansNL.Load("c:/Temp/MarVerenigingenEnStichtingenBalansNL.html");
+            docBalansNL.Load("c:/Temp/MarBoekhoudplichtigeOndernemingenBalansNL.html");
 
             var docProfitLossNL = new HtmlDocument();
-            docProfitLossNL.Load("c:/Temp/MarVerenigingenEnStichtingenProfitLossNL.html");
+            docProfitLossNL.Load("c:/Temp/MarBoekhoudplichtigeOndernemingenProfitLossNL.html");
 
-            var extractor = new MarGeneralLedgerAccountExtractor(docBalansNL, docProfitLossNL, new NullLoggerFactory());
+            var extractor = new MarGeneralLedgerAccountExtractor(null, docBalansNL, docProfitLossNL, new NullLoggerFactory());
             var result = extractor.Execute();
 
             var transformer = new MarGeneralLedgerAccountTransformer(new Source() { MarGeneralLedgerAccounts = result }, new Allors.Integration.Population(),new NullLoggerFactory());

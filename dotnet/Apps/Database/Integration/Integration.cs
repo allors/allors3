@@ -59,8 +59,9 @@ namespace Allors.Integration
             docProfitLossNL.Load(this.DataPath + "/MarProfitLossNL.html");
 
             using (var generalLedgerAccountList = new StreamReader(this.DataPath + "/RGS.xml"))
+            using (var marGeneralLedgerAccountList = new StreamReader(this.DataPath + "/MarVerenigingenEnStichtingen.xml"))
             {
-                var extraction = new Extract.Extract(generalLedgerAccountList, docBalansNL, docProfitLossNL, this.LoggerFactory);
+                var extraction = new Extract.Extract(generalLedgerAccountList, marGeneralLedgerAccountList, docBalansNL, docProfitLossNL, this.LoggerFactory);
                 source = extraction.Execute();
             }
 

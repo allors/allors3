@@ -24,10 +24,10 @@ namespace Allors.Meta.Generation.Storage
 
             string[,] workspace =
             {
-                { "../Core/Workspace/CSharp/Templates/meta.cs.stg", "Workspace/CSharp/Meta/Generated" },
-                { "../Core/Workspace/CSharp/Templates/meta.lazy.cs.stg", "Workspace/CSharp/Meta.Lazy/Generated" },
-                { "../Core/Workspace/CSharp/Templates/domain.cs.stg", "Workspace/CSharp/Domain/Generated" },
-                { "../Core/Workspace/CSharp/Templates/uml.cs.stg", "Workspace/CSharp/Domain.Diagrams/Generated" },
+                { "../Core/Workspace/Templates/meta.cs.stg", "Workspace/Meta/Generated" },
+                { "../Core/Workspace/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated" },
+                { "../Core/Workspace/Templates/domain.cs.stg", "Workspace/Domain/Generated" },
+                { "../Core/Workspace/Templates/uml.cs.stg", "Workspace/Domain.Diagrams/Generated" },
 
                 { "../../typescript/modules/templates/workspace.meta.ts.stg", "../../typescript/modules/libs/base/workspace/meta/src/lib/generated" },
                 { "../../typescript/modules/templates/workspace.meta.json.ts.stg", "../../typescript/modules/libs/base/workspace/meta-json/src/lib/generated" },

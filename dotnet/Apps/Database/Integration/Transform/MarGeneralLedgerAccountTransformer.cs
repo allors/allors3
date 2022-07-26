@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 
 namespace Allors.Integration.Transform
@@ -59,7 +60,7 @@ namespace Allors.Integration.Transform
                     var generalLedgerAccountClassification = new Staging.MarGeneralLedgerAccount()
                     {
                         ReferenceCode = generalLedgerAccount.ReferenceCode,
-                        Name = generalLedgerAccount.Name.Replace(@"\((.*?)\)", ""),
+                        Name = Regex.Replace(generalLedgerAccount.Name, "(\\([0-9]*?\\))|(\\(.\\))", ""),
                         Nivo = generalLedgerAccount.ReferenceCode.Length,
                         Activa = generalLedgerAccount.IsActiva,
                         Passiva = generalLedgerAccount.IsPassiva,

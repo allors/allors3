@@ -11,9 +11,6 @@ partial class Build
     private Target CiDotnetSystemAdaptersTestNpgsql => _ => _
         .DependsOn(DotnetSystemAdaptersTestNpgsql);
 
-    private Target CiDotnetSystemWorkspaceTest => _ => _
-        .DependsOn(DotnetSystemWorkspaceTest);
-
     private Target CiDotnetCoreDatabaseTest => _ => _
         .DependsOn(DotnetCoreDatabaseTest);
 

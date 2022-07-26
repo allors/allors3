@@ -5,13 +5,13 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Allors", "Allors", "{B7DFA9E8-6643-4B55-996D-2D884D9D19A1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "..\..\..\dotnet\base\database\configuration\Configuration.csproj", "{7E093E09-8283-42E5-AA1A-04B0CB96EB19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "..\..\..\dotnet\Base\Database\Configuration\Configuration.csproj", "{7E093E09-8283-42E5-AA1A-04B0CB96EB19}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\..\..\dotnet\base\database\domain\Domain.csproj", "{73BBAF79-76D5-42FA-AF3B-A9FE2A96A336}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\..\..\dotnet\Base\Database\Domain\Domain.csproj", "{73BBAF79-76D5-42FA-AF3B-A9FE2A96A336}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meta", "..\..\..\dotnet\base\database\meta\Meta.csproj", "{4099337D-0A80-4416-9F24-02382A073183}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meta", "..\..\..\dotnet\Base\Database\Meta\Meta.csproj", "{4099337D-0A80-4416-9F24-02382A073183}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "allors.database.adapters.sql.sqlclient", "..\..\..\dotnet\system\database\adapters\allors.database.adapters.sql.sqlclient\allors.database.adapters.sql.sqlclient.csproj", "{BB36C267-FD8D-4233-ABD6-6851526C4E4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.Database.Adapters.Sql.SqlClient", "..\..\..\dotnet\System\Database\Adapters\Allors.Database.Adapters.Sql.SqlClient\Allors.Database.Adapters.Sql.SqlClient.csproj", "{BB36C267-FD8D-4233-ABD6-6851526C4E4F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{C7141FC7-09A1-4A0D-A6E8-84528B9BB9D4}"
 EndProject
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffold", "..\scaffold\Sca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffold.Command", "Scaffold.Command\Scaffold.Command.csproj", "{CB82EDE5-4B7D-471B-8C55-FE77E983B85A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "resources", "..\..\..\dotnet\Base\Database\resources\resources.csproj", "{7966E5CD-BA47-40E1-8768-4CC993262F37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Resources", "..\..\..\dotnet\Base\Database\Resources\Resources.csproj", "{7966E5CD-BA47-40E1-8768-4CC993262F37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

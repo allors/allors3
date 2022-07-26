@@ -2,6 +2,7 @@ namespace Integration.Extract
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
     using Allors.Integration.Source;
@@ -10,8 +11,9 @@ namespace Integration.Extract
 
     public partial class MarGeneralLedgerAccountExtractor
     {
-        public MarGeneralLedgerAccountExtractor(HtmlDocument htmlDocumentBalans, HtmlDocument htmlDocumentProfitLoss, ILoggerFactory loggerFactory)
+        public MarGeneralLedgerAccountExtractor(StreamReader streamReader, HtmlDocument htmlDocumentBalans, HtmlDocument htmlDocumentProfitLoss, ILoggerFactory loggerFactory)
         {
+            this.StreamReader = streamReader;
             this.HtmlDocumentBalans = htmlDocumentBalans;
             this.HtmlDocumentProfitLoss = htmlDocumentProfitLoss;
             this.Logger = loggerFactory.CreateLogger<GeneralLedgerAccountExtractor>();
@@ -19,11 +21,16 @@ namespace Integration.Extract
 
         public HtmlDocument HtmlDocumentBalans { get; set; }
         public HtmlDocument HtmlDocumentProfitLoss { get; set; }
+        public StreamReader StreamReader { get; set; }
 
         public ILogger<GeneralLedgerAccountExtractor> Logger { get; set; }
 
         public MarGeneralLedgerAccount[] Execute()
         {
+            //var ser = new System.Xml.Serialization.XmlSerializer(typeof(MarGeneralLedgerAccounts));
+
+            //return ((MarGeneralLedgerAccounts)ser.Deserialize(StreamReader)).marGeneralLedgerAccount.Select(x => x).ToArray();
+
             var marGeneralLedgerAccounts = this.ExtractItems(this.HtmlDocumentBalans, "Balans");
             marGeneralLedgerAccounts.AddRange(this.ExtractItems(this.HtmlDocumentProfitLoss, "Profit Loss"));
 
