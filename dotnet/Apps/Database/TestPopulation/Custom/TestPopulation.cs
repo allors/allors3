@@ -442,6 +442,11 @@ namespace Allors
                 .WithExcludeRgsUitbr5(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithGeneralLedgerAccount(BVorDebHad)
+                .WithInternalOrganisation(dutchInternalOrganisation)
+                .Build();
+
             var BVorOvaVof = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BVorOvaVof")
                 .WithSortCode("G.LA")
@@ -457,6 +462,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsUseWithWoco(true)
+                .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithGeneralLedgerAccount(BVorOvaVof)
+                .WithInternalOrganisation(dutchInternalOrganisation)
                 .Build();
 
             var BEiv = new GeneralLedgerAccountTypeBuilder(this.Transaction)
@@ -480,6 +490,11 @@ namespace Allors
                 .WithExcludeRgsBV(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BEivOreRvh)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
+
             var BEivKapOnd = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BEivKapOnd")
                 .WithSortCode("J.M.A")
@@ -495,6 +510,11 @@ namespace Allors
                 .WithIsRgsExtended(true)
                 .WithIsRgsUseWithEZ(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BEivKapOnd)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
 
             var BSch = new GeneralLedgerAccountTypeBuilder(this.Transaction)
               .WithDescription("Kortlopende schulden")
@@ -518,6 +538,11 @@ namespace Allors
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchCreHac)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
+
             var BVorVbkTvo = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BVorVbkTvo")
                 .WithSortCode("G.G.B")
@@ -533,6 +558,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BVorVbkTvo)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
 
             var BSchBepBtw = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtw")
@@ -551,6 +581,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtw)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
 
             BVorVbkTvo.CounterPartAccount = BSchBepBtw;
 
@@ -572,6 +607,11 @@ namespace Allors
                 .WithExcludeRgsNivo5(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtwOla)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
+
             var BSchBepBtwOlv = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwOlv")
                 .WithSortCode("M.K.A030")
@@ -589,6 +629,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsNivo5(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtwOlv)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
 
             var BSchBepBtwOlo = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwOlo")
@@ -608,6 +653,11 @@ namespace Allors
                 .WithExcludeRgsNivo5(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtwOlo)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
+
             var BSchBepBtwOop = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwOop")
                 .WithSortCode("M.K.A050")
@@ -625,6 +675,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsNivo5(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtwOop)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
 
             var BSchBepBtwOlw = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwOlw")
@@ -644,6 +699,11 @@ namespace Allors
                 .WithExcludeRgsNivo5(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtwOlw)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
+
             var BSchBepBtwOlb = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwOlb")
                 .WithSortCode("M.K.A070")
@@ -661,6 +721,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsNivo5(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtwOlb)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
 
             var BSchBepBtwOlu = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwOlu")
@@ -680,6 +745,11 @@ namespace Allors
                 .WithExcludeRgsNivo5(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+               .WithGeneralLedgerAccount(BSchBepBtwOlu)
+               .WithInternalOrganisation(dutchInternalOrganisation)
+               .Build();
+
             var BSchBepBtwVoo = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwVoo")
                 .WithSortCode("M.K.A090")
@@ -698,6 +768,11 @@ namespace Allors
                 .WithExcludeRgsNivo5(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+              .WithGeneralLedgerAccount(BSchBepBtwVoo)
+              .WithInternalOrganisation(dutchInternalOrganisation)
+              .Build();
+
             var BSchBepBtwSda = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwSda")
                 .WithSortCode("M.K.A120")
@@ -714,6 +789,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsNivo5(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BSchBepBtwSda)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var BSchBepBtwAfo = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchBepBtwAfo")
@@ -733,6 +813,11 @@ namespace Allors
                 .WithExcludeRgsNivo5(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BSchBepBtwAfo)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var BSchOpaNto = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchOpaNto")
                 .WithSortCode("M.Q.A")
@@ -748,6 +833,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BSchOpaNto)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var BSchOpaVgo = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchOpaVgo")
@@ -765,6 +855,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BSchOpaVgo)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var BSchTusTov = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchTusTov")
                 .WithSortCode("M.R.J")
@@ -778,6 +873,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsWoco(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BSchTusTov)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var WBed = new GeneralLedgerAccountTypeBuilder(this.Transaction)
                 .WithDescription("Overige bedrijfskosten")
@@ -800,6 +900,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WBedVkkOvr)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WBedAdlBet = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WBedAdlBet")
                 .WithSortCode("W.L.H")
@@ -816,6 +921,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WBedAdlBet)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var WNerNewNew = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WNerNewNew")
@@ -834,6 +944,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WNerNewNew)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var BLimKasKas = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BLimKasKas")
                 .WithSortCode("I.A010")
@@ -851,6 +966,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BLimKasKas)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var Blim = new GeneralLedgerAccountTypeBuilder(this.Transaction)
                 .WithDescription("Liquide middelen")
@@ -874,6 +994,11 @@ namespace Allors
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BLimBanRba)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WOmz = new GeneralLedgerAccountTypeBuilder(this.Transaction)
                 .WithDescription("Netto-omzet")
                 .Build();
@@ -895,6 +1020,11 @@ namespace Allors
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOlh)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WOmzNopOlv = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WOmzNopOlv")
                 .WithSortCode("O.A020")
@@ -912,6 +1042,11 @@ namespace Allors
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOlv)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WOmzNopOlo = new GeneralLedgerAccountBuilder(this.Transaction)
              .WithReferenceCode("WOmzNopOlo")
              .WithSortCode("O.A030")
@@ -926,6 +1061,11 @@ namespace Allors
              .WithIsRgsBase(true)
              .WithIsRgsExtended(true)
              .WithIsRgsUseWithEZ(true)
+             .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOlo)
+             .WithInternalOrganisation(dutchInternalOrganisation)
              .Build();
 
             var WOmzNopOpg = new GeneralLedgerAccountBuilder(this.Transaction)
@@ -944,6 +1084,11 @@ namespace Allors
              .WithIsRgsUseWithEZ(true)
              .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOpg)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WOmzNopOlg = new GeneralLedgerAccountBuilder(this.Transaction)
              .WithReferenceCode("WOmzNopOlg")
              .WithSortCode("O.A050")
@@ -958,6 +1103,11 @@ namespace Allors
              .WithIsRgsBase(true)
              .WithIsRgsExtended(true)
              .WithIsRgsUseWithEZ(true)
+             .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOlg)
+             .WithInternalOrganisation(dutchInternalOrganisation)
              .Build();
 
             var WOmzNopOll = new GeneralLedgerAccountBuilder(this.Transaction)
@@ -975,6 +1125,11 @@ namespace Allors
              .WithIsRgsUseWithEZ(true)
              .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOll)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WOmzNopOln = new GeneralLedgerAccountBuilder(this.Transaction)
              .WithReferenceCode("WOmzNopOln")
              .WithSortCode("O.A070")
@@ -988,6 +1143,11 @@ namespace Allors
              .WithIsRgsBase(true)
              .WithIsRgsExtended(true)
              .WithIsRgsUseWithEZ(true)
+             .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOln)
+             .WithInternalOrganisation(dutchInternalOrganisation)
              .Build();
 
             var WOmzNopOli = new GeneralLedgerAccountBuilder(this.Transaction)
@@ -1006,6 +1166,11 @@ namespace Allors
              .WithIsRgsUseWithZzp(true)
              .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopOli)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var BVorOvaNtf = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BVorOvaNtf")
                 .WithSortCode("G.L.C")
@@ -1021,6 +1186,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BVorOvaNtf)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var WBedAdlBov = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WBedAdlBov")
@@ -1038,6 +1208,11 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WBedAdlBov)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WBedAdlVal = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WBedAdlVal")
                 .WithSortCode("W.L.F")
@@ -1054,10 +1229,14 @@ namespace Allors
                 .WithIsRgsUseWithWoco(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WBedAdlVal)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WKpr = new GeneralLedgerAccountTypeBuilder(this.Transaction)
              .WithDescription("Kostprijs van de omzet")
              .Build();
-
 
             var WKprBtkBed = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WKprBtkBed")
@@ -1074,6 +1253,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithZzp(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WKprBtkBed)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var WKprBtkBec = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WKprBtkBec")
@@ -1092,6 +1276,11 @@ namespace Allors
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WKprBtkBec)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WOmzNodOdg = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WOmzNodOdg")
                 .WithSortCode("O.C050")
@@ -1106,6 +1295,11 @@ namespace Allors
                 .WithIsRgsExtended(true)
                 .WithIsRgsUseWithEZ(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNodOdg)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             var WOmzNopNod = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WOmzNopNod")
@@ -1122,6 +1316,11 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithZzp(true)
                 .Build();
+
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(WOmzNopNod)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
 
             this.Transaction.Derive();
 
