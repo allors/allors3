@@ -414,6 +414,11 @@ namespace Allors
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
 
+            _ = new OrganisationGlAccountBuilder(this.Transaction)
+                .WithGeneralLedgerAccount(BVrdHanVoo)
+                .WithInternalOrganisation(dutchInternalOrganisation)
+                .Build();
+
             var Bvor = new GeneralLedgerAccountTypeBuilder(this.Transaction)
                 .WithDescription("Vorderingen")
                 .Build();
