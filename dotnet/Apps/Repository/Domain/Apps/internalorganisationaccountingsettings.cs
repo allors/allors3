@@ -188,6 +188,14 @@ namespace Allors.Repository
         public GeneralLedgerAccount RetainedEarnings { get; set; }
 
         #region Allors
+        [Id("dedaab4a-2309-4afb-ad46-530336a2adc3")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount NetIncome { get; set; }
+
+        #region Allors
         [Id("35f7a894-704e-48ec-93e9-1a531fcb2a07")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
