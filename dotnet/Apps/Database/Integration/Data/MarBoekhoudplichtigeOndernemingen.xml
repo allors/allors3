@@ -3,7 +3,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>1</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>EIGEN VERMOGEN, VOORZIENINGEN VOOR RISICO'S EN KOSTEN EN SCHULDEN OP MEER DAN ÉÉN JAAR</Name>
+		<Name>Eigen vermogen, voorzieningen voor risico's en kosten en schulden op meer dan één jaar</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -12,16 +12,34 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>10</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Fondsen van de vereniging of stichting</Name>
+		<Name>Kapitaal</Name>
 		<Passiva>I</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
+		<ReferenceCode>100</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Geplaatst kapitaal</Name>
+		<Passiva>I.A</Passiva>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>101</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Niet opgevraagd kapitaal </Name>
+		<Passiva>I.B</Passiva>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
 		<ReferenceCode>11</ReferenceCode>
 		<CounterPartAccount/>
-		<Name/>
+		<Name>Uitgiftepremies</Name>
 		<Passiva>II</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -48,7 +66,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>121</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Herwaarderingsmeerwaarden op materiële vaste activa</Name>
+		<Name>Herwaarderingsmeerwaarden op materiële vaste activa </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -57,7 +75,16 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>122</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Herwaarderingsmeerwaarden op financiële vaste activa</Name>
+		<Name>Herwaarderingsmeerwaarden op financiële vaste activa </Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>123</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Herwaarderingsmeerwaarden op voorraden </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -66,7 +93,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>124</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming van waardeverminderingen op geldbeleggingen</Name>
+		<Name>Terugneming van waardeverminderingen op geldbeleggingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -75,7 +102,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>13</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bestemde fondsen en andere reserves</Name>
+		<Name>Reserves</Name>
 		<Passiva>IV</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -84,8 +111,8 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>130</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Fondsen bestemd voor investeringen</Name>
-		<Passiva/>
+		<Name>Wettelijke reserve</Name>
+		<Passiva>IV.A</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
@@ -93,26 +120,44 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>131</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Fondsen bestemd voor sociaal passief</Name>
-		<Passiva/>
+		<Name>Onbeschikbare reserves</Name>
+		<Passiva>IV.B</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
+		<ReferenceCode>1310</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Reserve voor eigen aandelen</Name>
+		<Passiva>IV.B.1</Passiva>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1311</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Andere onbeschikbare reserves</Name>
+		<Passiva>IV.B.2</Passiva>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
 		<ReferenceCode>132</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Belastingvrije reserves</Name>
-		<Passiva/>
-		<Activa> </Activa>
+		<Passiva>IV.C</Passiva>
+		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>139</ReferenceCode>
+		<ReferenceCode>133</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Andere bestemde fondsen en andere reserves</Name>
-		<Passiva/>
+		<Name>Beschikbare reserves</Name>
+		<Passiva>IV.D</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
@@ -120,7 +165,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>14</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overgedragen resultaat</Name>
+		<Name>Overgedragen winst of Overgedragen verlies </Name>
 		<Passiva>V</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -176,24 +221,15 @@
 		<CounterPartAccount/>
 		<Name>Voorzieningen voor milieuverplichtingen</Name>
 		<Passiva>VII.A.4</Passiva>
-		<Activa> </Activa>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>164-165</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Voorzieningen voor overige risico's en kosten</Name>
-		<Passiva>VII.A.5</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>167</ReferenceCode>
+		<ReferenceCode>164 tot 165</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Voorzieningen voor terug te betalen subsidies, legaten en schenkingen met terugnemingsrecht</Name>
-		<Passiva>VII.B</Passiva>
+		<Name>Voorzieningen voor overige risico's en kosten </Name>
+		<Passiva>VII.A.5</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
@@ -202,15 +238,60 @@
 		<ReferenceCode>168</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Uitgestelde belastingen</Name>
-		<Passiva/>
-		<Activa> </Activa>
+		<Passiva>VII.B</Passiva>
+		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
+		<ReferenceCode>1680</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Uitgestelde belastingen op kapitaalsubsidies</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1681</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Uitgestelde belastingen op gerealiseerde meerwaarden op immateriële vaste activa</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1682</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Uitgestelde belastingen op gerealiseerde meerwaarden op materiële vaste activa</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1687</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Uitgestelde belastingen op gerealiseerde meerwaarden op effecten die zijn uitgegeven door de Belgische openbare sector</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1688</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Buitenlandse uitgestelde belastingen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
 		<ReferenceCode>17</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Schulden op meer dan een jaar</Name>
+		<Name>Schulden op meer dan één jaar</Name>
 		<Passiva>VIII</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -226,13 +307,49 @@
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
+		<ReferenceCode>1700</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Converteerbaar</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1701</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Niet converteerbaar</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
 		<ReferenceCode>171</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Niet achtergestelde obligatieleningen</Name>
+		<Name>Niet-achtergestelde obligatieleningen</Name>
 		<Passiva>VIII.A.2</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1710</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Converteerbaar</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>1711</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Niet converteerbaar</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>172</ReferenceCode>
@@ -309,7 +426,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>1751</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Te betalen wissels</Name>
+		<Name>Te betalen wissel</Name>
 		<Passiva>VIII.B.2</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -327,9 +444,9 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>178</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Borgtochten in contanten</Name>
-		<Passiva/>
-		<Activa> </Activa>
+		<Name>Borgtochten ontvangen in contanten</Name>
+		<Passiva>VIII.D</Passiva>
+		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
@@ -343,27 +460,18 @@
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>1790</ReferenceCode>
+		<ReferenceCode>19</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Rentedragend</Name>
-		<Passiva>VIII.D.1</Passiva>
+		<Name>Voorschot aan de vennoten op de verdeling van het netto-actief </Name>
+		<Passiva>VIbis.</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
-		<Nivo>4</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>1791</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Niet-rentedragend of gekoppeld aan een abnormaal lage rente</Name>
-		<Passiva>VIII.D.2</Passiva>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>4</Nivo>
+		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>OPRICHTINGSKOSTEN, VASTE ACTIVA EN VORDERINGEN OP MEER DAN 1 JAAR</Name>
+		<Name>Oprichtingskosten, vaste activa en vorderingen op meer dan één jaar</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -372,7 +480,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>20</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Oprichtingskosten</Name>
+		<Name>Oprichtingskosten </Name>
 		<Passiva/>
 		<Activa>I</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -381,7 +489,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>200</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Kosten van oprichting</Name>
+		<Name>Kosten van oprichting en kapitaalverhoging</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -390,7 +498,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>201</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Kosten bij uitgifte van leningen</Name>
+		<Name>Kosten bij uitgifte van leningen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -400,6 +508,15 @@
 		<ReferenceCode>202</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Overige oprichtingskosten</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>203</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>[...]</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -435,7 +552,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>211</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Concessies, octrooien, licenties, knowhow, merken en soortgelijke rechten</Name>
+		<Name>Concessies, octrooien, licenties, know-how, merken en soortgelijke rechten</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -462,7 +579,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>22</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terreinen en gebouwen</Name>
+		<Name>Terreinen en gebouwen </Name>
 		<Passiva/>
 		<Activa>III.A</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -489,7 +606,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>222</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bebouwde terreinen</Name>
+		<Name>Bebouwde terreinen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -507,7 +624,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>23</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Installaties, machines en uitrusting</Name>
+		<Name>Installaties, machines en uitrusting </Name>
 		<Passiva/>
 		<Activa>III.B</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -516,7 +633,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>24</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Meubilair en rollend materieel</Name>
+		<Name>Meubilair en rollend materieel </Name>
 		<Passiva/>
 		<Activa>III.C</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -525,7 +642,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>25</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Vaste activa in leasing of op grond van soortgelijke rechten</Name>
+		<Name>Vaste activa in leasing of op grond van een soortgelijk recht </Name>
 		<Passiva/>
 		<Activa>III.D</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -561,7 +678,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>26</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overige materiële vaste activa</Name>
+		<Name>Overige materiële vaste activa </Name>
 		<Passiva/>
 		<Activa>III.E</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -570,7 +687,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>27</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Materiële activa in aanbouw en vooruitbetalingen</Name>
+		<Name>Vaste activa in aanbouw en vooruitbetalingen </Name>
 		<Passiva/>
 		<Activa>III.F</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -588,7 +705,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>280</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Deelnemingen in verbonden vennootschappen</Name>
+		<Name>Deelnemingen in verbonden ondernemingen</Name>
 		<Passiva/>
 		<Activa>IV.A.1</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -606,7 +723,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2801</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Nog te storten bedragen</Name>
+		<Name>Nog te storten bedragen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -624,7 +741,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2809</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -633,7 +750,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>281</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Vorderingen op verbonden entiteiten</Name>
+		<Name>Vorderingen op verbonden ondernemingen</Name>
 		<Passiva/>
 		<Activa>IV.A.2</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -678,7 +795,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2819</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -687,7 +804,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>282</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Deelnemingen in vennootschappen waarmee een deelnemingsverhouding bestaat</Name>
+		<Name>Deelnemingen in ondernemingen waarmee een deelnemingsverhouding bestaat</Name>
 		<Passiva/>
 		<Activa>IV.B.1</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -705,7 +822,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2821</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Nog te storten bedragen</Name>
+		<Name>Nog te storten bedragen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -723,7 +840,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2829</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -732,7 +849,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>283</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Vorderingen op vennootschappen waarmee een deelnemingsverhouding bestaat</Name>
+		<Name>Vorderingen op ondernemingen waarmee een deelnemingsverhouding bestaat</Name>
 		<Passiva/>
 		<Activa>IV.B.2</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -777,7 +894,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2839</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -804,7 +921,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2841</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Nog te storten bedragen</Name>
+		<Name>Nog te storten bedragen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -822,7 +939,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2849</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -876,7 +993,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2859</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -894,7 +1011,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>29</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Vorderingen op meer dan 1 jaar</Name>
+		<Name>Vorderingen op meer dan één jaar</Name>
 		<Passiva/>
 		<Activa>V</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -905,7 +1022,7 @@
 		<CounterPartAccount/>
 		<Name>Handelsvorderingen</Name>
 		<Passiva/>
-		<Activa>V.A</Activa>
+		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
@@ -930,7 +1047,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2906</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Vooruitbetalingen</Name>
+		<Name>Vooruitbetalingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -948,7 +1065,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2909</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -982,25 +1099,7 @@
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>2912</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Te ontvangen subsidies</Name>
-		<Passiva/>
-		<Activa> </Activa>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>4</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>2915</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Niet-rentedragende vorderingen of gekoppeld aan een abnormaal lage rente</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>4</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>2916</ReferenceCode>
+		<ReferenceCode>2917</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Dubieuze debiteuren</Name>
 		<Passiva/>
@@ -1011,7 +1110,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>2919</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1020,7 +1119,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>3</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>VOORRADEN EN BESTELLINGEN IN UITVOERING</Name>
+		<Name>Voorraden en bestellingen in uitvoering</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1038,7 +1137,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>300</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde </Name>
+		<Name>Aanschaffingswaarde</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1047,7 +1146,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>309</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1056,7 +1155,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>31</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Hulpstoffen</Name>
+		<Name>Hulpstoffen </Name>
 		<Passiva/>
 		<Activa>VI.A.1</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1065,7 +1164,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>310</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde</Name>
+		<Name>Aanschaffingswaarde </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1074,7 +1173,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>319</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waarde verminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1083,16 +1182,16 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>32</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Goederen in bewerking</Name>
+		<Name>Goederen in bewerking </Name>
 		<Passiva/>
-		<Activa>VI.A.2</Activa>
+		<Activa>IV.A.2</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>320</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde</Name>
+		<Name>Aanschaffingswaarde </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1101,7 +1200,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>329</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1119,7 +1218,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>330</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde</Name>
+		<Name>Aanschaffingswaarde </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1128,7 +1227,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>339</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1137,7 +1236,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>34</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Handelsgoederen</Name>
+		<Name>Handelsgoederen </Name>
 		<Passiva/>
 		<Activa>VI.A.4</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1146,7 +1245,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>340</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde</Name>
+		<Name>Aanschaffingswaarde </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1155,7 +1254,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>349</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1164,7 +1263,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>35</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Onroerende goederen bestemd voor verkoop</Name>
+		<Name>Onroerende goederen bestemd voor verkoop </Name>
 		<Passiva/>
 		<Activa>VI.A.5</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1173,7 +1272,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>350</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde</Name>
+		<Name>Aanschaffingswaarde </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1182,7 +1281,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>359</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1209,7 +1308,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>369</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1218,7 +1317,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>37</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bestellingen in uitvoering</Name>
+		<Name>Bestellingen in uitvoering </Name>
 		<Passiva/>
 		<Activa>VI.B</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1245,7 +1344,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>379</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1254,7 +1353,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>4</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>VORDERINGEN EN SCHULDEN OP TEN HOOGSTE ÉÉN JAAR</Name>
+		<Name>Vorderingen en schulden op ten hoogste één jaar</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1273,7 +1372,7 @@
 		<ReferenceCode>400</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Handelsdebiteuren</Name>
-		<Passiva>IX.C.1(15)</Passiva>
+		<Passiva>IX.C.1 (14)</Passiva>
 		<Activa>VII.A</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
@@ -1290,7 +1389,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>404</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Te innen opbrengsten</Name>
+		<Name>Te innen opbrengsten </Name>
 		<Passiva/>
 		<Activa>VII.A</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1299,7 +1398,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>406</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Vooruitbetalingen</Name>
+		<Name>Vooruitbetalingen </Name>
 		<Passiva/>
 		<Activa>VII.A</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1317,7 +1416,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>409</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa>VII.A</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1326,7 +1425,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>41</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overige vorderingen</Name>
+		<Name>Overige vorderingen </Name>
 		<Passiva/>
 		<Activa>VII.B</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1335,7 +1434,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>410</ReferenceCode>
 		<CounterPartAccount/>
-		<Name/>
+		<Name>Opgevraagd, niet gestort kapitaal</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1369,7 +1468,7 @@
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>4120 tot 4124</ReferenceCode>
+		<ReferenceCode>4125 tot 4127</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Andere Belgische belastingen</Name>
 		<Passiva/>
@@ -1387,27 +1486,9 @@
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>413</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Te ontvangen subsidies</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
 		<ReferenceCode>414</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Te innen opbrengsten</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>415</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Niet-rentedragende vorderingen of gekoppeld aan een abnormaal lage rente</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1443,7 +1524,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>419</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1452,8 +1533,8 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>42</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Schulden op meer dan één jaar die binnen het jaar vervallen</Name>
-		<Passiva>IX. A</Passiva>
+		<Name>Schulden op meer dan één jaar die binnen het jaar vervallen  (zelfde onderverdeling als 17)</Name>
+		<Passiva>IX.A</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
@@ -1470,7 +1551,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>430</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Kredietinstellingen – Leningen op rekening met vaste termijn</Name>
+		<Name>Kredietinstellingen - Leningen op rekening met vaste termijn</Name>
 		<Passiva>IX.B.1</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1479,7 +1560,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>431</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Kredietinstellingen – Promessen</Name>
+		<Name>Kredietinstellingen - Promessen</Name>
 		<Passiva>IX.B.1</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1488,7 +1569,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>432</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Kredietinstellingen – Acceptkredieten</Name>
+		<Name>Kredietinstellingen - Acceptkredieten</Name>
 		<Passiva>IX.B.1</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1497,7 +1578,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>433</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Kredietinstellingen – Schulden op rekening-courant</Name>
+		<Name>Kredietinstellingen - Schulden in rekening-courant </Name>
 		<Passiva>IX.B.1</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1526,7 +1607,7 @@
 		<CounterPartAccount/>
 		<Name>Leveranciers</Name>
 		<Passiva>IX.C.1</Passiva>
-		<Activa>VII.A(21)</Activa>
+		<Activa>VII.A (18)</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
@@ -1542,7 +1623,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>444</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Te ontvangen facturen</Name>
+		<Name>Te ontvangen facturen </Name>
 		<Passiva>IX.C.1</Passiva>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1569,16 +1650,16 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>4500 tot 4504</ReferenceCode>
 		<CounterPartAccount/>
-		<Name/>
+		<Name>Belgische winstbelastingen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>4505 tot 4507 </ReferenceCode>
+		<ReferenceCode>4505 tot 4507</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Andere Belgische belastingen</Name>
+		<Name>Andere Belgische belastingen en taksen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1587,7 +1668,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>4508</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Buitenlandse belastingen</Name>
+		<Name>Buitenlandse belastingen en taksen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1614,16 +1695,16 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>4520 tot 4524</ReferenceCode>
 		<CounterPartAccount/>
-		<Name/>
+		<Name>Belgische winstbelastingen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>4525 tot 4527 </ReferenceCode>
+		<ReferenceCode>4525 tot 4527</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Andere Belgische belastingen</Name>
+		<Name>Andere Belgische belastingen en taksen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1632,7 +1713,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>4528</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Buitenlandse belastingen</Name>
+		<Name>Buitenlandse belastingen en taksen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1687,17 +1768,62 @@
 		<ReferenceCode>46</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Vooruitbetalingen op bestellingen</Name>
-		<Passiva/>
-		<Activa> </Activa>
+		<Passiva>IX.D</Passiva>
+		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>47</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Schulden uit de bestemming van het resultaat</Name>
+		<Passiva>IX.F</Passiva>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>2</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>470</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Dividenden en tantièmes over vorige boekjaren</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>471</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Dividenden over het boekjaar</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>472</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Tantièmes over het boekjaar</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>473</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Andere rechthebbenden</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>48</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Diverse schulden</Name>
-		<Passiva>IX.F.</Passiva>
-		<Activa> </Activa>
+		<Passiva>IX.F</Passiva>
+		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
@@ -1705,15 +1831,6 @@
 		<ReferenceCode>480</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Vervallen obligaties en coupons</Name>
-		<Passiva>IX.F.1</Passiva>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>483</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Terug te betalen subsidies</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1723,7 +1840,7 @@
 		<ReferenceCode>488</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Borgtochten ontvangen in contanten</Name>
-		<Passiva>IX.F.1</Passiva>
+		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
@@ -1736,24 +1853,6 @@
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>4890</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Rentedragend</Name>
-		<Passiva>IX.F.2</Passiva>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>4</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>4891</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Niet-rentedragend of gekoppeld aan een abnormaal lage rente</Name>
-		<Passiva>IX.F.3</Passiva>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>49</ReferenceCode>
@@ -1804,7 +1903,7 @@
 		<ReferenceCode>499</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Wachtrekeningen</Name>
-		<Passiva>X</Passiva>
+		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
@@ -1812,7 +1911,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>5</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>GELDBELEGGINGEN EN LIQUIDE MIDDELEN</Name>
+		<Name>Geldbeleggingen en liquide middelen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1821,36 +1920,18 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>50</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geldbeleggingen andere dan aandelen, vastrentende effecten en termijndeposito's</Name>
+		<Name>Eigen aandelen</Name>
 		<Passiva/>
-		<Activa>VIII</Activa>
+		<Activa>VIII.A</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>500</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>509</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Balans</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
 		<ReferenceCode>51</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aandelen</Name>
+		<Name>Aandelen en geldbeleggingen andere dan vastrentende beleggingen</Name>
 		<Passiva/>
-		<Activa>1[VIII]1</Activa>
+		<Activa>VIII.B</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
@@ -1864,29 +1945,74 @@
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
+		<ReferenceCode>5100</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Aandelen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>5101</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Geldbeleggingen andere dan vastrentende beleggingen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
 		<ReferenceCode>511</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Nog te storten bedragen</Name>
+		<Name>Niet-opgevraagde bedragen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
+		<ReferenceCode>5110</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Aandelen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
 		<ReferenceCode>519</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>5190</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Aandelen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>5191</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Geldbeleggingen andere dan vastrentende beleggingen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Balans</BalanceType>
+		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>52</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Vastrentende effecten</Name>
 		<Passiva/>
-		<Activa>1[VIII]1</Activa>
+		<Activa>VII.B</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
@@ -1902,7 +2028,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>529</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1913,14 +2039,14 @@
 		<CounterPartAccount/>
 		<Name>Termijndeposito's</Name>
 		<Passiva/>
-		<Activa>1[VIII]1</Activa>
+		<Activa>VIII.B</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>530</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Op meer dan één jaar</Name>
+		<Name>Op meer dan een jaar</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1929,7 +2055,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>531</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Op meer dan een maand en op ten hoogste één jaar</Name>
+		<Name>Op meer dan een maand en op ten hoogste een jaar</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1938,7 +2064,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>532</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Op ten hoogste één maand</Name>
+		<Name>Op ten hoogste een maand</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1947,7 +2073,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>539</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1956,7 +2082,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>54</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Te incasseren vervallen waarden</Name>
+		<Name>Te incasseren vervallen waarden </Name>
 		<Passiva/>
 		<Activa>IX</Activa>
 		<BalanceType>Balans</BalanceType>
@@ -1965,16 +2091,16 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>55</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Kredietinstellingen</Name>
+		<Name>Kredietinstellingen </Name>
 		<Passiva/>
 		<Activa>IX</Activa>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>550 tot 559 </ReferenceCode>
+		<ReferenceCode>550 tot 559</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Rekeningen geopend bij diverse instellingen, onder te verdelen in:</Name>
+		<Name>Rekeningen geopend bij verschillende instellingen, onder te verdelen in</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1983,7 +2109,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>0</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Rekeningen-courant</Name>
+		<Name>Rekening-courant</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -1992,7 +2118,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>1</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Uitgeschreven cheques</Name>
+		<Name>Uitgeschreven cheques </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -2001,7 +2127,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>9</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geboekte waardeverminderingen</Name>
+		<Name>Geboekte waardeverminderingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Balans</BalanceType>
@@ -2017,11 +2143,11 @@
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>570 tot 577 </ReferenceCode>
+		<ReferenceCode>570 tot 577</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Kassen-contanten</Name>
 		<Passiva/>
-		<Activa>IX</Activa>
+		<Activa/>
 		<BalanceType>Balans</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
@@ -2046,7 +2172,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>KOSTEN</Name>
+		<Name>Kosten</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2055,7 +2181,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>60</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Handelsgoederen, grond- en hulpstoffen</Name>
+		<Name>Handelsgoederen, grond- en hulpstoffen </Name>
 		<Passiva/>
 		<Activa>II.A</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2118,7 +2244,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>608</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Ontvangen kortingen, ristorno's en rabatten</Name>
+		<Name>Ontvangen kortingen, ristorno's en rabatten  </Name>
 		<Passiva/>
 		<Activa>II.A.1</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2127,7 +2253,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>609</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Voorraadwijzigingen</Name>
+		<Name>Voorraadwijzigingen </Name>
 		<Passiva/>
 		<Activa>II.A.2</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2163,7 +2289,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6095</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>van gekochte onroerende goederen, bestemd voor verkoop</Name>
+		<Name>van gekochte onroerende goederen bestemd voor verkoop</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2181,7 +2307,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>617</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Uitzendpersoneel en personen die ter beschikking worden gesteld van de vereniging of stichting</Name>
+		<Name>Uitzendkrachten en personen ter beschikking gesteld van de onderneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2190,7 +2316,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>618</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bezoldigingen, premies voor buitenwettelijke verzekeringen, ouderdoms- en overlevingspensioenen van bestuurders die niet worden toegekend krachtens een arbeidscontract</Name>
+		<Name>Bezoldigingen, premies voor buitenwettelijke verzekeringen, ouderdoms- en overlevingspensioenen van bestuurders, zaakvoerders en werkende vennoten, die niet worden toegekend uit hoofde van een arbeidsovereenkomst</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2217,7 +2343,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6200</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bestuurders of zaakvoerders</Name>
+		<Name>Bestuurders of zaakvoerder </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2271,7 +2397,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>622</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Werkgeverspremies voor buitenwettelijke verzekeringen</Name>
+		<Name>Werkgeverspremies voor bovenwettelijke verzekeringen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2298,7 +2424,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6240</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bestuurders of zaakvoerders</Name>
+		<Name>Bestuurders of zaakvoerders </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2316,7 +2442,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>63</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Afschrijvingen, waardeverminderingen en voorzieningen voor risico's en kosten</Name>
+		<Name>Afschrijvingen, waardeverminderingen en voorzieningen voor risico's </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2325,7 +2451,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>630</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Afschrijvingen en waardeverminderingen op vaste activa toevoeging</Name>
+		<Name>Afschrijvingen en waardeverminderingen op vaste activa-toevoeging</Name>
 		<Passiva/>
 		<Activa>II.D</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2397,7 +2523,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6311</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming</Name>
+		<Name>Terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2424,7 +2550,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6321</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming</Name>
+		<Name>Terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2433,7 +2559,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>633</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Waardeverminderingen op handelsvorderingen op meer dan één jaar</Name>
+		<Name>Waardeverminderingen op handelsvorderingen op meer dan een jaar</Name>
 		<Passiva/>
 		<Activa>II.E</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2451,7 +2577,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6331</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming</Name>
+		<Name>Terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2478,7 +2604,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6341</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming</Name>
+		<Name>Terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2505,7 +2631,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6351</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Besteding en terugneming</Name>
+		<Name>Besteding en terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2514,7 +2640,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>636</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Voorzieningen voor grote herstellingswerken en grote onderhoudswerken</Name>
+		<Name>Voorzieningen voor grote herstellingswerken en grote onderhoudswerken </Name>
 		<Passiva/>
 		<Activa>II.F</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2532,7 +2658,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6361</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Besteding en terugneming</Name>
+		<Name>Besteding en terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2559,7 +2685,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6371</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Besteding en terugneming</Name>
+		<Name>Besteding en terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2568,7 +2694,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>638</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Voorzieningen voor terug te betalen subsidies en legaten en voor schenkingen met terugnemingsrecht</Name>
+		<Name>Voorzieningen voor andere risico's en kosten</Name>
 		<Passiva/>
 		<Activa>II.F</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2586,20 +2712,11 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6381</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Besteding en terugneming</Name>
+		<Name>Besteding en terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>4</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>639</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Voorzieningen voor andere risico’s en kosten</Name>
-		<Passiva/>
-		<Activa>II.F</Activa>
-		<BalanceType>Profit Loss</BalanceType>
-		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>64</ReferenceCode>
@@ -2613,7 +2730,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>640</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bedrijfsbelastingen</Name>
+		<Name>Bedrijfsbelastingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2622,7 +2739,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>641</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Minderwaarden op de courante realisatie van materiële vaste activa</Name>
+		<Name>Minderwaarden op de courante realisatie van vaste activa</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2638,16 +2755,7 @@
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>643</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Schenkingen</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Profit Loss</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>644-648</ReferenceCode>
+		<ReferenceCode>643 tot 648</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Diverse bedrijfskosten</Name>
 		<Passiva/>
@@ -2658,7 +2766,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>649</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Als herstructureringskosten geactiveerde bedrijfskosten</Name>
+		<Name>Als herstructureringskosten geactiveerde bedrijfskosten </Name>
 		<Passiva/>
 		<Activa>II.H</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2694,7 +2802,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6501</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Afschrijving van kosten bij uitgifte van leningen en van disagio</Name>
+		<Name>Afschrijving van kosten bij uitgifte van leningen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2703,7 +2811,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6502</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geactiveerde intercalaire interesten</Name>
+		<Name>Geactiveerde intercalaire interesten </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2730,7 +2838,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6511</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming</Name>
+		<Name>Terugneming </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2739,7 +2847,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>652</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Minderwaarden op verwezenlijking van vlottende activa</Name>
+		<Name>Minderwaarden op de realisatie van vlottende activa</Name>
 		<Passiva/>
 		<Activa>V.C</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2757,7 +2865,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>654</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Wisselresultaten</Name>
+		<Name> Wisselresultaten  </Name>
 		<Passiva/>
 		<Activa>V.C</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2766,7 +2874,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>655</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Resultaten uit de omrekening van vreemde valuta</Name>
+		<Name>Resultaten uit de omrekening van vreemde valuta </Name>
 		<Passiva/>
 		<Activa>V.C</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2775,7 +2883,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>656</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Voorzieningen van financiële aard</Name>
+		<Name>Voorzieningen met financieel karakter</Name>
 		<Passiva/>
 		<Activa>V.C</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2784,7 +2892,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6560</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Toevoeging</Name>
+		<Name>Toevoegingen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2793,14 +2901,14 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6561</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Besteding en terugneming</Name>
+		<Name>Bestedingen en terugnemingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>657-658</ReferenceCode>
+		<ReferenceCode>657 tot 658</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Diverse financiële kosten</Name>
 		<Passiva/>
@@ -2811,7 +2919,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>659</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Als herstructureringskosten geactiveerde financiële kosten</Name>
+		<Name>Als herstructureringskosten geactiveerde financiële kosten </Name>
 		<Passiva/>
 		<Activa>V.C</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2829,7 +2937,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>660</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Niet-recurrente afschrijvingen en waardeverminderingen (toevoeging)</Name>
+		<Name>Niet-recurrente afschrijvingen en waardeverminderingen (toevoeging) </Name>
 		<Passiva/>
 		<Activa>II.I</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2865,7 +2973,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>661</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Waardeverminderingen op vaste financiële activa (toevoeging)</Name>
+		<Name>Waardeverminderingen op financiële vaste activa (toevoeging)</Name>
 		<Passiva/>
 		<Activa>V.D</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2883,7 +2991,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6620</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Voorzieningen voor niet-recurrente bedrijfsrisico’s en kosten</Name>
+		<Name>Voorzieningen voor niet-recurrente bedrijfsrisico's en -kosten</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2901,7 +3009,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>66201</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Bestedingen</Name>
+		<Name>Besteding </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2910,7 +3018,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6621</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Voorzieningen voor niet-recurrente financiële risico’s en kosten</Name>
+		<Name>Voorzieningen voor niet-recurrente financiële risico's en kosten</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2928,7 +3036,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>66211</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Besteding</Name>
+		<Name>Besteding </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2946,7 +3054,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6630</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Minderwaarden op de realisatie van immateriële en materiële vaste activa</Name>
+		<Name>Minderwaarde op de realisatie van immateriële en materiële vaste activa </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2955,7 +3063,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6631</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Minderwaarden op de realisatie van financiële vaste activa</Name>
+		<Name>Minderwaarde op de realisatie van immateriële en materiële vaste activa </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -2982,27 +3090,27 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6690</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Als herstructureringskosten geactiveerde niet-recurrente bedrijfskosten</Name>
+		<Name>Als herstructureringskosten geactiveerde niet-recurrente bedrijfskosten </Name>
 		<Passiva/>
-		<Activa>II.I </Activa>
+		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>6691</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Als herstructureingskosten geactiveerde niet-recurrente financiële kosten</Name>
+		<Name>Als herstructureringskosten geactiveerde niet-recurrente financiële kosten </Name>
 		<Passiva/>
-		<Activa>V.D</Activa>
+		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>67</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Belastingen</Name>
+		<Name>Belastingen op het resultaat</Name>
 		<Passiva/>
-		<Activa/>
+		<Activa>VIII.A</Activa>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
@@ -3090,7 +3198,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>673</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Buitenlandse belastingen op het resultaat van vorige boekjaren</Name>
+		<Name>Buitenlandse belastingen op het resultaat van vorige boekjaren </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3117,7 +3225,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>689</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overboeking naar de belastingvrije reserve</Name>
+		<Name>Overboeking naar de belastingvrije reserves</Name>
 		<Passiva/>
 		<Activa>X.B</Activa>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3126,7 +3234,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>69</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Resultaatverwerking</Name>
+		<Name>Resultatenverwerking </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3135,7 +3243,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>690</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overgedragen negatief resultaat van het vorig boekjaar</Name>
+		<Name>Overgedragen verlies van het vorige boekjaar</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3144,7 +3252,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>691</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overboeking naar de bestemde fondsen en andere reserves</Name>
+		<Name>Toevoeging aan het kapitaal en aan de uitgiftepremie</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3153,7 +3261,70 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>692</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Over te dragen positief resultaat</Name>
+		<Name>Toevoeging aan de reserves</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>6920</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Toevoeging aan de wettelijke reserve</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>6921</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Toevoeging aan de overige reserves</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>693</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Over te dragen winst</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>694</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Vergoeding van het kapitaal</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>695</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Bestuurders of zaakvoerders</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>696</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Werknemers</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>697</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Andere rechthebbenden</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3162,7 +3333,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>7</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>OPBRENGSTEN</Name>
+		<Name>Opbrengsten</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3172,13 +3343,13 @@
 		<ReferenceCode>70</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Omzet</Name>
-		<Passiva>LA</Passiva>
+		<Passiva>I.A</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>700-707</ReferenceCode>
+		<ReferenceCode>700 tot 707</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Verkopen en dienstprestaties</Name>
 		<Passiva/>
@@ -3189,7 +3360,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>708</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Toegekende kortingen, ristorno's en rabatten</Name>
+		<Name>Toegekende kortingen, ristorno's en rabatten  </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3198,7 +3369,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>71</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Wijziging in de voorraad en bestellingen in uitvoering</Name>
+		<Name>Wijzigingen in de voorraden en in de bestellingen in uitvoering</Name>
 		<Passiva>I.B</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3207,7 +3378,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>712</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>In de voorraad goederen in bewerking</Name>
+		<Name>in de voorraad goederen in bewerking</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3216,7 +3387,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>713</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>In de voorraad gereed product</Name>
+		<Name>in de voorraad gereed product</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3225,7 +3396,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>715</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>In de voorraad onroerende goederen bestemd voor verkoop</Name>
+		<Name>in de voorraad onroerende goederen bestemd voor verkoop</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3234,7 +3405,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>717</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>In de bestellingen in uitvoering</Name>
+		<Name>in de bestellingen in uitvoering</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3243,7 +3414,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>7170</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Aanschaffingswaarde</Name>
+		<Name>Aanschaffingswaarde </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3261,62 +3432,17 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>72</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Geproduceerde vaste activa I.C</Name>
-		<Passiva/>
+		<Name>Geproduceerde vaste activa</Name>
+		<Passiva>I.C</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>2</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>73</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Lidgeld, schenkingen, legaten en subsidies</Name>
-		<Passiva>I.D</Passiva>
-		<Activa/>
-		<BalanceType>Profit Loss</BalanceType>
-		<Nivo>2</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>730</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Lidgelden</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Profit Loss</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>731</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Schenkingen</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Profit Loss</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>732</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Legaten</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Profit Loss</BalanceType>
-		<Nivo>3</Nivo>
-	</MarGeneralLedgerAccount>
-	<MarGeneralLedgerAccount>
-		<ReferenceCode>733</ReferenceCode>
-		<CounterPartAccount/>
-		<Name>Subsidies</Name>
-		<Passiva/>
-		<Activa/>
-		<BalanceType>Profit Loss</BalanceType>
-		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>74</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overige bedrijfsopbrengsten</Name>
-		<Passiva>I.E</Passiva>
+		<Name>Andere bedrijfsopbrengsten</Name>
+		<Passiva>I.D</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>2</Nivo>
@@ -3324,7 +3450,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>740</ReferenceCode>
 		<CounterPartAccount/>
-		<Name/>
+		<Name>Bedrijfssubsidies en compenserende bedragen</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3349,7 +3475,7 @@
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>743-749</ReferenceCode>
+		<ReferenceCode>743 tot 749</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Diverse bedrijfsopbrengsten</Name>
 		<Passiva/>
@@ -3361,7 +3487,7 @@
 		<ReferenceCode>75</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Financiële opbrengsten</Name>
-		<Passiva>I.E</Passiva>
+		<Passiva>IV</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>2</Nivo>
@@ -3387,8 +3513,8 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>752</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Meerwaarden op de realisatie van vlottende activa</Name>
-		<Passiva>IV.B</Passiva>
+		<Name>Meerwaarden op de [...] realisatie van vlottende activa </Name>
+		<Passiva>IV.C</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
@@ -3396,8 +3522,8 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>753</ReferenceCode>
 		<CounterPartAccount/>
-		<Name/>
-		<Passiva/>
+		<Name>Kapitaal- en interestsubsidies</Name>
+		<Passiva>IV.C</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
@@ -3405,7 +3531,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>754</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Wisselresultaten</Name>
+		<Name>Wisselresultaten </Name>
 		<Passiva>IV.C</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3414,14 +3540,14 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>755</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Resultaten uit de omrekening van vreemde valuta</Name>
+		<Name>Resultaten uit de omrekening van vreemde valuta </Name>
 		<Passiva>IV.C</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>756-759</ReferenceCode>
+		<ReferenceCode>756 tot 759</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Diverse financiële opbrengsten</Name>
 		<Passiva>IV.C</Passiva>
@@ -3478,7 +3604,7 @@
 		<ReferenceCode>762</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Terugneming van voorzieningen voor niet-recurrente risico's en kosten</Name>
-		<Passiva>VII.C</Passiva>
+		<Passiva>I.E</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
@@ -3486,7 +3612,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>7620</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming van voorzieningen voor niet-recurrente bedrijfsrisico’s en kosten</Name>
+		<Name>Terugneming van voorzieningen voor niet-recurrente bedrijfsrisico's en -kosten</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3495,7 +3621,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>7621</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Terugneming van voorzieningen voor niet-recurrente financiële risico’s en kosten</Name>
+		<Name>Terugneming van voorzieningen voor niet-recurrente financiële risico's en kosten</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3513,7 +3639,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>7630</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Meerwaarde op de realisatie van immateriële en materiële vaste activa</Name>
+		<Name>Meerwaarde op de realisatie van immateriële en materiële vaste activa </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3529,10 +3655,10 @@
 		<Nivo>4</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode>764-768</ReferenceCode>
+		<ReferenceCode>764 tot 768</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Andere niet-recurrente bedrijfsopbrengsten</Name>
-		<Passiva>VII.E</Passiva>
+		<Passiva>I.E</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
@@ -3541,7 +3667,7 @@
 		<ReferenceCode>769</ReferenceCode>
 		<CounterPartAccount/>
 		<Name>Andere niet-recurrente financiële opbrengsten</Name>
-		<Passiva/>
+		<Passiva>IV.D</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
@@ -3549,16 +3675,61 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>77</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Regularisering van belastingen</Name>
-		<Passiva/>
+		<Name>Regularisering van belastingen en terugneming van fiscale voorzieningen </Name>
+		<Passiva>VIII.B</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>2</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
+		<ReferenceCode>771</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Belgische belastingen op het resultaat</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>7710</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Regularisering van verschuldigde of betaalde belastingen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>7711</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Regularisering van geraamde belastingen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>7712</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Terugneming van fiscale voorzieningen</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>4</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>773</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Buitenlandse belastingen op het resultaat</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
 		<ReferenceCode>78</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Onttrekking aan de belastingvrije reserves en uitgestelde belastingen</Name>
+		<Name>Onttrekkingen aan de belastingvrije reserves en uitgestelde belastingen </Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3567,8 +3738,8 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>780</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Onttrekking aan de uitgestelde belastingen</Name>
-		<Passiva/>
+		<Name>Onttrekkingen aan de uitgestelde belastingen</Name>
+		<Passiva>VII.A</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
@@ -3576,8 +3747,8 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>789</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Onttrekking aan de belastingvrije reserves</Name>
-		<Passiva/>
+		<Name>Onttrekkingen aan de belastingvrije reserves</Name>
+		<Passiva>X.A</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
@@ -3585,8 +3756,8 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>79</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Resultaatverwerking</Name>
-		<Passiva/>
+		<Name>Resultaatverwerking </Name>
+		<Passiva>XII</Passiva>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>2</Nivo>
@@ -3594,7 +3765,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>790</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Overgedragen positief resultaat van het vorige boekjaar</Name>
+		<Name>Overgedragen winst van het vorige boekjaar</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3603,7 +3774,7 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>791</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Andere reserves</Name>
+		<Name>Onttrekking aan het kapitaal en aan de uitgiftepremies</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
@@ -3612,19 +3783,28 @@
 	<MarGeneralLedgerAccount>
 		<ReferenceCode>792</ReferenceCode>
 		<CounterPartAccount/>
-		<Name>Over te dragen negatief resultaat</Name>
+		<Name>Onttrekking aan de reserves</Name>
 		<Passiva/>
 		<Activa/>
 		<BalanceType>Profit Loss</BalanceType>
 		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 	<MarGeneralLedgerAccount>
-		<ReferenceCode/>
+		<ReferenceCode>793</ReferenceCode>
 		<CounterPartAccount/>
-		<Name/>
+		<Name>Over te dragen verlies</Name>
 		<Passiva/>
 		<Activa/>
-		<BalanceType/>
-		<Nivo/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
+	</MarGeneralLedgerAccount>
+	<MarGeneralLedgerAccount>
+		<ReferenceCode>794</ReferenceCode>
+		<CounterPartAccount/>
+		<Name>Tussenkomst van vennoten (of van de eigenaar) in het verlies</Name>
+		<Passiva/>
+		<Activa/>
+		<BalanceType>Profit Loss</BalanceType>
+		<Nivo>3</Nivo>
 	</MarGeneralLedgerAccount>
 </MarGeneralLedgerAccounts>

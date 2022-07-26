@@ -75,7 +75,7 @@ namespace Integration.Tests.custom
                     generalLedgerAccountLevel3,
                     generalLedgerAccountLevel4,
                 },
-                MarGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
+                //MarGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
             };
 
             var integration = new Allors.Integration.Integration(this.Database, new DirectoryInfo("C:/Temp"), new NullLoggerFactory());
@@ -152,16 +152,20 @@ namespace Integration.Tests.custom
         [Test]
         public async System.Threading.Tasks.Task MarGeneralLedgerAccountExtractorTest()
         {
-            var docBalansNL = new HtmlDocument();
-            docBalansNL.Load("c:/Temp/MarBalansNL.html");
+            using (var marAccountingObligeeEnterprisesGeneralLedgerAccountList = new StreamReader("C:/Temp/MarBoekhoudplichtigeOndernemingen.xml"))
+            using (var marAssociationsAndFoundationsGeneralLedgerAccountGeneralLedgerAccountList = new StreamReader("C:/Temp/MarVerenigingenEnStichtingen.xml"))
+            {
+                var accountingObligeeEnterprisesExtractor = new MarAccountingObligeeEnterprisesGeneralLedgerAccountExtractor(marAccountingObligeeEnterprisesGeneralLedgerAccountList, new NullLoggerFactory());
+                var accountingObligeeEnterprisesResult = accountingObligeeEnterprisesExtractor.Execute();
 
-            var docProfitLossNL = new HtmlDocument();
-            docProfitLossNL.Load("c:/Temp/MarProfitLossNL.html");
+                var associationsAndFoundationsExtractor = new MarAssociationsAndFoundationsGeneralLedgerAccountExtractor(marAssociationsAndFoundationsGeneralLedgerAccountGeneralLedgerAccountList, new NullLoggerFactory());
+                var associationsAndFoundationsResult = associationsAndFoundationsExtractor.Execute();
 
-            var extractor = new MarGeneralLedgerAccountExtractor(null, docBalansNL, docProfitLossNL, new NullLoggerFactory());
-            var result = extractor.Execute();
+                Assert.IsNotEmpty(accountingObligeeEnterprisesResult);
+                Assert.IsNotEmpty(associationsAndFoundationsResult);
+            }
 
-            Assert.IsNotEmpty(result);
+
         }
 
         [Test]
@@ -171,29 +175,5 @@ namespace Integration.Tests.custom
             integration.Integrate();
             return System.Threading.Tasks.Task.CompletedTask;
         }
-
-        [Test]
-        public async System.Threading.Tasks.Task RunDezeTestNiet()
-        {
-            var docBalansNL = new HtmlDocument();
-            docBalansNL.Load("c:/Temp/MarBoekhoudplichtigeOndernemingenBalansNL.html");
-
-            var docProfitLossNL = new HtmlDocument();
-            docProfitLossNL.Load("c:/Temp/MarBoekhoudplichtigeOndernemingenProfitLossNL.html");
-
-            var extractor = new MarGeneralLedgerAccountExtractor(null, docBalansNL, docProfitLossNL, new NullLoggerFactory());
-            var result = extractor.Execute();
-
-            var transformer = new MarGeneralLedgerAccountTransformer(new Source() { MarGeneralLedgerAccounts = result }, new Allors.Integration.Population(),new NullLoggerFactory());
-            transformer.Execute(out var marGeneralLedgerAccount);
-
-            using (var writer = new StreamWriter("c:/Temp/mar.csv"))
-            using (var csv = new CsvWriter(writer, CultureInfo.CurrentCulture))
-            {
-                //csv.Context.RegisterClassMap<FooMap>();
-                csv.WriteRecords(marGeneralLedgerAccount);
-            }
-        }
-
     }
 }

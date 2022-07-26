@@ -24,6 +24,7 @@ namespace Allors.Integration.Source
     {
         public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
 
-        public MarGeneralLedgerAccount[] MarGeneralLedgerAccounts { get; set; }
+        public MarGeneralLedgerAccount[] MarAccountingObligeeEnterprisesGeneralLedgerAccounts { get; set; }
+        public MarGeneralLedgerAccount[] MarAssociationsAndFoundationsGeneralLedgerAccounts { get; set; }
     }
 }

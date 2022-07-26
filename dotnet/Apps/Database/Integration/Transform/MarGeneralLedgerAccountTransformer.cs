@@ -49,7 +49,7 @@ namespace Allors.Integration.Transform
             var marGeneralLedgerAccountList = new List<Staging.MarGeneralLedgerAccount>();
 
 
-            var marGeneralLedgerAccountsByType = this.Source.MarGeneralLedgerAccounts.GroupBy(v => v.FirstCharFromReferenceCode());
+            var marGeneralLedgerAccountsByType = this.Source.MarAccountingObligeeEnterprisesGeneralLedgerAccounts.GroupBy(v => v.FirstCharFromReferenceCode());
 
             foreach (var marGeneralLedgerAccountsTypeGroup in marGeneralLedgerAccountsByType.Where(v => !v.Key.StartsWith(".")))
             {
