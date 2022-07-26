@@ -97,6 +97,12 @@ namespace Allors.Repository
         public bool Active { get; set; }
 
         #region Allors
+        [Id("1309ea29-852e-4b85-a353-629c858460b5")]
+        #endregion
+        [Required]
+        public bool Closed { get; set; }
+
+        #region Allors
         [Id("babffef0-47ad-44ad-9a55-ffefb0fec783")]
         #endregion
         [Required]
