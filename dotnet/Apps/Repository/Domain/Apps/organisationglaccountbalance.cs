@@ -25,7 +25,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-
         public OrganisationGlAccount OrganisationGlAccount { get; set; }
 
         #region Allors
@@ -65,7 +64,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-
         public AccountingPeriod AccountingPeriod { get; set; }
 
         #region inherited methods

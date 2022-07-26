@@ -115,6 +115,13 @@ namespace Allors.Repository
         public DateTime TransactionDate { get; set; }
 
         #region Allors
+        [Id("2c2fd25f-2070-4594-8dc5-e9dcabbb1656")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Required]
+        public AccountingPeriod AccountingPeriod { get; set; }
+
+        #region Allors
         [Id("a29cb739-8d2f-4e7d-a652-af8d2e190658")]
         #endregion
         [Derived]
