@@ -1110,6 +1110,7 @@ namespace Allors
                 .WithDescription("Netto-omzet van onbelaste leveringen geproduceerde goederen")
                 .WithBalanceSide(credit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WOmz)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
