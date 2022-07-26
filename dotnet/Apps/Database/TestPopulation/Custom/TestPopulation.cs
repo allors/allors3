@@ -291,7 +291,7 @@ namespace Allors
 
             var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
 
-            var internalOrganisation = Organisations.CreateInternalOrganisation(
+            var dutchInternalOrganisation = Organisations.CreateInternalOrganisation(
                 transaction: this.Transaction,
                 name: "dutchInternalOrganisation",
                 address1: "address",
@@ -359,12 +359,12 @@ namespace Allors
                 workEffortSequence: new WorkEffortSequences(this.Transaction).EnforcedSequence,
                 requirementSequence: new RequirementSequences(this.Transaction).EnforcedSequence);
 
-            internalOrganisation.PurchaseShipmentNumberPrefix = "incoming shipmentno: ";
-            internalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.PurchaseReturnSequence = new PurchaseReturnSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.DropShipmentSequence = new DropShipmentSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.IncomingTransferSequence = new IncomingTransferSequences(this.Transaction).EnforcedSequence;
-            internalOrganisation.OutgoingTransferSequence = new OutgoingTransferSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.PurchaseShipmentNumberPrefix = "incoming shipmentno: ";
+            dutchInternalOrganisation.CustomerReturnSequence = new CustomerReturnSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.PurchaseReturnSequence = new PurchaseReturnSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.DropShipmentSequence = new DropShipmentSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.IncomingTransferSequence = new IncomingTransferSequences(this.Transaction).EnforcedSequence;
+            dutchInternalOrganisation.OutgoingTransferSequence = new OutgoingTransferSequences(this.Transaction).EnforcedSequence;
 
             this.Transaction.Derive();
 
@@ -414,6 +414,10 @@ namespace Allors
                 .WithExcludeRgsAfrekSyst(true)
                 .Build();
 
+            var Bvor = new GeneralLedgerAccountTypeBuilder(this.Transaction)
+                .WithDescription("Vorderingen")
+                .Build();
+
             var BVorDebHad = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BVorDebHad")
                 .WithSortCode("G.A.010")
@@ -422,6 +426,7 @@ namespace Allors
                 .WithDescription("Handelsdebiteuren nominaal")
                 .WithBalanceSide(debit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(Bvor)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -440,6 +445,7 @@ namespace Allors
                 .WithDescription("Vooruitbetaalde facturen overlopende activa")
                 .WithBalanceSide(debit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(Bvor)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -447,6 +453,10 @@ namespace Allors
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsUseWithWoco(true)
                 .Build();
+
+            var BEiv = new GeneralLedgerAccountTypeBuilder(this.Transaction)
+              .WithDescription("Groepsvermogen - Eigen vermogen - Kapitaal")
+              .Build();
 
             var BEivOreRvh = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BEivOreRvh")
@@ -456,6 +466,7 @@ namespace Allors
                 .WithDescription("Resultaat van het boekjaar")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BEiv)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -472,12 +483,17 @@ namespace Allors
                 .WithDescription("Ondernemingsvermogen exclusief fiscale reserves fiscaal eigen vermogen onderneming natuurlijke personen")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BEiv)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
                 .WithIsRgsUseWithEZ(true)
                 .Build();
+
+            var BSch = new GeneralLedgerAccountTypeBuilder(this.Transaction)
+              .WithDescription("Kortlopende schulden")
+              .Build();
 
             var BSchCreHac = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("BSchCreHac")
@@ -487,6 +503,7 @@ namespace Allors
                 .WithDescription("Handelscrediteuren nominaal schulden aan leveranciers en handelskredieten")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -504,6 +521,7 @@ namespace Allors
                 .WithDescription("Terug te vorderen Omzetbelasting vorderingen uit hoofde van belastingen")
                 .WithBalanceSide(debit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(Bvor)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -520,6 +538,7 @@ namespace Allors
                 .WithDescription("Te betalen Omzetbelasting belastingen en premies sociale verzekeringen")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -538,6 +557,7 @@ namespace Allors
                 .WithDescription("Omzetbelasting leveringen/diensten algemeen tarief")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -555,6 +575,7 @@ namespace Allors
                 .WithDescription("Omzetbelasting leveringen/diensten verlaagd tarief")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -572,6 +593,7 @@ namespace Allors
                 .WithDescription("Omzetbelasting leveringen/diensten overige tarieven")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -589,6 +611,7 @@ namespace Allors
                 .WithDescription("Omzetbelasting over privégebruik")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -606,6 +629,7 @@ namespace Allors
                 .WithDescription("Omzetbelasting leveringen/diensten waarbij heffing is verlegd")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -623,6 +647,7 @@ namespace Allors
                 .WithDescription("Omzetbelasting leveringen/diensten uit landen buiten de EU ")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -640,6 +665,7 @@ namespace Allors
                 .WithDescription("Omzetbelasting leveringen/diensten uit landen binnen EU")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -657,6 +683,7 @@ namespace Allors
                 .WithDescription("Voorbelasting")
                 .WithBalanceSide(debit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -674,6 +701,7 @@ namespace Allors
                 .WithDescription("Schattig deze aangifte")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -690,6 +718,7 @@ namespace Allors
                 .WithDescription("Afgedragen omzetbelasting")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(5)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -707,6 +736,7 @@ namespace Allors
                 .WithDescription("Nog te ontvangen facturen overlopende passiva")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -722,6 +752,7 @@ namespace Allors
                 .WithDescription("Vooruitgefactureerde omzet")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -737,9 +768,14 @@ namespace Allors
                 .WithDescription("Tussenrekeningen overig")
                 .WithBalanceSide(credit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(BSch)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsWoco(true)
+                .Build();
+
+            var WBed = new GeneralLedgerAccountTypeBuilder(this.Transaction)
+                .WithDescription("Overige bedrijfskosten")
                 .Build();
 
             var WBedVkkOvr = new GeneralLedgerAccountBuilder(this.Transaction)
@@ -750,6 +786,7 @@ namespace Allors
                 .WithDescription("Overige verkoopkosten verkoop gerelateerde kosten")
                 .WithBalanceSide(debit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WBed)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -766,6 +803,7 @@ namespace Allors
                 .WithDescription("Betalingsverschillen administratieve lasten")
                 .WithBalanceSide(debit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WBed)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -782,6 +820,7 @@ namespace Allors
                 .WithDescription("Netto resultaat na belastingen")
                 .WithBalanceSide(credit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WBed)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -798,6 +837,7 @@ namespace Allors
                 .WithDescription("Kas kasmiddelen")
                 .WithBalanceSide(debit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(WBed)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -805,6 +845,10 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsAfrekSyst(true)
+                .Build();
+
+            var Blim = new GeneralLedgerAccountTypeBuilder(this.Transaction)
+                .WithDescription("Liquide middelen")
                 .Build();
 
             var BLimBanRba = new GeneralLedgerAccountBuilder(this.Transaction)
@@ -815,6 +859,7 @@ namespace Allors
                 .WithDescription("Rekening-courant bank tegoeden op bankgirorekeningen")
                 .WithBalanceSide(debit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(Blim)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -822,6 +867,10 @@ namespace Allors
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .WithExcludeRgsAfrekSyst(true)
+                .Build();
+
+            var WOmz = new GeneralLedgerAccountTypeBuilder(this.Transaction)
+                .WithDescription("Netto-omzet")
                 .Build();
 
             var WOmzNopOlh = new GeneralLedgerAccountBuilder(this.Transaction)
@@ -832,6 +881,7 @@ namespace Allors
                 .WithDescription("1a. Netto-omzet uit leveringen geproduceerde goederen belast met hoog tarief")
                 .WithBalanceSide(credit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WOmz)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -848,6 +898,7 @@ namespace Allors
                 .WithDescription("1b. Netto-omzet uit leveringen geproduceerde goederen belast met laagd tarief")
                 .WithBalanceSide(credit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WOmz)
                 .WithRgsLevel(4)
                 .WithIsRgsUseWithZzp(true)
                 .WithIsRgsBase(true)
@@ -864,6 +915,7 @@ namespace Allors
              .WithDescription("1c. Netto-omzet uit leveringen geproduceerde goederen belast met overige tarieven, behalve 0%")
              .WithBalanceSide(credit)
              .WithBalanceType(profitLoss)
+             .WithGeneralLedgerAccountType(WOmz)
              .WithRgsLevel(4)
              .WithIsRgsUseWithZzp(true)
              .WithIsRgsBase(true)
@@ -879,6 +931,7 @@ namespace Allors
              .WithDescription("1d.Netto - omzet uit privégebruik geproduceerde goederen")
              .WithBalanceSide(credit)
              .WithBalanceType(profitLoss)
+             .WithGeneralLedgerAccountType(WOmz)
              .WithRgsLevel(4)
              .WithIsRgsUseWithZzp(true)
              .WithIsRgsBase(true)
@@ -894,6 +947,7 @@ namespace Allors
              .WithDescription("1e. Netto-omzet uit geproduceerde goederen belast met 0% of niet bij u belast")
              .WithBalanceSide(credit)
              .WithBalanceType(profitLoss)
+             .WithGeneralLedgerAccountType(WOmz)
              .WithRgsLevel(4)
              .WithIsRgsUseWithZzp(true)
              .WithIsRgsBase(true)
@@ -909,6 +963,7 @@ namespace Allors
              .WithDescription("2a. Netto-omzet uit leveringen geproduceerde goederen waarbij de omzetbelasting naar u  is verlegd")
              .WithBalanceSide(credit)
              .WithBalanceType(profitLoss)
+             .WithGeneralLedgerAccountType(WOmz)
              .WithRgsLevel(4)
              .WithIsRgsBase(true)
              .WithIsRgsExtended(true)
@@ -923,6 +978,7 @@ namespace Allors
              .WithDescription("3a. Netto-omzet uit leveringen geproduceerde goederen naar landen buiten EU (uitvoer)")
              .WithBalanceSide(credit)
              .WithBalanceType(profitLoss)
+             .WithGeneralLedgerAccountType(WOmz)
              .WithRgsLevel(4)
              .WithIsRgsBase(true)
              .WithIsRgsExtended(true)
@@ -937,6 +993,7 @@ namespace Allors
              .WithDescription("3b. Netto-omzet uit leveringen geproduceerde goederen naar landen binnen EU")
              .WithBalanceSide(credit)
              .WithBalanceType(profitLoss)
+             .WithGeneralLedgerAccountType(WOmz)
              .WithRgsLevel(4)
              .WithIsRgsBase(true)
              .WithIsRgsExtended(true)
@@ -952,6 +1009,7 @@ namespace Allors
                 .WithDescription("Nog te factureren of nog te verzenden facturen overlopende activa")
                 .WithBalanceSide(debit)
                 .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(Bvor)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -967,6 +1025,7 @@ namespace Allors
                 .WithDescription("Boekingsverschillen administratieve lasten")
                 .WithBalanceSide(debit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WBed)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -982,12 +1041,18 @@ namespace Allors
                 .WithDescription("Valutaomrekeningsverschillen administratieve lasten")
                 .WithBalanceSide(debit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WBed)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
                 .WithIsRgsUseWithEZ(true)
                 .WithIsRgsUseWithWoco(true)
                 .Build();
+
+            var WKpr = new GeneralLedgerAccountTypeBuilder(this.Transaction)
+             .WithDescription("Kostprijs van de omzet")
+             .Build();
+
 
             var WKprBtkBed = new GeneralLedgerAccountBuilder(this.Transaction)
                 .WithReferenceCode("WKprBtkBed")
@@ -997,6 +1062,7 @@ namespace Allors
                 .WithDescription("Betalingskorting debiteuren")
                 .WithBalanceSide(debit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WKpr)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -1012,6 +1078,7 @@ namespace Allors
                 .WithDescription("Betalingskortingen op inkopen inkoopwaarde handels- en productiegoederen")
                 .WithBalanceSide(debit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WKpr)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
@@ -1025,13 +1092,96 @@ namespace Allors
                 .WithSortCode("O.C050")
                 .WithReferenceNumber("8003050")
                 .WithName("1e. Netto-omzet uit verleende diensten belast met 0% of niet bij u belast")
+                .WithDescription("1e. Netto-omzet uit verleende diensten belast met 0% of niet bij u belast")
                 .WithBalanceSide(credit)
                 .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WOmz)
                 .WithRgsLevel(4)
                 .WithIsRgsBase(true)
                 .WithIsRgsExtended(true)
                 .WithIsRgsUseWithEZ(true)
                 .Build();
+
+            var WOmzNopNod = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("WOmzNopNod")
+                .WithSortCode("O.A150")
+                .WithReferenceNumber("8001150")
+                .WithName("Netto-omzet van onbelaste leveringen geproduceerde goederen")
+                .WithDescription("Netto-omzet van onbelaste leveringen geproduceerde goederen")
+                .WithBalanceSide(credit)
+                .WithBalanceType(profitLoss)
+                .WithGeneralLedgerAccountType(WOmz)
+                .WithRgsLevel(4)
+                .WithIsRgsBase(true)
+                .WithIsRgsExtended(true)
+                .WithIsRgsUseWithEZ(true)
+                .WithIsRgsUseWithZzp(true)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var discountSettings = new InternalOrganisationInvoiceSettingsBuilder(this.Transaction)
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Discount)
+                .WithSalesGeneralLedgerAccount(WKprBtkBed)
+                .WithPurchaseLedgerAccount(WKprBtkBec)
+                .Build();
+
+            var dutchStandardTariffSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).DutchStandardTariff)
+                .WithGeneralLedgerAccount(WOmzNopOlh)
+                .Build();
+
+            var dutchReducedTariffSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).DutchReducedTariff)
+                .WithGeneralLedgerAccount(WOmzNopOlv)
+                .Build();
+
+            var serviceB2BSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).ServiceB2B)
+                .WithGeneralLedgerAccount(WOmzNodOdg)
+                .Build();
+
+            var zeroRatedSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).ZeroRated)
+                .WithGeneralLedgerAccount(WOmzNopOlg)
+                .Build();
+
+            var exemptSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).Exempt)
+                .WithGeneralLedgerAccount(WOmzNopNod)
+                .Build();
+
+            var intraCommunautairSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
+                .WithVatRegime(new VatRegimes(this.Transaction).IntraCommunautair)
+                .WithGeneralLedgerAccount(WOmzNopOli)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var internalOrganisationAccountingSettings = new InternalOrganisationAccountingSettingsBuilder(this.Transaction)
+                .WithAccountsPayable(BVorDebHad)
+                .WithAccountsReceivable(BSchCreHac)
+                .WithSalesPaymentDifferences(WBedAdlBet)
+                .WithPurchasePaymentDifferences(WBedAdlBov)
+                .WithExhangeRateDifferences(WBedAdlVal)
+                .WithOpeningBalance(BSchTusTov)
+                .WithInventory(BVrdHanVoo)
+                .WithDeferredExpense(BVorOvaVof)
+                .WithDeferredRevenue(BSchOpaVgo)
+                .WithAccruedExpense(BSchOpaNto)
+                .WithAccruedRevenue(BVorOvaNtf)
+                .WithRetainedEarnings(BEivOreRvh)
+                .WithEquity(BEivKapOnd)
+                .WithSettingsForInvoiceItemType(discountSettings)
+                .WithSettingsForVatRegime(dutchStandardTariffSetting)
+                .WithSettingsForVatRegime(dutchReducedTariffSetting)
+                .WithSettingsForVatRegime(serviceB2BSetting)
+                .WithSettingsForVatRegime(zeroRatedSetting)
+                .WithSettingsForVatRegime(exemptSetting)
+                .WithSettingsForVatRegime(intraCommunautairSetting)
+                .Build();
+
+            dutchInternalOrganisation.SettingsForAccounting = internalOrganisationAccountingSettings;
 
             this.Transaction.Derive();
         }
