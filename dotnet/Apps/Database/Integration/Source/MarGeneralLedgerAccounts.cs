@@ -23,11 +23,11 @@ namespace Allors.Integration.Source
     using System.Collections.Generic;
     using System.Xml.Serialization;
 
-    [XmlRoot(ElementName = "GeneralLedgerAccounts")]
+    [XmlRoot(ElementName = "MarGeneralLedgerAccounts")]
     public partial class MarGeneralLedgerAccounts
     {
 
-        [XmlElement(ElementName = "GeneralLedgerAccount")]
+        [XmlElement(ElementName = "MarGeneralLedgerAccount")]
         public List<MarGeneralLedgerAccount> marGeneralLedgerAccount { get; set; }
     }
 }

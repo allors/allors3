@@ -22,27 +22,24 @@ namespace Allors.Integration.Extract
 {
     using System.IO;
     using global::Integration.Extract;
-    using HtmlAgilityPack;
     using Microsoft.Extensions.Logging;
 
     public partial class Extract
     {
 
-        public Extract(StreamReader generalLedgerAccountList, StreamReader marGeneralLedgerAccountList, HtmlDocument docBalansNL, HtmlDocument docProfitLossNL, ILoggerFactory loggerFactory)
+        public Extract(StreamReader generalLedgerAccountList, StreamReader marAccountingObligeeEnterprisesGeneralLedgerAccountList, StreamReader marAssociationsAndFoundationsGeneralLedgerAccountList, ILoggerFactory loggerFactory)
         {
             this.GeneralLedgerAccountList = generalLedgerAccountList;
-            this.MarGeneralLedgerAccountList = marGeneralLedgerAccountList;
-            this.DocBalansNL = docBalansNL;
-            this.DocProfitLossNL = docProfitLossNL;
+            this.MarAccountingObligeeEnterprisesGeneralLedgerAccountList = marAccountingObligeeEnterprisesGeneralLedgerAccountList;
+            this.MarAssociationsAndFoundationsGeneralLedgerAccountList = marAssociationsAndFoundationsGeneralLedgerAccountList;
             this.LoggerFactory = loggerFactory;
 
         }
-        public HtmlDocument DocBalansNL { get; }
-        public HtmlDocument DocProfitLossNL { get; }
 
         public StreamReader GeneralLedgerAccountList { get; }
 
-        public StreamReader MarGeneralLedgerAccountList { get; }
+        public StreamReader MarAccountingObligeeEnterprisesGeneralLedgerAccountList { get; }
+        public StreamReader MarAssociationsAndFoundationsGeneralLedgerAccountList { get; }
 
         public ILoggerFactory LoggerFactory { get; }
 
@@ -51,12 +48,14 @@ namespace Allors.Integration.Extract
         public Source.Source Execute()
         {
             var generalLedgerAccountExtractor = new GeneralLedgerAccountExtractor(this.GeneralLedgerAccountList, this.LoggerFactory);
-            var marGeneralLedgerAccountExtractor = new MarGeneralLedgerAccountExtractor(this.MarGeneralLedgerAccountList, this.DocBalansNL, this.DocProfitLossNL, this.LoggerFactory);
+            var marAccountingObligeeEnterprisesGeneralLedgerAccountExtractor = new MarAccountingObligeeEnterprisesGeneralLedgerAccountExtractor(this.MarAccountingObligeeEnterprisesGeneralLedgerAccountList, this.LoggerFactory);
+            var marAssociationsAndFoundationsGeneralLedgerAccountExtractor = new MarAssociationsAndFoundationsGeneralLedgerAccountExtractor(this.MarAssociationsAndFoundationsGeneralLedgerAccountList, this.LoggerFactory);
 
             return new Source.Source
             {
                 GeneralLedgerAccounts = generalLedgerAccountExtractor.Execute(),
-                MarGeneralLedgerAccounts = marGeneralLedgerAccountExtractor.Execute(),
+                MarAccountingObligeeEnterprisesGeneralLedgerAccounts = marAccountingObligeeEnterprisesGeneralLedgerAccountExtractor.Execute(),
+                MarAssociationsAndFoundationsGeneralLedgerAccounts = marAssociationsAndFoundationsGeneralLedgerAccountExtractor.Execute(),
             };
         }
     }

@@ -52,16 +52,11 @@ namespace Allors.Integration
             // Extract
             Source.Source source;
 
-            var docBalansNL = new HtmlDocument();
-            docBalansNL.Load(this.DataPath + "/MarBalansNL.html");
-
-            var docProfitLossNL = new HtmlDocument();
-            docProfitLossNL.Load(this.DataPath + "/MarProfitLossNL.html");
-
             using (var generalLedgerAccountList = new StreamReader(this.DataPath + "/RGS.xml"))
-            using (var marGeneralLedgerAccountList = new StreamReader(this.DataPath + "/MarVerenigingenEnStichtingen.xml"))
+            using (var marAccountingObligeeEnterprisesGeneralLedgerAccountList = new StreamReader(this.DataPath + "/MarBoekhoudplichtigeOndernemingen.xml"))
+            using (var marAssociationsAndFoundationsGeneralLedgerAccountList = new StreamReader(this.DataPath + "/MarVerenigingenEnStichtingen.xml"))
             {
-                var extraction = new Extract.Extract(generalLedgerAccountList, marGeneralLedgerAccountList, docBalansNL, docProfitLossNL, this.LoggerFactory);
+                var extraction = new Extract.Extract(generalLedgerAccountList, marAccountingObligeeEnterprisesGeneralLedgerAccountList, marAssociationsAndFoundationsGeneralLedgerAccountList, this.LoggerFactory);
                 source = extraction.Execute();
             }
 
