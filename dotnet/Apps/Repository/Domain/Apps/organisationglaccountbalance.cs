@@ -29,6 +29,30 @@ namespace Allors.Repository
         public OrganisationGlAccount OrganisationGlAccount { get; set; }
 
         #region Allors
+        [Id("05b607bf-ab65-447b-b41c-c9e3ade2dc0e")]
+        #endregion
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        public decimal OpeningBalance { get; set; }
+
+        #region Allors
+        [Id("b80d6897-3bcb-44b5-9625-d7d16ffb25a0")]
+        #endregion
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        public decimal DebitAmount { get; set; }
+
+        #region Allors
+        [Id("40a12787-b0cc-41bb-a2bc-9cc4290f46bc")]
+        #endregion
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        public decimal CreditAmount { get; set; }
+
+        #region Allors
         [Id("94c5bafb-29ef-4268-846e-5fda5c62af5c")]
         #endregion
         [Required]
