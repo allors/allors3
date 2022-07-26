@@ -75,7 +75,8 @@ namespace Integration.Tests.custom
                     generalLedgerAccountLevel3,
                     generalLedgerAccountLevel4,
                 },
-                //MarGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
+                MarAccountingObligeeEnterprisesGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
+                MarAssociationsAndFoundationsGeneralLedgerAccounts = Array.Empty<MarGeneralLedgerAccount>(),
             };
 
             var integration = new Allors.Integration.Integration(this.Database, new DirectoryInfo("C:/Temp"), new NullLoggerFactory());
