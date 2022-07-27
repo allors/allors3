@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class TimeEntryRule : Rule
     {
-        public TimeEntryRule(MetaPopulation m) : base(m, new Guid("fcacc37e-581a-4c6f-bb77-d06a2987ebcf")) =>
+        public TimeEntryRule(MetaPopulation m) : base(m, new Guid("3b41e454-ae35-4c81-a7d5-f12c7cc4d049")) =>
             this.Patterns = new Pattern[]
         {
             m.TimeEntry.RolePattern(v => v.WorkEffort),

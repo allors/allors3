@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class WorkRequirementFixedAssetNameRule : Rule
     {
-        public WorkRequirementFixedAssetNameRule(MetaPopulation m) : base(m, new Guid("02be092e-04ca-4cce-9255-19b562ee6dd4")) =>
+        public WorkRequirementFixedAssetNameRule(MetaPopulation m) : base(m, new Guid("3d4cbe92-c285-4869-9682-c38aa1ae2145")) =>
             this.Patterns = new Pattern[]
         {
             m.FixedAsset.RolePattern(v => v.DisplayName, v => v.WorkRequirementsWhereFixedAsset),

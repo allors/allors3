@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class SalesOrderItemInvoiceItemTypeRule : Rule
     {
-        public SalesOrderItemInvoiceItemTypeRule(MetaPopulation m) : base(m, new Guid("0bd194e2-b72b-4502-8609-a53c38cc2cb8")) =>
+        public SalesOrderItemInvoiceItemTypeRule(MetaPopulation m) : base(m, new Guid("572fdefa-c510-47bc-ac0a-fd77125d78ff")) =>
             this.Patterns = new Pattern[]
             {
                 m.SalesOrderItem.RolePattern(v => v.Product),

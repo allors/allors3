@@ -27,10 +27,10 @@ namespace Allors.Database.Domain
 
             var duplicates = rules.GroupBy(v => v.Id).Where(g => g.Count() > 1).ToArray();
 
-            //if (duplicates.Any())
-            //{
-            //    throw new Exception("Duplicate rules detected: " + string.Join(", ", duplicates.Select(v => v.Key)));
-            //}
+            if (duplicates.Any())
+            {
+                throw new Exception("Duplicate rules detected: " + string.Join(", ", duplicates.Select(v => v.Key)));
+            }
 
             return rules;
         }

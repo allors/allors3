@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class SerialisedItemPartNameRule : Rule
     {
-        public SerialisedItemPartNameRule(MetaPopulation m) : base(m, new Guid("c1a01030-5223-4bd5-a905-6fe4410236f9")) =>
+        public SerialisedItemPartNameRule(MetaPopulation m) : base(m, new Guid("4ee9c110-1d11-4345-95dd-d25f162294f8")) =>
             this.Patterns = new Pattern[]
             {
                 m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),

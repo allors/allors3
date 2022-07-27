@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class WorkRequirementSearchStringRule : Rule
     {
-        public WorkRequirementSearchStringRule(MetaPopulation m) : base(m, new Guid("e7549768-280e-480b-8f33-c2f3006dc1e5")) =>
+        public WorkRequirementSearchStringRule(MetaPopulation m) : base(m, new Guid("111314b9-bcab-4ea8-a3e8-4b608a571bb6")) =>
             this.Patterns = new Pattern[]
             {
                 m.Requirement.RolePattern(v => v.RequirementState, m.WorkRequirement),
