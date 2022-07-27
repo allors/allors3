@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public InternalOrganisationSupplierRelationShipsRule(MetaPopulation m) : base(m, new Guid("91e75f3d-41c7-4185-845c-1b219675069a")) =>
             this.Patterns = new Pattern[]
             {
+                //m.Party.RolePattern(v => v.DerivationTrigger, v => v.Supplier),
                 m.SupplierRelationship.RolePattern(v => v.InternalOrganisation),
                 m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting, v => v.SupplierRelationshipsWhereInternalOrganisation),
             };

@@ -80,7 +80,12 @@ namespace Allors.Database.Domain.Tests
 
             var ownBankAccount = new OwnBankAccountBuilder(this.Transaction)
                 .WithDescription("BE23 3300 6167 6391")
-                .WithBankAccount(new BankAccountBuilder(this.Transaction).WithBank(bank).WithCurrency(euro).WithIban("BE23 3300 6167 6391").WithNameOnAccount("Koen").Build())
+                .WithBankAccount(new BankAccountBuilder(this.Transaction)
+                    .WithBank(bank)
+                    .WithCurrency(euro)
+                    .WithIban("BE23 3300 6167 6391")
+                    .WithNameOnAccount("Koen")
+                    .Build())
                 .Build();
 
             var internalOrganisation2 = new OrganisationBuilder(this.Transaction)

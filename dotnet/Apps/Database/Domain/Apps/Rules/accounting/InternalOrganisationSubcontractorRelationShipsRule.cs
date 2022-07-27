@@ -12,31 +12,31 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class InternalOrganisationCustomerRelationShipsRule : Rule
+    public class InternalOrganisationSubcontractorRelationShipsRule : Rule
     {
-        public InternalOrganisationCustomerRelationShipsRule(MetaPopulation m) : base(m, new Guid("851c1595-5d71-4136-9523-90d9ca234a8b")) =>
+        public InternalOrganisationSubcontractorRelationShipsRule(MetaPopulation m) : base(m, new Guid("5bf15691-7f9d-4220-b49a-9d5270a97e57")) =>
             this.Patterns = new Pattern[]
             {
-                m.Party.RolePattern(v => v.DerivationTrigger, v => v.CustomerRelationshipsWhereCustomer),
-                m.CustomerRelationship.RolePattern(v => v.InternalOrganisation),
-                m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting, v => v.CustomerRelationshipsWhereInternalOrganisation),
+                //m.Party.RolePattern(v => v.DerivationTrigger, v => v.),
+                m.SubContractorRelationship.RolePattern(v => v.Contractor),
+                m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting, v => v.SubContractorRelationshipsWhereContractor),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            foreach (var @this in matches.Cast<CustomerRelationship>())
+            foreach (var @this in matches.Cast<SubContractorRelationship>())
             {
-                if (@this.InternalOrganisation.ExistSettingsForAccounting)
+                if (@this.Contractor.ExistSettingsForAccounting)
                 {
-                    var partyFinancial = @this.InternalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation.FirstOrDefault(v => Equals(v.FinancialParty, @this.Customer) && v.Debtor);
+                    var partyFinancial = @this.Contractor.PartyFinancialRelationshipsWhereInternalOrganisation.FirstOrDefault(v => Equals(v.FinancialParty, @this.SubContractor) && v.Debtor);
 
                     if (partyFinancial == null)
                     {
                         var partyFinancialRelationShip = new PartyFinancialRelationshipBuilder(@this.Strategy.Transaction)
-                            .WithFinancialParty(@this.Customer)
-                            .WithInternalOrganisation(@this.InternalOrganisation)
+                            .WithFinancialParty(@this.SubContractor)
+                            .WithInternalOrganisation(@this.Contractor)
                             .WithDebtor(true)
-                            .WithSubAccountNumber(@this.InternalOrganisation.NextSubAccountNumber())
+                            .WithSubAccountNumber(@this.Contractor.NextSubAccountNumber())
                             .WithFromDate(@this.FromDate)
                             .WithThroughDate(@this.ThroughDate)
                             .Build();

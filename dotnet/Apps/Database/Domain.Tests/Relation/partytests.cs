@@ -149,14 +149,5 @@ namespace Allors.Database.Domain.Tests
 
             Assert.DoesNotContain(partyContactMechanism, party.CurrentPartyContactMechanisms);
         }
-
-        [Fact]
-        public void ChangedDerivationTriggerCreatePartyFinancialRelationship()
-        {
-            var party = new PersonBuilder(this.Transaction).Build();
-            this.Derive();
-
-            Assert.True(party.ExistPartyFinancialRelationshipsWhereFinancialParty);
-        }
     }
 }

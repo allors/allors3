@@ -487,9 +487,25 @@ namespace Allors.Database.Domain.Tests
                 .WithContraAccount(new OrganisationGlAccountBuilder(this.Transaction).Build())
                 .WithJournalType(journalType)
                 .Build();
+            
             this.Derive();
 
             var detail = new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(journal.ContraAccount).Build();
+
+            var accountingPeriod = new AccountingPeriodBuilder(this.Transaction)
+                .WithInternalOrganisation(journal.InternalOrganisation)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Day)
+                .Build();
+
+            var transaction = new AccountingTransactionBuilder(this.Transaction)
+                .WithInternalOrganisation(journal.InternalOrganisation)
+                .WithAccountingPeriod(accountingPeriod)
+                .WithDescription("Test")
+                .WithTransactionDate(DateTime.Now)
+                .WithEntryDate(DateTime.Now.AddHours(1))
+                .WithAccountingTransactionDetail(detail)
+                .Build();
+
             this.Derive();
 
             journal.JournalType = new JournalTypeBuilder(this.Transaction).Build();
