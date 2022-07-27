@@ -13,6 +13,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.AccountingTransactionDetail.RolePattern(v => v.Amount),
+                m.OrganisationGlAccount.AssociationPattern(v => v.AccountingTransactionDetailsWhereOrganisationGlAccount, v => v.AccountingTransactionDetailsWhereOrganisationGlAccount),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -22,11 +23,17 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<AccountingTransactionDetail>())
             {
                 var accountingPeriod = @this.AccountingTransactionWhereAccountingTransactionDetail.AccountingPeriod;
+
                 var organisationGlAccount = @this.OrganisationGlAccount;
 
                 var organisationGlAccountBalance = organisationGlAccount.
                     OrganisationGlAccountBalancesWhereOrganisationGlAccount.
                     FirstOrDefault(v => v.AccountingPeriod.Equals(accountingPeriod));
+
+                if (organisationGlAccountBalance == null)
+                {
+                    continue;
+                }
 
                 organisationGlAccountBalance.CreditAmount = 0;
                 organisationGlAccountBalance.DebitAmount = 0;
