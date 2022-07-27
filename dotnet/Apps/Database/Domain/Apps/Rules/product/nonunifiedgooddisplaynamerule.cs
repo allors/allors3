@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class NonUnifiedGoodDisplayNameRule : Rule
     {
-        public NonUnifiedGoodDisplayNameRule(MetaPopulation m) : base(m, new Guid("66f3c4bc-d5c7-4d6a-bf15-fc06595fcf47")) =>
+        public NonUnifiedGoodDisplayNameRule(MetaPopulation m) : base(m, new Guid("a07ae907-b6b1-43d7-a500-8b5d68f540d6")) =>
             this.Patterns = new Pattern[]
             {
                 m.NonUnifiedGood.RolePattern(v => v.Name),

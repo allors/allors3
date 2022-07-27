@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class CatalogueSearchStringRule : Rule
     {
-        public CatalogueSearchStringRule(MetaPopulation m) : base(m, new Guid("0777930a-bf7c-4f48-aa02-182ff67b35a7")) =>
+        public CatalogueSearchStringRule(MetaPopulation m) : base(m, new Guid("d7db9fd9-81a0-4cd6-ad66-c0686e5cae84")) =>
             this.Patterns = new Pattern[]
         {
             m.Catalogue.RolePattern(v => v.Name),

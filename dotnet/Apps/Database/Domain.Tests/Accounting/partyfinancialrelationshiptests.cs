@@ -96,5 +96,50 @@ namespace Allors.Database.Domain.Tests
 
             Assert.True(partyFinancial.AmountOverDue == 0);
         }
+
+        [Fact]
+        public void OnSetOfInternalOrganisationSettingsForAccountingCreatePartyFinancialRelationships()
+        {
+            var interalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().Build();
+            var organisation = new Organisations(this.Transaction).Extent().First(v => !Equals(v, interalOrganisation));
+
+            new SupplierRelationshipBuilder(this.Transaction)
+                .WithInternalOrganisation(interalOrganisation)
+                .WithSupplier(organisation)
+                .Build();
+
+            this.Derive();
+
+            Assert.Contains(organisation, interalOrganisation.ActiveSuppliers);
+            Assert.False(interalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation.Any());
+
+            interalOrganisation.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build();
+
+            this.Derive();
+
+            Assert.True(interalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation.Any());
+        }
+
+        [Fact]
+        public void OnCreateOfNewPartyRelationShipWithInternalOrganisationThatUsesAccounting_PartyFinancialRealtionShipShouldBeCreated()
+        {
+            var interalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().Build();
+            interalOrganisation.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build();
+
+            var customer = new Parties(this.Transaction).Extent().First(v => !Equals(v, interalOrganisation));
+
+            this.Derive();
+
+            Assert.DoesNotContain(interalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation, v => v.FinancialParty == customer);
+
+            new CustomerRelationshipBuilder(this.Transaction)
+                .WithCustomer(customer)
+                .WithInternalOrganisation(interalOrganisation)
+                .Build();
+
+            this.Derive();
+
+            Assert.Contains(interalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation, v => v.FinancialParty == customer);
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
                 m.Party.AssociationPattern(v => v.PartyRelationshipsWhereParty),
                 m.PartyRelationship.RolePattern(v => v.FromDate, v => v.Parties),
                 m.PartyRelationship.RolePattern(v => v.ThroughDate, v => v.Parties),
-                m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting),
+                //m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -166,32 +166,30 @@ namespace Allors.Database.Domain
 
                 @this.DeriveRelationships();
 
-                // TODO: Rule die op ExistSettingsForAccounting luistert, check dat alle PartyFinancialRelationships er zijn, indien die er niet zijn maak ze aan
+                //var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.ExistSettingsForAccounting);
 
-                var internalOrganisations = new Organisations(@this.Strategy.Transaction).InternalOrganisations().Where(v => v.ExistSettingsForAccounting);
+                //if (!internalOrganisations.Contains(@this))
+                //{
+                //    foreach (var internalOrganisation in internalOrganisations)
+                //    {
+                //        var partyFinancial = @this.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
 
-                if (!internalOrganisations.Contains(@this))
-                {
-                    foreach (var internalOrganisation in internalOrganisations.Where(v => v.ExistSettingsForAccounting))
-                    {
-                        var partyFinancial = @this.PartyFinancialRelationshipsWhereFinancialParty.FirstOrDefault(v => Equals(v.InternalOrganisation, internalOrganisation));
+                //        if (partyFinancial == null)
+                //        {
+                //            // Debtor false indien supplier, true indien customer
 
-                        if (partyFinancial == null)
-                        {
-                            // Debtor false indien supplier, true indien customer
+                //            partyFinancial = new PartyFinancialRelationshipBuilder(@this.Strategy.Transaction)
+                //                .WithFinancialParty(@this)
+                //                .WithInternalOrganisation(internalOrganisation)
+                //                .Build();
+                //        }
 
-                            partyFinancial = new PartyFinancialRelationshipBuilder(@this.Strategy.Transaction)
-                                .WithFinancialParty(@this)
-                                .WithInternalOrganisation(internalOrganisation)
-                                .Build();
-                        }
-
-                        if (partyFinancial.SubAccountNumber == 0)
-                        {
-                            partyFinancial.SubAccountNumber = internalOrganisation.NextSubAccountNumber();
-                        }
-                    }
-                }
+                //        if (partyFinancial.SubAccountNumber == 0)
+                //        {
+                //            partyFinancial.SubAccountNumber = internalOrganisation.NextSubAccountNumber();
+                //        }
+                //    }
+                //}
             }
         }
     }

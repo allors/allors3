@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class PurchaseOrderPrintRule : Rule
     {
-        public PurchaseOrderPrintRule(MetaPopulation m) : base(m, new Guid("C98B629B-12F8-4297-B6DA-FB0C36C56C39")) =>
+        public PurchaseOrderPrintRule(MetaPopulation m) : base(m, new Guid("dee4f5a7-6976-4a27-9372-2875b92c2f5d")) =>
             this.Patterns = new Pattern[]
             {
                 m.PurchaseOrder.RolePattern(v => v.Description),

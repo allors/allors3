@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class DropShipmentSearchStringRule : Rule
     {
-        public DropShipmentSearchStringRule(MetaPopulation m) : base(m, new Guid("f8313a78-5d46-4e01-854c-af7d43fc878d")) =>
+        public DropShipmentSearchStringRule(MetaPopulation m) : base(m, new Guid("51f83926-6399-43a2-a1b4-45207fe19c46")) =>
             this.Patterns = new Pattern[]
             {
                 m.Shipment.RolePattern(v => v.ShipmentState, m.DropShipment),

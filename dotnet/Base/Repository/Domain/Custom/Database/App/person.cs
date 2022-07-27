@@ -154,11 +154,10 @@ namespace Allors.Repository
         [Indexed]
         public Organisation[] CycleMany { get; set; }
 
-        #region inherited methods
-        public void Delete() { }
-        #endregion
-
         [Id("FAF120ED-09D1-4E42-86A6-F0D9FF75E03C")]
         public void Method() { }
+
+        #region inherited methods
+        #endregion
     }
 }

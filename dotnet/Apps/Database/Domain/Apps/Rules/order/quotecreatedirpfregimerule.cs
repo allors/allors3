@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
 
     public class QuoteCreatedIrpfRegimeRule : Rule
     {
-        public QuoteCreatedIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("b66c0721-4aa5-4ca7-91a0-534f6cfc6718")) =>
+        public QuoteCreatedIrpfRegimeRule(MetaPopulation m) : base(m, new Guid("6a55acfc-4545-4b7d-87a4-3eaf97d2ebd1")) =>
             this.Patterns = new Pattern[]
             {
                 m.Quote.RolePattern(v => v.QuoteState),

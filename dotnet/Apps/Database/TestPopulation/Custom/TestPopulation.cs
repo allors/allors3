@@ -999,6 +999,28 @@ namespace Allors
              .WithInternalOrganisation(dutchInternalOrganisation)
              .Build();
 
+            var BLimBanRbaBg1 = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("BLimBanRbaBg1")
+                .WithSortCode("I.B.A010")
+                .WithReferenceNumber("1002010.01")
+                .WithName("Rekening-courant bank groep 1")
+                .WithDescription("Rekening-courant bank groep 1")
+                .WithBalanceSide(debit)
+                .WithBalanceType(balance)
+                .WithGeneralLedgerAccountType(Blim)
+                .WithRgsLevel(5)
+                .WithIsRgsBase(true)
+                .WithIsRgsExtended(true)
+                .WithIsRgsUseWithEZ(true)
+                .WithIsRgsUseWithWoco(true)
+                .WithExcludeRgsNivo5(true)
+                .Build();
+
+            var BLimBanRbaBg1Gl = new OrganisationGlAccountBuilder(this.Transaction)
+             .WithGeneralLedgerAccount(BLimBanRbaBg1)
+             .WithInternalOrganisation(dutchInternalOrganisation)
+             .Build();
+
             var WOmz = new GeneralLedgerAccountTypeBuilder(this.Transaction)
                 .WithDescription("Netto-omzet")
                 .Build();
@@ -1375,6 +1397,7 @@ namespace Allors
                 .WithInternalOrganisation(dutchInternalOrganisation)
                 .Build();
 
+            // Other 11 periodes
             for (var i = 1; i < 12; i++)
             {
                 _ = new AccountingPeriodBuilder(this.Transaction)
@@ -1412,6 +1435,15 @@ namespace Allors
                 .Build();
 
             dutchInternalOrganisation.SettingsForAccounting = internalOrganisationAccountingSettings;
+
+            this.Transaction.Derive();
+
+            var journal = new JournalBuilder(this.Transaction)
+                .WithJournalType(new JournalTypes(this.Transaction).Bank)
+                .WithName("Bank Journal")
+                .WithContraAccount(BLimBanRbaBg1Gl)
+                .WithCurrency(euro)
+                .Build();
 
             this.Transaction.Derive();
         }

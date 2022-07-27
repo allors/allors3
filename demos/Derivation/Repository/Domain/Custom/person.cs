@@ -20,11 +20,6 @@ namespace Allors.Repository
 
 
         #region inherited methods
-
-        public void Delete()
-        {
-        }
-
         #endregion inherited methods
     }
 }

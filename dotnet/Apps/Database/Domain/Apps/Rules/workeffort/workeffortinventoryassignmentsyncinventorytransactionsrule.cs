@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
 
     public class WorkEffortInventoryAssignmentSyncInventoryTransactionsRule : Rule
     {
-        public WorkEffortInventoryAssignmentSyncInventoryTransactionsRule(MetaPopulation m) : base(m, new Guid("cd533d3e-922c-4938-a12d-cfacd6c3b9d9")) =>
+        public WorkEffortInventoryAssignmentSyncInventoryTransactionsRule(MetaPopulation m) : base(m, new Guid("d56af54b-4401-420a-bd07-1d6270a101c8")) =>
             this.Patterns = new Pattern[]
         {
             m.WorkEffortInventoryAssignment.RolePattern(v => v.InventoryItem),
