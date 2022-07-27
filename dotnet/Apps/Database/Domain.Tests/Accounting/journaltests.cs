@@ -6,6 +6,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System;
     using System.Linq;
     using Resources;
     using Xunit;
@@ -455,6 +456,21 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var detail = new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(contraAccount).Build();
+
+            var accountingPeriod = new AccountingPeriodBuilder(this.Transaction)
+                .WithInternalOrganisation(contraAccount.InternalOrganisation)
+                .WithFrequency(new TimeFrequencies(this.Transaction).Day)
+                .Build();
+
+            var transaction = new AccountingTransactionBuilder(this.Transaction)
+                .WithInternalOrganisation(contraAccount.InternalOrganisation)
+                .WithAccountingPeriod(accountingPeriod)
+                .WithDescription("Test")
+                .WithTransactionDate(DateTime.Now)
+                .WithEntryDate(DateTime.Now.AddHours(1))
+                .WithAccountingTransactionDetail(detail)
+                .Build();
+
             this.Derive();
 
             journal.ContraAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
