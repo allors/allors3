@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.tracing\Allors.Database.Adapters.Tracing.csproj" />
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Tracing\Allors.Database.Adapters.Tracing.csproj" />
     <ProjectReference Include="..\Server\Server.csproj" />
   </ItemGroup>
 

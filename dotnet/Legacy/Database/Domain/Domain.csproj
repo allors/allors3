@@ -15,7 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
-    <ProjectReference Include="..\resources\Resources.csproj" />
+    <ProjectReference Include="..\Resources\Resources.csproj" />
   </ItemGroup>
 
   <ItemGroup>
