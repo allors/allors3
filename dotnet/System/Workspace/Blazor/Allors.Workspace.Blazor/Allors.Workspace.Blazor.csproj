@@ -15,8 +15,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
-  </ItemGroup>
-
 </Project>

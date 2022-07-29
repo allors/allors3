@@ -7,9 +7,9 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     using System.Globalization;
 
-    public class WorkEffortInvoiceItemAssignmentModel
+    public class SalesInvoiceItemAssignmentModel
     {
-        public WorkEffortInvoiceItemAssignmentModel(WorkEffortInvoiceItemAssignment workEffortInvoiceItemAssignment)
+        public SalesInvoiceItemAssignmentModel(WorkEffortInvoiceItemAssignment workEffortInvoiceItemAssignment)
         {
             var amount = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount ?? 0M;
 
