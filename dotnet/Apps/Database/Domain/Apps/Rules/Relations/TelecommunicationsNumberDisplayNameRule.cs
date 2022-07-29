@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class TeleCommunicationsNumberDisplayNameRule : Rule
+    public class TelecommunicationsNumberDisplayNameRule : Rule
     {
-        public TeleCommunicationsNumberDisplayNameRule(MetaPopulation m) : base(m, new Guid("62d5090e-d88f-4ae4-bde2-d5ec513e4c43")) =>
+        public TelecommunicationsNumberDisplayNameRule(MetaPopulation m) : base(m, new Guid("62d5090e-d88f-4ae4-bde2-d5ec513e4c43")) =>
             this.Patterns = new Pattern[]
             {
                 m.TelecommunicationsNumber.RolePattern(v => v.CountryCode),
