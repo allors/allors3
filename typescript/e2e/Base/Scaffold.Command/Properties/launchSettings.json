@@ -2,7 +2,7 @@
   "profiles": {
     "Scaffold.Command": {
       "commandName": "Project",
-      "commandLineArgs": "--output ../../../../e2e/generated ../../../../../../modules/apps/base/workspace/angular-material/application-app/src/app"
+      "commandLineArgs": "--output ../../../../E2E/Generated ../../../../../../modules/apps/base/workspace/angular-material/application-app/src/app"
     }
   }
 }

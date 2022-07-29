@@ -19,7 +19,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\base\Tests\base*\**\*.cs" />
+    <Compile Include="..\..\Base\Tests\Base*\**\*.cs" />
   </ItemGroup>
 
 

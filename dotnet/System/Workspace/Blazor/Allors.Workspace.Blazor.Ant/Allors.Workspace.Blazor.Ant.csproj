@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Allors.Workspace.Blazor\Allors.Workspace.Blazor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
-
 </Project>
