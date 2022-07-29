@@ -12,8 +12,9 @@ namespace Allors.Database.Domain
         public OrganisationGlAccountBalanceAmountRule(MetaPopulation m) : base(m, new Guid("aebf3ae1-4654-44dd-b4d3-a025afb203de")) =>
             this.Patterns = new Pattern[]
             {
-                m.AccountingTransactionDetail.RolePattern(v => v.Amount),
-                m.OrganisationGlAccount.AssociationPattern(v => v.AccountingTransactionDetailsWhereOrganisationGlAccount, v => v.AccountingTransactionDetailsWhereOrganisationGlAccount),
+                //m.OrganisationGlAccountBalance.RolePattern(v => v.DerivationTrigger, v => v.OrganisationGlAccount),
+                m.AccountingTransactionDetail.RolePattern(v => v.Amount, v => v.OrganisationGlAccount),
+                m.OrganisationGlAccount.AssociationPattern(v => v.AccountingTransactionDetailsWhereOrganisationGlAccount),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -25,33 +26,60 @@ namespace Allors.Database.Domain
                 var accountingPeriod = @this.AccountingTransactionWhereAccountingTransactionDetail.AccountingPeriod;
 
                 var organisationGlAccount = @this.OrganisationGlAccount;
+                var generalLedgerAccount = organisationGlAccount.GeneralLedgerAccount;
 
                 var organisationGlAccountBalance = organisationGlAccount.
-                    OrganisationGlAccountBalancesWhereOrganisationGlAccount.
-                    FirstOrDefault(v => v.AccountingPeriod.Equals(accountingPeriod));
+                    OrganisationGlAccountBalancesWhereOrganisationGlAccount
+                    .FirstOrDefault(v => v.AccountingPeriod.Equals(accountingPeriod));
 
-                if (organisationGlAccountBalance == null)
+                if (organisationGlAccountBalance != null)
                 {
-                    continue;
-                }
-
-                organisationGlAccountBalance.CreditAmount = 0;
-                organisationGlAccountBalance.DebitAmount = 0;
-
-                foreach (var accountingTransactionDetail in organisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount)
-                {
-                    if (accountingTransactionDetail.BalanceSide.IsCredit)
+                    if (generalLedgerAccount.RgsLevel == 4)
                     {
-                        organisationGlAccountBalance.CreditAmount += accountingTransactionDetail.Amount;
+                        var details = organisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount.ToList();
+                        var subDetails = new AccountingTransactionDetails(cycle.Transaction)
+                            .Extent()
+                            .Where(v => v.OrganisationGlAccount.GeneralLedgerAccount.Parent == generalLedgerAccount)
+                            .ToList();
+
+                        var allDetails = details.Concat(subDetails).ToList();
+
+                        this.CalculateAmounts(organisationGlAccountBalance, allDetails);
                     }
                     else
                     {
-                        organisationGlAccountBalance.DebitAmount += accountingTransactionDetail.Amount;
+                        var details = organisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount.ToList();
+
+                        this.CalculateAmounts(organisationGlAccountBalance, details);
+
+                        if (generalLedgerAccount.ExistParent)
+                        {
+                            organisationGlAccount.SubsidiaryOf.OrganisationGlAccountBalancesWhereOrganisationGlAccount.ToList()
+                                .ForEach(v => v.DerivationTrigger = Guid.NewGuid());
+                        }
                     }
                 }
-
-                organisationGlAccountBalance.Amount = organisationGlAccountBalance.DebitAmount - organisationGlAccountBalance.CreditAmount;
             }
+        }
+
+        private void CalculateAmounts(OrganisationGlAccountBalance organisationGlAccountBalance, IEnumerable<AccountingTransactionDetail> details)
+        {
+            organisationGlAccountBalance.CreditAmount = 0;
+            organisationGlAccountBalance.DebitAmount = 0;
+
+            foreach (var accountingTransactionDetail in details)
+            {
+                if (accountingTransactionDetail.BalanceSide.IsCredit)
+                {
+                    organisationGlAccountBalance.CreditAmount += accountingTransactionDetail.Amount;
+                }
+                else
+                {
+                    organisationGlAccountBalance.DebitAmount += accountingTransactionDetail.Amount;
+                }
+            }
+
+            organisationGlAccountBalance.Amount = organisationGlAccountBalance.DebitAmount - organisationGlAccountBalance.CreditAmount;
         }
     }
 }

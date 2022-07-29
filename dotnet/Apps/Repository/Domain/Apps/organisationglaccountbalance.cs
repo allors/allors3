@@ -5,6 +5,7 @@
 
 namespace Allors.Repository
 {
+    using System;
     using Attributes;
 
     #region Allors
@@ -65,6 +66,12 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public AccountingPeriod AccountingPeriod { get; set; }
+
+        #region Allors
+        [Id("dd741b96-53ac-4339-940c-87cd6a49a6db")]
+        #endregion
+        [Required]
+        public Guid DerivationTrigger { get; set; }
 
         #region inherited methods
 
