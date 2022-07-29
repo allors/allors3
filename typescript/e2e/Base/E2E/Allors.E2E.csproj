@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\dotnet\base\database\domain\Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\dotnet\Base\Database\Domain\Domain.csproj" />
   </ItemGroup>
 
 

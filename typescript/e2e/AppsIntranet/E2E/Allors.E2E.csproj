@@ -10,7 +10,7 @@
 
 
   <ItemGroup>
-    <Compile Include="..\..\base\E2E\base*\**\*.cs" />
+    <Compile Include="..\..\Base\E2E\Base*\**\*.cs" />
   </ItemGroup>
 
 

@@ -11,17 +11,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Allors.E2E", "E2E\Allors.E2E.csproj", "{BE25D375-245E-425D-A94C-6185A1B51D2E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffold", "..\scaffold\Scaffold.csproj", "{803BBBA1-90F8-4B4F-B034-51DC7B234C1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffold", "..\Scaffold\Scaffold.csproj", "{803BBBA1-90F8-4B4F-B034-51DC7B234C1F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaffold.Command", "Scaffold.Command\Scaffold.Command.csproj", "{CB82EDE5-4B7D-471B-8C55-FE77E983B85A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "..\..\..\dotnet\Apps\Database\configuration\Configuration.csproj", "{0FDC2ECA-529B-46AB-8F42-5D8EA728315B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "..\..\..\dotnet\Apps\Database\Configuration\Configuration.csproj", "{0FDC2ECA-529B-46AB-8F42-5D8EA728315B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\..\..\dotnet\Apps\Database\Domain\Domain.csproj", "{9029151A-5AB3-488D-B8AA-C73CF26D65F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "meta", "..\..\..\dotnet\Apps\Database\meta\meta.csproj", "{E4A45639-BECA-4C63-94FA-AC0E96074C99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meta", "..\..\..\dotnet\Apps\Database\Meta\Meta.csproj", "{E4A45639-BECA-4C63-94FA-AC0E96074C99}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestPopulation", "..\..\..\dotnet\Apps\Database\testpopulation\TestPopulation.csproj", "{E6C2B6FA-2FE4-4FD8-99BA-2E39AA64A33C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestPopulation", "..\..\..\dotnet\Apps\Database\TestPopulation\TestPopulation.csproj", "{E6C2B6FA-2FE4-4FD8-99BA-2E39AA64A33C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
