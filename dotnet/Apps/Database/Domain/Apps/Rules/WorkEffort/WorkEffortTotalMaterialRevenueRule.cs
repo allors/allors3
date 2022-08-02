@@ -39,17 +39,7 @@ namespace Allors.Database.Domain
     {
         public static void DeriveWorkEffortTotalMaterialRevenueRule(this WorkEffort @this, IValidation validation)
         {
-            var partsRevenue = Rounder.RoundDecimal(@this.WorkEffortInventoryAssignmentsWhereAssignment
-                .Where(v => v.DerivedBillableQuantity > 0)
-                .Sum(v => v.DerivedBillableQuantity * v.UnitSellingPrice), 2);
-
-            var sundriesRevenue = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment
-                .Where(v => v.ExistWorkEffortInvoiceItem
-                            && v.WorkEffortInvoiceItem.InvoiceItemType.IsSundries
-                            && v.WorkEffortInvoiceItem.Amount.HasValue)
-                .Sum(v => v.WorkEffortInvoiceItem.Amount.Value), 2);
-
-            @this.TotalMaterialRevenue = partsRevenue + sundriesRevenue;
+            @this.TotalMaterialRevenue = Rounder.RoundDecimal(@this.WorkEffortInventoryAssignmentsWhereAssignment.Where(v => v.DerivedBillableQuantity > 0).Sum(v => v.DerivedBillableQuantity * v.UnitSellingPrice), 2);
         }
     }
 }

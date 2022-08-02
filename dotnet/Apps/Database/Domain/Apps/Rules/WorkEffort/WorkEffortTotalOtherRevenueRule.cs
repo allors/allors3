@@ -33,10 +33,11 @@ namespace Allors.Database.Domain
 
     public static class WorkEffortTotalOtherRevenueRuleExtensions
     {
-        public static void DeriveWorkEffortTotalOtherRevenue(this WorkEffort @this, IValidation validation) => @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment
-                .Where(v => v.ExistWorkEffortInvoiceItem
-                            && v.WorkEffortInvoiceItem.InvoiceItemType.IsCleaning
-                            && v.WorkEffortInvoiceItem.Amount.HasValue)
+        public static void DeriveWorkEffortTotalOtherRevenue(this WorkEffort @this, IValidation validation)
+        {
+            @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment
+                .Where(v => v.WorkEffortInvoiceItem.Amount.HasValue)
                 .Sum(v => v.WorkEffortInvoiceItem.Amount.Value), 2);
+        }
     }
 }
