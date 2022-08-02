@@ -20,8 +20,6 @@ stages:
           target: 'CiDotnetSystemAdaptersTestSqlClient'
         adapters_npgsql:
           target: 'CiDotnetSystemAdaptersTestNpgsql'
-        system_workspace:
-          target: 'CiDotnetSystemWorkspaceTest'
         core_database:
           target: 'CiDotnetCoreDatabaseTest'
         core_workspace_local:

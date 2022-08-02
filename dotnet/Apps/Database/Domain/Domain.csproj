@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Allors.Domain</RootNamespace>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Allors.Documents" Version="1.0.4" />
+    <PackageReference Include="DataUtils.DataUrl" Version="1.0.2" />
+    <PackageReference Include="Markdig" Version="0.30.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="MimeTypesMap" Version="1.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace.Json\Allors.Database.Workspace.Json.csproj" />
+    <ProjectReference Include="..\..\..\System\Protocol\Allors.Protocol.Json.SystemText\Allors.Protocol.Json.SystemText.csproj" />
+    <ProjectReference Include="..\Meta\Meta.csproj" />
+    <ProjectReference Include="..\Resources\Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Core\Database\Domain\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Domain\Base*\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\allors.png" />
+    <None Remove="Templates\no_image_available.svg" />
+    <None Remove="Templates\productquote.odt" />
+    <None Remove="Templates\purchaseinvoice.odt" />
+    <None Remove="Templates\purchaseorder.odt" />
+    <None Remove="Templates\salesinvoice.odt" />
+    <None Remove="Templates\salesorder.odt" />
+    <None Remove="Templates\worktask.odt" />
+    <None Remove="Templates\worktaskworker.odt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\allors.png" />
+    <EmbeddedResource Include="Templates\no_image_available.svg" />
+    <EmbeddedResource Include="Templates\productquote.odt" />
+    <EmbeddedResource Include="Templates\purchaseinvoice.odt" />
+    <EmbeddedResource Include="Templates\purchaseorder.odt" />
+    <EmbeddedResource Include="Templates\salesinvoice.odt" />
+    <EmbeddedResource Include="Templates\salesorder.odt" />
+    <EmbeddedResource Include="Templates\worktask.odt" />
+    <EmbeddedResource Include="Templates\worktaskworker.odt" />
+  </ItemGroup>
+ 
+
+</Project>

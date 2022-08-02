@@ -50,6 +50,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
   shipToContacts: Person[] = [];
   vatRegimes: VatRegime[];
   internalOrganisation: InternalOrganisation;
+  ownWarehouses: Facility[];
   facilities: Facility[];
   addFacility = false;
 
@@ -97,6 +98,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
 
     pulls.push(
       this.fetcher.internalOrganisation,
+      this.fetcher.ownWarehouses,
       p.IrpfRegime({}),
       p.Currency({
         predicate: {
@@ -155,6 +157,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
     this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
     this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.ownWarehouses = this.fetcher.getOwnWarehouses(pullResult);
     this.facilities = pullResult.collection<Facility>(this.m.Facility);
 
     this.invoiceItemTypes = pullResult.collection<InvoiceItemType>(
@@ -168,6 +171,11 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
       (v: InvoiceItemType) =>
         v.UniqueId === '0d07f778-2735-44cb-8354-fb887ada42ad'
     );
+
+    this.object.StoredInFacility =
+      this.ownWarehouses?.length > 0
+        ? (this.ownWarehouses[0] as Facility)
+        : null;
 
     const serialisedItem = pullResult.object<SerialisedItem>(
       this.m.SerialisedItem

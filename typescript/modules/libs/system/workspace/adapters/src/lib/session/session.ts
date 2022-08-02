@@ -298,7 +298,7 @@ export abstract class Session implements ISession {
 
   onDatabasePushResponseNew(workspaceId: number, databaseId: number) {
     const object = this.objectByWorkspaceId.get(workspaceId);
-    this.pushToDatabaseTracker.created.delete(object);
+    this.pushToDatabaseTracker.created?.delete(object);
     (object.strategy as Strategy).onDatabasePushNewId(databaseId);
     this.addObject(object);
     (object.strategy as Strategy).onDatabasePushed();

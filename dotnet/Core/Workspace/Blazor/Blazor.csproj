@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Blazor\Allors.Workspace.Blazor\Allors.Workspace.Blazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+   
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+		<PackageReference Include="Microsoft.Playwright" Version="1.22.0" />
+		<PackageReference Include="NUnit" Version="3.13.3" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\dotnet\Base\Database\Configuration\Configuration.csproj" />
+		<ProjectReference Include="..\..\..\..\dotnet\Base\Database\Domain\Domain.csproj" />
+		<ProjectReference Include="..\..\..\..\dotnet\Base\Database\Meta\Meta.csproj" />
+		<ProjectReference Include="..\..\..\..\dotnet\Base\Database\Resources\Resources.csproj" />
+		<ProjectReference Include="..\..\..\..\dotnet\System\Database\Adapters\Allors.Database.Adapters.Sql.SqlClient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
+		<ProjectReference Include="..\E2E\Allors.E2E.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="appsettings.osx.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="appsettings.windows.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="logo.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="logo2.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+</Project>

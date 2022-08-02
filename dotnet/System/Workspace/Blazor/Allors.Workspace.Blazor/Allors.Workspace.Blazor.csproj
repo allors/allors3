@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.30.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\Allors.Workspace.Meta\Allors.Workspace.Meta.csproj" />
+  </ItemGroup>
+
+</Project>
