@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.WorkEffortInventoryAssignment.RolePattern(v => v.Assignment, v => v.Assignment),
+            m.WorkEffort.AssociationPattern(v => v.WorkEffortInventoryAssignmentsWhereAssignment),
 
             m.WorkTask.RolePattern(v => v.WorkEffortNumber),
             m.WorkTask.RolePattern(v => v.Name),

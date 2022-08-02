@@ -22,12 +22,21 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<WorkEffort>())
             {
-                @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment
-                    .Where(v => v.WorkEffortInvoiceItem.Amount.HasValue)
-                    .Sum(v => v.WorkEffortInvoiceItem.Amount.Value), 2);
+                @this.DeriveWorkEffortTotalOtherRevenue(validation);
             }
         }
+    }
+
+    public static class WorkEffortTotalOtherRevenueRuleExtensions
+    {
+        public static void DeriveWorkEffortTotalOtherRevenue(this WorkEffort @this, IValidation validation) => @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment
+                .Where(v => v.ExistWorkEffortInvoiceItem
+                            && v.WorkEffortInvoiceItem.InvoiceItemType.IsCleaning
+                            && v.WorkEffortInvoiceItem.Amount.HasValue)
+                .Sum(v => v.WorkEffortInvoiceItem.Amount.Value), 2);
     }
 }

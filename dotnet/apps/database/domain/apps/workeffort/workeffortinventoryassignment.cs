@@ -23,6 +23,8 @@ namespace Allors.Database.Domain
             // TODO: Avoid creating a Derivation
             var derivation = this.Strategy.Transaction.Database.Services.Get<IDerivationService>().CreateDerivation(transaction);
             this.SyncInventoryTransactions(derivation, this.InventoryItem, this.Quantity, new InventoryTransactionReasons(transaction).Consumption, true);
+
+            this.Assignment.ResetPrintDocument();
         }
 
         public void SyncInventoryTransactions(IDerivation derivation, InventoryItem inventoryItem, decimal initialQuantity, InventoryTransactionReason reason, bool isCancellation)
