@@ -84,6 +84,7 @@ namespace Allors.Database.Domain
                             .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
                             .WithSerialisedInventoryItemState(new SerialisedInventoryItemStates(this.Transaction()).Good)
                             .WithQuantity(1)
+                            .WithShipmentItem(shipmentItem)
                             .Build();
                     }
                     else
@@ -95,6 +96,7 @@ namespace Allors.Database.Domain
                             .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
                             .WithQuantity(shipmentItem.Quantity)
                             .WithCost(shipmentItem.Part.PartWeightedAverage.AverageCost)
+                            .WithShipmentItem(shipmentItem)
                             .Build();
                     }
                 }
