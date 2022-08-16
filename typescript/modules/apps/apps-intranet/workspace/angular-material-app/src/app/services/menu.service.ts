@@ -35,9 +35,11 @@ export class AppMenuService implements MenuService {
             objectType: m.SerialisedItemCharacteristic,
             title: 'Characteristics',
           },
-          { objectType: m.ProductType },
           { objectType: m.SerialisedItem, title: 'Serialised Assets' },
           { objectType: m.UnifiedGood, title: 'Unified Goods' },
+          { objectType: m.Brand },
+          { objectType: m.Model },
+          { objectType: m.ProductType },
         ],
       },
       {

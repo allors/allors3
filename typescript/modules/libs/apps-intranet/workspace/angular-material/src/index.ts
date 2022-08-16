@@ -58,6 +58,8 @@ export { InventoryItemTransactionCreateFormComponent } from './lib/domain/invent
 export { LetterCorrespondenceFormComponent } from './lib/domain/lettercorrespondence/form/lettercorrespondence-form.component';
 
 export { InlineModelComponent } from './lib/domain/model/inline/model-inline.component';
+export { ModelFormComponent } from './lib/domain/model/form/model-form.component';
+export { ModelListPageComponent } from './lib/domain/model/list/model-list-page.component';
 
 export { NonSerialisedInventoryItemFormComponent } from './lib/domain/nonserialisedinventoryitem/form/nonserialisedinventoryitem-form.component';
 

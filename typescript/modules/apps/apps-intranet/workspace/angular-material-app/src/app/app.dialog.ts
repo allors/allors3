@@ -7,6 +7,7 @@ import {
 export const dialogs = {
   create: {
     [tags.BasePrice]: Create,
+    [tags.Brand]: Create,
     [tags.Carrier]: Create,
     [tags.Catalogue]: Create,
     [tags.CustomerRelationship]: Create,
@@ -88,6 +89,7 @@ export const dialogs = {
   },
   edit: {
     [tags.BasePrice]: Edit,
+    [tags.Brand]: Edit,
     [tags.Carrier]: Edit,
     [tags.Catalogue]: Edit,
     [tags.CustomerRelationship]: Edit,
@@ -108,6 +110,7 @@ export const dialogs = {
     [tags.LetterCorrespondence]: Edit,
     [tags.ManufacturerIdentification]: Edit,
     [tags.MiscellaneousCharge]: Edit,
+    [tags.Model]: Edit,
     [tags.NonSerialisedInventoryItem]: Edit,
     [tags.OrderTerm]: Edit,
     [tags.OrganisationContactRelationship]: Edit,

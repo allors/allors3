@@ -6,6 +6,7 @@ import { ErrorComponent } from './error/error.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {
+  BrandListPageComponent,
   CarrierListPageComponent,
   CataloguesListPageComponent,
   CommunicationEventListPageComponent,
@@ -13,6 +14,7 @@ import {
   EmailMessageListPageComponent,
   ExchangeRateListPageComponent,
   GoodListPageComponent,
+  ModelListPageComponent,
   NonUnifiedGoodOverviewPageComponent,
   NonUnifiedPartOverviewPageComponent,
   OrganisationListPageComponent,
@@ -132,6 +134,8 @@ export const routes: Routes = [
             path: 'serialiseditemcharacteristics',
             component: SerialisedItemCharacteristicListPageComponent,
           },
+          { path: 'brands', component: BrandListPageComponent },
+          { path: 'models', component: ModelListPageComponent },
           {
             path: 'producttypes',
             component: ProductTypesOverviewPageComponent,

@@ -24,6 +24,7 @@ import {
   FaceToFaceCommunicationFormComponent,
   InventoryItemTransactionCreateFormComponent,
   LetterCorrespondenceFormComponent,
+  ModelFormComponent,
   NonSerialisedInventoryItemFormComponent,
   NonUnifiedGoodCreateFormComponent,
   NonUnifiedGoodEditFormComponent,
@@ -181,6 +182,7 @@ export class AppFormService implements FormService {
       [m.ExchangeRate, ExchangeRateFormComponent],
       [m.FaceToFaceCommunication, FaceToFaceCommunicationFormComponent],
       [m.LetterCorrespondence, LetterCorrespondenceFormComponent],
+      [m.Model, ModelFormComponent],
       [m.NonSerialisedInventoryItem, NonSerialisedInventoryItemFormComponent],
       [m.OrderAdjustment, OrderAdjustmentFormComponent],
       [
@@ -320,6 +322,7 @@ export const components: any[] = [
   FaceToFaceCommunicationFormComponent,
   InventoryItemTransactionCreateFormComponent,
   LetterCorrespondenceFormComponent,
+  ModelFormComponent,
   NonSerialisedInventoryItemFormComponent,
   OrderAdjustmentFormComponent,
   OrganisationContactRelationshipFormComponent,
