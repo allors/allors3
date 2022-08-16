@@ -32,7 +32,7 @@ partial class Build
         .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() =>
         {
-            using (new SqlServer())
+            using (new SqlLocalDB())
             {
                 DotNetTest(s => s
                     .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)

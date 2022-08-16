@@ -31,13 +31,15 @@ internal class SqlLocalDB : IDisposable
         manager = null;
     }
 
-    public void Init(string database, string user, string password)
+    public void Init(string database, string user = null, string password = null)
     {
         ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
 
         ExecuteCommand($"CREATE DATABASE [{database}]");
 
-        ExecuteCommand(@$"
+        if (!string.IsNullOrWhiteSpace(user))
+        {
+            ExecuteCommand(@$"
 USE [{database}]
 
 IF NOT EXISTS(SELECT principal_id FROM sys.server_principals WHERE name = '{user}') BEGIN
@@ -49,6 +51,7 @@ IF NOT EXISTS(SELECT principal_id FROM sys.database_principals WHERE name = '{us
     CREATE USER {user} FOR LOGIN {user}
 END
 ");
+        }
     }
 
     public int ExecuteCommand(string commandText)
