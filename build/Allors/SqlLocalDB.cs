@@ -50,6 +50,8 @@ END
 IF NOT EXISTS(SELECT principal_id FROM sys.database_principals WHERE name = '{user}') BEGIN
     CREATE USER {user} FOR LOGIN {user}
 END
+
+ALTER ROLE [db_owner] ADD MEMBER [{user}]
 ");
         }
     }
