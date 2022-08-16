@@ -3,13 +3,13 @@ using MartinCostello.SqlLocalDb;
 using Microsoft.Data.SqlClient;
 using static Nuke.Common.Logger;
 
-internal class SqlServer : IDisposable
+internal class SqlLocalDB : IDisposable
 {
     private ISqlLocalDbInstanceInfo dbInstance;
     private ISqlLocalDbInstanceManager manager;
     private SqlLocalDbApi sqlLocalDbApi;
 
-    public SqlServer()
+    public SqlLocalDB()
     {
         sqlLocalDbApi = new SqlLocalDbApi();
         dbInstance = sqlLocalDbApi.GetDefaultInstance();
@@ -31,11 +31,27 @@ internal class SqlServer : IDisposable
         manager = null;
     }
 
-    public void Drop(string database) => ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
+    public void Init(string database, string user, string password)
+    {
+        ExecuteCommand($"DROP DATABASE IF EXISTS [{database}]");
 
-    public void Create(string database) => ExecuteCommand($"CREATE DATABASE [{database}]");
+        ExecuteCommand($"CREATE DATABASE [{database}]");
 
-    private int ExecuteCommand(string commandText)
+        ExecuteCommand(@$"
+USE [{database}]
+
+IF NOT EXISTS(SELECT principal_id FROM sys.server_principals WHERE name = '{user}') BEGIN
+    CREATE LOGIN {user}
+    WITH PASSWORD = '{password}'
+END
+
+IF NOT EXISTS(SELECT principal_id FROM sys.database_principals WHERE name = '{user}') BEGIN
+    CREATE USER {user} FOR LOGIN {user}
+END
+");
+    }
+
+    public int ExecuteCommand(string commandText)
     {
         using var connection = manager.CreateConnection();
         connection.Open();
