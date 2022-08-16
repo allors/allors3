@@ -110,7 +110,10 @@ namespace Allors.Database.Domain
                     this.TakenBy = internalOrganisations.First();
                 }
             }
+        }
 
+        public void AppsOnInit(ObjectOnInit method)
+        {
             if (!this.ExistStore && this.ExistTakenBy)
             {
                 var stores = new Stores(this.Strategy.Transaction).Extent();
