@@ -7,7 +7,7 @@ import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
 import { And } from '@allors/system/workspace/domain';
-import { Model } from '@allors/default/workspace/domain';
+import { Brand, Model } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -31,6 +31,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 interface Row extends TableRow {
   object: Model;
   name: string;
+  brand: string;
 }
 
 @Component({
@@ -79,7 +80,10 @@ export class ModelListPageComponent implements OnInit, OnDestroy {
 
     this.table = new Table({
       selection: true,
-      columns: [{ name: 'name', sort: true }],
+      columns: [
+        { name: 'name', sort: true },
+        { name: 'brand', sort: true },
+      ],
       actions: [this.edit, this.delete],
       defaultAction: this.edit,
       pageSize: 50,
@@ -143,6 +147,11 @@ export class ModelListPageComponent implements OnInit, OnDestroy {
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
                 take: pageEvent.pageSize,
               }),
+              pull.Brand({
+                include: {
+                  Models: {},
+                },
+              }),
             ];
 
             return this.allors.context.pull(pulls);
@@ -152,11 +161,13 @@ export class ModelListPageComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
+        const brands = loaded.collection<Brand>(this.m.Brand);
         const objects = loaded.collection<Model>(this.m.Model);
         this.table.data = objects?.map((v) => {
           return {
             object: v,
             name: `${v.Name}`,
+            brand: brands?.find((w) => w.Models.includes(v))?.Name,
           } as Row;
         });
       });
