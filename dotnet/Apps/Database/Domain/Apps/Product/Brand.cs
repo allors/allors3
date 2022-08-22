@@ -8,5 +8,16 @@ namespace Allors.Database.Domain
     public partial class Brand
     {
         public bool IsDeletable => !this.ExistPartsWhereBrand;
+
+        public void AppsDelete(DeletableDelete method)
+        {
+            if (this.IsDeletable)
+            {
+                foreach (var deletable in this.Models)
+                {
+                    deletable.Delete();
+                }
+            }
+        }
     }
 }
