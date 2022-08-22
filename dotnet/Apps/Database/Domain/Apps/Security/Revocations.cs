@@ -10,6 +10,8 @@ namespace Allors.Database.Domain
 
     public partial class Revocations
     {
+        public static readonly Guid BrandDeleteRevocationId = new Guid("d377ace1-8572-4994-b0d7-0a23b282983d");
+        public static readonly Guid ModelDeleteRevocationId = new Guid("ba731036-0947-4534-a3c3-087c78059f78");
         public static readonly Guid NonUnifiedGoodDeleteRevocationId = new Guid("093a7d72-c9ad-422b-b04f-827305cd7296");
         public static readonly Guid NonUnifiedPartDeleteRevocationId = new Guid("5241e606-2246-435a-aeed-f819d094c3ae");
         public static readonly Guid OrganisationDeleteRevocationId = new Guid("52819a08-c8ac-4e5e-9048-d1c35ff0711c");
@@ -64,6 +66,10 @@ namespace Allors.Database.Domain
         public static readonly Guid WorkTaskCompleteRevocationId = new Guid("0ced8924-4efd-4f40-9055-22804ac51b39");
         public static readonly Guid WorkTaskInvoiceRevocationId = new Guid("9d200651-a109-4462-bf99-8a70c3c4afb3");
         public static readonly Guid WorkTaskReviseRevocationId = new Guid("d7367f95-dfe9-467c-a84f-8fad58374d57");
+
+        public Revocation BrandDeleteRevocation => this.Cache[BrandDeleteRevocationId];
+
+        public Revocation ModelDeleteRevocation => this.Cache[ModelDeleteRevocationId];
 
         public Revocation NonUnifiedGoodDeleteRevocation => this.Cache[NonUnifiedGoodDeleteRevocationId];
 
@@ -177,6 +183,8 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
+            merge(BrandDeleteRevocationId, _ => { });
+            merge(ModelDeleteRevocationId, _ => { });
             merge(NonUnifiedGoodDeleteRevocationId, _ => { });
             merge(NonUnifiedPartDeleteRevocationId, _ => { });
             merge(OrganisationDeleteRevocationId, _ => { });
