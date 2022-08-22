@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public ModelDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("9654dfc9-5f56-439b-a0a8-33d966bad55d")) =>
             this.Patterns = new Pattern[]
         {
-            m.Model.AssociationPattern(v => v.BrandWhereModel, m.Model),
+            m.Model.AssociationPattern(v => v.PartsWhereModel, m.Model),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

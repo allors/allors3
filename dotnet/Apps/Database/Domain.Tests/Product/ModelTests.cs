@@ -40,6 +40,21 @@ namespace Allors.Database.Domain.Tests
             brand.AddModel(model);
             this.Derive();
 
+            Assert.DoesNotContain(this.deleteRevocation, model.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedPartModelDeriveDeletePermission()
+        {
+            var model = new ModelBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            this.Derive();
+
+            part.Model = model;
+            this.Derive();
+
             Assert.Contains(this.deleteRevocation, model.Revocations);
         }
     }
