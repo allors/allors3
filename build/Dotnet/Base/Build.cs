@@ -11,9 +11,8 @@ partial class Build
         .Executes(() =>
         {
             var database = "Base";
-            using var sqlServer = new SqlServer();
-            sqlServer.Drop(database);
-            sqlServer.Create(database);
+            using var sqlLocalDb = new SqlLocalDB();
+            sqlLocalDb.Init(database);
         });
 
     private Target DotnetBaseDatabaseTest => _ => _

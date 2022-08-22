@@ -26,33 +26,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<PurchaseInvoice>())
             {
-                if (@this.PurchaseInvoiceState.IsNotPaid)
-                {
-                    foreach (PurchaseInvoiceItem invoiceItem in @this.ValidInvoiceItems)
-                    {
-                        if (invoiceItem.ExistSerialisedItem && !invoiceItem.SerialisedItem.ExistAssignedPurchasePrice)
-                        {
-                            invoiceItem.SerialisedItem.PurchasePrice = invoiceItem.TotalExVat;
-                        }
-
-                        if (invoiceItem.ExistSerialisedItem
-                            && @this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).PurchaseInvoiceConfirm))
-                        {
-                            if ((@this.BilledFrom as InternalOrganisation)?.IsInternalOrganisation == false)
-                            {
-                                invoiceItem.SerialisedItem.Buyer = @this.BilledTo;
-                            }
-
-                            // who comes first?
-                            // Item you purchased can be on sold via sales invoice even before purchase invoice is created and confirmed!!
-                            if (!invoiceItem.SerialisedItem.SalesInvoiceItemsWhereSerialisedItem.Any(v => (v.SalesInvoiceWhereSalesInvoiceItem.BillToCustomer as Organisation)?.IsInternalOrganisation == false))
-                            {
-                                invoiceItem.SerialisedItem.OwnedBy = @this.BilledTo;
-                                invoiceItem.SerialisedItem.Ownership = new Ownerships(@this.Transaction()).Own;
-                            }
-                        }
-                    }
-                }
+                @this.DerivePurchaseInvoiceSerialisedItem(validation);
             }
         }
     }
@@ -80,10 +54,7 @@ namespace Allors.Database.Domain
 
                         // who comes first?
                         // Item you purchased can be on sold via sales invoice even before purchase invoice is created and confirmed!!
-                        if (!invoiceItem.SerialisedItem.SalesInvoiceItemsWhereSerialisedItem
-                            .Any(v => (v.SalesInvoiceWhereSalesInvoiceItem.BillToCustomer as Organisation)?.IsInternalOrganisation == false
-                                        && v.ExistNextSerialisedItemAvailability
-                                        && v.NextSerialisedItemAvailability.IsSold))
+                        if (!invoiceItem.SerialisedItem.SalesInvoiceItemsWhereSerialisedItem.Any(v => (v.SalesInvoiceWhereSalesInvoiceItem.BillToCustomer as Organisation)?.IsInternalOrganisation == false))
                         {
                             invoiceItem.SerialisedItem.OwnedBy = @this.BilledTo;
                             invoiceItem.SerialisedItem.Ownership = new Ownerships(@this.Transaction()).Own;
