@@ -27,16 +27,24 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<Brand>())
             {
-                var deleteRevocation = new Revocations(transaction).BrandDeleteRevocation;
+                @this.DeriveBrandDeniedPermission(validation);
+            }
+        }
+    }
 
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveRevocation(deleteRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(deleteRevocation);
-                }
+    public static class BrandDeniedPermissionRuleExtensions
+    {
+        public static void DeriveBrandDeniedPermission(this Brand @this, IValidation validation)
+        {
+            var deleteRevocation = new Revocations(@this.Strategy.Transaction).BrandDeleteRevocation;
+
+            if (@this.IsDeletable)
+            {
+                @this.RemoveRevocation(deleteRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(deleteRevocation);
             }
         }
     }
