@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
     {
         public static void DeriveModelDeniedPermission(this Model @this, IValidation validation)
         {
-            var deleteRevocation = new Revocations(@this.Strategy.Transaction).BrandDeleteRevocation;
+            var deleteRevocation = new Revocations(@this.Strategy.Transaction).ModelDeleteRevocation;
 
             if (@this.IsDeletable)
             {
