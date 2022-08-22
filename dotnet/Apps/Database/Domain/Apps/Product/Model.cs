@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public partial class Model
     {
-        public bool IsDeletable => !this.ExistBrandWhereModel;
+        public bool IsDeletable => !this.ExistPartsWhereModel;
     }
 }
