@@ -434,7 +434,8 @@ namespace Allors.Database.Domain
 
                     var leftToInvoice = (orderItem.QuantityOrdered * orderItem.UnitPrice) - amountAlreadyInvoiced;
 
-                    if (leftToInvoice != 0)
+                    // Allow zero priced items to be invoiced
+                    if (leftToInvoice != 0 || orderItem.UnitPrice == 0)
                     {
                         var invoiceItem = new SalesInvoiceItemBuilder(this.Strategy.Transaction)
                             .WithInvoiceItemType(orderItem.InvoiceItemType)
