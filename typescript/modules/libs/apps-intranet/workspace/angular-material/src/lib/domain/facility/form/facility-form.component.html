@@ -1,0 +1,33 @@
+<div class="container-fluid" *ngIf="object">
+  <div class="row">
+    <a-mat-input
+      class="col-md"
+      [object]="object"
+      [roleType]="m.Facility.Name"
+    ></a-mat-input>
+    <a-mat-select
+      class="col-md"
+      [object]="object"
+      [roleType]="m.Facility.FacilityType"
+      [options]="facilityTypes"
+      display="Name"
+    ></a-mat-select>
+  </div>
+
+  <div class="row">
+    <a-mat-select
+      class="col-md"
+      [object]="object"
+      [roleType]="m.Facility.Owner"
+      [options]="owners"
+      display="DisplayName"
+    ></a-mat-select>
+    <a-mat-select
+      class="col-md"
+      [object]="object"
+      [roleType]="m.Facility.ParentFacility"
+      [options]="parents"
+      display="Name"
+    ></a-mat-select>
+  </div>
+</div>

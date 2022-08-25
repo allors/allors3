@@ -13,6 +13,7 @@ import {
   CustomerShipmentOverviewPageComponent,
   EmailMessageListPageComponent,
   ExchangeRateListPageComponent,
+  FacilityListPageComponent,
   GoodListPageComponent,
   ModelListPageComponent,
   NonUnifiedGoodOverviewPageComponent,
@@ -153,6 +154,7 @@ export const routes: Routes = [
             path: 'unifiedgood/:id',
             component: UnifiedGoodOverviewPageComponent,
           },
+          { path: 'facilities', component: FacilityListPageComponent },
         ],
       },
 
@@ -260,6 +262,7 @@ export const components: any[] = [
   CustomerShipmentOverviewPageComponent,
   EmailMessageListPageComponent,
   ExchangeRateListPageComponent,
+  FacilityListPageComponent,
   GoodListPageComponent,
   NonUnifiedGoodOverviewPageComponent,
   NonUnifiedPartOverviewPageComponent,

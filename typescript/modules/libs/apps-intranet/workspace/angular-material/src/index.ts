@@ -47,7 +47,9 @@ export { ExchangeRateListPageComponent } from './lib/domain/exchangerate/list/ex
 
 export { FaceToFaceCommunicationFormComponent } from './lib/domain/facetofacecommunication/form/facetofacecommunication-form.component';
 
+export { FacilityFormComponent } from './lib/domain/facility/form/facility-form.component';
 export { FacilityInlineComponent } from './lib/domain/facility/inline/facility-inline.component';
+export { FacilityListPageComponent } from './lib/domain/facility/list/facility-list-page.component';
 
 export { GoodListPageComponent } from './lib/domain/good/list/good-list-page.component';
 

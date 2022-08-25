@@ -63,6 +63,16 @@ export class AppSorterService implements SorterService {
     );
 
     define(
+      m.Facility,
+      new Sorter({
+        name: m.Facility.Name,
+        type: m.Facility.FacilityTypeName,
+        owner: m.Facility.OwnerName,
+        parent: m.Facility.ParentName,
+      })
+    );
+
+    define(
       m.Good,
       new Sorter({
         name: [m.Good.Name],

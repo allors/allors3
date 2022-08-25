@@ -14,7 +14,7 @@ namespace Allors.Repository
     [Id("cdd79e23-a132-48b0-b88f-a03bd029f49d")]
     #endregion
     [Plural("Facilities")]
-    public partial class Facility : GeoLocatable, Object
+    public partial class Facility : GeoLocatable, Object, Deletable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -78,6 +78,24 @@ namespace Allors.Repository
         public string Name { get; set; }
 
         #region Allors
+        [Id("b072bab5-1f3e-4ced-9c15-2511c1395aee")]
+        #endregion
+        [Workspace(Default)]
+        public string FacilityTypeName { get; set; }
+
+        #region Allors
+        [Id("521db852-3678-4297-a6fd-8b340cef05dc")]
+        #endregion
+        [Workspace(Default)]
+        public string OwnerName { get; set; }
+
+        #region Allors
+        [Id("a10c26ec-806e-4e4b-85a1-15d2443407f4")]
+        #endregion
+        [Workspace(Default)]
+        public string ParentName { get; set; }
+
+        #region Allors
         [Id("c73693db-9eae-4d81-a801-2ef4d619544b")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -96,6 +114,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }

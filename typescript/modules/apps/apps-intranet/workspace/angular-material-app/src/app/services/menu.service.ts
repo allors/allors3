@@ -40,6 +40,7 @@ export class AppMenuService implements MenuService {
           { objectType: m.Brand },
           { objectType: m.Model },
           { objectType: m.ProductType },
+          { objectType: m.Facility },
         ],
       },
       {

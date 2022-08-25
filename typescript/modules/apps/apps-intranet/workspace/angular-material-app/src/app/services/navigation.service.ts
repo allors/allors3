@@ -53,6 +53,7 @@ export class AppNavigationService extends NavigationService {
     define(m.NonUnifiedPart, '/products/parts', '/products/nonunifiedpart/:id');
     define(m.Catalogue, '/products/catalogues');
     define(m.ProductCategory, '/products/productcategories');
+    define(m.Facility, '/products/facilities');
     define(
       m.SerialisedItemCharacteristic,
       '/products/serialiseditemcharacteristics'

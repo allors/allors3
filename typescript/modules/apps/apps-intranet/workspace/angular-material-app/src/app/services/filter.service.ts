@@ -13,6 +13,7 @@ import {
   Country,
   Currency,
   Facility,
+  FacilityType,
   FixedAsset,
   Good,
   InventoryItemKind,
@@ -112,9 +113,26 @@ export class AppFilterService implements FilterService {
       roleTypes: [m.Organisation.DisplayName],
     });
 
+    const internalOrganisationSearch = new SearchFactory({
+      objectType: m.Organisation,
+      predicates: [
+        {
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        },
+      ],
+      roleTypes: [m.Organisation.DisplayName],
+    });
+
     const facilitySearch = new SearchFactory({
       objectType: m.Facility,
       roleTypes: [m.Facility.Name],
+    });
+
+    const facilityTypeSearch = new SearchFactory({
+      objectType: m.FacilityType,
+      roleTypes: [m.FacilityType.Name],
     });
 
     const countrySearch = new SearchFactory({
@@ -431,6 +449,47 @@ export class AppFilterService implements FilterService {
           toCurrency: {
             search: () => currencySearch,
             display: (v: Currency) => v && v.IsoCode,
+          },
+        }
+      )
+    );
+
+    define(
+      m.Facility,
+      new FilterDefinition(
+        {
+          kind: 'And',
+          operands: [
+            { kind: 'Like', roleType: m.Facility.Name, parameter: 'Name' },
+            {
+              kind: 'Equals',
+              propertyType: m.Facility.FacilityType,
+              parameter: 'Type',
+            },
+            {
+              kind: 'Equals',
+              propertyType: m.Facility.Owner,
+              parameter: 'Owner',
+            },
+            {
+              kind: 'Equals',
+              propertyType: m.Facility.ParentFacility,
+              parameter: 'Parent',
+            },
+          ],
+        },
+        {
+          Type: {
+            search: () => facilityTypeSearch,
+            display: (v: FacilityType) => v && v.Name,
+          },
+          Owner: {
+            search: () => internalOrganisationSearch,
+            display: (v: Organisation) => v && v.DisplayName,
+          },
+          Parent: {
+            search: () => facilitySearch,
+            display: (v: Facility) => v && v.Name,
           },
         }
       )
