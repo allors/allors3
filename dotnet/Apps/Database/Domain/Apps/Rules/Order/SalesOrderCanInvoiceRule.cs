@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
 
                         var leftToInvoice1 = salesOrderItem.QuantityOrdered * salesOrderItem.UnitPrice - amountAlreadyInvoiced1;
 
-                        if (leftToInvoice1 > 0)
+                        if (leftToInvoice1 > 0 || salesOrderItem.UnitPrice == 0)
                         {
                             @this.CanInvoice = true;
                         }
