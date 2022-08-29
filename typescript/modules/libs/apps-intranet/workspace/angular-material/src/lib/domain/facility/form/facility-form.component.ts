@@ -14,8 +14,6 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 
-import { FetcherService } from '../../../services/fetcher/fetcher-service';
-
 @Component({
   templateUrl: './facility-form.component.html',
   providers: [ContextService],
@@ -29,8 +27,7 @@ export class FacilityFormComponent extends AllorsFormComponent<Facility> {
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
-    form: NgForm,
-    private fetcher: FetcherService
+    form: NgForm
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -39,8 +36,6 @@ export class FacilityFormComponent extends AllorsFormComponent<Facility> {
   onPrePull(pulls: Pull[]): void {
     const { m } = this;
     const { pullBuilder: p } = m;
-
-    pulls.push(this.fetcher.locales);
 
     pulls.push(
       p.Facility({
