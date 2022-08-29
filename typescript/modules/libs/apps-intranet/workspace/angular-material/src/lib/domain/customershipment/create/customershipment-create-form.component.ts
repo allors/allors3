@@ -84,23 +84,23 @@ export class CustomerShipmentCreateFormComponent extends AllorsFormComponent<Cus
     const { m } = this;
     const { pullBuilder: p } = m;
 
-    this.fetcher.internalOrganisation,
+    pulls.push(
+      this.fetcher.internalOrganisation,
       this.fetcher.locales,
       this.fetcher.ownWarehouses,
-      pulls.push(
-        p.ShipmentMethod({
-          sorting: [{ roleType: m.ShipmentMethod.Name }],
-        }),
-        p.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
-        p.Organisation({
-          predicate: {
-            kind: 'Equals',
-            propertyType: m.Organisation.IsInternalOrganisation,
-            value: true,
-          },
-          sorting: [{ roleType: m.Organisation.DisplayName }],
-        })
-      );
+      p.ShipmentMethod({
+        sorting: [{ roleType: m.ShipmentMethod.Name }],
+      }),
+      p.Carrier({ sorting: [{ roleType: m.Carrier.Name }] }),
+      p.Organisation({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Organisation.IsInternalOrganisation,
+          value: true,
+        },
+        sorting: [{ roleType: m.Organisation.DisplayName }],
+      })
+    );
 
     this.onPrePullInitialize(pulls);
   }
