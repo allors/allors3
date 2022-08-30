@@ -86,6 +86,8 @@ import {
 } from '@allors/base/workspace/angular-material/application';
 
 import {
+  BankAccountFormComponent,
+  BankInlineComponent,
   BasepriceFormComponent,
   BrandFormComponent,
   InlineBrandComponent,
@@ -322,6 +324,8 @@ import {
     AllorsMaterialDynamicViewDetailPanelComponent,
     AllorsMaterialDynamicViewExtentPanelComponent,
     // Intranet Material
+    BankAccountFormComponent,
+    BankInlineComponent,
     BasepriceFormComponent,
     BrandFormComponent,
     InlineBrandComponent,

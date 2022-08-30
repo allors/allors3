@@ -7,6 +7,7 @@ import {
 
 import { Injectable } from '@angular/core';
 import {
+  BankAccountFormComponent,
   BasepriceFormComponent,
   BrandFormComponent,
   CarrierFormComponent,
@@ -172,6 +173,7 @@ export class AppFormService implements FormService {
     ]);
 
     this.formByObjectType = new Map<Composite, unknown>([
+      [m.BankAccount, BankAccountFormComponent],
       [m.BasePrice, BasepriceFormComponent],
       [m.Brand, BrandFormComponent],
       [m.Carrier, CarrierFormComponent],
@@ -311,6 +313,7 @@ export const editComponents: any[] = [
 ];
 
 export const components: any[] = [
+  BankAccountFormComponent,
   BasepriceFormComponent,
   BrandFormComponent,
   CarrierFormComponent,

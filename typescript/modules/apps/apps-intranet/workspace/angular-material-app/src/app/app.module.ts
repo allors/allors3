@@ -148,6 +148,7 @@ import {
   // Services
   PrintService,
   // Components
+  BankInlineComponent,
   InlineBrandComponent,
   BrandListPageComponent,
   CarrierListPageComponent,
@@ -319,6 +320,7 @@ import { AppActionService } from './services/action.service';
     ...formEditComponents,
     ...formComponents,
     // Non routed and non dialog components
+    BankInlineComponent,
     InlineBrandComponent,
     BrandListPageComponent,
     CarrierListPageComponent,

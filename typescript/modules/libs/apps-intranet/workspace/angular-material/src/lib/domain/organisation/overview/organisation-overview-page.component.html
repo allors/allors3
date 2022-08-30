@@ -109,6 +109,13 @@
           [enabler]="hasSupplierOfferings"
           [init]="m.PurchaseOrder.TakenViaSupplier"
         ></a-mat-dyn-edit-extent-panel>
+
+        <a-mat-dyn-view-extent-panel
+          [init]="m.BankAccount.PartyWhereBankAccount"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.BankAccount.PartyWhereBankAccount"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

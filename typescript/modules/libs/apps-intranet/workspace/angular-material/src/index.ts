@@ -6,6 +6,10 @@ export { InternalOrganisationId } from './lib/services/state/internal-organisati
 
 export { Filters } from './lib/filters/filters';
 
+export { BankInlineComponent } from './lib/domain/bank/inline/bank-inline.component';
+
+export { BankAccountFormComponent } from './lib/domain/bankaccount/form/bankaccount-form.component';
+
 export { BasepriceFormComponent } from './lib/domain/baseprice/form/baseprice-form.component';
 
 export { BrandFormComponent } from './lib/domain/brand/form/brand-form.component';

@@ -28,6 +28,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Workspace]
         public Media Logo { get; set; }
 
         #region Allors
@@ -35,12 +36,14 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
+        [Workspace]
         public string Bic { get; set; }
 
         #region Allors
         [Id("a7851af8-38cd-4785-b81c-fb2fa403d9f6")]
         #endregion
         [Size(256)]
+        [Workspace]
         public string SwiftCode { get; set; }
 
         #region Allors
@@ -49,6 +52,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
+        [Workspace]
         public Country Country { get; set; }
 
         #region Allors
@@ -56,6 +60,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
+        [Workspace]
         public string Name { get; set; }
 
         #region inherited methods

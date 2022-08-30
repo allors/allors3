@@ -26,6 +26,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Workspace]
         public Bank Bank { get; set; }
 
         #region Allors
@@ -33,6 +34,7 @@ namespace Allors.Repository
         #endregion
         [Size(256)]
         [Required]
+        [Workspace]
         public string NameOnAccount { get; set; }
 
         #region Allors
@@ -40,6 +42,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
+        [Workspace]
         public Currency Currency { get; set; }
 
         #region Allors
@@ -47,12 +50,14 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(256)]
+        [Workspace]
         public string Iban { get; set; }
 
         #region Allors
         [Id("b06a858d-a8ee-41b8-a747-7fd46336ae4f")]
         #endregion
         [Size(256)]
+        [Workspace]
         public string Description { get; set; }
 
         #region Allors
@@ -60,6 +65,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
+        [Workspace]
         public Person[] ContactPersons { get; set; }
 
         #region inherited methods

@@ -20,6 +20,7 @@ export class AppDisplayService implements DisplayService {
     this.nameByObjectType = new Map<Composite, RoleType>([
       [m.AgreementTerm, m.WorkRequirement.Description],
       [m.AgreementTerm, m.WorkRequirement.Description],
+      [m.BankAccount, m.BankAccount.NameOnAccount],
       [m.Brand, m.Brand.Name],
       [m.Carrier, m.Carrier.Name],
       [m.Catalogue, m.Catalogue.Name],
@@ -181,6 +182,7 @@ export class AppDisplayService implements DisplayService {
     this.descriptionByObjectType = new Map<Composite, RoleType>([]);
 
     this.primaryByObjectType = new Map<Composite, RoleType[]>([
+      [m.BankAccount, [m.BankAccount.NameOnAccount, m.BankAccount.Iban]],
       [
         m.CommunicationEvent,
         [

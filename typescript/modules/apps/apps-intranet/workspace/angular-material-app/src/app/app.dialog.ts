@@ -6,6 +6,7 @@ import {
 
 export const dialogs = {
   create: {
+    [tags.BankAccount]: Create,
     [tags.BasePrice]: Create,
     [tags.Brand]: Create,
     [tags.Carrier]: Create,
@@ -89,6 +90,7 @@ export const dialogs = {
     [tags.WorkTask]: Create,
   },
   edit: {
+    [tags.BankAccount]: Edit,
     [tags.BasePrice]: Edit,
     [tags.Brand]: Edit,
     [tags.Carrier]: Edit,
