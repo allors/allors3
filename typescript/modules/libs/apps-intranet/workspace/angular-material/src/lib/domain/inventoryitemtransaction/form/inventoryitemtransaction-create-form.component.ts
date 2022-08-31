@@ -147,7 +147,7 @@ export class InventoryItemTransactionCreateFormComponent extends AllorsFormCompo
 
     this.object.TransactionDate = new Date();
     this.object.Part = this.part;
-    this.object.Cost = this.part.PartWeightedAverage?.AverageCost;
+    this.object.Cost = this.part.PartWeightedAverage?.AverageCost ?? '0';
 
     if (this.inventoryItem) {
       this.object.Facility = this.inventoryItem.Facility;
