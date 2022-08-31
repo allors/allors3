@@ -2,7 +2,10 @@ import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { Pull, IPullResult } from '@allors/system/workspace/domain';
-import { NonSerialisedInventoryItem } from '@allors/default/workspace/domain';
+import {
+  Facility,
+  NonSerialisedInventoryItem,
+} from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
   ErrorService,
@@ -19,7 +22,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 })
 export class NonSerialisedInventoryItemFormComponent extends AllorsFormComponent<NonSerialisedInventoryItem> {
   public m: M;
-  facilities: import('c:/Users/MartienvanKnippenber/source/repos/Allors/allors3/typescript/modules/libs/apps-intranet/workspace/domain/src/index').Facility[];
+  facilities: Facility[];
 
   constructor(
     @Self() public allors: ContextService,
