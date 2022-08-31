@@ -107,7 +107,9 @@ namespace Allors.Database.Domain
             BankAccount bankAccount = null;
             if (!string.IsNullOrEmpty(bic) && !string.IsNullOrEmpty(iban))
             {
-                var bank = new BankBuilder(transaction).WithName(bankName).WithBic(bic).WithCountry(country).Build();
+                var bank = new Banks(transaction).FindBy(m.Bank.Bic, bic);
+                bank ??= new BankBuilder(transaction).WithName(bankName).WithBic(bic).WithCountry(country).Build();
+
                 bankAccount = new BankAccountBuilder(transaction)
                     .WithBank(bank)
                     .WithIban(iban)
