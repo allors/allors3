@@ -19,6 +19,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 })
 export class NonSerialisedInventoryItemFormComponent extends AllorsFormComponent<NonSerialisedInventoryItem> {
   public m: M;
+  facilities: import('c:/Users/MartienvanKnippenber/source/repos/Allors/allors3/typescript/modules/libs/apps-intranet/workspace/domain/src/index').Facility[];
 
   constructor(
     @Self() public allors: ContextService,
@@ -35,7 +36,7 @@ export class NonSerialisedInventoryItemFormComponent extends AllorsFormComponent
     const { m } = this;
     const { pullBuilder: p } = m;
 
-    pulls.push(this.fetcher.internalOrganisation);
+    pulls.push(this.fetcher.internalOrganisation, this.fetcher.ownWarehouses);
 
     if (this.editRequest) {
       pulls.push(
@@ -53,6 +54,8 @@ export class NonSerialisedInventoryItemFormComponent extends AllorsFormComponent
     this.object = this.editRequest
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
+
+    this.facilities = this.fetcher.getOwnWarehouses(pullResult);
 
     this.onPostPullInitialize(pullResult);
   }

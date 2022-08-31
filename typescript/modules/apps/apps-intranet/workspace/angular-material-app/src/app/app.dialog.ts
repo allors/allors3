@@ -30,6 +30,7 @@ export const dialogs = {
     [tags.LetterCorrespondence]: Create,
     [tags.ManufacturerIdentification]: Create,
     [tags.MiscellaneousCharge]: Create,
+    [tags.NonSerialisedInventoryItem]: Create,
     [tags.OrderTerm]: Create,
     [tags.Organisation]: Create,
     [tags.OrganisationContactRelationship]: Create,
