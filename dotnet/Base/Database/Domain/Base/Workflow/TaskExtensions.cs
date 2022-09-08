@@ -49,7 +49,11 @@ namespace Allors.Database.Domain
                 var user = currentTaskAssignement.User;
                 if (!participantSet.Contains(user))
                 {
-                    currentTaskAssignement.Notification.Confirm();
+                    if (currentTaskAssignement.ExistNotification)
+                    {
+                        currentTaskAssignement.Notification.Confirm();
+                    }
+
                     currentTaskAssignement.Delete();
 
                 }
