@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("5E594A00-15A4-4871-84E9-B8010A78FD21")]
     #endregion
-    public partial class SerialisedItem : Deletable, FixedAsset, Versioned
+    public partial class SerialisedItem : FixedAsset, Versioned
     {
         #region InheritedProperties
 
