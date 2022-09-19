@@ -46,11 +46,11 @@
           [roleType]="m.UnifiedGood.Name"
           label="Part"
         ></a-mat-static>
-        <a-mat-input
+        <a-mat-static
           class="col-md"
           [object]="object"
-          [roleType]="m.SerialisedItem.Name"
-        ></a-mat-input>
+          [roleType]="m.SerialisedItem.DisplayName"
+        ></a-mat-static>
       </div>
 
       <div class="row">
@@ -197,12 +197,6 @@
           <div *ngFor="let locale of locales; let i = index">
             <mat-divider *ngIf="i > 0"></mat-divider>
             <div class="row">
-              <a-mat-localised-text
-                class="col-md-12"
-                [object]="object"
-                [roleType]="m.SerialisedItem.LocalisedNames"
-                [locale]="locale"
-              ></a-mat-localised-text>
               <a-mat-localised-text
                 class="col-md-12"
                 [object]="object"

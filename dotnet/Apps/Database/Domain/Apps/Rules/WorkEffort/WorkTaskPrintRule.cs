@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
             m.PostalAddress.RolePattern(v => v.PostalCode, v => v.PartiesWhereShippingAddress.Party.WorkEffortsWhereCustomer.WorkEffort.AsWorkTask),
 
             m.WorkEffortFixedAssetAssignment.RolePattern(v => v.Assignment, v => v.Assignment.WorkEffort.AsWorkTask),
-            m.FixedAsset.RolePattern(v => v.Name, v => v.WorkEffortFixedAssetAssignmentsWhereFixedAsset.WorkEffortFixedAssetAssignment.Assignment.WorkEffort.AsWorkTask),
+            m.FixedAsset.RolePattern(v => v.DisplayName, v => v.WorkEffortFixedAssetAssignmentsWhereFixedAsset.WorkEffortFixedAssetAssignment.Assignment.WorkEffort.AsWorkTask),
             m.FixedAsset.RolePattern(v => v.Comment, v => v.WorkEffortFixedAssetAssignmentsWhereFixedAsset.WorkEffortFixedAssetAssignment.Assignment.WorkEffort.AsWorkTask),
             m.SerialisedItem.RolePattern(v => v.CustomerReferenceNumber, v => v.WorkEffortFixedAssetAssignmentsWhereFixedAsset.WorkEffortFixedAssetAssignment.Assignment.WorkEffort.AsWorkTask),
             m.SerialisedItem.RolePattern(v => v.ItemNumber, v => v.WorkEffortFixedAssetAssignmentsWhereFixedAsset.WorkEffortFixedAssetAssignment.Assignment.WorkEffort.AsWorkTask),

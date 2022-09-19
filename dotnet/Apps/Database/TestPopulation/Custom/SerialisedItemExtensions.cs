@@ -10,6 +10,6 @@ namespace Allors.Database.Domain.TestPopulation
 
     public static partial class SerialisedItemExtensions
     {
-        public static string DisplayName(this SerialisedItem @this) => @this.ItemNumber + " " + @this.Name + " SN: " + @this.SerialNumber;
+        public static string DisplayName(this SerialisedItem @this) => @this.ItemNumber + " " + @this.PartWhereSerialisedItem?.Name + " SN: " + @this.SerialNumber;
     }
 }

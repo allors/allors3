@@ -224,7 +224,7 @@ export class AppSorterService implements SorterService {
       new Sorter({
         id: [m.SerialisedItem.ItemNumber],
         categories: [m.SerialisedItem.ProductCategoriesDisplayName],
-        name: [m.SerialisedItem.Name],
+        name: [m.SerialisedItem.DisplayName],
         availability: [m.SerialisedItem.SerialisedItemAvailabilityName],
       })
     );

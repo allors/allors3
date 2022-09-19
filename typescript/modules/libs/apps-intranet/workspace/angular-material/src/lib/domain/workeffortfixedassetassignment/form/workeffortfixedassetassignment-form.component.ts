@@ -87,7 +87,7 @@ export class WorkEffortFixedAssetAssignmentFormComponent extends AllorsFormCompo
       pulls.push(
         p.SerialisedItem({
           objectId: initializer.id,
-          sorting: [{ roleType: m.SerialisedItem.Name }],
+          sorting: [{ roleType: m.SerialisedItem.DisplayName }],
         }),
         p.WorkEffort({
           objectId: initializer.id,

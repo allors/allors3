@@ -491,7 +491,6 @@ line2")
             var anOrganisation = new Organisations(@this.Transaction()).FindBy(m.Organisation.IsInternalOrganisation, false);
 
             var item = new SerialisedItemBuilder(@this.Transaction())
-                .WithName("name")
                 .WithSerialNumber("112")
                 .WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction()).Sold)
                 .WithAvailableForSale(false)

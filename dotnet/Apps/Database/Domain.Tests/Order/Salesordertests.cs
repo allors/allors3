@@ -2141,7 +2141,7 @@ namespace Allors.Database.Domain.Tests
                     .Build())
                 .Build();
 
-            var serialisedItem1 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("1").WithAvailableForSale(true).Build();
+            var serialisedItem1 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1").WithAvailableForSale(true).Build();
             good1.Part.AddSerialisedItem(serialisedItem1);
 
             new SerialisedInventoryItemBuilder(this.Transaction).WithFacility(this.InternalOrganisation.FacilitiesWhereOwner.FirstOrDefault()).WithPart(good1.Part).WithSerialisedItem(serialisedItem1).Build();
@@ -2366,7 +2366,7 @@ namespace Allors.Database.Domain.Tests
                     .Build())
                 .Build();
 
-            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("1").WithAvailableForSale(true).Build();
+            var serialisedItem = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1").WithAvailableForSale(true).Build();
             good.Part.AddSerialisedItem(serialisedItem);
 
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();

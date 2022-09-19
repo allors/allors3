@@ -17,9 +17,7 @@ namespace Allors.Database.Domain
         public SerialisedItemSearchStringRule(MetaPopulation m) : base(m, new Guid("9d4316ae-3abf-4b6a-839e-1acbcea8995f")) =>
             this.Patterns = new Pattern[]
             {
-                m.FixedAsset.RolePattern(v => v.Name, m.SerialisedItem),
-                m.FixedAsset.RolePattern(v => v.LocalisedNames, m.SerialisedItem),
-                m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedName.FixedAsset, m.SerialisedItem),
+                m.FixedAsset.RolePattern(v => v.DisplayName, m.SerialisedItem),
                 m.FixedAsset.RolePattern(v => v.LocalisedDescriptions, m.SerialisedItem),
                 m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedDescription.FixedAsset, m.SerialisedItem),
                 m.FixedAsset.RolePattern(v => v.Keywords, m.SerialisedItem),
@@ -67,8 +65,7 @@ namespace Allors.Database.Domain
         public static void DeriveSerialisedItemSearchString(this SerialisedItem @this, IValidation validation)
         {
             var array = new string[] {
-                    @this.Name,
-                    @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
+                    @this.DisplayName,
                     @this.Description,
                     @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
                     @this.Keywords,

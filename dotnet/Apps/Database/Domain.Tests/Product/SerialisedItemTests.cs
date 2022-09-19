@@ -163,7 +163,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedPartSerialisedItemDeriveName()
+        public void ChangedPartSerialisedItemDeriveDisplayName()
         {
             var part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).WithName("partname").Build();
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
@@ -172,7 +172,7 @@ namespace Allors.Database.Domain.Tests
             part.AddSerialisedItem(serialisedItem);
             this.Derive();
 
-            Assert.Equal("partname", serialisedItem.Name);
+            Assert.Contains("partname", serialisedItem.DisplayName);
         }
 
         [Fact]
@@ -437,15 +437,15 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedNameDeriveSearchString()
+        public void ChangedDisplayNameDeriveSearchString()
         {
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Derive();
 
-            serialisedItem.Name = "name";
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithName("partName").WithSerialisedItem(serialisedItem).Build();
             this.Derive();
 
-            Assert.Contains("name", serialisedItem.SearchString);
+            Assert.Contains("partName", serialisedItem.SearchString);
         }
 
         [Fact]

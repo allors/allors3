@@ -588,8 +588,8 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
 
-            var serialisedItem1 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("1").WithAvailableForSale(true).Build();
-            var serialisedItem1Not = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("1Not").Build();  // This one must be excluded
+            var serialisedItem1 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1").WithAvailableForSale(true).Build();
+            var serialisedItem1Not = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("1Not").Build();  // This one must be excluded
             good1.Part.AddSerialisedItem(serialisedItem1);
             good1.Part.AddSerialisedItem(serialisedItem1Not);
 
@@ -607,8 +607,8 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
 
-            var serialisedItem2a = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("2a").WithAvailableForSale(true).Build();
-            var serialisedItem2b = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("2b").WithAvailableForSale(true).Build();
+            var serialisedItem2a = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("2a").WithAvailableForSale(true).Build();
+            var serialisedItem2b = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("2b").WithAvailableForSale(true).Build();
             good2.Part.AddSerialisedItem(serialisedItem2a);
             good2.Part.AddSerialisedItem(serialisedItem2b);
 
@@ -626,7 +626,7 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
 
-            var serialisedItem11 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("11").WithAvailableForSale(true).Build();
+            var serialisedItem11 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("11").WithAvailableForSale(true).Build();
             good11.Part.AddSerialisedItem(serialisedItem11);
 
             var good12 = new NonUnifiedGoodBuilder(this.Transaction)
@@ -643,7 +643,7 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
 
-            var serialisedItem12 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("12").WithAvailableForSale(true).Build();
+            var serialisedItem12 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("12").WithAvailableForSale(true).Build();
             good12.Part.AddSerialisedItem(serialisedItem12);
 
             var good111 = new NonUnifiedGoodBuilder(this.Transaction)
@@ -660,7 +660,7 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
 
-            var serialisedItem111 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("111").WithAvailableForSale(true).Build();
+            var serialisedItem111 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("111").WithAvailableForSale(true).Build();
             good111.Part.AddSerialisedItem(serialisedItem111);
 
             var good121 = new NonUnifiedGoodBuilder(this.Transaction)
@@ -677,7 +677,7 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
 
-            var serialisedItem121 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("121").WithAvailableForSale(true).Build();
+            var serialisedItem121 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("121").WithAvailableForSale(true).Build();
             good121.Part.AddSerialisedItem(serialisedItem121);
 
             var good122 = new NonUnifiedGoodBuilder(this.Transaction)
@@ -694,7 +694,7 @@ namespace Allors.Database.Domain.Tests
                             .Build())
                 .Build();
 
-            var serialisedItem122 = new SerialisedItemBuilder(this.Transaction).WithName("name").WithSerialNumber("122").WithAvailableForSale(true).Build();
+            var serialisedItem122 = new SerialisedItemBuilder(this.Transaction).WithSerialNumber("122").WithAvailableForSale(true).Build();
             good122.Part.AddSerialisedItem(serialisedItem122);
 
             var productCategory1 = new ProductCategoryBuilder(this.Transaction)

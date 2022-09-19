@@ -27,8 +27,7 @@ namespace Allors.Database.Domain.TestPopulation
             var replacementValue = Convert.ToDecimal(faker.Commerce.Price());
             var expectedSalesPrice = Convert.ToDecimal(faker.Commerce.Price(replacementValue + 1000, replacementValue + 10000));
 
-            @this.WithName(faker.Lorem.Word())
-                .WithSerialisedItemAvailability(availability)
+            @this.WithSerialisedItemAvailability(availability)
                 .WithSerialisedItemState(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemState>()))
                 .WithDescription(faker.Lorem.Sentence())
                 .WithKeywords(faker.Lorem.Sentence())
@@ -66,8 +65,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build())
-                    .WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
                     .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }
 
@@ -83,8 +81,7 @@ namespace Allors.Database.Domain.TestPopulation
             var replacementValue = Convert.ToDecimal(faker.Commerce.Price());
             var expectedSalesPrice = Convert.ToDecimal(faker.Commerce.Price(replacementValue + 1000, replacementValue + 10000));
 
-            @this.WithName(faker.Lorem.Word())
-                .WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction).Available)
+            @this.WithSerialisedItemAvailability(new SerialisedItemAvailabilities(@this.Transaction).Available)
                 .WithSerialisedItemState(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemState>()))
                 .WithDescription(faker.Lorem.Sentence())
                 .WithKeywords(faker.Lorem.Sentence())
@@ -109,8 +106,7 @@ namespace Allors.Database.Domain.TestPopulation
 
             foreach (var additionalLocale in @this.Transaction.GetSingleton().AdditionalLocales)
             {
-                @this.WithLocalisedName(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Word()).WithLocale(additionalLocale).Build())
-                    .WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
+                @this.WithLocalisedDescription(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
                     .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
             }
 

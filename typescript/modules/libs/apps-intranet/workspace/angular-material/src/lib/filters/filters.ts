@@ -60,7 +60,7 @@ export class Filters {
   static serialisedItemsFilter(m: M) {
     return new SearchFactory({
       objectType: m.SerialisedItem,
-      roleTypes: [m.SerialisedItem.Name, m.SerialisedItem.SearchString],
+      roleTypes: [m.SerialisedItem.DisplayName, m.SerialisedItem.SearchString],
     });
   }
 

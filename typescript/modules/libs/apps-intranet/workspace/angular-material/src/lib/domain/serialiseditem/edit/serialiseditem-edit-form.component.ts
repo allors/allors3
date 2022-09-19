@@ -81,9 +81,6 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
               UnitOfMeasure: {},
             },
           },
-          LocalisedNames: {
-            Locale: {},
-          },
           LocalisedDescriptions: {
             Locale: {},
           },

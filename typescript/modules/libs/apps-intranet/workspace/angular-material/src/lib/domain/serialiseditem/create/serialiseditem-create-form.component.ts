@@ -133,7 +133,6 @@ export class SerialisedItemCreateFormComponent extends AllorsFormComponent<Seria
     if (obj) {
       const part = obj as Part;
       this.selectedPart = part;
-      this.object.Name = part.Name;
 
       const m = this.m;
       const { pullBuilder: pull } = m;
@@ -150,7 +149,6 @@ export class SerialisedItemCreateFormComponent extends AllorsFormComponent<Seria
 
       this.allors.context.pull(pulls).subscribe((loaded) => {
         this.selectedPart = loaded.object<Part>(m.Part);
-        this.object.Name = this.selectedPart.Name;
       });
     } else {
       this.selectedPart = undefined;

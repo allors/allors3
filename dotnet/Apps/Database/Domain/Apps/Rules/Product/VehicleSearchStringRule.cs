@@ -17,9 +17,7 @@ namespace Allors.Database.Domain
         public VehicleSearchStringRule(MetaPopulation m) : base(m, new Guid("fbe7ce1b-9e91-467f-8b1d-075a531ee18f")) =>
             this.Patterns = new Pattern[]
         {
-            m.FixedAsset.RolePattern(v => v.Name, m.Vehicle),
-            m.FixedAsset.RolePattern(v => v.LocalisedNames, m.Vehicle),
-            m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedName.FixedAsset, m.Vehicle),
+            m.FixedAsset.RolePattern(v => v.DisplayName, m.Vehicle),
             m.FixedAsset.RolePattern(v => v.LocalisedDescriptions, m.Vehicle),
             m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedDescription.FixedAsset, m.Vehicle),
             m.FixedAsset.RolePattern(v => v.Keywords, m.Vehicle),
@@ -49,8 +47,7 @@ namespace Allors.Database.Domain
         public static void DeriveVehicleSearchString(this Vehicle @this, IValidation validation)
         {
             var array = new string[] {
-                    @this.Name,
-                    @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
+                    @this.DisplayName,
                     @this.Description,
                     @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
                     @this.Keywords,

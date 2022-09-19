@@ -1526,7 +1526,7 @@ export class AppFilterService implements FilterService {
             },
             {
               kind: 'Like',
-              roleType: m.SerialisedItem.Name,
+              roleType: m.SerialisedItem.DisplayName,
               parameter: 'name',
             },
             {

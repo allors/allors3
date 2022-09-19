@@ -159,7 +159,7 @@ export class SerialisedItemListPageComponent implements OnInit, OnDestroy {
           return {
             object: v,
             id: v.ItemNumber,
-            name: v.Name,
+            name: v.DisplayName,
             categories: v.ProductCategoriesDisplayName,
             availability: v.SerialisedItemAvailabilityName,
             ownership: v.OwnershipName,

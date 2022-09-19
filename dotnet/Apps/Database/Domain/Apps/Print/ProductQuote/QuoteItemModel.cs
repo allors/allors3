@@ -26,7 +26,7 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
             var serialisedItem = item.SerialisedItem;
 
             this.Reference = item.InvoiceItemType?.Name;
-            this.Product = serialisedItem?.Name ?? product?.Name;
+            this.Product = serialisedItem?.DisplayName?? product?.Name;
             this.Description = serialisedItem?.Description ?? product?.Description;
             this.Details = item.Details;
             this.Quantity = item.Quantity.ToString("0");
