@@ -17,9 +17,7 @@ namespace Allors.Database.Domain
         public PropertySearchStringRule(MetaPopulation m) : base(m, new Guid("9a0f5042-dba5-4700-82de-ff0c7ae0ae17")) =>
             this.Patterns = new Pattern[]
         {
-            m.FixedAsset.RolePattern(v => v.Name, m.Property),
-            m.FixedAsset.RolePattern(v => v.LocalisedNames, m.Property),
-            m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedName.FixedAsset, m.Property),
+            m.FixedAsset.RolePattern(v => v.DisplayName, m.Property),
             m.FixedAsset.RolePattern(v => v.LocalisedDescriptions, m.Property),
             m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedDescription.FixedAsset, m.Property),
             m.FixedAsset.RolePattern(v => v.Keywords, m.Property),
@@ -49,8 +47,7 @@ namespace Allors.Database.Domain
         public static void DerivePropertySearchString(this Property @this, IValidation validation)
         {
             var array = new string[] {
-                    @this.Name,
-                    @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
+                    @this.DisplayName,
                     @this.Description,
                     @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
                     @this.Keywords,

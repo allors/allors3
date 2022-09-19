@@ -79,7 +79,7 @@ namespace Allors.Database.Domain
                 m.QuoteItem.RolePattern(v => v.Product, v => v.QuoteWhereQuoteItem.Quote.AsProductQuote),
                 m.QuoteItem.RolePattern(v => v.SerialisedItem, v => v.QuoteWhereQuoteItem.Quote.AsProductQuote),
                 m.InvoiceItemType.RolePattern(v => v.Name, v => v.QuoteItemsWhereInvoiceItemType.QuoteItem.QuoteWhereQuoteItem.Quote.AsProductQuote),
-                m.SerialisedItem.RolePattern(v => v.Name, v => v.QuoteItemsWhereSerialisedItem.QuoteItem.QuoteWhereQuoteItem.Quote.AsProductQuote),
+                m.SerialisedItem.RolePattern(v => v.DisplayName, v => v.QuoteItemsWhereSerialisedItem.QuoteItem.QuoteWhereQuoteItem.Quote.AsProductQuote),
                 m.Product.RolePattern(v => v.Name, v => v.QuoteItemsWhereProduct.QuoteItem.QuoteWhereQuoteItem.Quote.AsProductQuote),
                 m.SerialisedItem.RolePattern(v => v.Description, v => v.QuoteItemsWhereSerialisedItem.QuoteItem.QuoteWhereQuoteItem.Quote.AsProductQuote),
                 m.Product.RolePattern(v => v.Description, v => v.QuoteItemsWhereProduct.QuoteItem.QuoteWhereQuoteItem.Quote.AsProductQuote),

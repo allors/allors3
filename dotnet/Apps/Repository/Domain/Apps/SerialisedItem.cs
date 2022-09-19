@@ -25,10 +25,6 @@ namespace Allors.Repository
 
         public SecurityToken[] SecurityTokens { get; set; }
 
-        public string Name { get; set; }
-
-        public LocalisedText[] LocalisedNames { get; set; }
-
         public DateTime LastServiceDate { get; set; }
 
         public DateTime AcquiredDate { get; set; }

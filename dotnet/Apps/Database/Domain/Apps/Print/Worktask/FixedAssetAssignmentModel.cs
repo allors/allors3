@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             var transaction = assignment.Strategy.Transaction;
             var m = transaction.Database.Services.Get<MetaPopulation>();
 
-            this.Name = assignment.FixedAsset?.Name;
+            this.Name = assignment.FixedAsset?.DisplayName;
             this.Comment = assignment.FixedAsset?.Comment?.Split('\n');
 
             if (assignment.FixedAsset is SerialisedItem serialisedItem)

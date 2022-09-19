@@ -16,22 +16,6 @@ namespace Allors.Repository
     public partial interface FixedAsset : Commentable, Searchable, IDisplayName, CostUnit, Deletable
     {
         #region Allors
-        [Id("354107ce-4eb6-4b9a-83c8-5cfe5e3adb22")]
-        #endregion
-        [Required]
-        [Size(256)]
-        [Workspace(Default)]
-        string Name { get; set; }
-
-        #region Allors
-        [Id("54EC72A4-B9AC-44A0-A29F-10DAC2F58DEC")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToMany)]
-        [Workspace(Default)]
-        LocalisedText[] LocalisedNames { get; set; }
-
-        #region Allors
         [Id("51133e4d-5135-4991-9f2f-8df9762fac78")]
         #endregion
         [Workspace(Default)]

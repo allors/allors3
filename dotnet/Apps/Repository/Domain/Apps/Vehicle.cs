@@ -15,9 +15,6 @@ namespace Allors.Repository
     public partial class Vehicle : FixedAsset
     {
         #region inherited properties
-        public string Name { get; set; }
-
-        public LocalisedText[] LocalisedNames { get; set; }
 
         public string Comment { get; set; }
 

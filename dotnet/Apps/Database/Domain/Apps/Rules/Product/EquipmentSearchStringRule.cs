@@ -17,9 +17,7 @@ namespace Allors.Database.Domain
         public EquipmentSearchStringRule(MetaPopulation m) : base(m, new Guid("8bd46acb-0926-4ad7-bfeb-8a01638a1c98")) =>
             this.Patterns = new Pattern[]
         {
-            m.FixedAsset.RolePattern(v => v.Name, m.Equipment),
-            m.FixedAsset.RolePattern(v => v.LocalisedNames, m.Equipment),
-            m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedName.FixedAsset, m.Equipment),
+            m.FixedAsset.RolePattern(v => v.DisplayName, m.Equipment),
             m.FixedAsset.RolePattern(v => v.LocalisedDescriptions, m.Equipment),
             m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedDescription.FixedAsset, m.Equipment),
             m.FixedAsset.RolePattern(v => v.Keywords, m.Equipment),
@@ -49,8 +47,7 @@ namespace Allors.Database.Domain
         public static void DeriveEquipmentSearchString(this Equipment @this, IValidation validation)
         {
             var array = new string[] {
-                    @this.Name,
-                    @this.ExistLocalisedNames ? string.Join(" ", @this.LocalisedNames?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
+                    @this.DisplayName,
                     @this.Description,
                     @this.ExistLocalisedDescriptions ? string.Join(" ", @this.LocalisedDescriptions?.Select(v => v.Text ?? string.Empty).ToArray()) : null,
                     @this.Keywords,

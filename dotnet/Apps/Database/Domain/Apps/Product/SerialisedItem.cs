@@ -48,11 +48,6 @@ namespace Allors.Database.Domain
                     deletable.Delete();
                 }
 
-                foreach (var deletable in this.LocalisedNames)
-                {
-                    deletable.Delete();
-                }
-
                 foreach (var deletable in this.LocalisedDescriptions)
                 {
                     deletable.Delete();

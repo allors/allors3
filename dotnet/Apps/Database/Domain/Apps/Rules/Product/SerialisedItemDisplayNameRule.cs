@@ -18,8 +18,9 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.SerialisedItem.RolePattern(v => v.ItemNumber),
-                m.SerialisedItem.RolePattern(v => v.Name),
                 m.SerialisedItem.RolePattern(v => v.SerialNumber),
+                m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
+                m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, v => v.SerialisedItems),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -37,7 +38,7 @@ namespace Allors.Database.Domain
     {
         public static void DeriveSerialisedItemDisplayName(this SerialisedItem @this, IValidation validation)
         {
-            @this.DisplayName = $"{ @this.ItemNumber} { @this.Name} SN: { @this.SerialNumber}";
+            @this.DisplayName = $"{@this.ItemNumber} {@this.PartWhereSerialisedItem?.Name} SN: {@this.SerialNumber}";
         }
     }
 }

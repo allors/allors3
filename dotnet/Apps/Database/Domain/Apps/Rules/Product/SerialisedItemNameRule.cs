@@ -17,18 +17,18 @@ namespace Allors.Database.Domain
         public SerialisedItemNameRule(MetaPopulation m) : base(m, new Guid("3d6cf84b-b2af-4a0f-b2d9-a5b9f991f2cb")) =>
             this.Patterns = new Pattern[]
             {
-                m.SerialisedItem.RolePattern(v => v.Name),
-                m.SerialisedItem.RolePattern(v => v.SerialNumber),
+                //m.SerialisedItem.RolePattern(v => v.Name),
+                //m.SerialisedItem.RolePattern(v => v.SerialNumber),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                if (!@this.ExistName && @this.ExistSerialNumber)
-                {
-                    @this.Name = @this.SerialNumber;
-                }
+                //if (!@this.ExistName && @this.ExistSerialNumber)
+                //{
+                //    @this.Name = @this.SerialNumber;
+                //}
             }
         }
     }
