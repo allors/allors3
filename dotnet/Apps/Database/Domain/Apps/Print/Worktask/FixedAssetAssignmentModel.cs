@@ -8,7 +8,6 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
     using System.Linq;
     using Meta;
     using SerialisedItem = SerialisedItem;
-    using Vehicle = Vehicle;
     using WorkEffortFixedAssetAssignment = WorkEffortFixedAssetAssignment;
 
     public class FixedAssetAssignmentModel
@@ -32,16 +31,6 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
                 var hoursType = new SerialisedItemCharacteristicTypes(transaction).FindBy(m.SerialisedItemCharacteristicType.Name, "Operating Hours");
                 var hoursCharacteristic = serialisedItem.SerialisedItemCharacteristics.FirstOrDefault(v => v.SerialisedItemCharacteristicType.Equals(hoursType));
                 this.Hours = $"{hoursCharacteristic?.Value} {hoursType?.UnitOfMeasure?.Abbreviation}";
-                this.IsSerialisedItem = true;
-                this.IsVehicle = false;
-            }
-
-            if (assignment.FixedAsset is Vehicle vehicle)
-            {
-                this.Vehicle = vehicle.DisplayName;
-                this.Mileage = vehicle.Mileage;
-                this.IsVehicle = true;
-                this.IsSerialisedItem = false;
             }
         }
 
@@ -58,14 +47,6 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
         public string Model { get; }
 
         public string Hours { get; }
-
-        public string Vehicle { get; }
-
-        public string Mileage { get; }
-
-        public bool IsVehicle{ get; }
-
-        public bool IsSerialisedItem { get; }
 
         public string[] Comment { get; }
     }

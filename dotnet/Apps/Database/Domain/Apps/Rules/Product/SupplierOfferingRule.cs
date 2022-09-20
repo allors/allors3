@@ -32,6 +32,7 @@ namespace Allors.Database.Domain
                 {
                     var warehouses = @this.Strategy.Transaction.Extent<Facility>();
                     warehouses.Filter.AddEquals(this.M.Facility.FacilityType, new FacilityTypes(@this.Transaction()).Warehouse);
+                    warehouses.Filter.AddExists(this.M.Facility.StoresWhereDefaultFacility);
 
                     foreach (Facility facility in warehouses)
                     {
