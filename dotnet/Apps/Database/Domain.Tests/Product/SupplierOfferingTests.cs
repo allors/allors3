@@ -74,6 +74,14 @@ namespace Allors.Database.Domain.Tests
                 .WithName("second facility")
                 .Build();
 
+            new StoreBuilder(this.Transaction)
+                .WithInternalOrganisation(internalOrganisation)
+                .WithDefaultFacility(secondFacility)
+                .WithDefaultShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
+                .WithDefaultCarrier(new Carriers(this.Transaction).Fedex)
+                .WithName("another store")
+                .Build();
+
             new SupplierRelationshipBuilder(this.Transaction)
                 .WithSupplier(supplier)
                 .WithFromDate(this.Transaction.Now())
@@ -120,6 +128,14 @@ namespace Allors.Database.Domain.Tests
                 .WithFacilityType(new FacilityTypes(this.Transaction).Warehouse)
                 .WithName("second facility")
                 .WithOwner(this.InternalOrganisation)
+                .Build();
+
+            new StoreBuilder(this.Transaction)
+                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithDefaultFacility(secondFacility)
+                .WithDefaultShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
+                .WithDefaultCarrier(new Carriers(this.Transaction).Fedex)
+                .WithName("another store")
                 .Build();
 
             new SupplierRelationshipBuilder(this.Transaction)
