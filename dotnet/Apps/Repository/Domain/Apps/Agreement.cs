@@ -6,8 +6,8 @@
 namespace Allors.Repository
 {
     using System;
-
     using Attributes;
+    using static Workspaces;
 
     #region Allors
     [Id("4deca253-7135-4ceb-b984-6adaf1515630")]
@@ -17,6 +17,7 @@ namespace Allors.Repository
         #region Allors
         [Id("2ddce7b3-c763-45ea-8e1b-5ef8a0ea8e4a")]
         #endregion
+        [Workspace(Default)]
         DateTime AgreementDate { get; set; }
 
         #region Allors
@@ -24,6 +25,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
+        [Workspace(Default)]
         Addendum[] Addenda { get; set; }
 
         #region Allors
@@ -31,6 +33,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Size(-1)]
+        [Workspace(Default)]
         string Description { get; set; }
 
         #region Allors
@@ -38,12 +41,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
+        [Workspace(Default)]
         AgreementTerm[] AgreementTerms { get; set; }
 
         #region Allors
         [Id("9f4db098-c486-4d88-9df9-cd7c79294575")]
         #endregion
         [Size(-1)]
+        [Workspace(Default)]
         string Text { get; set; }
 
         #region Allors
@@ -51,12 +56,14 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
+        [Workspace(Default)]
         AgreementItem[] AgreementItems { get; set; }
 
         #region Allors
         [Id("daff1ce2-4d60-426c-a45c-a82b63751657")]
         #endregion
         [Size(256)]
+        [Workspace(Default)]
         string AgreementNumber { get; set; }
     }
 }
