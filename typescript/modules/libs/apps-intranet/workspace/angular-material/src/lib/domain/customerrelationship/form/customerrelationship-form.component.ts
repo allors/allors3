@@ -5,7 +5,6 @@ import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   CustomerRelationship,
   InternalOrganisation,
-  Organisation,
   Party,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -25,7 +24,7 @@ export class CustomerRelationshipFormComponent extends AllorsFormComponent<Custo
   readonly m: M;
 
   internalOrganisation: InternalOrganisation;
-  organisation: Organisation;
+  party: Party;
 
   constructor(
     @Self() public allors: ContextService,
@@ -58,7 +57,7 @@ export class CustomerRelationshipFormComponent extends AllorsFormComponent<Custo
     const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
-        p.Organisation({
+        p.Party({
           objectId: initializer.id,
         })
       );
@@ -70,13 +69,13 @@ export class CustomerRelationshipFormComponent extends AllorsFormComponent<Custo
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    this.organisation = pullResult.object<Organisation>(this.m.Organisation);
+    this.party = pullResult.object<Party>(this.m.Party);
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
 
     if (this.createRequest) {
       this.object.FromDate = new Date();
-      this.object.Customer = this.organisation;
+      this.object.Customer = this.party;
       this.object.InternalOrganisation = this.internalOrganisation;
     }
   }
