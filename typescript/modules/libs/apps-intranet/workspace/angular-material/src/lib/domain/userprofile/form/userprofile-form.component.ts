@@ -97,9 +97,14 @@ export class UserProfileFormComponent extends AllorsFormComponent<UserProfile> {
     this.onPostPullInitialize(pullResult);
 
     this.user = this.object.UserWhereUserProfile;
-    this.internalOrganizations = pullResult.collection<Organisation>(
+    const internalOrganizations = pullResult.collection<Organisation>(
       this.m.Organisation
     );
+
+    this.internalOrganizations = internalOrganizations?.filter(
+      (v) => v.canExecuteShowInMenu
+    );
+
     this.emailFrequencies = pullResult.collection<EmailFrequency>(
       this.m.EmailFrequency
     );

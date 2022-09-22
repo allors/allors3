@@ -53,8 +53,12 @@ export class SelectInternalOrganisationComponent implements OnInit, OnDestroy {
     ];
 
     this.subscription = this.allors.context.pull(pulls).subscribe((loaded) => {
-      this.internalOrganisations = loaded.collection<Organisation>(
+      const internalOrganisations = loaded.collection<Organisation>(
         m.Organisation
+      );
+
+      this.internalOrganisations = internalOrganisations?.filter(
+        (v) => v.canExecuteShowInMenu
       );
     });
   }

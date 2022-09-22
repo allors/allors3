@@ -608,5 +608,11 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         void CreateWorkEffortInvoice();
+
+        #region Allors
+        [Id("ba635057-50cc-4be4-837c-22dc9b60bb67")]
+        #endregion
+        [Workspace(Default)]
+        void ShowInMenu();
     }
 }
