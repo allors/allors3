@@ -39,39 +39,44 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
-                foreach (var productIdentification in this.ProductIdentifications)
+                foreach (var @this in this.ProductIdentifications)
                 {
-                    productIdentification.Delete();
+                    @this.Delete();
                 }
 
-                foreach (var localisedText in this.LocalisedNames)
+                foreach (var @this in this.LocalisedNames)
                 {
-                    localisedText.Delete();
+                    @this.Delete();
                 }
 
-                foreach (var localisedText in this.LocalisedDescriptions)
+                foreach (var @this in this.LocalisedDescriptions)
                 {
-                    localisedText.Delete();
+                    @this.Delete();
                 }
 
-                foreach (var inventoryItem in this.InventoryItemsWherePart)
+                foreach (var @this in this.InventoryItemsWherePart)
                 {
-                    inventoryItem.Delete();
+                    @this.Delete();
                 }
 
-                foreach (var partSubstitute in this.PartSubstitutesWherePart)
+                foreach (var @this in this.PartSubstitutesWherePart)
                 {
-                    partSubstitute.Delete();
+                    @this.Delete();
                 }
 
-                foreach (var partSubstitute in this.PartSubstitutesWhereSubstitutionPart)
+                foreach (var @this in this.PartSubstitutesWhereSubstitutionPart)
                 {
-                    partSubstitute.Delete();
+                    @this.Delete();
                 }
 
-                foreach (var supplierOffering in this.SupplierOfferingsWherePart)
+                foreach (var @this in this.SupplierOfferingsWherePart)
                 {
-                    supplierOffering.Delete();
+                    @this.Delete();
+                }
+
+                foreach (var @this in this.PurchaseOrderItemByProductsWhereUnifiedProduct)
+                {
+                    @this.Strategy.Delete();
                 }
             }
         }
