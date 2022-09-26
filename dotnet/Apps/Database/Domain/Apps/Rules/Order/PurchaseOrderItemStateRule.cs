@@ -55,6 +55,13 @@ namespace Allors.Database.Domain
                     @this.PurchaseOrderItemState = states.Created;
                 }
 
+                if (purchaseOrderState.IsCreated
+                    && @this.PurchaseOrderItemState.IsCompleted
+                    && @this.PurchaseOrderItemShipmentState.IsNa)
+                {
+                    @this.PurchaseOrderItemState = states.Created;
+                }
+
                 if (purchaseOrderState.IsInProcess &&
                     (@this.PurchaseOrderItemState.IsCreated || @this.PurchaseOrderItemState.IsOnHold))
                 {
