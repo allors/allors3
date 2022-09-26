@@ -21,7 +21,8 @@ namespace Allors.Database.Domain
             m.TimeEntry.RolePattern(v => v.FromDate, v => v.WorkEffort),
             m.TimeEntry.RolePattern(v => v.ThroughDate, v => v.WorkEffort),
             m.TimeEntry.RolePattern(v => v.WorkEffort, v => v.WorkEffort),
-            m.TimeSheet.RolePattern(v => v.TimeEntries, v => v.TimeEntries.TimeEntry.WorkEffort)
+            m.TimeSheet.RolePattern(v => v.TimeEntries, v => v.TimeEntries.TimeEntry.WorkEffort),
+            m.WorkTask.AssociationPattern(v => v.ServiceEntriesWhereWorkEffort)
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -42,32 +43,40 @@ namespace Allors.Database.Domain
         {
             @this.ActualHours = 0M;
 
-            foreach (var serviceEntry in @this.ServiceEntriesWhereWorkEffort)
+            if (!@this.ExistServiceEntriesWhereWorkEffort)
             {
-                if (serviceEntry is TimeEntry timeEntry)
+                @this.RemoveActualStart();
+                @this.RemoveActualCompletion();
+            }
+            else
+            {
+                foreach (var serviceEntry in @this.ServiceEntriesWhereWorkEffort)
                 {
-                    @this.ActualHours += timeEntry.ActualHours;
+                    if (serviceEntry is TimeEntry timeEntry)
+                    {
+                        @this.ActualHours += timeEntry.ActualHours;
 
-                    if (!@this.ExistActualStart)
-                    {
-                        @this.ActualStart = timeEntry.FromDate;
-                    }
-                    else if (timeEntry.FromDate < @this.ActualStart)
-                    {
-                        @this.ActualStart = timeEntry.FromDate;
-                    }
+                        if (!@this.ExistActualStart)
+                        {
+                            @this.ActualStart = timeEntry.FromDate;
+                        }
+                        else if (timeEntry.FromDate < @this.ActualStart)
+                        {
+                            @this.ActualStart = timeEntry.FromDate;
+                        }
 
-                    if (!@this.ExistActualCompletion)
-                    {
-                        @this.ActualCompletion = timeEntry.ThroughDate;
-                    }
-                    else if (timeEntry.ThroughDate > @this.ActualCompletion)
-                    {
-                        @this.ActualCompletion = timeEntry.ThroughDate;
-                    }
-                    else if (!timeEntry.ExistThroughDate)
-                    {
-                        @this.RemoveActualCompletion();
+                        if (!@this.ExistActualCompletion)
+                        {
+                            @this.ActualCompletion = timeEntry.ThroughDate;
+                        }
+                        else if (timeEntry.ThroughDate > @this.ActualCompletion)
+                        {
+                            @this.ActualCompletion = timeEntry.ThroughDate;
+                        }
+                        else if (!timeEntry.ExistThroughDate)
+                        {
+                            @this.RemoveActualCompletion();
+                        }
                     }
                 }
             }
