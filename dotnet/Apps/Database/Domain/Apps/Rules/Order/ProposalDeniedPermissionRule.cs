@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.Proposal.RolePattern(v => v.TransitionalRevocations),
+            m.Proposal.RolePattern(v => v.ValidQuoteItems),
             m.Proposal.RolePattern(v => v.Request),
         };
 
@@ -30,14 +31,28 @@ namespace Allors.Database.Domain
             {
                 @this.Revocations = @this.TransitionalRevocations;
 
-                var revocation = new Revocations(@this.Strategy.Transaction).ProposalDeleteRevocation;
+                var deleteRevocation = new Revocations(@this.Strategy.Transaction).ProposalDeleteRevocation;
+                var setReadyForProcessingRevocation = new Revocations(@this.Strategy.Transaction).ProposalSetReadyForProcessingRevocation;
+
+                if (@this.QuoteState.IsCreated)
+                {
+                    if (@this.ExistValidQuoteItems)
+                    {
+                        @this.RemoveRevocation(setReadyForProcessingRevocation);
+                    }
+                    else
+                    {
+                        @this.AddRevocation(setReadyForProcessingRevocation);
+                    }
+                }
+
                 if (@this.IsDeletable())
                 {
-                    @this.RemoveRevocation(revocation);
+                    @this.RemoveRevocation(deleteRevocation);
                 }
                 else
                 {
-                    @this.AddRevocation(revocation);
+                    @this.AddRevocation(deleteRevocation);
                 }
             }
         }

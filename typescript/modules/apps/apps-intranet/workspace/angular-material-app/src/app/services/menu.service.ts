@@ -49,6 +49,7 @@ export class AppMenuService implements MenuService {
         children: [
           { objectType: m.RequestForQuote },
           { objectType: m.ProductQuote },
+          { objectType: m.Proposal },
           { objectType: m.SalesOrder },
           { objectType: m.SalesInvoice },
         ],

@@ -18,7 +18,8 @@ namespace Allors.Database.Domain
         public ProposalRule(MetaPopulation m) : base(m, new Guid("F51A25BD-3FB7-4539-A541-5F19F124AA9F")) =>
             this.Patterns = new[]
             {
-                m.Proposal.RolePattern(v => v.Issuer)
+                m.Proposal.RolePattern(v => v.Issuer),
+                m.Proposal.RolePattern(v => v.QuoteNumber),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -33,6 +34,8 @@ namespace Allors.Database.Domain
                 {
                     validation.AddError(@this, this.M.Proposal.Issuer, ErrorMessages.InternalOrganisationChanged);
                 }
+
+                @this.WorkItemDescription = $"Proposal: {@this.QuoteNumber} [{@this.Issuer?.DisplayName}]";
             }
         }
     }

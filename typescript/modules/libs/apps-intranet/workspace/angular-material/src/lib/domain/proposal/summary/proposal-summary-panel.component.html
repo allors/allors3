@@ -1,0 +1,123 @@
+<mat-card *ngIf="proposal">
+  <mat-card-header (click)="toggle()" style="cursor: pointer">
+    <div mat-card-avatar>
+      <mat-icon style="font-size: 36px">business</mat-icon>
+    </div>
+    <mat-card-title>{{ proposal.QuoteNumber }}</mat-card-title>
+    <mat-card-subtitle>
+      <div>
+        {{ proposal.QuoteState?.Name }}
+      </div>
+    </mat-card-subtitle>
+
+    <mat-card-subtitle>
+      <div>
+        last modified:
+        {{ proposal.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
+        {{ proposal.LastModifiedBy?.DisplayName }}
+      </div>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div
+      *ngIf="proposal.Receiver"
+      (click)="navigation.overview(proposal.Receiver)"
+      style="cursor: pointer"
+    >
+      <div style="color: grey">Quoted to</div>
+      <div>
+        {{ proposal.Receiver?.DisplayName }}
+      </div>
+    </div>
+
+    <div
+      *ngIf="proposal.ContactPerson"
+      (click)="navigation.overview(proposal.ContactPerson)"
+      style="cursor: pointer"
+    >
+      <div style="color: grey">ContactPerson</div>
+      <div>
+        {{ proposal.ContactPerson?.DisplayName }}
+      </div>
+    </div>
+
+    <div
+      *ngIf="proposal.Request"
+      (click)="navigation.overview(proposal.Request)"
+      style="cursor: pointer"
+    >
+      <div style="color: grey">Request</div>
+      <div>
+        {{ proposal.Request.RequestNumber }}
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button
+      *ngIf="proposal.canExecuteSetReadyForProcessing"
+      mat-button
+      (click)="setReadyForProcessing()"
+    >
+      Ready for processing
+    </button>
+    <button
+      *ngIf="proposal.canExecuteApprove"
+      mat-button
+      type="button"
+      (click)="approve()"
+    >
+      Approve
+    </button>
+    <button *ngIf="proposal.canExecuteSend" mat-button (click)="send()">
+      Send
+    </button>
+    <button *ngIf="proposal.canExecuteAccept" mat-button (click)="accept()">
+      Accept
+    </button>
+    <button
+      *ngIf="proposal.canExecuteRevise"
+      mat-button
+      type="button"
+      (click)="revise()"
+    >
+      Revise
+    </button>
+    <button
+      *ngIf="proposal.canExecuteReopen"
+      mat-button
+      type="button"
+      (click)="reopen()"
+    >
+      Reopen
+    </button>
+    <button
+      *ngIf="proposal.canExecuteReject"
+      mat-button
+      type="button"
+      (click)="reject()"
+    >
+      Reject
+    </button>
+    <button
+      *ngIf="proposal.canExecuteCancel"
+      mat-button
+      type="button"
+      (click)="cancel()"
+    >
+      Cancel
+    </button>
+    <button mat-button type="button" (click)="print.execute(proposal)">
+      Print
+    </button>
+    <button
+      *ngIf="proposal.canExecuteCopy"
+      mat-button
+      type="button"
+      (click)="copy()"
+    >
+      Copy
+    </button>
+  </mat-card-actions>
+</mat-card>

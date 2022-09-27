@@ -5,7 +5,7 @@
         <a-mat-autocomplete
           class="col-md"
           [object]="object"
-          [roleType]="m.ProductQuote.Receiver"
+          [roleType]="m.Proposal.Receiver"
           [filter]="customersFilter.create(allors.context)"
           display="DisplayName"
           (changed)="receiverSelected($event)"
@@ -43,7 +43,7 @@
         <a-mat-select
           class="col"
           [object]="object"
-          [roleType]="m.ProductQuote.FullfillContactMechanism"
+          [roleType]="m.Proposal.FullfillContactMechanism"
           [options]="contactMechanisms"
           display="DisplayName"
         ></a-mat-select>
@@ -84,7 +84,7 @@
           class="col"
           [disabled]="receiverIsPerson"
           [object]="object"
-          [roleType]="m.ProductQuote.ContactPerson"
+          [roleType]="m.Proposal.ContactPerson"
           [options]="contacts"
           display="DisplayName"
         ></a-mat-select>
@@ -118,12 +118,12 @@
     <a-mat-datepicker
       class="col-md"
       [object]="object"
-      [roleType]="m.ProductQuote.ValidFromDate"
+      [roleType]="m.Proposal.ValidFromDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
       [object]="object"
-      [roleType]="m.ProductQuote.ValidThroughDate"
+      [roleType]="m.Proposal.ValidThroughDate"
     ></a-mat-datepicker>
   </div>
 
@@ -131,12 +131,12 @@
     <a-mat-datepicker
       class="col-md"
       [object]="object"
-      [roleType]="m.ProductQuote.IssueDate"
+      [roleType]="m.Proposal.IssueDate"
     ></a-mat-datepicker>
     <a-mat-datepicker
       class="col-md"
       [object]="object"
-      [roleType]="m.ProductQuote.RequiredResponseDate"
+      [roleType]="m.Proposal.RequiredResponseDate"
     ></a-mat-datepicker>
   </div>
 
@@ -144,8 +144,8 @@
     <a-mat-select
       class="col-md-6"
       [object]="object"
-      [roleType]="m.ProductQuote.DerivedCurrency"
-      [assignedRoleType]="m.ProductQuote.AssignedCurrency"
+      [roleType]="m.Proposal.DerivedCurrency"
+      [assignedRoleType]="m.Proposal.AssignedCurrency"
       [derivedInitialRole]="currencyInitialRole"
       [options]="currencies"
       label="Currency"
@@ -155,8 +155,8 @@
       *ngIf="!showIrpf"
       class="col-md"
       [object]="object"
-      [roleType]="m.ProductQuote.DerivedVatRegime"
-      [assignedRoleType]="m.ProductQuote.AssignedVatRegime"
+      [roleType]="m.Proposal.DerivedVatRegime"
+      [assignedRoleType]="m.Proposal.AssignedVatRegime"
       [options]="vatRegimes"
       label="VAT Regime"
       display="Name"
@@ -167,8 +167,8 @@
     <a-mat-select
       class="col-md"
       [object]="object"
-      [roleType]="m.ProductQuote.DerivedVatRegime"
-      [assignedRoleType]="m.ProductQuote.AssignedVatRegime"
+      [roleType]="m.Proposal.DerivedVatRegime"
+      [assignedRoleType]="m.Proposal.AssignedVatRegime"
       [options]="vatRegimes"
       label="VAT Regime"
       display="Name"
@@ -176,8 +176,8 @@
     <a-mat-select
       class="col-md"
       [object]="object"
-      [roleType]="m.ProductQuote.DerivedIrpfRegime"
-      [assignedRoleType]="m.ProductQuote.AssignedIrpfRegime"
+      [roleType]="m.Proposal.DerivedIrpfRegime"
+      [assignedRoleType]="m.Proposal.AssignedIrpfRegime"
       [options]="irpfRegimes"
       label="Irpf Regime"
       display="Name"
@@ -188,18 +188,18 @@
     <a-mat-textarea
       class="col-md-12"
       [object]="object"
-      [roleType]="m.ProductQuote.Description"
+      [roleType]="m.Proposal.Description"
     ></a-mat-textarea>
     <a-mat-textarea
       class="col-md-12"
       [object]="object"
-      [roleType]="m.ProductQuote.Comment"
+      [roleType]="m.Proposal.Comment"
       label="Comment"
     ></a-mat-textarea>
     <a-mat-textarea
       class="col-md-12"
       [object]="object"
-      [roleType]="m.ProductQuote.InternalComment"
+      [roleType]="m.Proposal.InternalComment"
       label="Internal Comment"
     ></a-mat-textarea>
   </div>

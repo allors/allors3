@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
     using Derivations.Rules;
     using Meta;
 
-    public class ProposalQuoteNumberRule : Rule
+    public class ProposalNumberRule : Rule
     {
-        public ProposalQuoteNumberRule(MetaPopulation m) : base(m, new Guid("f95644e6-dfdd-48a1-82dd-6b46be0bdb45")) =>
+        public ProposalNumberRule(MetaPopulation m) : base(m, new Guid("f95644e6-dfdd-48a1-82dd-6b46be0bdb45")) =>
             this.Patterns = new Pattern[]
             {
                 m.Proposal.RolePattern(v => v.Issuer),

@@ -1081,6 +1081,43 @@ export class AppFilterService implements FilterService {
     );
 
     define(
+      m.Proposal,
+      new FilterDefinition(
+        {
+          kind: 'And',
+          operands: [
+            {
+              kind: 'Equals',
+              propertyType: m.Proposal.QuoteState,
+              parameter: 'state',
+            },
+            {
+              kind: 'Equals',
+              propertyType: m.Proposal.Receiver,
+              parameter: 'to',
+            },
+            {
+              kind: 'Like',
+              roleType: m.Proposal.InternalComment,
+              parameter: 'internalComment',
+            },
+          ],
+        },
+        {
+          active: { initialValue: true },
+          state: {
+            search: () => quoteStateSearch,
+            display: (v: QuoteState) => v && v.Name,
+          },
+          to: {
+            search: () => partySearch,
+            display: (v: Party) => v && v.DisplayName,
+          },
+        }
+      )
+    );
+
+    define(
       m.PurchaseInvoice,
       new FilterDefinition(
         {

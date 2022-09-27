@@ -7,7 +7,6 @@ namespace Allors.Database.Domain
 {
     public partial class ProductQuoteApproval
     {
-       
         public void AppsApprove(ProductQuoteApprovalApprove method)
         {
             this.AssignPerformer();

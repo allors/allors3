@@ -13,9 +13,7 @@ import {
   Party,
   PartyContactMechanism,
   Person,
-  ProductQuote,
-  RequestForQuote,
-  SalesOrder,
+  Proposal,
   VatRegime,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -31,14 +29,12 @@ import { Filters } from '../../../filters/filters';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  selector: 'productquote-edit-form',
-  templateUrl: './productquote-edit-form.component.html',
+  selector: 'proposal-edit-form',
+  templateUrl: './proposal-edit-form.component.html',
   providers: [ContextService],
 })
-export class ProductQuoteEditFormComponent extends AllorsFormComponent<ProductQuote> {
+export class ProposalEditFormComponent extends AllorsFormComponent<Proposal> {
   readonly m: M;
-  salesOrder: SalesOrder;
-  request: RequestForQuote;
   currencies: Currency[];
   contactMechanisms: ContactMechanism[];
   contacts: Person[];
@@ -86,7 +82,7 @@ export class ProductQuoteEditFormComponent extends AllorsFormComponent<ProductQu
       this.fetcher.internalOrganisation,
       p.Currency({ sorting: [{ roleType: m.Currency.Name }] }),
       p.IrpfRegime({ sorting: [{ roleType: m.IrpfRegime.Name }] }),
-      p.ProductQuote({
+      p.Proposal({
         name: '_object',
         objectId: this.editRequest.objectId,
         include: {

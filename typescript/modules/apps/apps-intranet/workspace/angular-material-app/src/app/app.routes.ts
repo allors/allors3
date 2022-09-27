@@ -29,6 +29,8 @@ import {
   ProductQuoteListPageComponent,
   ProductQuoteOverviewPageComponent,
   ProductTypesOverviewPageComponent,
+  ProposalListPageComponent,
+  ProposalOverviewPageComponent,
   PurchaseInvoiceListPageComponent,
   PurchaseInvoiceOverviewPageComponent,
   PurchaseOrderListPageComponent,
@@ -99,6 +101,11 @@ export const routes: Routes = [
           {
             path: 'productquote/:id',
             component: ProductQuoteOverviewPageComponent,
+          },
+          { path: 'proposals', component: ProposalListPageComponent },
+          {
+            path: 'proposal/:id',
+            component: ProposalOverviewPageComponent,
           },
           { path: 'salesorders', component: SalesOrderListPageComponent },
           {

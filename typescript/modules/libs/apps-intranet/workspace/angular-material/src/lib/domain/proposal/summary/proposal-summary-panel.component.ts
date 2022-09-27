@@ -18,23 +18,17 @@ import {
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import {
-  ProductQuote,
-  RequestForQuote,
-  SalesOrder,
-} from '@allors/default/workspace/domain';
+import { Proposal } from '@allors/default/workspace/domain';
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
-  selector: 'productquote-summary-panel',
-  templateUrl: './productquote-summary-panel.component.html',
+  selector: 'proposal-summary-panel',
+  templateUrl: './proposal-summary-panel.component.html',
 })
-export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
+export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelComponent {
   m: M;
 
-  productQuote: ProductQuote;
-  salesOrder: SalesOrder;
-  request: RequestForQuote;
+  proposal: Proposal;
   print: Action;
 
   constructor(
@@ -62,7 +56,7 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
     const id = this.scoped.id;
 
     pulls.push(
-      p.ProductQuote({
+      p.Proposal({
         name: prefix,
         objectId: id,
         include: {
@@ -83,33 +77,17 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
             Media: {},
           },
         },
-      }),
-      p.ProductQuote({
-        name: `${prefix}_salesOrder`,
-        objectId: id,
-        select: {
-          SalesOrderWhereQuote: {},
-        },
-      }),
-      p.ProductQuote({
-        name: `${prefix}_request`,
-        objectId: id,
-        select: {
-          Request: {},
-        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.productQuote = loaded.object<ProductQuote>(prefix);
-    this.salesOrder = loaded.object<SalesOrder>(`${prefix}_salesOrder`);
-    this.request = loaded.object<RequestForQuote>(`${prefix}_request`);
+    this.proposal = loaded.object<Proposal>(prefix);
   }
 
   public setReadyForProcessing(): void {
     this.invokeService
-      .invoke(this.productQuote.SetReadyForProcessing)
+      .invoke(this.proposal.SetReadyForProcessing)
       .subscribe(() => {
         this.refreshService.refresh();
         this.snackBar.open('Successfully set ready for processing.', 'close', {
@@ -119,7 +97,7 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
   }
 
   public approve(): void {
-    this.invokeService.invoke(this.productQuote.Approve).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Approve).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully approved.', 'close', {
         duration: 5000,
@@ -128,14 +106,14 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
   }
 
   send() {
-    this.invokeService.invoke(this.productQuote.Send).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Send).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully sent.', 'close', { duration: 5000 });
     }, this.errorService.errorHandler);
   }
 
   accept() {
-    this.invokeService.invoke(this.productQuote.Accept).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Accept).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully accepted.', 'close', {
         duration: 5000,
@@ -144,7 +122,7 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
   }
 
   public reopen(): void {
-    this.invokeService.invoke(this.productQuote.Reopen).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Reopen).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully reopened.', 'close', {
         duration: 5000,
@@ -153,7 +131,7 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
   }
 
   public revise(): void {
-    this.invokeService.invoke(this.productQuote.Revise).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Revise).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully revised.', 'close', {
         duration: 5000,
@@ -161,17 +139,8 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
     }, this.errorService.errorHandler);
   }
 
-  public order(): void {
-    this.invokeService.invoke(this.productQuote.Order).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Successfully created a salesorder.', 'close', {
-        duration: 5000,
-      });
-    }, this.errorService.errorHandler);
-  }
-
   public cancel(): void {
-    this.invokeService.invoke(this.productQuote.Cancel).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Cancel).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully cancelled.', 'close', {
         duration: 5000,
@@ -180,7 +149,7 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
   }
 
   public reject(): void {
-    this.invokeService.invoke(this.productQuote.Reject).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', {
         duration: 5000,
@@ -189,7 +158,7 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
   }
 
   public copy(): void {
-    this.invokeService.invoke(this.productQuote.Copy).subscribe(() => {
+    this.invokeService.invoke(this.proposal.Copy).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully copied.', 'close', { duration: 5000 });
     }, this.errorService.errorHandler);

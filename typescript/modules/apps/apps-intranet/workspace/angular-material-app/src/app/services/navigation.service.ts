@@ -44,6 +44,7 @@ export class AppNavigationService extends NavigationService {
     define(m.Brand, '/products/brands');
     define(m.Model, '/products/models');
     define(m.ProductQuote, '/sales/productquotes', '/sales/productquote/:id');
+    define(m.Proposal, '/sales/proposals', '/sales/proposal/:id');
     define(m.SalesOrder, '/sales/salesorders', '/sales/salesorder/:id');
     define(m.SalesInvoice, '/sales/salesinvoices', '/sales/salesinvoice/:id');
 

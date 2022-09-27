@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Allors.Database.Domain.TestPopulation;
     using Resources;
     using Xunit;
 
@@ -29,14 +30,70 @@ namespace Allors.Database.Domain.Tests
     [Trait("Category", "Security")]
     public class ProposalDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {
-        public ProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).ProposalDeleteRevocation;
+        public ProposalDeniedPermissionRuleTests(Fixture fixture) : base(fixture)
+        {
+            this.deleteRevocation = new Revocations(this.Transaction).ProposalDeleteRevocation;
+            this.setReadyForProcessingRevocation = new Revocations(this.Transaction).ProposalSetReadyForProcessingRevocation;
+        }
 
         public override Config Config => new Config { SetupSecurity = true };
 
         private readonly Revocation deleteRevocation;
+        private readonly Revocation setReadyForProcessingRevocation;
 
         [Fact]
-        public void OnChangedProposalTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
+        public void OnChangedProductQuoteValidQuoteItemsDeriveSetReadyPermissionAllowed()
+        {
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction)
+                    .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
+                    .WithAssignedUnitPrice(1)
+                    .Build();
+            quote.AddQuoteItem(quoteItem);
+
+            this.Derive();
+
+            Assert.DoesNotContain(this.setReadyForProcessingRevocation, quote.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteValidQuoteItemsDeriveSetReadyPermissionDenied()
+        {
+            var quote = new ProposalBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var quoteItem = new QuoteItemBuilder(this.Transaction)
+                    .WithInvoiceItemType(new InvoiceItemTypeBuilder(this.Transaction).Build())
+                    .WithAssignedUnitPrice(1)
+                    .Build();
+            quote.AddQuoteItem(quoteItem);
+            this.Derive();
+
+            quoteItem.Cancel();
+            this.Derive();
+
+            Assert.Contains(this.setReadyForProcessingRevocation, quote.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedProductQuoteStateNotCreatedDeriveSetReadyPermission()
+        {
+            var quote = this.InternalOrganisation.CreateB2BProductQuoteWithSerialisedItem(this.Transaction.Faker());
+            this.Derive();
+
+            quote.Send();
+            this.Derive();
+
+            Assert.True(quote.QuoteState.IsAwaitingAcceptance);
+
+            var setReadyForProcessingPermission = new Permissions(this.Transaction).Get(this.M.ProductQuote, this.M.ProductQuote.SetReadyForProcessing);
+            Assert.Contains(setReadyForProcessingPermission, quote.Revocations.SelectMany(v => v.DeniedPermissions));
+        }
+
+        [Fact]
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionAllowed()
         {
             var quote = new ProposalBuilder(this.Transaction).Build();
             this.Derive();
@@ -45,7 +102,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void OnChangedProposalStateTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
+        public void OnChangedTransitionalDeniedPermissionsDeriveDeletePermissionDenied()
         {
             var quote = new ProposalBuilder(this.Transaction).Build();
             this.Derive();

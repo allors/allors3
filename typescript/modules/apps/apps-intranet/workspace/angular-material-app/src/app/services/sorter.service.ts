@@ -166,6 +166,16 @@ export class AppSorterService implements SorterService {
     );
 
     define(
+      m.Proposal,
+      new Sorter({
+        number: m.Quote.SortableQuoteNumber,
+        description: m.Quote.Description,
+        responseRequired: m.Quote.RequiredResponseDate,
+        lastModifiedDate: m.Quote.LastModifiedDate,
+      })
+    );
+
+    define(
       m.PurchaseInvoice,
       new Sorter({
         number: m.PurchaseInvoice.SortableInvoiceNumber,

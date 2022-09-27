@@ -143,6 +143,12 @@ export { ProductQuoteApprovalFormComponent } from './lib/domain/productquoteappr
 export { ProductTypeFormComponent } from './lib/domain/producttype/form/producttype-form.component';
 export { ProductTypesOverviewPageComponent } from './lib/domain/producttype/list/producttype-list-page.component';
 
+export { ProposalCreateFormComponent } from './lib/domain/proposal/create/proposal-create-form.component';
+export { ProposalEditFormComponent } from './lib/domain/proposal/edit/proposal-edit-form.component';
+export { ProposalListPageComponent } from './lib/domain/proposal/list/proposal-list-page.component';
+export { ProposalOverviewPageComponent } from './lib/domain/proposal/overview/proposal-overview-page.component';
+export { ProposalSummaryPanelComponent } from './lib/domain/proposal/summary/proposal-summary-panel.component';
+
 export { PurchaseInvoiceCreateFormComponent } from './lib/domain/purchaseinvoice/create/purchaseinvoice-create-form.component';
 export { PurchaseInvoiceEditFormComponent } from './lib/domain/purchaseinvoice/edit/purchaseinvoice-edit-form.component';
 export { PurchaseInvoiceListPageComponent } from './lib/domain/purchaseinvoice/list/purchaseinvoice-list-page.component';

@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
         public static readonly Guid ProductQuoteDeleteRevocationId = new Guid("6e7fabdb-baa1-428b-bc5e-d7935a03e97a");
         public static readonly Guid ProductQuoteSetReadyForProcessingRevocationId = new Guid("30eb2b73-3885-4c11-b329-f49fb3d8c6a4");
         public static readonly Guid ProposalDeleteRevocationId = new Guid("8b267066-0ba9-46e3-bff2-d9ba63373edb");
+        public static readonly Guid ProposalSetReadyForProcessingRevocationId = new Guid("eb02916f-33c8-4a2f-9dc2-206618aca4f2");
         public static readonly Guid PurchaseInvoiceCreateSalesInvoiceRevocationId = new Guid("b375129a-7248-4049-8c5a-78165e68d11e");
         public static readonly Guid PurchaseInvoiceDeleteRevocationId = new Guid("43c4f12b-de77-48d5-841f-5bc4249f035f");
         public static readonly Guid PurchaseOrderDeleteRevocationId = new Guid("572139d5-671f-4e33-a7f2-68ade7339295");
@@ -89,6 +90,8 @@ namespace Allors.Database.Domain
         public Revocation ProductQuoteSetReadyForProcessingRevocation => this.Cache[ProductQuoteSetReadyForProcessingRevocationId];
 
         public Revocation ProposalDeleteRevocation => this.Cache[ProposalDeleteRevocationId];
+
+        public Revocation ProposalSetReadyForProcessingRevocation => this.Cache[ProposalSetReadyForProcessingRevocationId];
 
         public Revocation PurchaseInvoiceCreateSalesInvoiceRevocation => this.Cache[PurchaseInvoiceCreateSalesInvoiceRevocationId];
 
@@ -197,6 +200,7 @@ namespace Allors.Database.Domain
             merge(ProductQuoteDeleteRevocationId, _ => { });
             merge(ProductQuoteSetReadyForProcessingRevocationId, _ => { });
             merge(ProposalDeleteRevocationId, _ => { });
+            merge(ProposalSetReadyForProcessingRevocationId, _ => { });
             merge(PurchaseInvoiceCreateSalesInvoiceRevocationId, _ => { });
             merge(PurchaseInvoiceDeleteRevocationId, _ => { });
             merge(PurchaseOrderDeleteRevocationId, _ => { });

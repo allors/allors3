@@ -29,6 +29,7 @@
     <None Remove="Templates\allors.png" />
     <None Remove="Templates\no_image_available.svg" />
     <None Remove="Templates\productquote.odt" />
+    <None Remove="Templates\proposal.odt" />
     <None Remove="Templates\purchaseinvoice.odt" />
     <None Remove="Templates\purchaseorder.odt" />
     <None Remove="Templates\salesinvoice.odt" />
@@ -41,6 +42,7 @@
     <EmbeddedResource Include="Templates\allors.png" />
     <EmbeddedResource Include="Templates\no_image_available.svg" />
     <EmbeddedResource Include="Templates\productquote.odt" />
+    <EmbeddedResource Include="Templates\proposal.odt" />
     <EmbeddedResource Include="Templates\purchaseinvoice.odt" />
     <EmbeddedResource Include="Templates\purchaseorder.odt" />
     <EmbeddedResource Include="Templates\salesinvoice.odt" />
