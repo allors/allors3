@@ -10,7 +10,7 @@ import { And, Equals } from '@allors/system/workspace/domain';
 import {
   InternalOrganisation,
   Person,
-  Quote,
+  ProductQuote,
 } from '@allors/default/workspace/domain';
 import {
   Action,
@@ -36,7 +36,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { format, formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: Quote;
+  object: ProductQuote;
   number: string;
   to: string;
   state: string;
@@ -179,7 +179,7 @@ export class ProductQuoteListPageComponent implements OnInit, OnDestroy {
               pull.Person({
                 objectId: this.userId.value,
               }),
-              pull.Quote({
+              pull.ProductQuote({
                 predicate,
                 sorting: sort
                   ? this.sorterService.sorter(m.ProductQuote)?.create(sort)
@@ -210,7 +210,7 @@ export class ProductQuoteListPageComponent implements OnInit, OnDestroy {
 
         this.canCreate = this.internalOrganisation.canExecuteCreateQuote;
 
-        const quotes = loaded.collection<Quote>(m.Quote);
+        const quotes = loaded.collection<ProductQuote>(m.ProductQuote);
         this.table.data = quotes
           ?.filter((v) => v.canReadQuoteNumber)
           ?.map((v) => {

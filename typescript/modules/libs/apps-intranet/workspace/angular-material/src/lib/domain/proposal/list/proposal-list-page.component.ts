@@ -10,7 +10,7 @@ import { And, Equals } from '@allors/system/workspace/domain';
 import {
   InternalOrganisation,
   Person,
-  Quote,
+  Proposal,
 } from '@allors/default/workspace/domain';
 import {
   Action,
@@ -36,7 +36,7 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { format, formatDistance } from 'date-fns';
 
 interface Row extends TableRow {
-  object: Quote;
+  object: Proposal;
   number: string;
   to: string;
   state: string;
@@ -179,7 +179,7 @@ export class ProposalListPageComponent implements OnInit, OnDestroy {
               pull.Person({
                 objectId: this.userId.value,
               }),
-              pull.Quote({
+              pull.Proposal({
                 predicate,
                 sorting: sort
                   ? this.sorterService.sorter(m.Proposal)?.create(sort)
@@ -210,7 +210,7 @@ export class ProposalListPageComponent implements OnInit, OnDestroy {
 
         this.canCreate = this.internalOrganisation.canExecuteCreateQuote;
 
-        const quotes = loaded.collection<Quote>(m.Quote);
+        const quotes = loaded.collection<Proposal>(m.Proposal);
         this.table.data = quotes
           ?.filter((v) => v.canReadQuoteNumber)
           ?.map((v) => {
