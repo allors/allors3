@@ -578,7 +578,7 @@ namespace Allors.Database.Domain
 
                 foreach (var salesTerm in purchaseOrderItem.SalesTerms)
                 {
-                    if (salesTerm.GetType().Name == typeof(IncoTerm).Name)
+                    if (salesTerm.GetType().Name == nameof(IncoTerm))
                     {
                         purchaseOrderItem.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
@@ -587,7 +587,7 @@ namespace Allors.Database.Domain
                             .Build());
                     }
 
-                    if (salesTerm.GetType().Name == typeof(InvoiceTerm).Name)
+                    if (salesTerm.GetType().Name == nameof(InvoiceTerm))
                     {
                         purchaseOrderItem.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
@@ -596,9 +596,18 @@ namespace Allors.Database.Domain
                             .Build());
                     }
 
-                    if (salesTerm.GetType().Name == typeof(OrderTerm).Name)
+                    if (salesTerm.GetType().Name == nameof(OrderTerm))
                     {
                         purchaseOrderItem.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
+                            .WithTermType(salesTerm.TermType)
+                            .WithTermValue(salesTerm.TermValue)
+                            .WithDescription(salesTerm.Description)
+                            .Build());
+                    }
+
+                    if (salesTerm.GetType().Name == nameof(QuoteTerm))
+                    {
+                        purchaseOrderItem.AddSalesTerm(new QuoteTermBuilder(this.Strategy.Transaction)
                             .WithTermType(salesTerm.TermType)
                             .WithTermValue(salesTerm.TermValue)
                             .WithDescription(salesTerm.Description)

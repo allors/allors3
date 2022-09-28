@@ -101,10 +101,10 @@ namespace Allors.Repository
         #region Allors
         [Id("05e3454a-0a7a-488d-b4b1-f0fd41392ddf")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
+        [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        QuoteTerm[] QuoteTerms { get; set; }
+        SalesTerm[] SalesTerms { get; set; }
 
         #region Allors
         [Id("2140e106-2ef3-427a-be94-458c2b8e154d")]

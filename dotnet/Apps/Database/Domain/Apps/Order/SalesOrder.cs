@@ -495,6 +495,15 @@ namespace Allors.Database.Domain
                             .WithDescription(salesTerm.Description)
                             .Build());
                     }
+
+                    if (salesTerm.GetType().Name == nameof(QuoteTerm))
+                    {
+                        salesInvoice.AddSalesTerm(new QuoteTermBuilder(this.Strategy.Transaction)
+                            .WithTermType(salesTerm.TermType)
+                            .WithTermValue(salesTerm.TermValue)
+                            .WithDescription(salesTerm.Description)
+                            .Build());
+                    }
                 }
 
                 foreach (var paymentApplication in this.PaymentApplicationsWhereOrder)

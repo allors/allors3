@@ -42,7 +42,7 @@ namespace Allors.Repository
 
         public DateTime ValidFromDate { get; set; }
 
-        public QuoteTerm[] QuoteTerms { get; set; }
+        public SalesTerm[] SalesTerms { get; set; }
 
         public DateTime ValidThroughDate { get; set; }
 

@@ -163,13 +163,43 @@ namespace Allors.Database.Domain
                 copy.AddLocalisedComment(new LocalisedTextBuilder(@this.Transaction()).WithLocale(localisedComment.Locale).WithText(localisedComment.Text).Build());
             }
 
-            foreach (var term in @this.QuoteTerms)
+            foreach (var salesTerm in @this.SalesTerms)
             {
-                copy.AddQuoteTerm(new QuoteTermBuilder(@this.Transaction())
-                    .WithTermType(term.TermType)
-                    .WithTermValue(term.TermValue)
-                    .WithDescription(term.Description)
-                    .Build());
+                if (salesTerm.GetType().Name == nameof(IncoTerm))
+                {
+                    @this.AddSalesTerm(new IncoTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(InvoiceTerm))
+                {
+                    @this.AddSalesTerm(new InvoiceTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(OrderTerm))
+                {
+                    @this.AddSalesTerm(new OrderTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(QuoteTerm))
+                {
+                    @this.AddSalesTerm(new QuoteTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
             }
 
             foreach (var orderAdjustment in @this.OrderAdjustments)
@@ -260,13 +290,43 @@ namespace Allors.Database.Domain
                 itemCopy.AddLocalisedComment(new LocalisedTextBuilder(@this.Transaction()).WithLocale(localisedComment.Locale).WithText(localisedComment.Text).Build());
             }
 
-            foreach (var term in quoteItem.QuoteTerms)
+            foreach (var salesTerm in quoteItem.SalesTerms)
             {
-                itemCopy.AddQuoteTerm(new QuoteTermBuilder(@this.Transaction())
-                    .WithTermType(term.TermType)
-                    .WithTermValue(term.TermValue)
-                    .WithDescription(term.Description)
-                    .Build());
+                if (salesTerm.GetType().Name == nameof(IncoTerm))
+                {
+                    itemCopy.AddSalesTerm(new IncoTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(InvoiceTerm))
+                {
+                    itemCopy.AddSalesTerm(new InvoiceTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(OrderTerm))
+                {
+                    itemCopy.AddSalesTerm(new OrderTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(QuoteTerm))
+                {
+                    itemCopy.AddSalesTerm(new QuoteTermBuilder(@this.Transaction())
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
             }
 
             return itemCopy;

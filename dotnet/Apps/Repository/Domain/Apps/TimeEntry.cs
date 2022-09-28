@@ -82,14 +82,6 @@ namespace Allors.Repository
         public decimal GrossMargin { get; set; }
 
         #region Allors
-        [Id("258a33cc-06ea-45a0-9b15-1b6d58385910")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public QuoteTerm QuoteTerm { get; set; }
-
-        #region Allors
         [Id("E478A603-B2DA-4C76-91A5-96C5A737FCFC")]
         #endregion
         [Precision(19)]

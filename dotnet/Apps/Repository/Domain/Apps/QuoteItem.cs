@@ -239,7 +239,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public QuoteTerm[] QuoteTerms { get; set; }
+        public SalesTerm[] SalesTerms { get; set; }
 
         #region Allors
         [Id("d7805656-dd9c-4144-a11f-efbb32e6ecb3")]

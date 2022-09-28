@@ -58,7 +58,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Workspace(Default)]
-        QuoteTerm[] QuoteTerms { get; set; }
+        SalesTerm[] SalesTerms { get; set; }
 
         #region Allors
         [Id("BFB459E5-E28A-4EE7-ABAD-06A06919C4C4")]
