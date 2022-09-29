@@ -63,6 +63,5 @@ export class PostalAddressInlineComponent implements OnInit, OnDestroy {
     this.saved.emit(this.postalAddress);
 
     this.postalAddress = undefined;
-    this.postalAddress = undefined;
   }
 }
