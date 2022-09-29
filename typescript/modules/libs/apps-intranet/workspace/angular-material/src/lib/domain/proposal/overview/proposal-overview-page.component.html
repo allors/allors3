@@ -29,6 +29,14 @@
         ></a-mat-dyn-edit-extent-panel>
 
         <a-mat-dyn-view-extent-panel
+          [init]="m.SalesTerm.QuoteWhereSalesTerm"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.SalesTerm.QuoteWhereSalesTerm"
+          [creatableFn]="canWrite"
+        ></a-mat-dyn-edit-extent-panel>
+
+        <a-mat-dyn-view-extent-panel
           [init]="m.OrderAdjustment.QuoteWhereOrderAdjustment"
         ></a-mat-dyn-view-extent-panel>
         <a-mat-dyn-edit-extent-panel
