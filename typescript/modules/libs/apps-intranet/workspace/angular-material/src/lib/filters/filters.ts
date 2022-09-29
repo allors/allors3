@@ -3,165 +3,6 @@ import { And } from '@allors/system/workspace/domain';
 import { M, TreeBuilder } from '@allors/default/workspace/meta';
 
 export class Filters {
-  static goodsFilter(m: M) {
-    return new SearchFactory({
-      objectType: m.Good,
-      roleTypes: [m.Good.Name, m.Good.SearchString],
-    });
-  }
-
-  static serialisedgoodsFilter(m: M) {
-    return new SearchFactory({
-      objectType: m.UnifiedGood,
-      roleTypes: [m.UnifiedGood.Name, m.UnifiedGood.SearchString],
-      post: (predicate: And) => {
-        predicate.operands.push({
-          kind: 'ContainedIn',
-          propertyType: m.UnifiedGood.InventoryItemKind,
-          extent: {
-            kind: 'Filter',
-            objectType: m.InventoryItemKind,
-            predicate: {
-              kind: 'Equals',
-              propertyType: m.InventoryItemKind.UniqueId,
-              value: '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae',
-            },
-          },
-        });
-      },
-    });
-  }
-
-  static partsFilter(m: M) {
-    return new SearchFactory({
-      objectType: m.Part,
-      roleTypes: [m.Part.Name, m.Part.SearchString],
-    });
-  }
-
-  static nonUnifiedPartsFilter(m: M) {
-    return new SearchFactory({
-      objectType: m.NonUnifiedPart,
-      roleTypes: [m.NonUnifiedPart.Name, m.NonUnifiedPart.SearchString],
-    });
-  }
-
-  static unifiedGoodsFilter(m: M, treeFactory: TreeBuilder) {
-    return new SearchFactory({
-      objectType: m.UnifiedGood,
-      roleTypes: [m.UnifiedGood.Name, m.UnifiedGood.SearchString],
-      include: treeFactory.UnifiedGood({
-        SerialisedItems: {},
-        PartWeightedAverage: {},
-      }),
-    });
-  }
-
-  static serialisedItemsFilter(m: M) {
-    return new SearchFactory({
-      objectType: m.SerialisedItem,
-      roleTypes: [m.SerialisedItem.DisplayName, m.SerialisedItem.SearchString],
-    });
-  }
-
-  static customersFilter(m: M, internalOrganisationId: number) {
-    return new SearchFactory({
-      objectType: m.Party,
-      roleTypes: [m.Party.DisplayName],
-      post: (predicate: And) => {
-        predicate.operands.push({
-          kind: 'ContainedIn',
-          propertyType: m.Party.CustomerRelationshipsWhereCustomer,
-          extent: {
-            kind: 'Filter',
-            objectType: m.CustomerRelationship,
-            predicate: {
-              kind: 'And',
-              operands: [
-                {
-                  kind: 'Equals',
-                  propertyType: m.CustomerRelationship.InternalOrganisation,
-                  value: internalOrganisationId,
-                },
-                {
-                  kind: 'LessThan',
-                  roleType: m.CustomerRelationship.FromDate,
-                  value: new Date(),
-                },
-                {
-                  kind: 'Or',
-                  operands: [
-                    {
-                      kind: 'Not',
-                      operand: {
-                        kind: 'Exists',
-                        propertyType: m.CustomerRelationship.ThroughDate,
-                      },
-                    },
-                    {
-                      kind: 'GreaterThan',
-                      roleType: m.CustomerRelationship.ThroughDate,
-                      value: new Date(),
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        });
-      },
-    });
-  }
-
-  static suppliersFilter(m: M, internalOrganisationId: number) {
-    return new SearchFactory({
-      objectType: m.Organisation,
-      roleTypes: [m.Organisation.DisplayName],
-      post: (predicate: And) => {
-        predicate.operands.push({
-          kind: 'ContainedIn',
-          propertyType: m.Organisation.SupplierRelationshipsWhereSupplier,
-          extent: {
-            kind: 'Filter',
-            objectType: m.SupplierRelationship,
-            predicate: {
-              kind: 'And',
-              operands: [
-                {
-                  kind: 'Equals',
-                  propertyType: m.SupplierRelationship.InternalOrganisation,
-                  value: internalOrganisationId,
-                },
-                {
-                  kind: 'LessThan',
-                  roleType: m.SupplierRelationship.FromDate,
-                  value: new Date(),
-                },
-                {
-                  kind: 'Or',
-                  operands: [
-                    {
-                      kind: 'Not',
-                      operand: {
-                        kind: 'Exists',
-                        propertyType: m.SupplierRelationship.ThroughDate,
-                      },
-                    },
-                    {
-                      kind: 'GreaterThan',
-                      roleType: m.SupplierRelationship.ThroughDate,
-                      value: new Date(),
-                    },
-                  ],
-                },
-              ],
-            },
-          },
-        });
-      },
-    });
-  }
-
   static allSuppliersFilter(m: M) {
     return new SearchFactory({
       objectType: m.Organisation,
@@ -206,29 +47,28 @@ export class Filters {
     });
   }
 
-  static subContractorsFilter(m: M, internalOrganisationId: number) {
+  static customersFilter(m: M, internalOrganisationId: number) {
     return new SearchFactory({
-      objectType: m.Organisation,
-      roleTypes: [m.Organisation.DisplayName],
+      objectType: m.Party,
+      roleTypes: [m.Party.DisplayName],
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
-          propertyType:
-            m.Organisation.SubContractorRelationshipsWhereSubContractor,
+          propertyType: m.Party.CustomerRelationshipsWhereCustomer,
           extent: {
             kind: 'Filter',
-            objectType: m.SubContractorRelationship,
+            objectType: m.CustomerRelationship,
             predicate: {
               kind: 'And',
               operands: [
                 {
                   kind: 'Equals',
-                  propertyType: m.SubContractorRelationship.Contractor,
+                  propertyType: m.CustomerRelationship.InternalOrganisation,
                   value: internalOrganisationId,
                 },
                 {
                   kind: 'LessThan',
-                  roleType: m.SubContractorRelationship.FromDate,
+                  roleType: m.CustomerRelationship.FromDate,
                   value: new Date(),
                 },
                 {
@@ -238,12 +78,12 @@ export class Filters {
                       kind: 'Not',
                       operand: {
                         kind: 'Exists',
-                        propertyType: m.SubContractorRelationship.ThroughDate,
+                        propertyType: m.CustomerRelationship.ThroughDate,
                       },
                     },
                     {
                       kind: 'GreaterThan',
-                      roleType: m.SubContractorRelationship.ThroughDate,
+                      roleType: m.CustomerRelationship.ThroughDate,
                       value: new Date(),
                     },
                   ],
@@ -305,10 +145,10 @@ export class Filters {
     });
   }
 
-  static organisationsFilter(m: M) {
+  static goodsFilter(m: M) {
     return new SearchFactory({
-      objectType: m.Organisation,
-      roleTypes: [m.Organisation.DisplayName],
+      objectType: m.Good,
+      roleTypes: [m.Good.Name, m.Good.SearchString],
     });
   }
 
@@ -340,6 +180,20 @@ export class Filters {
     });
   }
 
+  static nonUnifiedPartsFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.NonUnifiedPart,
+      roleTypes: [m.NonUnifiedPart.Name, m.NonUnifiedPart.SearchString],
+    });
+  }
+
+  static organisationsFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.Organisation,
+      roleTypes: [m.Organisation.DisplayName],
+    });
+  }
+
   static peopleFilter(m: M) {
     return new SearchFactory({
       objectType: m.Person,
@@ -351,6 +205,159 @@ export class Filters {
     return new SearchFactory({
       objectType: m.Party,
       roleTypes: [m.Party.DisplayName],
+    });
+  }
+
+  static partsFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.Part,
+      roleTypes: [m.Part.Name, m.Part.SearchString],
+    });
+  }
+
+  static postalAddressFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.PostalAddress,
+      roleTypes: [m.PostalAddress.DisplayName],
+    });
+  }
+
+  static serialisedgoodsFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.UnifiedGood,
+      roleTypes: [m.UnifiedGood.Name, m.UnifiedGood.SearchString],
+      post: (predicate: And) => {
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: m.UnifiedGood.InventoryItemKind,
+          extent: {
+            kind: 'Filter',
+            objectType: m.InventoryItemKind,
+            predicate: {
+              kind: 'Equals',
+              propertyType: m.InventoryItemKind.UniqueId,
+              value: '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae',
+            },
+          },
+        });
+      },
+    });
+  }
+
+  static serialisedItemsFilter(m: M) {
+    return new SearchFactory({
+      objectType: m.SerialisedItem,
+      roleTypes: [m.SerialisedItem.DisplayName, m.SerialisedItem.SearchString],
+    });
+  }
+
+  static subContractorsFilter(m: M, internalOrganisationId: number) {
+    return new SearchFactory({
+      objectType: m.Organisation,
+      roleTypes: [m.Organisation.DisplayName],
+      post: (predicate: And) => {
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType:
+            m.Organisation.SubContractorRelationshipsWhereSubContractor,
+          extent: {
+            kind: 'Filter',
+            objectType: m.SubContractorRelationship,
+            predicate: {
+              kind: 'And',
+              operands: [
+                {
+                  kind: 'Equals',
+                  propertyType: m.SubContractorRelationship.Contractor,
+                  value: internalOrganisationId,
+                },
+                {
+                  kind: 'LessThan',
+                  roleType: m.SubContractorRelationship.FromDate,
+                  value: new Date(),
+                },
+                {
+                  kind: 'Or',
+                  operands: [
+                    {
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: m.SubContractorRelationship.ThroughDate,
+                      },
+                    },
+                    {
+                      kind: 'GreaterThan',
+                      roleType: m.SubContractorRelationship.ThroughDate,
+                      value: new Date(),
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        });
+      },
+    });
+  }
+
+  static suppliersFilter(m: M, internalOrganisationId: number) {
+    return new SearchFactory({
+      objectType: m.Organisation,
+      roleTypes: [m.Organisation.DisplayName],
+      post: (predicate: And) => {
+        predicate.operands.push({
+          kind: 'ContainedIn',
+          propertyType: m.Organisation.SupplierRelationshipsWhereSupplier,
+          extent: {
+            kind: 'Filter',
+            objectType: m.SupplierRelationship,
+            predicate: {
+              kind: 'And',
+              operands: [
+                {
+                  kind: 'Equals',
+                  propertyType: m.SupplierRelationship.InternalOrganisation,
+                  value: internalOrganisationId,
+                },
+                {
+                  kind: 'LessThan',
+                  roleType: m.SupplierRelationship.FromDate,
+                  value: new Date(),
+                },
+                {
+                  kind: 'Or',
+                  operands: [
+                    {
+                      kind: 'Not',
+                      operand: {
+                        kind: 'Exists',
+                        propertyType: m.SupplierRelationship.ThroughDate,
+                      },
+                    },
+                    {
+                      kind: 'GreaterThan',
+                      roleType: m.SupplierRelationship.ThroughDate,
+                      value: new Date(),
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        });
+      },
+    });
+  }
+
+  static unifiedGoodsFilter(m: M, treeFactory: TreeBuilder) {
+    return new SearchFactory({
+      objectType: m.UnifiedGood,
+      roleTypes: [m.UnifiedGood.Name, m.UnifiedGood.SearchString],
+      include: treeFactory.UnifiedGood({
+        SerialisedItems: {},
+        PartWeightedAverage: {},
+      }),
     });
   }
 

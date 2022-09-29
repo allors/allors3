@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 
 import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
+  Quote,
   SalesInvoice,
   SalesOrder,
   SalesTerm,
@@ -66,7 +67,8 @@ export class SalesTermFormComponent extends AllorsFormComponent<SalesTerm> {
     if (initializer) {
       pulls.push(
         p.SalesInvoice({ objectId: initializer.id }),
-        p.SalesOrder({ objectId: initializer.id })
+        p.SalesOrder({ objectId: initializer.id }),
+        p.Quote({ objectId: initializer.id })
       );
     }
   }
@@ -78,22 +80,22 @@ export class SalesTermFormComponent extends AllorsFormComponent<SalesTerm> {
 
     this.container =
       pullResult.object<SalesInvoice>(this.m.SalesInvoice) ||
-      pullResult.object<SalesOrder>(this.m.SalesOrder);
+      pullResult.object<SalesOrder>(this.m.SalesOrder) ||
+      pullResult.object<Quote>(this.m.Quote);
 
     this.termTypes = pullResult.collection<TermType>(this.m.TermType);
 
-    // TODO: KOEN
-    // this.termTypes = this.termTypes?.filter(
-    //   (v) => v.strategy.cls.singularName === `${cls.singularName}Type`
-    // );
+    this.termTypes = this.termTypes?.filter(
+      (v) =>
+        v.strategy.cls.singularName ===
+        `${this.object.strategy.cls.singularName}Type`
+    );
 
     if (this.createRequest) {
-      const associationType = this.createRequest?.initializer.propertyType as AssociationType;
-      const roleType = associationType.roleType; 
-      this.container.strategy.addCompositesRole(
-        roleType,
-        this.object
-      );
+      const associationType = this.createRequest?.initializer
+        .propertyType as AssociationType;
+      const roleType = associationType.roleType;
+      this.container.strategy.addCompositesRole(roleType, this.object);
     }
   }
 }
