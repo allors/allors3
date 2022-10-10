@@ -84,6 +84,45 @@ namespace Allors.Database.Domain
                         .Build());
             }
 
+            foreach (var salesTerm in this.SalesTerms)
+            {
+                if (salesTerm.GetType().Name == nameof(IncoTerm))
+                {
+                    salesOrder.AddSalesTerm(new IncoTermBuilder(this.Strategy.Transaction)
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(InvoiceTerm))
+                {
+                    salesOrder.AddSalesTerm(new InvoiceTermBuilder(this.Strategy.Transaction)
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(OrderTerm))
+                {
+                    salesOrder.AddSalesTerm(new OrderTermBuilder(this.Strategy.Transaction)
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+
+                if (salesTerm.GetType().Name == nameof(QuoteTerm))
+                {
+                    salesOrder.AddSalesTerm(new QuoteTermBuilder(this.Strategy.Transaction)
+                        .WithTermType(salesTerm.TermType)
+                        .WithTermValue(salesTerm.TermValue)
+                        .WithDescription(salesTerm.Description)
+                        .Build());
+                }
+            }
+
             method.StopPropagation = true;
         }
 
