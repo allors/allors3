@@ -102,6 +102,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
+        [Workspace(Default)]
         DiscountAdjustment[] DiscountAdjustments { get; set; }
 
         #region Allors
@@ -109,6 +110,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
+        [Workspace(Default)]
         SurchargeAdjustment[] SurchargeAdjustments { get; set; }
 
         #region Allors

@@ -13,6 +13,10 @@ import { PartyDisplayPhoneRule } from './rules/party-display-phone.rule';
 import { PersonDisplayEmailRule } from './rules/person-display-email.rule';
 import { PersonDisplayNameRule } from './rules/person-display-name.rule';
 import { PostalAddressDisplayNameRule } from './rules/postal-address-display-name.rule';
+import { PurchaseInvoiceItemTotalIncVatRule } from './rules/purchase-invoice-item-total-inc-vat.rule';
+import { PurchaseInvoiceItemUnitVatRule } from './rules/purchase-invoice-item-unit-vat.rule';
+import { PurchaseOrderItemTotalIncVatRule } from './rules/purchase-order-item-total-inc-vat.rule';
+import { PurchaseOrderItemUnitVatRule } from './rules/purchase-order-item-unit-vat.rule';
 import { SerialisedItemAgeRule } from './rules/serialised-item-age.rule';
 import { SerialisedItemYearsToGoRule } from './rules/serialised-item-years-to-go.rule';
 import { TelecommunicationsNumberDisplayNameRule } from './rules/telecommunications-number-display-name.ruley';
@@ -34,6 +38,10 @@ export function ruleBuilder(metaPopulation: MetaPopulation): IRule<IObject>[] {
     new PersonDisplayNameRule(m),
     new PersonDisplayEmailRule(m),
     new PostalAddressDisplayNameRule(m),
+    new PurchaseInvoiceItemTotalIncVatRule(m),
+    new PurchaseInvoiceItemUnitVatRule(m),
+    new PurchaseOrderItemTotalIncVatRule(m),
+    new PurchaseOrderItemUnitVatRule(m),
     new SerialisedItemAgeRule(m),
     new SerialisedItemYearsToGoRule(m),
     new TelecommunicationsNumberDisplayNameRule(m),
