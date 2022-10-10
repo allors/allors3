@@ -189,10 +189,13 @@ export class AppFormService implements FormService {
       [m.ExchangeRate, ExchangeRateFormComponent],
       [m.FaceToFaceCommunication, FaceToFaceCommunicationFormComponent],
       [m.Facility, FacilityFormComponent],
+      [m.IncoTerm, SalesTermFormComponent],
+      [m.InvoiceTerm, SalesTermFormComponent],
       [m.LetterCorrespondence, LetterCorrespondenceFormComponent],
       [m.Model, ModelFormComponent],
       [m.NonSerialisedInventoryItem, NonSerialisedInventoryItemFormComponent],
       [m.OrderAdjustment, OrderAdjustmentFormComponent],
+      [m.OrderTerm, SalesTermFormComponent],
       [
         m.OrganisationContactRelationship,
         OrganisationContactRelationshipFormComponent,
