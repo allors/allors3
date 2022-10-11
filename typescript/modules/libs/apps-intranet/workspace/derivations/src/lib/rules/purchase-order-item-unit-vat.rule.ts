@@ -64,7 +64,7 @@ export class PurchaseOrderItemUnitVatRule implements IRule<PurchaseOrderItem> {
 
       const unitPrice = unitBasePrice - unitDiscount + unitSurcharge;
 
-      return ((unitPrice * parseFloat(vatRate.Rate ?? '0')) / 100).toFixed(2);
+      return ((unitPrice * parseFloat(vatRate?.Rate ?? '0')) / 100).toFixed(2);
     }
 
     return '0';

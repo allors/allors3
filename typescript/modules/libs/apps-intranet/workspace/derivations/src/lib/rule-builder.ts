@@ -23,6 +23,7 @@ import { TelecommunicationsNumberDisplayNameRule } from './rules/telecommunicati
 import { WebAddressDisplayNameRule } from './rules/web-address-display-name.rule';
 import { WorkEffortInventoryAssignmentTotalSellingPriceRule } from './rules/work-effort-inventory-assignment-total-selling-price.rule';
 import { MetaPopulation } from '@allors/system/workspace/meta';
+
 export function ruleBuilder(metaPopulation: MetaPopulation): IRule<IObject>[] {
   const m = metaPopulation as M;
   return [
