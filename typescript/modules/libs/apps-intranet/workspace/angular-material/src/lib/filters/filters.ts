@@ -357,6 +357,7 @@ export class Filters {
       include: treeFactory.UnifiedGood({
         SerialisedItems: {},
         PartWeightedAverage: {},
+        InventoryItemKind: {},
       }),
     });
   }

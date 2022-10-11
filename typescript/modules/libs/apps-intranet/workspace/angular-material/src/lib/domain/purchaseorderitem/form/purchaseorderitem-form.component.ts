@@ -226,6 +226,9 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
         this.m.NonUnifiedPart.Name,
         this.m.NonUnifiedPart.SearchString,
       ],
+      include: {
+        InventoryItemKind: {},
+      },
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
@@ -274,6 +277,15 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
   public goodSelected(unifiedGood: IObject): void {
     if (unifiedGood) {
       this.part = unifiedGood as UnifiedGood;
+
+      this.serialised =
+        this.part.InventoryItemKind.UniqueId ===
+        '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+
+      if (this.serialised) {
+        this.object.QuantityOrdered = '1';
+      }
+
       this.refreshSerialisedItems(unifiedGood as UnifiedGood);
     }
   }
@@ -292,6 +304,14 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
       this.unifiedGood = this.object.Part.strategy.cls === this.m.UnifiedGood;
       this.nonUnifiedPart =
         this.object.Part.strategy.cls === this.m.NonUnifiedPart;
+
+      this.serialised =
+        this.part.InventoryItemKind.UniqueId ===
+        '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+
+      if (this.serialised) {
+        this.object.QuantityOrdered = '1';
+      }
 
       this.updateFromPart(part as Part);
     }
