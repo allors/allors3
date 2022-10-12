@@ -5,6 +5,7 @@ import { M } from '@allors/default/workspace/meta';
 import {
   AllorsComponent,
   ContextService,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
 
 @Directive()
@@ -31,7 +32,11 @@ export abstract class AllorsListPageComponent extends AllorsComponent {
 
   private _objectType: Composite;
 
-  constructor(public allors: ContextService, private titleService: Title) {
+  constructor(
+    public allors: ContextService,
+    public metaService: MetaService,
+    private titleService: Title
+  ) {
     super();
 
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -40,7 +45,7 @@ export abstract class AllorsListPageComponent extends AllorsComponent {
 
   private onObjectType() {
     // TODO: add to configure
-    this.title = this.objectType.pluralName;
-    this.titleService.setTitle(this.title);
+    (this.title = this.metaService.pluralName(this.objectType)),
+      this.titleService.setTitle(this.title);
   }
 }
