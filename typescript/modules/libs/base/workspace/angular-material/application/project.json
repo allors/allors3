@@ -1,5 +1,6 @@
 {
-  "root": "libs/base/workspace/angular-material/application",
+  "name": "base-workspace-angular-material-application",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/base/workspace/angular-material/application/src",
   "projectType": "library",
   "targets": {
@@ -7,14 +8,16 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/base/workspace/angular-material/application/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/base/workspace/angular-material/application/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/base/workspace/angular-material/application"],
       "options": {
-        "jestConfig": "libs/base/workspace/angular-material/application/jest.config.js",
+        "jestConfig": "libs/base/workspace/angular-material/application/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,5 +1,6 @@
 {
-  "root": "libs/system/workspace/adapters",
+  "name": "system-workspace-adapters",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/system/workspace/adapters/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/system/workspace/adapters"],
       "options": {
-        "jestConfig": "libs/system/workspace/adapters/jest.config.js",
+        "jestConfig": "libs/system/workspace/adapters/jest.config.ts",
         "passWithNoTests": true
       }
     }

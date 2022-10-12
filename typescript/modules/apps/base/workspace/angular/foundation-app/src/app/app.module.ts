@@ -20,7 +20,6 @@ import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
 import { Configuration } from '@allors/system/workspace/domain';
-import { applyRules } from '@allors/system/workspace/derivations';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,
@@ -44,9 +43,6 @@ export function appInitFactory(
       objectFactory: new PrototypeObjectFactory(metaPopulation),
       idGenerator: () => nextId--,
     };
-
-    const rules = [];
-    applyRules(m, rules);
 
     const database = new DatabaseConnection(configuration, angularClient);
     const workspace = database.createWorkspace();
