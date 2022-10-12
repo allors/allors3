@@ -13,4 +13,6 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '../../../../coverage/libs/system/workspace/adapters-json-tests',
+  maxWorkers: 1,
+  testTimeout: 60000 * 10,
 };

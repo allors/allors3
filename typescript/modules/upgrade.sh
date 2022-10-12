@@ -17,7 +17,7 @@ npm install cross-fetch
 npm install date-fns
 npm install easymde
 npm install jsnlog
-npm install luxon
+npm install luxon@2.5.0
 
 // Apps Extranet
 npx nx g @nrwl/angular:application apps-extranet/workspace/angular-material-app --routing=true --style=scss --e2eTestRunner=none
