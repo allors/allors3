@@ -1,5 +1,6 @@
 {
-  "root": "libs/base/workspace/angular/application",
+  "name": "base-workspace-angular-application",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/base/workspace/angular/application/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/base/workspace/angular/application"],
       "options": {
-        "jestConfig": "libs/base/workspace/angular/application/jest.config.js",
+        "jestConfig": "libs/base/workspace/angular/application/jest.config.ts",
         "passWithNoTests": true
       }
     }

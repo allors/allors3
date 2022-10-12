@@ -1,5 +1,6 @@
 {
-  "root": "libs/core/workspace/derivations-custom",
+  "name": "core-workspace-derivations-custom",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/core/workspace/derivations-custom/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/core/workspace/derivations-custom"],
       "options": {
-        "jestConfig": "libs/core/workspace/derivations-custom/jest.config.js",
+        "jestConfig": "libs/core/workspace/derivations-custom/jest.config.ts",
         "passWithNoTests": true
       }
     }

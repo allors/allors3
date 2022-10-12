@@ -1,6 +1,7 @@
 {
+  "name": "apps-intranet-workspace-angular-material-app",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "root": "apps/apps-intranet/workspace/angular-material-app",
   "sourceRoot": "apps/apps-intranet/workspace/angular-material-app/src",
   "prefix": "allors",
   "targets": {
@@ -18,7 +19,10 @@
           "apps/apps-intranet/workspace/angular-material-app/src/favicon.ico",
           "apps/apps-intranet/workspace/angular-material-app/src/assets"
         ],
-        "styles": ["apps/apps-intranet/workspace/angular-material-app/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
+        "styles": [
+          "apps/apps-intranet/workspace/angular-material-app/src/styles.scss", 
+          "./node_modules/easymde/dist/easymde.min.css"
+        ],
         "scripts": [],
         "allowedCommonJsDependencies": ["easymde", "codemirror", "codemirror-spell-checker"]
       },
@@ -79,8 +83,8 @@
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/apps-intranet/workspace/angular-material-app/src/**/*.ts",
-          "apps/apps-intranet/workspace/angular-material-app/src/**/*.html"
+          "apps/apps-intranet/workspace/angular-material-app/**/*.ts",
+          "apps/apps-intranet/workspace/angular-material-app/**/*.html"
         ]
       }
     },
@@ -88,7 +92,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/apps-intranet/workspace/angular-material-app"],
       "options": {
-        "jestConfig": "apps/apps-intranet/workspace/angular-material-app/jest.config.js",
+        "jestConfig": "apps/apps-intranet/workspace/angular-material-app/jest.config.ts",
         "passWithNoTests": true
       }
     }

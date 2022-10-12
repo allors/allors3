@@ -1,5 +1,6 @@
 {
-  "root": "libs/base/workspace/angular/foundation",
+  "name": "base-workspace-angular-foundation",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/base/workspace/angular/foundation/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/base/workspace/angular/foundation"],
       "options": {
-        "jestConfig": "libs/base/workspace/angular/foundation/jest.config.js",
+        "jestConfig": "libs/base/workspace/angular/foundation/jest.config.ts",
         "passWithNoTests": true
       }
     }

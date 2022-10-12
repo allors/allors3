@@ -1,5 +1,6 @@
 {
-  "root": "libs/system/workspace/meta-json-tests",
+  "name": "system-workspace-meta-json-tests",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/system/workspace/meta-json-tests/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/system/workspace/meta-json-tests"],
       "options": {
-        "jestConfig": "libs/system/workspace/meta-json-tests/jest.config.js",
+        "jestConfig": "libs/system/workspace/meta-json-tests/jest.config.ts",
         "passWithNoTests": true
       }
     }
