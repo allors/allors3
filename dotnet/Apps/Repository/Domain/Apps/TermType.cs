@@ -15,6 +15,13 @@ namespace Allors.Repository
         #region inherited properties
         #endregion
 
+        #region Allors
+        [Id("b0e2c7a6-d73e-46bb-be54-ededdb22e9bb")]
+        #endregion
+        [Indexed]
+        [Workspace]
+        string Abbreviation { get; set; }
+
         #region inherited methods
         #endregion
     }
