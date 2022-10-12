@@ -14,6 +14,7 @@
     }
   ],
   "compilerOptions": {
+    "target": "es2020",
     "forceConsistentCasingInFileNames": true,
     // "strict": true,
     "noImplicitOverride": true,
@@ -41,6 +42,7 @@
     }
   },
   "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
