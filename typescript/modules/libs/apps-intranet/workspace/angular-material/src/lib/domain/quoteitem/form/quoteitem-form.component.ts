@@ -10,7 +10,7 @@ import {
   NonSerialisedInventoryItem,
   Part,
   Product,
-  ProductQuote,
+  Quote,
   QuoteItem,
   QuoteItemState,
   QuoteState,
@@ -46,7 +46,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class QuoteItemFormComponent extends AllorsFormComponent<QuoteItem> {
   readonly m: M;
-  quote: ProductQuote;
+  quote: Quote;
   invoiceItemTypes: InvoiceItemType[];
   partItemType: InvoiceItemType;
   productItemType: InvoiceItemType;
@@ -421,13 +421,13 @@ export class QuoteItemFormComponent extends AllorsFormComponent<QuoteItem> {
     );
 
     if (this.createRequest) {
-      this.quote = pullResult.object<ProductQuote>(this.m.ProductQuote);
+      this.quote = pullResult.object<Quote>(this.m.Quote);
       this.object.UnitOfMeasure = piece;
       this.quote.addQuoteItem(this.object);
       this.vatRegimeInitialRole = this.quote.DerivedVatRegime;
       this.irpfRegimeInitialRole = this.quote.DerivedIrpfRegime;
     } else {
-      this.quote = this.object.QuoteWhereQuoteItem as ProductQuote;
+      this.quote = this.object.QuoteWhereQuoteItem as Quote;
 
       if (this.object.Product) {
         this.previousProduct = this.object.Product;
