@@ -31,10 +31,11 @@
             </mat-select>
           </mat-form-field>
           <button
+            throttled
             mat-mini-fab
             color="accent"
             type="button"
-            (click)="addBrand = !addBrand"
+            (throttleClick)="addBrand = !addBrand"
           >
             <mat-icon *ngIf="!addBrand">add</mat-icon>
             <mat-icon *ngIf="addBrand">close</mat-icon>
@@ -70,10 +71,11 @@
             </mat-select>
           </mat-form-field>
           <button
+            throttled
             mat-mini-fab
             color="accent"
             type="button"
-            (click)="addModel = !addModel"
+            (throttleClick)="addModel = !addModel"
           >
             <mat-icon *ngIf="!addModel">add</mat-icon>
             <mat-icon *ngIf="addModel">close</mat-icon>

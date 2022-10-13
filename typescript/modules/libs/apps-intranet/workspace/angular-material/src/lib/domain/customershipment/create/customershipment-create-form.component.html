@@ -26,11 +26,12 @@
           display="DisplayName"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="!object.ShipToParty || !object.canWriteShipToAddress"
           type="button"
-          (click)="addShipToAddress = !addShipToAddress"
+          (throttleClick)="addShipToAddress = !addShipToAddress"
         >
           <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
           <mat-icon *ngIf="addShipToAddress">close</mat-icon>
@@ -62,6 +63,7 @@
           label="Customer contact person"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="
@@ -70,7 +72,7 @@
             shipToCustomerIsPerson
           "
           type="button"
-          (click)="addShipToContactPerson = !addShipToContactPerson"
+          (throttleClick)="addShipToContactPerson = !addShipToContactPerson"
         >
           <mat-icon *ngIf="!addShipToContactPerson">add</mat-icon>
           <mat-icon *ngIf="addShipToContactPerson">close</mat-icon>
@@ -104,11 +106,12 @@
           class="col-md"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="!object.canWriteShipFromAddress"
           type="button"
-          (click)="addShipFromAddress = !addShipFromAddress"
+          (throttleClick)="addShipFromAddress = !addShipFromAddress"
         >
           <mat-icon *ngIf="!addShipFromAddress">add</mat-icon>
           <mat-icon *ngIf="addShipFromAddress">close</mat-icon>

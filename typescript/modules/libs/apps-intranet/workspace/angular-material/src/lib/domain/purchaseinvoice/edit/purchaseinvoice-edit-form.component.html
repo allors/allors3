@@ -30,11 +30,12 @@
               (changed)="billedFromSelected($event)"
             ></a-mat-autocomplete>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteBilledFrom"
               type="button"
-              (click)="addBilledFrom = !addBilledFrom"
+              (throttleClick)="addBilledFrom = !addBilledFrom"
             >
               <mat-icon *ngIf="!addBilledFrom">add</mat-icon>
               <mat-icon *ngIf="addBilledFrom">close</mat-icon>
@@ -70,6 +71,7 @@
               display="DisplayName"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -77,7 +79,7 @@
                 !object.canWriteAssignedBilledFromContactMechanism
               "
               type="button"
-              (click)="
+              (throttleClick)="
                 addBilledFromContactMechanism = !addBilledFromContactMechanism
               "
             >
@@ -117,13 +119,16 @@
               class="col-md"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
                 !object.BilledFrom || !object.canWriteBilledFromContactPerson
               "
               type="button"
-              (click)="addBilledFromContactPerson = !addBilledFromContactPerson"
+              (throttleClick)="
+                addBilledFromContactPerson = !addBilledFromContactPerson
+              "
             >
               <mat-icon *ngIf="!addBilledFromContactPerson">add</mat-icon>
               <mat-icon *ngIf="addBilledFromContactPerson">close</mat-icon>
@@ -173,11 +178,12 @@
               (changed)="shipToCustomerSelected($event)"
             ></a-mat-autocomplete>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteShipToCustomer"
               type="button"
-              (click)="addShipToCustomer = !addShipToCustomer"
+              (throttleClick)="addShipToCustomer = !addShipToCustomer"
             >
               <mat-icon *ngIf="!addShipToCustomer">add</mat-icon>
               <mat-icon *ngIf="addShipToCustomer">close</mat-icon>
@@ -213,6 +219,7 @@
               display="DisplayName"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -220,7 +227,9 @@
                 !object.canWriteAssignedShipToCustomerAddress
               "
               type="button"
-              (click)="addShipToCustomerAddress = !addShipToCustomerAddress"
+              (throttleClick)="
+                addShipToCustomerAddress = !addShipToCustomerAddress
+              "
             >
               <mat-icon *ngIf="!addShipToCustomerAddress">add</mat-icon>
               <mat-icon *ngIf="addShipToCustomerAddress">close</mat-icon>
@@ -258,6 +267,7 @@
               class="col-md"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -265,7 +275,7 @@
                 !object.canWriteShipToCustomerContactPerson
               "
               type="button"
-              (click)="
+              (throttleClick)="
                 addShipToCustomerContactPerson = !addShipToCustomerContactPerson
               "
             >
@@ -306,11 +316,12 @@
               (changed)="billToEndCustomerSelected($event)"
             ></a-mat-autocomplete>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteBillToEndCustomer"
               type="button"
-              (click)="addBillToEndCustomer = !addBillToEndCustomer"
+              (throttleClick)="addBillToEndCustomer = !addBillToEndCustomer"
             >
               <mat-icon *ngIf="!addBillToEndCustomer">add</mat-icon>
               <mat-icon *ngIf="addBillToEndCustomer">close</mat-icon>
@@ -350,6 +361,7 @@
               label="Billed to Contact Mechanism"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -357,7 +369,7 @@
                 !object.canWriteAssignedBillToEndCustomerContactMechanism
               "
               type="button"
-              (click)="
+              (throttleClick)="
                 addBillToEndCustomerContactMechanism =
                   !addBillToEndCustomerContactMechanism
               "
@@ -405,6 +417,7 @@
               class="col-md"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -412,7 +425,7 @@
                 !object.canWriteBillToEndCustomerContactPerson
               "
               type="button"
-              (click)="
+              (throttleClick)="
                 addBillToEndCustomerContactPerson =
                   !addBillToEndCustomerContactPerson
               "
@@ -458,11 +471,12 @@
               (changed)="shipToEndCustomerSelected($event)"
             ></a-mat-autocomplete>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteShipToEndCustomer"
               type="button"
-              (click)="addShipToEndCustomer = !addShipToEndCustomer"
+              (throttleClick)="addShipToEndCustomer = !addShipToEndCustomer"
             >
               <mat-icon *ngIf="!addShipToEndCustomer">add</mat-icon>
               <mat-icon *ngIf="addShipToEndCustomer">close</mat-icon>
@@ -500,6 +514,7 @@
               display="DisplayName"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -507,7 +522,7 @@
                 !object.canWriteAssignedShipToEndCustomerAddress
               "
               type="button"
-              (click)="
+              (throttleClick)="
                 addShipToEndCustomerAddress = !addShipToEndCustomerAddress
               "
             >
@@ -546,6 +561,7 @@
               label="Schipping Contact Person"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -553,7 +569,7 @@
                 !object.canWriteShipToEndCustomerContactPerson
               "
               type="button"
-              (click)="
+              (throttleClick)="
                 addShipToEndCustomerContactPerson =
                   !addShipToEndCustomerContactPerson
               "

@@ -24,11 +24,12 @@
               label="Supplier"
             ></a-mat-autocomplete>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteTakenViaSupplier"
               type="button"
-              (click)="addSupplier = !addSupplier"
+              (throttleClick)="addSupplier = !addSupplier"
             >
               <mat-icon *ngIf="!addSupplier">add</mat-icon>
               <mat-icon *ngIf="addSupplier">close</mat-icon>
@@ -65,6 +66,7 @@
             >
             </a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -72,7 +74,7 @@
                 !object.canWriteAssignedTakenViaContactMechanism
               "
               type="button"
-              (click)="
+              (throttleClick)="
                 addTakenViaContactMechanism = !addTakenViaContactMechanism
               "
             >
@@ -111,6 +113,7 @@
               label="Supplier contact person"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="
@@ -118,7 +121,9 @@
                 !object.canWriteTakenViaContactPerson
               "
               type="button"
-              (click)="addTakenViaContactPerson = !addTakenViaContactPerson"
+              (throttleClick)="
+                addTakenViaContactPerson = !addTakenViaContactPerson
+              "
             >
               <mat-icon *ngIf="!addTakenViaContactPerson">add</mat-icon>
               <mat-icon *ngIf="addTakenViaContactPerson">close</mat-icon>
@@ -158,11 +163,14 @@
               class="col-md"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteAssignedBillToContactMechanism"
               type="button"
-              (click)="addBillToContactMechanism = !addBillToContactMechanism"
+              (throttleClick)="
+                addBillToContactMechanism = !addBillToContactMechanism
+              "
             >
               <mat-icon *ngIf="!addBillToContactMechanism">add</mat-icon>
               <mat-icon *ngIf="addBillToContactMechanism">close</mat-icon>
@@ -198,11 +206,12 @@
             >
             </a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteBillToContactPerson"
               type="button"
-              (click)="addBillToContactPerson = !addBillToContactPerson"
+              (throttleClick)="addBillToContactPerson = !addBillToContactPerson"
             >
               <mat-icon *ngIf="!addBillToContactPerson">add</mat-icon>
               <mat-icon *ngIf="addBillToContactPerson">close</mat-icon>
@@ -240,11 +249,12 @@
               class="col-md"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteAssignedShipToAddress"
               type="button"
-              (click)="addShipToAddress = !addShipToAddress"
+              (throttleClick)="addShipToAddress = !addShipToAddress"
             >
               <mat-icon *ngIf="!addShipToAddress">add</mat-icon>
               <mat-icon *ngIf="addShipToAddress">close</mat-icon>
@@ -275,11 +285,12 @@
               label="Shipping Contact Person"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.canWriteShipToContactPerson"
               type="button"
-              (click)="addShipToContactPerson = !addShipToContactPerson"
+              (throttleClick)="addShipToContactPerson = !addShipToContactPerson"
             >
               <mat-icon *ngIf="!addShipToContactPerson">add</mat-icon>
               <mat-icon *ngIf="addShipToContactPerson">close</mat-icon>
@@ -343,10 +354,11 @@
             >
             </a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               type="button"
-              (click)="addFacility = !addFacility"
+              (throttleClick)="addFacility = !addFacility"
             >
               <mat-icon *ngIf="!addFacility">add</mat-icon>
               <mat-icon *ngIf="addFacility">close</mat-icon>

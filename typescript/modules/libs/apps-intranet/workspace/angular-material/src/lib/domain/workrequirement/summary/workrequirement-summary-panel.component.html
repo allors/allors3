@@ -56,22 +56,43 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="requirement.canExecuteCancel" mat-button (click)="cancel()">
+    <button
+      throttled
+      *ngIf="requirement.canExecuteCancel"
+      mat-button
+      (throttleClick)="cancel()"
+    >
       Cancel
     </button>
-    <button *ngIf="requirement.canExecuteReopen" mat-button (click)="reopen()">
+    <button
+      throttled
+      *ngIf="requirement.canExecuteReopen"
+      mat-button
+      (throttleClick)="reopen()"
+    >
       Reopen
     </button>
-    <button *ngIf="requirement.canExecuteStart" mat-button (click)="start()">
+    <button
+      throttled
+      *ngIf="requirement.canExecuteStart"
+      mat-button
+      (throttleClick)="start()"
+    >
       Start
     </button>
-    <button *ngIf="requirement.canExecuteClose" mat-button (click)="close()">
+    <button
+      throttled
+      *ngIf="requirement.canExecuteClose"
+      mat-button
+      (throttleClick)="close()"
+    >
       Finish
     </button>
     <button
+      throttled
       *ngIf="requirement.canExecuteCreateWorkTask"
       mat-button
-      (click)="createWorkTask()"
+      (throttleClick)="createWorkTask()"
     >
       Create Work Order
     </button>

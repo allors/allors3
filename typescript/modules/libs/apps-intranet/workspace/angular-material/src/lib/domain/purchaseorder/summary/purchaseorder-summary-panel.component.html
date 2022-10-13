@@ -54,58 +54,114 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="order.canExecuteCancel" mat-button (click)="cancel()">
+    <button
+      throttled
+      *ngIf="order.canExecuteCancel"
+      mat-button
+      (throttleClick)="cancel()"
+    >
       Cancel
     </button>
-    <button *ngIf="order.canExecuteApprove" mat-button (click)="approve()">
+    <button
+      throttled
+      *ngIf="order.canExecuteApprove"
+      mat-button
+      (throttleClick)="approve()"
+    >
       Approve
     </button>
-    <button *ngIf="order.canExecuteReject" mat-button (click)="reject()">
+    <button
+      throttled
+      *ngIf="order.canExecuteReject"
+      mat-button
+      (throttleClick)="reject()"
+    >
       Reject
     </button>
-    <button *ngIf="order.canExecuteHold" mat-button (click)="hold()">
+    <button
+      throttled
+      *ngIf="order.canExecuteHold"
+      mat-button
+      (throttleClick)="hold()"
+    >
       Hold
     </button>
-    <button *ngIf="order.canExecuteContinue" mat-button (click)="continue()">
+    <button
+      throttled
+      *ngIf="order.canExecuteContinue"
+      mat-button
+      (throttleClick)="continue()"
+    >
       Continue
     </button>
     <button
+      throttled
       *ngIf="order.canExecuteSetReadyForProcessing"
       mat-button
-      (click)="setReadyForProcessing()"
+      (throttleClick)="setReadyForProcessing()"
     >
       Ready for processing
     </button>
-    <button *ngIf="order.canExecuteReopen" mat-button (click)="reopen()">
+    <button
+      throttled*ngIf="order.canExecuteReopen"
+      mat-button
+      (throttleClick)="reopen()"
+    >
       Reopen
     </button>
-    <button *ngIf="order.canExecuteRevise" mat-button (click)="revise()">
+    <button
+      throttled
+      *ngIf="order.canExecuteRevise"
+      mat-button
+      (throttleClick)="revise()"
+    >
       Revise
     </button>
-    <button mat-button type="button" (click)="print.execute(order)">
+    <button
+      throttled
+      mat-button
+      type="button"
+      (throttleClick)="print.execute(order)"
+    >
       Print
     </button>
-    <button *ngIf="order.canExecuteSend" mat-button (click)="send()">
+    <button
+      throttled
+      *ngIf="order.canExecuteSend"
+      mat-button
+      (throttleClick)="send()"
+    >
       Send
     </button>
-    <button *ngIf="order.canExecuteInvoice" mat-button (click)="invoice()">
+    <button
+      throttled
+      *ngIf="order.canExecuteInvoice"
+      mat-button
+      (throttleClick)="invoice()"
+    >
       Invoice
     </button>
     <button
+      throttled
       *ngIf="order.canExecuteQuickReceive"
       mat-button
-      (click)="quickReceive()"
+      (throttleClick)="quickReceive()"
     >
       Receive all items
     </button>
-    <button *ngIf="order.canExecuteReturn" mat-button (click)="quickReturn()">
+    <button
+      throttled*ngIf="order.canExecuteReturn"
+      mat-button
+      (throttleClick)="quickReturn()"
+    >
       Return all items
     </button>
     <button
+      throttled
       *ngIf="order.canExecuteCopy"
       mat-button
       type="button"
-      (click)="copy()"
+      (throttleClick)="copy()"
     >
       Copy
     </button>

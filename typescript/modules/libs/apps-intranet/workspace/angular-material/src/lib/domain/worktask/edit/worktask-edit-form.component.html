@@ -57,11 +57,12 @@
               display="DisplayName"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.Customer || !object.canWriteName"
               type="button"
-              (click)="addContactMechanism = !addContactMechanism"
+              (throttleClick)="addContactMechanism = !addContactMechanism"
             >
               <mat-icon *ngIf="!addContactMechanism">add</mat-icon>
               <mat-icon *ngIf="addContactMechanism">close</mat-icon>
@@ -94,11 +95,12 @@
               label="Contact Person"
             ></a-mat-select>
             <button
+              throttled
               mat-mini-fab
               color="accent"
               [disabled]="!object.Customer || !object.canWriteName"
               type="button"
-              (click)="addContactPerson = !addContactPerson"
+              (throttleClick)="addContactPerson = !addContactPerson"
             >
               <mat-icon *ngIf="!addContactPerson">add</mat-icon>
               <mat-icon *ngIf="addContactPerson">close</mat-icon>
@@ -144,7 +146,7 @@
           [roleType]="m.WorkTask.IssueDate"
         ></a-mat-datepicker>
       </div>
-    
+
       <div class="row">
         <a-mat-input
           class="col-md"

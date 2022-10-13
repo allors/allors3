@@ -12,11 +12,12 @@
           label="From"
         ></a-mat-autocomplete>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="!object.canWriteRequestItems"
           type="button"
-          (click)="addOriginator = !addOriginator"
+          (throttleClick)="addOriginator = !addOriginator"
         >
           <mat-icon *ngIf="!addOriginator">add</mat-icon>
           <mat-icon *ngIf="addOriginator">close</mat-icon>
@@ -50,11 +51,12 @@
           class="col-md"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="!object.Originator || !object.canWriteRequestItems"
           type="button"
-          (click)="addContactMechanism = !addContactMechanism"
+          (throttleClick)="addContactMechanism = !addContactMechanism"
         >
           <mat-icon *ngIf="!addContactMechanism">add</mat-icon>
           <mat-icon *ngIf="addContactMechanism">close</mat-icon>
@@ -89,11 +91,12 @@
           class="col-md"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="originatorIsPerson || !object.canWriteRequestItems"
           type="button"
-          (click)="addContactPerson = !addContactPerson"
+          (throttleClick)="addContactPerson = !addContactPerson"
         >
           <mat-icon *ngIf="!addContactPerson">add</mat-icon>
           <mat-icon *ngIf="addContactPerson">close</mat-icon>

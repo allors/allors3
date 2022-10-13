@@ -136,10 +136,11 @@
             </mat-select>
           </mat-form-field>
           <button
+            throttled
             mat-mini-fab
             color="accent"
             type="button"
-            (click)="addFacility = !addFacility"
+            (throttleClick)="addFacility = !addFacility"
           >
             <mat-icon *ngIf="!addFacility">add</mat-icon>
             <mat-icon *ngIf="addFacility">close</mat-icon>

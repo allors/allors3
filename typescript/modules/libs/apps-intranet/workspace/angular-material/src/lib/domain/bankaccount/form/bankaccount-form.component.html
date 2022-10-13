@@ -27,10 +27,11 @@
         >
         </a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           type="button"
-          (click)="addBank = !addBank"
+          (throttleClick)="addBank = !addBank"
         >
           <mat-icon *ngIf="!addBank">add</mat-icon>
           <mat-icon *ngIf="addBank">close</mat-icon>

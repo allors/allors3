@@ -37,10 +37,22 @@
 </div>
 
 <div class="row">
-  <button mat-button color="primary" type="button" (click)="save()">
+  <button
+    throttled
+    mat-button
+    color="primary"
+    type="button"
+    (throttleClick)="save()"
+  >
     Save
   </button>
-  <button mat-button color="accent" type="button" (click)="cancel()">
+  <button
+    throttled
+    mat-button
+    color="accent"
+    type="button"
+    (throttleClick)="cancel()"
+  >
     Cancel
   </button>
 </div>

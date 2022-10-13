@@ -73,7 +73,7 @@
     >
       <div style="color: grey">From Repeating Invoice:</div>
       <div>
-        {{ repeatedFrom.Source.InvoiceNumber}}
+        {{ repeatedFrom.Source.InvoiceNumber }}
       </div>
     </div>
 
@@ -102,62 +102,74 @@
 
   <mat-card-actions>
     <button
+      throttled
       *ngIf="invoice.canExecuteSend"
       mat-button
       type="button"
-      (click)="send()"
+      (throttleClick)="send()"
     >
       Send
     </button>
     <button
+      throttled
       *ngIf="invoice.canExecuteCancelInvoice"
       mat-button
       type="button"
-      (click)="cancel()"
+      (throttleClick)="cancel()"
     >
       Cancel
     </button>
     <button
+      throttled
       *ngIf="invoice.canExecuteWriteOff"
       mat-button
       type="button"
-      (click)="writeOff()"
+      (throttleClick)="writeOff()"
     >
       Write off
     </button>
     <button
+      throttled
       *ngIf="invoice.canExecuteCopy"
       mat-button
       type="button"
-      (click)="copy()"
+      (throttleClick)="copy()"
     >
       Copy
     </button>
     <button
+      throttled
       *ngIf="invoice.canExecuteReopen"
       mat-button
       type="button"
-      (click)="reopen()"
+      (throttleClick)="reopen()"
     >
       Reopen
     </button>
     <button
+      throttled
       *ngIf="invoice.canExecuteCredit"
       mat-button
       type="button"
-      (click)="credit()"
+      (throttleClick)="credit()"
     >
       Credit
     </button>
     <button
+      throttled
       *ngIf="invoice.canExecuteRevise"
       mat-button
       type="button"
-      (click)="revise()"
+      (throttleClick)="revise()"
     >
       Revise
     </button>
-    <button mat-button type="button" (click)="print.execute(invoice)">
+    <button
+      throttled
+      mat-button
+      type="button"
+      (throttleClick)="print.execute(invoice)"
+    >
       Print
     </button>
   </mat-card-actions>

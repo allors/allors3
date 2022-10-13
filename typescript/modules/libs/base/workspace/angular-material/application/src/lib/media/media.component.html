@@ -1,5 +1,11 @@
 <mat-card class="flex-fill d-flex flex-column justify-content-between">
-  <img class="media" *ngIf="isImage" [src]="src" (click)="preview()" style="cursor: pointer" />
+  <img
+    class="media"
+    *ngIf="isImage"
+    [src]="src"
+    (click)="preview()"
+    style="cursor: pointer"
+  />
   <div class="media" *ngIf="!isImage">
     <mat-icon>{{ icon }}</mat-icon>
   </div>
@@ -13,10 +19,22 @@
     <div class="row">
       <div class="col"></div>
       <div>
-        <button mat-icon-button type="button" (click)="download()" title="Download">
+        <button
+          throttled
+          mat-icon-button
+          type="button"
+          (throttleClick)="download()"
+          title="Download"
+        >
           <mat-icon>cloud_download</mat-icon>
         </button>
-        <button mat-icon-button type="button" (click)="delete.emit(this.media)" title="Delete">
+        <button
+          throttled
+          mat-icon-button
+          type="button"
+          (throttleClick)="delete.emit(this.media)"
+          title="Delete"
+        >
           <mat-icon>delete</mat-icon>
         </button>
       </div>

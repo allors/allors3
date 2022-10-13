@@ -1,10 +1,11 @@
 <div class="factoryfab-wrapper">
   <div class="factoryfab">
     <button
+      throttled
       *ngIf="classes.length === 1"
       mat-fab
       type="button"
-      (click)="create(classes[0])"
+      (throttleClick)="create(classes[0])"
       attr.data-allors-objecttype="{{ objectType.tag }}"
     >
       <mat-icon>add</mat-icon>
@@ -24,9 +25,10 @@
           ><span class="title">Add new</span></mat-toolbar
         >
         <button
+          throttled
           *ngFor="let class of classes"
           mat-menu-item
-          (click)="create(class); (false)"
+          (throttleClick)="create(class); (false)"
           attr.data-allors-class="{{ class.tag }}"
         >
           <mat-icon>{{ icon(class) }}</mat-icon

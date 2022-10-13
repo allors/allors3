@@ -37,11 +37,12 @@
           label="Participant"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="person != null"
           type="button"
-          (click)="addFromParty = !addFromParty"
+          (throttleClick)="addFromParty = !addFromParty"
         >
           <mat-icon *ngIf="!addFromParty">add</mat-icon>
           <mat-icon *ngIf="addFromParty">close</mat-icon>
@@ -72,11 +73,12 @@
           label="Participant"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           [disabled]="person != null"
           type="button"
-          (click)="addToParty = !addToParty"
+          (throttleClick)="addToParty = !addToParty"
         >
           <mat-icon *ngIf="!addToParty">add</mat-icon>
           <mat-icon *ngIf="addToParty">close</mat-icon>

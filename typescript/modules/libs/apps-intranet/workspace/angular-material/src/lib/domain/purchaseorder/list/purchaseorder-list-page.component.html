@@ -14,7 +14,13 @@
           <mat-toolbar-row>
             <div class="pl-3 mr-auto">{{ title }}</div>
             <div>
-              <button [disabled]="!table.anySelected" mat-icon-button matTooltip="Delete" (click)="delete.execute(table.selected)">
+              <button
+                throttled
+                [disabled]="!table.anySelected"
+                mat-icon-button
+                matTooltip="Delete"
+                (throttleClick)="delete.execute(table.selected)"
+              >
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -23,7 +29,10 @@
       </div>
 
       <div *ngIf="canCreate">
-        <a-mat-factory-fab [objectType]="m.PurchaseOrder" (created)="navigation.overview($event)"></a-mat-factory-fab>
+        <a-mat-factory-fab
+          [objectType]="m.PurchaseOrder"
+          (created)="navigation.overview($event)"
+        ></a-mat-factory-fab>
       </div>
 
       <div class="a-search container-fluid">

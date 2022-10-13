@@ -1,5 +1,6 @@
 <button
-  (click)="toNotifications()"
+  throttled
+  (throttleClick)="toNotifications()"
   type="button"
   mat-raised-button
   color="primary"

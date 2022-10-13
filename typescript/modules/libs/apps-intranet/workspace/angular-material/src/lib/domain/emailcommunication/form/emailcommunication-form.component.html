@@ -28,11 +28,12 @@
           (selected)="fromPartySelected($event)"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           type="button"
           [disabled]="person != null"
-          (click)="addFromParty = !addFromParty"
+          (throttleClick)="addFromParty = !addFromParty"
         >
           <mat-icon *ngIf="!addFromParty">add</mat-icon>
           <mat-icon *ngIf="addFromParty">close</mat-icon>
@@ -64,11 +65,12 @@
           (selected)="toPartySelected($event)"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           type="button"
           [disabled]="person != null"
-          (click)="addToParty = !addToParty"
+          (throttleClick)="addToParty = !addToParty"
         >
           <mat-icon *ngIf="!addToParty">add</mat-icon>
           <mat-icon *ngIf="addToParty">close</mat-icon>
@@ -103,10 +105,11 @@
           data-allors-name="fromEmail"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           type="button"
-          (click)="addFromEmail = !addFromEmail"
+          (throttleClick)="addFromEmail = !addFromEmail"
         >
           <mat-icon *ngIf="!addFromEmail">add</mat-icon>
           <mat-icon *ngIf="addFromEmail">close</mat-icon>
@@ -139,10 +142,11 @@
           data-allors-name="toEmail"
         ></a-mat-select>
         <button
+          throttled
           mat-mini-fab
           color="accent"
           type="button"
-          (click)="addToEmail = !addToEmail"
+          (throttleClick)="addToEmail = !addToEmail"
         >
           <mat-icon *ngIf="!addToEmail">add</mat-icon>
           <mat-icon *ngIf="addToEmail">close</mat-icon>

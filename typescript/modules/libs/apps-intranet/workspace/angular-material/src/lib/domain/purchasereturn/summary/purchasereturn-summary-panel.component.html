@@ -23,13 +23,19 @@
   <mat-card-content> </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="shipment.canExecuteCancel" mat-button (click)="cancel()">
+    <button
+      throttled
+      *ngIf="shipment.canExecuteCancel"
+      mat-button
+      (throttleClick)="cancel()"
+    >
       Cancel
     </button>
     <button
+      throttled
       *ngIf="shipment.ShipmentItems && shipment.canExecuteShip"
       mat-button
-      (click)="ship()"
+      (throttleClick)="ship()"
     >
       Ship
     </button>

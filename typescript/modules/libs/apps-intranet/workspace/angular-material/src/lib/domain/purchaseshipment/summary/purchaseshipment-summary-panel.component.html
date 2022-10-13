@@ -33,9 +33,10 @@
 
   <mat-card-actions>
     <button
+      throttled
       *ngIf="shipment.ShipmentItems.length > 0 && shipment.canExecuteReceive"
       mat-button
-      (click)="receive()"
+      (throttleClick)="receive()"
     >
       Receive
     </button>

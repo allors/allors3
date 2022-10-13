@@ -49,11 +49,12 @@
           display="DisplayName"
         ></a-mat-static>
         <button
+          throttleClick
           *ngIf="!employee"
           mat-mini-fab
           color="accent"
           type="button"
-          (click)="addEmployee = !addEmployee"
+          (throttleClick)="addEmployee = !addEmployee"
         >
           <mat-icon *ngIf="!addEmployee">add</mat-icon>
           <mat-icon *ngIf="addEmployee">close</mat-icon>

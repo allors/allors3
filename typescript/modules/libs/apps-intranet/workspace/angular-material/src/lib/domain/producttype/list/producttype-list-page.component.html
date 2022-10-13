@@ -14,7 +14,13 @@
           <mat-toolbar-row>
             <div class="pl-3 mr-auto">{{ title }}</div>
             <div>
-              <button [disabled]="!table.anySelected" mat-icon-button matTooltip="Delete" (click)="delete.execute(table.selected)">
+              <button
+                throttled
+                [disabled]="!table.anySelected"
+                mat-icon-button
+                matTooltip="Delete"
+                (throttleClick)="delete.execute(table.selected)"
+              >
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -22,7 +28,10 @@
         </mat-toolbar>
       </div>
 
-      <a-mat-factory-fab [objectType]="m.ProductType" (created)="refreshService.refresh()"></a-mat-factory-fab>
+      <a-mat-factory-fab
+        [objectType]="m.ProductType"
+        (created)="refreshService.refresh()"
+      ></a-mat-factory-fab>
 
       <div class="a-search container-fluid">
         <a-mat-filter [filter]="filter"></a-mat-filter>

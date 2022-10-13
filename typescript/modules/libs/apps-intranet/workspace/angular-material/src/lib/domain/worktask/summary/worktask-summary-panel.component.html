@@ -67,25 +67,60 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button *ngIf="workTask.canExecuteCancel" mat-button (click)="cancel()">
+    <button
+      throttled
+      *ngIf="workTask.canExecuteCancel"
+      mat-button
+      (throttleClick)="cancel()"
+    >
       Cancel
     </button>
-    <button *ngIf="workTask.canExecuteReopen" mat-button (click)="reopen()">
+    <button
+      throttled
+      *ngIf="workTask.canExecuteReopen"
+      mat-button
+      (throttleClick)="reopen()"
+    >
       Reopen
     </button>
-    <button *ngIf="workTask.canExecuteComplete" mat-button (click)="complete()">
+    <button
+      throttled
+      *ngIf="workTask.canExecuteComplete"
+      mat-button
+      (clthrottleClickick)="complete()"
+    >
       Complete
     </button>
-    <button *ngIf="workTask.canExecuteInvoice" mat-button (click)="invoice()">
+    <button
+      throttled
+      *ngIf="workTask.canExecuteInvoice"
+      mat-button
+      (throttleClick)="invoice()"
+    >
       Invoice
     </button>
-    <button *ngIf="workTask.canExecuteRevise" mat-button (click)="revise()">
+    <button
+      throttled
+      *ngIf="workTask.canExecuteRevise"
+      mat-button
+      (clthrottleClickick)="revise()"
+    >
       Revise
     </button>
-    <button mat-button type="button" (click)="printForWorker.execute(workTask)">
+    <button
+      throttled
+      mat-button
+      type="button"
+      (throttleClick)="printForWorker.execute(workTask)"
+    >
       Print internal
     </button>
-    <button mat-button type="button" (click)="print.execute(workTask)">
+    <button
+      throttled
+      mat-button
+      type="button"
+      (throttleClick)="print.execute(workTask)"
+    >
       Print
     </button>
   </mat-card-actions>

@@ -56,66 +56,88 @@
 
   <mat-card-actions>
     <button
+      throttled
       *ngIf="proposal.canExecuteSetReadyForProcessing"
       mat-button
-      (click)="setReadyForProcessing()"
+      (throttleClick)="setReadyForProcessing()"
     >
       Ready for processing
     </button>
     <button
+      throttled
       *ngIf="proposal.canExecuteApprove"
       mat-button
       type="button"
-      (click)="approve()"
+      (throttleClick)="approve()"
     >
       Approve
     </button>
-    <button *ngIf="proposal.canExecuteSend" mat-button (click)="send()">
+    <button
+      throttled
+      *ngIf="proposal.canExecuteSend"
+      mat-button
+      (throttleClick)="send()"
+    >
       Send
     </button>
-    <button *ngIf="proposal.canExecuteAccept" mat-button (click)="accept()">
+    <button
+      throttled
+      *ngIf="proposal.canExecuteAccept"
+      mat-button
+      (throttleClick)="accept()"
+    >
       Accept
     </button>
     <button
+      throttled
       *ngIf="proposal.canExecuteRevise"
       mat-button
       type="button"
-      (click)="revise()"
+      (throttleClick)="revise()"
     >
       Revise
     </button>
     <button
+      throttled
       *ngIf="proposal.canExecuteReopen"
       mat-button
       type="button"
-      (click)="reopen()"
+      (throttleClick)="reopen()"
     >
       Reopen
     </button>
     <button
+      throttled
       *ngIf="proposal.canExecuteReject"
       mat-button
       type="button"
-      (click)="reject()"
+      (throttleClick)="reject()"
     >
       Reject
     </button>
     <button
+      throttled
       *ngIf="proposal.canExecuteCancel"
       mat-button
       type="button"
-      (click)="cancel()"
+      (throttleClick)="cancel()"
     >
       Cancel
     </button>
-    <button mat-button type="button" (click)="print.execute(proposal)">
+    <button
+      throttled
+      mat-button
+      type="button"
+      (throttleClick)="print.execute(proposal)"
+    >
       Print
     </button>
     <button
+      throttled
       *ngIf="proposal.canExecuteCopy"
       mat-button
       type="button"
-      (click)="copy()"
+      (throttleClick)="copy()"
     >
       Copy
     </button>

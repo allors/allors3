@@ -92,11 +92,12 @@
           >
           </a-mat-autocomplete>
           <button
+            throttled
             *ngIf="object.strategy.isNew"
             mat-mini-fab
             color="accent"
             type="button"
-            (click)="addPart = !addPart"
+            (throttleClick)="addPart = !addPart"
           >
             <mat-icon *ngIf="!addPart">add</mat-icon>
             <mat-icon *ngIf="addPart">close</mat-icon>
@@ -227,10 +228,11 @@
             </mat-select>
           </mat-form-field>
           <button
+            throttled
             mat-mini-fab
             color="accent"
             type="button"
-            (click)="addFacility = !addFacility"
+            (throttleClick)="addFacility = !addFacility"
           >
             <mat-icon *ngIf="!addFacility">add</mat-icon>
             <mat-icon *ngIf="addFacility">close</mat-icon>

@@ -63,11 +63,12 @@
           display="DisplayName"
         ></a-mat-static>
         <button
+          throttled
           *ngIf="!person"
           mat-mini-fab
           color="accent"
           type="button"
-          (click)="addContact = !addContact"
+          (throttleClick)="addContact = !addContact"
         >
           <mat-icon *ngIf="!addContact">add</mat-icon>
           <mat-icon *ngIf="addContact">close</mat-icon>
