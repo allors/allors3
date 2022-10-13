@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import {
+  ThrottledConfig,
   ThrottledDirective,
   WorkspaceService,
 } from '@allors/base/workspace/angular/foundation';
@@ -24,7 +25,6 @@ import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
 import { Configuration } from '@allors/system/workspace/domain';
 import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
-import { ThrottledConfig } from 'libs/base/workspace/angular/foundation/src/lib/throttled/throttled-config';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,

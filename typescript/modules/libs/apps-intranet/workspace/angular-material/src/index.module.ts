@@ -37,6 +37,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import {
   AllorsFocusDirective,
   AllorsBarcodeDirective,
+  ThrottledDirective
 } from '@allors/base/workspace/angular/foundation';
 
 import {
@@ -287,6 +288,7 @@ import {
     // Base Foundation
     AllorsFocusDirective,
     AllorsBarcodeDirective,
+    ThrottledDirective,
     // Base Material Foundation
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialCancelComponent,

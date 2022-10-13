@@ -85,6 +85,7 @@ export * from './lib/table/table-row';
 
 export * from './lib/template/template-host.directive';
 
+export * from './lib/throttled/throttled-config';
 export * from './lib/throttled/throttled.directive';
 
 export * from './lib/workspace/workspace-service';
