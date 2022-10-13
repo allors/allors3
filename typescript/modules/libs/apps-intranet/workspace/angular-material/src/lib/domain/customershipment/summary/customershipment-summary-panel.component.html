@@ -36,9 +36,10 @@
       Cancel
     </button>
     <button
+      throttled
       *ngIf="shipment.ShipmentItems && shipment.canExecuteHold"
       mat-button
-      (click)="hold()"
+      (throttleClick)="hold()"
     >
       Hold
     </button>
