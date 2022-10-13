@@ -21,7 +21,7 @@ export class PrintAction implements Action {
       }
 
       const url = `${config.url}print/${printable.id}`;
-      window.open(url);
+      window.open(url, '_blank', 'noopener');
     };
   }
 

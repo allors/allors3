@@ -83,7 +83,7 @@ export class AllorsMaterialMediaComponent extends AllorsComponent {
       document.body.removeChild(link);
     } else if (this.media.UniqueId) {
       const url = this.mediaService.url(this.media);
-      window.open(url);
+      window.open(url, '_blank', 'noopener');
     }
   }
 
