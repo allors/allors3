@@ -1,5 +1,6 @@
 {
-  "root": "libs/base/workspace/domain",
+  "name": "base-workspace-domain",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/base/workspace/domain/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/base/workspace/domain"],
       "options": {
-        "jestConfig": "libs/base/workspace/domain/jest.config.js",
+        "jestConfig": "libs/base/workspace/domain/jest.config.ts",
         "passWithNoTests": true
       }
     }

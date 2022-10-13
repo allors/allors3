@@ -120,7 +120,7 @@ export class NotificationListPageComponent implements OnInit, OnDestroy {
 
           return [refresh, sort, pageEvent];
         }),
-        switchMap(([, ,]) => {
+        switchMap((_) => {
           const pulls = [
             pull.Person({
               objectId: this.userId.value,

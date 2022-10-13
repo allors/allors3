@@ -17,6 +17,7 @@ import {
   FilterService,
   TableRow,
   Table,
+  MetaService,
 } from '@allors/base/workspace/angular/foundation';
 import {
   AllorsListPageComponent,
@@ -60,9 +61,10 @@ export class PersonListPageComponent
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
-    public sorterService: SorterService
+    public sorterService: SorterService,
+    metaService: MetaService
   ) {
-    super(allors, titleService);
+    super(allors, metaService, titleService);
     this.objectType = this.m.Person;
 
     this.delete = deleteService.delete();

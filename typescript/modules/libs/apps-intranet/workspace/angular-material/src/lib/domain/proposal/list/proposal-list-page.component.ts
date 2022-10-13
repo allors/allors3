@@ -18,12 +18,16 @@ import {
   FilterField,
   FilterService,
   MediaService,
+  MetaService,
   RefreshService,
   Table,
   TableRow,
   UserId,
 } from '@allors/base/workspace/angular/foundation';
-import { NavigationService } from '@allors/base/workspace/angular/application';
+import {
+  AllorsListPageComponent,
+  NavigationService,
+} from '@allors/base/workspace/angular/application';
 import {
   DeleteActionService,
   OverviewActionService,
@@ -49,9 +53,10 @@ interface Row extends TableRow {
   templateUrl: './proposal-list-page.component.html',
   providers: [ContextService],
 })
-export class ProposalListPageComponent implements OnInit, OnDestroy {
-  public title = 'Proposals';
-
+export class ProposalListPageComponent
+  extends AllorsListPageComponent
+  implements OnInit, OnDestroy
+{
   table: Table<Row>;
 
   delete: Action;
@@ -63,10 +68,9 @@ export class ProposalListPageComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
   filter: Filter;
-  m: M;
 
   constructor(
-    @Self() public allors: ContextService,
+    @Self() allors: ContextService,
     public refreshService: RefreshService,
     public overviewService: OverviewActionService,
     public deleteService: DeleteActionService,
@@ -78,12 +82,11 @@ export class ProposalListPageComponent implements OnInit, OnDestroy {
     private fetcher: FetcherService,
     public filterService: FilterService,
     public sorterService: SorterService,
+    metaService: MetaService,
     titleService: Title
   ) {
-    this.allors.context.name = this.constructor.name;
-    titleService.setTitle(this.title);
-
-    this.m = this.allors.context.configuration.metaPopulation as M;
+    super(allors, metaService, titleService);
+    this.objectType = (this.m as unknown as M).Proposal;
 
     this.delete = deleteService.delete();
     this.delete.result.subscribe(() => {

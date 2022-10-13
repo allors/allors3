@@ -10,6 +10,7 @@ import {
   ContextService,
   CreateService,
   FilterService,
+  MetaService,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
@@ -67,9 +68,10 @@ export class OrganisationListPageComponent
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
-    public sorterService: SorterService
+    public sorterService: SorterService,
+    metaService: MetaService
   ) {
-    super(allors, titleService);
+    super(allors, metaService, titleService);
     this.objectType = this.m.Organisation;
 
     this.delete = deleteService.delete();

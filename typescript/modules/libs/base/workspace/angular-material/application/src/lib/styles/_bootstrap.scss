@@ -24,7 +24,7 @@ $link-hover-color: currentColor;
 $link-hover-decoration: none;
 $label-margin-bottom: 0;
 
-@import '~bootstrap/scss/bootstrap-grid';
+@import "node_modules/bootstrap/scss/bootstrap-grid";
 
 * {
   &:active,

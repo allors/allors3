@@ -18,6 +18,7 @@ import {
   FilterField,
   FilterService,
   MediaService,
+  MetaService,
   RefreshService,
   Table,
   TableRow,
@@ -67,9 +68,10 @@ export class WorkEffortListPageComponent
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
-    public sorterService: SorterService
+    public sorterService: SorterService,
+    metaService: MetaService
   ) {
-    super(allors, titleService);
+    super(allors, metaService, titleService);
     this.objectType = (this.m as unknown as M).WorkEffort;
 
     this.delete = deleteService.delete();

@@ -1,5 +1,6 @@
 {
-  "root": "libs/apps-intranet/workspace/derivations",
+  "name": "apps-intranet-workspace-derivations",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/apps-intranet/workspace/derivations/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/apps-intranet/workspace/derivations"],
       "options": {
-        "jestConfig": "libs/apps-intranet/workspace/derivations/jest.config.js",
+        "jestConfig": "libs/apps-intranet/workspace/derivations/jest.config.ts",
         "passWithNoTests": true
       }
     }

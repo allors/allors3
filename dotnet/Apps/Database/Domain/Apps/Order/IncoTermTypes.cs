@@ -57,6 +57,7 @@ namespace Allors.Database.Domain
             merge(ExwId, v =>
             {
                 v.Name = "Incoterm EXW (Ex Works)";
+                v.Abbreviation = "EXW";
                 localisedName.Set(v, dutchLocale, "Incoterm EXW (Af fabriek)");
                 v.IsActive = true;
             });
@@ -64,6 +65,7 @@ namespace Allors.Database.Domain
             merge(FcaId, v =>
             {
                 v.Name = "Incoterm FCA (Free Carrier)";
+                v.Abbreviation = "FCA";
                 localisedName.Set(v, dutchLocale, "Incoterm FCA (Vrachtvrij tot vervoerder)");
                 v.IsActive = true;
             });
@@ -71,6 +73,7 @@ namespace Allors.Database.Domain
             merge(CptId, v =>
             {
                 v.Name = "Incoterm CPT (Carriage Paid To)";
+                v.Abbreviation = "CPT";
                 localisedName.Set(v, dutchLocale, "Incoterm CPT (Vrachtvrij tot)");
                 v.IsActive = true;
             });
@@ -78,6 +81,7 @@ namespace Allors.Database.Domain
             merge(CipId, v =>
             {
                 v.Name = "Incoterm CIP (Carriage and Insurance Paid To))";
+                v.Abbreviation = "CIP";
                 localisedName.Set(v, dutchLocale, "Incoterm CIP (Vrachtvrij inclusief verzekering tot)");
                 v.IsActive = true;
             });
@@ -85,6 +89,7 @@ namespace Allors.Database.Domain
             merge(DatId, v =>
             {
                 v.Name = "Incoterm DAT (Delivered At Terminal)";
+                v.Abbreviation = "DAT";
                 localisedName.Set(v, dutchLocale, "Incoterm DAT (Franco terminal)");
                 v.IsActive = true;
             });
@@ -92,6 +97,7 @@ namespace Allors.Database.Domain
             merge(DapId, v =>
             {
                 v.Name = "Incoterm DAP (Delivered At Place)";
+                v.Abbreviation = "DAP";
                 localisedName.Set(v, dutchLocale, "Incoterm DAP (Franco ter plaatse)");
                 v.IsActive = true;
             });
@@ -99,6 +105,7 @@ namespace Allors.Database.Domain
             merge(DdpId, v =>
             {
                 v.Name = "Incoterm DDP (Delivered Duty Paid)";
+                v.Abbreviation = "DDP";
                 localisedName.Set(v, dutchLocale, "Incoterm DDP (Franco inclusief rechten)");
                 v.IsActive = true;
             });
@@ -106,6 +113,7 @@ namespace Allors.Database.Domain
             merge(FasId, v =>
             {
                 v.Name = "Incoterm FAS (Free Alongside Ship)";
+                v.Abbreviation = "FAS";
                 localisedName.Set(v, dutchLocale, "Incoterm FAS (Vrij langszij schip)");
                 v.IsActive = true;
             });
@@ -113,6 +121,7 @@ namespace Allors.Database.Domain
             merge(FobId, v =>
             {
                 v.Name = "Incoterm FOB (Free On Board)";
+                v.Abbreviation = "FOB";
                 localisedName.Set(v, dutchLocale, "Incoterm FOB (Vrij aan boord)");
                 v.IsActive = true;
             });
@@ -120,6 +129,7 @@ namespace Allors.Database.Domain
             merge(CfrId, v =>
             {
                 v.Name = "Incoterm CFR (Cost and Freight)";
+                v.Abbreviation = "CFR";
                 localisedName.Set(v, dutchLocale, "Incoterm CFR (Kostprijs en vracht)");
                 v.IsActive = true;
             });
@@ -127,6 +137,7 @@ namespace Allors.Database.Domain
             merge(CifId, v =>
             {
                 v.Name = "Incoterm CIF (Cost, Insurance and Freight)";
+                v.Abbreviation = "CIF";
                 localisedName.Set(v, dutchLocale, "Incoterm CIF (Kostprijs, verzekering en vracht)");
                 v.IsActive = true;
             });

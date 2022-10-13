@@ -1,5 +1,6 @@
 {
-  "root": "libs/apps-extranet/workspace/meta-json",
+  "name": "apps-extranet-workspace-meta-json",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/apps-extranet/workspace/meta-json/src",
   "projectType": "library",
   "targets": {
@@ -14,7 +15,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/apps-extranet/workspace/meta-json"],
       "options": {
-        "jestConfig": "libs/apps-extranet/workspace/meta-json/jest.config.js",
+        "jestConfig": "libs/apps-extranet/workspace/meta-json/jest.config.ts",
         "passWithNoTests": true
       }
     }

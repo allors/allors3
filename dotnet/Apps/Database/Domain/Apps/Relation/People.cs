@@ -64,8 +64,6 @@ namespace Allors.Database.Domain
         {
             var full = new[] { Operations.Read, Operations.Write, Operations.Execute };
 
-            config.GrantOwner(this.ObjectType, full);
-
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);
 

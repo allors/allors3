@@ -15,6 +15,7 @@ import { Country } from '@allors/default/workspace/domain';
 import {
   ContextService,
   FilterService,
+  MetaService,
   Table,
   TableRow,
 } from '@allors/base/workspace/angular/foundation';
@@ -64,9 +65,10 @@ export class CountryListPageComponent
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
-    public sorterService: SorterService
+    public sorterService: SorterService,
+    metaService: MetaService
   ) {
-    super(allors, titleService);
+    super(allors, metaService, titleService);
     this.objectType = this.m.Country;
 
     this.edit = editRoleService.edit();

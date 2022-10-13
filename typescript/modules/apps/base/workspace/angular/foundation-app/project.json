@@ -1,6 +1,7 @@
 {
+  "name": "base-workspace-angular-foundation-app",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "root": "apps/base/workspace/angular/foundation-app",
   "sourceRoot": "apps/base/workspace/angular/foundation-app/src",
   "prefix": "allors",
   "targets": {
@@ -14,8 +15,13 @@
         "polyfills": "apps/base/workspace/angular/foundation-app/src/polyfills.ts",
         "tsConfig": "apps/base/workspace/angular/foundation-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/base/workspace/angular/foundation-app/src/favicon.ico", "apps/base/workspace/angular/foundation-app/src/assets"],
-        "styles": ["apps/base/workspace/angular/foundation-app/src/styles.scss"],
+        "assets": [
+          "apps/base/workspace/angular/foundation-app/src/favicon.ico",
+          "apps/base/workspace/angular/foundation-app/src/assets"
+        ],
+        "styles": [
+          "apps/base/workspace/angular/foundation-app/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -75,8 +81,8 @@
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "apps/base/workspace/angular/foundation-app/src/**/*.ts",
-          "apps/base/workspace/angular/foundation-app/src/**/*.html"
+          "apps/base/workspace/angular/foundation-app/**/*.ts",
+          "apps/base/workspace/angular/foundation-app/**/*.html"
         ]
       }
     },
@@ -84,7 +90,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/base/workspace/angular/foundation-app"],
       "options": {
-        "jestConfig": "apps/base/workspace/angular/foundation-app/jest.config.js",
+        "jestConfig": "apps/base/workspace/angular/foundation-app/jest.config.ts",
         "passWithNoTests": true
       }
     }
