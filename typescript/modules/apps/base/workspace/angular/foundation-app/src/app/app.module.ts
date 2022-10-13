@@ -3,7 +3,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
+import {
+  ThrottledDirective,
+  WorkspaceService,
+} from '@allors/base/workspace/angular/foundation';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
 import { LazyMetaPopulation } from '@allors/system/workspace/meta-json';
@@ -20,6 +23,8 @@ import { QueryComponent } from './query/query.component';
 import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
 import { Configuration } from '@allors/system/workspace/domain';
+import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
+import { ThrottledConfig } from 'libs/base/workspace/angular/foundation/src/lib/throttled/throttled-config';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,
@@ -41,6 +46,7 @@ export function appInitFactory(
       name: 'Default',
       metaPopulation,
       objectFactory: new PrototypeObjectFactory(metaPopulation),
+      rules: ruleBuilder(m),
       idGenerator: () => nextId--,
     };
 
@@ -73,7 +79,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, QueryComponent, FetchComponent],
+  declarations: [
+    ThrottledDirective,
+    AppComponent,
+    HomeComponent,
+    QueryComponent,
+    FetchComponent,
+  ],
   imports: [
     BrowserModule,
     FormsModule,
@@ -86,6 +98,10 @@ const routes: Routes = [
       useFactory: appInitFactory,
       deps: [WorkspaceService, HttpClient],
       multi: true,
+    },
+    {
+      provide: ThrottledConfig,
+      useValue: { time: 5000 },
     },
   ],
   bootstrap: [AppComponent],

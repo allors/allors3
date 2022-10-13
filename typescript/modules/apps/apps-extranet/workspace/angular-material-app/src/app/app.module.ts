@@ -71,8 +71,9 @@ import {
   // Directives
   AllorsFocusDirective,
   AllorsBarcodeDirective,
-  TemplateHostDirective,
   ActionService,
+  TemplateHostDirective,
+  ThrottledDirective,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
@@ -176,6 +177,7 @@ import { AppActionService } from './services/action.service';
     AllorsFocusDirective,
     AllorsBarcodeDirective,
     TemplateHostDirective,
+    ThrottledDirective,
     // Base Material Foundation
     AllorsMaterialAssociationAutoCompleteComponent,
     AllorsMaterialCancelComponent,

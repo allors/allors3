@@ -5,9 +5,17 @@ import { Title } from '@angular/platform-browser';
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-  constructor(private title: Title) {}
+  throttledCounter: number;
+
+  constructor(private title: Title) {
+    this.throttledCounter = 0;
+  }
 
   public ngOnInit() {
     this.title.setTitle('Home');
+  }
+
+  throttledClick() {
+    this.throttledCounter += 1;
   }
 }
