@@ -22,7 +22,7 @@ export class ThrottledDirective implements OnInit, OnDestroy {
   throttleTime: number;
 
   @Output()
-  throttledClick = new EventEmitter();
+  throttleClick = new EventEmitter();
 
   private clicks = new Subject<MouseEvent>();
   private subscription: Subscription;
@@ -34,11 +34,11 @@ export class ThrottledDirective implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription = this.clicks
       .pipe(throttleTime(this.throttleTime))
-      .subscribe((event) => this.emitThrottledClick(event));
+      .subscribe((event) => this.emitThrottleClick(event));
   }
 
-  emitThrottledClick(event: MouseEvent) {
-    this.throttledClick.emit(event);
+  emitThrottleClick(event: MouseEvent) {
+    this.throttleClick.emit(event);
   }
 
   ngOnDestroy() {
