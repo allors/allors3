@@ -103,7 +103,7 @@
       Ready for processing
     </button>
     <button
-      throttled*ngIf="order.canExecuteReopen"
+      throttled *ngIf="order.canExecuteReopen"
       mat-button
       (throttleClick)="reopen()"
     >
@@ -150,7 +150,7 @@
       Receive all items
     </button>
     <button
-      throttled*ngIf="order.canExecuteReturn"
+      throttled *ngIf="order.canExecuteReturn"
       mat-button
       (throttleClick)="quickReturn()"
     >
