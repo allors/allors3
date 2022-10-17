@@ -61,6 +61,8 @@ namespace Tests.E2E.Generic
 
                         await this.Page.Keyboard.PressAsync("Escape");
                         await this.Page.WaitForAngular();
+                        await this.Page.Keyboard.PressAsync("Escape");
+                        await this.Page.WaitForAngular();
                     }
                 }
             }
