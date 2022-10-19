@@ -37,6 +37,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { Filters } from '../../../filters/filters';
 import { isAfter, isBefore } from 'date-fns';
+import { TreeBuilder } from 'libs/intranet/workspace/meta/src';
 
 @Component({
   templateUrl: './purchaseorderitem-form.component.html',
@@ -44,6 +45,8 @@ import { isAfter, isBefore } from 'date-fns';
 })
 export class PurchaseOrderItemFormComponent extends AllorsFormComponent<PurchaseOrderItem> {
   readonly m: M;
+  readonly treeBuilder: TreeBuilder;
+
   settings: Settings;
   order: PurchaseOrder;
   inventoryItems: InventoryItem[];
@@ -85,6 +88,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
     const { treeBuilder } = this.m;
+    this.treeBuilder = treeBuilder;
 
     this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(this.m, treeBuilder);
   }
@@ -226,9 +230,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
         this.m.NonUnifiedPart.Name,
         this.m.NonUnifiedPart.SearchString,
       ],
-      include: {
-        InventoryItemKind: {},
-      },
+      include: this.treeBuilder.InventoryItemKind({}),
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',

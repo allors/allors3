@@ -34,6 +34,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { isAfter, isBefore } from 'date-fns';
 import { Filters } from '../../../filters/filters';
+import { TreeBuilder } from 'libs/intranet/workspace/meta/src';
 
 @Component({
   templateUrl: './purchaseinvoiceitem-form.component.html',
@@ -41,6 +42,8 @@ import { Filters } from '../../../filters/filters';
 })
 export class PurchaseInvoiceItemFormComponent extends AllorsFormComponent<PurchaseInvoiceItem> {
   m: M;
+  readonly treeBuilder: TreeBuilder;
+
   invoice: PurchaseInvoice;
   orderItem: PurchaseOrderItem;
   inventoryItems: InventoryItem[];
@@ -77,6 +80,7 @@ export class PurchaseInvoiceItemFormComponent extends AllorsFormComponent<Purcha
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
     const { treeBuilder } = this.m;
+    this.treeBuilder = treeBuilder;
 
     this.unifiedGoodsFilter = Filters.unifiedGoodsFilter(this.m, treeBuilder);
   }
@@ -206,9 +210,7 @@ export class PurchaseInvoiceItemFormComponent extends AllorsFormComponent<Purcha
     this.partsFilter = new SearchFactory({
       objectType: this.m.Part,
       roleTypes: [this.m.Part.Name, this.m.Part.SearchString],
-      include: {
-        InventoryItemKind: {},
-      },
+      include: this.treeBuilder.InventoryItemKind({}),
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
