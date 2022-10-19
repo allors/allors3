@@ -100,13 +100,13 @@ namespace Allors.Database.Domain.TestPopulation
             new SupplierRelationshipBuilder(@this.Transaction())
                 .WithSupplier(supplier)
                 .WithInternalOrganisation(@this)
-                .WithFromDate(faker.Date.Past(2, refDate: @this.Transaction().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now().AddYears(-2)))
                 .Build();
 
             new OrganisationContactRelationshipBuilder(@this.Transaction())
                 .WithContact(new PersonBuilder(@this.Transaction()).WithDefaults().Build())
                 .WithOrganisation(supplier)
-                .WithFromDate(faker.Date.Past(2, refDate: @this.Transaction().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now().AddYears(-2)))
                 .Build();
 
             return supplier;
@@ -121,13 +121,13 @@ namespace Allors.Database.Domain.TestPopulation
             new SubContractorRelationshipBuilder(@this.Transaction())
                 .WithSubContractor(subContractor)
                 .WithContractor(@this)
-                .WithFromDate(faker.Date.Past(2, refDate: @this.Transaction().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now().AddYears(-2)))
                 .Build();
 
             new OrganisationContactRelationshipBuilder(@this.Transaction())
                 .WithContact(new PersonBuilder(@this.Transaction()).WithDefaults().Build())
                 .WithOrganisation(subContractor)
-                .WithFromDate(faker.Date.Past(2, refDate: @this.Transaction().Now()))
+                .WithFromDate(faker.Date.Past(refDate: @this.Transaction().Now().AddYears(-2)))
                 .Build();
 
             return subContractor;
