@@ -23,7 +23,7 @@ import {
   UnifiedGood,
   VatRegime,
 } from '@allors/default/workspace/domain';
-import { M } from '@allors/default/workspace/meta';
+import { M, TreeBuilder } from '@allors/default/workspace/meta';
 import {
   ErrorService,
   AllorsFormComponent,
@@ -34,7 +34,6 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { isAfter, isBefore } from 'date-fns';
 import { Filters } from '../../../filters/filters';
-import { TreeBuilder } from 'libs/intranet/workspace/meta/src';
 
 @Component({
   templateUrl: './purchaseinvoiceitem-form.component.html',
