@@ -127,6 +127,60 @@ export class FetcherService {
     return loaded.collection<Facility>('FetcherOwnWarehouses');
   }
 
+  public get ownWarehousesAndStorageLocations(): Pull {
+    return this.pull.Facility({
+      name: 'FetcherOwnWarehousesAndStorageLocations',
+      predicate: {
+        kind: 'Or',
+        operands: [
+          {
+            kind: 'And',
+            operands: [
+              {
+                kind: 'Equals',
+                propertyType: this.m.Facility.Owner,
+                value: this.internalOrganisationId.value,
+              },
+              {
+                kind: 'ContainedIn',
+                propertyType: this.m.Facility.FacilityType,
+                extent: {
+                  kind: 'Filter',
+                  objectType: this.m.FacilityType,
+                  predicate: {
+                    kind: 'Equals',
+                    propertyType: this.m.FacilityType.UniqueId,
+                    value: 'd4a70252-58d0-425b-8f54-7f55ae01a7b3',
+                  },
+                },
+              },
+            ],
+          },
+          {
+            kind: 'ContainedIn',
+            propertyType: this.m.Facility.FacilityType,
+            extent: {
+              kind: 'Filter',
+              objectType: this.m.FacilityType,
+              predicate: {
+                kind: 'Equals',
+                propertyType: this.m.FacilityType.UniqueId,
+                value: '921f33b2-5978-409f-b09e-f28708fe770b',
+              },
+            },
+          },
+        ],
+      },
+      sorting: [{ roleType: this.m.Facility.Name }],
+    });
+  }
+
+  getOwnWarehousesAndStorageLocations(loaded: IPullResult) {
+    return loaded.collection<Facility>(
+      'FetcherOwnWarehousesAndStorageLocations'
+    );
+  }
+
   public get categories(): Pull {
     return this.pull.Organisation({
       name: 'FetcherProductCategories',

@@ -6,6 +6,7 @@ import {
   ContactMechanism,
   Currency,
   Facility,
+  FacilityType,
   InternalOrganisation,
   InvoiceItemType,
   IrpfRegime,
@@ -98,7 +99,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
 
     pulls.push(
       this.fetcher.internalOrganisation,
-      this.fetcher.ownWarehouses,
+      this.fetcher.ownWarehousesAndStorageLocations,
       p.IrpfRegime({}),
       p.Currency({
         predicate: {
@@ -109,6 +110,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
         sorting: [{ roleType: m.Currency.IsoCode }],
       }),
       p.Facility({ sorting: [{ roleType: m.Facility.Name }] }),
+      p.FacilityType({}),
       p.Organisation({
         predicate: {
           kind: 'Equals',
@@ -157,8 +159,16 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
     this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
     this.currencies = pullResult.collection<Currency>(this.m.Currency);
-    this.ownWarehouses = this.fetcher.getOwnWarehouses(pullResult);
+    this.ownWarehouses =
+      this.fetcher.getOwnWarehousesAndStorageLocations(pullResult);
     this.facilities = pullResult.collection<Facility>(this.m.Facility);
+
+    const facilityTypes = pullResult.collection<FacilityType>(
+      this.m.FacilityType
+    );
+    const warehouseType = facilityTypes?.find(
+      (v: FacilityType) => v.UniqueId === 'd4a70252-58d0-425b-8f54-7f55ae01a7b3'
+    );
 
     this.invoiceItemTypes = pullResult.collection<InvoiceItemType>(
       this.m.InvoiceItemType
@@ -173,9 +183,11 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
     );
 
     this.object.StoredInFacility =
-      this.ownWarehouses?.length > 0
-        ? (this.ownWarehouses[0] as Facility)
-        : null;
+      this.ownWarehouses?.find(
+        (v) =>
+          v.FacilityType === warehouseType &&
+          v.Owner == this.internalOrganisation
+      ) ?? null;
 
     const serialisedItem = pullResult.object<SerialisedItem>(
       this.m.SerialisedItem

@@ -211,6 +211,7 @@ export class PurchaseOrderItemFormComponent extends AllorsFormComponent<Purchase
       this.vatRegimeInitialRole = this.order.DerivedVatRegime;
       this.irpfRegimeInitialRole = this.order.DerivedIrpfRegime;
       this.deliveryDateIniatiolRole = this.order.DeliveryDate;
+      this.object.StoredInFacility = this.order.StoredInFacility;
     } else {
       this.order = this.object.PurchaseOrderWherePurchaseOrderItem;
       this.selectedFacility = this.object.StoredInFacility;

@@ -13,6 +13,7 @@ import {
   InvoiceItemType,
   IrpfRegime,
   NonSerialisedInventoryItem,
+  NonUnifiedPart,
   Part,
   PurchaseInvoice,
   PurchaseInvoiceItem,
@@ -34,7 +35,6 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { isAfter, isBefore } from 'date-fns';
 import { Filters } from '../../../filters/filters';
-import { NonUnifiedPart } from 'libs/intranet/workspace/domain/src';
 
 @Component({
   templateUrl: './purchaseinvoiceitem-form.component.html',

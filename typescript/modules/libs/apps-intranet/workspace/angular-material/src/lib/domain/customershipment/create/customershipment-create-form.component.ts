@@ -87,7 +87,7 @@ export class CustomerShipmentCreateFormComponent extends AllorsFormComponent<Cus
     pulls.push(
       this.fetcher.internalOrganisation,
       this.fetcher.locales,
-      this.fetcher.ownWarehouses,
+      this.fetcher.ownWarehousesAndStorageLocations,
       p.ShipmentMethod({
         sorting: [{ roleType: m.ShipmentMethod.Name }],
       }),
@@ -113,7 +113,8 @@ export class CustomerShipmentCreateFormComponent extends AllorsFormComponent<Cus
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
     this.locales = this.fetcher.getAdditionalLocales(pullResult);
-    this.facilities = this.fetcher.getOwnWarehouses(pullResult);
+    this.facilities =
+      this.fetcher.getOwnWarehousesAndStorageLocations(pullResult);
     this.shipmentMethods = pullResult.collection<ShipmentMethod>(
       this.m.ShipmentMethod
     );

@@ -67,7 +67,7 @@ export class PurchaseReturnCreateFormComponent extends AllorsFormComponent<Purch
 
     pulls.push(
       this.fetcher.internalOrganisation,
-      this.fetcher.ownWarehouses,
+      this.fetcher.ownWarehousesAndStorageLocations,
       p.Organisation({
         predicate: {
           kind: 'Equals',
@@ -88,7 +88,8 @@ export class PurchaseReturnCreateFormComponent extends AllorsFormComponent<Purch
 
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
-    this.facilities = this.fetcher.getOwnWarehouses(pullResult);
+    this.facilities =
+      this.fetcher.getOwnWarehousesAndStorageLocations(pullResult);
 
     this.object.ShipFromParty = this.internalOrganisation;
 

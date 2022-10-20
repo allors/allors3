@@ -92,7 +92,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
 
     pulls.push(
       this.fetcher.internalOrganisation,
-      this.fetcher.ownWarehouses,
+      this.fetcher.ownWarehousesAndStorageLocations,
       p.PurchaseOrder({
         name: '_object',
         objectId: this.editRequest.objectId,
@@ -144,7 +144,8 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
     this.showIrpf = this.internalOrganisation.Country.IsoCode === 'ES';
     this.vatRegimes = this.internalOrganisation.Country.DerivedVatRegimes;
     this.irpfRegimes = pullResult.collection<IrpfRegime>(this.m.IrpfRegime);
-    this.ownWarehouses = this.fetcher.getOwnWarehouses(pullResult);
+    this.ownWarehouses =
+      this.fetcher.getOwnWarehousesAndStorageLocations(pullResult);
     this.facilities = pullResult.collection<Facility>(this.m.Facility);
     this.currencies = pullResult.collection<Currency>(this.m.Currency);
 
