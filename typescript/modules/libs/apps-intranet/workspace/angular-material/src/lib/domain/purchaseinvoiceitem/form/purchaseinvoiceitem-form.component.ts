@@ -34,6 +34,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
 import { isAfter, isBefore } from 'date-fns';
 import { Filters } from '../../../filters/filters';
+import { NonUnifiedPart } from 'libs/intranet/workspace/domain/src';
 
 @Component({
   templateUrl: './purchaseinvoiceitem-form.component.html',
@@ -209,7 +210,7 @@ export class PurchaseInvoiceItemFormComponent extends AllorsFormComponent<Purcha
     this.partsFilter = new SearchFactory({
       objectType: this.m.Part,
       roleTypes: [this.m.Part.Name, this.m.Part.SearchString],
-      include: this.treeBuilder.InventoryItemKind({}),
+      include: this.treeBuilder.NonUnifiedPart({ InventoryItemKind: {} }),
       post: (predicate: And) => {
         predicate.operands.push({
           kind: 'ContainedIn',
@@ -257,9 +258,19 @@ export class PurchaseInvoiceItemFormComponent extends AllorsFormComponent<Purcha
       this.nonUnifiedPart =
         this.object.Part.strategy.cls === this.m.NonUnifiedPart;
 
-      this.serialised =
-        this.part.InventoryItemKind.UniqueId ===
-        '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+      if (this.unifiedGood) {
+        const unifiedGood = this.object.Part as UnifiedGood;
+        this.serialised =
+          unifiedGood.InventoryItemKind.UniqueId ===
+          '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+      }
+
+      if (this.nonUnifiedPart) {
+        const nonUnifiedPart = this.object.Part as NonUnifiedPart;
+        this.serialised =
+          nonUnifiedPart.InventoryItemKind.UniqueId ===
+          '2596e2dd-3f5d-4588-a4a2-167d6fbe3fae';
+      }
 
       if (this.serialised) {
         this.object.Quantity = '1';
