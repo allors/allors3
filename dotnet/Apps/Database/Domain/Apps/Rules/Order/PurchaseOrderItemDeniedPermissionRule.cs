@@ -24,6 +24,7 @@ namespace Allors.Database.Domain
             m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, m.PurchaseOrderItem),
             m.OrderItem.AssociationPattern(v => v.OrderShipmentsWhereOrderItem, m.PurchaseOrderItem),
             m.OrderShipment.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
+            m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.Part.Part.PurchaseOrderItemsWherePart),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -86,6 +87,25 @@ namespace Allors.Database.Domain
             if (@this.QuantityReceived == @this.QuantityReturned)
             {
                 @this.AddRevocation(returnRevocation);
+            }
+
+            if (@this.ExistPart && @this.QuantityReceived - @this.QuantityReturned > 0)
+            {
+                var quantityPossibleToQuickReturn = @this.QuantityReceived - @this.QuantityReturned;
+                if (@this.Part.InventoryItemKind.IsSerialised)
+                {
+                    if (@this.Part.InventoryItemsWherePart.FirstOrDefault(v => v.Facility.Equals(@this.StoredInFacility)) is SerialisedInventoryItem inventoryItem && inventoryItem.Quantity == 0)
+                    {
+                        @this.AddRevocation(returnRevocation);
+                    }
+                }
+                else
+                {
+                    if (@this.Part.InventoryItemsWherePart.FirstOrDefault(v => v.Facility.Equals(@this.StoredInFacility)) is NonSerialisedInventoryItem inventoryItem && inventoryItem.QuantityOnHand < quantityPossibleToQuickReturn)
+                    {
+                        @this.AddRevocation(returnRevocation);
+                    }
+                }
             }
         }
     }
