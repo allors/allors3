@@ -24,13 +24,6 @@ namespace Allors.Database.Domain
                             singleton.GetResourceBytes("Templates.ProductQuote.odt"));
                 }
 
-                if (!@this.ExistProposalTemplate)
-                {
-                    @this.ProposalTemplate =
-                        singleton.CreateOpenDocumentTemplate<Print.ProposalModel.Model>("Proposal.odt",
-                            singleton.GetResourceBytes("Templates.Proposal.odt"));
-                }
-
                 if (!@this.ExistSalesOrderTemplate)
                 {
                     @this.SalesOrderTemplate =
