@@ -57,13 +57,16 @@ namespace Allors.Database.Domain
 
             if (adjustmentQuantity != 0)
             {
-                this.AddInventoryItemTransaction(new InventoryItemTransactionBuilder(this.Transaction())
+                var transaction = new InventoryItemTransactionBuilder(this.Transaction())
                     .WithPart(inventoryItem.Part)
                     .WithFacility(inventoryItem.Facility)
                     .WithQuantity(adjustmentQuantity)
                     .WithCost(inventoryItem.Part.PartWeightedAverage.AverageCost)
                     .WithReason(reason)
-                    .Build());
+                    .Build();
+
+                // this object (WorkEffortInventoryAssignment) is about to be deleted. Retain the workeffort number
+                transaction.WorkEffortNumber = this.WorkEffortNumber;
             }
         }
     }

@@ -32,33 +32,34 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
-        public void AppsPrint(PrintablePrint method)
-        {
-            var singleton = this.Strategy.Transaction.GetSingleton();
-            var logo = this.Issuer?.ExistLogoImage == true ?
-                            this.Issuer.LogoImage.MediaContent.Data :
-                            singleton.LogoImage.MediaContent.Data;
+        // printModel not implemented
+        //public void AppsPrint(PrintablePrint method)
+        //{
+        //    var singleton = this.Strategy.Transaction.GetSingleton();
+        //    var logo = this.Issuer?.ExistLogoImage == true ?
+        //                    this.Issuer.LogoImage.MediaContent.Data :
+        //                    singleton.LogoImage.MediaContent.Data;
 
-            var images = new Dictionary<string, byte[]>
-                                {
-                                    { "Logo1", logo },
-                                    { "Logo2", logo },
-                                };
+        //    var images = new Dictionary<string, byte[]>
+        //                        {
+        //                            { "Logo1", logo },
+        //                            { "Logo2", logo },
+        //                        };
 
-            if (this.ExistQuoteNumber)
-            {
-                var transaction = this.Strategy.Transaction;
-                var barcodeGenerator = transaction.Database.Services.Get<IBarcodeGenerator>();
-                var barcode = barcodeGenerator.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
-                images.Add("Barcode", barcode);
-            }
+        //    if (this.ExistQuoteNumber)
+        //    {
+        //        var transaction = this.Strategy.Transaction;
+        //        var barcodeGenerator = transaction.Database.Services.Get<IBarcodeGenerator>();
+        //        var barcode = barcodeGenerator.Generate(this.QuoteNumber, BarcodeType.CODE_128, 320, 80, pure: true);
+        //        images.Add("Barcode", barcode);
+        //    }
 
-            var printModel = new Print.ProposalModel.Model(this, images);
-            this.RenderPrintDocument(this.Issuer?.ProposalTemplate, printModel, images);
+        //    var printModel = new Print.ProposalModel.Model(this, images);
+        //    this.RenderPrintDocument(this.Issuer?.ProposalTemplate, printModel, images);
 
-            this.PrintDocument.Media.InFileName = $"{this.QuoteNumber}.odt";
+        //    this.PrintDocument.Media.InFileName = $"{this.QuoteNumber}.odt";
 
-            method.StopPropagation = true;
-        }
+        //    method.StopPropagation = true;
+        //}
     }
 }

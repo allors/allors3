@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Allors.Database.Domain.TestPopulation;
     using Resources;
     using Xunit;
 
@@ -306,6 +307,106 @@ namespace Allors.Database.Domain.Tests
 
             var errors = this.Derive().Errors.ToList();
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.SerializedItemAlreadyInInventory));
+        }
+    }
+
+    public class InventoryItemTransactionWorkEffortNumberRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public InventoryItemTransactionWorkEffortNumberRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void AddedWorkEffortInventoryAssignmentInventoryItemTransactionDeriveWorkEffortNumber()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Derive();
+
+            var worktask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Derive();
+
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
+                .WithPart(part)
+                .WithQuantity(2)
+                .Build();
+
+            this.Derive();
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(worktask)
+                .WithInventoryItem(part.InventoryItemsWherePart.First())
+                .WithQuantity(1)
+                .Build();
+
+            this.Derive();
+
+            Assert.Equal(worktask.WorkEffortNumber, inventoryAssignment.InventoryItemTransactions.First().WorkEffortNumber);
+        }
+
+        [Fact]
+        public void DeleteWorkEffortInventoryAssignmentDeriveWorkEffortNumber()
+        {
+            var part = new NonUnifiedPartBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).NonSerialised).Build();
+            this.Derive();
+
+            var worktask = new WorkTaskBuilder(this.Transaction).Build();
+            this.Derive();
+
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
+                .WithPart(part)
+                .WithQuantity(2)
+                .Build();
+
+            this.Derive();
+
+            var inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(worktask)
+                .WithInventoryItem(part.InventoryItemsWherePart.First())
+                .WithQuantity(1)
+                .Build();
+
+            this.Derive();
+
+            Assert.Equal(worktask.WorkEffortNumber, inventoryAssignment.InventoryItemTransactions.First().WorkEffortNumber);
+
+            inventoryAssignment.Delete();
+
+            this.Derive();
+
+            Assert.Equal(worktask.WorkEffortNumber, part.InventoryItemTransactionsWherePart.Last().WorkEffortNumber);
+        }
+    }
+
+    public class InventoryItemTransactionSalesOrderNumberRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public InventoryItemTransactionSalesOrderNumberRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void AddedSalesOrderItemInventoryAssignmentInventoryItemTransactionDeriveWorkEffortNumber()
+        {
+            var order = this.InternalOrganisation.CreateB2BSalesOrder(this.Transaction.Faker());
+            this.Transaction.Derive();
+
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithPart(item.Part)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
+                .WithQuantity(item.QuantityOrdered)
+                .Build();
+            this.Transaction.Derive();
+
+            order.SetReadyForPosting();
+            this.Transaction.Derive();
+
+            order.Post();
+            this.Transaction.Derive();
+
+            order.Accept();
+            this.Transaction.Derive();
+
+            var transaction = item.ReservedFromNonSerialisedInventoryItem.InventoryItemTransactionsWhereInventoryItem.Last();
+
+            Assert.Equal(order.OrderNumber, transaction.SalesOrderNumber);
         }
     }
 }

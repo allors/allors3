@@ -1766,6 +1766,45 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void OnChangedInventoryItemQuantityOnHandDeriveReturnPermission()
+        {
+            this.InternalOrganisation.IsAutomaticallyReceived = true;
+
+            var order = new PurchaseOrderBuilder(this.Transaction).WithTakenViaSupplier(this.InternalOrganisation.ActiveSuppliers.First()).Build();
+            this.Derive();
+
+            var orderItem = new PurchaseOrderItemBuilder(this.Transaction)
+                .WithPart(new NonUnifiedPartBuilder(this.Transaction).Build())
+                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).PartItem)
+                .WithQuantityOrdered(2)
+                .Build();
+
+            order.AddPurchaseOrderItem(orderItem);
+            this.Derive();
+
+            order.SetReadyForProcessing();
+            this.Derive();
+
+            order.Send();
+            this.Derive();
+
+            order.QuickReceive();
+            this.Derive();
+
+            Assert.True(orderItem.PurchaseOrderItemState.IsCompleted);
+            Assert.DoesNotContain(this.returnRevocation, orderItem.Revocations);
+
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithQuantity(1)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).OutgoingShipment)
+                .WithPart(orderItem.Part)
+                .Build();
+            this.Transaction.Derive();
+
+            Assert.Contains(this.returnRevocation, orderItem.Revocations);
+        }
+
+        [Fact]
         public void OnChangedOrderShipmentOrderItemDeriveQuickReceivePermission()
         {
             this.InternalOrganisation.IsAutomaticallyReceived = false;

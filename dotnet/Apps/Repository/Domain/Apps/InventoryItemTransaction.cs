@@ -42,6 +42,7 @@ namespace Allors.Repository
         [Id("0b285a95-a479-4052-a75c-2b4a3e074188")]
         #endregion
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public string PartNumber { get; set; }
 
@@ -49,6 +50,7 @@ namespace Allors.Repository
         [Id("aedd91bd-b401-4261-aa27-32bb82197257")]
         #endregion
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public string PartDisplayName { get; set; }
 
@@ -75,6 +77,7 @@ namespace Allors.Repository
         [Id("c5b12893-741e-4bcf-b027-1fb000ee370c")]
         #endregion
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public string SerialisedItemItemNumber { get; set; }
 
@@ -140,6 +143,7 @@ namespace Allors.Repository
         [Id("627d4c37-3f17-49c3-8b8d-4d7019daebb0")]
         #endregion
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public string FacilityName { get; set; }
 
@@ -194,8 +198,25 @@ namespace Allors.Repository
         [Id("69d9d589-a462-44a0-994b-3eed90f4924b")]
         #endregion
         [Indexed]
+        [Derived]
         [Workspace(Default)]
         public string InventoryItemStateName { get; set; }
+
+        #region Allors
+        [Id("bd32bfb7-12cb-409e-bdef-7e748b2b7f86")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string WorkEffortNumber { get; set; }
+
+        #region Allors
+        [Id("0a5bd58d-dfab-4bed-918d-f224dfb6a9c3")]
+        #endregion
+        [Indexed]
+        [Derived]
+        [Workspace(Default)]
+        public string SalesOrderNumber { get; set; }
 
         #region inherited methods
 
@@ -210,6 +231,5 @@ namespace Allors.Repository
         public void OnPostDerive() { }
 
         #endregion
-
     }
 }
