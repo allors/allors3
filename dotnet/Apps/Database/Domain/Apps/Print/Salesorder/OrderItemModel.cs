@@ -17,7 +17,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
             this.Reference = item.InvoiceItemType?.Name;
             this.Product = item.Product?.Name;
 
-            var description = item.Description ?? item.Product.DisplayName;
+            var description = item.Description ?? item.Product?.DisplayName;
             if (description != null)
             {
                 description = Markdown.ToPlainText(description);
