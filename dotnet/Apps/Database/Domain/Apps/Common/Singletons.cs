@@ -7,6 +7,10 @@ namespace Allors.Database.Domain
 {
     public partial class Singletons
     {
-        protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.SerialisedItemSoldOn);
+        protected override void AppsPrepare(Setup setup)
+        {
+            setup.AddDependency(this.ObjectType, this.M.SerialisedItemSoldOn);
+            setup.AddDependency(this.ObjectType, this.M.TemplateType);
+        }
     }
 }
