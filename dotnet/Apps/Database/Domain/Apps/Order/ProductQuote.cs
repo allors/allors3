@@ -70,7 +70,6 @@ namespace Allors.Database.Domain
                 salesOrder.AddSalesOrderItem(
                     new SalesOrderItemBuilder(this.Strategy.Transaction)
                         .WithInvoiceItemType(quoteItem.InvoiceItemType)
-                        .WithInternalComment(quoteItem.InternalComment)
                         .WithAssignedDeliveryDate(quoteItem.EstimatedDeliveryDate)
                         .WithAssignedUnitPrice(quoteItem.UnitPrice)
                         .WithAssignedVatRegime(quoteItem.AssignedVatRegime)
@@ -80,6 +79,7 @@ namespace Allors.Database.Domain
                         .WithNextSerialisedItemAvailability(new SerialisedItemAvailabilities(this.Transaction()).Sold)
                         .WithProductFeature(quoteItem.ProductFeature)
                         .WithQuantityOrdered(quoteItem.Quantity)
+                        .WithDescription(quoteItem.Details)
                         .WithInternalComment(quoteItem.InternalComment)
                         .Build());
             }
