@@ -50,6 +50,10 @@
     <EmbeddedResource Include="Templates\worktask.odt" />
     <EmbeddedResource Include="Templates\worktaskworker.odt" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Custom\Common\" />
+  </ItemGroup>
  
 
 </Project>
