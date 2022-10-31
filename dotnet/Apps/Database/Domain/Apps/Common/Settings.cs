@@ -31,6 +31,11 @@ namespace Allors.Database.Domain
             {
                 this.ProductNumberCounter = new CounterBuilder(this.Strategy.Transaction).Build();
             }
+
+            if (!this.ExistPartNumberCounter)
+            {
+                this.PartNumberCounter = new CounterBuilder(this.Strategy.Transaction).Build();
+            }
         }
 
         public string NextSkuNumber()
