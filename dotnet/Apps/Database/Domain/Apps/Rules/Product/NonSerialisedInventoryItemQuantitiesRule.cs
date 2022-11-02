@@ -11,6 +11,7 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Meta;
     using Derivations.Rules;
+    using Resources;
 
     public class NonSerialisedInventoryItemQuantitiesRule : Rule
     {
@@ -47,6 +48,11 @@ namespace Allors.Database.Domain
             if (quantityOnHand != @this.QuantityOnHand)
             {
                 @this.QuantityOnHand = quantityOnHand;
+            }
+
+            if (@this.QuantityOnHand < 0)
+            {
+                validation.AddError(@this, @this.Meta.QuantityOnHand, ErrorMessages.InvalidQuantity);
             }
 
             var quantityCommittedOut = @this.CalculateQuantityCommittedOut();
