@@ -172,12 +172,6 @@ namespace Allors.Repository
         [Indexed]
         public ProductQuoteItemByProduct[] ProductQuoteItemsByProduct { get; set; }
 
-        #region Allors
-        [Id("8D92571B-AABE-45EC-A2BB-93219B3E8C12")]
-        #endregion
-        [Workspace(Default)]
-        public void Order() { }
-
         #region Versioning
         #region Allors
         [Id("A3400F09-19A8-494A-B50A-4081B9E5D174")]
@@ -231,6 +225,8 @@ namespace Allors.Repository
         public void Delete() { }
 
         public void Copy() { }
+
+        public void Order() { }
 
         #endregion
     }

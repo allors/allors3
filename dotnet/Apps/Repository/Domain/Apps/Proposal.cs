@@ -215,6 +215,8 @@ namespace Allors.Repository
         public void Delete() { }
 
         public void Copy() { }
+
+        public void Order() { }
         #endregion
     }
 }

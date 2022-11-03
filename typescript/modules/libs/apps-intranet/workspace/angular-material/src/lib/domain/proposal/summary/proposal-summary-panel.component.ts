@@ -18,7 +18,7 @@ import {
 } from '@allors/base/workspace/angular/application';
 import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
-import { Proposal } from '@allors/default/workspace/domain';
+import { Proposal, SalesOrder } from '@allors/default/workspace/domain';
 import { PrintService } from '../../../actions/print/print.service';
 
 @Component({
@@ -29,6 +29,7 @@ export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelCompone
   m: M;
 
   proposal: Proposal;
+  salesOrder: SalesOrder;
   print: Action;
 
   constructor(
@@ -77,12 +78,20 @@ export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelCompone
             Media: {},
           },
         },
+      }),
+      p.ProductQuote({
+        name: `${prefix}_salesOrder`,
+        objectId: id,
+        select: {
+          SalesOrderWhereQuote: {},
+        },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
     this.proposal = loaded.object<Proposal>(prefix);
+    this.salesOrder = loaded.object<SalesOrder>(`${prefix}_salesOrder`);
   }
 
   public setReadyForProcessing(): void {
@@ -152,6 +161,15 @@ export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelCompone
     this.invokeService.invoke(this.proposal.Reject).subscribe(() => {
       this.refreshService.refresh();
       this.snackBar.open('Successfully rejected.', 'close', {
+        duration: 5000,
+      });
+    }, this.errorService.errorHandler);
+  }
+
+  public order(): void {
+    this.invokeService.invoke(this.proposal.Order).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully created a salesorder.', 'close', {
         duration: 5000,
       });
     }, this.errorService.errorHandler);

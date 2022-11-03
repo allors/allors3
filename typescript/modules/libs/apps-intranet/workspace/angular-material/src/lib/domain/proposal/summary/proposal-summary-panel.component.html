@@ -52,6 +52,17 @@
         {{ proposal.Request.RequestNumber }}
       </div>
     </div>
+
+    <div
+      *ngIf="salesOrder"
+      (click)="navigation.overview(salesOrder)"
+      style="cursor: pointer"
+    >
+      <div style="color: grey">SalesOrder</div>
+      <div>
+        {{ salesOrder.OrderNumber }}
+      </div>
+    </div>
   </mat-card-content>
 
   <mat-card-actions>
@@ -123,6 +134,15 @@
       (throttleClick)="cancel()"
     >
       Cancel
+    </button>
+    <button
+      throttled
+      *ngIf="proposal.canExecuteOrder"
+      mat-button
+      type="button"
+      (throttleClick)="order()"
+    >
+      Create SalesOrder
     </button>
     <button
       throttled

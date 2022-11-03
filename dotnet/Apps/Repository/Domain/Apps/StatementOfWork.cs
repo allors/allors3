@@ -218,6 +218,8 @@ namespace Allors.Repository
 
         public void Copy() { }
 
+        public void Order() { }
+
         #endregion
     }
 }
