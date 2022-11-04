@@ -126,7 +126,7 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
-        public static void AppsOrder(this Quote @this, ProductQuoteOrder method)
+        public static void AppsOrder(this Quote @this, QuoteOrder method)
         {
             @this.QuoteState = new QuoteStates(@this.Strategy.Transaction).Ordered;
 
