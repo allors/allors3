@@ -455,7 +455,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        public ProductQuote Quote { get; set; }
+        public Quote Quote { get; set; }
 
         #region Allors
         [Id("11698673-09EA-480F-B287-3D742FC89A93")]
