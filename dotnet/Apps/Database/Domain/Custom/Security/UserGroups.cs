@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
             merge(CustomerContactsId, v =>
             {
                 v.Name = "All customer Contacts";
-                v.isSelectable = false;
+                v.IsSelectable = false;
             });
         }
     }
