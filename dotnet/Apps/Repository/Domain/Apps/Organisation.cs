@@ -25,6 +25,8 @@ namespace Allors.Repository
 
         public PaymentMethod[] PaymentMethods { get; set; }
 
+        public SecurityToken OrganisationSecurityToken { get; set; }
+
         public PaymentMethod DefaultCollectionMethod { get; set; }
 
         public Counter PurchaseInvoiceNumberCounter { get; set; }

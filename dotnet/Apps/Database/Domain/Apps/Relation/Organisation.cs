@@ -144,6 +144,13 @@ namespace Allors.Database.Domain
                 .Select(v => v.Supplier)
                 .ToArray();
         }
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            if (!this.ExistOrganisationSecurityToken)
+            {
+                this.OrganisationSecurityToken = new SecurityTokenBuilder(this.Transaction()).Build();
+            }
+        }
 
         public void AppsDelete(DeletableDelete method)
         {
