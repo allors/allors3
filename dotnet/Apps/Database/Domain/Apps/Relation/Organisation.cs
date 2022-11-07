@@ -144,6 +144,7 @@ namespace Allors.Database.Domain
                 .Select(v => v.Supplier)
                 .ToArray();
         }
+
         public void AppsOnInit(ObjectOnInit method)
         {
             if (!this.ExistOrganisationSecurityToken)

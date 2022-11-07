@@ -32,7 +32,7 @@ namespace Allors.Database.Domain
                         .WithSubjectGroup(this.ContactsUserGroup)
                         .Build();
 
-                    this.OrganisationSecurityToken.AddGrant(this.ContactsGrant);
+                    this.ContactsSecurityToken.AddGrant(this.ContactsGrant);
                 }
 
                 this.ContactsUserGroup.Members = this.CurrentContacts.ToArray();
@@ -50,7 +50,7 @@ namespace Allors.Database.Domain
 
             this.SecurityTokens = new[]
             {
-                new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.OrganisationSecurityToken
+                new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.OrganisationSecurityToken, this.ContactsSecurityToken
             };
         }
     }

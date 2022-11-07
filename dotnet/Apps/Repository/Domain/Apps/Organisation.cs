@@ -283,6 +283,14 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
+        [Id("124181AE-3BB2-42E2-A27B-D9B811824282")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Derived]
+        public SecurityToken ContactsSecurityToken { get; set; }
+
+        #region Allors
         [Id("8FB7635C-6C06-43E8-9B6C-A760C7205804")]
         #endregion
         [Required]
