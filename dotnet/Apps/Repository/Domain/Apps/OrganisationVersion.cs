@@ -94,14 +94,6 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("45CDF666-F891-4F5D-8583-0CB5D489C918")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Derived]
-        public SecurityToken ContactsSecurityToken { get; set; }
-
-        #region Allors
         [Id("7BE2E3DF-E4B8-4D4F-BA1C-89E8E123D79B")]
         [Indexed]
         #endregion

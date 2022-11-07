@@ -290,14 +290,6 @@ namespace Allors.Repository
         public bool IsManufacturer { get; set; }
 
         #region Allors
-        [Id("124181AE-3BB2-42E2-A27B-D9B811824282")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        [Derived]
-        public SecurityToken ContactsSecurityToken { get; set; }
-
-        #region Allors
         [Id("98D13035-810F-4550-8EDE-8514FDFD275D")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]

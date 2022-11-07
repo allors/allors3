@@ -17,11 +17,6 @@ namespace Allors.Database.Domain
             {
                 var groupName = $"Customer contacts at {this.Name ?? "Unknown"} ({this.UniqueId})";
 
-                if (!this.ExistContactsSecurityToken)
-                {
-                    this.ContactsSecurityToken = new SecurityTokenBuilder(transaction).Build();
-                }
-
                 if (!this.ExistContactsUserGroup)
                 {
                     this.ContactsUserGroup = new UserGroupBuilder(transaction).WithName(groupName).Build();
@@ -37,7 +32,7 @@ namespace Allors.Database.Domain
                         .WithSubjectGroup(this.ContactsUserGroup)
                         .Build();
 
-                    this.ContactsSecurityToken.AddGrant(this.ContactsGrant);
+                    this.OrganisationSecurityToken.AddGrant(this.ContactsGrant);
                 }
 
                 this.ContactsUserGroup.Members = this.CurrentContacts.ToArray();
@@ -55,7 +50,7 @@ namespace Allors.Database.Domain
 
             this.SecurityTokens = new[]
             {
-                new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.ContactsSecurityToken
+                new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.OrganisationSecurityToken
             };
         }
     }

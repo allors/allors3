@@ -16,7 +16,7 @@ namespace Allors.Database.Domain
 
             if (this.Customer is Organisation customer)
             {
-                this.AddSecurityToken(customer.ContactsSecurityToken);
+                this.AddSecurityToken(customer.OrganisationSecurityToken);
             }
         }
     }
