@@ -17,6 +17,11 @@ namespace Allors.Database.Domain
             {
                 var groupName = $"Customer contacts at {this.Name ?? "Unknown"} ({this.UniqueId})";
 
+                if (!this.ExistContactsSecurityToken)
+                {
+                    this.ContactsSecurityToken = new SecurityTokenBuilder(transaction).Build();
+                }
+
                 if (!this.ExistContactsUserGroup)
                 {
                     this.ContactsUserGroup = new UserGroupBuilder(transaction).WithName(groupName).Build();
