@@ -79,7 +79,7 @@ export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelCompone
           },
         },
       }),
-      p.ProductQuote({
+      p.Quote({
         name: `${prefix}_salesOrder`,
         objectId: id,
         select: {

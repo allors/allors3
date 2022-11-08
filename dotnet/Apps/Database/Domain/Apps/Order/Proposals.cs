@@ -31,17 +31,18 @@ namespace Allors.Database.Domain
             var revise = this.Meta.Revise;
             var reopen = this.Meta.Reopen;
             var reject = this.Meta.Reject;
+            var order = this.Meta.Order;
             var cancel = this.Meta.Cancel;
             var delete = this.Meta.Delete;
 
-            config.Deny(this.ObjectType, created, approve, reopen, send, accept, revise);
-            config.Deny(this.ObjectType, awaitingApproval, setReadyForProcessing, send, accept, reopen, cancel, revise);
-            config.Deny(this.ObjectType, inProcess, setReadyForProcessing, approve, accept, reopen, delete);
-            config.Deny(this.ObjectType, awaitingAcceptance, setReadyForProcessing, approve, send, reopen, reject, delete);
+            config.Deny(this.ObjectType, created, approve, reopen, send, accept, revise, order);
+            config.Deny(this.ObjectType, awaitingApproval, setReadyForProcessing, send, accept, reopen, cancel, revise, order);
+            config.Deny(this.ObjectType, inProcess, setReadyForProcessing, approve, accept, reopen, delete, order);
+            config.Deny(this.ObjectType, awaitingAcceptance, setReadyForProcessing, approve, send, reopen, reject, delete, order);
             config.Deny(this.ObjectType, accepted, setReadyForProcessing, approve, send, accept, reject, reopen, delete);
-            config.Deny(this.ObjectType, ordered, setReadyForProcessing, approve, reject, cancel, reopen, send, accept, revise, delete);
-            config.Deny(this.ObjectType, rejected, setReadyForProcessing, approve, reject, send, accept, cancel, revise);
-            config.Deny(this.ObjectType, cancelled, setReadyForProcessing, cancel, reject, send, accept, approve, revise);
+            config.Deny(this.ObjectType, ordered, setReadyForProcessing, approve, reject, cancel, reopen, send, accept, revise, delete, order);
+            config.Deny(this.ObjectType, rejected, setReadyForProcessing, approve, reject, send, accept, cancel, revise, order);
+            config.Deny(this.ObjectType, cancelled, setReadyForProcessing, cancel, reject, send, accept, approve, revise, order);
 
             var except = new HashSet<IOperandType>
             {
