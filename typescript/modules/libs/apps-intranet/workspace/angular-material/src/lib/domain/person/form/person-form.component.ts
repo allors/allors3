@@ -126,7 +126,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
       p.UserGroup({
         predicate: {
           kind: 'Equals',
-          propertyType: m.UserGroup.isSelectable,
+          propertyType: m.UserGroup.IsSelectable,
           value: true,
         },
         include: {
@@ -233,7 +233,8 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
     }
 
     if (this.editRequest) {
-      this.selectedUserGroups =  pullResult.collection<UserGroup>('ActiveUserGroups') ?? [];
+      this.selectedUserGroups =
+        pullResult.collection<UserGroup>('ActiveUserGroups') ?? [];
     }
   }
 
@@ -244,8 +245,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
     if (event.isUserInput) {
       if (event.source.selected) {
         userGroup.addInMember(user);
-      } 
-      else {
+      } else {
         userGroup.addOutMember(user);
       }
     }

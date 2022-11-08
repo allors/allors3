@@ -15,7 +15,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Workspace]
-        public bool isSelectable{ get; set; }
+        public bool IsSelectable{ get; set; }
 
         #region Allors
         [Id("016fbfe7-5ac3-41b3-96b4-f5badaeee611")]

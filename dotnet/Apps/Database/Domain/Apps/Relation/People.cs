@@ -45,16 +45,6 @@ namespace Allors.Database.Domain
                 foreach (var internalOrganisation in internalOrganisations)
                 {
                     employeeUserGroup.AddMember(person);
-
-                    if (employeesByEmployer.TryGetValue(internalOrganisation, out var employees))
-                    {
-                        if (employees.Contains(person))
-                        {
-                            break;
-                        }
-                    }
-
-                    new EmploymentBuilder(this.Transaction).WithEmployer(internalOrganisation).WithEmployee(person).Build();
                 }
             }
         }

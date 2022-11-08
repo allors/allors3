@@ -21,22 +21,22 @@ namespace Allors.Database.Domain
             merge(EmployeesId, v =>
             {
                 v.Name = "Employees";
-                v.isSelectable = true;
+                v.IsSelectable = true;
             });
 
             merge(AdministratorsId, v =>
             {
-                v.isSelectable = true;
+                v.IsSelectable = true;
             });
 
             merge(GuestsId, v =>
             {
-                v.isSelectable = true;
+                v.IsSelectable = true;
             });
 
             merge(CreatorsId, v =>
             {
-                v.isSelectable = false;
+                v.IsSelectable = false;
             });
         }
     }
