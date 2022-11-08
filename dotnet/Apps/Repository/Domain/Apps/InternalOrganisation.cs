@@ -25,14 +25,6 @@ namespace Allors.Repository
         public bool IsInternalOrganisation { get; set; }
 
         #region Allors
-        [Id("0c251e1c-338c-43c7-a0d4-13872f848357")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        [Derived]
-        public SecurityToken OrganisationSecurityToken { get; set; }
-
-        #region Allors
         [Id("5eaab214-d2d4-46e3-806c-5193047067e2")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]

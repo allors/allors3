@@ -55,7 +55,7 @@ namespace Allors.Database.Domain
 
             this.SecurityTokens = new[]
             {
-                new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.OrganisationSecurityToken, this.ContactsSecurityToken
+                new SecurityTokens(this.Transaction()).DefaultSecurityToken, this.ContactsSecurityToken
             };
         }
     }
