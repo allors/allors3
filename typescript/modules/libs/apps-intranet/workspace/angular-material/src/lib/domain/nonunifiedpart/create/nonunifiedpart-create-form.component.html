@@ -74,6 +74,7 @@
           throttled
           mat-mini-fab
           color="accent"
+          [disabled]="!selectedBrand"
           type="button"
           (throttleClick)="addModel = !addModel"
         >
