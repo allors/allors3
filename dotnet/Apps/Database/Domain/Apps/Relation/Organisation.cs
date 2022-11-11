@@ -85,6 +85,7 @@ namespace Allors.Database.Domain
             && !this.ExistSalesOrdersWherePlacingCustomer
             && !this.ExistSalesOrdersWhereTakenBy
             && !this.ExistSalesOrderItemsWhereAssignedShipToParty
+            && !this.ExistSerialisedItemsWhereAssignedSuppliedBy
             && !this.ExistSerialisedItemsWhereSuppliedBy
             && !this.ExistSerialisedItemsWhereOwnedBy
             && !this.ExistSerialisedItemsWhereRentedBy
