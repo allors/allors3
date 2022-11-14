@@ -20,12 +20,17 @@ namespace Allors.Database.Domain
         internal static readonly Guid CentimeterId = new Guid("7D81FFC7-E77D-4a00-916D-49F2B1CCA12E");
         internal static readonly Guid MeterId = new Guid("2598BA8D-CF49-47f5-98E2-E65795C4178E");
         internal static readonly Guid KilometerId = new Guid("2598BA8D-CF49-47f5-98E2-E65795C4178E");
+        internal static readonly Guid YardId = new Guid("ec628e9e-b6d9-4003-a8c9-471f71ff948d");
+        internal static readonly Guid FootId = new Guid("9e336529-224b-4df1-8e62-ee701fe8e85c");
+        internal static readonly Guid InchId = new Guid("6fa9ff48-e5a4-4db8-899e-988c55bf4867");
 
         // Mass
         internal static readonly Guid MilligramId = new Guid("43E19BE3-5F7D-441D-A6B3-52EC1B7A2F84");
         internal static readonly Guid GramId = new Guid("F108E442-3A85-4F69-81ED-51BA9FC39A39");
         internal static readonly Guid KilogramId = new Guid("652A99BB-2B11-4DA7-B938-7A8EC1061A09");
         internal static readonly Guid MetricTonId = new Guid("140145F7-EB1C-45B9-9B94-982254B88B5D");
+        internal static readonly Guid PoundId = new Guid("24e580d6-4711-48c1-89f5-8f86ddadd51d");
+        internal static readonly Guid OunceId = new Guid("3e9df94e-0f4c-483d-95d6-e9ebc1192ea8");
 
         // Area
         internal static readonly Guid SquareMeterId = new Guid("B2BEEECC-4C04-487A-BA79-EE48AC555800");
@@ -37,6 +42,7 @@ namespace Allors.Database.Domain
         internal static readonly Guid CubicCentimeterId = new Guid("F6289FF0-87E8-4ADC-92E3-C5D532BA515F");
         internal static readonly Guid LiterId = new Guid("C0F2845D-3CBC-4FE7-970B-8C06AFB75ABC");
         internal static readonly Guid CubicMeterId = new Guid("F573E22F-9450-4E0A-B177-4142DFAAE829");
+        internal static readonly Guid GallonId = new Guid("4a63c80c-8e03-4d36-97bd-62f38bef2309");
 
         // Velocity
         internal static readonly Guid MeterPerSecondId = new Guid("66A4216C-46E8-4212-B456-76F968505F25");
@@ -132,6 +138,18 @@ namespace Allors.Database.Domain
         public UnitOfMeasure Ampere => this.Cache[AmpereId];
 
         public UnitOfMeasure Volt => this.Cache[VoltId];
+
+        public UnitOfMeasure Pound => this.Cache[PoundId];
+
+        public UnitOfMeasure Ounce => this.Cache[OunceId];
+
+        public UnitOfMeasure Gallon => this.Cache[GallonId];
+
+        public UnitOfMeasure Yard => this.Cache[YardId];
+
+        public UnitOfMeasure Foot => this.Cache[FootId];
+
+        public UnitOfMeasure Inch => this.Cache[InchId];
 
         private UniquelyIdentifiableCache<UnitOfMeasure> Cache => this.cache ??= new UniquelyIdentifiableCache<UnitOfMeasure>(this.Transaction);
 
@@ -519,6 +537,78 @@ namespace Allors.Database.Domain
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("volt").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("voltios").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("V")
+                    .WithUniqueId(KiloWattHourId)
+                    .WithIsActive(true)
+                    .Build();
+            }
+
+            if (this.Pound == null)
+            {
+                new UnitOfMeasureBuilder(this.Transaction)
+                    .WithName("pound")
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("pound").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la libra").WithLocale(spanishLocale).Build())
+                    .WithAbbreviation("lb.")
+                    .WithUniqueId(KiloWattHourId)
+                    .WithIsActive(true)
+                    .Build();
+            }
+
+            if (this.Ounce == null)
+            {
+                new UnitOfMeasureBuilder(this.Transaction)
+                    .WithName("ounce")
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("ounce").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la onza").WithLocale(spanishLocale).Build())
+                    .WithAbbreviation("oz.")
+                    .WithUniqueId(KiloWattHourId)
+                    .WithIsActive(true)
+                    .Build();
+            }
+
+            if (this.Gallon == null)
+            {
+                new UnitOfMeasureBuilder(this.Transaction)
+                    .WithName("gallon")
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("gallon").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("el galón").WithLocale(spanishLocale).Build())
+                    .WithAbbreviation("gal.")
+                    .WithUniqueId(KiloWattHourId)
+                    .WithIsActive(true)
+                    .Build();
+            }
+
+            if (this.Yard == null)
+            {
+                new UnitOfMeasureBuilder(this.Transaction)
+                    .WithName("yard")
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("yard").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la yarda").WithLocale(spanishLocale).Build())
+                    .WithAbbreviation("yd.")
+                    .WithUniqueId(KiloWattHourId)
+                    .WithIsActive(true)
+                    .Build();
+            }
+
+            if (this.Foot == null)
+            {
+                new UnitOfMeasureBuilder(this.Transaction)
+                    .WithName("foot")
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("foot").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("el pie").WithLocale(spanishLocale).Build())
+                    .WithAbbreviation("ft.")
+                    .WithUniqueId(KiloWattHourId)
+                    .WithIsActive(true)
+                    .Build();
+            }
+
+            if (this.Inch == null)
+            {
+                new UnitOfMeasureBuilder(this.Transaction)
+                    .WithName("inch")
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("inch").WithLocale(dutchLocale).Build())
+                    .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la pulgada").WithLocale(spanishLocale).Build())
+                    .WithAbbreviation("in.")
                     .WithUniqueId(KiloWattHourId)
                     .WithIsActive(true)
                     .Build();
