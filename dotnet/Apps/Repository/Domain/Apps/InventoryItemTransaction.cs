@@ -93,7 +93,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Workspace(Default)]
-        public decimal Cost { get; set; }
+        public decimal CostInApplicationCurrency { get; set; }
 
         /// <summary>
         /// The TransactionDate and Time when this InventoryItemTransaction occurred.

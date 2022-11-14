@@ -369,7 +369,7 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]
-        public decimal CostOfGoodsSold { get; set; }
+        public decimal CostOfGoodsSoldInApplicationCurrency { get; set; }
 
         #region Allors
         [Id("545eb094-63d8-4d25-a069-7c3e91f26eb7")]

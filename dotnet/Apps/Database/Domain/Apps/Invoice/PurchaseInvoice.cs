@@ -189,11 +189,15 @@ namespace Allors.Database.Domain
                             .Build();
                     }
 
+                    var settings = this.Strategy.Transaction.GetSingleton().Settings;
+
                     foreach (var orderItemBilling in purchaseInvoiceItem.OrderItemBillingsWhereInvoiceItem)
                     {
                         foreach (var receipt in orderItemBilling.OrderItem.ShipmentReceiptsWhereOrderItem)
                         {
-                            receipt.ShipmentItem.InventoryItemTransactionWhereShipmentItem.Cost = purchaseInvoiceItem.UnitBasePrice;
+                            var unitBasePriceInApplicationCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(purchaseInvoiceItem.UnitBasePrice, this.InvoiceDate, this.DerivedCurrency, settings.PreferredCurrency), 2);
+
+                            receipt.ShipmentItem.InventoryItemTransactionWhereShipmentItem.CostInApplicationCurrency = unitBasePriceInApplicationCurrency;
                         }
                     }
                 }

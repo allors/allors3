@@ -95,7 +95,7 @@ namespace Allors.Database.Domain
                             .WithFacility(shipmentItem.StoredInFacility)
                             .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
                             .WithQuantity(shipmentItem.Quantity)
-                            .WithCost(shipmentItem.Part.PartWeightedAverage.AverageCost)
+                            .WithCostInApplicationCurrency(shipmentItem.Part.PartWeightedAverage.AverageCostInApplicationCurrency)
                             .WithShipmentItem(shipmentItem)
                             .Build();
                     }

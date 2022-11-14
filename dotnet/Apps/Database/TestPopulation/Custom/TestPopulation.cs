@@ -177,23 +177,6 @@ namespace Allors
 
             var collectionMethod = new PaymentMethods(this.Transaction).Extent().FirstOrDefault();
 
-            new StoreBuilder(this.Transaction)
-                .WithName("store")
-                .WithBillingProcess(new BillingProcesses(this.Transaction).BillingForShipmentItems)
-                .WithInternalOrganisation(internalOrganisation)
-                .WithCustomerShipmentNumberPrefix("shipmentno: ")
-                .WithSalesInvoiceNumberPrefix("invoiceno: ")
-                .WithSalesOrderNumberPrefix("orderno: ")
-                .WithDefaultShipmentMethod(new ShipmentMethods(this.Transaction).Ground)
-                .WithDefaultCarrier(new Carriers(this.Transaction).Fedex)
-                .WithCreditLimit(500)
-                .WithPaymentGracePeriod(10)
-                .WithDefaultCollectionMethod(collectionMethod)
-                .WithIsImmediatelyPicked(false)
-                .WithAutoGenerateShipmentPackage(false)
-                .WithIsImmediatelyPacked(true)
-                .Build();
-
             new ProductCategoryBuilder(this.Transaction).WithName("Primary Category").Build();
 
             internalOrganisation.CreateEmployee("letmein", this.Transaction.Faker());

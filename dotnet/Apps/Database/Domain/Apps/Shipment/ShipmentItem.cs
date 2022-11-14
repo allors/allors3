@@ -21,6 +21,11 @@ namespace Allors.Database.Domain
                 this.ShipmentItemState = new ShipmentItemStates(this.Strategy.Transaction).Created;
             }
 
+            if (!this.ExistCurrency)
+            {
+                this.Currency = this.ExistShipmentWhereShipmentItem ? this.ShipmentWhereShipmentItem.ShipFromParty.PreferredCurrency : this.Transaction().GetSingleton().Settings.PreferredCurrency;
+            }
+
             this.DerivationTrigger = Guid.NewGuid();
         }
 

@@ -160,12 +160,22 @@
       </div>
     </div>
 
-    <a-mat-input
-      class="col-md"
-      [disabled]="isSerialized || !!selectedPurchaseOrderItem"
-      [object]="object"
-      [roleType]="m.ShipmentItem.UnitPurchasePrice"
-    ></a-mat-input>
+    <div class="row">
+      <a-mat-input
+        class="col-md"
+        [disabled]="isSerialized || !!selectedPurchaseOrderItem"
+        [object]="object"
+        [roleType]="m.ShipmentItem.UnitPurchasePrice"
+      ></a-mat-input>
+      <a-mat-select
+        class="col-md"
+        [object]="object"
+        [roleType]="m.ShipmentItem.Currency"
+        [options]="currencies"
+        label="Currency"
+        display="IsoCode"
+      ></a-mat-select>
+    </div>
   </div>
 
   <div class="row">

@@ -29,7 +29,7 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]
-        public decimal AverageCost { get; set; }
+        public decimal AverageCostInApplicationCurrency { get; set; }
 
         #region inherited methods
 

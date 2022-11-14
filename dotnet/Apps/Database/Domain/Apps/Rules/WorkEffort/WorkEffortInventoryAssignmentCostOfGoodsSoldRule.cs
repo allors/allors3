@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkEffortInventoryAssignment>())
             {
-                @this.CostOfGoodsSold = @this.Quantity * @this.InventoryItem.Part.PartWeightedAverage.AverageCost;
+                @this.CostOfGoodsSoldInApplicationCurrency = @this.Quantity * @this.InventoryItem.Part.PartWeightedAverage.AverageCostInApplicationCurrency;
             }
         }
     }

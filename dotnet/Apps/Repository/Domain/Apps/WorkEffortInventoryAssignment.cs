@@ -78,7 +78,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Workspace(Default)]
-        public decimal CostOfGoodsSold { get; set; }
+        public decimal CostOfGoodsSoldInApplicationCurrency { get; set; }
 
         #region Allors
         [Id("E13BAD88-7B44-4B92-89D0-86D182404880")]

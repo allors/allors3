@@ -79,7 +79,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
-            Assert.Equal(8, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             purchaseOrder1.Revise();
             this.Transaction.Derive();
@@ -100,7 +100,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(225, part.QuantityOnHand);
-            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithTakenBy(this.InternalOrganisation)
@@ -148,8 +148,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
-            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(401.5M, salesItem1.CostOfGoodsSold);
+            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(401.5M, salesItem1.CostOfGoodsSoldInApplicationCurrency);
 
             // Again Sell 50 items for 20 euro
             salesOrder.Revise();
@@ -193,8 +193,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(125, part.QuantityOnHand);
-            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(401.5M, salesItem1.CostOfGoodsSold);
+            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(401.5M, salesItem1.CostOfGoodsSoldInApplicationCurrency);
 
             // Purchase: 50 items at 8.25 euro
             purchaseOrder1.Revise();
@@ -215,7 +215,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Use 65 items in a workorder
             var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
@@ -231,8 +231,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(525.85M, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(525.85M, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
 
             // Cancel workeffort inventory assignment
             inventoryAssignment.Delete();
@@ -240,7 +240,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Use 35 items in a workorder
             inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
@@ -254,8 +254,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(140, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(283.15M, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(283.15M, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
 
             // Use 30 items in a workorder form second facility
             inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
@@ -267,8 +267,8 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(242.7M, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(242.7M, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
 
             // Purchase: 90 items at 8.35 euro
             var purchaseOrder3 = new PurchaseOrderBuilder(this.Transaction)
@@ -317,7 +317,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
-            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Ship 10 items to customer (without sales order)
             var outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
@@ -352,7 +352,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(240, part.QuantityOnHand);
-            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Receive 10 items at 8.55 from supplier (without purchase order)
             var incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
@@ -371,7 +371,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
-            Assert.Equal(8.27M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.27M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Receive 100 items at 7.9 from supplier (without purchase order)
             incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
@@ -390,7 +390,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(350, part.QuantityOnHand);
-            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Ship all items to customer (without sales order)
             outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
@@ -459,7 +459,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(0, part.QuantityOnHand);
-            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             purchaseOrder1.Revise();
             this.Transaction.Derive();
@@ -480,7 +480,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
-            Assert.Equal(8, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8, part.PartWeightedAverage.AverageCostInApplicationCurrency);
         }
 
         [Fact]
@@ -554,7 +554,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
-            Assert.Equal(8, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             purchaseOrder1.Revise();
             this.Derive();
@@ -575,7 +575,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal(225, part.QuantityOnHand);
-            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithTakenBy(this.InternalOrganisation)
@@ -623,8 +623,8 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
-            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(401.5M, salesItem1.CostOfGoodsSold);
+            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(401.5M, salesItem1.CostOfGoodsSoldInApplicationCurrency);
 
             // Again Sell 50 items for 20 euro
             salesOrder.Revise();
@@ -668,8 +668,8 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(125, part.QuantityOnHand);
-            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(401.5M, salesItem1.CostOfGoodsSold);
+            Assert.Equal(8.03M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(401.5M, salesItem1.CostOfGoodsSoldInApplicationCurrency);
 
             // Purchase: 50 items at 8.25 euro
             purchaseOrder1.Revise();
@@ -690,7 +690,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Use 65 items in a workorder
             var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithCustomer(customer).WithTakenBy(this.InternalOrganisation).Build();
@@ -706,8 +706,8 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(525.85M, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(525.85M, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
 
             // Cancel workeffort inventory assignment
             inventoryAssignment.Delete();
@@ -715,7 +715,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(175, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Use 35 items in a workorder
             inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
@@ -729,8 +729,8 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(140, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(283.15M, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(283.15M, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
 
             // Use 30 items in a workorder form second facility
             inventoryAssignment = new WorkEffortInventoryAssignmentBuilder(this.Transaction)
@@ -742,8 +742,8 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(110, part.QuantityOnHand);
-            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCost);
-            Assert.Equal(242.7M, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(8.09M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
+            Assert.Equal(242.7M, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
 
             // Purchase: 90 items at 8.35 euro
             var purchaseOrder3 = new PurchaseOrderBuilder(this.Transaction)
@@ -792,7 +792,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
-            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Ship 10 items to customer (without sales order)
             var outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
@@ -827,7 +827,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(240, part.QuantityOnHand);
-            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.26M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Receive 10 items at 8.55 from supplier (without purchase order)
             var incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
@@ -846,7 +846,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(250, part.QuantityOnHand);
-            Assert.Equal(8.27M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.27M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Receive 100 items at 7.9 from supplier (without purchase order)
             incomingShipment = new PurchaseShipmentBuilder(this.Transaction)
@@ -865,7 +865,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(350, part.QuantityOnHand);
-            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Ship all items to customer (without sales order)
             outgoingShipment = new CustomerShipmentBuilder(this.Transaction)
@@ -934,7 +934,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(0, part.QuantityOnHand);
-            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8.17M, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             purchaseOrder1.Revise();
           this.Derive();
@@ -955,7 +955,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(150, part.QuantityOnHand);
-            Assert.Equal(8, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(8, part.PartWeightedAverage.AverageCostInApplicationCurrency);
 
             // Purchase 150 items at 4 euro
             purchaseItem = new PurchaseOrderItemBuilder(this.Transaction).WithPart(part).WithQuantityOrdered(150).WithAssignedUnitPrice(4M).Build();
@@ -973,7 +973,7 @@ namespace Allors.Database.Domain.Tests
           this.Derive();
 
             Assert.Equal(300, part.QuantityOnHand);
-            Assert.Equal(6, part.PartWeightedAverage.AverageCost);
+            Assert.Equal(6, part.PartWeightedAverage.AverageCostInApplicationCurrency);
         }
     }
 }

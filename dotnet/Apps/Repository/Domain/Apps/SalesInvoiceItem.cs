@@ -231,7 +231,7 @@ namespace Allors.Repository
         #endregion
         [Required]
         [Workspace(Default)]
-        public decimal CostOfGoodsSold { get; set; }
+        public decimal CostOfGoodsSoldInApplicationCurrency { get; set; }
 
         #region inherited methods
 

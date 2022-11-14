@@ -282,6 +282,7 @@ namespace Allors.Database.Domain
                             .WithStoredInFacility(orderItem.StoredInFacility)
                             .WithQuantity(orderItem.QuantityOrdered)
                             .WithUnitPurchasePrice(orderItem.UnitPrice)
+                            .WithCurrency(this.DerivedCurrency)
                             .WithContentsDescription($"{orderItem.QuantityOrdered} * {orderItem.Part.Name}")
                             .Build();
 

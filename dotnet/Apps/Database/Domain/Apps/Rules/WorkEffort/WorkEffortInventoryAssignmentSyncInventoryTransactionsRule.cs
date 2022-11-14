@@ -84,7 +84,7 @@ namespace Allors.Database.Domain
                     .WithPart(inventoryItem.Part)
                     .WithFacility(inventoryItem.Facility)
                     .WithQuantity(adjustmentQuantity)
-                    .WithCost(inventoryItem.Part.PartWeightedAverage.AverageCost)
+                    .WithCostInApplicationCurrency(inventoryItem.Part.PartWeightedAverage.AverageCostInApplicationCurrency)
                     .WithReason(reason)
                     .Build());
             }

@@ -8,6 +8,7 @@ import {
   And,
 } from '@allors/system/workspace/domain';
 import {
+  Currency,
   Facility,
   Good,
   InventoryItem,
@@ -46,6 +47,7 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Filters } from '../../../filters/filters';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
   templateUrl: './shipmentitem-form.component.html',
@@ -76,6 +78,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   facilities: Facility[];
   goodIsSelected = false;
   partIsSelected = false;
+  currencies: Currency[];
 
   draftRequestItem: RequestItemState;
   submittedRequestItem: RequestItemState;
@@ -118,12 +121,14 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   private previousPart;
 
   unifiedGoodsFilter: SearchFactory;
+  settings: import('c:/Users/MartienvanKnippenber/source/repos/Allors/allors3/typescript/modules/libs/apps-intranet/workspace/domain/src/index').Settings;
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
-    public snackBar: MatSnackBar
+    public snackBar: MatSnackBar,
+    private fetcher: FetcherService
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -137,6 +142,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
     const { pullBuilder: p } = m;
 
     pulls.push(
+      this.fetcher.Settings,
       p.SerialisedItemAvailability({}),
       p.SerialisedInventoryItemState({
         predicate: {
@@ -155,7 +161,15 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       p.PurchaseOrderItemState({}),
       p.ShipmentItemState({}),
       p.ShipmentState({}),
-      p.Facility({})
+      p.Facility({}),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
+      })
     );
 
     if (this.editRequest) {
@@ -197,6 +211,9 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
           include: {
             ShipmentItems: {},
             ShipToAddress: {},
+            ShipFromParty: {
+              PreferredCurrency: {},
+            },
           },
         }),
         p.Shipment({
@@ -243,8 +260,15 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
+    this.settings = this.fetcher.getSettings(pullResult);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
+    this.facilities = pullResult.collection<Facility>(this.m.Facility);
+
     if (this.createRequest) {
       this.shipment = pullResult.object<Shipment>(this.m.Shipment);
+      this.object.Currency =
+        this.shipment.ShipFromParty.PreferredCurrency ??
+        this.settings.PreferredCurrency;
     } else {
       this.shipment = this.object.ShipmentWhereShipmentItem;
     }
@@ -256,7 +280,6 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
     this.isPurchaseReturn =
       this.shipment.strategy.cls === this.m.PurchaseReturn;
 
-    this.facilities = pullResult.collection<Facility>(this.m.Facility);
     this.serialisedItemAvailabilities =
       pullResult.collection<SerialisedItemAvailability>(
         this.m.SerialisedItemAvailability

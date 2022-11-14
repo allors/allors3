@@ -560,7 +560,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part1)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
-                .WithCost(10)
+                .WithCostInApplicationCurrency(10)
                 .Build();
             this.Derive();
 
@@ -571,7 +571,7 @@ namespace Allors.Database.Domain.Tests
                 .Build();
             this.Derive();
 
-            Assert.Equal(20, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(20, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
         }
 
         [Fact]
@@ -587,7 +587,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPart(part)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).IncomingShipment)
                 .WithQuantity(3)
-                .WithCost(10)
+                .WithCostInApplicationCurrency(10)
                 .Build();
             this.Derive();
 
@@ -601,7 +601,7 @@ namespace Allors.Database.Domain.Tests
             inventoryAssignment.Quantity = 3;
             this.Derive();
 
-            Assert.Equal(30, inventoryAssignment.CostOfGoodsSold);
+            Assert.Equal(30, inventoryAssignment.CostOfGoodsSoldInApplicationCurrency);
         }
     }
 

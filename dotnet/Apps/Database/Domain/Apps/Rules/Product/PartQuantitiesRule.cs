@@ -62,17 +62,17 @@ namespace Allors.Database.Domain
                     {
                         quantityOnHand += inventoryTransaction.Quantity;
 
-                        var transactionCost = inventoryTransaction.Quantity * inventoryTransaction.Cost;
+                        var transactionCost = inventoryTransaction.Quantity * inventoryTransaction.CostInApplicationCurrency;
                         totalCost += transactionCost;
 
                         var averageCost = quantityOnHand > 0 ? totalCost / quantityOnHand : 0M;
-                        @this.PartWeightedAverage.AverageCost = decimal.Round(averageCost, 2);
+                        @this.PartWeightedAverage.AverageCostInApplicationCurrency = decimal.Round(averageCost, 2);
                     }
                     else if (reason?.IncreasesQuantityOnHand == false)
                     {
                         quantityOnHand -= inventoryTransaction.Quantity;
 
-                        totalCost = quantityOnHand * @this.PartWeightedAverage.AverageCost;
+                        totalCost = quantityOnHand * @this.PartWeightedAverage.AverageCostInApplicationCurrency;
                     }
                 }
             }

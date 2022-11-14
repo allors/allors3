@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                 this.ShipToParty = internalOrganisations.First();
             }
 
-            if (!this.ExistShipToFacility && this.ExistShipToParty && this.ShipToParty is InternalOrganisation internalOrganisation)
+            if (!this.ExistShipToFacility && this.ExistShipToParty && this.ExistShipToParty && this.ShipToParty is InternalOrganisation internalOrganisation)
             {
                 this.ShipToFacility = internalOrganisation.StoresWhereInternalOrganisation.Single().DefaultFacility;
             }
@@ -56,6 +56,7 @@ namespace Allors.Database.Domain
         {
             this.ShipmentState = new ShipmentStates(this.Strategy.Transaction).Received;
             this.EstimatedArrivalDate = this.Transaction().Now().Date;
+            var settings = this.Strategy.Transaction.GetSingleton().Settings;
 
             foreach (var shipmentItem in this.ShipmentItems)
             {
@@ -109,6 +110,12 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
+                    decimal? unitPurchasePriceInApplicationCurrency = null;
+                    if (shipmentItem.UnitPurchasePrice.HasValue)
+                    {
+                        unitPurchasePriceInApplicationCurrency = Rounder.RoundDecimal(Currencies.ConvertCurrency(shipmentItem.UnitPurchasePrice.Value, this.Transaction().Now().Date, shipmentItem.Currency, settings.PreferredCurrency), 2);
+                    }
+
                     new InventoryItemTransactionBuilder(this.Transaction())
                         .WithPart(shipmentItem.Part)
                         .WithUnitOfMeasure(shipmentItem.Part.UnitOfMeasure)
@@ -117,7 +124,7 @@ namespace Allors.Database.Domain
                         .WithNonSerialisedInventoryItemState(new NonSerialisedInventoryItemStates(this.Transaction()).Good)
                         .WithShipmentItem(shipmentItem)
                         .WithQuantity(shipmentItem.Quantity)
-                        .WithCost(shipmentItem.UnitPurchasePrice)
+                        .WithCostInApplicationCurrency(unitPurchasePriceInApplicationCurrency)
                         .Build();
                 }
             }

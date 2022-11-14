@@ -342,7 +342,7 @@ namespace Allors.Database.Domain
 
                                 orderItemDerivedRoles.QuantityRequestsShipping = 0;
 
-                                orderItemDerivedRoles.CostOfGoodsSold = orderItem.QuantityOrdered * part.PartWeightedAverage.AverageCost;
+                                orderItemDerivedRoles.CostOfGoodsSoldInApplicationCurrency = orderItem.QuantityOrdered * part.PartWeightedAverage.AverageCostInApplicationCurrency;
                             }
                         }
 
@@ -442,7 +442,7 @@ namespace Allors.Database.Domain
                             .WithAssignedUnitPrice(orderItem.UnitPrice)
                             .WithProduct(orderItem.Product)
                             .WithQuantity(orderItem.QuantityOrdered)
-                            .WithCostOfGoodsSold(orderItem.CostOfGoodsSold)
+                            .WithCostOfGoodsSoldInApplicationCurrency(orderItem.CostOfGoodsSoldInApplicationCurrency)
                             .WithAssignedVatRegime(orderItem.AssignedVatRegime)
                             .WithAssignedIrpfRegime(orderItem.AssignedIrpfRegime)
                             .WithDescription(orderItem.Description)

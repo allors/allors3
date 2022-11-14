@@ -239,7 +239,7 @@ namespace Allors.Database.Domain
                                 .WithFacility(inventoryItem.Facility)
                                 .WithReason(new InventoryTransactionReasons(this.Strategy.Transaction).OutgoingShipment)
                                 .WithQuantity(shipmentItem.Quantity)
-                                .WithCost(inventoryItem.Part.PartWeightedAverage.AverageCost)
+                                .WithCostInApplicationCurrency(inventoryItem.Part.PartWeightedAverage.AverageCostInApplicationCurrency)
                                 .Build();
                         }
                     }

@@ -178,6 +178,14 @@ namespace Allors.Repository
         public decimal UnitPurchasePrice { get; set; }
 
         #region Allors
+        [Id("e3dbf6db-cf2e-45bd-a0f8-4157f67b017a")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        [Indexed]
+        public Currency Currency { get; set; }
+
+        #region Allors
         [Id("f02f4cb4-1050-4304-9f9b-182a123d3dd2")]
         #endregion
         [Required]

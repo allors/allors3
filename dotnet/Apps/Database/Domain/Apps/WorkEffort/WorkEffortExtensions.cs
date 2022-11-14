@@ -152,7 +152,7 @@ namespace Allors.Database.Domain
                     .WithPart(part)
                     .WithAssignedUnitPrice(workEffortInventoryAssignment.UnitSellingPrice)
                     .WithQuantity(quantity)
-                    .WithCostOfGoodsSold(workEffortInventoryAssignment.CostOfGoodsSold)
+                    .WithCostOfGoodsSoldInApplicationCurrency(workEffortInventoryAssignment.CostOfGoodsSoldInApplicationCurrency)
                     .Build();
 
                 salesInvoice.AddSalesInvoiceItem(invoiceItem);
