@@ -549,7 +549,7 @@ namespace Allors.Database.Domain
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("pound").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la libra").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("lb.")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(PoundId)
                     .WithIsActive(true)
                     .Build();
             }
@@ -561,7 +561,7 @@ namespace Allors.Database.Domain
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("ounce").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la onza").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("oz.")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(OunceId)
                     .WithIsActive(true)
                     .Build();
             }
@@ -573,7 +573,7 @@ namespace Allors.Database.Domain
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("gallon").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("el galón").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("gal.")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(GallonId)
                     .WithIsActive(true)
                     .Build();
             }
@@ -585,7 +585,7 @@ namespace Allors.Database.Domain
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("yard").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la yarda").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("yd.")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(YardId)
                     .WithIsActive(true)
                     .Build();
             }
@@ -597,7 +597,7 @@ namespace Allors.Database.Domain
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("foot").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("el pie").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("ft.")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(FootId)
                     .WithIsActive(true)
                     .Build();
             }
@@ -609,7 +609,7 @@ namespace Allors.Database.Domain
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("inch").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("la pulgada").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("in.")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(InchId)
                     .WithIsActive(true)
                     .Build();
             }
