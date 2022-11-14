@@ -29,6 +29,7 @@ import {
   SerialisedInventoryItem,
   SerialisedItem,
   SerialisedItemAvailability,
+  Settings,
   Shipment,
   ShipmentItem,
   ShipmentItemState,
@@ -48,7 +49,6 @@ import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Filters } from '../../../filters/filters';
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
-
 @Component({
   templateUrl: './shipmentitem-form.component.html',
   providers: [ContextService],
@@ -79,6 +79,7 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   goodIsSelected = false;
   partIsSelected = false;
   currencies: Currency[];
+  settings: Settings;
 
   draftRequestItem: RequestItemState;
   submittedRequestItem: RequestItemState;
@@ -121,7 +122,6 @@ export class ShipmentItemFormComponent extends AllorsFormComponent<ShipmentItem>
   private previousPart;
 
   unifiedGoodsFilter: SearchFactory;
-  settings: import('c:/Users/MartienvanKnippenber/source/repos/Allors/allors3/typescript/modules/libs/apps-intranet/workspace/domain/src/index').Settings;
 
   constructor(
     @Self() public allors: ContextService,
