@@ -1,14 +1,18 @@
 import { Component, Self } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { Pull, IPullResult } from '@allors/system/workspace/domain';
+import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
   Currency,
+  InternalOrganisation,
   Ordinal,
+  Organisation,
   Part,
+  Party,
   RatingType,
   Settings,
   SupplierOffering,
+  SupplierRelationship,
   UnitOfMeasure,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
@@ -30,6 +34,7 @@ import { Filters } from '../../../filters/filters';
 export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierOffering> {
   readonly m: M;
   part: Part;
+  internalOrganisation: InternalOrganisation;
   ratingTypes: RatingType[];
   preferences: Ordinal[];
   unitsOfMeasure: UnitOfMeasure[];
@@ -38,6 +43,7 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
   title: string;
 
   allSuppliersFilter: SearchFactory;
+  addSupplier = false;
 
   constructor(
     @Self() public allors: ContextService,
@@ -57,6 +63,7 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
     const { pullBuilder: p } = m;
 
     pulls.push(
+      this.fetcher.internalOrganisation,
       this.fetcher.Settings,
       p.RatingType({ sorting: [{ roleType: m.RateType.Name }] }),
       p.Ordinal({ sorting: [{ roleType: m.Ordinal.Name }] }),
@@ -101,6 +108,8 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
+    this.internalOrganisation =
+      this.fetcher.getInternalOrganisation(pullResult);
     this.ratingTypes = pullResult.collection<RatingType>(this.m.RatingType);
     this.preferences = pullResult.collection<Ordinal>(this.m.Ordinal);
     this.unitsOfMeasure = pullResult.collection<UnitOfMeasure>(
@@ -116,5 +125,49 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
     } else {
       this.part = this.object.Part;
     }
+  }
+
+  public supplierAdded(supplier: Organisation): void {
+    const supplierRelationship =
+      this.allors.context.create<SupplierRelationship>(
+        this.m.SupplierRelationship
+      );
+
+    supplierRelationship.Supplier = supplier;
+    supplierRelationship.InternalOrganisation = this.internalOrganisation;
+
+    supplier.PreferredCurrency = this.object.Currency;
+    this.object.Supplier = supplier;
+  }
+
+  public currencySelected(currency: IObject) {
+    if (this.object.Supplier?.PreferredCurrency == null) {
+      this.object.Supplier.PreferredCurrency = currency as Currency;
+    }
+  }
+
+  public supplierSelected(supplier: IObject) {
+    this.updateSupplier(supplier as Party);
+  }
+
+  private updateSupplier(supplier: Party): void {
+    const m = this.m;
+    const { pullBuilder: pull } = m;
+    const x = {};
+
+    const pulls = [
+      pull.Organisation({
+        object: supplier,
+        name: 'selectedSupplier',
+        include: {
+          PreferredCurrency: x,
+        },
+      }),
+    ];
+
+    this.allors.context.pull(pulls).subscribe((loaded) => {
+      const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
+      this.object.Currency = selectedSupplier.PreferredCurrency;
+    });
   }
 }

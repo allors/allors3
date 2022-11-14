@@ -29,7 +29,7 @@ export class AppDisplayService implements DisplayService {
       [m.ContactMechanismPurpose, m.ContactMechanismPurpose.Name],
       [m.ContactMechanismType, m.ContactMechanismType.Name],
       [m.Country, m.Country.Name],
-      [m.Currency, m.Currency.Name],
+      [m.Currency, m.Currency.IsoCode],
       [m.CustomerReturn, m.CustomerReturn.ShipmentNumber],
       [m.CustomerShipment, m.CustomerShipment.ShipmentNumber],
       [
@@ -411,6 +411,7 @@ export class AppDisplayService implements DisplayService {
         m.SupplierOffering,
         [
           m.SupplierOffering.Supplier,
+          m.SupplierOffering.Currency,
           m.SupplierOffering.Price,
           m.SupplierOffering.UnitOfMeasure,
         ],

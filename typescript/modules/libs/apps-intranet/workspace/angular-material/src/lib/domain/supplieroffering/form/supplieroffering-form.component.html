@@ -1,14 +1,42 @@
 <div class="container-fluid" *ngIf="object">
   <div class="container-fluid">
     <div class="row">
-      <a-mat-autocomplete
-        class="col-md"
-        [object]="object"
-        [roleType]="m.SupplierOffering.Supplier"
-        [filter]="allSuppliersFilter.create(allors.context)"
-        display="DisplayName"
-        label="Supplier"
-      ></a-mat-autocomplete>
+      <div class="col-md">
+        <div class="row">
+          <a-mat-autocomplete
+            class="col-md"
+            [object]="object"
+            [roleType]="m.SupplierOffering.Supplier"
+            [filter]="allSuppliersFilter.create(allors.context)"
+            (changed)="supplierSelected($event)"
+            display="DisplayName"
+            label="Supplier"
+          ></a-mat-autocomplete>
+          <button
+            throttled
+            mat-mini-fab
+            color="accent"
+            [disabled]="!object.canWriteSupplier"
+            type="button"
+            (throttleClick)="addSupplier = !addSupplier"
+          >
+            <mat-icon *ngIf="!addSupplier">add</mat-icon>
+            <mat-icon *ngIf="addSupplier">close</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <mat-card *ngIf="addSupplier">
+          <mat-card-header>Add a new supplier</mat-card-header>
+          <mat-card-content>
+            <organisation-inline
+              (saved)="supplierAdded($event); addSupplier = false"
+              (cancelled)="addSupplier = false"
+            >
+            </organisation-inline>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
 
     <div class="row">
@@ -89,6 +117,7 @@
         [object]="object"
         [roleType]="m.SupplierOffering.Currency"
         [options]="currencies"
+        (selected)="currencySelected($event)"
         display="Name"
       ></a-mat-select>
     </div>
