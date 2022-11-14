@@ -44,6 +44,7 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
 
   allSuppliersFilter: SearchFactory;
   addSupplier = false;
+  supplierIsNew = false;
 
   constructor(
     @Self() public allors: ContextService,
@@ -138,15 +139,17 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
 
     supplier.PreferredCurrency = this.object.Currency;
     this.object.Supplier = supplier;
+    this.supplierIsNew = true;
   }
 
   public currencySelected(currency: IObject) {
-    if (this.object.Supplier?.PreferredCurrency == null) {
+    if (this.supplierIsNew || this.object.Supplier?.PreferredCurrency == null) {
       this.object.Supplier.PreferredCurrency = currency as Currency;
     }
   }
 
   public supplierSelected(supplier: IObject) {
+    this.supplierIsNew = false;
     this.updateSupplier(supplier as Party);
   }
 
