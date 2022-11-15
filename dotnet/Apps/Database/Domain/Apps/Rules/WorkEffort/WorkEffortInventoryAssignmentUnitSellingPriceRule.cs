@@ -39,17 +39,19 @@ namespace Allors.Database.Domain
                 {
                     var part = @this.InventoryItem.Part;
 
-                    var startDate = @this.Assignment?.ActualStart ?? @this.Assignment?.ScheduledStart;
+                    var startDate = @this.Assignment?.ActualStart ?? @this.Assignment?.ScheduledStart ?? transaction.Now().Date;
+
                     var currentPriceComponents = @this.Assignment?.TakenBy?.PriceComponentsWherePricedBy
-                        .Where(v => v.FromDate <= startDate && (!v.ExistThroughDate || v.ThroughDate >= startDate))
+                        .Where(v => v.ExistPrice && v.FromDate <= startDate && (!v.ExistThroughDate || v.ThroughDate >= startDate))
                         .ToArray();
 
-                    if (currentPriceComponents != null)
+                    if (@this.ExistAssignment && part != null && currentPriceComponents != null)
                     {
                         var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
 
-                        var price = currentPartPriceComponents.OfType<BasePrice>().Max(v => v.Price);
-                        @this.UnitSellingPrice = price ?? 0M;
+                        var maxPrice = currentPartPriceComponents.OfType<BasePrice>().Max(v => Rounder.RoundDecimal(Currencies.ConvertCurrency(v.Price.Value, startDate, v.Currency, @this.Assignment.Currency), 2));
+
+                        @this.UnitSellingPrice = maxPrice;
                     }
                     else
                     {
