@@ -24,6 +24,16 @@ namespace Allors.Database.Domain
             {
                 this.TakenBy = internalOrganisations.First();
             }
+
+            if (this.ExistTakenBy && !this.ExistCurrency)
+            {
+                this.Currency = this.TakenBy.PreferredCurrency;
+            }
+
+            if (!this.ExistCurrency)
+            {
+                this.Currency = this.Strategy.Transaction.GetSingleton().Settings.PreferredCurrency;
+            }
         }
 
         public void AppsDelete(DeletableDelete method)

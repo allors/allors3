@@ -33,6 +33,8 @@ namespace Allors.Repository
 
         public Person ContactPerson { get; set; }
 
+        public Currency Currency { get; set; }
+
         public string Name { get; set; }
 
         public string Description { get; set; }

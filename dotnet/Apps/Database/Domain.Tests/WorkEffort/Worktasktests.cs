@@ -46,6 +46,40 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void GivenWorkTask_WhenBuild_ThenCurrencyIsTakenByPreferredCurrency()
+        {
+            var usd = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "USD");
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            internalOrganisation.PreferredCurrency = usd;
+
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").WithTakenBy(internalOrganisation).Build();
+
+            this.Transaction.Derive(false);
+
+            Assert.Equal(usd, workEffort.Currency);
+        }
+
+        [Fact]
+        public void GivenWorkTask_WhenBuild_ThenCurrencyIsSettingsPreferredCurrency()
+        {
+            var aed = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "AED");
+            var usd = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "USD");
+
+            this.Transaction.GetSingleton().Settings.PreferredCurrency = aed;
+
+            var anotherInternalOrganisation = new OrganisationBuilder(this.Transaction).WithIsInternalOrganisation(true).Build();
+            anotherInternalOrganisation.PreferredCurrency = usd;
+
+            this.Transaction.Derive(false);
+
+            var workEffort = new WorkTaskBuilder(this.Transaction).WithName("Activity").Build();
+
+            this.Transaction.Derive(false);
+
+            Assert.Equal(aed, workEffort.Currency);
+        }
+
+        [Fact]
         public void GivenWorkEffortAndTimeEntries_WhenDeriving_ThenActualHoursDerived()
         {
             // Arrange
@@ -1636,6 +1670,84 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal(10, workEffort.TotalRevenue);
+        }
+    }
+
+    public class WorkEffortCurrencyRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public WorkEffortCurrencyRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangeCurrency()
+        {
+            var aed = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "AED");
+            var usd = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "USD");
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            internalOrganisation.PreferredCurrency = usd;
+
+            this.Derive();
+
+            var workEffort = new WorkTaskBuilder(this.Transaction)
+                .WithExecutedBy(this.InternalOrganisation)
+                .Build();
+
+            this.Derive();
+
+            workEffort.Currency = aed;
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidWorkTaskCurrency)));
+
+            new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
+                .WithQuantity(1)
+                .Build();
+
+            this.Derive();
+
+            workEffort.Currency = usd;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidWorkTaskCurrency)));
+        }
+
+        [Fact]
+        public void ChangedCurrencyThrowValidationError()
+        {
+            var aed = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "AED");
+            var usd = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "USD");
+            var part = new NonUnifiedPartBuilder(this.Transaction).Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            internalOrganisation.PreferredCurrency = usd;
+
+            this.Derive();
+
+            var workEffort = new WorkTaskBuilder(this.Transaction)
+                .WithExecutedBy(this.InternalOrganisation)
+                .Build();
+
+            this.Derive();
+
+            workEffort.Currency = aed;
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Empty(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidWorkTaskCurrency)));
+
+            new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workEffort)
+                .WithInventoryItem(part.InventoryItemsWherePart.FirstOrDefault())
+                .WithQuantity(1)
+                .WithAssignedUnitSellingPrice(1)
+                .Build();
+
+            this.Derive();
+
+            workEffort.Currency = usd;
+
+            errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.InvalidWorkTaskCurrency)));
         }
     }
 

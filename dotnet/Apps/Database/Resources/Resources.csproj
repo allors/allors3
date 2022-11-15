@@ -9,7 +9,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DomainErrors.resx</DependentUpon>
     </Compile>
-    <Compile Update="ErrorMessages.Designer.cs">
+    <Compile Update="ErrorMessages.designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorMessages.resx</DependentUpon>

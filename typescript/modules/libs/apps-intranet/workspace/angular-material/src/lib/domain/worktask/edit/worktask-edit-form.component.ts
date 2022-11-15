@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
   ContactMechanism,
+  Currency,
   InternalOrganisation,
   Organisation,
   OrganisationContactRelationship,
@@ -47,6 +48,7 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
   workEfforts: WorkEffort[];
   customersFilter: SearchFactory;
   subContractorsFilter: SearchFactory;
+  currencies: Currency[];
 
   constructor(
     @Self() public allors: ContextService,
@@ -121,6 +123,14 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
           value: true,
         },
         sorting: [{ roleType: m.WorkEffortPurpose.Name }],
+      }),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
       })
     );
 
@@ -140,6 +150,7 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
     this.workEffortStates = pullResult.collection<WorkEffortState>(
       this.m.WorkEffortState
     );
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
     this.priorities = pullResult.collection<Priority>(this.m.Priority);
     this.workEffortPurposes = pullResult.collection<WorkEffortPurpose>(
       this.m.WorkEffortPurpose

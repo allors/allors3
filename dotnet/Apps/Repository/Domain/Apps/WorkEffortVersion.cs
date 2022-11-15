@@ -156,5 +156,12 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToMany)]
         [Workspace(Default)]
         WorkEffort[] Concurrencies { get; set; }
+
+        #region Allors
+        [Id("0d5ba46a-cf67-4e79-9bdf-1095a9875b33")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Workspace(Default)]
+        Currency Currency { get; set; }
     }
 }

@@ -67,6 +67,8 @@ namespace Allors.Repository
 
         public Organisation TakenBy { get; set; }
 
+        public Currency Currency { get; set; }
+
         #endregion
 
         #region Allors

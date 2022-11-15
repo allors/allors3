@@ -140,6 +140,14 @@
       </div>
 
       <div class="row">
+        <a-mat-select
+          class="col-md-6"
+          [object]="object"
+          [roleType]="m.WorkTask.Currency"
+          [options]="currencies"
+          label="Currency"
+          display="IsoCode"
+        ></a-mat-select>
         <a-mat-datepicker
           class="col-md-6"
           [object]="object"

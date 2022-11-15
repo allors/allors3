@@ -91,6 +91,14 @@ namespace Allors.Repository
         Person ContactPerson { get; set; }
 
         #region Allors
+        [Id("e6b91822-b41b-4fdd-bbc8-c161e93bd0a6")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        Currency Currency { get; set; }
+
+        #region Allors
         [Id("E938CD9B-C1E3-4DA6-BB0A-1DF917061A56")]
         #endregion
         [Workspace(Default)]

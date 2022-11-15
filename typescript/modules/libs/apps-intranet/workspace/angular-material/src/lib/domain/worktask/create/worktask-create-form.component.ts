@@ -4,6 +4,7 @@ import { NgForm } from '@angular/forms';
 import { Pull, IPullResult, IObject } from '@allors/system/workspace/domain';
 import {
   ContactMechanism,
+  Currency,
   InternalOrganisation,
   Locale,
   Organisation,
@@ -43,6 +44,7 @@ export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
   organisationsFilter: SearchFactory;
   subContractorsFilter: SearchFactory;
   workEffortFixedAssetAssignment: WorkEffortFixedAssetAssignment;
+  currencies: Currency[];
 
   constructor(
     @Self() public allors: ContextService,
@@ -69,6 +71,14 @@ export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
       this.fetcher.internalOrganisation,
       p.Locale({
         sorting: [{ roleType: m.Locale.Name }],
+      }),
+      p.Currency({
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.Currency.IsActive,
+          value: true,
+        },
+        sorting: [{ roleType: m.Currency.IsoCode }],
       })
     );
 
@@ -93,6 +103,7 @@ export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
     this.locales = pullResult.collection<Locale>(this.m.Locale);
+    this.currencies = pullResult.collection<Currency>(this.m.Currency);
 
     const fromSerialiseditem = pullResult.object<SerialisedItem>(
       this.m.SerialisedItem
@@ -102,6 +113,7 @@ export class WorkTaskCreateFormComponent extends AllorsFormComponent<WorkTask> {
     this.object.TakenBy = this.internalOrganisation as Organisation;
     this.object.Customer = fromCustomer;
     this.object.IssueDate = new Date();
+    this.object.Currency = this.internalOrganisation.PreferredCurrency;
 
     if (fromSerialiseditem != null) {
       this.workEffortFixedAssetAssignment =

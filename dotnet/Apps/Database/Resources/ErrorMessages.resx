@@ -291,4 +291,7 @@
   <data name="InvalidInvoiceDate" xml:space="preserve">
     <value>Sales invoice with later date already exists. </value>
   </data>
+  <data name="InvalidWorkTaskCurrency" xml:space="preserve">
+    <value>Changing currency not allowed. There are inventory assignments with manually assigned prices</value>
+  </data>
 </root>

@@ -41,14 +41,14 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    var part = @this.PurchaseOrderItem.Part;
+                    var part = @this.PurchaseOrderItem?.Part;
 
                     var startDate = @this.Assignment?.ActualStart ?? @this.Assignment?.ScheduledStart;
                     var currentPriceComponents = @this.Assignment?.TakenBy?.PriceComponentsWherePricedBy
                         .Where(v => v.FromDate <= startDate && (!v.ExistThroughDate || v.ThroughDate >= startDate))
                         .ToArray();
 
-                    if (currentPriceComponents != null)
+                    if (part != null && currentPriceComponents != null)
                     {
                         var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
 
