@@ -170,7 +170,7 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
 
     this.allors.context.pull(pulls).subscribe((loaded) => {
       const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
-      this.object.Currency = selectedSupplier.PreferredCurrency;
+      this.object.Currency = selectedSupplier?.PreferredCurrency;
     });
   }
 }
