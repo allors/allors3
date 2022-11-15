@@ -77,7 +77,9 @@ export class WorkEffortInventoryAssignmentFormComponent extends AllorsFormCompon
           name: '_object',
           objectId: this.editRequest.objectId,
           include: {
-            Assignment: {},
+            Assignment: {
+              Currency: {},
+            },
             InventoryItem: {
               Part: {
                 InventoryItemKind: {},
@@ -91,8 +93,11 @@ export class WorkEffortInventoryAssignmentFormComponent extends AllorsFormCompon
     const initializer = this.createRequest?.initializer;
     if (initializer) {
       pulls.push(
-        p.WorkEffort({
+        p.WorkTask({
           objectId: initializer.id,
+          include: {
+            Currency: {},
+          },
         })
       );
     }
