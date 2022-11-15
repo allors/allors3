@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
                         .Where(v => v.ExistPrice && v.FromDate <= startDate && (!v.ExistThroughDate || v.ThroughDate >= startDate))
                         .ToArray();
 
-                    if (@this.ExistAssignment && part != null && currentPriceComponents != null)
+                    if (@this.ExistAssignment && part != null && currentPriceComponents.Length > 0)
                     {
                         var currentPartPriceComponents = part.GetPriceComponents(currentPriceComponents);
 
