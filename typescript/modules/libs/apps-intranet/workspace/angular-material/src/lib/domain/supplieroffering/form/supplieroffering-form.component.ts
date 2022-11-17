@@ -122,7 +122,9 @@ export class SupplierOfferingFormComponent extends AllorsFormComponent<SupplierO
     if (this.createRequest) {
       this.part = pullResult.object<Part>(this.m.Part);
       this.object.Part = this.part;
-      this.object.Currency = this.settings.PreferredCurrency;
+      this.object.Currency =
+        this.internalOrganisation.PreferredCurrency ??
+        this.settings.PreferredCurrency;
     } else {
       this.part = this.object.Part;
     }
