@@ -93,6 +93,7 @@ namespace Allors.Database.Domain
                 var salesInvoice = new SalesInvoiceBuilder(@this.Strategy.Transaction)
                     .WithBilledFrom(@this.TakenBy)
                     .WithBillToCustomer(@this.Customer)
+                    .WithAssignedCurrency(@this.Currency)
                     .WithBillToContactPerson(@this.ContactPerson)
                     .WithInvoiceDate(@this.Strategy.Transaction.Now())
                     .WithSalesInvoiceType(new SalesInvoiceTypes(@this.Strategy.Transaction).SalesInvoice)
