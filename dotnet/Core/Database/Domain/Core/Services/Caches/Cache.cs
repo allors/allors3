@@ -33,10 +33,7 @@ namespace Allors.Database.Domain
         {
             get
             {
-                if (this.cache == null)
-                {
-                    this.cache = this.Transaction.GetCache<TKey>(typeof(TObject), this.RoleType);
-                }
+                this.cache ??= this.Transaction.GetCache<TKey>(typeof(TObject), this.RoleType);
 
                 if (!this.cache.TryGetValue(key, out var objectId))
                 {
@@ -58,19 +55,20 @@ namespace Allors.Database.Domain
             }
         }
 
-        public CacheMerger<TKey, TObject> Merger() => new CacheMerger<TKey, TObject>(this);
+        public CacheMerger Merger(Action<TObject> defaults = null) => new(this, defaults);
 
-        public class CacheMerger<TKey, TObject>
-            where TObject : class, IObject
+        public class CacheMerger
         {
             private readonly Cache<TKey, TObject> cache;
+            private readonly Action<TObject> defaults;
             private readonly ITransaction transaction;
             private readonly IClass @class;
             private readonly IRoleType roleType;
 
-            internal CacheMerger(Cache<TKey, TObject> cache)
+            internal CacheMerger(Cache<TKey, TObject> cache, Action<TObject> defaults)
             {
                 this.cache = cache;
+                this.defaults = defaults;
                 this.transaction = cache.Transaction;
                 this.@class = (IClass)this.transaction.Database.ObjectFactory.GetObjectType(typeof(TObject));
                 this.roleType = this.cache.RoleType;
@@ -80,8 +78,9 @@ namespace Allors.Database.Domain
                 (id, action) =>
                 {
                     var @object = this.cache[id] ?? (TObject)DefaultObjectBuilder.Build(this.transaction, this.@class);
-
                     @object.Strategy.SetUnitRole(this.roleType, id);
+
+                    this.defaults?.Invoke(@object);
                     action(@object);
 
                     return @object;

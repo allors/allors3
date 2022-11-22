@@ -6,7 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System;
-   
+
 
     public partial class TemplateTypes
     {
@@ -20,7 +20,7 @@ namespace Allors.Database.Domain
 
         protected override void CoreSetup(Setup setup)
         {
-            var merge = this.Cache.Merger().Action();
+            var merge = this.Cache.Merger(v => v.IsActive = true).Action();
 
             merge(OpenDocumentTypeId, v => v.Name = "Odt Template");
         }
