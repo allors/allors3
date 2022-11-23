@@ -55,17 +55,17 @@ namespace Allors.Database.Domain
             }
         }
 
-        public CacheMerger Merger(Action<TObject> defaults = null) => new(this, defaults);
+        public CacheMerger Merger(Action<TObject>? defaults = null) => new CacheMerger(this, defaults);
 
         public class CacheMerger
         {
             private readonly Cache<TKey, TObject> cache;
-            private readonly Action<TObject> defaults;
+            private readonly Action<TObject>? defaults;
             private readonly ITransaction transaction;
             private readonly IClass @class;
             private readonly IRoleType roleType;
 
-            internal CacheMerger(Cache<TKey, TObject> cache, Action<TObject> defaults)
+            internal CacheMerger(Cache<TKey, TObject> cache, Action<TObject>? defaults)
             {
                 this.cache = cache;
                 this.defaults = defaults;
