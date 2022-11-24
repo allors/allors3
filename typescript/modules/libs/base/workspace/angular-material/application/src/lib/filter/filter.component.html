@@ -4,7 +4,7 @@
   (click)="add($event)"
 >
   <mat-toolbar-row>
-    <mat-chip-list *ngIf="hasFields" class="mr-3">
+    <mat-chip-set *ngIf="hasFields" class="mr-3">
       <mat-chip
         *ngFor="let field of filter.fields"
         [removable]="true"
@@ -12,7 +12,7 @@
         >{{ field.definition.predicate.parameter }}: {{ field.display }}
         <mat-icon matChipRemove>cancel</mat-icon>
       </mat-chip>
-    </mat-chip-list>
+    </mat-chip-set>
 
     <div class="col pl-0" style="border-bottom: 1px dotted lightgray">
       <span class="mat-small" *ngIf="!hasFields">Add a Filter</span

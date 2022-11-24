@@ -2,7 +2,7 @@
   *ngIf="!disabled"
   class="d-flex flex-column align-items-stretch"
 >
-  <mat-chip-list #chipList>
+  <mat-chip-grid #chipList>
     <mat-chip
       *ngFor="let item of model"
       [removable]="!disabled"
@@ -27,7 +27,7 @@
       [required]="required"
       [readonly]="readonly"
     />
-  </mat-chip-list>
+  </mat-chip-grid>
 
   <button
     type="button"
@@ -57,7 +57,7 @@
 </mat-form-field>
 
 <mat-form-field *ngIf="disabled" class="d-flex flex-column align-items-stretch">
-  <mat-chip-list #chipListDisabled [disabled]="disabled">
+  <mat-chip-grid #chipListDisabled [disabled]="disabled">
     <mat-chip
       *ngFor="let item of model"
       [attr.data-allors-chip-display]="item[display]"
@@ -76,5 +76,5 @@
       [disabled]="disabled"
       readonly
     />
-  </mat-chip-list>
+  </mat-chip-grid>
 </mat-form-field>
