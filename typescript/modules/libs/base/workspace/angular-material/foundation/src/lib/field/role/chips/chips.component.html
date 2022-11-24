@@ -3,13 +3,13 @@
   class="d-flex flex-column align-items-stretch"
 >
   <mat-chip-grid #chipList>
-    <mat-chip
+    <mat-chip-row
       *ngFor="let item of model"
       [removable]="!disabled"
       (removed)="remove(item)"
       [attr.data-allors-chip-display]="item[display]"
       >{{ item[this.display]
-      }}<mat-icon matChipRemove *ngIf="!disabled">cancel</mat-icon></mat-chip
+      }}<mat-icon matChipRemove *ngIf="!disabled">cancel</mat-icon></mat-chip-row
     >
     <input
       #searchInput
@@ -58,13 +58,13 @@
 
 <mat-form-field *ngIf="disabled" class="d-flex flex-column align-items-stretch">
   <mat-chip-grid #chipListDisabled [disabled]="disabled">
-    <mat-chip
+    <mat-chip-row
       *ngFor="let item of model"
       [attr.data-allors-chip-display]="item[display]"
       disabled
     >
       {{ item[this.display] }}
-    </mat-chip>
+    </mat-chip-row>
     <input
       aFocus
       [aFocusTrigger]="roleType"

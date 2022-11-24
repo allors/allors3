@@ -8,6 +8,9 @@ import { RoleField } from '@allors/base/workspace/angular/foundation';
 })
 export class AllorsMaterialSliderComponent extends RoleField {
   @Input()
+  public invert: boolean;
+
+  @Input()
   public max: number;
 
   @Input()
@@ -15,6 +18,12 @@ export class AllorsMaterialSliderComponent extends RoleField {
 
   @Input()
   public step: number;
+
+  @Input()
+  public tickInterval: 'auto' | number;
+
+  @Input()
+  public vertical: boolean;
 
   @Input()
   public color: 'primary' | 'accent' | 'warn' = 'accent';

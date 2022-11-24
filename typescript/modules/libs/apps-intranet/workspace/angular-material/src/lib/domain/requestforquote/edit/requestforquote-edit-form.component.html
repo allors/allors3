@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="col-md-12">
-      <mat-card *ngIf="addOriginator">
+      <mat-card appearance="outlined" *ngIf="addOriginator">
         <mat-card-header>Add a new customer</mat-card-header>
         <mat-card-content>
           <party-party
@@ -74,7 +74,7 @@
       </div>
     </div>
     <div class="col-md-12">
-      <mat-card *ngIf="object.Originator && addContactMechanism">
+      <mat-card appearance="outlined" *ngIf="object.Originator && addContactMechanism">
         <mat-card-header>Add a new contact mechanism</mat-card-header>
         <mat-card-content>
           <party-contactmechanism
@@ -114,7 +114,7 @@
       </div>
     </div>
     <div class="col-md-12">
-      <mat-card *ngIf="object.Originator && addContactPerson">
+      <mat-card appearance="outlined" *ngIf="object.Originator && addContactPerson">
         <mat-card-header>Add a new contact person</mat-card-header>
         <mat-card-content>
           <person-inline
