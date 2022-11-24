@@ -19,9 +19,9 @@
   "private": true,
   "devDependencies": {
     "@angular-devkit/build-angular": "~15.0.0",
-    "@angular-eslint/eslint-plugin": "~14.0.4",
-    "@angular-eslint/eslint-plugin-template": "~14.0.4",
-    "@angular-eslint/template-parser": "~14.0.4",
+    "@angular-eslint/eslint-plugin": "~15.1.0",
+    "@angular-eslint/eslint-plugin-template": "~15.1.0",
+    "@angular-eslint/template-parser": "~15.1.0",
     "@angular/cli": "~15.0.0",
     "@angular/compiler-cli": "~15.0.0",
     "@angular/language-service": "~15.0.0",
@@ -66,7 +66,7 @@
     "date-fns": "^2.29.3",
     "easymde": "^2.18.0",
     "jsnlog": "^2.30.0",
-    "luxon": "^2.5.0",
+    "luxon": "^3.1.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

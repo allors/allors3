@@ -20,9 +20,6 @@ export class AllorsMaterialSliderComponent extends RoleField {
   public step: number;
 
   @Input()
-  public thumbLabel: boolean;
-
-  @Input()
   public tickInterval: 'auto' | number;
 
   @Input()

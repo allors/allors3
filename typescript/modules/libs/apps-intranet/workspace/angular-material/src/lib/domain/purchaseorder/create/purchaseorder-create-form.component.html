@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="col-md-12">
-      <mat-card *ngIf="addSupplier">
+      <mat-card appearance="outlined" *ngIf="addSupplier">
         <mat-card-header>Add a new supplier</mat-card-header>
         <mat-card-content>
           <organisation-inline
@@ -73,7 +73,7 @@
       class="col-md-12 pb-3"
       *ngIf="object.TakenViaSupplier && addTakenViaContactMechanism"
     >
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>Add a new contact mechanism</mat-card-header>
         <mat-card-content>
           <party-contactmechanism
@@ -114,7 +114,7 @@
       </div>
     </div>
     <div class="col-md-12" *ngIf="addTakenViaContactPerson">
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>Add a new person</mat-card-header>
         <mat-card-content>
           <person-inline
@@ -160,7 +160,7 @@
       </div>
     </div>
     <div class="col-md-12" *ngIf="addBillToContactMechanism">
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>Add a new ContactMechanism</mat-card-header>
         <mat-card-content>
           <party-contactmechanism
@@ -197,7 +197,7 @@
       </div>
     </div>
     <div class="col-md-12" *ngIf="addBillToContactPerson">
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>Add a new person</mat-card-header>
         <mat-card-content>
           <person-inline
@@ -240,7 +240,7 @@
       </div>
     </div>
     <div class="col-md-12 pb-3" *ngIf="addShipToAddress">
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>Add a new contact mechanism</mat-card-header>
         <mat-card-content>
           <party-contactmechanism-postaladdress
@@ -276,7 +276,7 @@
       </div>
     </div>
     <div class="col-md-12" *ngIf="addShipToContactPerson">
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>Add a new person</mat-card-header>
         <mat-card-content>
           <person-inline
@@ -319,7 +319,7 @@
       </div>
     </div>
     <div class="col-md-12 pb-3" *ngIf="addFacility">
-      <mat-card>
+      <mat-card appearance="outlined">
         <mat-card-header>Add new Facility</mat-card-header>
         <mat-card-content>
           <facility-inline

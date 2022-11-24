@@ -62,7 +62,7 @@
           </div>
         </div>
         <div class="col-md-12 pb-3" *ngIf="addShipFromAddress">
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new ship from address</mat-card-header>
             <mat-card-content>
               <party-contactmechanism-postaladdress
@@ -103,7 +103,7 @@
           </div>
         </div>
         <div class="col-md-12">
-          <mat-card *ngIf="addShipToCustomer">
+          <mat-card appearance="outlined" *ngIf="addShipToCustomer">
             <mat-card-header>Add a new customer</mat-card-header>
             <mat-card-content>
               <party-party
@@ -147,7 +147,7 @@
           class="col-md-12 pb-3"
           *ngIf="object.ShipToCustomer && addShipToAddress"
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new contact mechanism</mat-card-header>
             <mat-card-content>
               <party-contactmechanism-postaladdress
@@ -189,7 +189,7 @@
           class="col-md-12"
           *ngIf="object.ShipToCustomer && addShipToContactPerson"
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
               <person-inline
@@ -231,7 +231,7 @@
           </div>
         </div>
         <div class="col-md-12">
-          <mat-card *ngIf="addBillToCustomer">
+          <mat-card appearance="outlined" *ngIf="addBillToCustomer">
             <mat-card-header>Add a new customer</mat-card-header>
             <mat-card-content>
               <party-party
@@ -278,7 +278,7 @@
           class="col-md-12"
           *ngIf="object.BillToCustomer && addBillToContactMechanism"
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new ContactMechanism</mat-card-header>
             <mat-card-content>
               <party-contactmechanism
@@ -324,7 +324,7 @@
           class="col-md-12"
           *ngIf="object.BillToCustomer && addBillToContactPerson"
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
               <person-inline
@@ -366,7 +366,7 @@
           </div>
         </div>
         <div class="col-md-12">
-          <mat-card *ngIf="addShipToEndCustomer">
+          <mat-card appearance="outlined" *ngIf="addShipToEndCustomer">
             <mat-card-header>Add a new customer</mat-card-header>
             <mat-card-content>
               <party-party
@@ -415,7 +415,7 @@
           class="col-md-12 pb-3"
           *ngIf="object.ShipToEndCustomer && addShipToEndCustomerAddress"
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new contact mechanism</mat-card-header>
             <mat-card-content>
               <party-contactmechanism-postaladdress
@@ -469,7 +469,7 @@
           class="col-md-12"
           *ngIf="object.ShipToEndCustomer && addShipToEndCustomerContactPerson"
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
               <person-inline
@@ -511,7 +511,7 @@
           </div>
         </div>
         <div class="col-md-12">
-          <mat-card *ngIf="addBillToEndCustomer">
+          <mat-card appearance="outlined" *ngIf="addBillToEndCustomer">
             <mat-card-header>Add a new customer</mat-card-header>
             <mat-card-content>
               <party-party
@@ -569,7 +569,7 @@
             object.BillToEndCustomer && addBillToEndCustomerContactMechanism
           "
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new contact mechanism</mat-card-header>
             <mat-card-content>
               <party-contactmechanism
@@ -623,7 +623,7 @@
           class="col-md-12"
           *ngIf="object.BillToEndCustomer && addBillToEndCustomerContactPerson"
         >
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>Add a new person</mat-card-header>
             <mat-card-content>
               <person-inline
