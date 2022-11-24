@@ -171,43 +171,46 @@ namespace Allors.Workspace.Adapters
             // Same record
             if (this.PreviousRecord == null || this.Record == null || this.Record.Version == this.PreviousRecord.Version)
             {
-                foreach (var kvp in this.ChangedRoleByRelationType)
+                if (this.ChangedRoleByRelationType != null)
                 {
-                    var relationType = kvp.Key;
-                    var current = kvp.Value;
-
-                    if (this.PreviousChangedRoleByRelationType != null && this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previousChangedRole))
+                    foreach (var kvp in this.ChangedRoleByRelationType)
                     {
-                        if (relationType.RoleType.ObjectType.IsUnit)
+                        var relationType = kvp.Key;
+                        var current = kvp.Value;
+
+                        if (this.PreviousChangedRoleByRelationType != null && this.PreviousChangedRoleByRelationType.TryGetValue(relationType, out var previousChangedRole))
                         {
-                            changeSet.DiffUnit(this.Strategy, relationType, current, previousChangedRole);
-                        }
-                        else if (relationType.RoleType.IsOne)
-                        {
-                            changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (Strategy)previousChangedRole);
+                            if (relationType.RoleType.ObjectType.IsUnit)
+                            {
+                                changeSet.DiffUnit(this.Strategy, relationType, current, previousChangedRole);
+                            }
+                            else if (relationType.RoleType.IsOne)
+                            {
+                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (Strategy)previousChangedRole);
+                            }
+                            else
+                            {
+                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previousChangedRole);
+                            }
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previousChangedRole);
-                        }
-                    }
-                    else
-                    {
-                        var previous = this.Record?.GetRole(relationType.RoleType);
+                            var previous = this.Record?.GetRole(relationType.RoleType);
 
-                        if (relationType.RoleType.ObjectType.IsUnit)
-                        {
-                            changeSet.DiffUnit(this.Strategy, relationType, current, previous);
-                        }
-                        else if (relationType.RoleType.IsOne)
-                        {
-                            changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
-                        }
-                        else
-                        {
-                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
-                        }
+                            if (relationType.RoleType.ObjectType.IsUnit)
+                            {
+                                changeSet.DiffUnit(this.Strategy, relationType, current, previous);
+                            }
+                            else if (relationType.RoleType.IsOne)
+                            {
+                                changeSet.DiffComposite(this.Strategy, relationType, (Strategy)current, (long?)previous);
+                            }
+                            else
+                            {
+                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
+                            }
 
+                        }
                     }
                 }
             }
