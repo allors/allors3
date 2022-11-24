@@ -1,10 +1,25 @@
 <div>
   <div class="row">
     <mat-form-field class="col">
-      <input aFocus [aFocusTrigger]="roleType" matInput [ngModel]="fieldValue" [name]="name" [placeholder]="label" readonly (click)="fileInput.click()" />
+      <input
+        aFocus
+        [aFocusTrigger]="roleType"
+        matInput
+        [ngModel]="fieldValue"
+        [name]="name"
+        [placeholder]="label"
+        readonly
+        (click)="fileInput.click()"
+      />
     </mat-form-field>
 
-    <button mat-icon-button type="button" (click)="fileInput.click()" title="Add" [disabled]="disabled">
+    <button
+      mat-icon-button
+      type="button"
+      (click)="fileInput.click()"
+      title="Add"
+      [disabled]="disabled"
+    >
       <mat-icon>add_box</mat-icon>
     </button>
   </div>
@@ -15,5 +30,10 @@
     </div>
   </div>
 
-  <input #fileInput type="file" (change)="onFileInput($event)" style="display: none" />
+  <input
+    #fileInput
+    type="file"
+    (change)="onFileInput($event)"
+    style="display: none"
+  />
 </div>

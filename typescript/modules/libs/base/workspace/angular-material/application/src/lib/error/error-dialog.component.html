@@ -25,7 +25,9 @@
   <div *ngIf="isDerivationError">
     <h2>Following errors were encountered during derivation.</h2>
     <ul>
-      <li *ngFor="let error of response.derivationErrors">{{ error.message }}</li>
+      <li *ngFor="let error of response.derivationErrors">
+        {{ error.message }}
+      </li>
     </ul>
   </div>
 

@@ -112,7 +112,7 @@
             placeholder="UserGroups"
             multiple="true"
             [disabled]="!canWriteMembers"
-            >
+          >
             <mat-option
               (onSelectionChange)="onUserGroupChange($event)"
               *ngFor="let userGroup of userGroups"

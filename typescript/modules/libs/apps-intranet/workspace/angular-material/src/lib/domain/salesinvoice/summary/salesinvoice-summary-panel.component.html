@@ -10,7 +10,7 @@
       <div>{{ invoice.DerivedShipToAddress?.DisplayName }}</div>
       <div>
         last modified:
-        {{ invoice.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
+        {{ invoice.LastModifiedDate | date : 'd/M/yyyy, HH:mm' }} by
         {{ invoice.LastModifiedBy?.DisplayName }}
       </div>
     </mat-card-subtitle>

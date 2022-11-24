@@ -18,6 +18,6 @@ export class WebAddressDisplayNameRule implements IRule<WebAddress> {
   }
 
   derive(webAddress: WebAddress) {
-        return webAddress.ElectronicAddressString ?? "N/A";
+    return webAddress.ElectronicAddressString ?? 'N/A';
   }
 }

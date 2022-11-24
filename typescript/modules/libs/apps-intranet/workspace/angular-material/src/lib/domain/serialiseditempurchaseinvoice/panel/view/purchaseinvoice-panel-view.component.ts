@@ -98,8 +98,8 @@ export class PurchaseInvoicePanelViewComponent
                 include: {
                   PurchaseInvoiceItems: {
                     InvoiceItemType: {},
-                  }
-                }
+                  },
+                },
               },
             },
           },

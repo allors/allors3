@@ -7,7 +7,10 @@ import { AuthenticationTokenResponse } from './authentication-token-response';
 export abstract class AuthenticationService {
   abstract readonly token: string | null;
 
-  abstract login$(userName: string, password: string): Observable<AuthenticationTokenResponse>;
+  abstract login$(
+    userName: string,
+    password: string
+  ): Observable<AuthenticationTokenResponse>;
 
   abstract logout(): void;
 }

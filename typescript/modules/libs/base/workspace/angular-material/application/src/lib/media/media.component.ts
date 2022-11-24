@@ -23,7 +23,6 @@ import { isImage } from './media';
   styleUrls: ['./media.component.scss'],
 })
 export class AllorsMaterialMediaComponent extends AllorsComponent {
-
   @Input() media: Media;
 
   @Output() public delete: EventEmitter<IObject> = new EventEmitter();

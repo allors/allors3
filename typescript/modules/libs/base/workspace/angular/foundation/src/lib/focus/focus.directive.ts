@@ -1,4 +1,11 @@
-import { Directive, ElementRef, Inject, PLATFORM_ID, Input, OnDestroy } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  Inject,
+  PLATFORM_ID,
+  Input,
+  OnDestroy,
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { timer, Subscription } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -13,7 +20,11 @@ export class AllorsFocusDirective implements OnDestroy {
 
   private subscription: Subscription;
 
-  constructor(private readonly element: ElementRef<HTMLElement>, private readonly focusService: AllorsFocusService, @Inject(PLATFORM_ID) platformId: string) {
+  constructor(
+    private readonly element: ElementRef<HTMLElement>,
+    private readonly focusService: AllorsFocusService,
+    @Inject(PLATFORM_ID) platformId: string
+  ) {
     const inBrowser = isPlatformBrowser(platformId);
 
     this.subscription = this.focusService.focus$

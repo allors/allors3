@@ -148,8 +148,8 @@ export class SalesInvoiceSummaryPanelComponent extends AllorsViewSummaryPanelCom
         select: {
           RepeatingSalesInvoiceWhereSalesInvoice: {
             include: {
-              Source: {}
-            }
+              Source: {},
+            },
           },
         },
       })

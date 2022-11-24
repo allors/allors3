@@ -3,7 +3,9 @@ import { IRule } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import { TelecommunicationsNumber } from '@allors/default/workspace/domain';
 
-export class TelecommunicationsNumberDisplayNameRule implements IRule<TelecommunicationsNumber> {
+export class TelecommunicationsNumberDisplayNameRule
+  implements IRule<TelecommunicationsNumber>
+{
   objectType: Composite;
   roleType: RoleType;
   dependencies: Dependency[];
@@ -21,8 +23,9 @@ export class TelecommunicationsNumberDisplayNameRule implements IRule<Telecommun
     const parts: string[] = [
       telecommunicationsNumber.CountryCode,
       telecommunicationsNumber.AreaCode,
-      telecommunicationsNumber.ContactNumber];
+      telecommunicationsNumber.ContactNumber,
+    ];
 
-    return parts.filter(s => !!s).toString();
+    return parts.filter((s) => !!s).toString();
   }
 }

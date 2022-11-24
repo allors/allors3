@@ -23,7 +23,8 @@ export class PartyContactMechanismPostalAddressInlineComponent
   implements OnInit, OnDestroy
 {
   @Output()
-  public saved: EventEmitter<PartyContactMechanism> = new EventEmitter<PartyContactMechanism>();
+  public saved: EventEmitter<PartyContactMechanism> =
+    new EventEmitter<PartyContactMechanism>();
 
   @Output()
   public cancelled: EventEmitter<any> = new EventEmitter();

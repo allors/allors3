@@ -9,7 +9,11 @@ import {
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { M } from '@allors/default/workspace/meta';
-import { Organisation, Person, Singleton } from '@allors/default/workspace/domain';
+import {
+  Organisation,
+  Person,
+  Singleton,
+} from '@allors/default/workspace/domain';
 import { InternalOrganisationId } from '@allors/apps-intranet/workspace/angular-material';
 
 @Component({

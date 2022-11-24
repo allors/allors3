@@ -6,4 +6,6 @@ export enum DatabaseMode {
   // ExclusiveDatabase,
 }
 
-export const databaseModes = Object.values(DatabaseMode).filter((v) => typeof v === 'number') as DatabaseMode[];
+export const databaseModes = Object.values(DatabaseMode).filter(
+  (v) => typeof v === 'number'
+) as DatabaseMode[];

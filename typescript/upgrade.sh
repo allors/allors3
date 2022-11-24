@@ -1,8 +1,8 @@
-cd ..
+rm -rf modules
 
-npx create-nx-workspace@latest allors --preset=empty --cli=nx --nx-cloud=false
+npx create-nx-workspace@latest modules --preset=empty --cli=nx --nx-cloud=false
 
-cd allors
+cd modules
 
 npm install -D jest-chain
 npm install -D jest-trx-results-processor
@@ -21,7 +21,7 @@ npm install luxon@2.5.0
 
 // Apps Extranet
 npx nx g @nrwl/angular:application apps-extranet/workspace/angular-material-app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library apps-extranet/workspace/angular-material
+npx nx g @nrwl/angular:library apps-extranet/workspace/angular-material
 npx nx g @nrwl/workspace:library apps-extranet/workspace/derivations
 npx nx g @nrwl/workspace:library apps-extranet/workspace/domain
 npx nx g @nrwl/workspace:library apps-extranet/workspace/meta
@@ -29,7 +29,7 @@ npx nx g @nrwl/workspace:library apps-extranet/workspace/meta-json
 
 // Apps Intranet
 npx nx g @nrwl/angular:application apps-intranet/workspace/angular-material-app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library apps-intranet/workspace/angular-material
+npx nx g @nrwl/angular:library apps-intranet/workspace/angular-material
 npx nx g @nrwl/workspace:library apps-intranet/workspace/derivations
 npx nx g @nrwl/workspace:library apps-intranet/workspace/domain
 npx nx g @nrwl/workspace:library apps-intranet/workspace/meta
@@ -38,10 +38,10 @@ npx nx g @nrwl/workspace:library apps-intranet/workspace/meta-json
 // Base
 npx nx g @nrwl/angular:application base/workspace/angular/foundation-app --routing=true --e2eTestRunner=none
 npx nx g @nrwl/angular:application base/workspace/angular-material/application-app --routing=true --style=scss --e2eTestRunner=none
-npx nx g @nrwl/workspace:library base/workspace/angular/foundation
-npx nx g @nrwl/workspace:library base/workspace/angular/application
-npx nx g @nrwl/workspace:library base/workspace/angular-material/foundation
-npx nx g @nrwl/workspace:library base/workspace/angular-material/application
+npx nx g @nrwl/angular:library base/workspace/angular/foundation
+npx nx g @nrwl/angular:library base/workspace/angular/application
+npx nx g @nrwl/angular:library base/workspace/angular-material/foundation
+npx nx g @nrwl/angular:library base/workspace/angular-material/application
 npx nx g @nrwl/workspace:library base/workspace/derivations
 npx nx g @nrwl/workspace:library base/workspace/derivations-custom
 npx nx g @nrwl/workspace:library base/workspace/domain

@@ -75,7 +75,7 @@ import {
   AllorsBarcodeDirective,
   ActionService,
   TemplateHostDirective,
-  ThrottledDirective
+  ThrottledDirective,
 } from '@allors/base/workspace/angular/foundation';
 
 import {
