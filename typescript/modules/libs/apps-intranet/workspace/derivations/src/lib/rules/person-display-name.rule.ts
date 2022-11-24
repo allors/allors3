@@ -19,7 +19,7 @@ export class PersonDisplayNameRule implements IRule<Person> {
 
   derive(person: Person) {
     let displayName = `${person.FirstName}`;
-   
+
     if (person.MiddleName) {
       if (displayName) {
         displayName += ` ${person.MiddleName}`;
@@ -27,7 +27,7 @@ export class PersonDisplayNameRule implements IRule<Person> {
         displayName += `${person.MiddleName}`;
       }
     }
-   
+
     if (person.LastName) {
       if (displayName) {
         displayName += ` ${person.LastName}`;

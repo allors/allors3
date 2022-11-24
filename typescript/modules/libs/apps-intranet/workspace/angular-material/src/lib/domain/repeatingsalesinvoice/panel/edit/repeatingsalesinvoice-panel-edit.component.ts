@@ -32,7 +32,10 @@ import {
   IconService,
   ViewActionService,
 } from '@allors/base/workspace/angular-material/application';
-import { RepeatingSalesInvoice, SalesInvoice } from '@allors/default/workspace/domain';
+import {
+  RepeatingSalesInvoice,
+  SalesInvoice,
+} from '@allors/default/workspace/domain';
 
 interface Row extends TableRow {
   object: IObject;
@@ -72,7 +75,10 @@ export class RepeatingSalesInvoicePanelEditComponent
   }
 
   get initializer(): Initializer {
-    return { propertyType: this.m.RepeatingSalesInvoice.Source, id: this.scoped.id };
+    return {
+      propertyType: this.m.RepeatingSalesInvoice.Source,
+      id: this.scoped.id,
+    };
   }
 
   title = 'Repeating Sales Invoices';
@@ -152,7 +158,7 @@ export class RepeatingSalesInvoicePanelEditComponent
               },
             },
           },
-        }),
+        })
       );
     }
   }

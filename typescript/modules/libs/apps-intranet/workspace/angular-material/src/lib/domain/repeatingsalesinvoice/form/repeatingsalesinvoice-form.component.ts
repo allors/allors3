@@ -76,11 +76,9 @@ export class RepeatingSalesInvoiceFormComponent extends AllorsFormComponent<Repe
 
     this.frequencies = pullResult.collection<TimeFrequency>(
       this.m.TimeFrequency
-      );
-    
-    this.invoice = pullResult.object<SalesInvoice>(
-        this.m.SalesInvoice
-      );
+    );
+
+    this.invoice = pullResult.object<SalesInvoice>(this.m.SalesInvoice);
     this.daysOfWeek = pullResult.collection<DayOfWeek>(this.m.DayOfWeek);
 
     if (this.createRequest) {

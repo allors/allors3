@@ -9,7 +9,7 @@ $grid-breakpoints: (
   //  tablet landscape (small, large)
   lg: 1280px,
   // laptops and desktops
-  xl: 1600px // large desktops,,
+  xl: 1600px // large desktops,,,
 );
 
 $container-max-widths: (
@@ -24,7 +24,7 @@ $link-hover-color: currentColor;
 $link-hover-decoration: none;
 $label-margin-bottom: 0;
 
-@import "node_modules/bootstrap/scss/bootstrap-grid";
+@import 'node_modules/bootstrap/scss/bootstrap-grid';
 
 * {
   &:active,
@@ -33,6 +33,8 @@ $label-margin-bottom: 0;
   }
 }
 
-a:not(.mat-button):not(.mat-raised-button):not(.mat-fab):not(.mat-mini-fab):not([mat-list-item]) {
+a:not(.mat-button):not(.mat-raised-button):not(.mat-fab):not(.mat-mini-fab):not(
+    [mat-list-item]
+  ) {
   color: #3f51b5; // 2
 }

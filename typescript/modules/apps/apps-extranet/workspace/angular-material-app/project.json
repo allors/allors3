@@ -19,9 +19,7 @@
           "apps/apps-extranet/workspace/angular-material-app/src/favicon.ico",
           "apps/apps-extranet/workspace/angular-material-app/src/assets"
         ],
-        "styles": [
-          "apps/apps-extranet/workspace/angular-material-app/src/styles.scss"
-        ],
+        "styles": ["apps/apps-extranet/workspace/angular-material-app/src/styles.scss"],
         "scripts": [],
         "allowedCommonJsDependencies": ["easymde"]
       },

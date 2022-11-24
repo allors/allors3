@@ -19,11 +19,33 @@
   </mat-form-field>
 
   <mat-form-field class="col-2">
-    <input matInput type="number" min="0" max="23" [(ngModel)]="hour" [name]="name + '_hour'" placeholder="hour" [required]="required" [disabled]="disabled || !this.shadow" [readonly]="readonly" />
+    <input
+      matInput
+      type="number"
+      min="0"
+      max="23"
+      [(ngModel)]="hour"
+      [name]="name + '_hour'"
+      placeholder="hour"
+      [required]="required"
+      [disabled]="disabled || !this.shadow"
+      [readonly]="readonly"
+    />
   </mat-form-field>
 
   <mat-form-field class="col-2">
-    <input matInput type="number" min="0" max="59" [(ngModel)]="minute" [name]="name + '_minute'" placeholder="minute" [required]="required" [disabled]="disabled || !this.shadow" [readonly]="readonly" />
+    <input
+      matInput
+      type="number"
+      min="0"
+      max="59"
+      [(ngModel)]="minute"
+      [name]="name + '_minute'"
+      placeholder="minute"
+      [required]="required"
+      [disabled]="disabled || !this.shadow"
+      [readonly]="readonly"
+    />
   </mat-form-field>
 </div>
 

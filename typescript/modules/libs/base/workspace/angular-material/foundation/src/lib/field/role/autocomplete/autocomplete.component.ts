@@ -55,8 +55,7 @@ export class AllorsMaterialAutocompleteComponent
 
   private focused = false;
 
-
-  get displayProperty(): string{
+  get displayProperty(): string {
     return this.model ? this.model[this.display] : '';
   }
 

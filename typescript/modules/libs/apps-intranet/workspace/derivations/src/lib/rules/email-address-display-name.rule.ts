@@ -18,6 +18,6 @@ export class EmailAddressDisplayNameRule implements IRule<EmailAddress> {
   }
 
   derive(emailAddress: EmailAddress) {
-        return emailAddress.ElectronicAddressString ?? "N/A";
+    return emailAddress.ElectronicAddressString ?? 'N/A';
   }
 }

@@ -1,8 +1,8 @@
-rm -rf modules
+rmdir modules
 
 npx create-nx-workspace@latest modules --preset=empty --cli=nx --nx-cloud=false
 
-cd allors
+cd modules
 
 npm install -D jest-chain
 npm install -D jest-trx-results-processor

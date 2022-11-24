@@ -18,7 +18,6 @@ export class OrganisationDisplayNameRule implements IRule<Organisation> {
   }
 
   derive(organisation: Organisation) {
-
-    return organisation.Name ?? "N/A";
+    return organisation.Name ?? 'N/A';
   }
 }

@@ -1,8 +1,4 @@
-import {
-  AfterViewInit,
-  Directive,
-  OnDestroy,
-} from '@angular/core';
+import { AfterViewInit, Directive, OnDestroy } from '@angular/core';
 import { Panel, PanelKind, PanelMode } from '../panel/panel';
 import { ScopedService } from './scoped.service';
 import { Subscription, tap } from 'rxjs';

@@ -15,7 +15,8 @@
 
     <mat-card-subtitle>
       <div>
-        last modified: {{ order.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
+        last modified:
+        {{ order.LastModifiedDate | date : 'd/M/yyyy, HH:mm' }} by
         {{ order.LastModifiedBy?.DisplayName }}
       </div>
     </mat-card-subtitle>

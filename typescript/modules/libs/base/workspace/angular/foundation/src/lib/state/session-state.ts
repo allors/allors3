@@ -7,7 +7,8 @@ export abstract class SessionState {
 
   constructor(private key: string) {
     const initialStringValue = sessionStorage.getItem(this.key);
-    const initialValue = initialStringValue != null ? parseInt(initialStringValue) : null;
+    const initialValue =
+      initialStringValue != null ? parseInt(initialStringValue) : null;
     this.subject = new BehaviorSubject<number | null>(initialValue);
     this.observable$ = this.subject.asObservable();
   }

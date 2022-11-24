@@ -20,13 +20,15 @@ export class PostalAddressDisplayNameRule implements IRule<PostalAddress> {
   }
 
   derive(postalAddress: PostalAddress) {
-    const parts: string[] = [postalAddress.Address1,
+    const parts: string[] = [
+      postalAddress.Address1,
       postalAddress.Address2,
       postalAddress.Address3,
       postalAddress.PostalCode,
       postalAddress.Locality,
-      postalAddress.Country?.Name];
+      postalAddress.Country?.Name,
+    ];
 
-    return parts.filter(s => !!s).toString();
+    return parts.filter((s) => !!s).toString();
   }
 }

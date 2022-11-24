@@ -19,10 +19,7 @@
           "apps/base/workspace/angular-material/application-app/src/favicon.ico",
           "apps/base/workspace/angular-material/application-app/src/assets"
         ],
-        "styles": [
-          "apps/base/workspace/angular-material/application-app/src/styles.scss",
-          "./node_modules/easymde/dist/easymde.min.css"
-        ],
+        "styles": ["apps/base/workspace/angular-material/application-app/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
         "scripts": [],
         "allowedCommonJsDependencies": ["easymde", "codemirror", "codemirror-spell-checker"]
       },
@@ -90,9 +87,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/base/workspace/angular-material/application-app"
-      ],
+      "outputs": ["coverage/apps/base/workspace/angular-material/application-app"],
       "options": {
         "jestConfig": "apps/base/workspace/angular-material/application-app/jest.config.ts",
         "passWithNoTests": true

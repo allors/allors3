@@ -13,7 +13,8 @@
 
     <mat-card-subtitle>
       <div>
-        last modified: {{ order.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
+        last modified:
+        {{ order.LastModifiedDate | date : 'd/M/yyyy, HH:mm' }} by
         {{ order.LastModifiedBy?.DisplayName }}
       </div>
     </mat-card-subtitle>
@@ -103,7 +104,8 @@
       Ready for processing
     </button>
     <button
-      throttled *ngIf="order.canExecuteReopen"
+      throttled
+      *ngIf="order.canExecuteReopen"
       mat-button
       (throttleClick)="reopen()"
     >
@@ -150,7 +152,8 @@
       Receive all items
     </button>
     <button
-      throttled *ngIf="order.canExecuteReturn"
+      throttled
+      *ngIf="order.canExecuteReturn"
       mat-button
       (throttleClick)="quickReturn()"
     >

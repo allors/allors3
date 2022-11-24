@@ -53,7 +53,7 @@ export class PersonCreateDialogComponent implements OnInit, OnDestroy {
 
     this.subscription = combineLatest([this.route.url, this.refresh$])
       .pipe(
-        switchMap(([url,refresh]) => {
+        switchMap(([url, refresh]) => {
           const pulls = [
             pull.Locale({
               select: {
