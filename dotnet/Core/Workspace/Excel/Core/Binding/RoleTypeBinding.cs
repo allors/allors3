@@ -93,6 +93,8 @@ namespace Allors.Excel
                     cell.Value = this.Transform(this.Object.Strategy.GetRole(this.DisplayRoleType ?? this.RoleType));
                 }
             }
+
+            cell.Style = this.Object.Strategy.CanWrite(this.RoleType) ? Application.Excel.Constants.WriteStyle : Application.Excel.Constants.ReadOnlyStyle;
         }
 
         public void ToDomain(ICell cell)
