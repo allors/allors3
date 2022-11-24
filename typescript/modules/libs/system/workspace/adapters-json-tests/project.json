@@ -8,7 +8,9 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/system/workspace/adapters-json-tests/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/system/workspace/adapters-json-tests/**/*.ts"
+        ]
       }
     },
     "test": {

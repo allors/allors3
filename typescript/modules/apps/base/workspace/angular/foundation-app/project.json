@@ -15,8 +15,13 @@
         "polyfills": "apps/base/workspace/angular/foundation-app/src/polyfills.ts",
         "tsConfig": "apps/base/workspace/angular/foundation-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/base/workspace/angular/foundation-app/src/favicon.ico", "apps/base/workspace/angular/foundation-app/src/assets"],
-        "styles": ["apps/base/workspace/angular/foundation-app/src/styles.scss"],
+        "assets": [
+          "apps/base/workspace/angular/foundation-app/src/favicon.ico",
+          "apps/base/workspace/angular/foundation-app/src/assets"
+        ],
+        "styles": [
+          "apps/base/workspace/angular/foundation-app/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -75,7 +80,10 @@
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/base/workspace/angular/foundation-app/**/*.ts", "apps/base/workspace/angular/foundation-app/**/*.html"]
+        "lintFilePatterns": [
+          "apps/base/workspace/angular/foundation-app/**/*.ts",
+          "apps/base/workspace/angular/foundation-app/**/*.html"
+        ]
       }
     },
     "test": {

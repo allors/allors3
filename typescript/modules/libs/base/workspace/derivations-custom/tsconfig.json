@@ -16,10 +16,18 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@allors/default/workspace/domain": ["libs/base/workspace/domain/src/index.ts"],
-      "@allors/system/workspace/domain": ["libs/system/workspace/domain/src/index.ts"],
-      "@allors/default/workspace/meta": ["libs/base/workspace/meta/src/index.ts"],
-      "@allors/system/workspace/meta": ["libs/system/workspace/meta/src/index.ts"]
+      "@allors/default/workspace/domain": [
+        "libs/base/workspace/domain/src/index.ts"
+      ],
+      "@allors/system/workspace/domain": [
+        "libs/system/workspace/domain/src/index.ts"
+      ],
+      "@allors/default/workspace/meta": [
+        "libs/base/workspace/meta/src/index.ts"
+      ],
+      "@allors/system/workspace/meta": [
+        "libs/system/workspace/meta/src/index.ts"
+      ]
     }
   }
 }

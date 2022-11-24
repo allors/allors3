@@ -8,7 +8,9 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/base/workspace/angular-material/foundation/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/base/workspace/angular-material/foundation/**/*.ts"
+        ]
       }
     },
     "test": {

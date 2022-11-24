@@ -19,9 +19,16 @@
           "apps/apps-intranet/workspace/angular-material-app/src/favicon.ico",
           "apps/apps-intranet/workspace/angular-material-app/src/assets"
         ],
-        "styles": ["apps/apps-intranet/workspace/angular-material-app/src/styles.scss", "./node_modules/easymde/dist/easymde.min.css"],
+        "styles": [
+          "apps/apps-intranet/workspace/angular-material-app/src/styles.scss",
+          "./node_modules/easymde/dist/easymde.min.css"
+        ],
         "scripts": [],
-        "allowedCommonJsDependencies": ["easymde", "codemirror", "codemirror-spell-checker"]
+        "allowedCommonJsDependencies": [
+          "easymde",
+          "codemirror",
+          "codemirror-spell-checker"
+        ]
       },
       "configurations": {
         "production": {
