@@ -12,7 +12,7 @@
         "outputPath": "dist/apps/base/workspace/angular/foundation-app",
         "index": "apps/base/workspace/angular/foundation-app/src/index.html",
         "main": "apps/base/workspace/angular/foundation-app/src/main.ts",
-        "polyfills": "apps/base/workspace/angular/foundation-app/src/polyfills.ts",
+        "polyfills": ["zone.js"],
         "tsConfig": "apps/base/workspace/angular/foundation-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -61,12 +61,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "base-workspace-angular-foundation-app:build:production",
-          "proxyConfig": "apps/base/workspace/angular/foundation-app/proxy.conf.json"
+          "browserTarget": "base-workspace-angular-foundation-app:build:production"
         },
         "development": {
-          "browserTarget": "base-workspace-angular-foundation-app:build:development",
-          "proxyConfig": "apps/base/workspace/angular/foundation-app/proxy.conf.json"
+          "browserTarget": "base-workspace-angular-foundation-app:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -88,7 +86,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/base/workspace/angular/foundation-app"],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/base/workspace/angular/foundation-app/jest.config.ts",
         "passWithNoTests": true
