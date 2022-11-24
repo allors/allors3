@@ -11,8 +11,12 @@
     }
   ],
   "compilerOptions": {
+    "target": "es2022",
+    "useDefineForClassFields": false,
     "forceConsistentCasingInFileNames": true,
-    // "strict": true,
+    //"strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
@@ -60,6 +64,7 @@
       ]
     },
     "angularCompilerOptions": {
+      "enableI18nLegacyMessageIdFormat": false,
       "strictInjectionParameters": true,
       "strictInputAccessModifiers": true,
       "strictTemplates": true
