@@ -1,6 +1,6 @@
-cd ..
+rm -rf modules
 
-npx create-nx-workspace@latest allors --preset=empty --cli=nx --nx-cloud=false
+npx create-nx-workspace@latest modules --preset=empty --cli=nx --nx-cloud=false
 
 cd allors
 
