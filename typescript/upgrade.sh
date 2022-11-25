@@ -1,8 +1,8 @@
 rm -rf modules
 
-npx create-nx-workspace@latest allors --preset=empty --cli=nx --nx-cloud=false
+npx create-nx-workspace@latest a --preset=empty --cli=nx --nx-cloud=false
 
-mv allors modules
+mv a modules
 
 cd modules
 
@@ -13,7 +13,6 @@ npm install -D @nrwl/angular
 npm install @angular/cdk
 npm install @angular/material
 npm install @angular/material-luxon-adapter
-npm install bootstrap@4.6.0
 npm install common-tags
 npm install cross-fetch
 npm install date-fns
