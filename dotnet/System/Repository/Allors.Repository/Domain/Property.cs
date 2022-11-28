@@ -8,6 +8,7 @@ namespace Allors.Repository.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using Inflector;
     using Text;
 
@@ -68,7 +69,14 @@ namespace Allors.Repository.Domain
                 dynamic attribute = this.AttributeByName.Get("Multiplicity");
                 if (attribute == null)
                 {
-                    return Multiplicity.ManyToOne;
+                    if (this.IsArray)
+                    {
+                        return Multiplicity.ManyToMany;
+                    }
+                    else
+                    {
+                        return Multiplicity.ManyToOne;
+                    }
                 }
 
                 return (Multiplicity)(int)attribute.Value;
@@ -157,6 +165,8 @@ namespace Allors.Repository.Domain
                 return this.DefiningType.SingularName + "Where" + this.RoleSingularName;
             }
         }
+
+        public bool IsArray { get; set; }
 
         public override string ToString() => $"{this.DefiningType.SingularName}.{this.RoleSingularName}";
     }
