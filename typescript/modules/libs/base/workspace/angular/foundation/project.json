@@ -1,25 +1,22 @@
 {
   "name": "base-workspace-angular-foundation",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "library",
   "sourceRoot": "libs/base/workspace/angular/foundation/src",
-  "prefix": "a",
+  "projectType": "library",
   "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/base/workspace/angular/foundation/**/*.ts"]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["coverage/libs/base/workspace/angular/foundation"],
       "options": {
         "jestConfig": "libs/base/workspace/angular/foundation/jest.config.ts",
         "passWithNoTests": true
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/base/workspace/angular/foundation/**/*.ts",
-          "libs/base/workspace/angular/foundation/**/*.html"
-        ]
       }
     }
   },

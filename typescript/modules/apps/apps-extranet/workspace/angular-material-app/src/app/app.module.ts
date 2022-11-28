@@ -240,7 +240,7 @@ import { AppActionService } from './services/action.service';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
     MatLuxonDateModule,
     MatAutocompleteModule,
     MatButtonModule,

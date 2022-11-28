@@ -1,25 +1,24 @@
 {
   "name": "apps-intranet-workspace-angular-material",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "library",
   "sourceRoot": "libs/apps-intranet/workspace/angular-material/src",
-  "prefix": "a",
+  "projectType": "library",
   "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/apps-intranet/workspace/angular-material/**/*.ts"
+        ]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["coverage/libs/apps-intranet/workspace/angular-material"],
       "options": {
         "jestConfig": "libs/apps-intranet/workspace/angular-material/jest.config.ts",
         "passWithNoTests": true
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/apps-intranet/workspace/angular-material/**/*.ts",
-          "libs/apps-intranet/workspace/angular-material/**/*.html"
-        ]
       }
     }
   },

@@ -1,25 +1,22 @@
 {
   "name": "base-workspace-angular-application",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "library",
   "sourceRoot": "libs/base/workspace/angular/application/src",
-  "prefix": "a",
+  "projectType": "library",
   "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/base/workspace/angular/application/**/*.ts"]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["coverage/libs/base/workspace/angular/application"],
       "options": {
         "jestConfig": "libs/base/workspace/angular/application/jest.config.ts",
         "passWithNoTests": true
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/base/workspace/angular/application/**/*.ts",
-          "libs/base/workspace/angular/application/**/*.html"
-        ]
       }
     }
   },

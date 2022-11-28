@@ -11,12 +11,8 @@
     }
   ],
   "compilerOptions": {
-    "target": "es2022",
-    "useDefineForClassFields": false,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    // "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
@@ -56,12 +52,11 @@
       "@allors/default/workspace/meta-json": [
         "libs/base/workspace/meta/json/src/index.ts"
       ]
+    },
+    "angularCompilerOptions": {
+      "strictInjectionParameters": true,
+      "strictInputAccessModifiers": true,
+      "strictTemplates": true
     }
-  },
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
   }
 }

@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="col-md-12">
-        <mat-card appearance="outlined" *ngIf="addSupplier">
+        <mat-card *ngIf="addSupplier">
           <mat-card-header>Add a new supplier</mat-card-header>
           <mat-card-content>
             <organisation-inline
@@ -68,7 +68,7 @@
         </div>
       </div>
       <div class="col-md-12" *ngIf="addShipFromContactPerson">
-        <mat-card appearance="outlined">
+        <mat-card>
           <mat-card-header>Add a new person</mat-card-header>
           <mat-card-content>
             <person-inline
@@ -109,7 +109,7 @@
         </div>
       </div>
       <div class="col-md-12 pb-3" *ngIf="addShipToAddress">
-        <mat-card appearance="outlined">
+        <mat-card>
           <mat-card-header>Add a new contact mechanism</mat-card-header>
           <mat-card-content>
             <party-contactmechanism-postaladdress
@@ -145,7 +145,7 @@
         </div>
       </div>
       <div class="col-md-12" *ngIf="addShipToContactPerson">
-        <mat-card appearance="outlined">
+        <mat-card>
           <mat-card-header>Add a new person</mat-card-header>
           <mat-card-content>
             <person-inline
@@ -190,7 +190,7 @@
         </div>
       </div>
       <div class="col-md-12 pb-3" *ngIf="addFacility">
-        <mat-card appearance="outlined">
+        <mat-card>
           <mat-card-header>Add new Facility</mat-card-header>
           <mat-card-content>
             <facility-inline

@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="col-md-12 pb-3" *ngIf="object.ShipToParty && addShipToAddress">
-      <mat-card appearance="outlined">
+      <mat-card>
         <mat-card-header>Add a shipping address</mat-card-header>
         <mat-card-content>
           <party-contactmechanism
@@ -80,7 +80,7 @@
       </div>
     </div>
     <div class="col-md-12" *ngIf="addShipToContactPerson">
-      <mat-card appearance="outlined">
+      <mat-card>
         <mat-card-header>Add a new person</mat-card-header>
         <mat-card-content>
           <person-inline
@@ -119,7 +119,7 @@
       </div>
     </div>
     <div class="col-md-12 pb-3" *ngIf="addShipFromAddress">
-      <mat-card appearance="outlined">
+      <mat-card>
         <mat-card-header>Add a new ship from address</mat-card-header>
         <mat-card-content>
           <party-contactmechanism-postaladdress
