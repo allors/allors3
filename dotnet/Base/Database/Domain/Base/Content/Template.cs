@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     public partial class Template
     {
         public object Object => this.Strategy.Transaction.Database.Services.Get<ITemplateObjectCache>().Get(this);
-
+            
         public byte[] Render(object model, IDictionary<string, byte[]> images = null)
         {
             var properties = model.GetType().GetProperties();

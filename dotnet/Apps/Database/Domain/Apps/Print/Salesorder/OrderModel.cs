@@ -17,6 +17,8 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
             this.Description = order.Description?.Split('\n');
             this.Currency = currencyIsoCode;
             this.Number = order.OrderNumber;
+            this.QuoteNumber = order.Quote?.QuoteNumber;
+
             this.Date = order.OrderDate.ToString("yyyy-MM-dd");
             DateTime? ret;
             if (order.ExistOrderDate)
@@ -80,5 +82,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
         public string Currency { get; }
 
         public bool PrintIrpf { get; }
+
+        public string QuoteNumber { get; }
     }
 }

@@ -4,8 +4,8 @@ TemplateId() ::= <<98A1777D-28A2-477C-9A7E-90486D19262C>>
 TemplateName() ::= <<Allors Html Docs>>
 TemplateVersion() ::= <<1.0.0>>
 TemplateAllors() ::= <<1.0>>
-TemplateConfiguration(meta) ::= <<
-$! 
+TemplateConfiguration(meta, args) ::= <<
+$!
 Copyright 2002-2016 Allors bvba.
 
 Dual Licensed under
@@ -23,11 +23,11 @@ GNU General Public License for more details.
 For more information visit http://www.allors.com/legal
 !$
 <generations>
-	<generation template="docs" output="docs.html"/> 
+	<generation template="docs" output="docs.html"/>
 </generations>
 >>
 
-docs(meta) ::= <<
+docs(meta, args) ::= <<
 <!DOCTYPE html>
 <html lang="en">
   <head>

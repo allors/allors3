@@ -29,7 +29,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
             var other = new InvoiceTermTypes(salesTerm.Strategy.Transaction).Other;
             if (salesTerm.ExistTermType && !salesTerm.TermType.Equals(other))
             {
-                this.Value = salesTerm.TermType.Name + " " + this.Value;
+                this.Value = salesTerm.ExistTermValue ? salesTerm.TermType.Name + ": " + salesTerm.TermValue : salesTerm.TermType.Name;
             }
         }
 
