@@ -80,16 +80,20 @@ namespace Application.Excel
                     object output = null;
 
                     // TODO: Koen
-                    if(input != null)
+                    if (input != null)
                     {
                         switch (this.RoleType.ObjectType.Tag)
                         {
                             case UnitTags.Binary:
-                                output = input != null ? Convert.FromBase64String(input as string) : null;
+                                if (input is string binaryStringValue)
+                                {
+                                    output = Convert.FromBase64String(binaryStringValue);
+                                }
+
                                 break;
 
                             case UnitTags.Boolean:
-                                output = input != null ? Convert.ToBoolean(input) : null;
+                                output = Convert.ToBoolean(input);
                                 break;
 
                             case UnitTags.DateTime:
@@ -101,27 +105,28 @@ namespace Application.Excel
                                 break;
 
                             case UnitTags.Decimal:
-                                output = input != null ? Convert.ToDecimal(input) : null;
+                                output = Convert.ToDecimal(input);
                                 break;
 
                             case UnitTags.Float:
-                                output = input != null ? Convert.ToDouble(input) : null;
+                                output = Convert.ToDouble(input);
                                 break;
 
                             case UnitTags.Integer:
-                                output = input != null ? Convert.ToInt32(input) : null;
+                                output = Convert.ToInt32(input);
                                 break;
 
                             case UnitTags.String:
-                                output = input != null ? Convert.ToString(input) : null;
+                                output = Convert.ToString(input);
                                 break;
 
                             case UnitTags.Unique:
-                                if (input is string)
+                                if (input is string uniqueStringValue)
                                 {
-                                    Guid.TryParse((string)input, out var guidOutput);
+                                    Guid.TryParse(uniqueStringValue, out var guidOutput);
                                     output = guidOutput;
                                 }
+
                                 break;
 
                             default:
