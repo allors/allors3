@@ -307,7 +307,7 @@ namespace Allors.Repository.Domain
                     }
                 }
             }
-            
+
             foreach (var composite in composites)
             {
                 composite.Subtypes = composites.Where(v => v.Interfaces.Contains(composite)).ToArray();
@@ -416,9 +416,11 @@ namespace Allors.Repository.Domain
                         continue;
                     }
 
-                    var propertyAttributesByTypeName = reflectedProperty.GetCustomAttributes(false).Cast<Attribute>().GroupBy(v => v.GetType());
-
                     var reflectedPropertyType = reflectedProperty.PropertyType;
+
+                    property.IsArray = reflectedPropertyType.Name.EndsWith("[]");
+
+                    var propertyAttributesByTypeName = reflectedProperty.GetCustomAttributes(false).Cast<Attribute>().GroupBy(v => v.GetType());
                     var typeName = this.GetTypeName(reflectedPropertyType);
                     property.Type = this.TypeBySingularName[typeName];
 
