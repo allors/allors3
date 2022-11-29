@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
     using System.Linq;
     using Meta;
 
@@ -21,6 +22,8 @@ namespace Allors.Database.Domain
         public abstract Composite ObjectType { get; }
 
         public ITransaction Transaction { get; private set; }
+
+        public T Build(params Action<T>[] builders) => this.Transaction.Build(builders);
 
         public Extent<T> Extent() => this.Transaction.Extent<T>();
 
