@@ -12,7 +12,7 @@
         "outputPath": "dist/apps/base/workspace/angular-material/application-app",
         "index": "apps/base/workspace/angular-material/application-app/src/index.html",
         "main": "apps/base/workspace/angular-material/application-app/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": "apps/base/workspace/angular-material/application-app/src/polyfills.ts",
         "tsConfig": "apps/base/workspace/angular-material/application-app/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -94,7 +94,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "coverage/apps/base/workspace/angular-material/application-app"
+      ],
       "options": {
         "jestConfig": "apps/base/workspace/angular-material/application-app/jest.config.ts",
         "passWithNoTests": true

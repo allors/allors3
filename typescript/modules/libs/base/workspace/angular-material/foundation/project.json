@@ -1,25 +1,24 @@
 {
   "name": "base-workspace-angular-material-foundation",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "library",
   "sourceRoot": "libs/base/workspace/angular-material/foundation/src",
-  "prefix": "allors",
+  "projectType": "library",
   "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/base/workspace/angular-material/foundation/**/*.ts"
+        ]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["coverage/libs/base/workspace/angular-material/foundation"],
       "options": {
         "jestConfig": "libs/base/workspace/angular-material/foundation/jest.config.ts",
         "passWithNoTests": true
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/base/workspace/angular-material/foundation/**/*.ts",
-          "libs/base/workspace/angular-material/foundation/**/*.html"
-        ]
       }
     }
   },

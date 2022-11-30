@@ -2,9 +2,11 @@ namespace Application.Excel
 {
     using System;
     using System.Globalization;
+    using Allors;
     using Allors.Excel;
     using Allors.Workspace;
     using Allors.Workspace.Meta;
+    using Newtonsoft.Json.Linq;
     using DateTime = System.DateTime;
 
     public class TextBox<T> : IControl where T : IObject
@@ -74,47 +76,66 @@ namespace Application.Excel
             {
                 if (this.ToDomain == null)
                 {
-                    if (this.RoleType.ObjectType.ClrType == typeof(bool))
+                    var input = this.Cell.Value;
+                    object output = null;
+
+                    // TODO: Koen
+                    if (input != null)
                     {
-                        if (Constants.YES.Equals(Convert.ToString(this.Cell.Value, CultureInfo.CurrentCulture), StringComparison.OrdinalIgnoreCase))
+                        switch (this.RoleType.ObjectType.Tag)
                         {
-                            this.Object.Strategy.SetRole(this.RoleType, true);
-                        }
-                        else
-                        {
-                            if (this.RoleType.IsRequired)
-                            {
-                                this.Object.Strategy.SetRole(this.RoleType, false);
-                            }
-                            else
-                            {
-                                this.Object.Strategy.SetRole(this.RoleType, null);
-                            }
+                            case UnitTags.Binary:
+                                if (input is string binaryStringValue)
+                                {
+                                    output = Convert.FromBase64String(binaryStringValue);
+                                }
+
+                                break;
+
+                            case UnitTags.Boolean:
+                                output = Convert.ToBoolean(input);
+                                break;
+
+                            case UnitTags.DateTime:
+                                if (double.TryParse(Convert.ToString(input, CultureInfo.CurrentCulture), out double d))
+                                {
+                                    var dateTime = DateTime.FromOADate(d);
+                                    output = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, DateTimeKind.Utc);
+                                }
+                                break;
+
+                            case UnitTags.Decimal:
+                                output = Convert.ToDecimal(input);
+                                break;
+
+                            case UnitTags.Float:
+                                output = Convert.ToDouble(input);
+                                break;
+
+                            case UnitTags.Integer:
+                                output = Convert.ToInt32(input);
+                                break;
+
+                            case UnitTags.String:
+                                output = Convert.ToString(input);
+                                break;
+
+                            case UnitTags.Unique:
+                                if (input is string uniqueStringValue)
+                                {
+                                    Guid.TryParse(uniqueStringValue, out var guidOutput);
+                                    output = guidOutput;
+                                }
+
+                                break;
+
+                            default:
+                                throw new ArgumentOutOfRangeException("Unknown Unit");
                         }
                     }
-                    else if (this.RoleType.ObjectType.ClrType == typeof(DateTime))
-                    {
-                        if (double.TryParse(Convert.ToString(this.Cell.Value, CultureInfo.CurrentCulture), out double d))
-                        {
-                            var dt = DateTime.FromOADate(d);
-                            this.Object.Strategy.SetRole(this.RoleType, dt);
-                        }
-                        else
-                        {
-                            if (this.RoleType.IsRequired)
-                            {
-                                this.Object.Strategy.SetRole(this.RoleType, DateTime.MinValue);
-                            }
-                            else
-                            {
-                                this.Object.Strategy.SetRole(this.RoleType, null);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        this.Object.Strategy.SetRole(this.RoleType, this.Cell.Value);
-                    }
+
+                    this.Object.Strategy.SetRole(this.RoleType, output);
+
                 }
                 else
                 {
