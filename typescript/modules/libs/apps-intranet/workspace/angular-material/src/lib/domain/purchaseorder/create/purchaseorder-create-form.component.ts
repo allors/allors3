@@ -195,7 +195,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
 
     const part = pullResult.object<NonUnifiedPart>(this.m.NonUnifiedPart);
 
-    if (serialisedItem !== undefined) {
+    if (serialisedItem != null) {
       const purchaseOrderItem = this.allors.context.create<PurchaseOrderItem>(
         this.m.PurchaseOrderItem
       );
@@ -209,7 +209,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
       this.object.addPurchaseOrderItem(purchaseOrderItem);
     }
 
-    if (part !== undefined) {
+    if (part != null) {
       const offerings = part.SupplierOfferingsWherePart.filter(
         (v) =>
           isBefore(new Date(v.FromDate), new Date()) &&

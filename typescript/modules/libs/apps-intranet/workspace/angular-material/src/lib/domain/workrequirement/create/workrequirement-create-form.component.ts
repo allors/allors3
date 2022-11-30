@@ -103,7 +103,7 @@ export class WorkRequirementCreateFormComponent extends AllorsFormComponent<Work
       const serialisedItem = pullResult.object<SerialisedItem>(
         this.m.SerialisedItem
       );
-      if (serialisedItem !== undefined) {
+      if (serialisedItem != null) {
         if (
           serialisedItem.OwnedBy != null &&
           !(<Organisation>serialisedItem.OwnedBy).IsInternalOrganisation

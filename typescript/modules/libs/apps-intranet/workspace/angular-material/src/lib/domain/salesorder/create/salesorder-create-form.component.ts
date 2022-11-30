@@ -250,7 +250,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
 
     const part = pullResult.object<NonUnifiedPart>(this.m.NonUnifiedPart);
 
-    if (serialisedItem !== undefined) {
+    if (serialisedItem != null) {
       const salesOrderItem = this.allors.context.create<SalesOrderItem>(
         this.m.SalesOrderItem
       );
@@ -266,7 +266,7 @@ export class SalesOrderCreateFormComponent extends AllorsFormComponent<SalesOrde
       this.object.addSalesOrderItem(salesOrderItem);
     }
 
-    if (part !== undefined) {
+    if (part != null) {
       const salesOrderItem = this.allors.context.create<SalesOrderItem>(
         this.m.SalesOrderItem
       );

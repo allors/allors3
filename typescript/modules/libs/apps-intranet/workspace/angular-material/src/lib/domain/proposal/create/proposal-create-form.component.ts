@@ -136,7 +136,7 @@ export class ProposalCreateFormComponent extends AllorsFormComponent<Proposal> {
 
     const part = pullResult.object<NonUnifiedPart>(this.m.NonUnifiedPart);
 
-    if (serialisedItem !== undefined) {
+    if (serialisedItem != null) {
       const quoteItem = this.allors.context.create<QuoteItem>(this.m.QuoteItem);
 
       quoteItem.InvoiceItemType = this.productItemType;
@@ -148,7 +148,7 @@ export class ProposalCreateFormComponent extends AllorsFormComponent<Proposal> {
       this.object.addQuoteItem(quoteItem);
     }
 
-    if (part !== undefined) {
+    if (part != null) {
       const quoteItem = this.allors.context.create<QuoteItem>(this.m.QuoteItem);
 
       quoteItem.InvoiceItemType = this.partItemType;

@@ -89,7 +89,7 @@ function resolveRecursive(
 }
 
 export function isPath(path: unknown): path is Path {
-  return (path as Path).propertyType !== undefined;
+  return (path as Path).propertyType != null;
 }
 
 export function pathResolve(

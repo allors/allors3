@@ -10,7 +10,7 @@ export interface RadioGroupOption {
 }
 
 function isObject(obj: any | IObject): obj is IObject {
-  return (obj as IObject).strategy !== undefined;
+  return (obj as IObject).strategy != null;
 }
 
 @Component({

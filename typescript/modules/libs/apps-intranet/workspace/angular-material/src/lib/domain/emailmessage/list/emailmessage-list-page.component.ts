@@ -157,7 +157,7 @@ export class EmailMessageListPageComponent implements OnInit, OnDestroy {
             object: v,
             created: format(new Date(v.DateCreated), 'dd-MM-yyyy'),
             sent:
-              v.DateSent !== null
+              v.DateSent != null
                 ? format(new Date(v.DateSent), 'dd-MM-yyyy')
                 : '',
             sender: v.Sender?.UserEmail,
