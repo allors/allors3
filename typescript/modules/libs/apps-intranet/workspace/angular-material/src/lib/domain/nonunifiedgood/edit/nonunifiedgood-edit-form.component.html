@@ -44,7 +44,6 @@
           placeholder="Categories"
           multiple="true"
         >
-          <mat-option>None</mat-option>
           <mat-option *ngFor="let category of categories" [value]="category">
             {{ category.DisplayName }}
           </mat-option>
