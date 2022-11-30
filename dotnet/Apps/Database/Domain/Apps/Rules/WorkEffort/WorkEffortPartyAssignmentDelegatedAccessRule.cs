@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public WorkEffortPartyAssignmentDelegatedAccessRule(MetaPopulation m) : base(m, new Guid("7407eab3-b776-41d2-90f6-2e9a0d5c6c40")) =>
             this.Patterns = new Pattern[]
         {
-            m.WorkEffortPartyAssignment.RolePattern(v => v.AssignmentRates),
+            m.WorkEffortPartyAssignment.RolePattern(v => v.Assignment),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
