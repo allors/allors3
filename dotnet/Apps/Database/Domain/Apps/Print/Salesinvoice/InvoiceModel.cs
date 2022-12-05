@@ -42,6 +42,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
             this.TotalToPay = currencyIsoCode + " " + (invoice.GrandTotal - invoice.AdvancePayment).ToString("N2", new CultureInfo("nl-BE"));
 
             this.PaymentNetDays = invoice.PaymentNetDays;
+            this.PrintPaymentNetDays = this.PaymentNetDays > 0;
 
             string TakenByCountry = null;
             if (invoice.BilledFrom.PartyContactMechanismsWhereParty?.FirstOrDefault(v => v.ContactPurposes.Any(p => Equals(p, new ContactMechanismPurposes(transaction).RegisteredOffice)))?.ContactMechanism is PostalAddress registeredOffice)
@@ -94,6 +95,8 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
         public string TotalToPay { get; }
 
         public int PaymentNetDays { get; }
+
+        public bool PrintPaymentNetDays { get; }
 
         public string VatClause { get; set; }
 

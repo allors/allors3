@@ -49,6 +49,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
             this.GrandTotal = currencyIsoCode + " " + order.GrandTotal.ToString("N2", new CultureInfo("nl-BE"));
 
             this.PaymentNetDays = order.PaymentNetDays;
+            this.PrintPaymentNetDays = this.PaymentNetDays > 0;
         }
 
         public string[] Description { get; }
@@ -78,6 +79,8 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
         public string GrandTotal { get; }
 
         public int PaymentNetDays { get; }
+
+        public bool PrintPaymentNetDays { get; }
 
         public string Currency { get; }
 
