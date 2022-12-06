@@ -20,13 +20,14 @@ namespace Allors.Database.Domain
                 m.WorkEffort.RolePattern(v => v.TotalMaterialRevenue),
                 m.WorkEffort.RolePattern(v => v.TotalSubContractedRevenue),
                 m.WorkEffort.RolePattern(v => v.TotalOtherRevenue),
+                m.WorkEffort.RolePattern(v => v.TotalDiscount),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<WorkEffort>())
             {
-                @this.GrandTotal = Rounder.RoundDecimal(@this.TotalLabourRevenue + @this.TotalMaterialRevenue + @this.TotalSubContractedRevenue + @this.TotalOtherRevenue, 2);
+                @this.GrandTotal = Rounder.RoundDecimal(@this.TotalLabourRevenue + @this.TotalMaterialRevenue + @this.TotalSubContractedRevenue + @this.TotalOtherRevenue - @this.TotalDiscount, 2);
             }
         }
     }

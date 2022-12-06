@@ -75,6 +75,8 @@ namespace Allors.Repository
 
         public decimal TotalRevenue { get; set; }
 
+        public decimal TotalDiscount { get; set; }
+
         public decimal GrandTotal { get; set; }
 
         public WorkEffort[] Precendencies { get; set; }

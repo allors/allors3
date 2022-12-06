@@ -14,5 +14,7 @@ namespace Allors.Database.Domain
         public bool IsProductItem => this.UniqueId == InvoiceItemTypes.ProductItemId;
 
         public bool IsService => this.UniqueId == InvoiceItemTypes.ServiceId;
+
+        public bool IsDiscount => this.UniqueId == InvoiceItemTypes.DiscountId;
     }
 }

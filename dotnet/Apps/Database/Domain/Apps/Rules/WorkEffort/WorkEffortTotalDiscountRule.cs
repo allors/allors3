@@ -1,4 +1,4 @@
-// <copyright file="WorkEffortTotalOtherRevenueRule.cs" company="Allors bvba">
+// <copyright file="WorkEffortTotalDiscountRule.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -11,9 +11,9 @@ namespace Allors.Database.Domain
     using Allors.Database.Derivations;
     using Derivations.Rules;
 
-    public class WorkEffortTotalOtherRevenueRule : Rule
+    public class WorkEffortTotalDiscountRule : Rule
     {
-        public WorkEffortTotalOtherRevenueRule(MetaPopulation m) : base(m, new Guid("32ca5f8e-2b89-4a7a-92c6-51f921c67579")) =>
+        public WorkEffortTotalDiscountRule(MetaPopulation m) : base(m, new Guid("9d95a40c-a53b-4265-aa0d-11846b6b4a50")) =>
             this.Patterns = new Pattern[]
             {
                 m.WorkEffortInvoiceItemAssignment.RolePattern(v => v.Assignment, v => v.Assignment),
@@ -26,17 +26,17 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<WorkEffort>())
             {
-                @this.DeriveWorkEffortTotalOtherRevenue(validation);
+                @this.DeriveWorkEffortTotalDiscount(validation);
             }
         }
     }
 
-    public static class WorkEffortTotalOtherRevenueRuleExtensions
+    public static class WorkEffortTotalDiscountRuleExtensions
     {
-        public static void DeriveWorkEffortTotalOtherRevenue(this WorkEffort @this, IValidation validation) => @this.TotalOtherRevenue = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment
-                    .Where(v => v.ExistWorkEffortInvoiceItem
-                            && !v.WorkEffortInvoiceItem.InvoiceItemType.IsDiscount
+        public static void DeriveWorkEffortTotalDiscount(this WorkEffort @this, IValidation validation) => @this.TotalDiscount = Rounder.RoundDecimal(@this.WorkEffortInvoiceItemAssignmentsWhereAssignment
+                .Where(v => v.ExistWorkEffortInvoiceItem
+                            && v.WorkEffortInvoiceItem.InvoiceItemType.IsDiscount
                             && v.WorkEffortInvoiceItem.Amount.HasValue)
-            .Sum(v => v.WorkEffortInvoiceItem.Amount.Value), 2);
+                .Sum(v => v.WorkEffortInvoiceItem.Amount.Value), 2);
     }
 }

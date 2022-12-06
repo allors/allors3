@@ -303,6 +303,16 @@ namespace Allors.Repository
         decimal TotalRevenue { get; set; }
 
         #region Allors
+        [Id("7eac6626-ba4a-44b6-88cb-3cc56fedc5e9")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace(Default)]
+        decimal TotalDiscount { get; set; }
+
+        #region Allors
         [Id("e9d47579-1eb2-4023-953d-64b6826e82ac")]
         
         
