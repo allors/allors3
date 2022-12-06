@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
     public class WorkEffortTotalLabourRevenueRule : Rule
     {
         public WorkEffortTotalLabourRevenueRule(MetaPopulation m) : base(m, new Guid("fb6c7fc1-e090-4c17-a799-1c562b258ec7")) =>
-            this.Patterns = new[]
+            this.Patterns = new Pattern[]
             {
                 m.TimeEntry.RolePattern(v => v.WorkEffort, v => v.WorkEffort.WorkEffort.ServiceEntriesWhereWorkEffort.ServiceEntry.WorkEffort),
                 m.TimeEntry.RolePattern(v => v.BillingAmount, v => v.WorkEffort.WorkEffort.ServiceEntriesWhereWorkEffort.ServiceEntry.WorkEffort),

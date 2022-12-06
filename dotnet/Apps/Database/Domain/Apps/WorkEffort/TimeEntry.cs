@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
+
     public partial class TimeEntry
     {
         public decimal ActualHours
@@ -50,10 +52,13 @@ namespace Allors.Database.Domain
                 this.RateType = useInternalRate ? new RateTypes(this.Transaction()).InternalRate : new RateTypes(this.Transaction()).StandardRate;
             }
         }
+
         public void AppsOnPostDerive(ObjectOnPostDerive method)
         {
             method.Derivation.Validation.AssertExists(this, this.M.TimeEntry.TimeSheetWhereTimeEntry);
             method.Derivation.Validation.AssertAtLeastOne(this, this.M.TimeEntry.WorkEffort, this.M.TimeEntry.EngagementItem);
         }
+
+        public void AppsDelete(DeletableDelete method) => this.WorkEffort.DerivationTrigger = Guid.NewGuid();
     }
 }
