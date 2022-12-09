@@ -19,13 +19,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void SingleObjectState()
         {
-            var initial = new OrderStates(this.Session).Initial;
-            var confirmed = new OrderStates(this.Session).Confirmed;
-            var cancelled = new OrderStates(this.Session).Cancelled;
+            var initial = new OrderStates(this.Transaction).Initial;
+            var confirmed = new OrderStates(this.Transaction).Confirmed;
+            var cancelled = new OrderStates(this.Transaction).Cancelled;
 
-            var order = new OrderBuilder(this.Session).Build();
+            var order = new OrderBuilder(this.Transaction).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.False(order.ExistOrderState);
             Assert.False(order.ExistLastOrderState);
@@ -37,7 +37,7 @@ namespace Allors.Database.Domain.Tests
 
             order.OrderState = initial;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(initial, order.OrderState);
             Assert.Equal(initial, order.LastOrderState);
@@ -51,7 +51,7 @@ namespace Allors.Database.Domain.Tests
 
             order.OrderState = confirmed;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(confirmed, order.OrderState);
             Assert.Equal(confirmed, order.LastOrderState);
@@ -68,27 +68,27 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void MultipleObjectStates()
         {
-            var initial = new OrderStates(this.Session).Initial;
-            var confirmed = new OrderStates(this.Session).Confirmed;
-            var cancelled = new OrderStates(this.Session).Cancelled;
+            var initial = new OrderStates(this.Transaction).Initial;
+            var confirmed = new OrderStates(this.Transaction).Confirmed;
+            var cancelled = new OrderStates(this.Transaction).Cancelled;
 
-            var notShipped = new ShipmentStates(this.Session).NotShipped;
-            var partiallyShipped = new ShipmentStates(this.Session).PartiallyShipped;
-            var shipped = new ShipmentStates(this.Session).Shipped;
+            var notShipped = new ShipmentStates(this.Transaction).NotShipped;
+            var partiallyShipped = new ShipmentStates(this.Transaction).PartiallyShipped;
+            var shipped = new ShipmentStates(this.Transaction).Shipped;
 
-            var order = new OrderBuilder(this.Session).Build();
+            var order = new OrderBuilder(this.Transaction).Build();
 
             order.OrderState = initial;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.OrderState = confirmed;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             order.ShipmentState = notShipped;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(notShipped, order.ShipmentState);
             Assert.Equal(notShipped, order.LastShipmentState);
@@ -105,7 +105,7 @@ namespace Allors.Database.Domain.Tests
 
             order.ShipmentState = partiallyShipped;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal(2, order.ObjectStates.Count());
             Assert.Contains(confirmed, order.ObjectStates);

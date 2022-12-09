@@ -13,11 +13,21 @@ namespace Allors.Database.Domain
 
         public CultureInfo CultureInfo => this.ExistName ? new CultureInfo(this.Name) : null;
 
-        public void CoreOnPostBuild(ObjectOnPostBuild method)
+        public void BaseOnInit(ObjectOnInit method)
         {
-            if (!this.ExistName && this.ExistLanguage && this.ExistCountry)
+            if (!this.ExistName)
             {
-                this.Name = this.Language.IsoCode + "-" + this.Country.IsoCode;
+                if (this.ExistLanguage)
+                {
+                    if (this.ExistCountry)
+                    {
+                        this.Name = this.Language.IsoCode.ToLowerInvariant() + "-" + this.Country.IsoCode.ToUpperInvariant();
+                    }
+                    else
+                    {
+                        this.Name = this.Language.IsoCode.ToLowerInvariant();
+                    }
+                }
             }
         }
     }

@@ -355,7 +355,7 @@ namespace Allors
                 .WithName("Ned. Belastingdienst")
                 .WithEuListingState(netherlands)
                 .WithLegalForm(new LegalForms(this.Transaction).Extent().First)
-                .WithLocale(new Locales(this.Transaction).DutchNetherlands)
+                .WithLocale(new Locales(this.Transaction).LocaleByName["nl"])
                 .WithTaxNumber("NL123123")
                 .WithComment("Comment")
                 .Build();
@@ -364,7 +364,7 @@ namespace Allors
                 .WithName("Federale OverheidsDienst FINANCIËN")
                 .WithEuListingState(netherlands)
                 .WithLegalForm(new LegalForms(this.Transaction).Extent().First)
-                .WithLocale(new Locales(this.Transaction).DutchNetherlands)
+                .WithLocale(new Locales(this.Transaction).LocaleByName["nl"])
                 .WithTaxNumber("NL12341234")
                 .WithComment("Comment")
                 .Build();

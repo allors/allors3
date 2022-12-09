@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
         // {
         //    var poor = new SkillRatings(this.DatabaseSession).Poor;
 
-        // var dutch = new Locales(this.DatabaseSession).DutchNetherlands;
+        // var dutch = new Locales(this.DatabaseSession).LocaleByName["nl"];
 
         // Assert.Equal("Poor", poor.GetName());
         //    Assert.Equal("Slecht", poor.GetNameWithLocale(dutch));
@@ -32,7 +32,7 @@ namespace Allors.Database.Domain.Tests
         // {
         //    var billingInquiries = new ContactMechanismPurposes(this.DatabaseSession).BillingInquiriesPhone;
 
-        // var dutch = new Locales(this.DatabaseSession).DutchNetherlands;
+        // var dutch = new Locales(this.DatabaseSession).LocaleByName["nl"];
 
         // Assert.Equal("Billing Inquiries phone", billingInquiries.GetName());
         //    Assert.Equal("Facturatie vragen telefoon", billingInquiries.GetNameWithLocale(dutch));

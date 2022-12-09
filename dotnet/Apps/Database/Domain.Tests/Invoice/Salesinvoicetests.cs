@@ -534,7 +534,7 @@ namespace Allors.Database.Domain.Tests
 
             var customer = new OrganisationBuilder(this.Transaction)
                 .WithName("customer")
-                .WithLocale(new Locales(this.Transaction).DutchBelgium)
+                .WithLocale(new Locales(this.Transaction).LocaleByName["nl"])
                 .Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer).Build();
@@ -575,7 +575,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Equal(invoice1.BilledFrom.Locale, invoice1.DerivedLocale);
 
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
 
             customer.Locale = dutchLocale;
 

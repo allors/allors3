@@ -5,29 +5,13 @@
 
 namespace Allors.Database.Domain
 {
-   
+    using System.Linq;
 
     public partial class Locales
     {
-        public const string EnglishGreatBritainName = "en-GB";
-        public const string EnglishUnitedStatesName = "en-US";
-        public const string DutchNetherlandsName = "nl-NL";
-        public const string DutchBelgiumName = "nl-BE";
-        public const string SpanishName = "es-ES";
+        private Cache<string, Locale> localeByName;
 
-        private Cache<string, Locale> localeByIdentifier;
-
-        public Cache<string, Locale> LocaleByIdentifier => this.localeByIdentifier ??= new Cache<string, Locale>(this.Transaction, this.Meta.Name);
-
-        public Locale EnglishGreatBritain => this.FindBy(this.Meta.Name, EnglishGreatBritainName);
-
-        public Locale EnglishUnitedStates => this.FindBy(this.Meta.Name, EnglishUnitedStatesName);
-
-        public Locale DutchNetherlands => this.FindBy(this.Meta.Name, DutchNetherlandsName);
-
-        public Locale DutchBelgium => this.FindBy(this.Meta.Name, DutchBelgiumName);
-
-        public Locale Spanish => this.FindBy(this.Meta.Name, SpanishName);
+        public Cache<string, Locale> LocaleByName => this.localeByName ??= new Cache<string, Locale>(this.Transaction, this.Meta.Name);
 
         protected override void CorePrepare(Setup setup)
         {
@@ -37,40 +21,16 @@ namespace Allors.Database.Domain
 
         protected override void CoreSetup(Setup setup)
         {
-            var countries = new Countries(this.Transaction);
             var languages = new Languages(this.Transaction);
 
-            var merge = this.LocaleByIdentifier.Merger().Action();
+            var merge = this.LocaleByName.Merger().Action();
 
-            merge(EnglishGreatBritainName, v =>
+            // Create a generic locale (without a region) for every language.
+            foreach (var language in languages.Extent().Cast<Language>())
             {
-                v.Country = countries.CountryByIsoCode["GB"];
-                v.Language = languages.LanguageByCode["en"];
-            });
-
-            merge(EnglishUnitedStatesName, v =>
-            {
-                v.Country = countries.CountryByIsoCode["US"];
-                v.Language = languages.LanguageByCode["en"];
-            });
-
-            merge(DutchNetherlandsName, v =>
-            {
-                v.Country = countries.CountryByIsoCode["NL"];
-                v.Language = languages.LanguageByCode["nl"];
-            });
-
-            merge(DutchBelgiumName, v =>
-            {
-                v.Country = countries.CountryByIsoCode["BE"];
-                v.Language = languages.LanguageByCode["nl"];
-            });
-
-            merge(SpanishName, v =>
-            {
-                v.Country = countries.CountryByIsoCode["ES"];
-                v.Language = languages.LanguageByCode["es"];
-            });
+                var name = language.IsoCode.ToLowerInvariant();
+                merge(name, v => v.Language = languages.LanguageByCode[name]);
+            }
         }
     }
 }

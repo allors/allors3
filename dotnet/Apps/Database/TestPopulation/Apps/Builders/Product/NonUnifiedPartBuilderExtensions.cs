@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.TestPopulation
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
             var faker = @this.Transaction.Faker();
 
-            var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;
+            var dutchLocale = new Locales(@this.Transaction).LocaleByName["nl"];
             var brand = new BrandBuilder(@this.Transaction).WithDefaults().Build();
 
             var nonSerialisedProductType = new ProductTypes(@this.Transaction).FindBy(m.ProductType.Name, "nonSerialisedProductType");
@@ -74,7 +74,7 @@ namespace Allors.Database.Domain.TestPopulation
                     .WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
                     .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
 
-                var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
+                var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Language.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
                 @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build())
                     .WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
             }
@@ -85,7 +85,7 @@ namespace Allors.Database.Domain.TestPopulation
         public static NonUnifiedPartBuilder WithSerialisedDefaults(this NonUnifiedPartBuilder @this, Organisation internalOrganisation, Faker faker)
         {
             var m = @this.Transaction.Database.Services.Get<MetaPopulation>();
-            var dutchLocale = new Locales(@this.Transaction).DutchNetherlands;
+            var dutchLocale = new Locales(@this.Transaction).LocaleByName["nl"];
             var brand = new BrandBuilder(@this.Transaction).WithDefaults().Build();
 
             var serialisedProductType = new ProductTypes(@this.Transaction).FindBy(m.ProductType.Name, "serialisedProductType");
@@ -139,7 +139,7 @@ namespace Allors.Database.Domain.TestPopulation
                     .WithLocalisedComment(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build())
                     .WithLocalisedKeyword(new LocalisedTextBuilder(@this.Transaction).WithText(faker.Lorem.Sentence()).WithLocale(additionalLocale).Build());
 
-                var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Country.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
+                var localisedDocument = new MediaBuilder(@this.Transaction).WithInFileName($"doc1.{additionalLocale.Language.IsoCode}.pdf").WithInData(faker.Random.Bytes(1000)).Build();
                 @this.WithPublicLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build())
                     .WithPrivateLocalisedElectronicDocument(new LocalisedMediaBuilder(@this.Transaction).WithMedia(localisedDocument).WithLocale(additionalLocale).Build());
             }

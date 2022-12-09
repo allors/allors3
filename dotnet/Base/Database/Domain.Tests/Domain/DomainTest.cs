@@ -39,13 +39,13 @@ namespace Allors.Database.Domain.Tests
 
         public virtual Config Config { get; } = new Config { SetupSecurity = false };
 
-        public ITransaction Session { get; private set; }
+        public ITransaction Transaction { get; private set; }
 
-        public ITime Time => this.Session.Database.Services.Get<ITime>();
+        public ITime Time => this.Transaction.Database.Services.Get<ITime>();
 
-        public IDerivationService DerivationService => this.Session.Database.Services.Get<IDerivationService>();
+        public IDerivationService DerivationService => this.Transaction.Database.Services.Get<IDerivationService>();
 
-        public ISecurity Security => this.Session.Database.Services.Get<ISecurity>();
+        public ISecurity Security => this.Transaction.Database.Services.Get<ISecurity>();
 
         public TimeSpan? TimeShift
         {
@@ -68,8 +68,8 @@ namespace Allors.Database.Domain.Tests
 
         public void Dispose()
         {
-            this.Session.Rollback();
-            this.Session = null;
+            this.Transaction.Rollback();
+            this.Transaction = null;
         }
 
         protected void Setup(IDatabase database, bool populate)
@@ -81,7 +81,7 @@ namespace Allors.Database.Domain.Tests
                 new Setup(database, this.Config).Apply();
             }
 
-            this.Session = database.CreateTransaction();
+            this.Transaction = database.CreateTransaction();
         }
 
         protected Stream GetResource(string name)

@@ -44,7 +44,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         [Workspace(Default)]
         public Country Country { get; set; }
 

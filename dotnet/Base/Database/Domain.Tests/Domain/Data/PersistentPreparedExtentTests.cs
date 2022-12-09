@@ -20,9 +20,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public async void WithParameter()
         {
-            var organisations = new Organisations(this.Session).Extent().ToArray();
+            var organisations = new Organisations(this.Transaction).Extent().ToArray();
 
-            var extentService = this.Session.Database.Services.Get<IPreparedExtents>();
+            var extentService = this.Transaction.Database.Services.Get<IPreparedExtents>();
             var organizationByName = extentService.Get(PersistentPreparedExtents.ByName);
 
             var arguments = new Arguments(new Dictionary<string, object>
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
                 { "name", "Acme" },
             }, new UnitConvert());
 
-            Extent<Organisation> organizations = organizationByName.Build(this.Session, arguments).ToArray();
+            Extent<Organisation> organizations = organizationByName.Build(this.Transaction, arguments).ToArray();
 
             Assert.Single(organizations);
 

@@ -15,32 +15,32 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCountryWhenValidatingThenRequiredRelationsMustExist()
         {
-            var builder = new CountryBuilder(this.Session);
+            var builder = new CountryBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
             builder.WithIsoCode("XX").Build();
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
             builder.WithName("X Country");
 
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder = new CountryBuilder(this.Session);
+            builder = new CountryBuilder(this.Transaction);
             builder.WithName("X Country");
 
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

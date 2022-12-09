@@ -5,7 +5,7 @@
 
 namespace Allors.Database.Domain
 {
-   
+
 
     public partial class Singletons
     {
@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         {
             var singleton = this.Transaction.GetSingleton() ?? new SingletonBuilder(this.Transaction).Build();
 
-            singleton.DefaultLocale = new Locales(this.Transaction).EnglishGreatBritain;
+            singleton.DefaultLocale = new Locales(this.Transaction).LocaleByName["en"];
         }
     }
 }

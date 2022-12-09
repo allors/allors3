@@ -15,17 +15,17 @@ namespace Allors.Database.Domain.Tests
         [Fact(Skip = "TODO: Koen  Locale is required")]
         public void GivenLocalisedTextWhenValidatingThenRequiredRelationsMustExist()
         {
-            var builder = new LocalisedTextBuilder(this.Session);
+            var builder = new LocalisedTextBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            builder.WithLocale(new Locales(this.Session).EnglishGreatBritain);
+            builder.WithLocale(new Locales(this.Transaction).LocaleByName["en"]);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

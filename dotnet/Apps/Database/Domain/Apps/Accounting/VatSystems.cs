@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
 
         protected override void BaseSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);

@@ -30,8 +30,6 @@ namespace Allors.Database.Domain
         {
             base.CustomSetup(setup);
 
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
-
             new GenderBuilder(this.Transaction)
                 .WithName("Male")
                 .WithUniqueId(MaleId)

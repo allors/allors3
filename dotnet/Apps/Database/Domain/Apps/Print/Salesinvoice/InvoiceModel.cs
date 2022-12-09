@@ -52,7 +52,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
 
             if (TakenByCountry == "BE")
             {
-                this.VatClause = invoice.DerivedVatClause?.LocalisedClauses.FirstOrDefault(v => v.Locale.Equals(new Locales(transaction).DutchBelgium))?.Text;
+                this.VatClause = invoice.DerivedVatClause?.LocalisedClauses.FirstOrDefault(v => v.Locale.Equals(new Locales(transaction).LocaleByName["nl"]))?.Text;
 
                 if (this.VatClause != null && Equals(invoice.DerivedVatClause, new VatClauses(transaction).BeArt14Par2))
                 {

@@ -155,8 +155,8 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
-            var spanishLocale = new Locales(this.Transaction).Spanish;
+            var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
+            var spanishLocale = new Locales(this.Transaction).LocaleByName["es"];
 
             if (this.Pack == null)
             {

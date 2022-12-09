@@ -39,7 +39,7 @@ namespace Allors.Database.Domain.Tests
         {
             var euro = new Currencies(this.Transaction).FindBy(this.M.Currency.IsoCode, "EUR");
 
-            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").WithLocale(new Locales(this.Transaction).EnglishGreatBritain).Build();
+            this.supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").WithLocale(new Locales(this.Transaction).LocaleByName["en"]).Build();
 
             this.internalOrganisation = this.Transaction.GetSingleton();
 

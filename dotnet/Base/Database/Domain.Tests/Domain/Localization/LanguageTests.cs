@@ -15,18 +15,18 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenLanguageWhenValidatingThenRequiredRelationsMustExist()
         {
-            var builder = new LanguageBuilder(this.Session);
+            var builder = new LanguageBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
             builder.WithIsoCode("XX").Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            builder.WithLocalisedName(new LocalisedTextBuilder(this.Session).WithLocale(new Locales(this.Session).FindBy(this.M.Locale.Name, Locales.EnglishGreatBritainName)).WithText("XXX)").Build());
+            builder.WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithLocale(new Locales(this.Transaction).LocaleByName["en"]).WithText("XXX)").Build());
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

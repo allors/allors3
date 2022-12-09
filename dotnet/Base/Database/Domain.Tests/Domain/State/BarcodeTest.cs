@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Default()
         {
-            var barcodeService = this.Session.Database.Services.Get<IBarcodeGenerator>();
+            var barcodeService = this.Transaction.Database.Services.Get<IBarcodeGenerator>();
             var image = barcodeService.Generate("Allors", BarcodeType.CODE_128);
             File.WriteAllBytes("barcode.png", image);
         }

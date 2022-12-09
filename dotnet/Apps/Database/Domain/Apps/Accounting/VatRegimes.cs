@@ -62,7 +62,7 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
             var netherlands = new Countries(this.Transaction).FindBy(M.Country.IsoCode, "NL");
             var belgium = new Countries(this.Transaction).FindBy(M.Country.IsoCode, "BE");
             var spain = new Countries(this.Transaction).FindBy(M.Country.IsoCode, "ES");

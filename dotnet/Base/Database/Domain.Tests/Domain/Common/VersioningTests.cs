@@ -19,9 +19,9 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void InitialNothing()
         {
-            var order = new OrderBuilder(this.Session).Build();
+            var order = new OrderBuilder(this.Transaction).Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);
@@ -35,11 +35,11 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void VersionedUnitRole()
         {
-            var order = new OrderBuilder(this.Session)
+            var order = new OrderBuilder(this.Transaction)
                 .WithAmount(10m)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);
@@ -55,17 +55,17 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void NonVersionedUnitRole()
         {
-            var order = new OrderBuilder(this.Session)
+            var order = new OrderBuilder(this.Transaction)
                 .WithAmount(10m)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             var currentVersion = order.CurrentVersion;
 
             order.NonVersionedAmount = 20m;
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.ExistAllVersions);
             Assert.Single(order.AllVersions);
@@ -75,13 +75,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void InitialCompositeRole()
         {
-            var initialObjectState = new OrderStates(this.Session).Initial;
+            var initialObjectState = new OrderStates(this.Transaction).Initial;
 
-            var order = new OrderBuilder(this.Session)
+            var order = new OrderBuilder(this.Transaction)
                 .WithOrderState(initialObjectState)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);
@@ -97,13 +97,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void InitialCompositeRoles()
         {
-            var orderLine = new OrderLineBuilder(this.Session).Build();
+            var orderLine = new OrderLineBuilder(this.Transaction).Build();
 
-            var order = new OrderBuilder(this.Session)
+            var order = new OrderBuilder(this.Transaction)
                 .WithOrderLine(orderLine)
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.True(order.ExistCurrentVersion);
             Assert.True(order.ExistAllVersions);

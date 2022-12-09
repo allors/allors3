@@ -34,8 +34,7 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
-            var dutchBelgium = new Locales(this.Transaction).DutchBelgium;
+            var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
 
             var merge = this.Cache.Merger().Action();
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);
@@ -44,48 +43,48 @@ namespace Allors.Database.Domain
             merge(ServiceB2BId, v =>
             {
                 v.Name = "Rent goods";
-                localisedName.Set(v, dutchBelgium, "Verhuur goederen");
-                localisedClause.Set(v, dutchBelgium, "Dienstverrichting niet onderworpen aan Belgische btw art. 21, § 2 van het Wbtw / Art. 44  /EG.");
+                localisedName.Set(v, dutchLocale, "Verhuur goederen");
+                localisedClause.Set(v, dutchLocale, "Dienstverrichting niet onderworpen aan Belgische btw art. 21, § 2 van het Wbtw / Art. 44  /EG.");
                 v.IsActive = true;
             });
 
             merge(IntraCommunautairId, v =>
             {
                 v.Name = "Intracommunautair";
-                localisedName.Set(v, dutchBelgium, "Intracommunautair");
-                localisedClause.Set(v, dutchBelgium, "Vrijstelling van BTW art. 39bis, eerste lid, 1° van het WBTW / Vrijgesteld || Artikel 138, lid 1 - Richtlijn 2006/112.");
+                localisedName.Set(v, dutchLocale, "Intracommunautair");
+                localisedClause.Set(v, dutchLocale, "Vrijstelling van BTW art. 39bis, eerste lid, 1° van het WBTW / Vrijgesteld || Artikel 138, lid 1 - Richtlijn 2006/112.");
                 v.IsActive = true;
             });
 
             merge(BeArt39Par1Item1Id, v =>
             {
                 v.Name = "Export goods, transport responsible is you, destination customer";
-                localisedName.Set(v, dutchBelgium, "Verkoop buiten EU, transport verantwoordelijk bent u, bestemming klant");
-                localisedClause.Set(v, dutchBelgium, "Vrijstelling van BTW art. 39 § 1, 1° van het WBTW / Vrijgesteld  || artikel 146, lid 1, onder a) – richtlijn 2006/112.");
+                localisedName.Set(v, dutchLocale, "Verkoop buiten EU, transport verantwoordelijk bent u, bestemming klant");
+                localisedClause.Set(v, dutchLocale, "Vrijstelling van BTW art. 39 § 1, 1° van het WBTW / Vrijgesteld  || artikel 146, lid 1, onder a) – richtlijn 2006/112.");
                 v.IsActive = true;
             });
 
             merge(BeArt15Par2Id, v =>
             {
                 v.Name = "Export goods, transport responsible is you, destination internal organisation";
-                localisedName.Set(v, dutchBelgium, "Verkoop buiten EU, transport verantwoordelijk bent u, bestemming interne organisatie");
-                localisedClause.Set(v, dutchBelgium, "Levering van goederen niet onderworpen aan Belgische BTW. art. 15, § 2, van het WBTW / Artikel 33, lid 1, onder a) en b) - Richtlijn 2006/112.");
+                localisedName.Set(v, dutchLocale, "Verkoop buiten EU, transport verantwoordelijk bent u, bestemming interne organisatie");
+                localisedClause.Set(v, dutchLocale, "Levering van goederen niet onderworpen aan Belgische BTW. art. 15, § 2, van het WBTW / Artikel 33, lid 1, onder a) en b) - Richtlijn 2006/112.");
                 v.IsActive = true;
             });
 
             merge(BeArt39Par1Item2Id, v =>
             {
                 v.Name = "Export goods, transport responsible is customer, destination customer";
-                localisedName.Set(v, dutchBelgium, "Verkoop buiten EU, transport verantwoordelijk is klant, bestemming klant");
-                localisedClause.Set(v, dutchBelgium, "Vrijstelling van BTW art. 39 § 1, 2° van het WBTW / Vrijgesteld  || artikel 146, lid 1, onder a) – richtlijn 2006/112.");
+                localisedName.Set(v, dutchLocale, "Verkoop buiten EU, transport verantwoordelijk is klant, bestemming klant");
+                localisedClause.Set(v, dutchLocale, "Vrijstelling van BTW art. 39 § 1, 2° van het WBTW / Vrijgesteld  || artikel 146, lid 1, onder a) – richtlijn 2006/112.");
                 v.IsActive = true;
             });
 
             merge(BeArt14Par2Id, v =>
             {
                 v.Name = "Export goods, transport responsible is customer, destination internal organisation";
-                localisedName.Set(v, dutchBelgium, "Verkoop buiten EU, transport verantwoordelijk is klant, bestemming internal organisation");
-                localisedClause.Set(v, dutchBelgium, @"
+                localisedName.Set(v, dutchLocale, "Verkoop buiten EU, transport verantwoordelijk is klant, bestemming internal organisation");
+                localisedClause.Set(v, dutchLocale, @"
 Levering van goederen niet onderworpen aan Belgische BTW. art. 14, § 2 van het WBTW / Artikel 32, eerste alinea - Richtlijn 2006/112 Extra vermeldingen:
 De goederen worden niet geïnstalleerd. / The goods are not installed.
 Koper vervoert van België naar {shipToCountry}. / The buyer transports from Belgium to {shipToCountry}");

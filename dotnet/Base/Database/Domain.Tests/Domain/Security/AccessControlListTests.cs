@@ -22,15 +22,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenAnAuthenticationPopulationWhenCreatingAnAccessListForGuestThenPermissionIsDenied()
         {
-            this.Session.Derive();
-            this.Session.Commit();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
 
-            var sessions = new[] { this.Session };
+            var sessions = new[] { this.Transaction };
             foreach (var session in sessions)
             {
                 session.Commit();
 
-                var guest = new AutomatedAgents(this.Session).Guest;
+                var guest = new AutomatedAgents(this.Transaction).Guest;
                 var acls = new DatabaseAccessControl(this.Security, guest);
                 foreach (Object aco in (IObject[])session.Extent(this.M.Organisation))
                 {
@@ -48,7 +48,7 @@ namespace Allors.Database.Domain.Tests
         private Permission FindPermission(RoleType roleType, Operations operation)
         {
             var objectType = (Class)roleType.AssociationType.ObjectType;
-            return new Permissions(this.Session).Get(objectType, roleType, operation);
+            return new Permissions(this.Transaction).Get(objectType, roleType, operation);
         }
     }
 }

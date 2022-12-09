@@ -1528,7 +1528,7 @@ namespace Allors.Database.Domain.Tests
         public void GivenSalesOrderWithBillToCustomerWithPreferredCurrency_WhenBuild_ThenCurrencyIsFromCustomer()
         {
             var mechelen = new CityBuilder(this.Transaction).WithName("Mechelen").Build();
-            var englischLocale = new Locales(this.Transaction).EnglishGreatBritain;
+            var englischLocale = new Locales(this.Transaction).LocaleByName["en"];
 
             var euro = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "EUR");
             var poundSterling = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "GBP");

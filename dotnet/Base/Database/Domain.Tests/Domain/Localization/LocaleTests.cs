@@ -15,39 +15,39 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenLocale_WhenDeriving_ThenRequiredRelationsMustExist()
         {
-            var builder = new LocaleBuilder(this.Session);
+            var builder = new LocaleBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            this.Session.Rollback();
+            this.Transaction.Rollback();
 
-            var language = new Languages(this.Session).FindBy(this.M.Language.IsoCode, "en");
-
-            builder.WithLanguage(language);
-            builder.Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
-
-            this.Session.Rollback();
-
-            var country = new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE");
+            var country = new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "BE");
 
             builder.WithCountry(country);
             builder.Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            this.Transaction.Rollback();
+
+            var language = new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "en");
+
+            builder.WithLanguage(language);
+            builder.Build();
+
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenLocale_WhenDeriving_ThenNameIsSet()
         {
-            var locale = new LocaleBuilder(this.Session)
-                .WithLanguage(new Languages(this.Session).FindBy(this.M.Language.IsoCode, "en"))
-                .WithCountry(new Countries(this.Session).FindBy(this.M.Country.IsoCode, "BE"))
+            var locale = new LocaleBuilder(this.Transaction)
+                .WithLanguage(new Languages(this.Transaction).FindBy(this.M.Language.IsoCode, "en"))
+                .WithCountry(new Countries(this.Transaction).FindBy(this.M.Country.IsoCode, "BE"))
                 .Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
             Assert.Equal("en-BE", locale.Name);
         }
@@ -55,29 +55,29 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenLocaleWhenValidatingThenRequiredRelationsMustExist()
         {
-            var dutch = new Languages(this.Session).LanguageByCode["nl"];
-            var netherlands = new Countries(this.Session).CountryByIsoCode["NL"];
+            var dutch = new Languages(this.Transaction).LanguageByCode["nl"];
+            var netherlands = new Countries(this.Transaction).CountryByIsoCode["NL"];
 
-            var builder = new LocaleBuilder(this.Session);
+            var builder = new LocaleBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
-
-            builder.WithLanguage(dutch).Build();
-
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
             builder.WithCountry(netherlands).Build();
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            builder.WithLanguage(dutch).Build();
+
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
 
         [Fact]
         public void GivenLocaleWhenValidatingThenNameIsSet()
         {
-            var locale = new Locales(this.Session).FindBy(this.M.Locale.Name, Locales.DutchNetherlandsName);
+            var locale = new Locales(this.Transaction).FindBy(this.M.Locale.Name, "nl");
 
-            Assert.Equal("nl-NL", locale.Name);
+            Assert.Equal("nl", locale.Name);
         }
     }
 }

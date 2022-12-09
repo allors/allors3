@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Tests
             this.singleton = this.Transaction.GetSingleton();
             this.billToCustomer = new OrganisationBuilder(this.Transaction).WithName("billToCustomer").WithPreferredCurrency(euro).Build();
             this.good = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good1");
-            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").WithLocale(new Locales(this.Transaction).EnglishGreatBritain).Build();
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").WithLocale(new Locales(this.Transaction).LocaleByName["nl"]).Build();
 
             new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(this.billToCustomer).Build();
 

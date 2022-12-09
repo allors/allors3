@@ -21,7 +21,7 @@ namespace Allors
         {
             var m = @this.Strategy.Transaction.Database.Services.Get<MetaPopulation>();
 
-            var dutchLocale = new Locales(@this.Transaction()).DutchNetherlands;
+            var dutchLocale = new Locales(@this.Transaction()).LocaleByName["nl"];
             @this.AddAdditionalLocale(dutchLocale);
 
             var administrator = new PersonBuilder(@this.Transaction()).WithUserName("administrator").Build();

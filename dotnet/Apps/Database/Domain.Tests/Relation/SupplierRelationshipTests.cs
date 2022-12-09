@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Tests
             this.contact = new PersonBuilder(this.Transaction).WithLastName("contact").Build();
             this.supplier = new OrganisationBuilder(this.Transaction)
                 .WithName("supplier")
-                .WithLocale(new Locales(this.Transaction).EnglishGreatBritain)
+                .WithLocale(new Locales(this.Transaction).LocaleByName["nl"])
 
                 .Build();
 

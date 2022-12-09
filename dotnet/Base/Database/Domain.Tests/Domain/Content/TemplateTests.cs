@@ -20,13 +20,13 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void Render()
         {
-            var media = new MediaBuilder(this.Session).WithInData(this.GetResourceBytes("Domain.Tests.Resources.EmbeddedTemplate.odt")).Build();
-            var templateType = new TemplateTypes(this.Session).OpenDocumentType;
-            var template = new TemplateBuilder(this.Session).WithMedia(media).WithTemplateType(templateType).WithArguments("logo, people").Build();
+            var media = new MediaBuilder(this.Transaction).WithInData(this.GetResourceBytes("Domain.Tests.Resources.EmbeddedTemplate.odt")).Build();
+            var templateType = new TemplateTypes(this.Transaction).OpenDocumentType;
+            var template = new TemplateBuilder(this.Transaction).WithMedia(media).WithTemplateType(templateType).WithArguments("logo, people").Build();
 
-            this.Session.Derive();
+            this.Transaction.Derive();
 
-            var people = new People(this.Session).Extent();
+            var people = new People(this.Transaction).Extent();
             var logo = this.GetResourceBytes("Domain.Tests.Resources.logo.png");
 
             var data = new Dictionary<string, object>

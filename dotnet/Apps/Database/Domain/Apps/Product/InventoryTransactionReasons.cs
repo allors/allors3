@@ -52,7 +52,7 @@ namespace Allors.Database.Domain
 
         protected override void AppsSetup(Setup setup)
         {
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
             var serialisedStates = new SerialisedInventoryItemStates(this.Transaction);
             var nonSerialisedStates = new NonSerialisedInventoryItemStates(this.Transaction);
 

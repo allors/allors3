@@ -16,26 +16,25 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCurrencyWhenValidatingThenRequiredRelationsMustExist()
         {
-            var builder = new CurrencyBuilder(this.Session);
+            var builder = new CurrencyBuilder(this.Transaction);
             builder.Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
             builder.WithIsoCode("BND").Build();
 
-            Assert.True(this.Session.Derive(false).HasErrors);
+            Assert.True(this.Transaction.Derive(false).HasErrors);
 
-            var locales = new Locales(this.Session).Extent().ToArray();
-            var locale = new Locales(this.Session).FindBy(this.M.Locale.Name, Locales.EnglishGreatBritainName);
+            var locale = new Locales(this.Transaction).FindBy(this.M.Locale.Name, "en");
 
             builder
                 .WithLocalisedName(
-                    new LocalisedTextBuilder(this.Session)
+                    new LocalisedTextBuilder(this.Transaction)
                     .WithText("Brunei Dollar")
                     .WithLocale(locale)
                 .Build());
 
-            Assert.False(this.Session.Derive(false).HasErrors);
+            Assert.False(this.Transaction.Derive(false).HasErrors);
         }
     }
 }

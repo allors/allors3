@@ -26,12 +26,12 @@ namespace Allors.Database.Domain.Tests
             var singleton = this.Transaction.GetSingleton();
             var localeCount = singleton.Locales.Count();
 
-            singleton.AddAdditionalLocale(new Locales(this.Transaction).EnglishUnitedStates);
+            singleton.AddAdditionalLocale(new Locales(this.Transaction).LocaleByName["fr"]);
 
             this.Transaction.Derive();
 
             Assert.Contains(singleton.DefaultLocale, singleton.Locales);
-            Assert.Contains(new Locales(this.Transaction).EnglishUnitedStates, singleton.Locales);
+            Assert.Contains(new Locales(this.Transaction).LocaleByName["fr"], singleton.Locales);
             Assert.Equal(localeCount + 1, singleton.Locales.Count());
         }
     }
