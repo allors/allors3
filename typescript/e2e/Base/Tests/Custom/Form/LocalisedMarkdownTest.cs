@@ -27,7 +27,7 @@ namespace Tests.E2E.Form
         [Test]
         public async Task Populated()
         {
-            var locale = new Locales(this.Transaction).DutchBelgium;
+            var locale = new Locales(this.Transaction).LocaleByName["nl"];
             var localisedMarkdown = new LocalisedTextBuilder(this.Transaction).WithLocale(locale).WithText("*** Hello ***").Build();
             var data = new DataBuilder(this.Transaction).Build();
             data.AddLocalisedMarkdown(localisedMarkdown);
@@ -44,7 +44,7 @@ namespace Tests.E2E.Form
         [Test]
         public async Task Set()
         {
-            var locale = new Locales(this.Transaction).DutchBelgium;
+            var locale = new Locales(this.Transaction).LocaleByName["nl"];
             var before = new Datas(this.Transaction).Extent().ToArray();
 
             await this.FormComponent.LocalisedMarkdownsLocalisedMarkdown.SetAsync("*** Hello ***");

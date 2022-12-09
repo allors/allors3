@@ -35,7 +35,7 @@ namespace Tests
         public void Execute()
         {
             var singleton = this.Transaction.GetSingleton();
-            var dutchLocale = new Locales(this.Transaction).DutchNetherlands;
+            var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
             singleton.AddAdditionalLocale(dutchLocale);
 
             var euro = new Currencies(this.Transaction).FindBy(M.Currency.IsoCode, "EUR");

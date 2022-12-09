@@ -59,7 +59,7 @@ namespace Tests.E2E.Objects
         {
             var before = new Organisations(this.Transaction).Extent().ToArray();
             var legalForm = new LegalForms(this.Transaction).BeBvbaSprl;
-            var locale = new Locales(this.Transaction).EnglishGreatBritain;
+            var locale = new Locales(this.Transaction).LocaleByName["en"];
             var organisationRole = new OrganisationRoles(this.Transaction).Supplier;
             var currency = new Currencies(this.Transaction).Extent().First();
             var industryClassification = new IndustryClassifications(this.Transaction).Extent().First();
