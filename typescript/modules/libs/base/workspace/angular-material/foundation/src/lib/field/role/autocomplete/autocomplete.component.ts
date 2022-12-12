@@ -43,7 +43,7 @@ export class AllorsMaterialAutocompleteComponent
     parameters?: { [id: string]: TypeForParameter }
   ) => Observable<IObject[]>;
 
-  @Input() filterParameters: { [id: string]: string };
+  @Input() filterParameters: { [id: string]: TypeForParameter };
 
   @Output() changed: EventEmitter<IObject> = new EventEmitter();
 
