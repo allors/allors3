@@ -242,7 +242,6 @@ namespace Allors.Database.Domain
             copy.ContactPerson = @this.ContactPerson;
             copy.ValidFromDate = @this.ValidFromDate;
             copy.ValidThroughDate = @this.ValidThroughDate;
-            copy.RequiredResponseDate = @this.RequiredResponseDate;
             copy.FullfillContactMechanism = @this.FullfillContactMechanism;
             copy.AssignedCurrency = @this.AssignedCurrency;
             copy.AssignedVatRegime = @this.AssignedVatRegime;

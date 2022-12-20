@@ -24,7 +24,6 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithIssueDate(@this.Transaction.Now().AddDays(-2))
                 .WithValidFromDate(@this.Transaction.Now().AddDays(-2))
                 .WithValidThroughDate(@this.Transaction.Now().AddDays(2))
-                .WithRequiredResponseDate(@this.Transaction.Now().AddDays(2))
                 .WithReceiver(customer)
                 .WithFullfillContactMechanism(customer.GeneralCorrespondence);
 
@@ -48,7 +47,6 @@ namespace Allors.Database.Domain.TestPopulation
             @this.WithIssueDate(@this.Transaction.Now().AddDays(-2));
             @this.WithValidFromDate(@this.Transaction.Now().AddDays(-2));
             @this.WithValidThroughDate(@this.Transaction.Now().AddDays(2));
-            @this.WithRequiredResponseDate(@this.Transaction.Now().AddDays(2));
             @this.WithReceiver(customer);
             @this.WithQuoteItem(quoteItem);
 

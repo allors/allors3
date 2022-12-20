@@ -38,7 +38,6 @@ namespace Allors.Database.Domain
                 .WithContactPerson(this.ContactPerson)
                 .WithDescription(this.Description)
                 .WithReceiver(this.Originator)
-                .WithRequiredResponseDate(this.RequiredResponseDate)
                 .WithAssignedCurrency(this.DerivedCurrency)
                 .WithFullfillContactMechanism(this.FullfillContactMechanism)
                 .Build();

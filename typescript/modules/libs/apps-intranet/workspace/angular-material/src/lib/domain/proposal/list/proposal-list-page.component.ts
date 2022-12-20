@@ -44,7 +44,7 @@ interface Row extends TableRow {
   number: string;
   to: string;
   state: string;
-  responseRequired: string;
+  validThroughDate: string;
   description: string;
   lastModifiedDate: string;
 }
@@ -102,7 +102,7 @@ export class ProposalListPageComponent
         { name: 'to' },
         { name: 'state' },
         { name: 'description', sort: true },
-        { name: 'responseRequired', sort: true },
+        { name: 'validThroughDate', sort: true },
         { name: 'lastModifiedDate', sort: true },
       ],
       actions: [overviewService.overview(), this.print, this.delete],
@@ -223,9 +223,9 @@ export class ProposalListPageComponent
               to: v.Receiver && v.Receiver.DisplayName,
               state: `${v.QuoteState && v.QuoteState.Name}`,
               description: `${v.Description || ''}`,
-              responseRequired:
-                v.RequiredResponseDate &&
-                format(new Date(v.RequiredResponseDate), 'dd-MM-yyyy'),
+              validThroughDate:
+                v.ValidThroughDate &&
+                format(new Date(v.ValidThroughDate), 'dd-MM-yyyy'),
               lastModifiedDate: formatDistance(
                 new Date(v.LastModifiedDate),
                 new Date()

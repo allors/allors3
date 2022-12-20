@@ -153,7 +153,7 @@ export class AppSorterService implements SorterService {
       new Sorter({
         number: m.Quote.SortableQuoteNumber,
         description: m.Quote.Description,
-        responseRequired: m.Quote.RequiredResponseDate,
+        validThroughDate: m.Quote.ValidThroughDate,
         lastModifiedDate: m.Quote.LastModifiedDate,
       })
     );
@@ -170,7 +170,7 @@ export class AppSorterService implements SorterService {
       new Sorter({
         number: m.Quote.SortableQuoteNumber,
         description: m.Quote.Description,
-        responseRequired: m.Quote.RequiredResponseDate,
+        validThroughDate: m.Quote.ValidThroughDate,
         lastModifiedDate: m.Quote.LastModifiedDate,
       })
     );

@@ -37,8 +37,6 @@ namespace Allors.Repository
 
         public string InternalComment { get; set; }
 
-        public DateTime RequiredResponseDate { get; set; }
-
         public QuoteItem[] ValidQuoteItems { get; set; }
 
         public DateTime ValidFromDate { get; set; }
