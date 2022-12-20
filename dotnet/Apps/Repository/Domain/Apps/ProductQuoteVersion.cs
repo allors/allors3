@@ -21,8 +21,6 @@ namespace Allors.Repository
 
         public string InternalComment { get; set; }
 
-        public DateTime RequiredResponseDate { get; set; }
-
         public DateTime ValidFromDate { get; set; }
 
         public SalesTerm[] SalesTerms { get; set; }

@@ -39,14 +39,6 @@ namespace Allors.Repository
         string InternalComment { get; set; }
 
         #region Allors
-        [Id("93DD5B53-08C6-40A9-AD40-FE547C34FE7A")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Workspace(Default)]
-        DateTime RequiredResponseDate { get; set; }
-
-        #region Allors
         [Id("1D8BE58D-45CE-446D-8508-3A95F500EB78")]
         #endregion
         [Workspace(Default)]
