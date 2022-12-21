@@ -52,11 +52,11 @@
       "@allors/default/workspace/meta-json": [
         "libs/base/workspace/meta/json/src/index.ts"
       ]
-    },
-    "angularCompilerOptions": {
-      "strictInjectionParameters": true,
-      "strictInputAccessModifiers": true,
-      "strictTemplates": true
     }
+  },
+  "angularCompilerOptions": {
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
   }
 }
