@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Resources;
     using Xunit;
 
     public class OrganisationContactRelationshipTests : DomainTest, IClassFixture<Fixture>
@@ -212,6 +213,79 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(organisation, organisationContactRelationship.Parties);
+        }
+    }
+
+    public class OrganisationContactRelationshipFromDateRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public OrganisationContactRelationshipFromDateRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError()
+        {
+            var contact = new PersonBuilder(this.Transaction).WithLastName("contact").Build();
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_1()
+        {
+            var contact = new PersonBuilder(this.Transaction).WithLastName("contact").Build();
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-1)).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_2()
+        {
+            var contact = new PersonBuilder(this.Transaction).WithLastName("contact").Build();
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodNotActive()
+        {
+            var contact = new PersonBuilder(this.Transaction).WithLastName("contact").Build();
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(2)).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void PeriodNotActive_1()
+        {
+            var contact = new PersonBuilder(this.Transaction).WithLastName("contact").Build();
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new OrganisationContactRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-2)).WithThroughDate(this.Transaction.Now().AddDays(-1)).WithContact(contact).WithOrganisation(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

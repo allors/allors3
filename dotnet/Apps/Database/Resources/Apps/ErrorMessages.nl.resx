@@ -282,4 +282,7 @@
   <data name="InvalidWorkTaskCurrency" xml:space="preserve">
     <value>Wijziging valuta niet toegestaan.  Er zijn inventory assignments met een manueel aangepaste prijs.</value>
   </data>
+  <data name="PeriodActive" xml:space="preserve">
+    <value>Er is al een item actief op deze datum</value>
+  </data>
 </root>

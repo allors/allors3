@@ -6,6 +6,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
+    using Resources;
     using Xunit;
 
     public class EmploymentTests : DomainTest, IClassFixture<Fixture>
@@ -112,6 +114,79 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(internalOrganisation, employment.Parties);
+        }
+    }
+
+    public class EmploymentFromDateRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public EmploymentFromDateRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError()
+        {
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(employee).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithEmployee(employee).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_1()
+        {
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(employee).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-1)).WithEmployee(employee).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_2()
+        {
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithEmployee(employee).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithEmployee(employee).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodNotActive()
+        {
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithEmployee(employee).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(2)).WithEmployee(employee).Build();
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void PeriodNotActive_1()
+        {
+            var employee = new PersonBuilder(this.Transaction).WithLastName("employee").Build();
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithEmployee(employee).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new EmploymentBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-2)).WithThroughDate(this.Transaction.Now().AddDays(-1)).WithEmployee(employee).Build();
+
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

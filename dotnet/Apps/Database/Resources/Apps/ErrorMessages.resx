@@ -294,4 +294,7 @@
   <data name="InvalidWorkTaskCurrency" xml:space="preserve">
     <value>Changing currency not allowed. There are inventory assignments with manually assigned prices</value>
   </data>
+  <data name="PeriodActive" xml:space="preserve">
+    <value>There already is an active instance on this date</value>
+  </data>
 </root>

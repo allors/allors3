@@ -8,6 +8,8 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Linq;
+    using Resources;
     using Xunit;
 
     public class ProfessionalServicesRelationshipRuleTests : DomainTest, IClassFixture<Fixture>
@@ -40,6 +42,79 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(internalOrganisation, relationship.Parties);
+        }
+    }
+
+    public class ProfessionalServicesRelationshipFromDateRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public ProfessionalServicesRelationshipFromDateRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError()
+        {
+            var professional = new PersonBuilder(this.Transaction).WithLastName("professional").Build();
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_1()
+        {
+            var professional = new PersonBuilder(this.Transaction).WithLastName("professional").Build();
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-1)).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_2()
+        {
+            var professional = new PersonBuilder(this.Transaction).WithLastName("professional").Build();
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodNotActive()
+        {
+            var professional = new PersonBuilder(this.Transaction).WithLastName("professional").Build();
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(2)).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void PeriodNotActive_1()
+        {
+            var professional = new PersonBuilder(this.Transaction).WithLastName("professional").Build();
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new ProfessionalServicesRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-2)).WithThroughDate(this.Transaction.Now().AddDays(-1)).WithProfessional(professional).WithProfessionalServicesProvider(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

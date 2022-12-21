@@ -439,6 +439,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There already is an active instance on this date.
+        /// </summary>
+        public static string PeriodActive {
+            get {
+                return ResourceManager.GetString("PeriodActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to quantity more than allowed.
         /// </summary>
         public static string PickListItemQuantityMoreThanAllowed {

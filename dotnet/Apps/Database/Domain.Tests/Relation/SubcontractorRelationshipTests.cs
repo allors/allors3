@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Resources;
     using TestPopulation;
     using Xunit;
 
@@ -255,6 +256,79 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(internalOrganisation, relationship.Parties);
+        }
+    }
+
+    public class SubContractorRelationshipFromDateRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SubContractorRelationshipFromDateRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError()
+        {
+            var subcontractor = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_1()
+        {
+            var subcontractor = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-1)).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_2()
+        {
+            var subcontractor = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodNotActive()
+        {
+            var subcontractor = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(2)).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void PeriodNotActive_1()
+        {
+            var subcontractor = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SubContractorRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-2)).WithThroughDate(this.Transaction.Now().AddDays(-1)).WithSubContractor(subcontractor).WithContractor(this.InternalOrganisation).Build();
+
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }

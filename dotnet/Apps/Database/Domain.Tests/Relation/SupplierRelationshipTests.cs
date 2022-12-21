@@ -7,6 +7,7 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
+    using Resources;
     using Xunit;
 
     public class SupplierRelationshipTests : DomainTest, IClassFixture<Fixture>
@@ -268,6 +269,79 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Contains(internalOrganisation, relationship.Parties);
+        }
+    }
+
+    public class SupplierRelationshipFromDateRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SupplierRelationshipFromDateRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSupplier(supplier).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithSupplier(supplier).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_1()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSupplier(supplier).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-1)).WithSupplier(supplier).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_2()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithSupplier(supplier).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(1)).WithSupplier(supplier).Build();
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodNotActive()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddDays(1)).WithSupplier(supplier).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(2)).WithSupplier(supplier).Build();
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void PeriodNotActive_1()
+        {
+            var supplier = new OrganisationBuilder(this.Transaction).WithName("supplier").Build();
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithSupplier(supplier).Build();
+
+            Assert.False(this.Derive().HasErrors);
+
+            new SupplierRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddDays(-2)).WithThroughDate(this.Transaction.Now().AddDays(-1)).WithSupplier(supplier).Build();
+
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }
