@@ -95,7 +95,6 @@ namespace Tests.E2E.Objects
             await form.ValidFromDateDatepicker.SetAsync(date);
             await form.ValidThroughDateDatepicker.SetAsync(tomorrow);
             await form.IssueDateDatepicker.SetAsync(date);
-            await form.RequiredResponseDateDatepicker.SetAsync(tomorrow);
             await form.DerivedCurrencySelect.SetAsync(currency);
             await form.DerivedVatRegimeSelect.SetAsync(vatRegime);
             await form.DescriptionTextarea.SetAsync("Description");
@@ -122,7 +121,6 @@ namespace Tests.E2E.Objects
             Assert.AreEqual(date, productQuote.ValidFromDate.Value.Date);
             Assert.AreEqual(tomorrow, productQuote.ValidThroughDate.Value.Date);
             Assert.AreEqual(date, productQuote.IssueDate.Date);
-            Assert.AreEqual(tomorrow, productQuote.RequiredResponseDate.Value.Date);
             Assert.AreEqual(currency, productQuote.AssignedCurrency);
             Assert.AreEqual(vatRegime, productQuote.AssignedVatRegime);
             Assert.AreEqual("Description", productQuote.Description);
