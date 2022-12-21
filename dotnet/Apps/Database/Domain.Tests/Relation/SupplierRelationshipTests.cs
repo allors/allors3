@@ -125,24 +125,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenSupplierRelationship_WhenDeriving_ThenRequiredRelationsMustExist()
-        {
-            this.InstantiateObjects(this.Transaction);
-
-            var builder = new SupplierRelationshipBuilder(this.Transaction);
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithSupplier(this.supplier);
-            builder.Build();
-
-            Assert.False(this.Derive().HasErrors);
-        }
-
-        [Fact]
         public void GivenSupplierOrganisation_WhenOrganisationContactRelationshipIsCreated_ThenPersonIsAddedToUserGroup()
         {
             this.InstantiateObjects(this.Transaction);

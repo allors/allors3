@@ -28,14 +28,15 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenPerson_WhenEmployed_ThenIsEmployeeEqualsTrue()
         {
-            var employment = new EmploymentBuilder(this.Transaction)
-                .WithEmployee(this.Purchaser)
+            var person = new PersonBuilder(this.Transaction).WithLastName("person").Build();
+            new EmploymentBuilder(this.Transaction)
+                .WithEmployee(person)
                 .WithFromDate(this.Transaction.Now())
                 .Build();
 
             this.Transaction.Derive();
 
-            Assert.True(this.Purchaser.AppsIsActiveEmployee(this.Transaction.Now()));
+            Assert.True(person.AppsIsActiveEmployee(this.Transaction.Now()));
         }
 
         [Fact]

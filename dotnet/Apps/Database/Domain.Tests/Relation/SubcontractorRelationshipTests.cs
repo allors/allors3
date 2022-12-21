@@ -114,22 +114,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void GivenSubContractorRelationship_WhenDeriving_ThenRequiredRelationsMustExist()
-        {
-            var builder = new SubContractorRelationshipBuilder(this.Transaction);
-            builder.Build();
-
-            Assert.True(this.Derive().HasErrors);
-
-            this.Transaction.Rollback();
-
-            builder.WithSubContractor(this.subcontractor);
-            builder.Build();
-
-            Assert.False(this.Derive().HasErrors);
-        }
-
-        [Fact]
         public void GivenContractorOrganisation_WhenOrganisationContactRelationshipIsCreated_ThenPersonIsAddedToUserGroup()
         {
             this.InstantiateObjects(this.Transaction);

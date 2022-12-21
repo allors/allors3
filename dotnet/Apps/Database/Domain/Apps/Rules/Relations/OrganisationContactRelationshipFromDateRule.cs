@@ -36,22 +36,25 @@ namespace Allors.Database.Domain
     {
         public static void DeriveOrganisationContactRelationshipFromDate(this OrganisationContactRelationship @this, IValidation validation)
         {
-            if (@this.Contact.OrganisationContactRelationshipsWhereContact.Except(new[] { @this })
-                .FirstOrDefault(v => v.Organisation.Equals(@this.Organisation)
-                                    && v.FromDate.Date <= @this.FromDate.Date
-                                    && (!v.ExistThroughDate || v.ThroughDate.Value.Date >= @this.FromDate.Date))
-                != null)
+            if (@this.ExistContact && @this.ExistOrganisation)
             {
-                validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
-            }
+                if (@this.Contact.OrganisationContactRelationshipsWhereContact.Except(new[] { @this })
+                    .FirstOrDefault(v => v.Organisation.Equals(@this.Organisation)
+                                        && v.FromDate.Date <= @this.FromDate.Date
+                                        && (!v.ExistThroughDate || v.ThroughDate.Value.Date >= @this.FromDate.Date))
+                    != null)
+                {
+                    validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                }
 
-            if (@this.Contact.OrganisationContactRelationshipsWhereContact.Except(new[] { @this })
-                .FirstOrDefault(v => v.Organisation.Equals(@this.Organisation)
-                                    && @this.FromDate.Date <= v.FromDate.Date
-                                    && (!@this.ExistThroughDate || @this.ThroughDate.Value.Date >= v.FromDate.Date))
-                != null)
-            {
-                validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                if (@this.Contact.OrganisationContactRelationshipsWhereContact.Except(new[] { @this })
+                    .FirstOrDefault(v => v.Organisation.Equals(@this.Organisation)
+                                        && @this.FromDate.Date <= v.FromDate.Date
+                                        && (!@this.ExistThroughDate || @this.ThroughDate.Value.Date >= v.FromDate.Date))
+                    != null)
+                {
+                    validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                }
             }
         }
     }

@@ -36,22 +36,25 @@ namespace Allors.Database.Domain
     {
         public static void DeriveProfessionalServicesRelationshipFromDate(this ProfessionalServicesRelationship @this, IValidation validation)
         {
-            if (@this.Professional.ProfessionalServicesRelationshipsWhereProfessional.Except(new[] { @this })
-                .FirstOrDefault(v => v.ProfessionalServicesProvider.Equals(@this.ProfessionalServicesProvider)
-                                    && v.FromDate.Date <= @this.FromDate.Date
-                                    && (!v.ExistThroughDate || v.ThroughDate.Value.Date >= @this.FromDate.Date))
-                != null)
+            if (@this.ExistProfessional && @this.ExistProfessionalServicesProvider)
             {
-                validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
-            }
+                if (@this.Professional.ProfessionalServicesRelationshipsWhereProfessional.Except(new[] { @this })
+                    .FirstOrDefault(v => v.ProfessionalServicesProvider.Equals(@this.ProfessionalServicesProvider)
+                                        && v.FromDate.Date <= @this.FromDate.Date
+                                        && (!v.ExistThroughDate || v.ThroughDate.Value.Date >= @this.FromDate.Date))
+                    != null)
+                {
+                    validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                }
 
-            if (@this.Professional.ProfessionalServicesRelationshipsWhereProfessional.Except(new[] { @this })
-                .FirstOrDefault(v => v.ProfessionalServicesProvider.Equals(@this.ProfessionalServicesProvider)
-                                    && @this.FromDate.Date <= v.FromDate.Date
-                                    && (!@this.ExistThroughDate || @this.ThroughDate.Value.Date >= v.FromDate.Date))
-                != null)
-            {
-                validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                if (@this.Professional.ProfessionalServicesRelationshipsWhereProfessional.Except(new[] { @this })
+                    .FirstOrDefault(v => v.ProfessionalServicesProvider.Equals(@this.ProfessionalServicesProvider)
+                                        && @this.FromDate.Date <= v.FromDate.Date
+                                        && (!@this.ExistThroughDate || @this.ThroughDate.Value.Date >= v.FromDate.Date))
+                    != null)
+                {
+                    validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                }
             }
         }
     }

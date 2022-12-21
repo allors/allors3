@@ -588,11 +588,6 @@ namespace Allors.Database.Domain.Tests
 
             var good2 = new Goods(this.Transaction).FindBy(this.M.Good.Name, "good2");
 
-            new SupplierRelationshipBuilder(this.Transaction)
-                .WithSupplier(this.supplier)
-                .WithFromDate(this.Transaction.Now())
-                .Build();
-
             var good2PurchasePrice = new SupplierOfferingBuilder(this.Transaction)
                 .WithPart(this.part)
                 .WithSupplier(this.supplier)

@@ -36,22 +36,25 @@ namespace Allors.Database.Domain
     {
         public static void DeriveSubContractorRelationshipFromDate(this SubContractorRelationship @this, IValidation validation)
         {
-            if (@this.SubContractor.SubContractorRelationshipsWhereSubContractor.Except(new[] { @this })
-                .FirstOrDefault(v => v.Contractor.Equals(@this.Contractor)
-                                    && v.FromDate.Date <= @this.FromDate.Date
-                                    && (!v.ExistThroughDate || v.ThroughDate.Value.Date >= @this.FromDate.Date))
-                != null)
+            if (@this.ExistSubContractor && @this.ExistContractor)
             {
-                validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
-            }
+                if (@this.SubContractor.SubContractorRelationshipsWhereSubContractor.Except(new[] { @this })
+                    .FirstOrDefault(v => v.Contractor.Equals(@this.Contractor)
+                                        && v.FromDate.Date <= @this.FromDate.Date
+                                        && (!v.ExistThroughDate || v.ThroughDate.Value.Date >= @this.FromDate.Date))
+                    != null)
+                {
+                    validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                }
 
-            if (@this.SubContractor.SubContractorRelationshipsWhereSubContractor.Except(new[] { @this })
-                .FirstOrDefault(v => v.Contractor.Equals(@this.Contractor)
-                                    && @this.FromDate.Date <= v.FromDate.Date
-                                    && (!@this.ExistThroughDate || @this.ThroughDate.Value.Date >= v.FromDate.Date))
-                != null)
-            {
-                validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                if (@this.SubContractor.SubContractorRelationshipsWhereSubContractor.Except(new[] { @this })
+                    .FirstOrDefault(v => v.Contractor.Equals(@this.Contractor)
+                                        && @this.FromDate.Date <= v.FromDate.Date
+                                        && (!@this.ExistThroughDate || @this.ThroughDate.Value.Date >= v.FromDate.Date))
+                    != null)
+                {
+                    validation.AddError(@this, @this.Meta.FromDate, ErrorMessages.PeriodActive);
+                }
             }
         }
     }
