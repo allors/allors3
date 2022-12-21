@@ -499,7 +499,7 @@ import { AppActionService } from './services/action.service';
       provide: MAT_AUTOCOMPLETE_DEFAULT_OPTIONS,
       useValue: { autoActiveFirstOption: true },
     },
-    { provide: MAT_DATE_LOCALE, useValue: 'nl' },
+    { provide: MAT_DATE_LOCALE, useValue: 'nl-BE' },
     { provide: MatDialogRef, useValue: {} },
     {
       provide: AllorsDialogService,
