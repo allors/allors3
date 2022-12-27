@@ -17,6 +17,8 @@ namespace Allors.Repository
     {
         #region inherited properties
 
+        public string DisplayPartyRelationship { get; set; }
+
         public DateTime FromDate { get; set; }
 
         public DateTime ThroughDate { get; set; }

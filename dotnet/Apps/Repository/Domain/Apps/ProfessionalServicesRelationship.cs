@@ -27,6 +27,8 @@ namespace Allors.Repository
         public SecurityToken[] SecurityTokens { get; set; }
 
         public Party[] Parties { get; set; }
+
+        public string DisplayPartyRelationship { get; set; }
         #endregion
 
         #region Allors

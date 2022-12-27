@@ -19,6 +19,8 @@ namespace Allors.Repository
 
         public Party[] Parties { get; set; }
 
+        public string DisplayPartyRelationship { get; set; }
+
         public DateTime FromDate { get; set; }
 
         public DateTime ThroughDate { get; set; }

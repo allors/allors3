@@ -29,6 +29,8 @@ namespace Allors.Repository
 
         public Party[] Parties { get; set; }
 
+        public string DisplayPartyRelationship { get; set; }
+
         #endregion
 
         #region Allors

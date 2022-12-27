@@ -31,5 +31,12 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         Agreement[] Agreements { get; set; }
+
+        #region Allors
+        [Id("5cf32809-60ef-44d7-9a4a-400cd2640937")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        string DisplayPartyRelationship{ get; set; }
     }
 }
