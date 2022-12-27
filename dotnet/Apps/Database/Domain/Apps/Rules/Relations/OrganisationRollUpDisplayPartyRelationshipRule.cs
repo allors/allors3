@@ -36,6 +36,6 @@ namespace Allors.Database.Domain
 
     public static class OrganisationRollUpDisplayPartyRelationshipRuleExtensions
     {
-        public static void DeriveOrganisationRollUpDisplayPartyRelationship(this OrganisationRollUp @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.Child.DisplayName} is part of {@this.Parent.DisplayName}";
+        public static void DeriveOrganisationRollUpDisplayPartyRelationship(this OrganisationRollUp @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.Child?.DisplayName} is part of {@this.Parent?.DisplayName}";
     }
 }

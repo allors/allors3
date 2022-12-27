@@ -36,6 +36,6 @@ namespace Allors.Database.Domain
 
     public static class PartyFinancialRelationshipDisplayPartyRelationshipRuleExtensions
     {
-        public static void DerivePartyFinancialRelationshipDisplayPartyRelationship(this PartyFinancialRelationship @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.FinancialParty.DisplayName} has account with {@this.InternalOrganisation.DisplayName}";
+        public static void DerivePartyFinancialRelationshipDisplayPartyRelationship(this PartyFinancialRelationship @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.FinancialParty?.DisplayName} has account with {@this.InternalOrganisation?.DisplayName}";
     }
 }

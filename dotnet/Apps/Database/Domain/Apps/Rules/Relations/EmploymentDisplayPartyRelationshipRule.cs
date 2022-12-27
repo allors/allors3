@@ -36,6 +36,6 @@ namespace Allors.Database.Domain
 
     public static class EmploymentDisplayPartyRelationshipRuleExtensions
     {
-        public static void DeriveEmploymentDisplayPartyRelationship(this Employment @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.Employee.DisplayName} is employee at {@this.Employer.DisplayName}";
+        public static void DeriveEmploymentDisplayPartyRelationship(this Employment @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.Employee?.DisplayName} is employee at {@this.Employer?.DisplayName}";
     }
 }

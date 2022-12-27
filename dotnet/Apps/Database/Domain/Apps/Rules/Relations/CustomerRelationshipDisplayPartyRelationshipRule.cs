@@ -36,6 +36,6 @@ namespace Allors.Database.Domain
 
     public static class CustomerRelationshipDisplayPartyRelationshipRuleExtensions
     {
-        public static void DeriveCustomerRelationshipDisplayPartyRelationship(this CustomerRelationship @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.Customer.DisplayName} is customer of {@this.InternalOrganisation.DisplayName}";
+        public static void DeriveCustomerRelationshipDisplayPartyRelationship(this CustomerRelationship @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.Customer?.DisplayName} is customer of {@this.InternalOrganisation?.DisplayName}";
     }
 }

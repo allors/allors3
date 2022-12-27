@@ -36,6 +36,6 @@ namespace Allors.Database.Domain
 
     public static class SubContractorRelationshipDisplayPartyRelationshipRuleExtensions
     {
-        public static void DeriveSubContractorRelationshipDisplayPartyRelationship(this SubContractorRelationship @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.SubContractor.DisplayName} is subcontractor for {@this.Contractor.DisplayName}";
+        public static void DeriveSubContractorRelationshipDisplayPartyRelationship(this SubContractorRelationship @this, IValidation validation) => @this.DisplayPartyRelationship = $"{@this.SubContractor?.DisplayName} is subcontractor for {@this.Contractor?.DisplayName}";
     }
 }

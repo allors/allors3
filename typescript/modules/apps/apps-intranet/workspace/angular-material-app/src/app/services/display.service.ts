@@ -220,7 +220,7 @@ export class AppDisplayService implements DisplayService {
         m.PartyRate,
         [m.PartyRate.RateType, m.PartyRate.Rate, m.PartyRate.Frequency],
       ],
-      [m.PartyRelationship, [m.PartyRelationship.Parties]],
+      [m.PartyRelationship, [m.PartyRelationship.DisplayPartyRelationship]],
       [
         m.Person,
         [m.Person.FirstName, m.Person.LastName, m.Person.DisplayEmail],
