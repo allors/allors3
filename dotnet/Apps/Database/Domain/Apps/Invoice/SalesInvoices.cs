@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
                 this.Meta.Comment,
                 this.Meta.Description,
                 this.Meta.Message,
-                this.Meta.DueDate,
+                this.Meta.InvoiceDate,
                 this.Meta.ElectronicDocuments,
                 this.Meta.Print,
                 this.Meta.Credit,

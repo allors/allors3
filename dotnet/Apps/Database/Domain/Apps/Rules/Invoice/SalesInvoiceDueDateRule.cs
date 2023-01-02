@@ -18,8 +18,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.SalesInvoice.RolePattern(v => v.InvoiceDate),
-            // TODO: Martien
             m.SalesInvoice.RolePattern(v => v.SalesTerms),
+            m.SalesTerm.RolePattern(v => v.TermValue, v => v.InvoiceWhereSalesTerm, m.SalesInvoice),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
