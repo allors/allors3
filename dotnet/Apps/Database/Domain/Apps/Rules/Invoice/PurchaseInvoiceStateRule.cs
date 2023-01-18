@@ -19,6 +19,7 @@ namespace Allors.Database.Domain
             {
                 m.PurchaseInvoice.RolePattern(v => v.AmountPaid),
                 m.PurchaseInvoice.RolePattern(v => v.GrandTotal),
+                m.PurchaseInvoice.RolePattern(v => v.PurchaseInvoiceState), // From any state -> revise -> created -> confirm()
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
