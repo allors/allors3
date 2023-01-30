@@ -48,12 +48,15 @@ namespace Allors.Database.Domain
                 return "application/pdf";
             }
 
-            int num = fileName.LastIndexOf('.');
-            if (num != -1 && fileName.Length > num + 1)
+            if (!string.IsNullOrEmpty(fileName))
             {
-                if (fileName.Substring(num + 1).ToLower() == "msg")
+                var num = fileName.LastIndexOf('.');
+                if (num != -1 && fileName.Length > num + 1)
                 {
-                    return "application/vsd.ms-outlook";
+                    if (fileName.Substring(num + 1).ToLower() == "msg")
+                    {
+                        return "application/vsd.ms-outlook";
+                    }
                 }
             }
 
