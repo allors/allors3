@@ -39,6 +39,8 @@ namespace Allors.Database.Domain
                 m.Organisation.RolePattern(v => v.InternetAddress, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.TaxNumber, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.CurrentPartyContactMechanisms, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
+                m.Organisation.RolePattern(v => v.CurrentPartyContactMechanisms, v => v.QuotesWhereReceiver.Quote.AsProductQuote),
+                m.Person.RolePattern(v => v.CurrentPartyContactMechanisms, v => v.QuotesWhereContactPerson.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.GeneralCorrespondence, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.PostalAddress.RolePattern(v => v.Address1, v => v.PartiesWhereGeneralCorrespondence.Party.AsOrganisation.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.PostalAddress.RolePattern(v => v.Address2, v => v.PartiesWhereGeneralCorrespondence.Party.AsOrganisation.QuotesWhereIssuer.Quote.AsProductQuote),
@@ -74,6 +76,9 @@ namespace Allors.Database.Domain
                 m.TelecommunicationsNumber.RolePattern(v => v.CountryCode, v => v.PartyContactMechanismsWhereContactMechanism.PartyContactMechanism.PartyWhereCurrentPartyContactMechanism.Party.AsPerson.QuotesWhereContactPerson.Quote.AsProductQuote),
                 m.TelecommunicationsNumber.RolePattern(v => v.AreaCode, v => v.PartyContactMechanismsWhereContactMechanism.PartyContactMechanism.PartyWhereCurrentPartyContactMechanism.Party.AsPerson.QuotesWhereContactPerson.Quote.AsProductQuote),
                 m.TelecommunicationsNumber.RolePattern(v => v.ContactNumber, v => v.PartyContactMechanismsWhereContactMechanism.PartyContactMechanism.PartyWhereCurrentPartyContactMechanism.Party.AsPerson.QuotesWhereContactPerson.Quote.AsProductQuote),
+                m.TelecommunicationsNumber.RolePattern(v => v.CountryCode, v => v.PartyContactMechanismsWhereContactMechanism.PartyContactMechanism.PartyWhereCurrentPartyContactMechanism.Party.QuotesWhereReceiver.Quote.AsProductQuote),
+                m.TelecommunicationsNumber.RolePattern(v => v.AreaCode, v => v.PartyContactMechanismsWhereContactMechanism.PartyContactMechanism.PartyWhereCurrentPartyContactMechanism.Party.QuotesWhereReceiver.Quote.AsProductQuote),
+                m.TelecommunicationsNumber.RolePattern(v => v.ContactNumber, v => v.PartyContactMechanismsWhereContactMechanism.PartyContactMechanism.PartyWhereCurrentPartyContactMechanism.Party.QuotesWhereReceiver.Quote.AsProductQuote),
 
                 m.ProductQuote.RolePattern(v => v.QuoteItems),
                 m.QuoteItem.RolePattern(v => v.Product, v => v.QuoteWhereQuoteItem.Quote.AsProductQuote),
