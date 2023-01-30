@@ -48,9 +48,28 @@ namespace Allors.Database.Domain
                 return "application/pdf";
             }
 
+            int num = fileName.LastIndexOf('.');
+            if (num != -1 && fileName.Length > num + 1)
+            {
+                if (fileName.Substring(num + 1).ToLower() == "msg")
+                {
+                    return "application/vsd.ms-outlook";
+                }
+            }
+
             return !string.IsNullOrEmpty(fileName) ?
                 MimeTypesMap.GetMimeType(fileName) :
                 "application/octet-stream";
+        }
+
+        public static string GetExtension(string type)
+        {
+            if (type == "application/vsd.ms-outlook")
+            {
+                return "msg";
+            }
+
+            return MimeTypesMap.GetExtension(type);
         }
 
         private static bool Match(IReadOnlyList<byte> content, IReadOnlyList<byte> signature)

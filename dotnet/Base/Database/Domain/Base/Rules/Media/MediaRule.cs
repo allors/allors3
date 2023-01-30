@@ -54,26 +54,26 @@ namespace Allors.Database.Domain
                     media.RemoveInData();
                 }
 
+                if (media.ExistInDataUri)
+                {
+                    var dataUrl = new DataUrl(media.InDataUri);
+
+                    media.MediaContent.Data = Convert.FromBase64String(dataUrl.ReadAsBase64EncodedString());
+                    media.MediaContent.Type = MediaContents.Sniff(media.MediaContent.Data, media.InFileName);
+
+                    media.RemoveInDataUri();
+                }
+
                 if (media.ExistInFileName)
                 {
                     media.Name = System.IO.Path.GetFileNameWithoutExtension(media.InFileName);
                     media.RemoveInFileName();
                 }
 
-                if (media.ExistInDataUri)
-                {
-                    var dataUrl = new DataUrl(media.InDataUri);
-
-                    media.MediaContent.Data = Convert.FromBase64String(dataUrl.ReadAsBase64EncodedString());
-                    media.MediaContent.Type = dataUrl.ContentType;
-
-                    media.RemoveInDataUri();
-                }
-
                 media.Type = media.MediaContent?.Type;
 
                 var name = !string.IsNullOrWhiteSpace(media.Name) ? media.Name : media.UniqueId.ToString();
-                var fileName = $"{name}.{MimeTypesMap.GetExtension(media.Type)}";
+                var fileName = $"{name}.{MediaContents.GetExtension(media.Type)}";
                 var safeFileName = new string(fileName.Where(ch => !InvalidFileNameChars.Contains(ch)).ToArray());
 
                 var uppercaseSafeFileName = safeFileName.ToUpperInvariant();
