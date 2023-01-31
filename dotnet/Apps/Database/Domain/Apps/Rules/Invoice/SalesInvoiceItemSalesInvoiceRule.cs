@@ -60,6 +60,15 @@ namespace Allors.Database.Domain
                         @this.SalesInvoiceItemState = salesInvoiceItemStates.CancelledByInvoice;
                     }
                 }
+
+                if (salesInvoice != null
+                    && salesInvoice.ExistSalesInvoiceState
+                    && !salesInvoice.SalesInvoiceState.IsWrittenOff
+                    && @this.ExistSalesInvoiceItemState
+                    && @this.SalesInvoiceItemState.IsWrittenOff)
+                {
+                    @this.SalesInvoiceItemState = @this.PreviousSalesInvoiceItemState;
+                }
             }
         }
     }
