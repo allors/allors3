@@ -7,9 +7,9 @@
   <ItemGroup>
     <PackageReference Include="Allors.Documents" Version="1.0.4" />
     <PackageReference Include="DataUtils.DataUrl" Version="1.0.2" />
-    <PackageReference Include="MailKit" Version="3.3.0" />
+    <PackageReference Include="MailKit" Version="3.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
     <PackageReference Include="MimeTypesMap" Version="1.0.8" />
     <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.12" />
   </ItemGroup>
