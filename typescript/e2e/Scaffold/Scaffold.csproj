@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.17.1" />
-    <PackageReference Include="Scriban" Version="5.4.6" />
+    <PackageReference Include="AngleSharp" Version="1.0.1" />
+    <PackageReference Include="Scriban" Version="5.5.2" />
   </ItemGroup>
 
 </Project>
