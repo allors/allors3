@@ -10,7 +10,7 @@ stages:
     timeoutInMinutes: 480
 
     pool:
-      vmImage: 'windows-2019'
+      vmImage: 'windows-latest'
 
     strategy:
       matrix:
@@ -50,12 +50,17 @@ stages:
       submodules: true
     - powershell: Set-Culture -CultureInfo nl-BE
       displayName: CultureInfo nl-BE
-    - task: UseDotNet@2
-      displayName: 'Use .NET 7.0 sdk'
-      inputs:
-        packageType: sdk
-        version: 7.0.x
-        installationPath: $(Agent.ToolsDirectory)/dotnet
+    # - task: UseDotNet@2
+    #   displayName: 'Use .NET 7.0 sdk'
+    #   inputs:
+    #     packageType: sdk
+    #     version: 7.0.x
+    #     installationPath: $(Agent.ToolsDirectory)/dotnet
+    - powershell: |
+        Set-Service postgresql-x64-14 -StartupType manual
+        Start-Service postgresql-x64-14
+        Get-CimInstance win32_service | Where-Object Name -eq "postgresql-x64-14"
+      displayName: 'Setup PostgreSQL'
     - task: PowerShell@2
       env:
         NODE_OPTIONS: --max_old_space_size=16384
