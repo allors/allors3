@@ -180,6 +180,7 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
       this.timeSheet = pullResult.object<TimeSheet>(
         this.timeSheetWhereWorkerPullName
       );
+      this.object.Worker = this.timeSheet.Worker;
     });
   }
 

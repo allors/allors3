@@ -48,7 +48,7 @@ namespace Allors.Repository
         [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Derived]
+        [Required]
         [Workspace(Default)]
         public Person Worker { get; set; }
 
