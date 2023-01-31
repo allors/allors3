@@ -12,6 +12,6 @@ public partial class Paths
     
     public AbsolutePath TypescriptE2EBaseTests => TypescriptE2EBase / "Tests";
     public AbsolutePath TypescriptE2EBaseTestsProject => TypescriptE2EBaseTests / "Tests.csproj";
-    public AbsolutePath TypescriptE2EBaseTestsPlaywrightCommand => TypescriptE2EBaseTests / "bin/debug/net6.0/.playwright/node/win32_x64/playwright.cmd";
+    public AbsolutePath TypescriptE2EBaseTestsPlaywrightCommand => TypescriptE2EBaseTests / "bin/debug/net7.0/.playwright/node/win32_x64/playwright.cmd";
 
 }
