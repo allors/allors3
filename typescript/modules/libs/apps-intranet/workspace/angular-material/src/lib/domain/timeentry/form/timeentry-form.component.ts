@@ -181,7 +181,7 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
   }
 
   public override save(): void {
-    if (this.object.TimeSheetWhereTimeEntry) {
+    if (!this.object.TimeSheetWhereTimeEntry && this.timeSheet !== undefined) {
       this.timeSheet.addTimeEntry(this.object);
     }
 
