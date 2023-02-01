@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<TimeEntry>())
             {
-                @this.DelegatedAccess = @this.WorkEffort;
+                @this.DelegatedAccess = @this.Worker;
                 @this.AddSecurityToken(@this.Worker?.OwnerSecurityToken);
             }
         }
