@@ -55,8 +55,7 @@ namespace Allors.Database.Domain
 
         public void AppsOnPostDerive(ObjectOnPostDerive method)
         {
-            method.Derivation.Validation.AssertExists(this, this.M.TimeEntry.TimeSheetWhereTimeEntry);
-            method.Derivation.Validation.AssertAtLeastOne(this, this.M.TimeEntry.WorkEffort, this.M.TimeEntry.EngagementItem);
+            method.Derivation.Validation.AssertExists(this, this.M.TimeEntry.Worker);
         }
 
         public void AppsDelete(DeletableDelete method) => this.WorkEffort.DerivationTrigger = Guid.NewGuid();

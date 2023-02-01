@@ -97,6 +97,7 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
         }),
         p.WorkEffort({
           objectId: initializer.id,
+          name: 'parties',
           select: {
             WorkEffortPartyAssignmentsWhereAssignment: {
               include: {
@@ -131,9 +132,7 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
       this.object.TimeFrequency = hour;
 
       const workEffortPartyAssignments =
-        pullResult.collection<WorkEffortPartyAssignment>(
-          this.m.WorkEffortPartyAssignment
-        );
+        pullResult.collection<WorkEffortPartyAssignment>('parties');
       this.workers = Array.from(
         new Set(workEffortPartyAssignments?.map((v) => v.Party)).values()
       );
@@ -142,9 +141,7 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
       this.workEffort = this.object.WorkEffort;
 
       const workEffortPartyAssignments =
-        pullResult.collection<WorkEffortPartyAssignment>(
-          this.m.WorkEffort.WorkEffortPartyAssignmentsWhereAssignment
-        );
+        pullResult.collection<WorkEffortPartyAssignment>('parties');
       this.workers = Array.from(
         new Set(workEffortPartyAssignments?.map((v) => v.Party)).values()
       );
@@ -180,12 +177,11 @@ export class TimeEntryFormComponent extends AllorsFormComponent<TimeEntry> {
       this.timeSheet = pullResult.object<TimeSheet>(
         this.timeSheetWhereWorkerPullName
       );
-      this.object.Worker = this.timeSheet.Worker;
     });
   }
 
   public override save(): void {
-    if (!this.object.TimeSheetWhereTimeEntry) {
+    if (this.object.TimeSheetWhereTimeEntry) {
       this.timeSheet.addTimeEntry(this.object);
     }
 
