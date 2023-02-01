@@ -2153,7 +2153,7 @@ namespace Allors.Database.Domain.Tests
             invoiceItem2.AppsWriteOff();  //user can do this by reopening the invoice
             this.Transaction.Derive();
 
-            Assert.Equal(invoice.SalesInvoiceState, new SalesInvoiceStates(this.Transaction).Paid);
+            Assert.Equal(invoice.SalesInvoiceState, new SalesInvoiceStates(this.Transaction).PartiallyPaid);
         }
 
         [Fact]

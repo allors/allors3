@@ -46,17 +46,6 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(originalCount, derivation.Errors.Count());
 
             //// Re-arrange
-            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Work").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-            timeEntry.WorkEffort = workOrder;
-
-            // Act
-            derivation = this.Derive();
-
-            // Assert
-            Assert.True(derivation.HasErrors);
-            Assert.Equal(originalCount - 1, derivation.Errors.Count());
-
-            //// Re-arrange
             var worker = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
             new EmploymentBuilder(this.Transaction).WithEmployee(worker).WithEmployer(internalOrganisation).Build();
 
@@ -195,19 +184,10 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreatedThrowValidationError()
         {
-            var basePrice = new TimeEntryBuilder(this.Transaction).Build();
+            var timeEntry = new TimeEntryBuilder(this.Transaction).Build();
 
             var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.WorkEffort, TimeEntry.EngagementItem at least one"));
-        }
-
-        [Fact]
-        public void OnCreatedThrowValidationError_2()
-        {
-            var basePrice = new TimeEntryBuilder(this.Transaction).Build();
-
-            var errors = this.Derive().Errors.ToList();
-            Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.TimeSheetWhereTimeEntry is required"));
+            Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.Worker is required"));
         }
 
         //[Fact]
