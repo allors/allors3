@@ -5,11 +5,13 @@
 
 namespace Allors.Database.Domain.Print.PurchaseOrderModel
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Bogus.DataSets;
 
     public class Model
     {
-        public Model(PurchaseOrder order)
+        public Model(PurchaseOrder order, Dictionary<string, byte[]> images)
         {
             this.Order = new OrderModel(order);
 
@@ -17,7 +19,7 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
             this.TakenVia = new TakenViaModel(order);
             this.ShipTo = new ShipToModel(order);
 
-            this.OrderItems = order.PurchaseOrderItems.Select(v => new OrderItemModel(v)).ToArray();
+            this.OrderItems = order.PurchaseOrderItems.Select(v => new OrderItemModel(v, images)).ToArray();
         }
 
         public OrderModel Order { get; }

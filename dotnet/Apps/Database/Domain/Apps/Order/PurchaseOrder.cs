@@ -173,7 +173,7 @@ namespace Allors.Database.Domain
                 images.Add("Barcode", barcode);
             }
 
-            var model = new Print.PurchaseOrderModel.Model(this);
+            var model = new Print.PurchaseOrderModel.Model(this, images);
             this.RenderPrintDocument(this.OrderedBy?.PurchaseOrderTemplate, model, images);
 
             this.PrintDocument.Media.InFileName = $"{this.OrderNumber}.odt";
