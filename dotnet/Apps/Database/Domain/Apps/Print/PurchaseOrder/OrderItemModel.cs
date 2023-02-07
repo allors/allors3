@@ -5,12 +5,13 @@
 
 namespace Allors.Database.Domain.Print.PurchaseOrderModel
 {
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
 
     public class OrderItemModel
     {
-        public OrderItemModel(PurchaseOrderItem item)
+        public OrderItemModel(PurchaseOrderItem item, Dictionary<string, byte[]> imageByImageName)
         {
             this.Part = item.Part?.Name;
             var description = item.Description;
