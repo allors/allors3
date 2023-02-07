@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
                 if (repeatingSalesInvoice.NextExecutionDate.Date <= transaction.Now().Date
                     && (!repeatingSalesInvoice.ExistFinalExecutionDate
                     || repeatingSalesInvoice.FinalExecutionDate > transaction.Now().Date)
-                    || (repeatingSalesInvoice.FinalExecutionDate <= transaction.Now().Date && !repeatingSalesInvoice.FinalExecutionExecuted))
+                    || (repeatingSalesInvoice.FinalExecutionDate == transaction.Now().Date && !repeatingSalesInvoice.FinalExecutionExecuted))
                 {
                     repeatingSalesInvoice.Repeat();
                 }

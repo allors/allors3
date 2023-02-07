@@ -154,6 +154,7 @@ namespace Allors.Database.Domain
                 .WithShipToEndCustomerContactPerson(this.ShipToEndCustomerContactPerson)
                 .WithDescription(this.Description)
                 .WithStore(this.Store)
+                .WithAssignedCurrency(this.DerivedCurrency)
                 .WithInvoiceDate(this.Transaction().Now())
                 .WithSalesChannel(this.SalesChannel)
                 .WithSalesInvoiceType(new SalesInvoiceTypes(this.Strategy.Transaction).SalesInvoice)

@@ -232,6 +232,11 @@ namespace Allors.Database.Domain
                     deletable.Strategy.Delete();
                 }
 
+                foreach (var approval in this.PurchaseInvoiceApprovalsWherePurchaseInvoice)
+                {
+                    approval.Delete();
+                }
+
                 foreach (var orderAdjustment in this.OrderAdjustments)
                 {
                     orderAdjustment.Delete();
