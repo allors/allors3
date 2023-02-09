@@ -5,7 +5,7 @@
     {
         <BSLabel>@Label</BSLabel>
     }
-    <BSBasicInput InputType="InputType.Select" @bind-Value="ModelId">
+    <BSBasicInput InputType="InputType.Select" @bind="ModelId">
         @if (this.Model == null || !this.Required)
         {
             <option value="0">@EmptyValue</option>

@@ -11,7 +11,7 @@
     }
     else
     {
-        <BSInput InputType="InputType" @bind-Value="StringModel"></BSInput>
+        <BSInput InputType="InputType" @bind="StringModel"></BSInput>
         <BSFormFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
     }
 </BSFormGroup>
