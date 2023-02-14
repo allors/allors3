@@ -60,6 +60,14 @@ namespace Allors.Database.Configuration.Derivations.Default
             }
         }
 
+        public void AssertNonWhiteSpaceString(IObject association, IRoleType roleType)
+        {
+            if (string.IsNullOrWhiteSpace(association.Strategy.GetUnitRole(roleType) as string))
+            {
+                this.AddError(new DerivationErrorRequired(this, association, roleType));
+            }
+        }
+
         public void AssertExistsNonEmptyString(IObject association, IRoleType roleType)
         {
             this.AssertExists(association, roleType);

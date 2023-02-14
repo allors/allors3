@@ -27,6 +27,8 @@ namespace Allors.Database.Derivations
         void AssertNotExists(IObject association, IRoleType roleType);
 
         void AssertNonEmptyString(IObject association, IRoleType roleType);
+ 
+        void AssertNonWhiteSpaceString(IObject association, IRoleType roleType);
 
         void AssertExistsNonEmptyString(IObject association, IRoleType roleType);
 
