@@ -43,5 +43,18 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(0, units.RequiredInteger);
             Assert.NotEqual(Guid.Empty, units.RequiredUnique);
         }
+
+        [Fact]
+        public void AssertRequired()
+        {
+            var valiData = new ValiDataBuilder(this.Transaction).Build();
+
+            Assert.True(this.Transaction.Derive(false).HasErrors);
+
+            valiData.RequiredPerson = new People(this.Transaction).Extent().First;
+
+            Assert.False(this.Transaction.Derive(false).HasErrors);
+        }
+
     }
 }
