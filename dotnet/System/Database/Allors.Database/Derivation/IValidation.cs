@@ -28,9 +28,13 @@ namespace Allors.Database.Derivations
 
         void AssertNonEmptyString(IObject association, IRoleType roleType);
 
+        void AssertNonWhiteSpaceString(IObject association, IRoleType roleType);
+
         void AssertExistsNonEmptyString(IObject association, IRoleType roleType);
 
         void AssertIsUnique(IChangeSet changeSet, IObject association, IRoleType roleType);
+
+        void AssertIsUnique(IChangeSet changeSet, IObject association, IComposite objectType, params IRoleType[] roleTypes);
 
         void AssertAtLeastOne(IObject association, params IRoleType[] roleTypes);
 

@@ -7,6 +7,7 @@
 namespace Allors.Database.Configuration.Derivations.Default
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Database.Derivations;
     using Meta;
 
@@ -60,6 +61,14 @@ namespace Allors.Database.Configuration.Derivations.Default
             }
         }
 
+        public void AssertNonWhiteSpaceString(IObject association, IRoleType roleType)
+        {
+            if (string.IsNullOrWhiteSpace(association.Strategy.GetUnitRole(roleType) as string))
+            {
+                this.AddError(new DerivationErrorRequired(this, association, roleType));
+            }
+        }
+
         public void AssertExistsNonEmptyString(IObject association, IRoleType roleType)
         {
             this.AssertExists(association, roleType);
@@ -68,7 +77,7 @@ namespace Allors.Database.Configuration.Derivations.Default
 
         public void AssertIsUnique(IChangeSet changeSet, IObject association, IRoleType roleType)
         {
-            if (changeSet.RoleTypesByAssociation.TryGetValue(association, out var roleTypes) && roleTypes.Contains(roleType))
+            if (changeSet.RoleTypesByAssociation.TryGetValue(association, out var changedRoleTypes) && changedRoleTypes.Contains(roleType))
             {
                 var objectType = roleType.AssociationType.ObjectType;
                 var role = association.Strategy.GetRole(roleType);
@@ -86,14 +95,42 @@ namespace Allors.Database.Configuration.Derivations.Default
             }
         }
 
+        public void AssertIsUnique(IChangeSet changeSet, IObject association, IComposite objectType, params IRoleType[] roleTypes)
+        {
+            if (changeSet.RoleTypesByAssociation.TryGetValue(association, out var changedRoleTypes) && changedRoleTypes.Intersect(roleTypes).Any())
+            {
+                Extent extent = null;
+
+                foreach (var roleType in roleTypes)
+                {
+                    var role = association.Strategy.GetRole(roleType);
+                    if (role == null)
+                    {
+                        continue;
+                    }
+
+                    if (extent == null)
+                    {
+                        var transaction = association.Strategy.Transaction;
+                        extent = transaction.Extent(objectType);
+                    }
+
+                    extent.Filter.AddEquals(roleType, role);
+                }
+
+                if (extent != null && extent.Count != 1)
+                {
+                    this.AddError(new DerivationErrorUnique(this, association, roleTypes));
+                }
+
+            }
+        }
+
         public void AssertAtLeastOne(IObject association, params IRoleType[] roleTypes)
         {
-            foreach (var roleType in roleTypes)
+            if (roleTypes.Any(association.Strategy.ExistRole))
             {
-                if (association.Strategy.ExistRole(roleType))
-                {
-                    return;
-                }
+                return;
             }
 
             this.AddError(new DerivationErrorAtLeastOne(this, DerivationRelation.Create(association, roleTypes)));

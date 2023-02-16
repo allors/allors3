@@ -1,0 +1,45 @@
+@page "/organisation/list"
+@using Allors.Workspace.Meta
+@using Organisation = Allors.Workspace.Domain.Organisation
+@attribute [Authorize]
+@inject IWorkspace Workspace
+
+@if (organisations != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th width="90%">Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var organisation in organisations)
+            {
+                <tr>
+                    <td>@organisation.Name</td>
+                    <td><a href="/organisation/edit/@organisation.Id">Edit</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    Organisation[] organisations;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        var session = this.Workspace.CreateSession();
+        var m = session.Workspace.Services.Get<M>();
+
+        var pull = new Pull
+            {
+                Extent = new Filter(m.Organisation),
+            };
+
+        var result = await session.PullAsync(pull);
+
+        this.organisations = result.GetCollection<Organisation>();
+    }
+}

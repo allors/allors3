@@ -29,6 +29,20 @@ namespace Allors.Repository
         [Required]
         public Person RequiredPerson { get; set; }
 
+        #region Allors
+        [Id("9DCAC493-0E90-4BB1-9F22-554A7F399042")]
+        [Indexed]
+        #endregion
+        [Workspace(Default)]
+        public int ValueA { get; set; }
+
+        #region Allors
+        [Id("ACC9D05D-B9B5-4F98-8DCE-1EC3DB5990E0")]
+        [Indexed]
+        #endregion
+        [Workspace(Default)]
+        public int ValueB { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Database\Adapters\Allors.Database.Adapters.Sql.SqlClient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Local\Allors.Workspace.Adapters.Local.csproj" />
+    <ProjectReference Include="..\..\Database\Configuration\Configuration.csproj" />
+    <ProjectReference Include="..\Blazor.Bootstrap\Blazor.Bootstrap.csproj" />
+    <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
+    <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
+  </ItemGroup>
+
+</Project>
