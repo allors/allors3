@@ -32,6 +32,7 @@ namespace Allors.Database.Domain
             m.TelecommunicationsNumber.RolePattern(v => v.Description, v => v.PartiesWhereCellPhoneNumber.Party.AsPerson.WorkEffortsWhereContactPerson.WorkEffort.AsWorkTask),
             m.TelecommunicationsNumber.RolePattern(v => v.Description, v => v.PartiesWhereGeneralPhoneNumber.Party.AsPerson.WorkEffortsWhereContactPerson.WorkEffort.AsWorkTask),
             m.WorkTask.RolePattern(v => v.TotalLabourRevenue),
+            m.WorkTask.RolePattern(v => v.TotalOtherRevenue),
             m.WorkTask.RolePattern(v => v.TotalMaterialRevenue),
             m.WorkTask.RolePattern(v => v.TotalSubContractedRevenue),
             m.WorkTask.RolePattern(v => v.GrandTotal),
