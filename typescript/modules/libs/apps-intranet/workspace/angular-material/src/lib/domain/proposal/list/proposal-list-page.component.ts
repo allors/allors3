@@ -45,8 +45,6 @@ interface Row extends TableRow {
   to: string;
   state: string;
   validThroughDate: string;
-  origin: string;
-  destination: string;
   description: string;
   lastModifiedDate: string;
 }
@@ -226,8 +224,6 @@ export class ProposalListPageComponent
               number: `${v.QuoteNumber}`,
               to: v.Receiver && v.Receiver.DisplayName,
               state: `${v.QuoteState && v.QuoteState.Name}`,
-              origin: `${v.Origin || ''}`,
-              destination: `${v.Destination || ''}`,
               description: `${v.Description || ''}`,
               validThroughDate:
                 v.ValidThroughDate &&
