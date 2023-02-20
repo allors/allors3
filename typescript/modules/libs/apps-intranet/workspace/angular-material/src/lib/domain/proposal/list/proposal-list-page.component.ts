@@ -45,6 +45,8 @@ interface Row extends TableRow {
   to: string;
   state: string;
   validThroughDate: string;
+  origin: string;
+  destination: string;
   description: string;
   lastModifiedDate: string;
 }
@@ -101,6 +103,8 @@ export class ProposalListPageComponent
         { name: 'number', sort: true },
         { name: 'to' },
         { name: 'state' },
+        { name: 'origin', sort: true },
+        { name: 'destination', sort: true },
         { name: 'description', sort: true },
         { name: 'validThroughDate', sort: true },
         { name: 'lastModifiedDate', sort: true },
@@ -222,6 +226,8 @@ export class ProposalListPageComponent
               number: `${v.QuoteNumber}`,
               to: v.Receiver && v.Receiver.DisplayName,
               state: `${v.QuoteState && v.QuoteState.Name}`,
+              origin: `${v.Origin || ''}`,
+              destination: `${v.Destination || ''}`,
               description: `${v.Description || ''}`,
               validThroughDate:
                 v.ValidThroughDate &&

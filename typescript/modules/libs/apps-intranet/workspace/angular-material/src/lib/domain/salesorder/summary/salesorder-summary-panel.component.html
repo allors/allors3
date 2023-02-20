@@ -16,7 +16,7 @@
     <mat-card-subtitle>
       <div>
         last modified:
-        {{ order.LastModifiedDate | date : 'd/M/yyyy, HH:mm' }} by
+        {{ order.LastModifiedDate | date: 'd/M/yyyy, HH:mm' }} by
         {{ order.LastModifiedBy?.DisplayName }}
       </div>
     </mat-card-subtitle>
@@ -30,7 +30,7 @@
     >
       <div style="color: grey">Quote</div>
       <div>
-        {{ order.Quote.Receiver?.DisplayName }}
+        {{ order.Quote.QuoteNumber }}
       </div>
     </div>
 
