@@ -50,6 +50,12 @@ namespace Allors.Database.Domain
                 this.Meta.ElectronicDocuments,
                 this.Meta.Print,
                 this.Meta.Credit,
+                this.Meta.AssignedBillToContactMechanism,
+                this.Meta.AssignedBillToEndCustomerContactMechanism,
+                this.Meta.AssignedShipToAddress,
+                this.Meta.AssignedShipToEndCustomerAddress,
+                this.Meta.BillToContactPerson,
+                this.Meta.ShipToContactPerson,
             };
 
             config.DenyExcept(this.ObjectType, notPaid, except, Operations.Write);

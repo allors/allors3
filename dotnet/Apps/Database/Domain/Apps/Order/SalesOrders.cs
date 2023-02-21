@@ -56,8 +56,18 @@ namespace Allors.Database.Domain
 
             var except = new HashSet<IOperandType>
             {
+                this.Meta.InternalComment,
+                this.Meta.Comment,
+                this.Meta.Description,
+                this.Meta.OrderDate,
                 this.Meta.ElectronicDocuments,
                 this.Meta.Print,
+                this.Meta.AssignedBillToContactMechanism,
+                this.Meta.AssignedBillToEndCustomerContactMechanism,
+                this.Meta.AssignedShipToAddress,
+                this.Meta.AssignedShipToEndCustomerAddress,
+                this.Meta.BillToContactPerson,
+                this.Meta.ShipToContactPerson,
             };
 
             var transferredExcept = new HashSet<IOperandType>
