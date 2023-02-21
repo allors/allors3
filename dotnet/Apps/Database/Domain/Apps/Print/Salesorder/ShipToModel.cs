@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain.Print.SalesOrderModel
 {
+    using System.Collections.Generic;
+
     public class ShipToModel
     {
         public ShipToModel(SalesOrder order)
@@ -27,17 +29,19 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
                                 order.BillToCustomer?.ShippingAddress ??
                                 order.BillToCustomer?.GeneralCorrespondence;
 
+            var address = new List<string>();
+
             if (shipToAddress is PostalAddress postalAddress)
             {
-                this.Address = postalAddress.Address1;
+                address.Add(postalAddress.Address1);
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address2))
                 {
-                    this.Address += $"\n{postalAddress.Address2}";
+                    address.Add(postalAddress.Address2);
                 }
 
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address3))
                 {
-                    this.Address += $"\n{postalAddress.Address3}";
+                    address.Add(postalAddress.Address3);
                 }
 
                 this.City = postalAddress.Locality;
@@ -47,6 +51,8 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
                 this.PrintPostalCode = !string.IsNullOrEmpty(this.PostalCode);
                 this.PrintCity = !this.PrintPostalCode;
             }
+
+            this.Address = address.ToArray();
         }
 
         public bool PrintPostalCode { get; }
@@ -55,7 +61,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
 
         public string Name { get; }
 
-        public string Address { get; }
+        public string[] Address { get; }
 
         public string City { get; }
 
