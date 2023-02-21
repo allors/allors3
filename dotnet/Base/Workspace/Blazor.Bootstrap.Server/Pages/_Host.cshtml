@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using Microsoft.AspNetCore.Components.Web
 @namespace Blazor.Bootstrap.Server.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
     <link href="Blazor.Bootstrap.Server.styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link rel="icon" type="image/png" href="favicon.png" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
@@ -30,5 +30,7 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+    <script src="_content/BlazorStrap/popper.min.js"></script>
+    <script src="_content/BlazorStrap/blazorstrap.js"></script>
 </body>
 </html>

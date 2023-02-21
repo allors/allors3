@@ -3,11 +3,11 @@
 @using Allors.Workspace.Blazor.Validation
 @implements System.IDisposable
 
-<BSFormGroup @attributes="Attributes">
+<BSInputGroup @attributes="Attributes">
     <BSLabel>@DerivedLabel</BSLabel>
     <input type="date" class="form-control" @bind="Model" />
-    <BSFormFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
-</BSFormGroup>
+    <BSFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
+</BSInputGroup>
 
 @code {
     //TODO: Inherit from rolefield
@@ -35,7 +35,7 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object> Attributes { get; set; }
-    
+
     public IPropertyType PropertyType { get => this.RoleType; }
 
     public IObject DerivedObject

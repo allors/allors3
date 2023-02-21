@@ -10,16 +10,16 @@
 
 @if (organisation != null)
 {
-    <ABSForm Model="@organisation" OnValidSubmit="@HandleValidSubmit">
+    <ABSForm Model="@organisation" OnValidSubmit="@HandleValidSubmit" TValue="Organisation">
         <ValidationSummary />
 
         <BSRow>
             <ABSStringInput RoleType="@M.Organisation.Name" />
         </BSRow>
-
+@*
         <BSRow>
             <ABSSelect RoleType="@M.Organisation.Owner" Options="@people" Required="true" DisplayOption="@(v => ((Person) v).FullName)" />
-        </BSRow>
+        </BSRow>*@
 
         <BSRow>
             <BSFormGroup>

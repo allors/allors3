@@ -1,22 +1,21 @@
 @page "/person/edit/{id}"
 @using Allors.Workspace.Meta
 @using Person = Allors.Workspace.Domain.Person
-@using Polly
 @attribute [Authorize]
 @inject IWorkspace Workspace
 @inject NavigationManager NavigationManager
 
 @if (person != null)
 {
-    <ABSForm Model="@person" OnValidSubmit="@HandleValidSubmit">
+    <ABSForm Model="@person" TValue="Person" OnValidSubmit="@HandleValidSubmit">
         <ValidationSummary />
 
         <BSRow>
             <BSCol>
-                <ABSInput RoleType="@M.Person.FirstName" />
+                <ABSStringInput RoleType="@M.Person.FirstName" />
             </BSCol>
             <BSCol>
-                <ABSInput RoleType="@M.Person.LastName" />
+                <ABSStringInput RoleType="@M.Person.LastName" />
             </BSCol>
         </BSRow>
 
@@ -39,7 +38,7 @@
     ISession Session;
 
     M M => this.Session.Workspace.Services.Get<M>();
-    
+
     [Parameter]
     public string id { get; set; }
 
@@ -50,9 +49,9 @@
         this.Session = this.Workspace.CreateSession();
 
         var pull = new Pull
-        {
-            ObjectId = long.Parse(id)
-        };
+            {
+                ObjectId = long.Parse(id)
+            };
 
         var result = await this.Session.PullAsync(pull);
 

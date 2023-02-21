@@ -1,11 +1,15 @@
+@typeparam TValue
 @using Allors.Workspace.Blazor.Validation
-<BSForm OnSubmit="@OnSubmit" OnValidSubmit="@OnValidSubmit" OnInvalidSubmit="@OnInvalidSubmit" @attributes="Attributes">
+<BSForm Model="@Model" OnSubmit="@OnSubmit" OnValidSubmit="@OnValidSubmit" OnInvalidSubmit="@OnInvalidSubmit" @attributes="Attributes" TValue="@TValue">
     <CascadingValue Value="@Fields">
         @ChildContent
     </CascadingValue>
 </BSForm>
 
 @code {
+    [Parameter]
+    public TValue Model { get; set; }
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 

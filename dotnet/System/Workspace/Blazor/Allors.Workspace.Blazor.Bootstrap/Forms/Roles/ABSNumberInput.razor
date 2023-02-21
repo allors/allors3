@@ -1,7 +1,7 @@
 @inherits ABSNumberInputBase
 
-<BSFormGroup>
+<BSInputGroup>
     <BSLabel>@Label</BSLabel>
-    <BSInput InputType="InputType" @bind="IntModel"></BSInput>
-    <BSFormFeedback For="@(() => Model)" ValidMessage="@ValidMessage"/>
-</BSFormGroup>
+    <BSInput InputType="InputType" Value="IntModel"></BSInput>
+    <BSFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
+</BSInputGroup>
