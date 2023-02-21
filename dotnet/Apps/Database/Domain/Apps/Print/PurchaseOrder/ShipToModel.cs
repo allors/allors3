@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain.Print.PurchaseOrderModel
 {
     using System.Collections.Generic;
-    using Bogus.DataSets;
 
     public class ShipToModel
     {

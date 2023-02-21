@@ -7,7 +7,6 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Bogus.DataSets;
 
     public class BilledToModel
     {
