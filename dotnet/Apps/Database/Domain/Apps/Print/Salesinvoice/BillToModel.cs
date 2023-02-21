@@ -28,12 +28,12 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
                 this.Address = postalAddress.Address1;
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address2))
                 {
-                    this.Address = $"\n{postalAddress.Address2}";
+                    this.Address += $"\n{postalAddress.Address2}";
                 }
 
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address3))
                 {
-                    this.Address = $"\n{postalAddress.Address3}";
+                    this.Address += $"\n{postalAddress.Address3}";
                 }
 
                 this.City = postalAddress.Locality;

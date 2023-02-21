@@ -37,12 +37,12 @@ namespace Allors.Database.Domain.Print.ProposalModel
                     this.Address = generalAddress.Address1;
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address2))
                     {
-                        this.Address = $"\n{generalAddress.Address2}";
+                        this.Address += $"\n{generalAddress.Address2}";
                     }
 
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address3))
                     {
-                        this.Address = $"\n{generalAddress.Address3}";
+                        this.Address += $"\n{generalAddress.Address3}";
                     }
 
                     this.City = generalAddress.Locality;
