@@ -15,17 +15,19 @@ namespace Allors.Database.Domain.Print.ProposalModel
         {
             var contactMechanism = quote.FullfillContactMechanism;
 
+            var address = new List<string>();
+
             if (contactMechanism is PostalAddress postalAddress)
             {
-                this.Address = postalAddress.Address1;
+                address.Add(postalAddress.Address1);
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address2))
                 {
-                    this.Address += $"\n{postalAddress.Address2}";
+                    address.Add(postalAddress.Address2);
                 }
 
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address3))
                 {
-                    this.Address += $"\n{postalAddress.Address3}";
+                    address.Add(postalAddress.Address3);
                 }
 
                 this.City = postalAddress.Locality;
@@ -36,11 +38,13 @@ namespace Allors.Database.Domain.Print.ProposalModel
 
             if (contactMechanism is ElectronicAddress electronicAddress)
             {
-                this.Address = electronicAddress.ElectronicAddressString;
+                address.Add(electronicAddress.ElectronicAddressString);
             }
+
+            this.Address = address.ToArray();
         }
 
-        public string Address { get; }
+        public string[] Address { get; }
 
         public string City { get; }
 

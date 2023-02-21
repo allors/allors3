@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.Print.SalesInvoiceModel
 {
+    using System.Collections.Generic;
     using System.Linq;
 
     public class BilledFromModel
@@ -24,20 +25,21 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
                     this.Telephone = $"{phone.CountryCode} {phone.AreaCode} {phone.ContactNumber}";
                 }
 
+                var address = new List<string>();
+
                 if (billedFrom.GeneralCorrespondence is PostalAddress generalAddress)
                 {
-                    var address = generalAddress.Address1;
+                    address.Add(generalAddress.Address1);
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address2))
                     {
-                        address += $"\n{generalAddress.Address2}";
+                        address.Add(generalAddress.Address2);
                     }
 
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address3))
                     {
-                        address += $"\n{generalAddress.Address3}";
+                        address.Add(generalAddress.Address3);
                     }
 
-                    this.Address = address?.Split('\n');
                     this.City = generalAddress.Locality;
                     this.State = generalAddress.Region;
                     this.PostalCode = generalAddress.PostalCode;
@@ -58,6 +60,8 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
                     this.Bank = bank?.Name;
                     this.Swift = bank?.SwiftCode ?? bank?.Bic;
                 }
+
+                this.Address = address.ToArray();
             }
         }
 

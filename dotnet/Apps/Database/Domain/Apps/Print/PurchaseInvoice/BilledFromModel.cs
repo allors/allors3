@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 {
+    using System.Collections.Generic;
+
     public class BilledFromModel
     {
         public BilledFromModel(PurchaseInvoice invoice)
@@ -23,17 +25,19 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 
             this.Contact = contactPerson?.DisplayName;
 
+            var address = new List<string>();
+
             if (contactMechanisam is PostalAddress postalAddress)
             {
-                this.Address = postalAddress.Address1;
+                address.Add(postalAddress.Address1);
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address2))
                 {
-                    this.Address += $"\n{postalAddress.Address2}";
+                    address.Add(postalAddress.Address2);
                 }
 
                 if (!string.IsNullOrWhiteSpace(postalAddress.Address3))
                 {
-                    this.Address += $"\n{postalAddress.Address3}";
+                    address.Add(postalAddress.Address3);
                 }
 
                 this.City = postalAddress.Locality;
@@ -46,8 +50,10 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 
             if (contactMechanisam is ElectronicAddress electronicAddress)
             {
-                this.Address = electronicAddress.ElectronicAddressString;
+                address.Add(electronicAddress.ElectronicAddressString);
             }
+
+            this.Address = address.ToArray();
         }
 
         public bool PrintPostalCode { get; }
@@ -56,7 +62,7 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
 
         public string Name { get; }
 
-        public string Address { get; }
+        public string[] Address { get; }
 
         public string City { get; }
 

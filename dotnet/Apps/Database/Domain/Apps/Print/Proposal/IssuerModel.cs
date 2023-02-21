@@ -32,17 +32,19 @@ namespace Allors.Database.Domain.Print.ProposalModel
                     this.Telephone2 = phoneNumbers[1].ToString();
                 }
 
+                var address = new List<string>();
+
                 if (issuer.GeneralCorrespondence is PostalAddress generalAddress)
                 {
-                    this.Address = generalAddress.Address1;
+                    address.Add(generalAddress.Address1);
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address2))
                     {
-                        this.Address += $"\n{generalAddress.Address2}";
+                        address.Add(generalAddress.Address2);
                     }
 
                     if (!string.IsNullOrWhiteSpace(generalAddress.Address3))
                     {
-                        this.Address += $"\n{generalAddress.Address3}";
+                        address.Add(generalAddress.Address3);
                     }
 
                     this.City = generalAddress.Locality;
@@ -60,12 +62,14 @@ namespace Allors.Database.Domain.Print.ProposalModel
                     this.Bank = bank?.Name;
                     this.Swift = bank?.SwiftCode ?? bank?.Bic;
                 }
+
+                this.Address = address.ToArray();
             }
         }
 
         public string Name { get; }
 
-        public string Address { get; }
+        public string[] Address { get; }
 
         public string City { get; }
 
