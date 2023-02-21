@@ -20,7 +20,6 @@ namespace Allors.Workspace.Adapters.Local
     public class DatabaseConnection : Adapters.DatabaseConnection
     {
         private readonly Dictionary<long, AccessControl> accessControlById;
-        private readonly IPermissions permission;
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
@@ -33,7 +32,6 @@ namespace Allors.Workspace.Adapters.Local
             this.recordRanges = rangesFactory();
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
-            this.permission = this.Database.Services.Get<IPermissions>();
             this.accessControlById = new Dictionary<long, AccessControl>();
         }
 
