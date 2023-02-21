@@ -6,6 +6,8 @@
 
 namespace Allors.Workspace.Configuration
 {
+    using System.Globalization;
+    using System.Security.Claims;
     using Adapters;
     using Allors.Ranges;
     using Derivations;
@@ -31,8 +33,9 @@ namespace Allors.Workspace.Configuration
                 var database = serviceProvider.GetRequiredService<IDatabaseService>().Database;
                 var authenticationState = serviceProvider.GetRequiredService<AuthenticationStateProvider>();
                 var user = authenticationState.GetAuthenticationStateAsync().Result.User;
-                var id = user.
-                return new Adapters.Local.DatabaseConnection(configuration, database, servicesBuilder, rangesFactory);
+                var claim = user.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = claim != null ? int.Parse(claim.Value, CultureInfo.InvariantCulture) : 0;
+                return new Adapters.Local.DatabaseConnection(configuration, database, servicesBuilder, rangesFactory) { UserId = userId };
             });
         }
     }
