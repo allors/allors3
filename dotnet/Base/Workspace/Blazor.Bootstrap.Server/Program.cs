@@ -17,6 +17,7 @@ builder.Services.AddSingleton<IPolicyService, PolicyService>();
 
 builder.Services.AddAllorsDatabase(configuration);
 builder.Services.AddAllorsWorkspace();
+builder.Services.AddSingleton<IImageService, LocalImageService>();
 
 builder.Services.AddDefaultIdentity<IdentityUser>().AddAllorsStores();
 builder.Services.AddRazorPages();

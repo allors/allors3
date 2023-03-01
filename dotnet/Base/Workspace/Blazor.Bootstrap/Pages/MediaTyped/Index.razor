@@ -18,12 +18,12 @@
         var m = session.Workspace.Services.Get<M>();
 
         var pull = new Pull
-        {
-            Extent = new Filter(m.Media),
-        };
+            {
+                Extent = new Filter(m.Media),
+            };
 
         var result = await session.PullAsync(pull);
 
-        this.image = result.GetCollection<Media>().First(v => v.FileName.Equals("madeliefje.jpg"));
+        this.image = result.GetCollection<Media>().First(v => v.FileName.Equals("madeliefje.jpeg"));
     }
 }

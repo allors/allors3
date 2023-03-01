@@ -42,7 +42,7 @@ namespace Allors.Services
 
             parameters.Add($"we");
 
-            return $"//images.weserv.nl/?url={this.BaseUri}Image/{media.UniqueId}/{media.Revision}?{string.Join("&", parameters)}";
+            return $"//images.weserv.nl/?url={this.BaseUri}/allors/image/{media.UniqueId}/{media.Revision}?{string.Join("&", parameters)}";
         }
     }
 }

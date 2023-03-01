@@ -28,7 +28,7 @@ namespace Allors.Services
                 parameters.Add($"b={background}");
             }
 
-            return $"/Image/{media.UniqueId}/{media.Revision}{(parameters.Count > 0 ? "?" : string.Empty)}{string.Join("&", parameters)}";
+            return $"/allors/image/{media.UniqueId}/{media.Revision}{(parameters.Count > 0 ? "?" : string.Empty)}{string.Join("&", parameters)}";
         }
     }
 }
