@@ -163,6 +163,7 @@ export class PurchaseOrderEditFormComponent extends AllorsFormComponent<Purchase
 
   public facilityAdded(facility: Facility): void {
     this.facilities.push(facility);
+    this.ownWarehouses.push(facility);
     this.object.StoredInFacility = facility;
   }
 
