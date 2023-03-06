@@ -1,6 +1,6 @@
 @inherits AStringInputBase
 
-@*<BSFormGroup @attributes="Attributes">
+@*<BSInputGroup @attributes="Attributes">
     @if (ShowLabel)
     {
         <BSLabel>@Label</BSLabel>
@@ -14,7 +14,7 @@
         <BSInput InputType="InputType" @bind-Value="StringModel"></BSInput>
         <BSFormFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
     }
-</BSFormGroup>*@
+</BSInputGroup>*@
 
 <FormItem @attributes="Attributes">
 

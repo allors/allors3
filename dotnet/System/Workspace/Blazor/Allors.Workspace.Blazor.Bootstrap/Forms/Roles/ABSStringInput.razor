@@ -1,17 +1,15 @@
 @inherits ABSStringInputBase
 
-<BSFormGroup @attributes="Attributes">
+<BSInputGroup @attributes="Attributes">
     @if (ShowLabel)
     {
         <BSLabel>@Label</BSLabel>
     }
-    @if (HideValidation)
+
+    <BSInput InputType="InputType" @bind-Value="StringModel"></BSInput>
+    @if (!HideValidation)
     {
-        <input type="string" class="form-control" @bind="StringModel" />
+        <BSFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
     }
-    else
-    {
-        <BSInput InputType="InputType" @bind="StringModel"></BSInput>
-        <BSFormFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
-    }
-</BSFormGroup>
+
+</BSInputGroup>

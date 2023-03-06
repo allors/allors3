@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorStrap" Version="5.1.100" />
+    <PackageReference Include="BlazorStrap.V5" Version="5.1.100" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.2" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.2.2" />
   </ItemGroup>
@@ -18,6 +20,7 @@
     <ProjectReference Include="..\..\Database\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\..\Database\Meta\Meta.csproj" />
     <ProjectReference Include="..\..\Database\Resources\Resources.csproj" />
+    <ProjectReference Include="..\Blazor.Bootstrap\Blazor.Bootstrap.csproj" />
     <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
     <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
     <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
@@ -25,6 +28,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Server\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Server\Base*\**\*.cs" />
   </ItemGroup>
 
 </Project>

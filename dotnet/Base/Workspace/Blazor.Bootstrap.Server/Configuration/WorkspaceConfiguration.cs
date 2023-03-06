@@ -37,6 +37,12 @@ namespace Allors.Workspace.Configuration
                 var userId = claim != null ? int.Parse(claim.Value, CultureInfo.InvariantCulture) : 0;
                 return new Adapters.Local.DatabaseConnection(configuration, database, servicesBuilder, rangesFactory) { UserId = userId };
             });
+
+            services.AddScoped(serviceProvider =>
+            {
+                var databaseConnection = serviceProvider.GetRequiredService<DatabaseConnection>();
+                return databaseConnection.CreateWorkspace();
+            });
         }
     }
 }

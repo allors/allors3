@@ -18,33 +18,22 @@ public partial class Build
 
     public static int Main() => Execute<Build>(x => x.Default);
 
-    protected override void OnBuildInitialized()
-    {
-        base.OnBuildInitialized();
-        TaskKill();
-    }
-
-    protected override void OnBuildFinished()
-    {
-        base.OnBuildFinished();
-        TaskKill();
-    }
-
-    public void TaskKill()
-    {
-        static void TaskKill(string imageName)
+    private Target Reset => _ => _
+        .Executes(() =>
         {
-            try
+            static void TaskKill(string imageName)
             {
-                StartProcess("taskkill", $"/IM {imageName} /F /T /FI \"PID ge 0\"").WaitForExit();
+                try
+                {
+                    StartProcess("taskkill", $"/IM {imageName} /F /T /FI \"PID ge 0\"").WaitForExit();
+                }
+                catch
+                {
+                }
             }
-            catch
-            {
-            }
-        }
 
-        TaskKill("node.exe");
-        TaskKill("chrome.exe");
-        TaskKill("chromedriver.exe");
-    }
+            TaskKill("node.exe");
+            TaskKill("chrome.exe");
+            TaskKill("chromedriver.exe");
+        });
 }

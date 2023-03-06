@@ -3,11 +3,11 @@
 @using Allors.Workspace.Blazor.Validation
 @implements System.IDisposable
 
-<BSFormGroup @attributes="Attributes">
+<BSInputGroup @attributes="Attributes">
     <BSLabel>@DerivedLabel</BSLabel>
     <input type="datetime" class="form-control" @bind="Model" />
-    <BSFormFeedback For="@(() => Model)" ValidMessage="@ValidMessage"/>
-</BSFormGroup>
+    <BSFeedback For="@(() => Model)" ValidMessage="@ValidMessage" />
+</BSInputGroup>
 
 @code {
     //TODO: Inherit from rolefield

@@ -28,6 +28,7 @@ namespace Allors.Database.Meta
             relationTypes.OrganisationName.RoleType.IsRequired = true;
 
             AddWorkspace(meta.Gender, workspaceName);
+            AddWorkspace(meta.MediaTyped, workspaceName);
         }
     }
 }

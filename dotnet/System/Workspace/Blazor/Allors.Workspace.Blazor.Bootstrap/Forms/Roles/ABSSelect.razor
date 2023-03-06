@@ -1,11 +1,11 @@
 @inherits ABSSelectBase
 
-<BSFormGroup @attributes="Attributes">
+<BSInputGroup @attributes="Attributes">
     @if (ShowLabel)
     {
         <BSLabel>@Label</BSLabel>
     }
-    <BSBasicInput InputType="InputType.Select" @bind="ModelId">
+    <BSInput InputType="BlazorStrap.InputType.Select" @bind-Value="ModelId">
         @if (this.Model == null || !this.Required)
         {
             <option value="0">@EmptyValue</option>
@@ -14,5 +14,5 @@
         {
             <option value="@option.Id">@(DisplayOption(option))</option>
         }
-    </BSBasicInput>
-</BSFormGroup>
+    </BSInput>
+</BSInputGroup>

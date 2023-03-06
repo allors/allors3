@@ -2,6 +2,7 @@ using Allors.Security;
 using Allors.Services;
 using Allors.Workspace.Configuration;
 using Blazor.Bootstrap.Server.Areas.Identity;
+using BlazorStrap;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,11 +17,14 @@ builder.Services.AddSingleton<IPolicyService, PolicyService>();
 
 builder.Services.AddAllorsDatabase(configuration);
 builder.Services.AddAllorsWorkspace();
+builder.Services.AddSingleton<IImageService, LocalImageService>();
 
 builder.Services.AddDefaultIdentity<IdentityUser>().AddAllorsStores();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
+builder.Services.AddBlazorStrap();
 
 var app = builder.Build();
 

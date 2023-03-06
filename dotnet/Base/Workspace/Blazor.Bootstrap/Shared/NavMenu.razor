@@ -1,49 +1,56 @@
 @inject NavigationManager NavigationManager
 
-<BSNavbar IsExpand="true">
-    <div class="container">
-        <BSNavbarBrand Href="/">Allors</BSNavbarBrand>
-        <BSNavbarToggler @onclick="onclick" />
-        <BSCollapse isOpen="@IsOpen" IsNavbar="true" IsOpenChanged="OpenChanged">
-            <BSNav IsList="true" Class="mr-auto" IsNavbar="true">
-
-                <BSNavItem>
-                    <BSNavLink Href="/counter">Counter</BSNavLink>
-                </BSNavItem>
-
-                @foreach (string group in groups)
-                {
-                    <BSNavItem IsDropdown="true">
-                        <BSDropdownToggle Color="Color.Light">@group</BSDropdownToggle>
-
-                        <BSDropdownMenu>
-                            @foreach (var navItem in navItems.Where(n => n.Group == group))
-                            {
-                                <BSDropdownItem Href="@NavigationManager.ToAbsoluteUri(navItem.Url).AbsoluteUri">@navItem.Name</BSDropdownItem>
-                            }
-                        </BSDropdownMenu>
-                    </BSNavItem>
-                }
-
-            </BSNav>
-                   
-            <LoginDisplay />
-        </BSCollapse>
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Blazor.Bootstrap.Server</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </div>
-</BSNavbar>
+</div>
 
-@code
-{
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+
+        @foreach (var navItem in navItems)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@NavigationManager.ToAbsoluteUri(navItem.Url).AbsoluteUri">
+                    <span class="oi oi-@navItem.Icon" aria-hidden="true"></span> @navItem.Name
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
     class NavItem
     {
-        public string Group;
         public string Name;
         public string Icon;
         public string Url;
     }
 
     NavItem[] navItems;
-    string[] groups;
 
     bool IsOpen { get; set; } = true;
 
@@ -63,36 +70,32 @@
     {
         await base.OnInitializedAsync();
 
-        const string relations = "Relations";
-        const string misc = "Misc";
-
-        groups = new string[] { relations, misc };
         navItems = new[]
         {
             new NavItem()
             {
-                Group = relations,
                 Name = "Organisations",
                 Url = "organisation/list",
+                Icon = "briefcase"
             },
             new NavItem()
             {
-                Group = relations,
                 Name = "People",
                 Url = "person/list",
+                Icon = "person"
             },
             new NavItem()
             {
-                Group = misc,
                 Name = "MediaTyped",
                 Url = "mediatyped/list",
+                Icon ="circle-check",
             },
             new NavItem()
             {
-                Group = misc,
                 Name = "Image",
                 Url = "image",
+                Icon = "image"
             },
-        }.OrderBy(i => i.Name).ToArray();
+    }.OrderBy(i => i.Name).ToArray();
     }
 }
