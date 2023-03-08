@@ -1,44 +1,60 @@
-@page "/context/parent"
+@page "/context"
+@implements IDisposable
 @using Task = System.Threading.Tasks.Task
-@using MediaTyped = Allors.Workspace.Domain.MediaTyped
+@using Person = Allors.Workspace.Domain.Person
 @using Allors.Workspace.Meta
 @attribute [Authorize]
 @inject IWorkspace Workspace
 @inject NavigationManager NavigationManager
 
+<CascadingValue Value="@Revision" Name="Revision">
+    <CascadingValue Value="@M" IsFixed="true">
+
+        <h2>
+            Parent Revision: @Revision
+        </h2>
+
+        <ChildA Person="@person" />
+        <ChildB Person="@person" />
+
+    </CascadingValue>
+</CascadingValue>
+
 @code {
-    ISession Session;
+    ISession Session { get; set; }
+
+    long Revision { get; set; }
 
     M M => this.Session.Workspace.Services.Get<M>();
 
-    [Parameter]
-    public string id { get; set; }
-
-    MediaTyped mediaTyped;
+    Person person;
 
     protected override async Task OnInitializedAsync()
     {
-        Session = this.Workspace.CreateSession();
+        this.Session = this.Workspace.CreateSession();
+        this.Session.OnChange += SessionOnChange;
 
         var pull = new[]
         {
             new Pull
             {
-                ObjectId = long.Parse(id),
+                Extent = new Filter(M.Person),
             }
-        };
+    };
 
         var result = await Session.PullAsync(pull);
 
-        mediaTyped = result.GetObject<MediaTyped>();
+        person = result.GetCollection<Person>().First();
     }
 
-    public async Task HandleValidSubmit()
+    private void SessionOnChange(object sender, EventArgs e)
     {
-        var response = await Session.PushAsync();
-        if (!response.HasErrors)
-        {
-            NavigationManager.NavigateTo("/mediatyped/list");
-        }
+        this.Revision++;
+        this.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        this.Session.OnChange -= this.SessionOnChange;
     }
 }

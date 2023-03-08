@@ -1,40 +1,17 @@
-@page "/mediatyped/list"
-@using Allors.Workspace.Meta
-@using MediaTyped = Allors.Workspace.Domain.MediaTyped
+@page "/context/child-b"
+@using Person = Allors.Workspace.Domain.Person
 @attribute [Authorize]
-@inject IWorkspace Workspace
 
+<h2>Child B Revision: @Revision</h2>
 
-@if (mediaTypeds != null)
-{
-    @foreach (var mediaTyped in mediaTypeds)
-    {
-        <ABSForm Model="@mediaTyped">
-            <AMarkdownHtml RoleType="@M.MediaTyped.Markdown"></AMarkdownHtml>
-            <a href="/mediatyped/edit/@mediaTyped.Id">Edit</a>
-        </ABSForm>
-        <hr/>
-    }
-}
+<p>
+    @Person.FirstName @Person.LastName
+</p>
 
 @code {
-    ISession Session;
-
-    M M => this.Session.Workspace.Services.Get<M>();
-
-    MediaTyped[] mediaTypeds;
-
-    protected override async System.Threading.Tasks.Task OnInitializedAsync()
-    {
-        Session = this.Workspace.CreateSession();
-
-        var pull = new Pull
-        {
-            Extent = new Filter(M.MediaTyped),
-        };
-
-        var result = await Session.PullAsync(pull);
-
-        this.mediaTypeds = result.GetCollection<MediaTyped>();
-    }
+    [CascadingParameter(Name = "Revision")]
+    public long Revision { get; set; }
+    
+    [Parameter]
+    public Person Person { get; set; }
 }

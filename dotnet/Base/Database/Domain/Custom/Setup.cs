@@ -23,6 +23,15 @@ namespace Allors.Database.Domain
 
         private void CustomOnPostSetup(Config config)
         {
+            var administratorRole = new Roles(this.transaction).Administrator;
+            var administrators = new UserGroups(this.transaction).Administrators;
+            var defaultSecurityToken = new SecurityTokens(this.transaction).DefaultSecurityToken;
+
+            var acl = new GrantBuilder(this.transaction)
+                .WithRole(administratorRole)
+                .WithSubjectGroup(administrators)
+                .WithSecurityToken(defaultSecurityToken).Build();
+
             var avatar = new Medias(this.transaction).Avatar;
 
             var place = new PlaceBuilder(this.transaction).WithPostalCode("X").WithCity("London").WithCountry(new Countries(this.transaction).CountryByIsoCode["GB"]).Build();
@@ -38,7 +47,7 @@ namespace Allors.Database.Domain
             john.SetPassword("john");
             jenny.SetPassword("jenny");
 
-            new UserGroups(this.transaction).Administrators.AddMember(jane);
+            administrators.AddMember(jane);
             new UserGroups(this.transaction).Creators.AddMember(jane);
             new UserGroups(this.transaction).Creators.AddMember(john);
             new UserGroups(this.transaction).Creators.AddMember(jenny);

@@ -86,9 +86,9 @@
             },
             new NavItem()
             {
-                Name = "MediaTyped",
-                Url = "mediatyped/list",
-                Icon ="circle-check",
+                Name = "Context",
+                Url = "context",
+                Icon = "star"
             },
             new NavItem()
             {
@@ -96,6 +96,13 @@
                 Url = "image",
                 Icon = "image"
             },
+            new NavItem()
+            {
+                Name = "MediaTyped",
+                Url = "mediatyped/list",
+                Icon ="circle-check",
+            },
+
     }.OrderBy(i => i.Name).ToArray();
     }
 }

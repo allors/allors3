@@ -10,10 +10,13 @@ namespace Allors.Workspace
     using System.Threading.Tasks;
     using Data;
     using Derivations;
+    using System;
 
     public interface ISession
     {
         IWorkspace Workspace { get; }
+
+        event EventHandler OnChange;
 
         bool HasChanges { get; }
 

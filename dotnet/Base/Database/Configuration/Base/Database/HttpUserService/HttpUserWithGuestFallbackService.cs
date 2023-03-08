@@ -33,6 +33,9 @@ namespace Allors.Database.Configuration
             {
                 this.User = new AutomatedAgents(transaction).Guest;
             }
+
+
+            this.User = (User)transaction.Instantiate(856);
         }
     }
 }

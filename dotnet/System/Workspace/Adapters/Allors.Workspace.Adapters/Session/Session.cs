@@ -31,7 +31,7 @@ namespace Allors.Workspace.Adapters
             this.strategiesByClass = new Dictionary<IClass, ISet<Strategy>>();
             this.SessionOriginState = new SessionOriginState(workspace.StrategyRanges);
 
-            this.ChangeSetTracker = new ChangeSetTracker();
+            this.ChangeSetTracker = new ChangeSetTracker(this);
             this.PushToDatabaseTracker = new PushToDatabaseTracker();
 
             this.Services.OnInit(this);
@@ -45,6 +45,11 @@ namespace Allors.Workspace.Adapters
         public ISessionServices Services { get; }
 
         IWorkspace ISession.Workspace => this.Workspace;
+
+        public event EventHandler OnChange;
+
+        public virtual void OnChanged(EventArgs e) => this.OnChange?.Invoke(this, e);
+
         public Workspace Workspace { get; }
 
         public ChangeSetTracker ChangeSetTracker { get; }
