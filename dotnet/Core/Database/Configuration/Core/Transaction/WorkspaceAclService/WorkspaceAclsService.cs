@@ -15,9 +15,9 @@ namespace Allors.Database.Configuration
 
         public IWorkspaceMask WorkspaceMask { get; set; }
 
-        public User User { get; }
+        public IUser User { get; }
 
-        public WorkspaceAclsService(ISecurity security, IWorkspaceMask workspaceMask, User user)
+        public WorkspaceAclsService(ISecurity security, IWorkspaceMask workspaceMask, IUser user)
         {
             this.Security = security;
             this.WorkspaceMask = workspaceMask;

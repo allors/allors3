@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using Database.Services;
+
     public static partial class CommunicationEventExtensions
     {
         public static void AppsOnInit(this CommunicationEvent @this, ObjectOnInit method)

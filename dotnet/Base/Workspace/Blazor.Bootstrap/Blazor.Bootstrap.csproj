@@ -7,20 +7,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
   </PropertyGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="BlazorStrap" Version="5.1.100" />
-    <PackageReference Include="BlazorStrap.V5" Version="5.1.100" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.2" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Workspace\Blazor\Allors.Workspace.Blazor.Bootstrap\Allors.Workspace.Blazor.Bootstrap.csproj" />
     <ProjectReference Include="..\Blazor\Blazor.csproj" />
-    <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
   </ItemGroup>
 
 </Project>

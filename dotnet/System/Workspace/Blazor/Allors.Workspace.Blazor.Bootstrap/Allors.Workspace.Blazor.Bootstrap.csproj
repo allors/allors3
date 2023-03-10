@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="BlazorStrap" Version="5.1.100" />
     <PackageReference Include="BlazorStrap.V5" Version="5.1.100" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.3" />
   </ItemGroup>
 
   <ItemGroup>

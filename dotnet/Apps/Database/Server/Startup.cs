@@ -49,8 +49,10 @@ namespace Allors.Database.Server.Controllers
             {
                 {new HostString("localhost", 5000), "Default"}
             }));
-            services.AddScoped<IWorkspaceService, WorkspaceService>();
+            // Allors Scoped
+            services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IWorkspaceService, WorkspaceService>();
 
             services.AddCors(options =>
             {
@@ -141,8 +143,10 @@ namespace Allors.Database.Server.Controllers
             app.UseAuthorization();
 
             app.ConfigureExceptionHandler(env);
-
             app.UseResponseCaching();
+
+            app.UseMiddleware<ClaimsPrincipalServiceMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

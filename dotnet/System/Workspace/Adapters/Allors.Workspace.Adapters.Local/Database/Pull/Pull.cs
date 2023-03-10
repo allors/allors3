@@ -30,14 +30,14 @@ namespace Allors.Workspace.Adapters.Local
         public Pull(Session session) : base(session)
         {
             this.Workspace = session.Workspace;
-            var database = this.Workspace.DatabaseConnection.Database;
-            this.Transaction = database.CreateTransaction();
-
-            this.AllowedClasses = database.Services.Get<IMetaCache>()
+            this.Transaction = this.Workspace.DatabaseConnection.CreateTransaction();
+            
+            var databaseServices = this.Workspace.DatabaseConnection.DatabaseServices;
+            this.AllowedClasses = databaseServices.Get<IMetaCache>()
                 .GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
-            this.PreparedSelects = database.Services.Get<IPreparedSelects>();
-            this.PreparedExtents = database.Services.Get<IPreparedExtents>();
-            this.PrefetchPolicyCache = database.Services.Get<IPrefetchPolicyCache>();
+            this.PreparedSelects = databaseServices.Get<IPreparedSelects>();
+            this.PreparedExtents = databaseServices.Get<IPreparedExtents>();
+            this.PrefetchPolicyCache = databaseServices.Get<IPrefetchPolicyCache>();
 
             this.AccessControl = this.Transaction.Services.Get<IWorkspaceAclsService>()
                 .Create(this.Workspace.DatabaseConnection.Configuration.Name);
@@ -231,7 +231,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             var classDependencies = new Dictionary<IClass, ISet<IPropertyType>>();
 
-            var m = this.Workspace.DatabaseConnection.Database.MetaPopulation;
+            var m = this.Workspace.DatabaseConnection.MetaPopulation;
             foreach (var pullDependency in pullDependencies)
             {
                 var objectType = (IComposite)m.FindByTag(pullDependency.ObjectType.Tag);

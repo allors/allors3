@@ -7,6 +7,7 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Database.Services;
 
     public static partial class TaskExtensions
     {
@@ -17,7 +18,7 @@ namespace Allors.Database.Domain
                 @this.DateCreated = @this.Strategy.Transaction.Now();
             }
         }
-        
+
         public static void BaseDelete(this Task @this, DeletableDelete _)
         {
             foreach (var taskAssignment in @this.TaskAssignmentsWhereTask)

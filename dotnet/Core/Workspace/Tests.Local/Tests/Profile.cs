@@ -12,6 +12,7 @@ namespace Tests.Workspace.Local
     using Allors.Database.Adapters.Memory;
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
+    using Allors.Database.Services;
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;

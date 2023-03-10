@@ -69,7 +69,7 @@ namespace Allors.Database.Protocol.Json
 
         public IRanges<long> Ranges { get; }
 
-        public User User { get; }
+        public IUser User { get; }
 
         public IAccessControl AccessControl { get; }
 

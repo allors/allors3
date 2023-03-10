@@ -6,11 +6,13 @@
 namespace Allors.Database.Domain.Tests
 {
     using Database;
+    using Database.Security;
     using Domain;
+    using Services;
 
     public static class TransactionExtensions
     {
-        public static User GetUser(this ITransaction @this) => @this.Services.Get<IUserService>().User;
+        public static IUser GetUser(this ITransaction @this) => @this.Services.Get<IUserService>().User;
 
         public static void SetUser(this ITransaction @this, User user) => @this.Services.Get<IUserService>().User = user;
     }

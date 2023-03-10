@@ -10,7 +10,8 @@ namespace Allors.Database.Server.Controllers
     using Domain;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    
+    using Services;
+
     public class TestSessionController : Controller
     {
         public TestSessionController(ITransactionService sessionService, IWorkspaceService workspaceService)
@@ -32,7 +33,7 @@ namespace Allors.Database.Server.Controllers
         public IActionResult UserName()
         {
             var user = this.Transaction.Services.Get<IUserService>().User;
-            var result = user?.UserName;
+            var result = (user as User).UserName;
             return this.Content(result);
         }
     }

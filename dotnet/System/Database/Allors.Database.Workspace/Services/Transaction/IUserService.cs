@@ -3,10 +3,15 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Domain
+namespace Allors.Database.Services
 {
+    using System;
+    using Security;
+
     public interface IUserService
     {
-        User User { get; set; }
+        event EventHandler UserChanged;
+
+        IUser User { get; set; }
     }
 }

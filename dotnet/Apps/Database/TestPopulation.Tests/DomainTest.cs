@@ -12,6 +12,7 @@ namespace Allors.Database.Domain.Tests
     using Database.Derivations;
     using Meta;
     using Allors;
+    using Database.Services;
     using Organisation = Domain.Organisation;
     using Person = Domain.Person;
     using User = Domain.User;

@@ -25,6 +25,7 @@ namespace Allors
     using Database;
     using Database.Domain;
     using Database.Domain.TestPopulation;
+    using Database.Services;
 
     public partial class TestPopulation
     {

@@ -271,7 +271,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Bootstrap", "Base\Wo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Configuration", "Base\Workspace\Configuration\Workspace.Configuration.csproj", "{912C392F-A92B-4A85-8884-7E89E5A6D2F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Bootstrap.Server", "Base\Workspace\Blazor.Bootstrap.Server\Blazor.Bootstrap.Server.csproj", "{743276E4-ADAE-4080-B7A6-428F1585915C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Bootstrap.Server", "Base\Workspace\Blazor.Bootstrap.Server\Blazor.Bootstrap.Server.csproj", "{743276E4-ADAE-4080-B7A6-428F1585915C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Bootstrap.Wasm", "Base\Workspace\Blazor.Bootstrap.Wasm\Blazor.Bootstrap.Wasm.csproj", "{91684225-98A1-4444-90AA-0E70E297A4D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -715,6 +717,10 @@ Global
 		{743276E4-ADAE-4080-B7A6-428F1585915C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{743276E4-ADAE-4080-B7A6-428F1585915C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{743276E4-ADAE-4080-B7A6-428F1585915C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91684225-98A1-4444-90AA-0E70E297A4D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91684225-98A1-4444-90AA-0E70E297A4D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91684225-98A1-4444-90AA-0E70E297A4D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91684225-98A1-4444-90AA-0E70E297A4D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -849,6 +855,7 @@ Global
 		{B6A4F605-FD4F-4E6C-81E6-436010D77827} = {CBEF291F-11B5-49E9-9E39-54630F8A5774}
 		{912C392F-A92B-4A85-8884-7E89E5A6D2F8} = {F3F8D54B-E896-4081-8F6B-EDD896CB51D0}
 		{743276E4-ADAE-4080-B7A6-428F1585915C} = {CBEF291F-11B5-49E9-9E39-54630F8A5774}
+		{91684225-98A1-4444-90AA-0E70E297A4D7} = {CBEF291F-11B5-49E9-9E39-54630F8A5774}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D78C3D-8536-4549-B1EE-C19BD0C50387}

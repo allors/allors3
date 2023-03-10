@@ -8,25 +8,20 @@ namespace Allors.Database.Configuration
     using System;
     using Database;
     using Domain;
-    using Microsoft.AspNetCore.Http;
     using Services;
 
     public class TransactionServices : ITransactionServices
     {
-        private readonly HttpUserService userService;
+        private readonly UserService userService;
 
         private IDatabaseAclsService databaseAclsService;
         private IWorkspaceAclsService workspaceAclsService;
         private IObjectBuilderService objectBuilderService;
 
-        public TransactionServices(IHttpContextAccessor httpContextAccessor) => this.userService = new HttpUserService(httpContextAccessor);
-
-        public virtual void OnInit(ITransaction transaction)
+        public TransactionServices()
         {
-            transaction.Database.Services.Get<IPermissions>().Load(transaction);
-
-            this.Transaction = transaction;
-            this.userService.OnInit(transaction);
+            this.userService = new UserService();
+            this.userService.UserChanged += OnUserChanged;
         }
 
         public ITransaction Transaction { get; private set; }
@@ -45,8 +40,20 @@ namespace Allors.Database.Configuration
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 
+        public virtual void OnInit(ITransaction transaction)
+        {
+            this.Transaction = transaction;
+            transaction.Database.Services.Get<IPermissions>().Load(transaction);
+        }
+
         public void Dispose()
         {
+        }
+
+        private void OnUserChanged(object sender, EventArgs e)
+        {
+            this.databaseAclsService = null;
+            this.workspaceAclsService = null;
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Tests
     using Allors.Database.Derivations;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
+    using Allors.Database.Security;
+    using Allors.Database.Services;
     using Microsoft.Extensions.Configuration;
     using C1 = Allors.Database.Domain.C1;
     using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
@@ -93,7 +95,7 @@ namespace Tests
             }
         }
 
-        protected User SetUser(string userName) => this.Transaction.Services.Get<IUserService>().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
+        protected IUser SetUser(string userName) => this.Transaction.Services.Get<IUserService>().User = new Users(this.Transaction).FindBy(this.M.User.UserName, userName);
 
         protected Stream GetResource(string name)
         {

@@ -12,6 +12,7 @@ namespace Allors.Database.Domain.Tests
     using Adapters.Memory;
     using Configuration;
     using Database.Derivations;
+    using Database.Services;
     using Meta;
     using TestPopulation;
     using Organisation = Domain.Organisation;

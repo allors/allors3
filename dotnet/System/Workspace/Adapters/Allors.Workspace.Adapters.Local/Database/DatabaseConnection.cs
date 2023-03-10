@@ -37,7 +37,19 @@ namespace Allors.Workspace.Adapters.Local
 
         public long UserId { get; set; }
 
-        internal IDatabase Database { get; }
+        private IDatabase Database { get; }
+
+        public IDatabaseServices DatabaseServices => this.Database.Services;
+
+        public Database.Meta.IMetaPopulation MetaPopulation => this.Database.MetaPopulation;
+
+        public ITransaction CreateTransaction()
+        {
+            var transaction = this.Database.CreateTransaction();
+            var user = (IUser)transaction.Instantiate(this.UserId);
+            transaction.Services.Get<IUserService>().User = user;
+            return transaction;
+        }
 
         internal void Sync(IEnumerable<IObject> objects, IAccessControl accessControl)
         {
@@ -139,5 +151,7 @@ namespace Allors.Workspace.Adapters.Local
 
             return this.recordRanges.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
         }
+
+
     }
 }

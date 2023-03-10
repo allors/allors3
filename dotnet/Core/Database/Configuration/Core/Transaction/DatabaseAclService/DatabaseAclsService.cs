@@ -11,11 +11,11 @@ namespace Allors.Database.Configuration
 
     public class DatabaseAclsService : IDatabaseAclsService
     {
-        public User User { get; }
+        public IUser User { get; }
 
         public ISecurity Security { get; }
 
-        public DatabaseAclsService(User user, ISecurity security)
+        public DatabaseAclsService(IUser user, ISecurity security)
         {
             this.User = user;
             this.Security = security;

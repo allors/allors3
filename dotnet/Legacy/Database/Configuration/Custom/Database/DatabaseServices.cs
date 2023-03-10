@@ -66,7 +66,7 @@ namespace Allors.Database.Configuration
 
         public MetaPopulation M { get; private set; }
 
-        public ITransactionServices CreateTransactionServices() => new TransactionServices(this.httpContextAccessor);
+        public ITransactionServices CreateTransactionServices() => new TransactionServices();
 
         public T Get<T>() =>
             typeof(T) switch

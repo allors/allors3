@@ -13,7 +13,6 @@ namespace Allors.Workspace.Configuration
     using Derivations;
     using Domain;
     using Meta.Lazy;
-    using Microsoft.AspNetCore.Components.Authorization;
     using Services;
 
     public static class WorkspaceConfiguration
@@ -31,8 +30,8 @@ namespace Allors.Workspace.Configuration
             services.AddScoped<DatabaseConnection>(serviceProvider =>
             {
                 var database = serviceProvider.GetRequiredService<IDatabaseService>().Database;
-                var authenticationState = serviceProvider.GetRequiredService<AuthenticationStateProvider>();
-                var user = authenticationState.GetAuthenticationStateAsync().Result.User;
+                var claimsPrincipalService = serviceProvider.GetRequiredService<IClaimsPrincipalService>();
+                var user = claimsPrincipalService.User;
                 var claim = user.FindFirst(ClaimTypes.NameIdentifier);
                 var userId = claim != null ? int.Parse(claim.Value, CultureInfo.InvariantCulture) : 0;
                 return new Adapters.Local.DatabaseConnection(configuration, database, servicesBuilder, rangesFactory) { UserId = userId };

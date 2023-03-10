@@ -6,6 +6,7 @@
 namespace Commands
 {
     using Allors.Database.Domain;
+    using Allors.Database.Services;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 

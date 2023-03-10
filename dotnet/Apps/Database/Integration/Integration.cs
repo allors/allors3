@@ -26,6 +26,7 @@ namespace Allors.Integration
     using System.Linq;
     using Allors.Database;
     using Allors.Database.Domain;
+    using Database.Services;
     using HtmlAgilityPack;
     using Microsoft.Extensions.Logging;
 

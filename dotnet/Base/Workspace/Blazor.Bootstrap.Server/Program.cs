@@ -4,7 +4,9 @@ using Allors.Workspace.Configuration;
 using Blazor.Bootstrap.Server.Areas.Identity;
 using BlazorStrap;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -18,6 +20,9 @@ builder.Services.AddSingleton<IPolicyService, PolicyService>();
 builder.Services.AddAllorsDatabase(configuration);
 builder.Services.AddAllorsWorkspace();
 builder.Services.AddSingleton<IImageService, LocalImageService>();
+
+builder.Services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
+builder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<CircuitHandler, ClaimsPrincipalCircuitHandler>());
 
 builder.Services.AddDefaultIdentity<IdentityUser>().AddAllorsStores();
 builder.Services.AddRazorPages();
@@ -46,6 +51,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ClaimsPrincipalServiceMiddleware>();
 
 app.MapControllers();
 app.MapBlazorHub();

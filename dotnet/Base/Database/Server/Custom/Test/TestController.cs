@@ -10,6 +10,7 @@ namespace Allors.Database.Server.Controllers
     using Domain;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Services;
 
     public class TestController : Controller
     {

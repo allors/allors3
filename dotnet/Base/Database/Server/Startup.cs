@@ -28,7 +28,6 @@ namespace Allors.Server
     using User = Database.Domain.User;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
-    using Database.Services;
 
     public class Startup
     {
@@ -50,6 +49,7 @@ namespace Allors.Server
             }));
             services.AddScoped<IWorkspaceService, WorkspaceService>();
             // Allors Scoped
+            services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
             services.AddScoped<ITransactionService, TransactionService>();
 
             services.AddCors(options =>
@@ -136,6 +136,9 @@ namespace Allors.Server
             app.ConfigureExceptionHandler(env);
 
             app.UseResponseCaching();
+
+            app.UseMiddleware<ClaimsPrincipalServiceMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

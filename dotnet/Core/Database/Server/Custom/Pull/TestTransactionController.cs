@@ -7,6 +7,7 @@ namespace Allors.Server.Controllers
 {
     using Database;
     using Database.Domain;
+    using Database.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Services;
@@ -32,7 +33,7 @@ namespace Allors.Server.Controllers
         public IActionResult UserName()
         {
             var userService = this.Transaction.Services.Get<IUserService>();
-            var result = userService?.User?.UserName ?? string.Empty;
+            var result = (userService?.User as User)?.UserName ?? string.Empty;
             return this.Content(result);
         }
     }

@@ -20,7 +20,7 @@ namespace Allors.Workspace.Adapters.Local
         internal Invoke(Session session) : base(session)
         {
             this.Workspace = session.Workspace;
-            this.Transaction = this.Workspace.DatabaseConnection.Database.CreateTransaction();
+            this.Transaction = this.Workspace.DatabaseConnection.CreateTransaction();
 
             var metaCache = this.Transaction.Database.Services.Get<IMetaCache>();
 

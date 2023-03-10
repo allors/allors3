@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using Allors.Database.Services;
+
     public static class AuditableExtensions
     {
         public static void CoreOnPostDerive(this Auditable @this, ObjectOnPostDerive method)
@@ -18,13 +20,13 @@ namespace Allors.Database.Domain
                 if (changeSet.Created.Contains(@this))
                 {
                     @this.CreationDate = @this.Strategy.Transaction.Now();
-                    @this.CreatedBy = user;
+                    @this.CreatedBy = (User)user;
                 }
 
                 if (changeSet.Associations.Contains(@this))
                 {
                     @this.LastModifiedDate = @this.Strategy.Transaction.Now();
-                    @this.LastModifiedBy = user;
+                    @this.LastModifiedBy = (User)user;
                 }
             }
         }

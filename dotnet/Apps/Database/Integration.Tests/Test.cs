@@ -12,6 +12,7 @@ namespace Integration.Tests
     using Allors.Database.Domain;
     using Allors.Database.Domain.TestPopulation;
     using Allors.Database.Meta;
+    using Allors.Database.Services;
     using NUnit.Framework;
 
     public abstract class Test

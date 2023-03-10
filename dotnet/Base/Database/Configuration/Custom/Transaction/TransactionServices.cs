@@ -14,21 +14,19 @@ namespace Allors.Database.Configuration
 
     public class TransactionServices : ITransactionServices
     {
-        private readonly HttpUserWithGuestFallbackService userService;
+        private readonly UserService userService;
 
         private IDatabaseAclsService databaseAclsService;
         private IWorkspaceAclsService workspaceAclsService;
         private IObjectBuilderService objectBuilderService;
 
-        public TransactionServices(IHttpContextAccessor httpContextAccessor) => this.userService = new HttpUserWithGuestFallbackService(httpContextAccessor);
-
-        public virtual void OnInit(ITransaction transaction)
+        public TransactionServices()
         {
-            transaction.Database.Services.Get<IPermissions>().Load(transaction);
-
-            this.Transaction = transaction;
-            this.userService.OnInit(transaction);
+            this.userService = new UserService();
+            this.userService.UserChanged += OnUserChanged;
         }
+
+
 
         public ITransaction Transaction { get; private set; }
 
@@ -48,6 +46,18 @@ namespace Allors.Database.Configuration
 
         public void Dispose()
         {
+        }
+
+        public virtual void OnInit(ITransaction transaction)
+        {
+            transaction.Database.Services.Get<IPermissions>().Load(transaction);
+            this.Transaction = transaction;
+        }
+
+        private void OnUserChanged(object sender, EventArgs e)
+        {
+            this.databaseAclsService = null;
+            this.workspaceAclsService = null;
         }
     }
 }

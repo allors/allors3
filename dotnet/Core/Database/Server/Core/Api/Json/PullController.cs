@@ -18,14 +18,14 @@ namespace Allors.Database.Protocol.Json
     [Route("allors/pull")]
     public class PullController : ControllerBase
     {
-        public PullController(IDatabaseService databaseService, IWorkspaceService workspaceService, IPolicyService policyService)
+        public PullController(ITransactionService transactionService, IWorkspaceService workspaceService, IPolicyService policyService)
         {
-            this.DatabaseService = databaseService;
+            this.TransactionService = transactionService;
             this.WorkspaceService = workspaceService;
             this.PolicyService = policyService;
         }
 
-        private IDatabaseService DatabaseService { get; }
+        private ITransactionService TransactionService { get; }
 
         public IWorkspaceService WorkspaceService { get; }
 
@@ -43,7 +43,7 @@ namespace Allors.Database.Protocol.Json
                 {
                     try
                     {
-                        using var transaction = this.DatabaseService.Database.CreateTransaction();
+                        using var transaction = this.TransactionService.Transaction;
                         var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken);
                         return api.Pull(request);
                     }

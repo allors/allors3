@@ -16,12 +16,14 @@ namespace Allors.Server
     using JSNLog;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Components.Server.Circuits;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
     using Security;
@@ -50,6 +52,7 @@ namespace Allors.Server
             services.AddSingleton<IDatabaseService, DatabaseService>();
             services.AddSingleton(workspaceConfig);
             // Allors Scoped
+            services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IWorkspaceService, WorkspaceService>();
 
@@ -101,7 +104,7 @@ namespace Allors.Server
             var metaPopulation = new MetaBuilder().Build();
             var engine = new Engine(Rules.Create(metaPopulation));
             var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
-            var databaseScope = new DefaultDatabaseServices(engine, httpContextAccessor);
+            var databaseScope = new DefaultDatabaseServices(engine);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, objectFactory);
             app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = databaseBuilder.Build();
 
@@ -132,8 +135,10 @@ namespace Allors.Server
             app.UseAuthorization();
 
             app.ConfigureExceptionHandler(env);
-
             app.UseResponseCaching();
+
+            app.UseMiddleware<ClaimsPrincipalServiceMiddleware>();
+
             app.UseEndpoints(endpoints =>
               {
                   endpoints.MapControllerRoute(
