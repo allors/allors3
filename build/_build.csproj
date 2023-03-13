@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="7.0.1" />
-    <PackageReference Include="NuGet.Packaging.Core" Version="6.4.0" />
+    <PackageReference Include="Npgsql" Version="7.0.2" />
+    <PackageReference Include="NuGet.Packaging.Core" Version="6.5.0" />
     <PackageReference Include="Nuke.Common" Version="6.3.0" />
     <PackageReference Include="MartinCostello.SqlLocalDb" Version="3.2.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
