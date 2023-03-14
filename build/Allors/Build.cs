@@ -19,21 +19,23 @@ public partial class Build
     public static int Main() => Execute<Build>(x => x.Default);
 
     private Target Reset => _ => _
-        .Executes(() =>
-        {
-            static void TaskKill(string imageName)
-            {
-                try
-                {
-                    StartProcess("taskkill", $"/IM {imageName} /F /T /FI \"PID ge 0\"").WaitForExit();
-                }
-                catch
-                {
-                }
-            }
+        .Executes(KillProcesses);
 
-            TaskKill("node.exe");
-            TaskKill("chrome.exe");
-            TaskKill("chromedriver.exe");
-        });
+    static void KillProcesses()
+    {
+        static void TaskKill(string imageName)
+        {
+            try
+            {
+                StartProcess("taskkill", $"/IM {imageName} /F /T /FI \"PID ge 0\"").WaitForExit();
+            }
+            catch
+            {
+            }
+        }
+
+        TaskKill("node.exe");
+        TaskKill("chrome.exe");
+        TaskKill("chromedriver.exe");
+    }
 }
