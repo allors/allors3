@@ -61,6 +61,7 @@ ALTER ROLE [db_owner] ADD MEMBER [{user}]
         using var connection = manager.CreateConnection();
         connection.Open();
         using var command = new SqlCommand(commandText, connection);
+        command.CommandTimeout = 5 * 60;
         return command.ExecuteNonQuery();
     }
 }
