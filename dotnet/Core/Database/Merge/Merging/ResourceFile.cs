@@ -10,6 +10,7 @@ namespace Allors.R1.Development.Resources
 {
     using System.IO;
     using System.Linq;
+    using System.Xml;
     using System.Xml.Linq;
 
     internal class ResourceFile
@@ -56,7 +57,11 @@ namespace Allors.R1.Development.Resources
         public void Write(DirectoryInfo outputDirectory)
         {
             var fileInfo = new FileInfo(Path.Combine(outputDirectory.FullName, this.FileName));
-            this.Document.Save(fileInfo.FullName);
+
+            var xmlWriterSettings = new XmlWriterSettings { NewLineChars = "\n", Indent = true };
+            using var xmlWriter = XmlWriter.Create(fileInfo.FullName, xmlWriterSettings);
+
+            this.Document.Save(xmlWriter);
         }
     }
 }
