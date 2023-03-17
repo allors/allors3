@@ -5,19 +5,24 @@
 
 namespace Allors.Database.Domain
 {
-    using System.Collections.Generic;
-
     public partial class DeletableDelete
     {
-        public ISet<Deletable> Deleting { get; set; }
-
         public override void Execute()
         {
-            this.Deleting ??= new HashSet<Deletable>();
-            this.Deleting.Add((Deletable)this.Object);
-            base.Execute();
+            var deleting = this.Object.Strategy.Transaction.Services.Get<IDeleting>();
 
-            this.Object.Strategy.Delete();
+            deleting.OnBeginDelete((Deletable)this.Object);
+
+            try
+            {
+                base.Execute();
+
+                this.Object.Strategy.Delete();
+            }
+            finally
+            {
+                deleting.OnEndDelete((Deletable)this.Object);
+            }
         }
     }
 }

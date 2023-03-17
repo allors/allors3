@@ -19,6 +19,7 @@ namespace Allors.Database.Configuration
         private IDatabaseAclsService databaseAclsService;
         private IWorkspaceAclsService workspaceAclsService;
         private IObjectBuilderService objectBuilderService;
+        private IDeleting deleting;
 
         public TransactionServices()
         {
@@ -41,6 +42,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IUserService) => (T)(IUserService)this.userService,
                 { } type when type == typeof(IDatabaseAclsService) => (T)(this.databaseAclsService ??= new DatabaseAclsService(this.userService.User, this.DatabaseServices.Get<ISecurity>())),
                 { } type when type == typeof(IWorkspaceAclsService) => (T)(this.workspaceAclsService ??= new WorkspaceAclsService(this.DatabaseServices.Get<ISecurity>(), this.DatabaseServices.Get<IWorkspaceMask>(), this.userService.User)),
+                { } type when type == typeof(IDeleting) => (T)(this.deleting ??= new Deleting()),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 
