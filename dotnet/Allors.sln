@@ -273,7 +273,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspace.Configuration", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Bootstrap.Server", "Base\Workspace\Blazor.Bootstrap.Server\Blazor.Bootstrap.Server.csproj", "{743276E4-ADAE-4080-B7A6-428F1585915C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Bootstrap.Wasm", "Base\Workspace\Blazor.Bootstrap.Wasm\Blazor.Bootstrap.Wasm.csproj", "{91684225-98A1-4444-90AA-0E70E297A4D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Bootstrap.Wasm", "Base\Workspace\Blazor.Bootstrap.Wasm\Blazor.Bootstrap.Wasm.csproj", "{91684225-98A1-4444-90AA-0E70E297A4D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

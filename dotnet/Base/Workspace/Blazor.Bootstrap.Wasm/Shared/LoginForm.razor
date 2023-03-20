@@ -1,3 +1,4 @@
+@using Allors.Workspace.Blazor
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -7,13 +8,13 @@
         <BSRow>
             <BSFormGroup>
                 <BSLabel For="userName">Email address</BSLabel>
-                <BSBasicInput Id="userName" InputType="InputType.Email" PlaceHolder="Email" @bind="@UserName" />
+                <BSInput Id="userName" InputType="BlazorStrap.InputType.Email" PlaceHolder="Email" @bind-Value="UserName" />
             </BSFormGroup>
         </BSRow>
         <BSRow>
             <BSFormGroup>
                 <BSLabel For="password">Password</BSLabel>
-                <BSBasicInput Id="password" InputType="InputType.Password" PlaceHolder="Password" @bind="@Password" />
+                <BSInput Id="password" InputType="BlazorStrap.InputType.Password" PlaceHolder="Password" @bind-Value="Password" />
             </BSFormGroup>
         </BSRow>
         <BSRow>
@@ -34,12 +35,12 @@
 
     bool IsServerSide => !this.IsClientSide;
 
-    override protected void OnInitialized()
+    protected override void OnInitialized()
     {
         this.allorsAuthenticationStateProvider = this.AuthenticationStateProvider as AllorsAuthenticationStateProvider;
     }
 
-    override protected void OnAfterRender(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
         if (this.IsServerSide)
         {

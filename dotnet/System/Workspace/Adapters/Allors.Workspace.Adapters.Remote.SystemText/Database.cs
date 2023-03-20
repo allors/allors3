@@ -38,7 +38,7 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
 
         public override IUnitConvert UnitConvert { get; }
 
-        protected override string UserId => this.userId;
+        public override string UserId => this.userId;
 
         public IAsyncPolicy Policy { get; set; } = Polly.Policy
             .Handle<HttpRequestException>()

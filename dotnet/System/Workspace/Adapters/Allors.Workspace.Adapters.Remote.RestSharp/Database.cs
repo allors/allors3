@@ -29,7 +29,7 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
 
         public override IUnitConvert UnitConvert { get; }
 
-        protected override string UserId => this.client.UserId;
+        public override string UserId => this.client.UserId;
 
         public override async Task<SyncResponse> Sync(SyncRequest syncRequest)
         {

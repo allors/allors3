@@ -1,7 +1,9 @@
 namespace Allors.Workspace.Blazor
 {
+    using System;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using Allors.Workspace.Adapters.Remote.SystemText;
     using Microsoft.AspNetCore.Components.Authorization;
 
     public partial class AllorsAuthenticationStateProvider : AuthenticationStateProvider
@@ -10,12 +12,12 @@ namespace Allors.Workspace.Blazor
 
         private readonly AllorsAuthenticationStateProviderConfig Config;
 
-        private readonly IWorkspace workspace;
+        private readonly DatabaseConnection Database;
 
-        public AllorsAuthenticationStateProvider(AllorsAuthenticationStateProviderConfig config, IWorkspace workspace)
+        public AllorsAuthenticationStateProvider(AllorsAuthenticationStateProviderConfig config, DatabaseConnection database)
         {
             this.Config = config;
-            this.workspace = workspace;
+            this.Database = database;
         }
 
         public override Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -40,7 +42,6 @@ namespace Allors.Workspace.Blazor
 
         public async Task<bool> LogIn(string userName, string password)
         {
-            /*
             var uri = new Uri(this.Config.AuthenticationUrl, UriKind.Relative);
             var loggedIn = await this.Database.Login(uri, userName, password);
             if (loggedIn)
@@ -50,9 +51,6 @@ namespace Allors.Workspace.Blazor
             }
 
             return loggedIn;
-            */
-
-            return true;
         }
 
         public void LogOut()

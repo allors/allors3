@@ -12,7 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.SystemText\Allors.Workspace.Adapters.Remote.SystemText.csproj" />
     <ProjectReference Include="..\Blazor.Bootstrap\Blazor.Bootstrap.csproj" />
+    <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
+    <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
   </ItemGroup>
 
 </Project>
