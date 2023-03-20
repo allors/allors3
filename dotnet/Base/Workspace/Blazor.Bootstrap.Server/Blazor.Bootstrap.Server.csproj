@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\Database\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\..\Database\Meta\Meta.csproj" />
     <ProjectReference Include="..\..\Database\Resources\Resources.csproj" />
-    <ProjectReference Include="..\Blazor.Bootstrap\Blazor.Bootstrap.csproj" />
+    <ProjectReference Include="..\Blazor.Bootstrap.Common\Blazor.Bootstrap.Common.csproj" />
     <ProjectReference Include="..\Configuration\Workspace.Configuration.csproj" />
     <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
     <ProjectReference Include="..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
