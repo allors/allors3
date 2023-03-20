@@ -1,9 +1,9 @@
 <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Blazor.Bootstrap.Pages.Index).Assembly">
+    <Router AppAssembly="@typeof(Blazor.Bootstrap.Pages.Index).Assembly" AdditionalAssemblies="new []{typeof(App).Assembly}">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <LoginForm/>
+                    You are not Authorized. 
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />

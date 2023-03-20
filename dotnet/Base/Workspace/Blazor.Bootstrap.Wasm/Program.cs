@@ -1,4 +1,5 @@
 using Allors.Ranges;
+using Allors.Services;
 using Allors.Workspace;
 using Allors.Workspace.Adapters;
 using Allors.Workspace.Blazor;
@@ -46,6 +47,12 @@ builder.Services.AddSingleton(new AllorsAuthenticationStateProviderConfig
 builder.Services.AddScoped<AllorsAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AllorsAuthenticationStateProvider>());
 builder.Services.AddAuthorizationCore();
+
+builder.Services.AddSingleton(new LocalImageServiceConfig
+{
+    Url = "http://localhost:5000"
+});
+builder.Services.AddSingleton<IImageService, LocalImageService>();
 
 builder.Services.AddBlazorStrap();
 

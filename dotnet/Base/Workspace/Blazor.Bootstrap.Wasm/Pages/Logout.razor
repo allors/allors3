@@ -1,0 +1,13 @@
+@page "/logout"
+@inject NavigationManager Navigation
+@using Allors.Workspace.Blazor
+@inject AllorsAuthenticationStateProvider AllorsAuthenticationStateProvider
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        this.AllorsAuthenticationStateProvider.LogOut();
+        this.Navigation.NavigateTo("/");
+    }
+}
