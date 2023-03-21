@@ -10,11 +10,11 @@
 
 @if (organisation != null)
 {
-    <ABSForm Model="@organisation" OnValidSubmit="@HandleValidSubmit" TValue="Organisation">
+    <BootstrapForm Model="@organisation" OnValidSubmit="@HandleValidSubmit" TValue="Organisation">
         <ValidationSummary />
 
         <BSRow>
-            <ABSStringInput RoleType="@M.Organisation.Name" />
+            <BootstrapStringInputRole RoleType="@M.Organisation.Name" />
         </BSRow>
 @*
         <BSRow>
@@ -26,7 +26,7 @@
                 <BSButton type="submit">Submit</BSButton>
             </BSInputGroup>
         </BSRow>
-    </ABSForm>
+    </BootstrapForm>
 }
 
 @code {

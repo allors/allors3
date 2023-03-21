@@ -7,15 +7,15 @@
 
 @if (person != null)
 {
-    <ABSForm Model="@person" TValue="Person" OnValidSubmit="@HandleValidSubmit">
+    <BootstrapForm Model="@person" TValue="Person" OnValidSubmit="@HandleValidSubmit">
         <ValidationSummary />
 
         <BSRow>
             <BSCol>
-                <ABSStringInput RoleType="@M.Person.FirstName" />
+                <BootstrapStringInputRole RoleType="@M.Person.FirstName" />
             </BSCol>
             <BSCol>
-                <ABSStringInput RoleType="@M.Person.LastName" />
+                <BootstrapStringInputRole RoleType="@M.Person.LastName" />
             </BSCol>
         </BSRow>
 
@@ -31,7 +31,7 @@
             </BSCol>
         </BSRow>
 
-    </ABSForm>
+    </BootstrapForm>
 }
 
 @code {

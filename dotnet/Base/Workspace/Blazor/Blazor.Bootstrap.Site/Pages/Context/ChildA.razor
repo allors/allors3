@@ -5,18 +5,18 @@
 
 <h2>Child A Revision: @Revision</h2>
 
-<ABSForm Model="@Person" TValue="Person">
+<BootstrapForm Model="@Person" TValue="Person">
 
     <BSRow>
         <BSCol>
-            <ABSStringInput RoleType="@M.Person.FirstName" />
+            <BootstrapStringInputRole RoleType="@M.Person.FirstName" />
         </BSCol>
         <BSCol>
-            <ABSStringInput RoleType="@M.Person.LastName" />
+            <BootstrapStringInputRole RoleType="@M.Person.LastName" />
         </BSCol>
     </BSRow>
 
-</ABSForm>
+</BootstrapForm>
 
 @code {
     [CascadingParameter]

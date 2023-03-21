@@ -9,10 +9,10 @@
 {
     @foreach (var mediaTyped in mediaTypeds)
     {
-        <ABSForm Model="@mediaTyped">
+        <BootstrapForm Model="@mediaTyped">
             <AMarkdownHtml RoleType="@M.MediaTyped.Markdown"></AMarkdownHtml>
             <a href="/mediatyped/edit/@mediaTyped.Id">Edit</a>
-        </ABSForm>
+        </BootstrapForm>
         <hr/>
     }
 }

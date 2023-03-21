@@ -8,11 +8,11 @@
 
 @if (mediaTyped != null)
 {
-    <ABSForm Model="@mediaTyped" OnValidSubmit="@HandleValidSubmit">
+    <BootstrapForm Model="@mediaTyped" OnValidSubmit="@HandleValidSubmit">
         <ValidationSummary/>
 
         <BSRow>
-            <ABSStringInput RoleType="@M.MediaTyped.Markdown"/>
+            <BootstrapStringInputRole RoleType="@M.MediaTyped.Markdown"/>
         </BSRow>
 
         <BSRow>
@@ -20,7 +20,7 @@
                 <BSButton type="submit">Submit</BSButton>
             </BSInputGroup>
         </BSRow>
-    </ABSForm>
+    </BootstrapForm>
 }
 
 @code {
