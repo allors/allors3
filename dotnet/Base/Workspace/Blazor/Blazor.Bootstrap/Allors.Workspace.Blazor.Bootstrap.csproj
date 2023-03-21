@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Allors.Workspace.Blazor\Allors.Workspace.Blazor.csproj" />
+    <ProjectReference Include="..\Blazor\Allors.Workspace.Blazor.csproj" />
   </ItemGroup>
-
 </Project>

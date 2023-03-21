@@ -5,7 +5,7 @@ using Allors.Workspace.Adapters;
 using Allors.Workspace.Blazor;
 using Allors.Workspace.Derivations;
 using Allors.Workspace.Meta.Lazy;
-using Blazor.Bootstrap.Wasm;
+using Allors.Workspace.Blazor.Bootstrap.Site.Wasm;
 using BlazorStrap;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;

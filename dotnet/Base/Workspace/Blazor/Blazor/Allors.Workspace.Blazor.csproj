@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
-    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Meta\Allors.Workspace.Meta.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\System\Workspace\Allors.Workspace.Meta\Allors.Workspace.Meta.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,8 +9,8 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Allors.Workspace.Blazor.Bootstrap\Allors.Workspace.Blazor.Bootstrap.csproj" />
-    <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Blazor.Bootstrap\Allors.Workspace.Blazor.Bootstrap.csproj" />
+    <ProjectReference Include="..\..\Domain\Workspace.Domain.csproj" />
   </ItemGroup>
 
 </Project>
