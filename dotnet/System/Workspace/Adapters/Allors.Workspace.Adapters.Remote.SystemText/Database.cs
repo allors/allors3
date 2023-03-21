@@ -54,6 +54,7 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
             var authResult = await this.ReadAsAsync<AuthenticationTokenResponse>(response);
             if (!authResult.a)
             {
+                this.Logoff();
                 return false;
             }
 
@@ -61,6 +62,12 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
             this.userId = authResult.u;
 
             return true;
+        }
+
+        public void Logoff()
+        {
+            this.HttpClient.DefaultRequestHeaders.Authorization = null;
+            this.userId = null;
         }
 
         public override async Task<PullResponse> Pull(object args, string name)
