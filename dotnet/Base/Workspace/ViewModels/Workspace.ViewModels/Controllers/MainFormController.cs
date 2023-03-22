@@ -6,17 +6,16 @@ using Services;
 
 public partial class MainFormController : ObservableObject
 {
-    public MainFormController(IMessageService messageService)
+    public MainFormController(IMdiService mdiService)
     {
-        this.MessageService = messageService;
+        this.MdiService = mdiService;
     }
 
-    public IMessageService MessageService { get; }
+    public IMdiService MdiService { get; }
 
     [RelayCommand]
-    private void ShowDialog()
+    private void ShowPerson()
     {
-        var result = this.MessageService.ShowDialog("Yes or No?", "The Question");
-        Console.WriteLine(result);
+        this.MdiService.Open(typeof(PersonFormController));
     }
 }

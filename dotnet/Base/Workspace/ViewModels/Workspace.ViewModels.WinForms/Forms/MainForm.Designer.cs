@@ -1,4 +1,4 @@
-namespace Workspace.ViewModels.WinForms
+namespace Workspace.ViewModels.WinForms.Forms
 {
     partial class MainForm
     {
@@ -13,9 +13,9 @@ namespace Workspace.ViewModels.WinForms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
-                components.Dispose();
+                this.components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -48,7 +48,7 @@ namespace Workspace.ViewModels.WinForms
             // 
             // peopleToolStripMenuItem
             // 
-            this.peopleToolStripMenuItem.DataBindings.Add(new Binding("Command", this.mainFormControllerBindingSource, "ShowDialogCommand", true));
+            this.peopleToolStripMenuItem.DataBindings.Add(new Binding("Command", this.mainFormControllerBindingSource, "ShowPersonCommand", true));
             this.peopleToolStripMenuItem.Name = "peopleToolStripMenuItem";
             this.peopleToolStripMenuItem.Size = new Size(68, 24);
             this.peopleToolStripMenuItem.Text = "People";
@@ -63,6 +63,7 @@ namespace Workspace.ViewModels.WinForms
             this.AutoScaleMode = AutoScaleMode.Font;
             this.ClientSize = new Size(1523, 881);
             this.Controls.Add(this.menuStrip1);
+            this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Allors";

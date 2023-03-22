@@ -15,8 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.SystemText\Allors.Workspace.Adapters.Remote.SystemText.csproj" />
+    <ProjectReference Include="..\..\Configuration\Workspace.Configuration.csproj" />
+    <ProjectReference Include="..\..\Domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\Meta.Lazy\Workspace.Meta.Lazy.csproj" />
     <ProjectReference Include="..\Workspace.ViewModels\Workspace.ViewModels.csproj" />
   </ItemGroup>
-
 
 </Project>

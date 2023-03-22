@@ -1,14 +1,12 @@
-namespace Workspace.ViewModels.WinForms
+namespace Workspace.ViewModels.WinForms.Forms
 {
     using Controllers;
 
     public partial class MainForm : Form
     {
-        private readonly MainFormController controller;
-
         public MainForm(MainFormController controller)
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.DataContext = controller;
         }
 
