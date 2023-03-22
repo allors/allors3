@@ -44,18 +44,21 @@ namespace Workspace.ViewModels.WinForms
                 {
                     // Allors
                     services.AddSingleton(databaseConnection);
+                    services.AddSingleton<IDatabaseService, DatabaseService>();
+                    services.AddSingleton(v => v.GetService<IDatabaseService>().CreateWorkspace());
+                    services.AddScoped(v => v.GetService<IWorkspace>().CreateSession());
 
                     // Services
                     services.AddSingleton<IMdiService, MdiService>();
                     services.AddSingleton<IMessageService, MessageService>();
 
                     // Controllers
-                    services.AddTransient<MainFormController>();
-                    services.AddTransient<PersonFormController>();
+                    services.AddScoped<MainFormController>();
+                    services.AddScoped<PersonFormController>();
 
                     // Forms
                     services.AddSingleton<MainForm>();
-                    services.AddTransient<PersonForm>();
+                    services.AddScoped<PersonForm>();
                 });
         }
     }
