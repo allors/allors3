@@ -72,7 +72,7 @@ namespace Allors.Database.Domain
                         else
                         {
                             if (fromPart != null)
-                            {
+                                {
                                 characteristic.Value = fromPart.Value;
                             }
 

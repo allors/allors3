@@ -389,6 +389,7 @@ namespace Allors.Database.Domain
                 facility = new FacilityBuilder(transaction)
                     .WithName(facilityName)
                     .WithFacilityType(new FacilityTypes(transaction).Warehouse)
+                    .WithLocation(new LocationBuilder(transaction).WithName(facilityName).Build())
                     .WithOwner(internalOrganisation)
                     .Build();
             }
