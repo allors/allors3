@@ -33,7 +33,6 @@ namespace Allors.Database.Domain
 
                 m.Request.RolePattern(v => v.RequestNumber, v => v.QuoteWhereRequest.Quote.AsProductQuote),
 
-                m.ProductQuote.RolePattern(v => v.Issuer, v => v.Issuer.InternalOrganisation.AsOrganisation.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.DisplayName, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.GeneralEmail, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
                 m.Organisation.RolePattern(v => v.InternetAddress, v => v.QuotesWhereIssuer.Quote.AsProductQuote),
