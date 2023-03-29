@@ -7,10 +7,10 @@ namespace Allors.Database.Domain
 {
     public interface IDeleting
     {
-        void OnBeginDelete(Deletable deletable);
+        void OnBeginDelete(long id);
 
-        void OnEndDelete(Deletable deletable);
+        void OnEndDelete(long id);
 
-        bool IsDeleting(Deletable deletable);
+        bool IsDeleting(long id);
     }
 }

@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
             }
 
             var deleting = @this.Strategy.Transaction.Services.Get<IDeleting>();
-            return deleting.IsDeleting(@this);
+            return deleting.IsDeleting(@this.Id);
         }
     }
 }

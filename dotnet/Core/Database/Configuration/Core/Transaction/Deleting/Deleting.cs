@@ -6,18 +6,17 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
-    using Collections;
 
     public class Deleting : IDeleting
     {
-        private readonly ISet<Deletable> deleting;
+        private readonly ISet<long> deleting;
 
-        public Deleting() => this.deleting = new HashSet<Deletable>();
+        public Deleting() => this.deleting = new HashSet<long>();
 
-        public void OnBeginDelete(Deletable deletable) => this.deleting.Add(deletable);
+        public void OnBeginDelete(long id) => this.deleting.Add(id);
 
-        public void OnEndDelete(Deletable deletable) => this.deleting.Remove(deletable);
+        public void OnEndDelete(long id) => this.deleting.Remove(id);
 
-        public bool IsDeleting(Deletable deletable) => this.deleting.Contains(deletable);
+        public bool IsDeleting(long id) => this.deleting.Contains(id);
     }
 }

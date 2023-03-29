@@ -10,8 +10,10 @@ namespace Allors.Database.Domain
         public override void Execute()
         {
             var deleting = this.Object.Strategy.Transaction.Services.Get<IDeleting>();
+            
+            var id = this.Object.Id;
 
-            deleting.OnBeginDelete((Deletable)this.Object);
+            deleting.OnBeginDelete(id);
 
             try
             {
@@ -21,7 +23,7 @@ namespace Allors.Database.Domain
             }
             finally
             {
-                deleting.OnEndDelete((Deletable)this.Object);
+                deleting.OnEndDelete(id);
             }
         }
     }
