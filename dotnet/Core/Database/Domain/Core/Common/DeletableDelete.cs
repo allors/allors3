@@ -5,13 +5,20 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
+
     public partial class DeletableDelete
     {
         public override void Execute()
         {
             var deleting = this.Object.Strategy.Transaction.Services.Get<IDeleting>();
-            
+
             var id = this.Object.Id;
+
+            if (deleting.IsDeleting(id))
+            {
+                throw new Exception("Object with id " + id + " is already deleting");
+            }
 
             deleting.OnBeginDelete(id);
 
