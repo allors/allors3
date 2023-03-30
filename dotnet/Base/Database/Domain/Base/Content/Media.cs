@@ -7,6 +7,6 @@ namespace Allors.Database.Domain
 {
     public partial class Media
     {
-        public void CoreDelete(DeletableDelete method) => this.MediaContent?.Delete();
+        public void CoreDelete(DeletableDelete method) => this.MediaContent?.CascadingDelete();
     }
 }

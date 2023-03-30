@@ -157,94 +157,94 @@ namespace Allors.Database.Domain
 
                 foreach (var deletable in this.StoresWhereInternalOrganisation)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PartyFinancialRelationshipsWhereInternalOrganisation)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PartyContactMechanismsWhereParty)
                 {
                     var contactmechanism = deletable.ContactMechanism;
 
-                    deletable.Delete();
+                    deletable.CascadingDelete();
 
                     if (!contactmechanism.ExistPartyContactMechanismsWhereContactMechanism)
                     {
-                        contactmechanism.Delete();
+                        contactmechanism.CascadingDelete();
                     }
                 }
 
                 foreach (var deletable in this.OrganisationContactRelationshipsWhereOrganisation)
                 {
-                    deletable.Contact.Delete();
+                    deletable.Contact.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PriceComponentsWherePricedBy)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.CommunicationEventsWhereInvolvedParty)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.CustomerRelationshipsWhereCustomer)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.CustomerRelationshipsWhereInternalOrganisation)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.OrganisationRollUpsWhereChild)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PartyFixedAssetAssignmentsWhereParty)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.ProfessionalServicesRelationshipsWhereProfessionalServicesProvider)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.SubContractorRelationshipsWhereSubContractor)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.SubContractorRelationshipsWhereContractor)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.SupplierRelationshipsWhereSupplier)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.SupplierRelationshipsWhereInternalOrganisation)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.SupplierOfferingsWhereSupplier)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
             }
         }

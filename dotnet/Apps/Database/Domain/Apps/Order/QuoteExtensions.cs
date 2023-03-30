@@ -60,12 +60,12 @@ namespace Allors.Database.Domain
             {
                 foreach (var orderAdjustment in @this.OrderAdjustments)
                 {
-                    orderAdjustment.Delete();
+                    orderAdjustment.CascadingDelete();
                 }
 
                 foreach (var item in @this.QuoteItems)
                 {
-                    item.Delete();
+                    item.CascadingDelete();
                 }
             }
         }

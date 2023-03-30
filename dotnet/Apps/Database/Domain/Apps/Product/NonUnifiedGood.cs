@@ -44,27 +44,27 @@ namespace Allors.Database.Domain
 
                 foreach (var productIdentification in this.ProductIdentifications)
                 {
-                    productIdentification.Delete();
+                    productIdentification.CascadingDelete();
                 }
 
                 foreach (var localisedText in this.LocalisedNames)
                 {
-                    localisedText.Delete();
+                    localisedText.CascadingDelete();
                 }
 
                 foreach (var localisedText in this.LocalisedDescriptions)
                 {
-                    localisedText.Delete();
+                    localisedText.CascadingDelete();
                 }
 
                 foreach (var priceComponent in this.VirtualProductPriceComponents)
                 {
-                    priceComponent.Delete();
+                    priceComponent.CascadingDelete();
                 }
 
                 foreach (var estimatedProductCosts in this.EstimatedProductCosts)
                 {
-                    estimatedProductCosts.Delete();
+                    estimatedProductCosts.CascadingDelete();
                 }
             }
         }

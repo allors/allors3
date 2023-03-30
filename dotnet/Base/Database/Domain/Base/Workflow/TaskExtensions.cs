@@ -23,7 +23,7 @@ namespace Allors.Database.Domain
         {
             foreach (var taskAssignment in @this.TaskAssignmentsWhereTask)
             {
-                taskAssignment.Delete();
+                taskAssignment.CascadingDelete();
             }
         }
 

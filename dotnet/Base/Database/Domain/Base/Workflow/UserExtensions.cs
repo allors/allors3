@@ -15,6 +15,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public static void BaseDelete(this User @this, DeletableDelete method) => @this.NotificationList?.Delete();
+        public static void BaseDelete(this User @this, DeletableDelete method) => @this.NotificationList?.CascadingDelete();
     }
 }

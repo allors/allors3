@@ -45,42 +45,42 @@ namespace Allors.Database.Domain
 
                 foreach (var deletable in this.LocalisedComments)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.LocalisedDescriptions)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.LocalisedKeywords)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PublicElectronicDocuments)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PublicLocalisedElectronicDocuments)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PrivateElectronicDocuments)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.PrivateLocalisedElectronicDocuments)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var deletable in this.SerialisedItemCharacteristics)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
 
                 foreach (var version in this.AllVersions)

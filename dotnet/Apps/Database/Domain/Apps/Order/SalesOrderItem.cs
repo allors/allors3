@@ -92,7 +92,7 @@ namespace Allors.Database.Domain
 
             foreach (var salesTerm in this.SalesTerms)
             {
-                salesTerm.Delete();
+                salesTerm.CascadingDelete();
             }
 
             if (this.ExistSerialisedItem)

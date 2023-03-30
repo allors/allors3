@@ -78,42 +78,42 @@ namespace Allors.Database.Domain
 
             foreach (var salesTerm in this.SalesTerms)
             {
-                salesTerm.Delete();
+                salesTerm.CascadingDelete();
             }
 
             foreach (var invoiceVatRateItem in this.InvoiceVatRateItems)
             {
-                invoiceVatRateItem.Delete();
+                invoiceVatRateItem.CascadingDelete();
             }
 
             foreach (var billing in this.WorkEffortBillingsWhereInvoiceItem)
             {
                 billing.WorkEffort.DerivationTrigger = Guid.NewGuid();
-                billing.Delete();
+                billing.CascadingDelete();
             }
 
             foreach (var billing in this.OrderItemBillingsWhereInvoiceItem)
             {
                 billing.OrderItem.DerivationTrigger = Guid.NewGuid();
-                billing.Delete();
+                billing.CascadingDelete();
             }
 
             foreach (var billing in this.ShipmentItemBillingsWhereInvoiceItem)
             {
                 billing.ShipmentItem.DerivationTrigger = Guid.NewGuid();
-                billing.Delete();
+                billing.CascadingDelete();
             }
 
             foreach (var billing in this.TimeEntryBillingsWhereInvoiceItem)
             {
                 billing.TimeEntry.WorkEffort.DerivationTrigger = Guid.NewGuid();
-                billing.Delete();
+                billing.CascadingDelete();
             }
 
             foreach (var billing in this.ServiceEntryBillingsWhereInvoiceItem)
             {
                 billing.ServiceEntry.DerivationTrigger = Guid.NewGuid();
-                billing.Delete();
+                billing.CascadingDelete();
             }
         }
     }

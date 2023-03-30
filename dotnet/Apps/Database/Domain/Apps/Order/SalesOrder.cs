@@ -142,17 +142,17 @@ namespace Allors.Database.Domain
 
                 foreach (var orderAdjustment in this.OrderAdjustments)
                 {
-                    orderAdjustment.Delete();
+                    orderAdjustment.CascadingDelete();
                 }
 
                 foreach (var item in this.SalesOrderItems)
                 {
-                    item.Delete();
+                    item.CascadingDelete();
                 }
 
                 foreach (var salesTerm in this.SalesTerms)
                 {
-                    salesTerm.Delete();
+                    salesTerm.CascadingDelete();
                 }
             }
         }

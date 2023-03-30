@@ -63,52 +63,52 @@ namespace Allors.Database.Domain
 
                 foreach (var productIdentification in this.ProductIdentifications)
                 {
-                    productIdentification.Delete();
+                    productIdentification.CascadingDelete();
                 }
 
                 foreach (var localisedText in this.LocalisedNames)
                 {
-                    localisedText.Delete();
+                    localisedText.CascadingDelete();
                 }
 
                 foreach (var localisedText in this.LocalisedDescriptions)
                 {
-                    localisedText.Delete();
+                    localisedText.CascadingDelete();
                 }
 
                 foreach (var priceComponent in this.VirtualProductPriceComponents)
                 {
-                    priceComponent.Delete();
+                    priceComponent.CascadingDelete();
                 }
 
                 foreach (var estimatedProductCosts in this.EstimatedProductCosts)
                 {
-                    estimatedProductCosts.Delete();
+                    estimatedProductCosts.CascadingDelete();
                 }
 
                 foreach (var productFeatureApplicability in this.ProductFeatureApplicabilitiesWhereAvailableFor)
                 {
-                    productFeatureApplicability.Delete();
+                    productFeatureApplicability.CascadingDelete();
                 }
 
                 foreach (var inventoryItem in this.InventoryItemsWherePart)
                 {
-                    inventoryItem.Delete();
+                    inventoryItem.CascadingDelete();
                 }
 
                 foreach (var partSubstitute in this.PartSubstitutesWherePart)
                 {
-                    partSubstitute.Delete();
+                    partSubstitute.CascadingDelete();
                 }
 
                 foreach (var partSubstitute in this.PartSubstitutesWhereSubstitutionPart)
                 {
-                    partSubstitute.Delete();
+                    partSubstitute.CascadingDelete();
                 }
 
                 foreach (var supplierOffering in this.SupplierOfferingsWherePart)
                 {
-                    supplierOffering.Delete();
+                    supplierOffering.CascadingDelete();
                 }
             }
         }

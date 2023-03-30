@@ -138,54 +138,54 @@ namespace Allors.Database.Domain
 
             foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.ProfessionalServicesRelationshipsWhereProfessional)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.PartyFinancialRelationshipsWhereFinancialParty)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.PartyContactMechanismsWhereParty)
             {
                 var contactmechanism = deletable.ContactMechanism;
 
-                deletable.Delete();
+                deletable.CascadingDelete();
 
                 if (!contactmechanism.ExistPartyContactMechanismsWhereContactMechanism)
                 {
-                    contactmechanism.Delete();
+                    contactmechanism.CascadingDelete();
                 }
             }
 
             foreach (var deletable in this.CommunicationEventsWhereInvolvedParty)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             if (this.ExistTimeSheetWhereWorker)
             {
-                this.TimeSheetWhereWorker.Delete();
+                this.TimeSheetWhereWorker.CascadingDelete();
             }
 
             if (this.ExistOwnerGrant)
             {
-                this.OwnerGrant.Delete();
+                this.OwnerGrant.CascadingDelete();
             }
 
             if (this.ExistOwnerSecurityToken)
             {
-                this.OwnerSecurityToken.Delete();
+                this.OwnerSecurityToken.CascadingDelete();
             }
         }
     }

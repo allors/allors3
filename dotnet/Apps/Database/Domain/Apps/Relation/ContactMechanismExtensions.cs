@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             foreach(PartyContactMechanism partyContactMechanism in @this.PartyContactMechanismsWhereContactMechanism)
             {
-                partyContactMechanism.Delete();
+                partyContactMechanism.CascadingDelete();
             }
         }
     }

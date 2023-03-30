@@ -15,7 +15,7 @@ namespace Allors.Database.Domain
             {
                 foreach (var deletable in this.Models)
                 {
-                    deletable.Delete();
+                    deletable.CascadingDelete();
                 }
             }
         }

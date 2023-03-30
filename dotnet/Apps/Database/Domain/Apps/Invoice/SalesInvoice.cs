@@ -407,17 +407,17 @@ namespace Allors.Database.Domain
 
                 foreach (var orderAdjustment in this.OrderAdjustments)
                 {
-                    orderAdjustment.Delete();
+                    orderAdjustment.CascadingDelete();
                 }
 
                 foreach (var salesInvoiceItem in this.SalesInvoiceItems)
                 {
-                    salesInvoiceItem.Delete();
+                    salesInvoiceItem.CascadingDelete();
                 }
 
                 foreach (var salesTerm in this.SalesTerms)
                 {
-                    salesTerm.Delete();
+                    salesTerm.CascadingDelete();
                 }
             }
         }

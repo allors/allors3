@@ -40,42 +40,42 @@ namespace Allors.Database.Domain
         {
             foreach (var deletable in this.WorkEffortAssignmentRatesWhereWorkEffort)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.WorkEffortFixedAssetAssignmentsWhereAssignment)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.WorkEffortInventoryAssignmentsWhereAssignment)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.ServiceEntriesWhereWorkEffort)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.WorkEffortInvoiceItemAssignmentsWhereAssignment)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.WorkEffortPartyAssignmentsWhereAssignment)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.WorkRequirementFulfillmentsWhereFullfillmentOf)
             {
-                deletable.Delete();
+                deletable.CascadingDelete();
             }
 
             foreach (var deletable in this.AllVersions)

@@ -234,22 +234,22 @@ namespace Allors.Database.Domain
 
                 foreach (var approval in this.PurchaseInvoiceApprovalsWherePurchaseInvoice)
                 {
-                    approval.Delete();
+                    approval.CascadingDelete();
                 }
 
                 foreach (var orderAdjustment in this.OrderAdjustments)
                 {
-                    orderAdjustment.Delete();
+                    orderAdjustment.CascadingDelete();
                 }
 
                 foreach (var invoiceItem in this.PurchaseInvoiceItems)
                 {
-                    invoiceItem.Delete();
+                    invoiceItem.CascadingDelete();
                 }
 
                 foreach (var salesTerm in this.SalesTerms)
                 {
-                    salesTerm.Delete();
+                    salesTerm.CascadingDelete();
                 }
             }
         }

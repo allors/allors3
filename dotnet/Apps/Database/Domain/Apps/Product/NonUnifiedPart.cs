@@ -41,37 +41,37 @@ namespace Allors.Database.Domain
             {
                 foreach (var @this in this.ProductIdentifications)
                 {
-                    @this.Delete();
+                    @this.CascadingDelete();
                 }
 
                 foreach (var @this in this.LocalisedNames)
                 {
-                    @this.Delete();
+                    @this.CascadingDelete();
                 }
 
                 foreach (var @this in this.LocalisedDescriptions)
                 {
-                    @this.Delete();
+                    @this.CascadingDelete();
                 }
 
                 foreach (var @this in this.InventoryItemsWherePart)
                 {
-                    @this.Delete();
+                    @this.CascadingDelete();
                 }
 
                 foreach (var @this in this.PartSubstitutesWherePart)
                 {
-                    @this.Delete();
+                    @this.CascadingDelete();
                 }
 
                 foreach (var @this in this.PartSubstitutesWhereSubstitutionPart)
                 {
-                    @this.Delete();
+                    @this.CascadingDelete();
                 }
 
                 foreach (var @this in this.SupplierOfferingsWherePart)
                 {
-                    @this.Delete();
+                    @this.CascadingDelete();
                 }
 
                 foreach (var @this in this.PurchaseOrderItemByProductsWhereUnifiedProduct)

@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         {
             if (IsDeletable)
             {
-                this.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.Delete();
+                this.WorkEffortInvoiceItemAssignmentWhereWorkEffortInvoiceItem.CascadingDelete();
             }
         }
     }

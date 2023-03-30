@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         {
             foreach (var paymentApplication in @this.PaymentApplications)
             {
-                paymentApplication.Delete();
+                paymentApplication.CascadingDelete();
             }
         }
     }

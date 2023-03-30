@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
         {
             foreach (var task in @this.TasksWhereWorkItem)
             {
-                task.Delete();
+                task.CascadingDelete();
             }
         }
 

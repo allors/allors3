@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
 
             foreach (var pickListItem in this.PickListItems)
             {
-                pickListItem.Delete();
+                pickListItem.CascadingDelete();
             }
 
             if (this.ExistShipToParty)

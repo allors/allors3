@@ -16,6 +16,6 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void BaseDelete(DeletableDelete _) => this.Notification?.Delete();
+        public void BaseDelete(DeletableDelete _) => this.Notification?.CascadingDelete();
     }
 }

@@ -14,6 +14,6 @@ namespace Allors.Database.Domain
                 @this.UserProfile = new UserProfileBuilder(@this.Strategy.Transaction).Build();
             }
         }
-        public static void AppsDelete(this User @this, DeletableDelete method) => @this.UserProfile?.Delete();
+        public static void AppsDelete(this User @this, DeletableDelete method) => @this.UserProfile?.CascadingDelete();
     }
 }

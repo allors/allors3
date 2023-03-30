@@ -128,7 +128,7 @@ namespace Allors.Database.Domain
         {
             foreach (var shipmentItems in this.ShipmentItems)
             {
-                shipmentItems.Delete();
+                shipmentItems.CascadingDelete();
             }
 
             foreach (var deletable in this.AllVersions)

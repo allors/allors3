@@ -49,7 +49,7 @@ namespace Allors.Database.Domain
                 foreach (var orderItemBilling in this.OrderItemBillingsWhereInvoiceItem)
                 {
                     orderItemBilling.OrderItem.DerivationTrigger = Guid.NewGuid();
-                    orderItemBilling.Delete();
+                    orderItemBilling.CascadingDelete();
                 }
             }
         }

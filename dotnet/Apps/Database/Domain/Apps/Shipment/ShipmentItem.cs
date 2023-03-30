@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
             {
                 foreach (var itemIssuance in this.ItemIssuancesWhereShipmentItem)
                 {
-                    itemIssuance.Delete();
+                    itemIssuance.CascadingDelete();
                 }
             }
 
@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
                 foreach (var orderShipment in this.OrderShipmentsWhereShipmentItem)
                 {
                     orderShipment.OrderItem.DerivationTrigger = Guid.NewGuid();
-                    orderShipment.Delete();
+                    orderShipment.CascadingDelete();
                 }
             }
         }

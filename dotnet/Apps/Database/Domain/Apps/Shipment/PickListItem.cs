@@ -11,7 +11,7 @@ namespace Allors.Database.Domain
         {
             foreach (var itemIssuance in this.ItemIssuancesWherePickListItem)
             {
-                itemIssuance.Delete();
+                itemIssuance.CascadingDelete();
             }
         }
     }

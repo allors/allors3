@@ -45,7 +45,7 @@ namespace Allors.Database.Domain
             {
                 foreach (var item in @this.RequestItems)
                 {
-                    item.Delete();
+                    item.CascadingDelete();
                 }
             }
         }
