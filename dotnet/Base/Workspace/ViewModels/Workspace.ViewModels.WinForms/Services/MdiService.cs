@@ -1,6 +1,5 @@
 namespace Workspace.ViewModels.WinForms.Services
 {
-    using System.CodeDom;
     using Controllers;
     using Forms;
     using Microsoft.Extensions.DependencyInjection;

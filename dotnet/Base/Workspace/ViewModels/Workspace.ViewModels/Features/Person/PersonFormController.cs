@@ -12,6 +12,8 @@ using Task = Task;
 
 public partial class PersonFormController : ObservableObject
 {
+    private PersonModel selected;
+
     public PersonFormController(ISession session, IMessageService messageService)
     {
         this.Session = session;
@@ -24,11 +26,16 @@ public partial class PersonFormController : ObservableObject
 
     public ObservableCollection<PersonModel> People { get; } = new();
 
-    [ObservableProperty] private PersonModel selected;
-
-    partial void OnSelectedChanging(PersonModel selected)
+    public PersonModel Selected
     {
-        Console.WriteLine(selected.FirstName);
+        get => this.selected;
+        set
+        {
+            if (value?.FirstName != "Jenny")
+            {
+                this.SetProperty(ref this.selected, value);
+            }
+        }
     }
 
     [RelayCommand]

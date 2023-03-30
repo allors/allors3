@@ -40,10 +40,15 @@ namespace Workspace.ViewModels.WinForms.Forms
             this.dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             this.peopleBindingSource = new BindingSource(this.components);
+            this.textBox2 = new TextBox();
+            this.label2 = new Label();
+            this.textBox1 = new TextBox();
+            this.label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)this.personFormControllerBindingSource).BeginInit();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)this.splitContainer1).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)this.dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)this.peopleBindingSource).BeginInit();
@@ -102,6 +107,13 @@ namespace Workspace.ViewModels.WinForms.Forms
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.textBox2);
+            this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.textBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Size = new Size(1041, 474);
             this.splitContainer1.SplitterDistance = 347;
             this.splitContainer1.TabIndex = 2;
@@ -140,6 +152,41 @@ namespace Workspace.ViewModels.WinForms.Forms
             // 
             this.peopleBindingSource.DataMember = "People";
             this.peopleBindingSource.DataSource = this.personFormControllerBindingSource;
+            this.peopleBindingSource.CurrentChanged += this.peopleBindingSource_CurrentChanged;
+            // 
+            // textBox2
+            // 
+            this.textBox2.DataBindings.Add(new Binding("Text", this.personFormControllerBindingSource, "Selected.FirstName", true));
+            this.textBox2.Location = new Point(307, 143);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new Size(125, 27);
+            this.textBox2.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new Point(123, 146);
+            this.label2.Name = "label2";
+            this.label2.Size = new Size(169, 20);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "First Name (ViewModel)";
+            // 
+            // textBox1
+            // 
+            this.textBox1.DataBindings.Add(new Binding("Text", this.peopleBindingSource, "FirstName", true));
+            this.textBox1.Location = new Point(307, 88);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new Size(125, 27);
+            this.textBox1.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new Point(123, 91);
+            this.label1.Name = "label1";
+            this.label1.Size = new Size(126, 20);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "First Name (View)";
             // 
             // PersonForm
             // 
@@ -155,6 +202,8 @@ namespace Workspace.ViewModels.WinForms.Forms
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)this.splitContainer1).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)this.dataGridView1).EndInit();
@@ -176,5 +225,9 @@ namespace Workspace.ViewModels.WinForms.Forms
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private BindingSource peopleBindingSource;
+        private TextBox textBox1;
+        private Label label1;
+        private TextBox textBox2;
+        private Label label2;
     }
 }
