@@ -17,5 +17,13 @@ namespace Allors.Database.Domain
             var deleting = @this.Strategy.Transaction.Services.Get<IDeleting>();
             return deleting.IsDeleting(@this.Id);
         }
+
+        public static void CascadingDelete(this Deletable @this)
+        {
+            if (!@this.IsDeleting())
+            {
+                @this.Delete();
+            }
+        }
     }
 }
