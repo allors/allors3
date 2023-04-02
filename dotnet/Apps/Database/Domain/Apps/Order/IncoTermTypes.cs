@@ -9,17 +9,18 @@ namespace Allors.Database.Domain
 
     public partial class IncoTermTypes
     {
-        private static readonly Guid ExwId = new Guid("08F45D13-4354-494E-889E-BD84F73749D8");
-        private static readonly Guid FcaId = new Guid("689D7B46-6DE5-4276-AF1B-F9A8A3DEB7CF");
-        private static readonly Guid CptId = new Guid("CAF35B5B-7156-45D0-95E3-26632D0D4BF7");
-        private static readonly Guid CipId = new Guid("D93EF678-15FE-4794-8C94-7384DD84ACBB");
-        private static readonly Guid DatId = new Guid("8412EB47-C674-49C3-B2F5-F93B1E2C28FD");
-        private static readonly Guid DapId = new Guid("2E050969-A3B8-481A-B37F-ABC11C50A9DD");
-        private static readonly Guid DdpId = new Guid("D9CB935C-539E-403E-A368-15564038591B");
-        private static readonly Guid FasId = new Guid("DC851808-BA41-46C4-AB32-18219E52939D");
-        private static readonly Guid FobId = new Guid("5005D64C-2D6E-411F-9CF7-FBE3BE0DA79E");
-        private static readonly Guid CfrId = new Guid("14C74444-F935-4AF2-9108-8CCEBD1920B2");
-        private static readonly Guid CifId = new Guid("13C6ACE8-A928-45D4-8F2D-7F2320E38EE0");
+        public static readonly Guid ExwId = new Guid("08F45D13-4354-494E-889E-BD84F73749D8");
+        public static readonly Guid FcaId = new Guid("689D7B46-6DE5-4276-AF1B-F9A8A3DEB7CF");
+        public static readonly Guid CptId = new Guid("CAF35B5B-7156-45D0-95E3-26632D0D4BF7");
+        public static readonly Guid CipId = new Guid("D93EF678-15FE-4794-8C94-7384DD84ACBB");
+        public static readonly Guid DatId = new Guid("8412EB47-C674-49C3-B2F5-F93B1E2C28FD");
+        public static readonly Guid DapId = new Guid("2E050969-A3B8-481A-B37F-ABC11C50A9DD");
+        public static readonly Guid DdpId = new Guid("D9CB935C-539E-403E-A368-15564038591B");
+        public static readonly Guid FasId = new Guid("DC851808-BA41-46C4-AB32-18219E52939D");
+        public static readonly Guid FobId = new Guid("5005D64C-2D6E-411F-9CF7-FBE3BE0DA79E");
+        public static readonly Guid CfrId = new Guid("14C74444-F935-4AF2-9108-8CCEBD1920B2");
+        public static readonly Guid CifId = new Guid("13C6ACE8-A928-45D4-8F2D-7F2320E38EE0");
+        public static readonly Guid DduId = new Guid("691a8c51-6524-450f-8c73-d85cdb10418d");
 
         private UniquelyIdentifiableCache<IncoTermType> cache;
 
@@ -44,6 +45,8 @@ namespace Allors.Database.Domain
         public IncoTermType Cfr => this.Cache[CfrId];
 
         public IncoTermType Cif => this.Cache[CifId];
+
+        public IncoTermType Ddu => this.Cache[DduId];
 
         private UniquelyIdentifiableCache<IncoTermType> Cache => this.cache ??= new UniquelyIdentifiableCache<IncoTermType>(this.Transaction);
 
@@ -139,6 +142,14 @@ namespace Allors.Database.Domain
                 v.Name = "Incoterm CIF (Cost, Insurance and Freight)";
                 v.Abbreviation = "CIF";
                 localisedName.Set(v, dutchLocale, "Incoterm CIF (Kostprijs, verzekering en vracht)");
+                v.IsActive = true;
+            });
+
+            merge(DduId, v =>
+            {
+                v.Name = "Incoterm DDU (Delivered Duty Unpaid)";
+                v.Abbreviation = "DDU";
+                localisedName.Set(v, dutchLocale, "Incoterm DDU (Delivered Duty Unpaid)");
                 v.IsActive = true;
             });
         }
