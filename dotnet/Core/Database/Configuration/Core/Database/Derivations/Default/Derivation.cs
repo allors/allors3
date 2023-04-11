@@ -174,7 +174,7 @@ namespace Allors.Database.Configuration.Derivations.Default
                 {
                     var domainDerivation = kvp.Key;
                     var matches = kvp.Value;
-                    domainDerivation.Derive(domainCycle, matches);
+                    domainDerivation.Derive(domainCycle, matches.Where(v => !v.Strategy.IsDeleted));
                 }
 
                 changeSet = this.Transaction.Checkpoint();
