@@ -56,7 +56,7 @@ namespace Workspace.ViewModels.WinForms.Forms
             // 
             // personFormControllerBindingSource
             // 
-            this.personFormControllerBindingSource.DataSource = typeof(Controllers.PersonFormController);
+            this.personFormControllerBindingSource.DataSource = typeof(Features.PersonFormViewModel);
             // 
             // toolStrip1
             // 

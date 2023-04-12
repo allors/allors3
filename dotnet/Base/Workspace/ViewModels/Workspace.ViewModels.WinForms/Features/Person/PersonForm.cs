@@ -1,25 +1,25 @@
 namespace Workspace.ViewModels.WinForms.Forms
 {
     using System.Windows.Forms;
-    using Workspace.ViewModels.Controllers;
+    using Features;
 
     public partial class PersonForm : Form
     {
-        public PersonForm(PersonFormController controller)
+        public PersonForm(PersonFormViewModel viewModel)
         {
             InitializeComponent();
-            this.ViewModel = controller;
+            this.ViewModel = viewModel;
             this.DataContext = this.ViewModel;
         }
 
-        public PersonFormController ViewModel { get; set; }
+        public PersonFormViewModel ViewModel { get; set; }
 
         private void PersonForm_DataContextChanged(object sender, EventArgs e)
             => this.personFormControllerBindingSource.DataSource = this.DataContext;
 
         private void peopleBindingSource_CurrentChanged(object sender, EventArgs e)
         {
-            var current = (PersonModel)this.peopleBindingSource.Current;
+            var current = (PersonViewModel)this.peopleBindingSource.Current;
 
             this.ViewModel.Selected = current;
 

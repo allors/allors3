@@ -1,6 +1,6 @@
 namespace Workspace.ViewModels.WinForms.Services
 {
-    using Controllers;
+    using Features;
     using Forms;
     using Microsoft.Extensions.DependencyInjection;
     using Workspace.ViewModels.Services;
@@ -18,7 +18,7 @@ namespace Workspace.ViewModels.WinForms.Services
         {
             var parent = this.ServiceProvider.GetRequiredService<MainForm>();
 
-            if (controllerType == typeof(PersonFormController))
+            if (controllerType == typeof(PersonFormViewModel))
             {
                 var form = this.ServiceProvider.GetRequiredService<PersonForm>();
                 form.MdiParent = parent;
