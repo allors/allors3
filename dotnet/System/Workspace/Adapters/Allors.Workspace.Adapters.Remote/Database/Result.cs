@@ -30,11 +30,11 @@ namespace Allors.Workspace.Adapters.Remote
 
         public string ErrorMessage => this.response._e;
 
-        public IEnumerable<IObject> VersionErrors => this.Session.Instantiate<IObject>(this.response._v);
+        public IEnumerable<IObject> VersionErrors => this.response._v != null ? this.Session.Instantiate<IObject>(this.response._v) : Array.Empty<IObject>();
 
-        public IEnumerable<IObject> AccessErrors => this.Session.Instantiate<IObject>(this.response._a);
+        public IEnumerable<IObject> AccessErrors => this.response._a != null ? this.Session.Instantiate<IObject>(this.response._a) : Array.Empty<IObject>();
 
-        public IEnumerable<IObject> MissingErrors => this.Session.Instantiate<IObject>(this.response._m);
+        public IEnumerable<IObject> MissingErrors => this.response._m != null ? this.Session.Instantiate<IObject>(this.response._m) : Array.Empty<IObject>();
 
         public IEnumerable<IDerivationError> DerivationErrors
         {

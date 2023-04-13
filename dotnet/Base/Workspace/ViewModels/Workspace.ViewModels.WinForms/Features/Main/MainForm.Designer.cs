@@ -55,7 +55,7 @@ namespace Workspace.ViewModels.WinForms.Forms
             // 
             // mainFormControllerBindingSource
             // 
-            this.mainFormControllerBindingSource.DataSource = typeof(Controllers.MainFormController);
+            this.mainFormControllerBindingSource.DataSource = typeof(Features.MainFormViewModel);
             // 
             // MainForm
             // 

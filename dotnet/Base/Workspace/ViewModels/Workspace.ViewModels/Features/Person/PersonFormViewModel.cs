@@ -1,4 +1,4 @@
-namespace Workspace.ViewModels.Controllers;
+namespace Workspace.ViewModels.Features;
 
 using System.Collections.ObjectModel;
 using Allors.Workspace;
@@ -10,11 +10,11 @@ using Services;
 using Person = Allors.Workspace.Domain.Person;
 using Task = Task;
 
-public partial class PersonFormController : ObservableObject
+public partial class PersonFormViewModel : ObservableObject
 {
-    private PersonModel selected;
+    private PersonViewModel selected;
 
-    public PersonFormController(ISession session, IMessageService messageService)
+    public PersonFormViewModel(ISession session, IMessageService messageService)
     {
         this.Session = session;
         this.MessageService = messageService;
@@ -24,9 +24,9 @@ public partial class PersonFormController : ObservableObject
 
     public IMessageService MessageService { get; }
 
-    public ObservableCollection<PersonModel> People { get; } = new();
+    public ObservableCollection<PersonViewModel> People { get; } = new();
 
-    public PersonModel Selected
+    public PersonViewModel Selected
     {
         get => this.selected;
         set
@@ -61,7 +61,7 @@ public partial class PersonFormController : ObservableObject
         this.People.Clear();
         foreach (var person in people)
         {
-            this.People.Add(new PersonModel(person));
+            this.People.Add(new PersonViewModel(person));
         }
 
         this.OnPropertyChanged(nameof(People));

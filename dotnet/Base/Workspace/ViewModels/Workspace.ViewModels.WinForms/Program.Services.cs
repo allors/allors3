@@ -5,7 +5,7 @@ namespace Workspace.ViewModels.WinForms
     using Allors.Workspace;
     using Allors.Workspace.Derivations;
     using Allors.Workspace.Meta.Lazy;
-    using Controllers;
+    using Features;
     using Forms;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -53,12 +53,12 @@ namespace Workspace.ViewModels.WinForms
                     services.AddSingleton<IMessageService, MessageService>();
 
                     // Controllers
-                    services.AddScoped<MainFormController>();
-                    services.AddScoped<PersonFormController>();
+                    services.AddScoped<MainFormViewModel>();
+                    services.AddScoped<PersonFormViewModel>();
 
                     // Forms
                     services.AddSingleton<MainForm>();
-                    services.AddScoped<PersonForm>();
+                    services.AddTransient<PersonForm>();
                 });
         }
     }

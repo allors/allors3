@@ -1,13 +1,13 @@
 namespace Workspace.ViewModels.WinForms.Forms
 {
-    using Controllers;
+    using Features;
 
     public partial class MainForm : Form
     {
-        public MainForm(MainFormController controller)
+        public MainForm(MainFormViewModel viewModel)
         {
             this.InitializeComponent();
-            this.DataContext = controller;
+            this.DataContext = viewModel;
         }
 
         private void MainForm_DataContextChanged(object sender, EventArgs e)

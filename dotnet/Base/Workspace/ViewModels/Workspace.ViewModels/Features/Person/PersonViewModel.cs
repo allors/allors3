@@ -1,13 +1,13 @@
-namespace Workspace.ViewModels.Controllers;
+namespace Workspace.ViewModels.Features;
 
 using Allors.Workspace.Domain;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-public partial class PersonModel : ObservableObject
+public partial class PersonViewModel : ObservableObject
 {
     private readonly Person person;
 
-    public PersonModel(Person person) => this.person = person;
+    public PersonViewModel(Person person) => this.person = person;
 
     public string FirstName
     {
