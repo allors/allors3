@@ -1,0 +1,14 @@
+<div class="container-fluid" *ngIf="object">
+  <div class="row">
+    <a-mat-input
+      class="col-md"
+      [object]="object"
+      [roleType]="m.GeneralLedgerAccount.ReferenceNumber"
+    ></a-mat-input>
+    <a-mat-input
+      class="col-md"
+      [object]="object"
+      [roleType]="m.GeneralLedgerAccount.Name"
+    ></a-mat-input>
+  </div>
+</div>

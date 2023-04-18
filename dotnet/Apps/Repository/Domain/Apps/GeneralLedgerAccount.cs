@@ -29,14 +29,12 @@ namespace Allors.Repository
         #region Allors
         [Id("0f57c2f7-eee2-4bf1-a72d-056990634f05")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public string ReferenceCode { get; set; }
 
         #region Allors
         [Id("c0d736c2-f9a4-4647-bb5a-3a088f56a56a")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public string SortCode { get; set; }
 
@@ -74,7 +72,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         [Workspace(Default)]
         public GeneralLedgerAccountType GeneralLedgerAccountType { get; set; }
 
@@ -118,7 +115,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         [Workspace(Default)]
         public BalanceSide BalanceSide { get; set; }
 
@@ -127,7 +123,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        [Required]
         [Workspace(Default)]
         public BalanceType BalanceType { get; set; }
 

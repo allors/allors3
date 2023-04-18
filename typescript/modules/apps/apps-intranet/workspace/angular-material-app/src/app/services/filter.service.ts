@@ -15,6 +15,7 @@ import {
   Facility,
   FacilityType,
   FixedAsset,
+  GeneralLedgerAccount,
   Good,
   InventoryItemKind,
   IUnitOfMeasure,
@@ -493,6 +494,25 @@ export class AppFilterService implements FilterService {
           },
         }
       )
+    );
+
+    define(
+      m.GeneralLedgerAccount,
+      new FilterDefinition({
+        kind: 'And',
+        operands: [
+          {
+            kind: 'Like',
+            roleType: m.GeneralLedgerAccount.Name,
+            parameter: 'Name',
+          },
+          {
+            kind: 'Equals',
+            propertyType: m.GeneralLedgerAccount.ReferenceNumber,
+            parameter: 'Number',
+          },
+        ],
+      })
     );
 
     define(

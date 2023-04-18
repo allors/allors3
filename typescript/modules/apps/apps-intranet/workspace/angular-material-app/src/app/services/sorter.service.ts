@@ -73,6 +73,14 @@ export class AppSorterService implements SorterService {
     );
 
     define(
+      m.GeneralLedgerAccount,
+      new Sorter({
+        referenceNumber: m.GeneralLedgerAccount.ReferenceNumber,
+        name: m.GeneralLedgerAccount.Name,
+      })
+    );
+
+    define(
       m.Good,
       new Sorter({
         name: [m.Good.Name],

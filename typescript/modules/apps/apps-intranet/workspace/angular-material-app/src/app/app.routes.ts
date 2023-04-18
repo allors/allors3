@@ -14,6 +14,7 @@ import {
   EmailMessageListPageComponent,
   ExchangeRateListPageComponent,
   FacilityListPageComponent,
+  GeneralLedgerAccountListPageComponent,
   GoodListPageComponent,
   ModelListPageComponent,
   NonUnifiedGoodOverviewPageComponent,
@@ -246,6 +247,10 @@ export const routes: Routes = [
         path: 'accounting',
         children: [
           { path: 'exchangerates', component: ExchangeRateListPageComponent },
+          {
+            path: 'glaccounts',
+            component: GeneralLedgerAccountListPageComponent,
+          },
         ],
       },
       {
@@ -270,6 +275,7 @@ export const components: any[] = [
   EmailMessageListPageComponent,
   ExchangeRateListPageComponent,
   FacilityListPageComponent,
+  GeneralLedgerAccountListPageComponent,
   GoodListPageComponent,
   NonUnifiedGoodOverviewPageComponent,
   NonUnifiedPartOverviewPageComponent,

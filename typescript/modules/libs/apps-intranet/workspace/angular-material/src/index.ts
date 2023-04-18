@@ -29,6 +29,8 @@ export { FacilityInlineComponent } from './lib/domain/facility/inline/facility-i
 export { FacilityListPageComponent } from './lib/domain/facility/list/facility-list-page.component';
 export { FetcherService } from './lib/services/fetcher/fetcher-service';
 export { Filters } from './lib/filters/filters';
+export { GeneralLedgerAccountFormComponent } from './lib/domain/generalledgeraccount/form/generalledgeraccount-form.component';
+export { GeneralLedgerAccountListPageComponent } from './lib/domain/generalledgeraccount/list/generalledgeraccount-list-page.component';
 export { GoodListPageComponent } from './lib/domain/good/list/good-list-page.component';
 export { InlineBrandComponent } from './lib/domain/brand/inline/brand-inline.component';
 export { InlineModelComponent } from './lib/domain/model/inline/model-inline.component';

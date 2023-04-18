@@ -118,6 +118,7 @@ import {
   FacilityFormComponent,
   FacilityInlineComponent,
   FacilityListPageComponent,
+  GeneralLedgerAccountFormComponent,
   GoodListPageComponent,
   SelectInternalOrganisationComponent,
   InventoryItemTransactionCreateFormComponent,
@@ -281,6 +282,7 @@ import {
   WorkTaskOverviewPageComponent,
   WorkTaskEditFormComponent,
   WorkTaskSummaryPanelComponent,
+  GeneralLedgerAccountListPageComponent,
 } from './index';
 
 @NgModule({
@@ -363,6 +365,8 @@ import {
     FacilityFormComponent,
     FacilityInlineComponent,
     FacilityListPageComponent,
+    GeneralLedgerAccountFormComponent,
+    GeneralLedgerAccountListPageComponent,
     GoodListPageComponent,
     SelectInternalOrganisationComponent,
     InventoryItemTransactionCreateFormComponent,

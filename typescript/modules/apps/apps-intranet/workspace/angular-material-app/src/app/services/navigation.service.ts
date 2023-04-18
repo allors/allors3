@@ -115,6 +115,7 @@ export class AppNavigationService extends NavigationService {
     define(m.TaskAssignment, '/workflow/taskassignments');
 
     define(m.ExchangeRate, '/accounting/exchangerates');
+    define(m.GeneralLedgerAccount, '/accounting/glaccounts');
     define(m.EmailMessage, '/admin/emailmessages');
   }
 
