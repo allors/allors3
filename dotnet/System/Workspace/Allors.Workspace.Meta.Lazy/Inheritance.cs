@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the Inheritance type.</summary>
 
-namespace Allors.Workspace.Meta
+namespace Allors.Workspace.Meta.Lazy
 {
     public sealed class Inheritance
     {

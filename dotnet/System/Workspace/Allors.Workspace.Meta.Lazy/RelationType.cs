@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the RelationType type.</summary>
 
-namespace Allors.Workspace.Meta
+namespace Allors.Workspace.Meta.Lazy
 {
     /// <summary>
     /// A <see cref="RelationType"/> defines the state and behavior for

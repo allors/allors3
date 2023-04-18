@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the Domain type.</summary>
 
-namespace Allors.Workspace.Meta
+namespace Allors.Workspace.Meta.Lazy
 {
     using System;
     using System.Collections.Generic;

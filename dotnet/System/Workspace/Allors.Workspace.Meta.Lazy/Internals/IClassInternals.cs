@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the AssociationType type.</summary>
 
-namespace Allors.Workspace.Meta
+namespace Allors.Workspace.Meta.Lazy
 {
     public interface IClassInternals : ICompositeInternals, IClass
     {
