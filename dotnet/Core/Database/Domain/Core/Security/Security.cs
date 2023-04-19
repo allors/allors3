@@ -8,6 +8,7 @@ namespace Allors.Database.Domain
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Allors.Graph;
     using Meta;
 
     public partial class Security
@@ -23,7 +24,7 @@ namespace Allors.Database.Domain
         private readonly ITransaction transaction;
 
         private readonly Dictionary<ObjectType, IObjects> objectsByObjectType;
-        private readonly ObjectsGraph objectsGraph;
+        private readonly Graph<IObjects> objectsGraph;
 
         // TODO: Koen
         public Security(ITransaction transaction)
@@ -36,7 +37,7 @@ namespace Allors.Database.Domain
                 this.objectsByObjectType[objectType] = objectType.GetObjects(transaction);
             }
 
-            this.objectsGraph = new ObjectsGraph();
+            this.objectsGraph = new Graph<IObjects>();
 
             this.roleById = new Dictionary<Guid, Role>();
             foreach (Role role in transaction.Extent<Role>())
