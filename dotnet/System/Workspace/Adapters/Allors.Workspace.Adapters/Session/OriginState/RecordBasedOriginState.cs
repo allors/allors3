@@ -86,7 +86,7 @@ namespace Allors.Workspace.Adapters
         {
             if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
             {
-                return (RefRange<Strategy>)changedRole;
+                return RefRange<Strategy>.Ensure(changedRole);
             }
 
             var role = ValueRange<long>.Ensure(this.Record?.GetRole(roleType));
@@ -190,7 +190,7 @@ namespace Allors.Workspace.Adapters
                             }
                             else
                             {
-                                changeSet.DiffComposites(this.Strategy, relationType, (RefRange<Strategy>)current, (RefRange<Strategy>)previousChangedRole);
+                                changeSet.DiffComposites(this.Strategy, relationType, RefRange<Strategy>.Ensure(current), RefRange<Strategy>.Ensure(previousChangedRole));
                             }
                         }
                         else
@@ -207,7 +207,7 @@ namespace Allors.Workspace.Adapters
                             }
                             else
                             {
-                                changeSet.DiffComposites(this.Strategy, relationType, (RefRange<Strategy>)current, (ValueRange<long>)previous);
+                                changeSet.DiffComposites(this.Strategy, relationType, RefRange<Strategy>.Ensure(current), ValueRange<long>.Ensure(previous));
                             }
 
                         }
@@ -241,7 +241,7 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, (RefRange<Strategy>)current, (RefRange<Strategy>)previous);
+                            changeSet.DiffComposites(this.Strategy, relationType, RefRange<Strategy>.Ensure(current), RefRange<Strategy>.Ensure(previous));
                         }
                     }
                     else
@@ -262,7 +262,7 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, (ValueRange<long>)current, (ValueRange<long>)previous);
+                            changeSet.DiffComposites(this.Strategy, relationType, ValueRange<long>.Ensure(current), ValueRange<long>.Ensure(previous));
                         }
                     }
                 }
@@ -308,7 +308,7 @@ namespace Allors.Workspace.Adapters
                     diffs.Add(new CompositesDiff(relationType, this.Strategy)
                     {
                         OriginalRoles = original != null ? ValueRange<long>.Ensure(original).Select(v => this.Session.GetStrategy(v)).ToArray() : Array.Empty<Strategy>(),
-                        ChangedRoles = ((RefRange<Strategy>)changed).Save() ?? Array.Empty<Strategy>(),
+                        ChangedRoles = (RefRange<Strategy>.Ensure(changed)).Save() ?? Array.Empty<Strategy>(),
                     });
                 }
             }
@@ -396,7 +396,7 @@ namespace Allors.Workspace.Adapters
         {
             if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
             {
-                return (RefRange<Strategy>)changedRole;
+                return RefRange<Strategy>.Ensure(changedRole);
             }
 
             var role = ValueRange<long>.Ensure(this.Record?.GetRole(roleType));
