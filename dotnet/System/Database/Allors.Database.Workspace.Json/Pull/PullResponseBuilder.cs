@@ -14,14 +14,13 @@ namespace Allors.Database.Protocol.Json
     using Derivations;
     using Domain;
     using Meta;
-    using Ranges;
+    using Shared.Ranges;
     using Security;
     using Services;
 
     public class PullResponseBuilder : IProcedureContext, IProcedureOutput
     {
         private readonly IUnitConvert unitConvert;
-        private readonly IRanges<long> ranges;
         private readonly IDictionary<IClass, ISet<IPropertyType>> dependencies;
 
         private readonly Dictionary<string, ISet<IObject>> collectionsByName = new Dictionary<string, ISet<IObject>>();
@@ -42,13 +41,11 @@ namespace Allors.Database.Protocol.Json
             IPreparedSelects preparedSelects,
             IPreparedExtents preparedExtents,
             IUnitConvert unitConvert,
-            IRanges<long> ranges,
             IDictionary<IClass, ISet<IPropertyType>> dependencies,
             IPrefetchPolicyCache prefetchPolicyCache,
             CancellationToken cancellationToken)
         {
             this.unitConvert = unitConvert;
-            this.ranges = ranges;
             this.dependencies = dependencies;
             this.Transaction = transaction;
 
@@ -282,8 +279,8 @@ namespace Allors.Database.Protocol.Json
                     {
                         i = v.Strategy.ObjectId,
                         v = v.Strategy.ObjectVersion,
-                        g = this.ranges.Import(grants.Select(w => w.Id)).Save(),
-                        r = this.ranges.Import(revocations.Select(w => w.Id))
+                        g = ValueRange<long>.Import(grants.Select(w => w.Id)).Save(),
+                        r = ValueRange<long>.Import(revocations.Select(w => w.Id))
                             .Save(),
                     };
                 }).ToArray(),

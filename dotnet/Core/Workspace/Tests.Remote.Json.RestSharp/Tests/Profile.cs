@@ -7,7 +7,6 @@ namespace Tests.Workspace.Remote
 {
     using System;
     using System.Threading.Tasks;
-    using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Adapters.Remote.ResthSharp;
@@ -30,7 +29,6 @@ namespace Tests.Workspace.Remote
 
         private readonly Configuration configuration;
         private readonly IdGenerator idGenerator;
-        private readonly DefaultRanges<long> defaultRanges;
 
         private Client client;
 
@@ -49,7 +47,6 @@ namespace Tests.Workspace.Remote
             var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
             this.configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
             this.idGenerator = new IdGenerator();
-            this.defaultRanges = new DefaultStructRanges<long>();
         }
 
         public async Task InitializeAsync()
@@ -60,7 +57,7 @@ namespace Tests.Workspace.Remote
             Assert.True(response.IsSuccessful);
 
             this.client = new Client(this.CreateRestClient);
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator, this.defaultRanges);
+            this.DatabaseConnection = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator);
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
             await this.Login("administrator");
@@ -70,7 +67,7 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace CreateExclusiveWorkspace()
         {
-            var database = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator, this.defaultRanges);
+            var database = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator);
             return database.CreateWorkspace();
         }
 

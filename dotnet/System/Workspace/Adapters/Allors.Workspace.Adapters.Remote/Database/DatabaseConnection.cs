@@ -16,7 +16,7 @@ namespace Allors.Workspace.Adapters.Remote
     using Allors.Protocol.Json.Api.Security;
     using Allors.Protocol.Json.Api.Sync;
     using Meta;
-    using Ranges;
+    using Shared.Ranges;
 
     public abstract class DatabaseConnection : Adapters.DatabaseConnection
     {
@@ -28,9 +28,8 @@ namespace Allors.Workspace.Adapters.Remote
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> writePermissionByOperandTypeByClass;
         private readonly Dictionary<IClass, Dictionary<IOperandType, long>> executePermissionByOperandTypeByClass;
 
-        protected DatabaseConnection(Adapters.Configuration configuration, IdGenerator idGenerator, Func<IWorkspaceServices> servicesBuilder, IRanges<long> ranges) : base(configuration, idGenerator)
+        protected DatabaseConnection(Adapters.Configuration configuration, IdGenerator idGenerator, Func<IWorkspaceServices> servicesBuilder) : base(configuration, idGenerator)
         {
-            this.Ranges = ranges;
             this.servicesBuilder = servicesBuilder;
 
             this.recordsById = new Dictionary<long, DatabaseRecord>();
@@ -52,11 +51,9 @@ namespace Allors.Workspace.Adapters.Remote
 
         public abstract IUnitConvert UnitConvert { get; }
 
-        internal IRanges<long> Ranges { get; }
-
         public abstract string UserId { get; }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.Ranges);
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder());
 
         internal SyncRequest OnPullResponse(PullResponse response) =>
             new SyncRequest
@@ -74,12 +71,12 @@ namespace Allors.Workspace.Adapters.Remote
                             return true;
                         }
 
-                        if (!@record.GrantIds.Equals(this.Ranges.Load(v.g)))
+                        if (!@record.GrantIds.Equals(ValueRange<long>.Load(v.g)))
                         {
                             return true;
                         }
 
-                        if (!@record.RevocationIds.Equals(this.Ranges.Load(v.r)))
+                        if (!@record.RevocationIds.Equals(ValueRange<long>.Load(v.r)))
                         {
                             return true;
                         }
@@ -122,8 +119,8 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     var id = syncResponseAccessControl.i;
                     var version = syncResponseAccessControl.v;
-                    var permissionIds = this.Ranges.Load(syncResponseAccessControl.p);
-                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
+                    var permissionIds = ValueRange<long>.Load(syncResponseAccessControl.p);
+                    this.AccessControlById[id] = new AccessControl { Version = version, PermissionIds = ValueRange<long>.Load(permissionIds) };
 
                     foreach (var permissionId in permissionIds)
                     {
@@ -144,8 +141,8 @@ namespace Allors.Workspace.Adapters.Remote
                 {
                     var id = syncResponseRevocation.i;
                     var version = syncResponseRevocation.v;
-                    var permissionIds = this.Ranges.Load(syncResponseRevocation.p);
-                    this.RevocationById[id] = new Revocation { Version = version, PermissionIds = this.Ranges.Load(permissionIds) };
+                    var permissionIds = ValueRange<long>.Load(syncResponseRevocation.p);
+                    this.RevocationById[id] = new Revocation { Version = version, PermissionIds = ValueRange<long>.Load(permissionIds) };
 
                     foreach (var permissionId in permissionIds)
                     {

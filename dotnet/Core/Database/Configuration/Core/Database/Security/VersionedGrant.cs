@@ -7,16 +7,16 @@ namespace Allors.Database.Configuration
 {
     using System.Collections.Generic;
     using Domain;
-    using Ranges;
+    using Shared.Ranges;
 
     public class VersionedGrant : IVersionedGrant
     {
-        public VersionedGrant(IRanges<long> ranges, long id, long version, ISet<long> users, IEnumerable<long> permissions)
+        public VersionedGrant(long id, long version, ISet<long> users, IEnumerable<long> permissions)
         {
             this.Id = id;
             this.Version = version;
             this.UserSet = users;
-            this.PermissionRange = ranges.Import(permissions);
+            this.PermissionRange = ValueRange<long>.Import(permissions);
             this.PermissionSet = new HashSet<long>(this.PermissionRange);
         }
 
@@ -28,6 +28,6 @@ namespace Allors.Database.Configuration
 
         public ISet<long> PermissionSet { get; }
 
-        public IRange<long> PermissionRange { get; }
+        public ValueRange<long> PermissionRange { get; }
     }
 }

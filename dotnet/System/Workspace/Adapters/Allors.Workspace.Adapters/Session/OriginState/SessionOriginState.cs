@@ -7,19 +7,16 @@ namespace Allors.Workspace.Adapters
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Meta;
-    using Ranges;
+    using Shared.Ranges;
 
     public class SessionOriginState
     {
-        private readonly IRanges<Strategy> ranges;
         private readonly PropertyByObjectByPropertyType store;
 
-        public SessionOriginState(IRanges<Strategy> ranges)
+        public SessionOriginState()
         {
-            this.ranges = ranges;
-            this.store = new PropertyByObjectByPropertyType(ranges);
+            this.store = new PropertyByObjectByPropertyType();
         }
 
         public void Checkpoint(ChangeSet changeSet) => changeSet.AddSessionStateChanges(this.store.Checkpoint());
@@ -60,7 +57,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public IRange<Strategy> GetCompositesRole(Strategy association, IRoleType propertyType) => this.store.GetComposites(association, propertyType) ?? EmptyRange<Strategy>.Instance;
+        public RefRange<Strategy> GetCompositesRole(Strategy association, IRoleType propertyType) => this.store.GetComposites(association, propertyType);
 
         public void AddCompositesRole(Strategy association, IRoleType roleType, Strategy item)
         {
@@ -86,7 +83,7 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public void SetCompositesRole(Strategy association, IRoleType roleType, IRange<Strategy> role)
+        public void SetCompositesRole(Strategy association, IRoleType roleType, RefRange<Strategy> role)
         {
             var previousRole = this.store.GetComposites(association, roleType);
 
@@ -108,7 +105,7 @@ namespace Allors.Workspace.Adapters
 
         public Strategy GetCompositeAssociation(Strategy association, IAssociationType propertyType) => this.store.GetComposite(association, propertyType);
 
-        public IEnumerable<Strategy> GetCompositesAssociation(Strategy role, IAssociationType propertyType) => this.store.GetComposites(role, propertyType) ?? (IEnumerable<Strategy>)Array.Empty<Strategy>();
+        public IEnumerable<Strategy> GetCompositesAssociation(Strategy role, IAssociationType propertyType) => this.store.GetComposites(role, propertyType);
 
         private void SetCompositeRoleOne2One(Strategy association, IRoleType roleType, Strategy role)
         {
@@ -173,7 +170,7 @@ namespace Allors.Workspace.Adapters
 
             // A <---- R
             var associations = this.store.GetComposites(role, associationType);
-            associations = this.ranges.Add(associations, association);
+            associations = associations.Add(association);
             this.store.SetComposites(role, associationType, associations);
 
             // A ----> R
@@ -207,7 +204,7 @@ namespace Allors.Workspace.Adapters
 
             // A <---- R
             var roleAssociations = this.store.GetComposites(role, associationType);
-            roleAssociations = this.ranges.Remove(roleAssociations, association);
+            roleAssociations = roleAssociations.Remove(association);
             this.store.SetComposites(role, associationType, roleAssociations);
 
             // A ----> R
@@ -244,7 +241,7 @@ namespace Allors.Workspace.Adapters
 
             // A ----> R
             var roles = this.store.GetComposites(association, roleType);
-            roles = this.ranges.Add(roles, role);
+            roles = roles.Add(role);
             this.store.SetComposites(association, roleType, roles);
         }
 
@@ -267,12 +264,12 @@ namespace Allors.Workspace.Adapters
 
             // A <---- R
             var associations = this.store.GetComposites(role, associationType);
-            associations = this.ranges.Add(associations, association);
+            associations = associations.Add(association);
             this.store.SetComposites(role, associationType, associations);
 
             // A ----> R
             var roles = this.store.GetComposites(association, roleType);
-            roles = this.ranges.Add(roles, role);
+            roles = roles.Add(role);
             this.store.SetComposites(association, roleType, roles);
         }
 
@@ -291,7 +288,7 @@ namespace Allors.Workspace.Adapters
             this.store.SetComposite(role, associationType, null);
 
             // A ----> R
-            roles = this.ranges.Remove(roles, role);
+            roles = roles.Remove(role);
             this.store.SetComposites(association, roleType, roles);
         }
 
@@ -308,11 +305,11 @@ namespace Allors.Workspace.Adapters
 
             // A <---- R
             var associations = this.store.GetComposites(role, associationType);
-            associations = this.ranges.Remove(associations, association);
+            associations = associations.Remove(association);
             this.store.SetComposites(role, associationType, associations);
 
             // A ----> R
-            roles = this.ranges.Remove(roles, role);
+            roles = roles.Remove(role);
             this.store.SetComposites(association, roleType, roles);
         }
     }

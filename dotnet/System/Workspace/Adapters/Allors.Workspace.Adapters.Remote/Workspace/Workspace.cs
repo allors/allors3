@@ -5,11 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Remote
 {
-    using Ranges;
+    using Shared.Ranges;
 
     public class Workspace : Adapters.Workspace
     {
-        public Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges<long> recordRanges) : base(database, services, recordRanges) => this.Services.OnInit(this);
+        public Workspace(DatabaseConnection database, IWorkspaceServices services) : base(database, services) => this.Services.OnInit(this);
 
         public new DatabaseConnection DatabaseConnection => (DatabaseConnection)base.DatabaseConnection;
 

@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Security;
     using Database.Services;
     using Meta;
-    using Ranges;
+    using Shared.Ranges;
     using AccessControl = AccessControl;
     using IRoleType = Database.Meta.IRoleType;
 
@@ -23,13 +23,11 @@ namespace Allors.Workspace.Adapters.Local
         private readonly ConcurrentDictionary<long, DatabaseRecord> recordsById;
 
         private readonly Func<IWorkspaceServices> servicesBuilder;
-        private readonly IRanges<long> recordRanges;
 
-        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder, Func<IRanges<long>> rangesFactory) : base(configuration, new IdGenerator())
+        public DatabaseConnection(Configuration configuration, IDatabase database, Func<IWorkspaceServices> servicesBuilder) : base(configuration, new IdGenerator())
         {
             this.Database = database;
             this.servicesBuilder = servicesBuilder;
-            this.recordRanges = rangesFactory();
 
             this.recordsById = new ConcurrentDictionary<long, DatabaseRecord>();
             this.accessControlById = new Dictionary<long, AccessControl>();
@@ -68,12 +66,12 @@ namespace Allors.Workspace.Adapters.Local
 
                     var accessControls = acl.Grants?.Select(v => (IGrant)transaction.Instantiate(v.Id)).Select(this.GetAccessControl).ToArray() ?? Array.Empty<AccessControl>();
 
-                    this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, this.recordRanges.Load(acl.Revocations.Select(v => v.Id)), accessControls);
+                    this.recordsById[id] = new DatabaseRecord(workspaceClass, id, @object.Strategy.ObjectVersion, roleByRoleType, ValueRange<long>.Load(acl.Revocations.Select(v => v.Id)), accessControls);
                 }
             }
         }
 
-        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder(), this.recordRanges);
+        public override IWorkspace CreateWorkspace() => new Workspace(this, this.servicesBuilder());
 
         public override Adapters.DatabaseRecord GetRecord(long id)
         {
@@ -132,7 +130,7 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             acessControl.Version = grant.Strategy.ObjectVersion;
-            acessControl.PermissionIds = this.recordRanges.Import(grant.Permissions.Select(v => v.Id));
+            acessControl.PermissionIds = ValueRange<long>.Import(grant.Permissions.Select(v => v.Id));
 
             return acessControl;
         }
@@ -149,9 +147,7 @@ namespace Allors.Workspace.Adapters.Local
                 return @object.Strategy.GetCompositeRole(roleType)?.Id;
             }
 
-            return this.recordRanges.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
+            return ValueRange<long>.Load(@object.Strategy.GetCompositesRole<IObject>(roleType).Select(v => v.Id));
         }
-
-
     }
 }

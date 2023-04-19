@@ -5,12 +5,12 @@
 
 namespace Allors.Workspace.Adapters
 {
-    using Ranges;
+    using Shared.Ranges;
 
     public class Revocation
     {
         public long Version { get; set; }
 
-        public IRange<long> PermissionIds { get; set; }
+        public ValueRange<long> PermissionIds { get; set; }
     }
 }

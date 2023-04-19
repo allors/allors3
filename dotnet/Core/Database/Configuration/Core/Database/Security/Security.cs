@@ -11,7 +11,7 @@ namespace Allors.Database.Configuration
     using System.Linq;
     using Database.Security;
     using Domain;
-    using Ranges;
+    using Shared.Ranges;
     using Services;
     using Class = Meta.Class;
     using MetaPopulation = Meta.MetaPopulation;
@@ -34,8 +34,6 @@ namespace Allors.Database.Configuration
             var database = databaseServices.Database;
             var m = database.Services.Get<MetaPopulation>();
             var metaCache = databaseServices.Get<IMetaCache>();
-
-            this.Ranges = databaseServices.Get<IRanges<long>>();
 
             this.databaseVersionedSecurityTokens = new ConcurrentDictionary<long, IVersionedSecurityToken>();
             this.databaseVersionedGrants = new ConcurrentDictionary<long, IVersionedGrant>();
@@ -86,8 +84,6 @@ namespace Allors.Database.Configuration
 
         public PrefetchPolicy RevocationPrefetchPolicy { get; }
 
-        public IRanges<long> Ranges { get; }
-
         public IVersionedGrant[] GetVersionedGrants(ITransaction transaction, IUser user, ISecurityToken[] securityTokens)
         {
             var result = new Dictionary<long, IVersionedGrant>();
@@ -126,7 +122,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var grant in missing)
                 {
-                    var versionedGrant = new VersionedGrant(this.Ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Select(v => v.Id));
+                    var versionedGrant = new VersionedGrant(grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Select(v => v.Id));
                     this.databaseVersionedGrants[grant.Id] = versionedGrant;
                     if (versionedGrant.UserSet.Contains(user.Id))
                     {
@@ -170,7 +166,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var revocation in missing)
                 {
-                    var versionedRevocation = new VersionedRevocation(this.Ranges, revocation.Strategy.ObjectId, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions.Select(v => v.Id));
+                    var versionedRevocation = new VersionedRevocation(revocation.Strategy.ObjectId, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions.Select(v => v.Id));
                     this.databaseVersionedRevocations[revocation.Strategy.ObjectId] = versionedRevocation;
                     result.Add(versionedRevocation.Id, versionedRevocation);
                 }
@@ -207,7 +203,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var revocation in missing)
                 {
-                    var versionedRevocation = new VersionedRevocation(this.Ranges, revocation.Id, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions.Select(v => v.Id).Where(v => workspacePermissionIds.Contains(v)));
+                    var versionedRevocation = new VersionedRevocation( revocation.Id, revocation.Strategy.ObjectVersion, ((Revocation)revocation).DeniedPermissions.Select(v => v.Id).Where(v => workspacePermissionIds.Contains(v)));
                     versionedRevocations[revocation.Strategy.ObjectId] = versionedRevocation;
                     result.Add(versionedRevocation.Id, versionedRevocation);
                 }
@@ -240,7 +236,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var securityToken in missing)
                 {
-                    var versionedSecurityToken = new VersionedSecurityToken(this.Ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
+                    var versionedSecurityToken = new VersionedSecurityToken(securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
                     this.databaseVersionedSecurityTokens[securityToken.Id] = versionedSecurityToken;
                     versionedSecurityTokens.Add(versionedSecurityToken);
                 }
@@ -275,7 +271,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var securityToken in missing)
                 {
-                    var versionedSecurityToken = new VersionedSecurityToken(this.Ranges, securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
+                    var versionedSecurityToken = new VersionedSecurityToken( securityToken.Id, securityToken.Strategy.ObjectVersion, securityToken.Grants.ToDictionary(v => v.Id, v => v.Strategy.ObjectVersion));
                     versionedSecurityTokens[securityToken.Strategy.ObjectId] = versionedSecurityToken;
                     result.Add(versionedSecurityToken);
                 }
@@ -319,7 +315,7 @@ namespace Allors.Database.Configuration
 
                 foreach (var grant in missing)
                 {
-                    var versionedGrant = new VersionedGrant(this.Ranges, grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)).Select(v => v.Id));
+                    var versionedGrant = new VersionedGrant(grant.Id, grant.Strategy.ObjectVersion, new HashSet<long>(grant.EffectiveUsers.Select(v => v.Id)), grant.EffectivePermissions.Where(v => workspacePermissionIds.Contains(v.Id)).Select(v => v.Id));
                     versionedGrantById[grant.Id] = versionedGrant;
                     if (versionedGrant.UserSet.Contains(user.Id))
                     {

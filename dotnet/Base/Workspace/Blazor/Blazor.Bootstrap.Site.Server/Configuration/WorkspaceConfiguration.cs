@@ -9,7 +9,6 @@ namespace Allors.Workspace.Configuration
     using System.Globalization;
     using System.Security.Claims;
     using Adapters;
-    using Allors.Ranges;
     using Derivations;
     using Domain;
     using Meta.Lazy;
@@ -19,7 +18,6 @@ namespace Allors.Workspace.Configuration
     {
         public static void AddAllorsWorkspace(this IServiceCollection services)
         {
-            var rangesFactory = () => new DefaultStructRanges<long>();
             var servicesBuilder = () => new WorkspaceServices();
 
             var metaPopulation = new MetaBuilder().Build();
@@ -34,7 +32,7 @@ namespace Allors.Workspace.Configuration
                 var user = claimsPrincipalService.User;
                 var claim = user.FindFirst(ClaimTypes.NameIdentifier);
                 var userId = claim != null ? int.Parse(claim.Value, CultureInfo.InvariantCulture) : 0;
-                return new Adapters.Local.DatabaseConnection(configuration, database, servicesBuilder, rangesFactory) { UserId = userId };
+                return new Adapters.Local.DatabaseConnection(configuration, database, servicesBuilder) { UserId = userId };
             });
 
             services.AddScoped(serviceProvider =>

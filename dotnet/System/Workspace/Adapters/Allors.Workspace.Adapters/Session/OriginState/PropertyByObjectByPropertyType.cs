@@ -8,17 +8,15 @@ namespace Allors.Workspace.Adapters
 {
     using System.Collections.Generic;
     using Meta;
-    using Ranges;
+    using Shared.Ranges;
 
     public class PropertyByObjectByPropertyType
     {
-        private readonly IRanges<Strategy> ranges;
         private readonly IDictionary<IPropertyType, IDictionary<Strategy, object>> propertyByObjectByPropertyType;
         private IDictionary<IPropertyType, IDictionary<Strategy, object>> changedPropertyByObjectByPropertyType;
 
-        public PropertyByObjectByPropertyType(IRanges<Strategy> ranges)
+        public PropertyByObjectByPropertyType()
         {
-            this.ranges = ranges;
             this.propertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<Strategy, object>>();
             this.changedPropertyByObjectByPropertyType = new Dictionary<IPropertyType, IDictionary<Strategy, object>>();
         }
@@ -31,9 +29,9 @@ namespace Allors.Workspace.Adapters
 
         public void SetComposite(Strategy @object, IPropertyType propertyType, Strategy newValue) => this.Set(@object, propertyType, newValue);
 
-        public IRange<Strategy> GetComposites(Strategy @object, IPropertyType propertyType) => this.ranges.Ensure(this.Get(@object, propertyType));
+        public RefRange<Strategy> GetComposites(Strategy @object, IPropertyType propertyType) => RefRange<Strategy>.Ensure(this.Get(@object, propertyType));
 
-        public void SetComposites(Strategy @object, IPropertyType propertyType, IRange<Strategy> newValue) => this.Set(@object, propertyType, newValue);
+        public void SetComposites(Strategy @object, IPropertyType propertyType, RefRange<Strategy> newValue) => this.Set(@object, propertyType, newValue);
 
         public void SetComposites(Strategy @object, IPropertyType propertyType, object newValue)
         {
@@ -44,7 +42,7 @@ namespace Allors.Workspace.Adapters
 
             this.changedPropertyByObjectByPropertyType.TryGetValue(propertyType, out var changedValueByPropertyType);
 
-            if (propertyType.IsOne ? Equals(newValue, originalValue) : this.ranges.Ensure(newValue).Equals(originalValue))
+            if (propertyType.IsOne ? Equals(newValue, originalValue) : RefRange<Strategy>.Ensure(newValue).Equals(originalValue))
             {
                 changedValueByPropertyType?.Remove(@object);
             }
@@ -132,7 +130,7 @@ namespace Allors.Workspace.Adapters
 
             this.changedPropertyByObjectByPropertyType.TryGetValue(propertyType, out var changedValueByPropertyType);
 
-            if (propertyType.IsOne ? Equals(newValue, originalValue) : this.ranges.Ensure(newValue).Equals(originalValue))
+            if (propertyType.IsOne ? Equals(newValue, originalValue) : RefRange<Strategy>.Ensure(newValue).Equals(originalValue))
             {
                 changedValueByPropertyType?.Remove(@object);
             }

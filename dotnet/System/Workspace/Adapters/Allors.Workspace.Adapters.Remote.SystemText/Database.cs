@@ -19,7 +19,7 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Protocol.Json.Auth;
     using Allors.Protocol.Json.SystemTextJson;
-    using Ranges;
+    using Shared.Ranges;
     using Polly;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>")]
@@ -27,7 +27,7 @@ namespace Allors.Workspace.Adapters.Remote.SystemText
     {
         private string userId;
 
-        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, IdGenerator idGenerator, IRanges<long> ranges) : base(configuration, idGenerator, servicesBuilder, ranges)
+        public DatabaseConnection(Configuration configuration, Func<IWorkspaceServices> servicesBuilder, HttpClient httpClient, IdGenerator idGenerator) : base(configuration, idGenerator, servicesBuilder)
         {
             this.HttpClient = httpClient;
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();

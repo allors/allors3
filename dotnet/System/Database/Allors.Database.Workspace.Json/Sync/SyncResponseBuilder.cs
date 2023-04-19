@@ -10,13 +10,12 @@ namespace Allors.Database.Protocol.Json
     using Allors.Protocol.Json;
     using Meta;
     using Allors.Protocol.Json.Api.Sync;
-    using Ranges;
+    using Shared.Ranges;
     using Security;
 
     public class SyncResponseBuilder
     {
         private readonly IUnitConvert unitConvert;
-        private readonly IRanges<long> ranges;
 
         private readonly ITransaction transaction;
         private readonly ISet<IClass> allowedClasses;
@@ -30,15 +29,13 @@ namespace Allors.Database.Protocol.Json
             ISet<IClass> allowedClasses,
             IDictionary<IClass, ISet<IRoleType>> roleTypesByClass,
             IDictionary<IClass, PrefetchPolicy> prefetchPolicyByClass,
-            IUnitConvert unitConvert,
-            IRanges<long> ranges)
+            IUnitConvert unitConvert)
         {
             this.transaction = transaction;
             this.allowedClasses = allowedClasses;
             this.roleTypesByClass = roleTypesByClass;
             this.prefetchPolicyByClass = prefetchPolicyByClass;
             this.unitConvert = unitConvert;
-            this.ranges = ranges;
             this.maskedObjects = new HashSet<IObject>();
 
             this.AccessControl = accessControl;
@@ -77,8 +74,8 @@ namespace Allors.Database.Protocol.Json
                             .Where(w => acl.CanRead(w) && v.Strategy.ExistRole(w))
                             .Select(w => this.CreateSyncResponseRole(v, w, this.unitConvert))
                             .ToArray(),
-                        g = this.ranges.Import(acl.Grants.Select(w => w.Id)).Save(),
-                        r = this.ranges.Import(acl.Revocations.Select(w => w.Id)).Save(),
+                        g = ValueRange<long>.Import(acl.Grants.Select(w => w.Id)).Save(),
+                        r = ValueRange<long>.Import(acl.Revocations.Select(w => w.Id)).Save(),
                     };
                 }).ToArray(),
             };
@@ -103,7 +100,7 @@ namespace Allors.Database.Protocol.Json
             else
             {
                 var roles = @object.Strategy.GetCompositesRole<IObject>(roleType).Where(this.Include);
-                syncResponseRole.c = this.ranges.Import(roles.Select(roleObject => roleObject.Id)).ToArray();
+                syncResponseRole.c = ValueRange<long>.Import(roles.Select(roleObject => roleObject.Id)).ToArray();
             }
 
             return syncResponseRole;

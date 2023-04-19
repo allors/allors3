@@ -6,7 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
-    using Ranges;
+    using Shared.Ranges;
 
     public interface IVersionedRevocation
     {
@@ -16,6 +16,6 @@ namespace Allors.Database.Domain
 
         ISet<long> PermissionSet { get; }
 
-        IRange<long> PermissionRange { get; }
+        ValueRange<long> PermissionRange { get; }
     }
 }
