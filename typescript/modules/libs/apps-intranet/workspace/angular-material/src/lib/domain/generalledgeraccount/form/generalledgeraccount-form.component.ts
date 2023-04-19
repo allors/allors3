@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 
 import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
+  OrganisationGlAccount,
   GeneralLedgerAccount,
   InternalOrganisation,
 } from '@allors/default/workspace/domain';
@@ -63,5 +64,15 @@ export class GeneralLedgerAccountFormComponent extends AllorsFormComponent<Gener
 
     this.internalOrganisation =
       this.fetcher.getInternalOrganisation(pullResult);
+
+    if (this.createRequest) {
+      const organisationGlAccount =
+        this.allors.context.create<OrganisationGlAccount>(
+          this.m.OrganisationGlAccount
+        );
+
+      organisationGlAccount.InternalOrganisation = this.internalOrganisation;
+      organisationGlAccount.GeneralLedgerAccount = this.object;
+    }
   }
 }

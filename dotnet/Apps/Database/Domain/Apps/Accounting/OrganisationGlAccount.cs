@@ -9,6 +9,8 @@ namespace Allors.Database.Domain
 
     public partial class OrganisationGlAccount
     {
+        public bool IsDeletable => !this.ExistAccountingTransactionDetailsWhereOrganisationGlAccount;
+
         public bool IsNeutralAccount() =>
             !this.IsBankAccount() && !this.IsCashAccount() && !this.IsCostAccount() && !this.IsCostAccount()
             && !this.IsCreditorAccount() && !this.IsDebtorAccount() && !this.IsInventoryAccount();

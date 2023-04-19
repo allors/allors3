@@ -268,4 +268,79 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(errors, e => e.Message.Contains(ErrorMessages.NotACostUnitAccount));
         }
     }
+
+    [Trait("Category", "Security")]
+    public class GeneralLedgerAccountDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public GeneralLedgerAccountDeniedPermissionRuleTests(Fixture fixture) : base(fixture) => this.deleteRevocation = new Revocations(this.Transaction).GeneralLedgerAccountDeleteRevocation;
+
+        public override Config Config => new Config { SetupSecurity = true };
+
+        private readonly Revocation deleteRevocation;
+
+        [Fact]
+        public void OnChangedGeneralLedgerAccountDeriveDeletePermission()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
+            this.Derive();
+
+            Assert.DoesNotContain(this.deleteRevocation, glAccount.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedOrganisationGlAccountGeneralLedgerAccountDeriveDeletePermission()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).Build();
+            this.Derive();
+
+            organisationGlAccount.GeneralLedgerAccount = glAccount;
+            this.Derive();
+
+            Assert.DoesNotContain(this.deleteRevocation, glAccount.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedAccountingTransactionDetailOrganisationGlAccountDeriveDeletePermission()
+        {
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).WithGeneralLedgerAccount(glAccount).Build();
+            this.Derive();
+
+            var transaction = new AccountingTransactionBuilder(this.Transaction)
+                .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(organisationGlAccount).Build())
+                .Build();
+            this.Derive();
+
+            Assert.Contains(this.deleteRevocation, glAccount.Revocations);
+        }
+
+        [Fact]
+        public void OnChangedAccountingTransactionDeleteDeriveDeletePermission()
+        {
+            this.InternalOrganisation.ExportAccounting = true;
+
+            var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction).WithGeneralLedgerAccount(glAccount).Build();
+            this.Derive();
+
+            var transaction = new AccountingTransactionBuilder(this.Transaction)
+                .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(organisationGlAccount).Build())
+                .Build();
+            this.Derive();
+
+            Assert.Contains(this.deleteRevocation, glAccount.Revocations);
+
+            transaction.Delete();
+            this.Derive();
+
+            Assert.DoesNotContain(this.deleteRevocation, glAccount.Revocations);
+        }
+    }
 }

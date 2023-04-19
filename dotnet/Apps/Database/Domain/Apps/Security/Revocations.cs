@@ -10,12 +10,15 @@ namespace Allors.Database.Domain
 
     public partial class Revocations
     {
+        public static readonly Guid AccountingTransactionDeleteRevocationId = new Guid("fabbf918-8c77-470f-ac5a-96589c8cf006");
         public static readonly Guid BrandDeleteRevocationId = new Guid("d377ace1-8572-4994-b0d7-0a23b282983d");
         public static readonly Guid FacilityDeleteRevocationId = new Guid("786eef87-99a9-4183-ba4d-414a223e8a1d");
+        public static readonly Guid GeneralLedgerAccountDeleteRevocationId = new Guid("75167ef5-ffa4-4541-ba98-aca868270fec");
         public static readonly Guid ModelDeleteRevocationId = new Guid("ba731036-0947-4534-a3c3-087c78059f78");
         public static readonly Guid NonUnifiedGoodDeleteRevocationId = new Guid("093a7d72-c9ad-422b-b04f-827305cd7296");
         public static readonly Guid NonUnifiedPartDeleteRevocationId = new Guid("5241e606-2246-435a-aeed-f819d094c3ae");
         public static readonly Guid OrganisationDeleteRevocationId = new Guid("52819a08-c8ac-4e5e-9048-d1c35ff0711c");
+        public static readonly Guid OrganisationGlAccountDeleteRevocationId = new Guid("eb54baeb-19c6-4915-8cb7-89bd26f604b1");
         public static readonly Guid PersonDeleteRevocationId = new Guid("f7ce0f2b-14ef-4a4b-8dc9-5f8f9c4fb3c4");
         public static readonly Guid PersonResetPasswordRevocationId = new Guid("58c26f37-0c9b-4d97-811e-d22a5c557358");
         public static readonly Guid ProductQuoteDeleteRevocationId = new Guid("6e7fabdb-baa1-428b-bc5e-d7935a03e97a");
@@ -69,9 +72,13 @@ namespace Allors.Database.Domain
         public static readonly Guid WorkTaskInvoiceRevocationId = new Guid("9d200651-a109-4462-bf99-8a70c3c4afb3");
         public static readonly Guid WorkTaskReviseRevocationId = new Guid("d7367f95-dfe9-467c-a84f-8fad58374d57");
 
+        public Revocation AccountingTransactionDeleteRevocation => this.Cache[AccountingTransactionDeleteRevocationId];
+
         public Revocation BrandDeleteRevocation => this.Cache[BrandDeleteRevocationId];
 
         public Revocation FacilityDeleteRevocation => this.Cache[FacilityDeleteRevocationId];
+
+        public Revocation GeneralLedgerAccountDeleteRevocation => this.Cache[GeneralLedgerAccountDeleteRevocationId];
 
         public Revocation ModelDeleteRevocation => this.Cache[ModelDeleteRevocationId];
 
@@ -80,6 +87,8 @@ namespace Allors.Database.Domain
         public Revocation NonUnifiedPartDeleteRevocation => this.Cache[NonUnifiedPartDeleteRevocationId];
 
         public Revocation OrganisationDeleteRevocation => this.Cache[OrganisationDeleteRevocationId];
+
+        public Revocation OrganisationGlAccountDeleteRevocation => this.Cache[OrganisationGlAccountDeleteRevocationId];
 
         public Revocation PersonDeleteRevocation => this.Cache[PersonDeleteRevocationId];
 
@@ -189,12 +198,15 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
+            merge(AccountingTransactionDeleteRevocationId, _ => { });
             merge(BrandDeleteRevocationId, _ => { });
             merge(FacilityDeleteRevocationId, _ => { });
+            merge(GeneralLedgerAccountDeleteRevocationId, _ => { });
             merge(ModelDeleteRevocationId, _ => { });
             merge(NonUnifiedGoodDeleteRevocationId, _ => { });
             merge(NonUnifiedPartDeleteRevocationId, _ => { });
             merge(OrganisationDeleteRevocationId, _ => { });
+            merge(OrganisationGlAccountDeleteRevocationId, _ => { });
             merge(PersonDeleteRevocationId, _ => { });
             merge(PersonResetPasswordRevocationId, _ => { });
             merge(ProductQuoteDeleteRevocationId, _ => { });

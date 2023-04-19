@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("785a36a9-4710-4f3f-bd26-dbaff5353535")]
     #endregion
-    public partial class AccountingTransaction : Object
+    public partial class AccountingTransaction : Object, Deletable
     {
         #region inherited properties
 
@@ -143,6 +143,12 @@ namespace Allors.Repository
         [Required]
         public DateTime EntryDate { get; set; }
 
+        #region Allors
+        [Id("b68801be-f9be-4df7-b34d-609f1397dc07")]
+        #endregion
+        [Required]
+        public bool Exported { get; set; }
+
         #region inherited methods
 
         public void OnBuild()
@@ -160,6 +166,8 @@ namespace Allors.Repository
         public void OnPostDerive()
         {
         }
+
+        public void Delete() { }
 
         #endregion
     }
