@@ -10,7 +10,7 @@ namespace Allors.Repository
     #region Allors
     [Id("e41be1b2-715b-4bc0-b095-ac23d9950ee4")]
     #endregion
-    public partial class AccountingTransactionDetail : DelegatedAccessObject
+    public partial class AccountingTransactionDetail : DelegatedAccessObject, Deletable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -66,7 +66,7 @@ namespace Allors.Repository
 
         public void OnPostDerive() { }
 
-
+        public void Delete() { }
 
         #endregion
     }

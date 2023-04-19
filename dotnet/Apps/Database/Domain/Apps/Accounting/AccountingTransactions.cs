@@ -1,11 +1,11 @@
-// <copyright file="OrganisationGlAccounts.cs" company="Allors bvba">
+// <copyright file="AccountingTransactions.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Database.Domain
 {
-    public partial class OrganisationGlAccounts
+    public partial class AccountingTransactions
     {
         protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
 
@@ -14,7 +14,7 @@ namespace Allors.Database.Domain
             var revocations = new Revocations(this.Transaction);
             var permissions = new Permissions(this.Transaction);
 
-            revocations.OrganisationGlAccountDeleteRevocation.DeniedPermissions = new[]
+            revocations.AccountingTransactionDeleteRevocation.DeniedPermissions = new[]
             {
                 permissions.Get(this.Meta, this.Meta.Delete),
             };

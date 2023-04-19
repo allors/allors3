@@ -15,7 +15,6 @@ import {
   Facility,
   FacilityType,
   FixedAsset,
-  GeneralLedgerAccount,
   Good,
   InventoryItemKind,
   IUnitOfMeasure,

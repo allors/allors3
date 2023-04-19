@@ -252,6 +252,7 @@ namespace Allors.Repository
         public Guid DerivationTrigger { get; set; }
 
         public Country Country { get; set; }
+
         public InternalOrganisationAccountingSettings SettingsForAccounting { get; set; }
 
         public string DisplayName { get; set; }
@@ -259,6 +260,8 @@ namespace Allors.Repository
         public string DisplayPhone { get; set; }
 
         public string SearchString { get; set; }
+
+        public bool ExportAccounting { get; set; }
 
         #endregion
 

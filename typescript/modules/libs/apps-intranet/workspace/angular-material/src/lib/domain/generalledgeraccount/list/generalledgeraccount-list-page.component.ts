@@ -6,7 +6,10 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { GeneralLedgerAccount } from '@allors/default/workspace/domain';
+import {
+  GeneralLedgerAccount,
+  OrganisationGlAccount,
+} from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -26,6 +29,8 @@ import {
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
 import { format } from 'date-fns';
+import { And, Equals } from '@allors/system/workspace/domain';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 interface Row extends TableRow {
   object: GeneralLedgerAccount;
   referenceNumber: string;
@@ -60,7 +65,8 @@ export class GeneralLedgerAccountListPageComponent
     public mediaService: MediaService,
     public filterService: FilterService,
     public sorterService: SorterService,
-    titleService: Title
+    titleService: Title,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
@@ -94,21 +100,44 @@ export class GeneralLedgerAccountListPageComponent
   ngOnInit(): void {
     const m = this.m;
     const { pullBuilder: pull } = m;
-    const x = {};
 
     this.filter = this.filterService.filter(m.GeneralLedgerAccount);
+
+    const internalOrganisationPredicate: Equals = {
+      kind: 'Equals',
+      propertyType: m.OrganisationGlAccount.InternalOrganisation,
+    };
+
+    const predicate: And = {
+      kind: 'And',
+      operands: [
+        this.filter.definition.predicate,
+        {
+          kind: 'ContainedIn',
+          propertyType:
+            m.GeneralLedgerAccount
+              .OrganisationGlAccountsWhereGeneralLedgerAccount,
+          extent: {
+            kind: 'Filter',
+            objectType: m.OrganisationGlAccount,
+            predicate: internalOrganisationPredicate,
+          },
+        },
+      ],
+    };
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
       this.filter.fields$,
       this.table.sort$,
       this.table.pager$,
+      this.internalOrganisationId.observable$,
     ])
       .pipe(
         scan(
           (
             [previousRefresh, previousFilterFields],
-            [refresh, filterFields, sort, pageEvent]
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
           ) => {
             pageEvent =
               previousRefresh !== refresh ||
@@ -123,19 +152,28 @@ export class GeneralLedgerAccountListPageComponent
               this.table.pageIndex = 0;
             }
 
-            return [refresh, filterFields, sort, pageEvent];
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
         ),
         switchMap(
-          ([, filterFields, sort, pageEvent]: [
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
             Date,
             FilterField[],
             Sort,
-            PageEvent
+            PageEvent,
+            number
           ]) => {
+            internalOrganisationPredicate.value = internalOrganisationId;
+
             const pulls = [
               pull.GeneralLedgerAccount({
-                predicate: this.filter.definition.predicate,
+                predicate,
                 sorting: sort
                   ? this.sorterService
                       .sorter(m.GeneralLedgerAccount)

@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("59f3100c-da48-4b4c-a302-1a75e37216a6")]
     #endregion
-    public partial class OrganisationGlAccount : Period, Object
+    public partial class OrganisationGlAccount : Period, Object, Deletable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -95,6 +95,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }
