@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
+    using Allors.Graph;
     using Meta;
 
     public partial class Setup
@@ -13,7 +14,7 @@ namespace Allors.Database.Domain
         private readonly ITransaction transaction;
 
         private readonly Dictionary<IObjectType, IObjects> objectsByObjectType;
-        private readonly ObjectsGraph objectsGraph;
+        private readonly Graph<IObjects> objectsGraph;
 
         public Setup(IDatabase database, Config config)
         {
@@ -26,7 +27,7 @@ namespace Allors.Database.Domain
                 this.objectsByObjectType[objectType] = objectType.GetObjects(transaction);
             }
 
-            this.objectsGraph = new ObjectsGraph();
+            this.objectsGraph = new Graph<IObjects>();
         }
 
         public Config Config { get; }
