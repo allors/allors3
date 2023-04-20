@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("69db99bc-97f7-4e2e-903c-74afb55992af")]
     #endregion
-    public partial class VatRegime : Enumeration, Versioned
+    public partial class VatRegime : Enumeration, Versioned, Deletable
     {
         #region inherited properties
         public LocalisedText[] LocalisedNames { get; set; }
@@ -65,14 +65,6 @@ namespace Allors.Repository
         public Country Country { get; set; }
 
         #region Allors
-        [Id("2071cc28-c8bf-43dc-a5e5-ec5735756dfa")]
-        #endregion
-        [Workspace(Default)]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        public VatRate ObsoleteVatRate { get; set; }
-
-        #region Allors
         [Id("8c66f441-be9a-468f-86f7-19fb2cebb51b")]
         #endregion
         [Workspace(Default)]
@@ -115,6 +107,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }

@@ -53,6 +53,8 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<VatRate> Cache => this.cache ??= new UniquelyIdentifiableCache<VatRate>(this.Transaction);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSetup(Setup setup)
         {
             var merge = this.Cache.Merger().Action();
@@ -135,6 +137,18 @@ namespace Allors.Database.Domain
                 v.FromDate = new DateTime(2000, 01, 01, 0, 0, 0, DateTimeKind.Utc);
                 v.Rate = 0;
             });
+        }
+
+
+        protected override void AppsSecure(Security config)
+        {
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.VatRateDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

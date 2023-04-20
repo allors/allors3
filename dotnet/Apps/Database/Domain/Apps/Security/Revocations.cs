@@ -14,6 +14,8 @@ namespace Allors.Database.Domain
         public static readonly Guid BrandDeleteRevocationId = new Guid("d377ace1-8572-4994-b0d7-0a23b282983d");
         public static readonly Guid FacilityDeleteRevocationId = new Guid("786eef87-99a9-4183-ba4d-414a223e8a1d");
         public static readonly Guid GeneralLedgerAccountDeleteRevocationId = new Guid("75167ef5-ffa4-4541-ba98-aca868270fec");
+        public static readonly Guid IrpfRateDeleteRevocationId = new Guid("b677a51d-25dc-4ae5-a257-1db6499e20d5");
+        public static readonly Guid IrpfRegimeDeleteRevocationId = new Guid("2aa601f8-4f07-4c6c-afb7-a879cfffbb47");
         public static readonly Guid ModelDeleteRevocationId = new Guid("ba731036-0947-4534-a3c3-087c78059f78");
         public static readonly Guid NonUnifiedGoodDeleteRevocationId = new Guid("093a7d72-c9ad-422b-b04f-827305cd7296");
         public static readonly Guid NonUnifiedPartDeleteRevocationId = new Guid("5241e606-2246-435a-aeed-f819d094c3ae");
@@ -63,6 +65,9 @@ namespace Allors.Database.Domain
         public static readonly Guid SerialisedItemDeleteRevocationId = new Guid("df9751a6-50e5-41d7-bbc1-befaf38b38ec");
         public static readonly Guid StatementOfWorkDeleteRevocationId = new Guid("a6d8c7dc-c849-4850-a37c-696bba468fb5");
         public static readonly Guid UnifiedGoodDeleteRevocationId = new Guid("c742b7f9-2310-4272-ab89-25898a7db3cc");
+        public static readonly Guid VatClauseDeleteRevocationId = new Guid("4f9e78af-dfd7-4883-bf59-5bddc434294c");
+        public static readonly Guid VatRateDeleteRevocationId = new Guid("44caf036-4880-4865-a163-73c5205c3238");
+        public static readonly Guid VatRegimeDeleteRevocationId = new Guid("8affdb44-36cd-401a-a4fb-055b73b11213");
         public static readonly Guid WorkEffortInvoiceItemDeleteRevocationId = new Guid("81128223-025b-48fc-806f-caf3201cb595");
         public static readonly Guid WorkRequirementCancelRevocationId = new Guid("52706d60-64eb-424c-88bd-1e2be382bc84");
         public static readonly Guid WorkRequirementDeleteRevocationId = new Guid("22ab560a-e740-4cdd-b237-50e97fcf6dd2");
@@ -79,6 +84,10 @@ namespace Allors.Database.Domain
         public Revocation FacilityDeleteRevocation => this.Cache[FacilityDeleteRevocationId];
 
         public Revocation GeneralLedgerAccountDeleteRevocation => this.Cache[GeneralLedgerAccountDeleteRevocationId];
+
+        public Revocation IrpfRateDeleteRevocation => this.Cache[IrpfRateDeleteRevocationId];
+
+        public Revocation IrpfRegimeDeleteRevocation => this.Cache[IrpfRegimeDeleteRevocationId];
 
         public Revocation ModelDeleteRevocation => this.Cache[ModelDeleteRevocationId];
 
@@ -178,6 +187,12 @@ namespace Allors.Database.Domain
 
         public Revocation UnifiedGoodDeleteRevocation => this.Cache[UnifiedGoodDeleteRevocationId];
 
+        public Revocation VatClauseDeleteRevocation => this.Cache[VatClauseDeleteRevocationId];
+
+        public Revocation VatRateDeleteRevocation => this.Cache[VatRateDeleteRevocationId];
+
+        public Revocation VatRegimeDeleteRevocation => this.Cache[VatRegimeDeleteRevocationId];
+
         public Revocation WorkEffortInvoiceItemDeleteRevocation => this.Cache[WorkEffortInvoiceItemDeleteRevocationId];
 
         public Revocation WorkRequirementCancelRevocation => this.Cache[WorkRequirementCancelRevocationId];
@@ -202,6 +217,8 @@ namespace Allors.Database.Domain
             merge(BrandDeleteRevocationId, _ => { });
             merge(FacilityDeleteRevocationId, _ => { });
             merge(GeneralLedgerAccountDeleteRevocationId, _ => { });
+            merge(IrpfRateDeleteRevocationId, _ => { });
+            merge(IrpfRegimeDeleteRevocationId, _ => { });
             merge(ModelDeleteRevocationId, _ => { });
             merge(NonUnifiedGoodDeleteRevocationId, _ => { });
             merge(NonUnifiedPartDeleteRevocationId, _ => { });
@@ -251,6 +268,9 @@ namespace Allors.Database.Domain
             merge(SerialisedItemDeleteRevocationId, _ => { });
             merge(StatementOfWorkDeleteRevocationId, _ => { });
             merge(UnifiedGoodDeleteRevocationId, _ => { });
+            merge(VatClauseDeleteRevocationId, _ => { });
+            merge(VatRateDeleteRevocationId, _ => { });
+            merge(VatRegimeDeleteRevocationId, _ => { });
             merge(WorkEffortInvoiceItemDeleteRevocationId, _ => { });
             merge(WorkRequirementCancelRevocationId, _ => { });
             merge(WorkRequirementDeleteRevocationId, _ => { });

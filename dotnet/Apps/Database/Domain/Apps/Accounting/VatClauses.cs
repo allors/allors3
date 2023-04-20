@@ -32,6 +32,8 @@ namespace Allors.Database.Domain
 
         private UniquelyIdentifiableCache<VatClause> Cache => this.cache ??= new UniquelyIdentifiableCache<VatClause>(this.Transaction);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSetup(Setup setup)
         {
             var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
@@ -90,6 +92,17 @@ De goederen worden niet geïnstalleerd. / The goods are not installed.
 Koper vervoert van België naar {shipToCountry}. / The buyer transports from Belgium to {shipToCountry}");
                 v.IsActive = true;
             });
+        }
+
+        protected override void AppsSecure(Security config)
+        {
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.VatClauseDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("a5e29ca1-80de-4de4-9085-b69f21550b5a")]
     #endregion
-    public partial class VatRate : UniquelyIdentifiable, Period
+    public partial class VatRate : UniquelyIdentifiable, Period, Deletable
     {
         #region inherited properties
         public DateTime FromDate { get; set; }
@@ -125,6 +125,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }

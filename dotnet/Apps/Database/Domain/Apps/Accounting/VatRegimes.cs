@@ -60,6 +60,8 @@ namespace Allors.Database.Domain
             setup.AddDependency(this.ObjectType, this.M.VatClause);
         }
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSetup(Setup setup)
         {
             var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
@@ -209,6 +211,18 @@ namespace Allors.Database.Domain
                     country.AddDerivedVatRegime(EuVatregime);
                 }
             }
+        }
+
+
+        protected override void AppsSecure(Security config)
+        {
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.VatRegimeDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

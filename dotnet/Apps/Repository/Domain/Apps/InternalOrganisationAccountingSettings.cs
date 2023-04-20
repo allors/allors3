@@ -220,6 +220,14 @@ namespace Allors.Repository
         public InternalOrganisationVatRegimeSettings[] SettingsForVatRegime{ get; set; }
 
         #region Allors
+        [Id("e571a300-8006-4c82-9205-f0c0005fa400")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        public InternalOrganisationIrpfRegimeSettings[] SettingsForIrpfRegime { get; set; }
+
+        #region Allors
         [Id("4a95ad2c-63ba-481c-9698-5d2094df6ed4")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]

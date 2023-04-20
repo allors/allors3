@@ -25,6 +25,8 @@ namespace Allors.Database.Domain
 
         protected override void AppsPrepare(Setup setup) => setup.AddDependency(this.ObjectType, this.M.IrpfRate);
 
+        protected override void AppsPrepare(Security security) => security.AddDependency(this.Meta, this.M.Revocation);
+
         protected override void AppsSetup(Setup setup)
         {
             var dutchLocale = new Locales(this.Transaction).LocaleByName["nl"];
@@ -58,6 +60,17 @@ namespace Allors.Database.Domain
             });
             irpfregime = new IrpfRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, ExemptId);
             irpfregime.AddIrpfRate(new IrpfRates(this.Transaction).Zero);
+        }
+
+        protected override void AppsSecure(Security config)
+        {
+            var revocations = new Revocations(this.Transaction);
+            var permissions = new Permissions(this.Transaction);
+
+            revocations.IrpfRegimeDeleteRevocation.DeniedPermissions = new[]
+            {
+                permissions.Get(this.Meta, this.Meta.Delete),
+            };
         }
     }
 }

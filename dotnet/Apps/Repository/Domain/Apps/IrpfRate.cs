@@ -19,7 +19,7 @@ namespace Allors.Repository
     /// if you are selling to a Spanish business you will have to indicate the level of IRPF that should be withheld by the customer.
     /// Essentially this is withheld by your customer and paid to the tax office by them on your behalf.
     /// </summary>
-    public partial class IrpfRate : UniquelyIdentifiable, Period
+    public partial class IrpfRate : UniquelyIdentifiable, Period, Deletable
     {
         #region inherited properties
         public DateTime FromDate { get; set; }
@@ -70,6 +70,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }
