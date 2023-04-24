@@ -17,7 +17,7 @@ using static DebuggerDisplayConstants;
 [assembly: DebuggerDisplay(name, Target = typeof(NonSerialisedInventoryItem))]
 [assembly: DebuggerDisplay(name, Target = typeof(NonUnifiedPart))]
 [assembly: DebuggerDisplay(name, Target = typeof(Organisation))]
-[assembly: DebuggerDisplay("{PartyName}" + id, Target = typeof(Person))]
+[assembly: DebuggerDisplay("{DisplayName}" + id, Target = typeof(Person))]
 [assembly: DebuggerDisplay("{QuoteNumber ?? Description}" + id, Target = typeof(ProductQuote))]
 [assembly: DebuggerDisplay("{InvoiceNumber ?? Description}" + id, Target = typeof(SalesInvoice))]
 [assembly: DebuggerDisplay("{OrderNumber ?? Description}" + id, Target = typeof(SalesOrder))]

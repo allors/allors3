@@ -116,7 +116,11 @@ export class AppNavigationService extends NavigationService {
 
     define(m.ExchangeRate, '/accounting/exchangerates');
     define(m.GeneralLedgerAccount, '/accounting/glaccounts');
+
     define(m.EmailMessage, '/admin/emailmessages');
+    define(m.VatClause, '/admin/vatclauses', '/admin/vatclause/:id');
+    define(m.VatRegime, '/admin/vatregimes', '/admin/vatregime/:id');
+    define(m.IrpfRegime, '/admin/irpfregimes', '/admin/irpfregime/:id');
   }
 
   hasList(objectType: Composite): boolean {

@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
+
     public partial class IrpfRate
     {
         public bool IsDeletable => !this.ExistInvoiceItemsWhereIrpfRate
@@ -19,9 +21,9 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
-            if (this.IsDeletable)
+            if (!this.IsDeletable)
             {
-                this.Delete();
+                throw new Exception("Cannot delete IRPF Rate");
             }
         }
     }

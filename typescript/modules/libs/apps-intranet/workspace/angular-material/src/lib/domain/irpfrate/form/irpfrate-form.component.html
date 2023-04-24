@@ -1,0 +1,24 @@
+<div class="container-fluid" *ngIf="object">
+  <div class="row">
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.IrpfRate.FromDate"
+    >
+    </a-mat-datepicker>
+    <a-mat-datepicker
+      class="col-md"
+      [object]="object"
+      [roleType]="m.IrpfRate.ThroughDate"
+    >
+    </a-mat-datepicker>
+  </div>
+
+  <div class="row">
+    <a-mat-input
+      class="col-md-6"
+      [object]="object"
+      [roleType]="m.IrpfRate.Rate"
+    ></a-mat-input>
+  </div>
+</div>

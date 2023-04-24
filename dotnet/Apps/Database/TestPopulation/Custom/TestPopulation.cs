@@ -22,6 +22,7 @@ namespace Allors
 {
     using System.Globalization;
     using System.Linq;
+    using Allors.Database.Meta;
     using Database;
     using Database.Domain;
     using Database.Domain.TestPopulation;
@@ -40,6 +41,8 @@ namespace Allors
 
         public void Populate(IDatabase database)
         {
+            var m = this.Transaction.Database.Services.Get<MetaPopulation>();
+
             CultureInfo.CurrentCulture = new CultureInfo("en-GB");
             CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
@@ -60,7 +63,10 @@ namespace Allors
 
             var singleton = this.Transaction.GetSingleton();
 
-            var belgium = new Countries(this.Transaction).CountryByIsoCode["BE"];
+            var belgium = new Countries(this.Transaction).CountryByIsoCode["NL"];
+            var locale = new Locales(this.Transaction).FindBy(m.Locale.Name, "nl");
+            locale.Country = belgium;
+
             var euro = belgium.Currency;
 
             singleton.AddAdditionalLocale(belgium.LocalesWhereCountry.FirstOrDefault());
@@ -71,7 +77,7 @@ namespace Allors
                 .WithCountry(belgium)
                 .Build();
 
-            var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
+            var serialisedItemSoldOns = new Database.Domain.SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
 
             var internalOrganisation = Organisations.CreateInternalOrganisation(
                 transaction: this.Transaction,
@@ -273,7 +279,7 @@ namespace Allors
             var netherlands = new Countries(this.Transaction).CountryByIsoCode["NL"];
             var euro = netherlands.Currency;
 
-            var serialisedItemSoldOns = new SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
+            var serialisedItemSoldOns = new Database.Domain.SerialisedItemSoldOn[] { new SerialisedItemSoldOns(this.Transaction).SalesInvoiceSend, new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm };
 
             var dutchInternalOrganisation = Organisations.CreateInternalOrganisation(
                 transaction: this.Transaction,

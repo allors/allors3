@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
+
     public partial class VatRate
     {
         public bool IsDeletable => !this.ExistInvoicesWhereDerivedVatRate
@@ -16,9 +18,9 @@ namespace Allors.Database.Domain
 
         public void AppsDelete(DeletableDelete method)
         {
-            if (this.IsDeletable)
+            if (!this.IsDeletable)
             {
-                this.Delete();
+                throw new Exception("Cannot delete Vat Rate");
             }
         }
     }

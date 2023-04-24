@@ -12,7 +12,7 @@ namespace Allors.Repository
     [Id("88a49ec6-3c06-432a-8894-b28fe76bb41f")]
     #endregion
     [Plural("InternalOrganisationVatRegimeSettingses")]
-    public partial class InternalOrganisationVatRegimeSettings : Object
+    public partial class InternalOrganisationVatRegimeSettings : Deletable
     {
         #region inherited properties
 
@@ -49,6 +49,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }

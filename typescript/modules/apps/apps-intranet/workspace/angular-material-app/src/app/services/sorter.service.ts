@@ -88,6 +88,13 @@ export class AppSorterService implements SorterService {
     );
 
     define(
+      m.IrpfRegime,
+      new Sorter({
+        name: m.IrpfRegime.Name,
+      })
+    );
+
+    define(
       m.NonUnifiedPart,
       new Sorter({
         name: m.NonUnifiedPart.Name,
@@ -272,6 +279,21 @@ export class AppSorterService implements SorterService {
         name: [m.UnifiedGood.Name],
         id: [m.UnifiedGood.ProductNumber],
         lastModifiedDate: m.UnifiedGood.LastModifiedDate,
+      })
+    );
+
+    define(
+      m.VatClause,
+      new Sorter({
+        name: m.VatClause.Name,
+      })
+    );
+
+    define(
+      m.VatRegime,
+      new Sorter({
+        name: m.VatRegime.Name,
+        country: m.VatRegime.CountryName,
       })
     );
 

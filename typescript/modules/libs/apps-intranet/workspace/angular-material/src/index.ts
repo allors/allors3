@@ -37,6 +37,12 @@ export { InlineModelComponent } from './lib/domain/model/inline/model-inline.com
 export { InlineWebAddressComponent } from './lib/domain/webaddress/inline/webaddress-inline.component';
 export { InternalOrganisationId } from './lib/services/state/internal-organisation-id';
 export { InventoryItemTransactionCreateFormComponent } from './lib/domain/inventoryitemtransaction/form/inventoryitemtransaction-create-form.component';
+export { IrpfRateFormComponent } from './lib/domain/irpfrate/form/irpfrate-form.component';
+export { IrpfRegimeCreateFormComponent } from './lib/domain/irpfregime/create/irpfregime-create-form.component';
+export { IrpfRegimeEditFormComponent } from './lib/domain/irpfregime/edit/irpfregime-edit-form.component';
+export { IrpfRegimeListPageComponent } from './lib/domain/irpfregime/list/irpfregime-list-page.component';
+export { IrpfRegimeOverviewPageComponent } from './lib/domain/irpfregime/overview/irpfregime-overview-page.component';
+export { IrpfRegimeSummaryPanelComponent } from './lib/domain/irpfregime/summary/irpfregime-summary-panel.component';
 export { LetterCorrespondenceFormComponent } from './lib/domain/lettercorrespondence/form/lettercorrespondence-form.component';
 export { ModelFormComponent } from './lib/domain/model/form/model-form.component';
 export { ModelListPageComponent } from './lib/domain/model/list/model-list-page.component';
@@ -181,6 +187,14 @@ export { UnifiedGoodOverviewPageComponent } from './lib/domain/unifiedgood/overv
 export { UnifiedGoodSummaryPanelComponent } from './lib/domain/unifiedgood/summary/unifiedgood-summary-panel.component';
 export { UserProfileFormComponent } from './lib/domain/userprofile/form/userprofile-form.component';
 export { UserProfileLinkComponent } from './lib/domain/userprofile/link/userprofile-link.component';
+export { VatClauseFormComponent } from './lib/domain/vatclause/form/vatclause-form.component';
+export { VatClauseListPageComponent } from './lib/domain/vatclause/list/vatclause-list-page.component';
+export { VatRateFormComponent } from './lib/domain/vatrate/form/vatrate-form.component';
+export { VatRegimeCreateFormComponent } from './lib/domain/vatregime/create/vatregime-create-form.component';
+export { VatRegimeEditFormComponent } from './lib/domain/vatregime/edit/vatregime-edit-form.component';
+export { VatRegimeListPageComponent } from './lib/domain/vatregime/list/vatregime-list-page.component';
+export { VatRegimeOverviewPageComponent } from './lib/domain/vatregime/overview/vatregime-overview-page.component';
+export { VatRegimeSummaryPanelComponent } from './lib/domain/vatregime/summary/vatregime-summary-panel.component';
 export { WebAddressCreateFormComponent } from './lib/domain/webaddress/create/webaddress-create-form.component';
 export { WebAddressEditFormComponent } from './lib/domain/webaddress/edit/webaddress-edit-form.component';
 export { WorkEffortAssignmentRateFormComponent } from './lib/domain/workeffortassignmentrate/form/workeffortassignmentrate-form.component';

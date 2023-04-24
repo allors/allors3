@@ -506,8 +506,8 @@ export class AppFilterService implements FilterService {
             parameter: 'Name',
           },
           {
-            kind: 'Equals',
-            propertyType: m.GeneralLedgerAccount.ReferenceNumber,
+            kind: 'Like',
+            roleType: m.GeneralLedgerAccount.ReferenceNumber,
             parameter: 'Number',
           },
         ],
@@ -582,6 +582,20 @@ export class AppFilterService implements FilterService {
           },
         }
       )
+    );
+
+    define(
+      m.IrpfRegime,
+      new FilterDefinition({
+        kind: 'And',
+        operands: [
+          {
+            kind: 'Like',
+            roleType: m.IrpfRegime.Name,
+            parameter: 'Name',
+          },
+        ],
+      })
     );
 
     define(
@@ -1878,6 +1892,47 @@ export class AppFilterService implements FilterService {
           model: {
             search: () => modelSearch,
             display: (v: Model) => v && v.Name,
+          },
+        }
+      )
+    );
+
+    define(
+      m.VatClause,
+      new FilterDefinition({
+        kind: 'And',
+        operands: [
+          {
+            kind: 'Like',
+            roleType: m.VatClause.Name,
+            parameter: 'Name',
+          },
+        ],
+      })
+    );
+
+    define(
+      m.VatRegime,
+      new FilterDefinition(
+        {
+          kind: 'And',
+          operands: [
+            {
+              kind: 'Like',
+              roleType: m.VatRegime.Name,
+              parameter: 'Name',
+            },
+            {
+              kind: 'ContainedIn',
+              propertyType: m.VatRegime.Country,
+              parameter: 'country',
+            },
+          ],
+        },
+        {
+          country: {
+            search: () => countrySearch,
+            display: (v: Country) => v && v.Name,
           },
         }
       )

@@ -12,7 +12,7 @@ namespace Allors.Repository
     [Id("c8b6ee7b-18ab-4921-96a0-01dfa76b577c")]
     #endregion
     [Plural("InternalOrganisationIrpfRegimeSettingses")]
-    public partial class InternalOrganisationIrpfRegimeSettings : Object
+    public partial class InternalOrganisationIrpfRegimeSettings : Deletable
     {
         #region inherited properties
 
@@ -49,6 +49,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }

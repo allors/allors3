@@ -96,6 +96,13 @@ namespace Allors.Repository
         [Indexed]
         public VatClause VatClause { get; set; }
 
+        #region Allors
+        [Id("1df0b3cd-01c7-47b0-9358-7de6e2ab9ce6")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        public string CountryName { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

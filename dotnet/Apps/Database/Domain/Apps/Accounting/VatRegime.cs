@@ -7,8 +7,7 @@ namespace Allors.Database.Domain
 {
     public partial class VatRegime
     {
-        public bool IsDeletable => !this.ExistCountriesWhereDerivedVatRegime
-            && !this.ExistInvoicesWhereDerivedVatRegime
+        public bool IsDeletable => !this.ExistInvoicesWhereDerivedVatRegime
             && !this.ExistInvoiceVersionsWhereDerivedVatRegime
             && !this.ExistInternalOrganisationVatRegimeSettingsesWhereVatRegime
             && !this.ExistOrdersWhereDerivedVatRegime
@@ -29,7 +28,15 @@ namespace Allors.Database.Domain
                     @this.Delete();
                 }
 
-                this.VatClause.Delete();
+                foreach (var @this in this.InternalOrganisationVatRegimeSettingsesWhereVatRegime)
+                {
+                    @this.Delete();
+                }
+
+                if (this.ExistVatClause)
+                {
+                    this.VatClause.Delete();
+                }
             }
         }
     }

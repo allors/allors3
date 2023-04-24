@@ -192,6 +192,7 @@ export class AppDisplayService implements DisplayService {
           m.CommunicationEvent.EventPurposes,
         ],
       ],
+      [m.IrpfRate, [m.IrpfRate.Rate]],
       [
         m.NonSerialisedInventoryItem,
         [
@@ -417,6 +418,7 @@ export class AppDisplayService implements DisplayService {
         ],
       ],
       [m.TimeEntry, [m.TimeEntry.Worker, m.TimeEntry.AmountOfTime]],
+      [m.VatRate, [m.VatRate.Rate]],
       [
         m.WorkEffort,
         [

@@ -94,7 +94,12 @@ export class AppMenuService implements MenuService {
       {
         title: 'Admin',
         icon: 'admin_panel_settings',
-        children: [{ objectType: m.EmailMessage }],
+        children: [
+          { objectType: m.EmailMessage },
+          { objectType: m.VatRegime, title: 'VAT Regimes' },
+          { objectType: m.IrpfRegime, title: 'IRPF Regimes' },
+          { objectType: m.VatClause, title: 'VAT Clauses' },
+        ],
       },
     ];
   }
