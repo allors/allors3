@@ -294,6 +294,7 @@ export class AppFormService implements FormService {
 export const createComponents: any[] = [
   CustomerShipmentCreateFormComponent,
   EmailAddressCreateFormComponent,
+  IrpfRegimeCreateFormComponent,
   NonUnifiedGoodCreateFormComponent,
   NonUnifiedPartCreateFormComponent,
   OrganisationCreateFormComponent,
@@ -310,6 +311,7 @@ export const createComponents: any[] = [
   SerialisedItemCreateFormComponent,
   TelecommunicationsNumberCreateFormComponent,
   UnifiedGoodCreateFormComponent,
+  VatRegimeCreateFormComponent,
   WebAddressCreateFormComponent,
   WorkRequirementCreateFormComponent,
   WorkRequirementFulfillmentCreateFormComponent,
@@ -319,6 +321,7 @@ export const createComponents: any[] = [
 export const editComponents: any[] = [
   CustomerShipmentEditFormComponent,
   EmailAddressEditFormComponent,
+  IrpfRegimeEditFormComponent,
   NonUnifiedGoodEditFormComponent,
   NonUnifiedPartEditFormComponent,
   OrganisationEditFormComponent,
@@ -339,6 +342,7 @@ export const editComponents: any[] = [
   WorkRequirementEditFormComponent,
   // TODO:
   // WorkRequirementFulfillmentEditFormComponent,
+  VatRegimeEditFormComponent,
   WorkTaskEditFormComponent,
 ];
 
@@ -359,8 +363,6 @@ export const components: any[] = [
   GeneralLedgerAccountFormComponent,
   InventoryItemTransactionCreateFormComponent,
   IrpfRateFormComponent,
-  IrpfRegimeCreateFormComponent,
-  IrpfRegimeEditFormComponent,
   LetterCorrespondenceFormComponent,
   ModelFormComponent,
   NonSerialisedInventoryItemFormComponent,
@@ -399,8 +401,6 @@ export const components: any[] = [
   UserProfileFormComponent,
   VatClauseFormComponent,
   VatRateFormComponent,
-  VatRegimeCreateFormComponent,
-  VatRegimeEditFormComponent,
   WorkEffortAssignmentRateFormComponent,
   WorkEffortFixedAssetAssignmentFormComponent,
   WorkEffortInventoryAssignmentFormComponent,
