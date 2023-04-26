@@ -13,12 +13,14 @@ namespace Allors.Database.Configuration
     using Domain;
     using Meta;
     using Microsoft.AspNetCore.Http;
-    using Shared.Ranges;
+    using Ranges;
     using Services;
 
     public abstract class DatabaseServices : IDatabaseServices
     {
         private readonly IHttpContextAccessor httpContextAccessor;
+
+        private IRanges<long> ranges;
 
         private IMetaCache metaCache;
 
@@ -88,6 +90,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.Database, this.metaCache)),
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,
+                { } type when type == typeof(IRanges<long>) => (T)(this.ranges ??= new DefaultStructRanges<long>()),
                 { } type when type == typeof(IClassById) => (T)(this.classById ??= new ClassById()),
                 { } type when type == typeof(IVersionedIdByStrategy) => (T)(this.versionedIdByStrategy ??= new VersionedIdByStrategy()),
                 { } type when type == typeof(IPreparedSelects) => (T)(this.preparedSelects ??= new PreparedSelects(this.Database)),

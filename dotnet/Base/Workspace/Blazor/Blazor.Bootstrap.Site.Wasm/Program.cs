@@ -1,3 +1,4 @@
+using Allors.Ranges;
 using Allors.Services;
 using Allors.Workspace;
 using Allors.Workspace.Adapters;
@@ -24,6 +25,7 @@ var httpClient = new HttpClient
 
 Func<IWorkspaceServices> servicesBuilder = () => new WorkspaceServices();
 var idGenerator = new IdGenerator();
+DefaultRanges<long> defaultRanges = new DefaultStructRanges<long>();
 var metaPopulation = new MetaBuilder().Build();
 var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
 var rules = new IRule[]
@@ -32,7 +34,7 @@ var rules = new IRule[]
 };
 var configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
 
-var databaseConnection = new DatabaseConnection(configuration, servicesBuilder, httpClient, idGenerator);
+var databaseConnection = new DatabaseConnection(configuration, servicesBuilder, httpClient, idGenerator, defaultRanges);
 builder.Services.AddSingleton(databaseConnection);
 
 builder.Services.AddScoped(_ => httpClient);

@@ -1,5 +1,6 @@
 namespace Workspace.ViewModels.WinForms
 {
+    using Allors.Ranges;
     using Allors.Workspace.Adapters;
     using Allors.Workspace;
     using Allors.Workspace.Derivations;
@@ -27,6 +28,7 @@ namespace Workspace.ViewModels.WinForms
             };
 
             var idGenerator = new IdGenerator();
+            DefaultRanges<long> defaultRanges = new DefaultStructRanges<long>();
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
             var rules = new IRule[]
@@ -35,7 +37,7 @@ namespace Workspace.ViewModels.WinForms
             };
             var configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
 
-            var databaseConnection = new DatabaseConnection(configuration, () => new WorkspaceServices(), httpClient, idGenerator);
+            var databaseConnection = new DatabaseConnection(configuration, () => new WorkspaceServices(), httpClient, idGenerator, defaultRanges);
 
             return Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
