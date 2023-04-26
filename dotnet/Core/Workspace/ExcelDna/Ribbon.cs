@@ -7,6 +7,7 @@ namespace ExcelDNA
     using System.Windows.Forms;
     using Allors.Excel;
     using Allors.Excel.Interop;
+    using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Adapters.Remote.ResthSharp;
@@ -54,12 +55,13 @@ namespace ExcelDNA
                 var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
                 var configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
                 var idGenerator = new IdGenerator();
+                var defaultRanges = new DefaultStructRanges<long>();
 
                 var excelServices = new ExcelServices(this);
 
                 IRestClient RestClientFactory() => new RestClient(this.AppConfig.AllorsDatabaseAddress).UseNewtonsoftJson();
                 this.Client = new Client(RestClientFactory);
-                this.DatabaseConnection = new DatabaseConnection(configuration, () => new WorkspaceServices(excelServices), this.Client, idGenerator);
+                this.DatabaseConnection = new DatabaseConnection(configuration, () => new WorkspaceServices(excelServices), this.Client, idGenerator, defaultRanges);
                 this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
                 this.Program = new Program(this.Workspace);

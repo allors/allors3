@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters.Remote
     using System.Linq;
     using Allors.Protocol.Json.Api.Sync;
     using Meta;
-    using Shared.Ranges;
+    using Ranges;
 
     internal class DatabaseRecord : Adapters.DatabaseRecord
     {
@@ -24,13 +24,13 @@ namespace Allors.Workspace.Adapters.Remote
             new DatabaseRecord(database, (IClass)database.Configuration.MetaPopulation.FindByTag(syncResponseObject.c), syncResponseObject.i, syncResponseObject.v)
             {
                 syncResponseRoles = syncResponseObject.ro,
-                GrantIds = ValueRange<long>.Load(ctx.CheckForMissingGrants(syncResponseObject.g)),
-                RevocationIds = ValueRange<long>.Load(ctx.CheckForMissingRevocations(syncResponseObject.r))
+                GrantIds = database.Ranges.Load(ctx.CheckForMissingGrants(syncResponseObject.g)),
+                RevocationIds = database.Ranges.Load(ctx.CheckForMissingRevocations(syncResponseObject.r))
             };
 
-        internal ValueRange<long> GrantIds { get; private set; }
+        internal IRange<long> GrantIds { get; private set; }
 
-        internal ValueRange<long> RevocationIds { get; private set; }
+        internal IRange<long> RevocationIds { get; private set; }
 
         private Dictionary<IRelationType, object> RoleByRelationType
         {
@@ -38,6 +38,7 @@ namespace Allors.Workspace.Adapters.Remote
             {
                 if (this.syncResponseRoles != null)
                 {
+                    var ranges = this.database.Ranges;
                     var metaPopulation = this.database.Configuration.MetaPopulation;
                     this.roleByRelationType = this.syncResponseRoles.ToDictionary(
                         v => (IRelationType)metaPopulation.FindByTag(v.t),
@@ -56,7 +57,7 @@ namespace Allors.Workspace.Adapters.Remote
                                 return v.o;
                             }
 
-                            return ValueRange<long>.Load(v.c);
+                            return ranges.Load(v.c);
                         });
 
                     this.syncResponseRoles = null;
@@ -75,7 +76,7 @@ namespace Allors.Workspace.Adapters.Remote
 
         public override bool IsPermitted(long permission)
         {
-            if (this.GrantIds.IsEmpty)
+            if (this.GrantIds == null)
             {
                 return false;
             }

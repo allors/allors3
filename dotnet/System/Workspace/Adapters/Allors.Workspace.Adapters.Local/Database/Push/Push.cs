@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters.Local
     using Database.Meta;
     using Database.Security;
     using Database.Services;
-    using Shared.Ranges;
+    using Ranges;
 
     public class Push : Result, IPushResult
     {
@@ -148,6 +148,8 @@ namespace Allors.Workspace.Adapters.Local
             // TODO: Cache and filter for workspace
             var acl = this.AccessControl[obj];
 
+            var ranges = this.Workspace.RecordRanges;
+
             foreach (var keyValuePair in local.DatabaseOriginState.ChangedRoleByRelationType)
             {
                 var relationType = keyValuePair.Key;
@@ -183,7 +185,7 @@ namespace Allors.Workspace.Adapters.Local
                     }
                     else
                     {
-                        var workspaceRole = RefRange<Adapters.Strategy>.Ensure(roleValue);
+                        var workspaceRole = (IRange<Adapters.Strategy>)roleValue;
 
                         if (this.ObjectByNewId != null)
                         {
@@ -203,7 +205,7 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
-        private IEnumerable<IObject> GetRoles(RefRange<Adapters.Strategy> strategies)
+        private IEnumerable<IObject> GetRoles(IRange<Adapters.Strategy> strategies)
         {
             foreach (var v in strategies.Select(v => v.Id).Where(v => v < 0))
             {

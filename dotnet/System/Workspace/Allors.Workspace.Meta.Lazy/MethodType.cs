@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the IObjectType type.</summary>
 
-namespace Allors.Workspace.Meta.Lazy
+namespace Allors.Workspace.Meta
 {
     public sealed class MethodType : IMethodTypeInternals
     {

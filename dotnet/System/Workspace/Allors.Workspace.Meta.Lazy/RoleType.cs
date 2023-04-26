@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the RoleType type.</summary>
 
-namespace Allors.Workspace.Meta.Lazy
+namespace Allors.Workspace.Meta
 {
     using System;
     using Text;

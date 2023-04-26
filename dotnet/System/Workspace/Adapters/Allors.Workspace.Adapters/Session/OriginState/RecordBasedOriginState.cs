@@ -9,7 +9,7 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using System.Linq;
     using Meta;
-    using Shared.Ranges;
+    using Ranges;
 
     public abstract class RecordBasedOriginState
     {
@@ -82,21 +82,21 @@ namespace Allors.Workspace.Adapters
             }
         }
 
-        public RefRange<Strategy> GetCompositesRole(IRoleType roleType)
+        public IRange<Strategy> GetCompositesRole(IRoleType roleType)
         {
             if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
             {
-                return RefRange<Strategy>.Ensure(changedRole);
+                return (IRange<Strategy>)changedRole;
             }
 
-            var role = ValueRange<long>.Ensure(this.Record?.GetRole(roleType));
+            var role = (IRange<long>)this.Record?.GetRole(roleType);
 
-            if (role.IsEmpty)
+            if (role == null)
             {
-                return RefRange<Strategy>.Empty;
+                return EmptyRange<Strategy>.Instance;
             }
 
-            return RefRange<Strategy>.Load(role.Select(v =>
+            return this.Ranges.Load(role.Select(v =>
             {
                 var strategy = this.Session.GetStrategy(v);
                 this.AssertStrategy(strategy);
@@ -116,7 +116,7 @@ namespace Allors.Workspace.Adapters
                 return;
             }
 
-            role = role.Add(roleToAdd);
+            role = this.Ranges.Add(role, roleToAdd);
             this.SetChangedRole(roleType, role);
 
             if (associationType.IsMany)
@@ -137,11 +137,11 @@ namespace Allors.Workspace.Adapters
                 return;
             }
 
-            role = role.Remove(roleToRemove);
+            role = this.Ranges.Remove(role, roleToRemove);
             this.SetChangedRole(roleType, role);
         }
 
-        public void SetCompositesRole(IRoleType roleType, RefRange<Strategy> role)
+        public void SetCompositesRole(IRoleType roleType, IRange<Strategy> role)
         {
             if (this.SameCompositesRole(roleType, role))
             {
@@ -190,7 +190,7 @@ namespace Allors.Workspace.Adapters
                             }
                             else
                             {
-                                changeSet.DiffComposites(this.Strategy, relationType, RefRange<Strategy>.Ensure(current), RefRange<Strategy>.Ensure(previousChangedRole));
+                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previousChangedRole);
                             }
                         }
                         else
@@ -207,7 +207,7 @@ namespace Allors.Workspace.Adapters
                             }
                             else
                             {
-                                changeSet.DiffComposites(this.Strategy, relationType, RefRange<Strategy>.Ensure(current), ValueRange<long>.Ensure(previous));
+                                changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<long>)previous);
                             }
 
                         }
@@ -241,7 +241,7 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, RefRange<Strategy>.Ensure(current), RefRange<Strategy>.Ensure(previous));
+                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<Strategy>)current, (IRange<Strategy>)previous);
                         }
                     }
                     else
@@ -262,7 +262,7 @@ namespace Allors.Workspace.Adapters
                         }
                         else
                         {
-                            changeSet.DiffComposites(this.Strategy, relationType, ValueRange<long>.Ensure(current), ValueRange<long>.Ensure(previous));
+                            changeSet.DiffComposites(this.Strategy, relationType, (IRange<long>)current, (IRange<long>)previous);
                         }
                     }
                 }
@@ -278,6 +278,8 @@ namespace Allors.Workspace.Adapters
             {
                 return;
             }
+
+            var ranges = this.Session.Workspace.RecordRanges;
 
             foreach (var kvp in this.ChangedRoleByRelationType)
             {
@@ -307,8 +309,8 @@ namespace Allors.Workspace.Adapters
                 {
                     diffs.Add(new CompositesDiff(relationType, this.Strategy)
                     {
-                        OriginalRoles = original != null ? ValueRange<long>.Ensure(original).Select(v => this.Session.GetStrategy(v)).ToArray() : Array.Empty<Strategy>(),
-                        ChangedRoles = (RefRange<Strategy>.Ensure(changed)).Save() ?? Array.Empty<Strategy>(),
+                        OriginalRoles = original != null ? ranges.Ensure(original).Select(v => this.Session.GetStrategy(v)).ToArray() : Array.Empty<Strategy>(),
+                        ChangedRoles = ((IRange<Strategy>)changed).Save() ?? Array.Empty<Strategy>(),
                     });
                 }
             }
@@ -320,6 +322,8 @@ namespace Allors.Workspace.Adapters
             {
                 return true;
             }
+
+            var ranges = this.Session.Workspace.RecordRanges;
 
             foreach (var kvp in this.ChangedRoleByRelationType)
             {
@@ -343,7 +347,7 @@ namespace Allors.Workspace.Adapters
                         return false;
                     }
                 }
-                else if (!ValueRange<long>.Ensure(original).Equals(ValueRange<long>.Ensure(newOriginal)))
+                else if (!ranges.Ensure(original).Equals(ranges.Ensure(newOriginal)))
                 {
                     return false;
                 }
@@ -392,15 +396,15 @@ namespace Allors.Workspace.Adapters
             return role == null ? null : this.Session.GetStrategy((long)role);
         }
 
-        private RefRange<Strategy> GetCompositesRoleIfInstantiated(IRoleType roleType)
+        private IRange<Strategy> GetCompositesRoleIfInstantiated(IRoleType roleType)
         {
             if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
             {
-                return RefRange<Strategy>.Ensure(changedRole);
+                return (IRange<Strategy>)changedRole;
             }
 
-            var role = ValueRange<long>.Ensure(this.Record?.GetRole(roleType));
-            return role.IsEmpty ? RefRange<Strategy>.Empty : RefRange<Strategy>.Load(role.Select(this.Session.GetStrategy).Where(v => v != null));
+            var role = (IRange<long>)this.Record?.GetRole(roleType);
+            return role == null ? EmptyRange<Strategy>.Instance : this.Ranges.Load(role.Select(v => this.Session.GetStrategy(v)).Where(v => v != null));
         }
         private bool SameCompositeRole(IRoleType roleType, Strategy role)
         {
@@ -424,14 +428,14 @@ namespace Allors.Workspace.Adapters
             return role.Id == (long)changedRoleId;
         }
 
-        private bool SameCompositesRole(IRoleType roleType, RefRange<Strategy> role)
+        private bool SameCompositesRole(IRoleType roleType, IRange<Strategy> role)
         {
             if (this.ChangedRoleByRelationType != null && this.ChangedRoleByRelationType.TryGetValue(roleType.RelationType, out var changedRole))
             {
                 return role.Equals(changedRole);
             }
 
-            var roleIds = ValueRange<long>.Ensure(this.Record?.GetRole(roleType));
+            var roleIds = this.Session.Workspace.RecordRanges.Ensure(this.Record?.GetRole(roleType));
             return role.IsEmpty ? roleIds.IsEmpty : role.Select(v => v.Id).SequenceEqual(roleIds);
         }
 
@@ -452,6 +456,8 @@ namespace Allors.Workspace.Adapters
         protected Session Session => this.Strategy.Session;
 
         protected Workspace Workspace => this.Session.Workspace;
+
+        private IRanges<Strategy> Ranges => this.Strategy.Session.Workspace.StrategyRanges;
 
         #endregion
     }

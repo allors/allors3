@@ -13,7 +13,7 @@ namespace Allors.Workspace.Adapters
     using System.Linq;
     using Collections;
     using Meta;
-    using Shared.Ranges;
+    using Ranges;
 
     public sealed class ChangeSet : IChangeSet
     {
@@ -126,19 +126,21 @@ namespace Allors.Workspace.Adapters
             this.AddAssociation(relationType, association);
         }
 
-        public void DiffComposites(Strategy association, IRelationType relationType, RefRange<Strategy> current, ValueRange<long> previousRange)
+        public void DiffComposites(Strategy association, IRelationType relationType, IRange<Strategy> current, IRange<long> previousRange)
         {
-            var previous = RefRange<Strategy>.Load(ValueRange<long>.Ensure(previousRange).Select(v => this.Session.GetStrategy(v)));
+            var ranges = this.Session.Workspace.RecordRanges;
+            var previous = this.Session.Workspace.StrategyRanges.Load(ranges.Ensure(previousRange).Select(v => this.Session.GetStrategy(v)));
             this.DiffComposites(association, relationType, current, previous);
         }
 
-        public void DiffComposites(Strategy association, IRelationType relationType, ValueRange<long> currentRange, ValueRange<long> previous)
+        public void DiffComposites(Strategy association, IRelationType relationType, IRange<long> currentRange, IRange<long> previous)
         {
-            var current = RefRange<Strategy>.Load(ValueRange<long>.Ensure(currentRange).Select(v => this.Session.GetStrategy(v)));
+            var ranges = this.Session.Workspace.RecordRanges;
+            var current = this.Session.Workspace.StrategyRanges.Load(ranges.Ensure(currentRange).Select(v => this.Session.GetStrategy(v)));
             this.DiffComposites(association, relationType, current, previous);
         }
 
-        public void DiffComposites(Strategy association, IRelationType relationType, RefRange<Strategy> current, RefRange<Strategy> previous)
+        public void DiffComposites(Strategy association, IRelationType relationType, IRange<Strategy> current, IRange<Strategy> previous)
         {
             var hasChange = false;
 

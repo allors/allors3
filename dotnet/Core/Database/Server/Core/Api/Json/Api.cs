@@ -18,7 +18,7 @@ namespace Allors.Database.Protocol.Json
     using Derivations;
     using Domain;
     using Meta;
-    using Shared.Ranges;
+    using Ranges;
     using Security;
     using Services;
     using Tracing;
@@ -38,6 +38,7 @@ namespace Allors.Database.Protocol.Json
             var metaCache = databaseServices.Get<IMetaCache>();
 
             this.PrefetchPolicyCache = databaseServices.Get<IPrefetchPolicyCache>();
+            this.Ranges = databaseServices.Get<IRanges<long>>();
             this.User = transactionServices.Get<IUserService>().User;
             this.AccessControl = transactionServices.Get<IWorkspaceAclsService>().Create(this.WorkspaceName);
             this.AllowedClasses = metaCache.GetWorkspaceClasses(this.WorkspaceName);
@@ -65,6 +66,8 @@ namespace Allors.Database.Protocol.Json
         public ISink Sink { get; }
 
         public IPrefetchPolicyCache PrefetchPolicyCache { get; set; }
+
+        public IRanges<long> Ranges { get; }
 
         public IUser User { get; }
 
@@ -111,7 +114,7 @@ namespace Allors.Database.Protocol.Json
             this.Sink?.OnBefore(@event);
 
             var dependencies = this.ToDependencies(pullRequest.d);
-            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, dependencies, this.PrefetchPolicyCache, this.CancellationToken);
+            var pullResponseBuilder = new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, dependencies, this.PrefetchPolicyCache, this.CancellationToken);
             var pullResponse = pullResponseBuilder.Build(pullRequest);
 
             if (@event != null)
@@ -146,7 +149,7 @@ namespace Allors.Database.Protocol.Json
             this.Sink?.OnBefore(@event);
 
             var prefetchPolicyByClass = this.PrefetchPolicyCache.WorkspacePrefetchPolicyByClass(this.WorkspaceName);
-            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.RoleTypesByClass, prefetchPolicyByClass, this.UnitConvert);
+            var syncResponseBuilder = new SyncResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.RoleTypesByClass, prefetchPolicyByClass, this.UnitConvert, this.Ranges);
             var syncResponse = syncResponseBuilder.Build(syncRequest);
 
             if (@event != null)
@@ -174,7 +177,7 @@ namespace Allors.Database.Protocol.Json
         public PullResponseBuilder CreatePullResponseBuilder(string dependencyId = null)
         {
             // TODO: Dependencies
-            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, null, this.PrefetchPolicyCache, this.CancellationToken);
+            return new PullResponseBuilder(this.Transaction, this.AccessControl, this.AllowedClasses, this.PreparedSelects, this.PreparedExtents, this.UnitConvert, this.Ranges, null, this.PrefetchPolicyCache, this.CancellationToken);
         }
 
         private IDictionary<IClass, ISet<IPropertyType>> ToDependencies(PullDependency[] pullDependencies)

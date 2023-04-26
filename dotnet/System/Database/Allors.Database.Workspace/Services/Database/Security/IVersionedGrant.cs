@@ -6,7 +6,7 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
-    using Shared.Ranges;
+    using Ranges;
 
     public interface IVersionedGrant
     {
@@ -18,6 +18,6 @@ namespace Allors.Database.Domain
 
         ISet<long> PermissionSet { get; }
 
-        ValueRange<long> PermissionRange { get; }
+        IRange<long> PermissionRange { get; }
     }
 }

@@ -13,6 +13,7 @@ namespace Tests.Workspace.Local
     using Allors.Database.Configuration;
     using Allors.Database.Domain;
     using Allors.Database.Services;
+    using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
     using Allors.Workspace.Derivations;
@@ -27,6 +28,7 @@ namespace Tests.Workspace.Local
 
     public class Profile : IProfile
     {
+        private readonly Func<IRanges<long>> rangesFactory;
         private readonly Func<IWorkspaceServices> servicesBuilder;
         private readonly Configuration configuration;
 
@@ -44,6 +46,7 @@ namespace Tests.Workspace.Local
 
         public Profile(Fixture fixture)
         {
+            this.rangesFactory = () => new DefaultStructRanges<long>();
             this.servicesBuilder = () => new WorkspaceServices();
 
             var metaPopulation = new MetaBuilder().Build();
@@ -80,7 +83,7 @@ namespace Tests.Workspace.Local
 
         public IWorkspace CreateExclusiveWorkspace()
         {
-            var database = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder) { UserId = this.user.Id };
+            var database = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
             return database.CreateWorkspace();
         }
         public IWorkspace CreateWorkspace() => this.DatabaseConnection.CreateWorkspace();
@@ -91,7 +94,7 @@ namespace Tests.Workspace.Local
             this.user = new Users(transaction).Extent().ToArray().First(v => v.UserName.Equals(userName, StringComparison.InvariantCultureIgnoreCase));
             transaction.Services.Get<IUserService>().User = this.user;
 
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder) { UserId = this.user.Id };
+            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.Database, this.servicesBuilder, this.rangesFactory) { UserId = this.user.Id };
 
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 

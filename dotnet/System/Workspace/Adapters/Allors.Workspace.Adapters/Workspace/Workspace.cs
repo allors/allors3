@@ -8,17 +8,19 @@ namespace Allors.Workspace.Adapters
     using System.Collections.Generic;
     using Derivations;
     using Meta;
-    using Shared.Ranges;
+    using Ranges;
 
     public abstract class Workspace : IWorkspace
     {
         private readonly IDictionary<IRoleType, IRule> ruleByRoleType;
         private readonly IDictionary<IRoleType, IDictionary<IClass, IRule>> rulesByClassByRoleType;
 
-        protected Workspace(DatabaseConnection database, IWorkspaceServices services)
+        protected Workspace(DatabaseConnection database, IWorkspaceServices services, IRanges<long> recordRanges)
         {
             this.DatabaseConnection = database;
             this.Services = services;
+            this.RecordRanges = recordRanges;
+            this.StrategyRanges = new DefaultClassRanges<Strategy>();
 
             this.ruleByRoleType = new Dictionary<IRoleType, IRule>();
             this.rulesByClassByRoleType = new Dictionary<IRoleType, IDictionary<IClass, IRule>>();
@@ -54,6 +56,10 @@ namespace Allors.Workspace.Adapters
         public IConfiguration Configuration => this.DatabaseConnection.Configuration;
 
         public IWorkspaceServices Services { get; }
+
+        public IRanges<long> RecordRanges { get; }
+
+        public IRanges<Strategy> StrategyRanges { get; }
 
         public abstract ISession CreateSession();
 

@@ -975,6 +975,8 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
+                var ranges = this.Transaction.Database.Ranges;
+
                 if (this.originalRoleByRoleType == null)
                 {
                     return null;
@@ -1011,7 +1013,7 @@ namespace Allors.Database.Adapters.Sql
                     {
                         var changeTracker = (ChangeTracker)originalRole;
 
-                        if (changeTracker.Add.Except(changeTracker.Remove).IsEmpty && changeTracker.Remove.Except(changeTracker.Add).IsEmpty)
+                        if (ranges.Except(changeTracker.Add, changeTracker.Remove).IsEmpty && ranges.Except(changeTracker.Remove, changeTracker.Add).IsEmpty)
                         {
                             continue;
                         }
@@ -1033,6 +1035,8 @@ namespace Allors.Database.Adapters.Sql
         {
             get
             {
+                var ranges = this.Transaction.Database.Ranges;
+
                 if (this.originalAssociationByAssociationType == null)
                 {
                     return null;
@@ -1060,7 +1064,7 @@ namespace Allors.Database.Adapters.Sql
                     {
                         var changeTracker = (ChangeTracker)originalAssociation;
 
-                        if (changeTracker.Add.Except(changeTracker.Remove).IsEmpty && changeTracker.Remove.Except(changeTracker.Add).IsEmpty)
+                        if (ranges.Except(changeTracker.Add, changeTracker.Remove).IsEmpty && ranges.Except(changeTracker.Remove, changeTracker.Add).IsEmpty)
                         {
                             continue;
                         }
@@ -1106,10 +1110,11 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesRoleAdd(IRoleType roleType, long originalRole)
         {
+            var ranges = this.Transaction.Database.Ranges;
             this.EnsureOriginalRoleByRoleType.TryGetValue(roleType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
-            changeTracker.Add = changeTracker.Add.Add(originalRole);
+            changeTracker.Add = ranges.Add(changeTracker.Add, originalRole);
             this.originalRoleByRoleType[roleType] = changeTracker;
 
             this.State.ChangeLog.OnChangedRoles(this);
@@ -1117,10 +1122,11 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesRoleRemove(IRoleType roleType, long originalRole)
         {
+            var ranges = this.Transaction.Database.Ranges;
             this.EnsureOriginalRoleByRoleType.TryGetValue(roleType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
-            changeTracker.Remove = changeTracker.Remove.Add(originalRole);
+            changeTracker.Remove = ranges.Add(changeTracker.Remove, originalRole);
             this.originalRoleByRoleType[roleType] = changeTracker;
 
             this.State.ChangeLog.OnChangedRoles(this);
@@ -1139,10 +1145,11 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesAssociationAdd(IAssociationType associationType, long originalAssociation)
         {
+            var ranges = this.Transaction.Database.Ranges;
             this.EnsureOriginalAssociationByAssociationType.TryGetValue(associationType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
-            changeTracker.Add = changeTracker.Add.Add(originalAssociation);
+            changeTracker.Add = ranges.Add(changeTracker.Add, originalAssociation);
             this.originalAssociationByAssociationType[associationType] = changeTracker;
 
             this.State.ChangeLog.OnChangedAssociations(this);
@@ -1150,10 +1157,11 @@ namespace Allors.Database.Adapters.Sql
 
         private void OnChangingCompositesAssociationRemove(IAssociationType associationType, long originalAssociation)
         {
+            var ranges = this.Transaction.Database.Ranges;
             this.EnsureOriginalAssociationByAssociationType.TryGetValue(associationType, out var temp);
 
             var changeTracker = (ChangeTracker?)temp ?? new ChangeTracker();
-            changeTracker.Remove = changeTracker.Remove.Add(originalAssociation);
+            changeTracker.Remove = ranges.Add(changeTracker.Remove, originalAssociation);
             this.originalAssociationByAssociationType[associationType] = changeTracker;
 
             this.State.ChangeLog.OnChangedAssociations(this);

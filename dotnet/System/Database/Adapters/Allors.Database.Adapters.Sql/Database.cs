@@ -13,7 +13,8 @@ namespace Allors.Database.Adapters.Sql
     using Allors.Database.Tracing;
     using Caching;
     using Meta;
-    
+    using Ranges;
+
     public abstract class Database : IDatabase
     {
         public static readonly IsolationLevel DefaultIsolationLevel = System.Data.IsolationLevel.Snapshot;
@@ -107,6 +108,8 @@ namespace Allors.Database.Adapters.Sql
         {
             get;
         }
+
+        internal IRanges<long> Ranges = new DefaultStructRanges<long>();
 
         public ITransaction CreateTransaction()
         {

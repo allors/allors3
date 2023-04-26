@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the AssociationType type.</summary>
 
-namespace Allors.Workspace.Meta.Lazy
+namespace Allors.Workspace.Meta
 {
     public interface IUnitInternals : IUnit
     {
