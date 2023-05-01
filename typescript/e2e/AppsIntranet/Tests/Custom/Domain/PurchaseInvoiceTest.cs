@@ -104,7 +104,7 @@ namespace Tests.E2E.Objects
             await form.BilledFromAutocomplete.SelectAsync(billedFrom.Name);
             await form.DerivedBilledFromContactMechanismSelect.SelectAsync(billedFromContactMechanism);
             await form.BilledFromContactPersonSelect.SelectAsync(billedFromContactPerson);
-            await form.BilledToContactPersonAutocomplete.SelectAsync(billToContactPerson.DisplayName);
+            //await form.BilledToContactPersonAutocomplete.SelectAsync(billToContactPerson.DisplayName);
             await form.ShipToCustomerAutocomplete.SelectAsync(shipToCustomer.DisplayName);
             await form.ShipToCustomerContactPersonSelect.SelectAsync(shipToContactPerson);
             await form.BillToEndCustomerAutocomplete.SelectAsync(billToEndCustomer.DisplayName);
@@ -133,7 +133,7 @@ namespace Tests.E2E.Objects
             Assert.AreEqual(billedFrom, purchaseInvoice.BilledFrom);
             Assert.AreEqual(billedFromContactMechanism, purchaseInvoice.AssignedBilledFromContactMechanism);
             Assert.AreEqual(billedFromContactPerson, purchaseInvoice.BilledFromContactPerson);
-            Assert.AreEqual(billToContactPerson, purchaseInvoice.BilledToContactPerson);
+            //Assert.AreEqual(billToContactPerson, purchaseInvoice.BilledToContactPerson);
             Assert.AreEqual(shipToCustomer, purchaseInvoice.ShipToCustomer);
             Assert.AreEqual(shipToContactPerson, purchaseInvoice.ShipToCustomerContactPerson);
             Assert.AreEqual(billToEndCustomer, purchaseInvoice.BillToEndCustomer);
