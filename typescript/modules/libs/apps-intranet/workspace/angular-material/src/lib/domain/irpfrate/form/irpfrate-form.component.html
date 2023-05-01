@@ -21,4 +21,78 @@
       [roleType]="m.IrpfRate.Rate"
     ></a-mat-input>
   </div>
+
+  <div class="row">
+    <mat-form-field class="col-md">
+      <mat-select
+        name="irpfPayableAccount"
+        [(ngModel)]="irpfPayableAccount"
+        placeholder="Irpf Payable Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onIrpfPayableAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="col-md">
+      <mat-select
+        name="irpfToPayAccount"
+        [(ngModel)]="irpfToPayAccount"
+        placeholder="Irpf To Pay Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onIrpfToPayAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md">
+      <mat-select
+        name="irpfReceivableAccount"
+        [(ngModel)]="irpfReceivableAccount"
+        placeholder="Irpf Receivable Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onIrpfReceivableAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="col-md">
+      <mat-select
+        name="irpfToReceiveAccount"
+        [(ngModel)]="irpfToReceiveAccount"
+        placeholder="Irpf To Receive Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onIrpfToReceiveAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+  </div>
 </div>

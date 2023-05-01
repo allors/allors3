@@ -21,4 +21,78 @@
       [roleType]="m.VatRate.Rate"
     ></a-mat-input>
   </div>
+
+  <div class="row">
+    <mat-form-field class="col-md">
+      <mat-select
+        name="vatPayableAccount"
+        [(ngModel)]="vatPayableAccount"
+        placeholder="Vat Payable Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onVatPayableAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="col-md">
+      <mat-select
+        name="vatToPayAccount"
+        [(ngModel)]="vatToPayAccount"
+        placeholder="Vat To Pay Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onVatToPayAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="row">
+    <mat-form-field class="col-md">
+      <mat-select
+        name="vatReceivableAccount"
+        [(ngModel)]="vatReceivableAccount"
+        placeholder="Vat Receivable Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onVatReceivableAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="col-md">
+      <mat-select
+        name="vatToReceiveAccount"
+        [(ngModel)]="vatToReceiveAccount"
+        placeholder="Vat To Receive Account"
+        multiple="false"
+      >
+        <mat-option>None</mat-option>
+        <mat-option
+          (onSelectionChange)="onVatToReceiveAccountChange($event)"
+          *ngFor="let organisationGlAccount of organisationGlAccounts"
+          [value]="organisationGlAccount"
+          >{{ organisationGlAccount.GeneralLedgerAccount.ReferenceNumber }}:
+          {{ organisationGlAccount.GeneralLedgerAccount.Name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+  </div>
 </div>

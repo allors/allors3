@@ -152,6 +152,20 @@ export class Filters {
     });
   }
 
+  static organisationGlAccountsFilter(m: M, internalOrganisationId: number) {
+    return new SearchFactory({
+      objectType: m.OrganisationGlAccount,
+      roleTypes: [m.OrganisationGlAccount.GeneralLedgerAccount],
+      post: (predicate: And) => {
+        predicate.operands.push({
+          kind: 'Equals',
+          propertyType: m.OrganisationGlAccount.InternalOrganisation,
+          value: internalOrganisationId,
+        });
+      },
+    });
+  }
+
   static internalOrganisationsFilter(m: M) {
     return new SearchFactory({
       objectType: m.Organisation,

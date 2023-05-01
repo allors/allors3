@@ -37,14 +37,6 @@ namespace Allors.Repository
         public decimal Rate { get; set; }
 
         #region Allors
-        [Id("46cf5d68-cceb-4b49-933c-875e9614eb8b")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount VatPayableAccount { get; set; }
-
-        #region Allors
         [Id("5418fdea-366c-4e0b-b2e0-d49cfb12cbe5")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -77,14 +69,6 @@ namespace Allors.Repository
         public TimeFrequency PaymentFrequency { get; set; }
 
         #region Allors
-        [Id("b2aa3989-8e65-4fdb-9654-46ae615fd73a")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount VatToPayAccount { get; set; }
-
-        #region Allors
         [Id("b628964e-5139-4c32-a2c1-239deaff70e8")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -93,20 +77,36 @@ namespace Allors.Repository
         public EuSalesListType EuSalesListType { get; set; }
 
         #region Allors
-        [Id("cbd85372-08d1-4c6d-81a9-02d76c874c46")]
+        [Id("46cf5d68-cceb-4b49-933c-875e9614eb8b")]
         #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
+        [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Workspace(Default)]
-        public OrganisationGlAccount VatToReceiveAccount { get; set; }
+        public OrganisationGlAccount[] VatPayableAccounts { get; set; }
+
+        #region Allors
+        [Id("b2aa3989-8e65-4fdb-9654-46ae615fd73a")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        public OrganisationGlAccount[] VatToPayAccounts { get; set; }
 
         #region Allors
         [Id("cf879781-9f52-438c-b0e0-fd23f336bead")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToMany)]
         [Indexed]
         [Workspace(Default)]
-        public OrganisationGlAccount VatReceivableAccount { get; set; }
+        public OrganisationGlAccount[] VatReceivableAccounts { get; set; }
+
+        #region Allors
+        [Id("cbd85372-08d1-4c6d-81a9-02d76c874c46")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        [Workspace(Default)]
+        public OrganisationGlAccount[] VatToReceiveAccounts { get; set; }
 
         #region Allors
         [Id("e6242c51-98f9-408d-9dd8-07e3c639c82e")]
