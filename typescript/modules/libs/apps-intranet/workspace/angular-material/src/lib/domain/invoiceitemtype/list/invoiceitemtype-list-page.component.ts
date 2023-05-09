@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
 import { Sort } from '@angular/material/sort';
 
 import { M } from '@allors/default/workspace/meta';
-import { VatRegime } from '@allors/default/workspace/domain';
+import { InvoiceItemType } from '@allors/default/workspace/domain';
 import {
   Action,
   Filter,
@@ -19,27 +19,27 @@ import {
 } from '@allors/base/workspace/angular/foundation';
 import { NavigationService } from '@allors/base/workspace/angular/application';
 import {
-  DeleteActionService,
+  EditActionService,
   OverviewActionService,
   SorterService,
 } from '@allors/base/workspace/angular-material/application';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 interface Row extends TableRow {
-  object: VatRegime;
+  object: InvoiceItemType;
   name: string;
 }
 
 @Component({
-  templateUrl: './vatregime-list-page.component.html',
+  templateUrl: './invoiceitemtype-list-page.component.html',
   providers: [ContextService],
 })
-export class VatRegimeListPageComponent implements OnInit, OnDestroy {
-  public title = 'VAT Regimes';
+export class InvoiceItemTypeListPageComponent implements OnInit, OnDestroy {
+  public title = 'Invoice Item Types';
 
   table: Table<Row>;
 
-  delete: Action;
+  edit: Action;
 
   private subscription: Subscription;
   filter: Filter;
@@ -49,28 +49,29 @@ export class VatRegimeListPageComponent implements OnInit, OnDestroy {
     @Self() public allors: ContextService,
     public refreshService: RefreshService,
     public overviewService: OverviewActionService,
-    public deleteService: DeleteActionService,
+    public editRoleService: EditActionService,
     public navigation: NavigationService,
     public mediaService: MediaService,
     public filterService: FilterService,
     public sorterService: SorterService,
-    titleService: Title
+    titleService: Title,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     this.allors.context.name = this.constructor.name;
     this.m = this.allors.context.configuration.metaPopulation as M;
 
     titleService.setTitle(this.title);
 
-    this.delete = deleteService.delete();
-    this.delete.result.subscribe(() => {
+    this.edit = editRoleService.edit();
+    this.edit.result.subscribe(() => {
       this.table.selection.clear();
     });
 
     this.table = new Table({
       selection: true,
       columns: [{ name: 'name', sort: true }],
-      actions: [overviewService.overview(), this.delete],
-      defaultAction: overviewService.overview(),
+      actions: [this.edit],
+      defaultAction: this.edit,
       pageSize: 50,
       initialSort: 'name',
       initialSortDirection: 'desc',
@@ -81,19 +82,20 @@ export class VatRegimeListPageComponent implements OnInit, OnDestroy {
     const m = this.m;
     const { pullBuilder: pull } = m;
 
-    this.filter = this.filterService.filter(m.VatRegime);
+    this.filter = this.filterService.filter(m.InvoiceItemType);
 
     this.subscription = combineLatest([
       this.refreshService.refresh$,
       this.filter.fields$,
       this.table.sort$,
       this.table.pager$,
+      this.internalOrganisationId.observable$,
     ])
       .pipe(
         scan(
           (
             [previousRefresh, previousFilterFields],
-            [refresh, filterFields, sort, pageEvent]
+            [refresh, filterFields, sort, pageEvent, internalOrganisationId]
           ) => {
             pageEvent =
               previousRefresh !== refresh ||
@@ -108,21 +110,28 @@ export class VatRegimeListPageComponent implements OnInit, OnDestroy {
               this.table.pageIndex = 0;
             }
 
-            return [refresh, filterFields, sort, pageEvent];
+            return [
+              refresh,
+              filterFields,
+              sort,
+              pageEvent,
+              internalOrganisationId,
+            ];
           }
         ),
         switchMap(
-          ([, filterFields, sort, pageEvent]: [
+          ([, filterFields, sort, pageEvent, internalOrganisationId]: [
             Date,
             FilterField[],
             Sort,
-            PageEvent
+            PageEvent,
+            number
           ]) => {
             const pulls = [
-              pull.VatRegime({
+              pull.InvoiceItemType({
                 predicate: this.filter.definition.predicate,
                 sorting: sort
-                  ? this.sorterService.sorter(m.VatRegime)?.create(sort)
+                  ? this.sorterService.sorter(m.InvoiceItemType)?.create(sort)
                   : null,
                 arguments: this.filter.parameters(filterFields),
                 skip: pageEvent.pageIndex * pageEvent.pageSize,
@@ -137,7 +146,7 @@ export class VatRegimeListPageComponent implements OnInit, OnDestroy {
       .subscribe((loaded) => {
         this.allors.context.reset();
 
-        const objects = loaded.collection<VatRegime>(m.VatRegime);
+        const objects = loaded.collection<InvoiceItemType>(m.InvoiceItemType);
         this.table.data = objects?.map((v) => {
           return {
             object: v,

@@ -59,38 +59,6 @@ namespace Allors.Repository
         [Workspace(Default)]
         public TimeFrequency PaymentFrequency { get; set; }
 
-        #region Allors
-        [Id("841FE2F6-85E9-495E-9043-D5F228304E22")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] IrpfPayableAccounts { get; set; }
-
-        #region Allors
-        [Id("748AB6BD-DC32-45EE-83E4-88CF7BB3845A")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] IrpfToPayAccounts { get; set; }
-
-        #region Allors
-        [Id("D0981213-985A-43FF-9DC5-AD571ADFB8B8")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] IrpfReceivableAccounts { get; set; }
-
-        #region Allors
-        [Id("1AD7B882-B4A8-43E0-8777-C044721D3710")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] IrpfToReceiveAccounts { get; set; }
-
         #region inherited methods
 
         public void OnBuild() { }

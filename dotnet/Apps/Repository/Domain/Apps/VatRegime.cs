@@ -62,7 +62,15 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        public Country Country { get; set; }
+        public Country ObsoleteCountry { get; set; }
+
+        #region Allors
+        [Id("65eb1cc4-46b6-435f-b5a1-4ca359680fdd")]
+        #endregion
+        [Workspace(Default)]
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        public Country[] Countries { get; set; }
 
         #region Allors
         [Id("8c66f441-be9a-468f-86f7-19fb2cebb51b")]
@@ -95,13 +103,6 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         public VatClause VatClause { get; set; }
-
-        #region Allors
-        [Id("1df0b3cd-01c7-47b0-9358-7de6e2ab9ce6")]
-        #endregion
-        [Derived]
-        [Workspace(Default)]
-        public string CountryName { get; set; }
 
         #region inherited methods
 

@@ -76,102 +76,102 @@ namespace Allors.Database.Domain
             {
                 v.Name = "Dutch standard VAT tariff";
                 localisedName.Set(v, dutchLocale, "Nederland hoog BTW-tarief");
-                v.Country = netherlands;
                 v.IsActive = true;
             });
             var vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, DutchStandardId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Dutch21);
+            vatregime.AddVatRate(new VatRates(this.Transaction).DutchStandard);
+            vatregime.AddCountry(netherlands);
 
             merge(DutchReducedId, v =>
             {
                 v.Name = "Dutch reduced VAT tariff";
                 localisedName.Set(v, dutchLocale, "Nederland laag BTW-tarief");
-                v.Country = netherlands;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, DutchReducedId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Dutch9);
+            vatregime.AddVatRate(new VatRates(this.Transaction).DutchReduced);
+            vatregime.AddCountry(netherlands);
 
             merge(BelgiumStandardId, v =>
             {
                 v.Name = "Belgium standard VAT tariff";
                 localisedName.Set(v, dutchLocale, "Belgie hoog BTW-tarief");
-                v.Country = belgium;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, BelgiumStandardId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Belgium21);
+            vatregime.AddVatRate(new VatRates(this.Transaction).BelgiumStandard);
+            vatregime.AddCountry(belgium);
 
             merge(BelgiumReducedTableAId, v =>
             {
                 v.Name = "Belgium reduced VAT 6%";
                 localisedName.Set(v, dutchLocale, "Belgie laag BTW-tarief 6%");
-                v.Country = belgium;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, BelgiumReducedTableAId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Belgium6);
+            vatregime.AddVatRate(new VatRates(this.Transaction).BelgiumReduced);
+            vatregime.AddCountry(belgium);
 
             merge(BelgiumReducedTableBId, v =>
             {
                 v.Name = "Belgium reduced VAT tariff 12%";
                 localisedName.Set(v, dutchLocale, "Belgie laag BTW-tarief 12%");
-                v.Country = belgium;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, BelgiumReducedTableBId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Belgium12);
+            vatregime.AddVatRate(new VatRates(this.Transaction).BelgiumIntermediate);
+            vatregime.AddCountry(belgium);
 
             merge(ServiceB2BId, v =>
             {
                 v.Name = "Service B2B: Not VAT assessable";
                 localisedName.Set(v, dutchLocale, "Service B2B: Niet BTW-plichtig");
                 v.VatClause = new VatClauses(this.Transaction).ServiceB2B;
-                v.Country = belgium;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, ServiceB2BId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).BelgiumServiceB2B0);
+            vatregime.AddVatRate(new VatRates(this.Transaction).BelgiumServiceB2B);
+            vatregime.AddCountry(belgium);
 
             merge(SpainStandardId, v =>
             {
                 v.Name = "Spain standard VAT tariff";
                 localisedName.Set(v, dutchLocale, "Spanje hoog BTW-tarief");
-                v.Country = spain;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, SpainStandardId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Spain21);
+            vatregime.AddVatRate(new VatRates(this.Transaction).SpainStandard);
+            vatregime.AddCountry(spain);
 
             merge(SpainReducedId, v =>
             {
                 v.Name = "Spain reduced VAT tariff";
                 localisedName.Set(v, dutchLocale, "Spanje laag BTW-tarief");
-                v.Country = spain;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, SpainReducedId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Spain10);
+            vatregime.AddVatRate(new VatRates(this.Transaction).SpainReduced);
+            vatregime.AddCountry(spain);
 
             merge(SpainSuperReducedId, v =>
             {
                 v.Name = "Spain super reduced VAT tariff";
                 localisedName.Set(v, dutchLocale, "Spanje extra laag BTW-tarief");
-                v.Country = spain;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, SpainSuperReducedId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Spain4);
+            vatregime.AddVatRate(new VatRates(this.Transaction).SpainSuperReduced);
+            vatregime.AddCountry(spain);
 
             merge(SpainCanaryIslandsId, v =>
             {
                 v.Name = "Spain Canary islands VAT tariff";
                 localisedName.Set(v, dutchLocale, "Spanje Canarische eilanden BTW-tarief");
-                v.Country = spain;
                 v.IsActive = true;
             });
             vatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, SpainCanaryIslandsId);
-            vatregime.AddVatRate(new VatRates(this.Transaction).Spain7);
+            vatregime.AddVatRate(new VatRates(this.Transaction).SpainIgic);
+            vatregime.AddCountry(spain);
 
             merge(ZeroRatedId, v =>
             {
@@ -180,7 +180,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
             var zeroRatedvatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, ZeroRatedId);
-            zeroRatedvatregime.AddVatRate(new VatRates(this.Transaction).ZeroRated0);
+            zeroRatedvatregime.AddVatRate(new VatRates(this.Transaction).ZeroRated);
 
             merge(ExemptId, v =>
             {
@@ -189,7 +189,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
             var exemptVatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, ExemptId);
-            exemptVatregime.AddVatRate(new VatRates(this.Transaction).Exempt0);
+            exemptVatregime.AddVatRate(new VatRates(this.Transaction).Exempt);
 
             merge(IntraCommunautairId, v =>
             {
@@ -199,20 +199,19 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
             var EuVatregime = new VatRegimes(this.Transaction).FindBy(M.VatRegime.UniqueId, IntraCommunautairId);
-            EuVatregime.AddVatRate(new VatRates(this.Transaction).Intracommunity0);
+            EuVatregime.AddVatRate(new VatRates(this.Transaction).Intracommunity);
 
             foreach (Country country in this.Transaction.Extent<Country>())
             {
-                country.AddDerivedVatRegime(zeroRatedvatregime);
-                country.AddDerivedVatRegime(exemptVatregime);
+                zeroRatedvatregime.AddCountry(country);
+                exemptVatregime.AddCountry(country);
 
                 if (Countries.EuMemberStates.Contains(country.IsoCode))
                 {
-                    country.AddDerivedVatRegime(EuVatregime);
+                    EuVatregime.AddCountry(country);
                 }
             }
         }
-
 
         protected override void AppsSecure(Security config)
         {

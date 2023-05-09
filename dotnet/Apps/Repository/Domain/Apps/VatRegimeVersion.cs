@@ -34,7 +34,15 @@ namespace Allors.Repository
         [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        public Country Country { get; set; }
+        public Country ObsoleteCountry { get; set; }
+
+        #region Allors
+        [Id("843285bd-abcf-4edb-88c4-5e9da8b45f91")]
+        #endregion
+        [Workspace(Default)]
+        [Multiplicity(Multiplicity.ManyToMany)]
+        [Indexed]
+        public Country[] Countries { get; set; }
 
         #region inherited methods
 

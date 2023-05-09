@@ -20,7 +20,6 @@ namespace Allors.Database.Domain
             m.VatRegime.AssociationPattern(v => v.CountriesWhereDerivedVatRegime, m.VatRegime),
             m.VatRegime.AssociationPattern(v => v.InvoicesWhereDerivedVatRegime, m.VatRegime),
             m.VatRegime.AssociationPattern(v => v.InvoiceVersionsWhereDerivedVatRegime, m.VatRegime),
-            m.VatRegime.AssociationPattern(v => v.InternalOrganisationVatRegimeSettingsesWhereVatRegime, m.VatRegime),
             m.VatRegime.AssociationPattern(v => v.OrdersWhereDerivedVatRegime, m.VatRegime),
             m.VatRegime.AssociationPattern(v => v.OrderVersionsWhereDerivedVatRegime, m.VatRegime),
             m.VatRegime.AssociationPattern(v => v.PriceablesWhereDerivedVatRegime, m.VatRegime),

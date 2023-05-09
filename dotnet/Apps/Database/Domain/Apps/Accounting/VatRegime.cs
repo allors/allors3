@@ -9,7 +9,6 @@ namespace Allors.Database.Domain
     {
         public bool IsDeletable => !this.ExistInvoicesWhereDerivedVatRegime
             && !this.ExistInvoiceVersionsWhereDerivedVatRegime
-            && !this.ExistInternalOrganisationVatRegimeSettingsesWhereVatRegime
             && !this.ExistOrdersWhereDerivedVatRegime
             && !this.ExistOrderVersionsWhereDerivedVatRegime
             && !this.ExistPriceablesWhereDerivedVatRegime
@@ -24,11 +23,6 @@ namespace Allors.Database.Domain
             if (this.IsDeletable)
             {
                 foreach (var @this in this.VatRates)
-                {
-                    @this.Delete();
-                }
-
-                foreach (var @this in this.InternalOrganisationVatRegimeSettingsesWhereVatRegime)
                 {
                     @this.Delete();
                 }

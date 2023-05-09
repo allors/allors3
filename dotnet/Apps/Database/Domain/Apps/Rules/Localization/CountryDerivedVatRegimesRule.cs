@@ -12,28 +12,35 @@ namespace Allors.Database.Domain
     using Meta;
     using Derivations.Rules;
 
-    public class CountryVatRegimesRule : Rule
+    public class CountryDerivedVatRegimesRule : Rule
     {
-        public CountryVatRegimesRule(MetaPopulation m) : base(m, new Guid("ac33cb9d-f694-4247-ad5d-fdae01d05c07")) =>
+        public CountryDerivedVatRegimesRule(MetaPopulation m) : base(m, new Guid("ac33cb9d-f694-4247-ad5d-fdae01d05c07")) =>
             this.Patterns = new Pattern[]
             {
                 m.Country.AssociationPattern(v => v.VatRegimesWhereCountry),
+                m.VatRegime.RolePattern(v => v.Countries, v => v.Countries),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Country>())
             {
-                foreach (var vatRegime in @this.VatRegimesWhereCountry)
-                {
-                    var previousCountry = vatRegime.CurrentVersion?.Country;
-                    if (previousCountry != null && previousCountry != vatRegime.Country)
-                    {
-                        previousCountry.RemoveDerivedVatRegime(vatRegime);
-                    }
+                @this.DeriveCountryDerivedVatRegimes(validation);
+            }
+        }
+    }
 
-                    @this.AddDerivedVatRegime(vatRegime);
-                }
+    public static class CountryDerivedVatRegimesRuleExtensions
+    {
+        public static void DeriveCountryDerivedVatRegimes(this Country @this, IValidation validation)
+        {
+            @this.RemoveDerivedVatRegimes();
+
+            foreach (var vatRegime in @this.VatRegimesWhereCountry)
+            {
+                @this.AddDerivedVatRegime(vatRegime);
             }
         }
     }

@@ -76,7 +76,7 @@ namespace Allors.Database.Domain
             this.DerivationTrigger = Guid.NewGuid();
         }
 
-        public void BaseOnInit(ObjectOnInit method)
+        public void AppsOnInit(ObjectOnInit method)
         {
             if (!this.ExistStoredInFacility
                 && this.ExistInvoiceItemType

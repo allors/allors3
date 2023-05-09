@@ -89,10 +89,25 @@ namespace Allors.Database.Domain.Tests
             var vatRegime = new VatRegimeBuilder(this.Transaction).Build();
             this.Derive();
 
-            vatRegime.Country = country;
+            vatRegime.AddCountry(country);
             this.Derive();
 
             Assert.Contains(vatRegime, country.DerivedVatRegimes);
+        }
+
+        [Fact]
+        public void ChangedVatRegimeCountryDeriveDerivedVatRegimes2()
+        {
+            var country = new CountryBuilder(this.Transaction).Build();
+            this.Derive();
+
+            var vatRegime = new VatRegimeBuilder(this.Transaction).WithCountry(country).Build();
+            this.Derive();
+
+            vatRegime.RemoveCountry(country);
+            this.Derive();
+
+            Assert.DoesNotContain(vatRegime, country.DerivedVatRegimes);
         }
     }
 }

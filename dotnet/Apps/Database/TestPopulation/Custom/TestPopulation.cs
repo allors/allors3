@@ -1336,41 +1336,41 @@ namespace Allors
 
             this.Transaction.Derive();
 
-            var discountSettings = new InternalOrganisationInvoiceSettingsBuilder(this.Transaction)
-                .WithInvoiceItemType(new InvoiceItemTypes(this.Transaction).Discount)
-                .WithSalesGeneralLedgerAccount(WKprBtkBed)
-                .WithPurchaseLedgerAccount(WKprBtkBec)
-                .Build();
+            foreach(var setting in new VatRates(this.Transaction).DutchStandard.InternalOrganisationVatRateSettingsesWhereVatRate)
+            {
+                setting.VatPayableAccount = WOmzNopOlh;
+                setting.VatReceivableAccount = WOmzNopOlh;
+            }
 
-            var dutchStandardTariffSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
-                .WithVatRegime(new VatRegimes(this.Transaction).DutchStandardTariff)
-                .WithGeneralLedgerAccount(WOmzNopOlh)
-                .Build();
+            foreach (var setting in new VatRates(this.Transaction).DutchReduced.InternalOrganisationVatRateSettingsesWhereVatRate)
+            {
+                setting.VatPayableAccount = WOmzNopOlv;
+                setting.VatReceivableAccount = WOmzNopOlv;
+            }
 
-            var dutchReducedTariffSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
-                .WithVatRegime(new VatRegimes(this.Transaction).DutchReducedTariff)
-                .WithGeneralLedgerAccount(WOmzNopOlv)
-                .Build();
+            foreach (var setting in new VatRates(this.Transaction).BelgiumServiceB2B.InternalOrganisationVatRateSettingsesWhereVatRate)
+            {
+                setting.VatPayableAccount = WOmzNodOdg;
+                setting.VatReceivableAccount = WOmzNodOdg;
+            }
 
-            var serviceB2BSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
-                .WithVatRegime(new VatRegimes(this.Transaction).ServiceB2B)
-                .WithGeneralLedgerAccount(WOmzNodOdg)
-                .Build();
+            foreach (var setting in new VatRates(this.Transaction).ZeroRated.InternalOrganisationVatRateSettingsesWhereVatRate)
+            {
+                setting.VatPayableAccount = WOmzNopOlg;
+                setting.VatReceivableAccount = WOmzNopOlg;
+            }
 
-            var zeroRatedSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
-                .WithVatRegime(new VatRegimes(this.Transaction).ZeroRated)
-                .WithGeneralLedgerAccount(WOmzNopOlg)
-                .Build();
+            foreach (var setting in new VatRates(this.Transaction).Exempt.InternalOrganisationVatRateSettingsesWhereVatRate)
+            {
+                setting.VatPayableAccount = WOmzNopNod;
+                setting.VatReceivableAccount = WOmzNopNod;
+            }
 
-            var exemptSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
-                .WithVatRegime(new VatRegimes(this.Transaction).Exempt)
-                .WithGeneralLedgerAccount(WOmzNopNod)
-                .Build();
-
-            var intraCommunautairSetting = new InternalOrganisationVatRegimeSettingsBuilder(this.Transaction)
-                .WithVatRegime(new VatRegimes(this.Transaction).IntraCommunautair)
-                .WithGeneralLedgerAccount(WOmzNopOli)
-                .Build();
+            foreach (var setting in new VatRates(this.Transaction).Intracommunity.InternalOrganisationVatRateSettingsesWhereVatRate)
+            {
+                setting.VatPayableAccount = WOmzNopOli;
+                setting.VatReceivableAccount = WOmzNopOli;
+            }
 
             this.Transaction.Derive();
 
@@ -1400,31 +1400,27 @@ namespace Allors
 
             this.Transaction.Derive();
 
-            var internalOrganisationAccountingSettings = new InternalOrganisationAccountingSettingsBuilder(this.Transaction)
-                .WithAccountsPayable(BVorDebHad)
-                .WithAccountsReceivable(BSchCreHac)
-                .WithSalesPaymentDifferences(WBedAdlBet)
-                .WithPurchasePaymentDifferences(WBedAdlBov)
-                .WithExhangeRateDifferences(WBedAdlVal)
-                .WithOpeningBalance(BSchTusTov)
-                .WithInventory(BVrdHanVoo)
-                .WithDeferredExpense(BVorOvaVof)
-                .WithDeferredRevenue(BSchOpaVgo)
-                .WithAccruedExpense(BSchOpaNto)
-                .WithAccruedRevenue(BVorOvaNtf)
-                .WithRetainedEarnings(BEivOreRvh)
-                .WithEquity(BEivKapOnd)
-                .WithSettingsForInvoiceItemType(discountSettings)
-                .WithSettingsForVatRegime(dutchStandardTariffSetting)
-                .WithSettingsForVatRegime(dutchReducedTariffSetting)
-                .WithSettingsForVatRegime(serviceB2BSetting)
-                .WithSettingsForVatRegime(zeroRatedSetting)
-                .WithSettingsForVatRegime(exemptSetting)
-                .WithSettingsForVatRegime(intraCommunautairSetting)
-                .WithActualAccountingPeriod(periode1)
-                .Build();
+            var discountSettings = dutchInternalOrganisation.SettingsForAccounting.SettingsForInvoiceItemTypes.FirstOrDefault(v => v.InvoiceItemType.Equals(new InvoiceItemTypes(this.Transaction).Discount));
+            if (discountSettings != null)
+            {
+                discountSettings.SalesGeneralLedgerAccount = WKprBtkBed;
+                discountSettings.PurchaseGeneralLedgerAccount = WKprBtkBec;
+            }
 
-            dutchInternalOrganisation.SettingsForAccounting = internalOrganisationAccountingSettings;
+            dutchInternalOrganisation.SettingsForAccounting.AccountsPayable = BVorDebHad;
+            dutchInternalOrganisation.SettingsForAccounting.AccountsReceivable = BSchCreHac;
+            dutchInternalOrganisation.SettingsForAccounting.SalesPaymentDifferences = WBedAdlBet;
+            dutchInternalOrganisation.SettingsForAccounting.PurchasePaymentDifferences = WBedAdlBov;
+            dutchInternalOrganisation.SettingsForAccounting.ExhangeRateDifferences = WBedAdlVal;
+            dutchInternalOrganisation.SettingsForAccounting.OpeningBalance = BSchTusTov;
+            dutchInternalOrganisation.SettingsForAccounting.Inventory = BVrdHanVoo;
+            dutchInternalOrganisation.SettingsForAccounting.DeferredExpense = BVorOvaVof;
+            dutchInternalOrganisation.SettingsForAccounting.DeferredRevenue = BSchOpaVgo;
+            dutchInternalOrganisation.SettingsForAccounting.AccruedExpense = BSchOpaNto;
+            dutchInternalOrganisation.SettingsForAccounting.AccruedRevenue = BVorOvaNtf;
+            dutchInternalOrganisation.SettingsForAccounting.RetainedEarnings = BEivOreRvh;
+            dutchInternalOrganisation.SettingsForAccounting.Equity = BEivKapOnd;
+            dutchInternalOrganisation.SettingsForAccounting.ActualAccountingPeriod = periode1;
 
             this.Transaction.Derive();
 

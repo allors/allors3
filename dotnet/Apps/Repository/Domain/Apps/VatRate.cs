@@ -77,38 +77,6 @@ namespace Allors.Repository
         public EuSalesListType EuSalesListType { get; set; }
 
         #region Allors
-        [Id("46cf5d68-cceb-4b49-933c-875e9614eb8b")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] VatPayableAccounts { get; set; }
-
-        #region Allors
-        [Id("b2aa3989-8e65-4fdb-9654-46ae615fd73a")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] VatToPayAccounts { get; set; }
-
-        #region Allors
-        [Id("cf879781-9f52-438c-b0e0-fd23f336bead")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] VatReceivableAccounts { get; set; }
-
-        #region Allors
-        [Id("cbd85372-08d1-4c6d-81a9-02d76c874c46")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
-        [Workspace(Default)]
-        public OrganisationGlAccount[] VatToReceiveAccounts { get; set; }
-
-        #region Allors
         [Id("e6242c51-98f9-408d-9dd8-07e3c639c82e")]
         #endregion
         [Workspace(Default)]

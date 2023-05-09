@@ -201,7 +201,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public InternalOrganisationInvoiceSettings[] SettingsForInvoiceItemType { get; set; }
+        public InternalOrganisationInvoiceItemTypeSettings[] SettingsForInvoiceItemTypes { get; set; }
 
         #region Allors
         [Id("3b8ebd9c-59d7-4389-80b6-5ccdd582197f")]
@@ -209,7 +209,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public InternalOrganisationInventorySettings[] SettingsForInventoryVariance { get; set; }
+        public InternalOrganisationInventorySettings[] SettingsForInventoryVariances { get; set; }
 
         #region Allors
         [Id("3f624382-3398-4562-9483-e46946988632")]
@@ -217,7 +217,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public InternalOrganisationVatRegimeSettings[] SettingsForVatRegime{ get; set; }
+        public InternalOrganisationVatRateSettings[] SettingsForVatRates{ get; set; }
 
         #region Allors
         [Id("e571a300-8006-4c82-9205-f0c0005fa400")]
@@ -225,7 +225,7 @@ namespace Allors.Repository
         [Multiplicity(Multiplicity.OneToMany)]
         [Indexed]
         [Workspace(Default)]
-        public InternalOrganisationIrpfRegimeSettings[] SettingsForIrpfRegime { get; set; }
+        public InternalOrganisationIrpfRateSettings[] SettingsForIrpfRates { get; set; }
 
         #region Allors
         [Id("4a95ad2c-63ba-481c-9698-5d2094df6ed4")]

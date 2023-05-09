@@ -55,7 +55,7 @@ export class VatRegimeEditFormComponent extends AllorsFormComponent<VatRegime> {
           LocalisedNames: {
             Locale: {},
           },
-          Country: {},
+          Countries: {},
           LastModifiedBy: {},
         },
       }),

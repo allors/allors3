@@ -16,6 +16,7 @@ import {
   FacilityListPageComponent,
   GeneralLedgerAccountListPageComponent,
   GoodListPageComponent,
+  InvoiceItemTypeListPageComponent,
   IrpfRegimeListPageComponent,
   IrpfRegimeOverviewPageComponent,
   ModelListPageComponent,
@@ -262,6 +263,10 @@ export const routes: Routes = [
         path: 'admin',
         children: [
           { path: 'emailmessages', component: EmailMessageListPageComponent },
+          {
+            path: 'invoiceitemtypes',
+            component: InvoiceItemTypeListPageComponent,
+          },
           { path: 'irpfregimes', component: IrpfRegimeListPageComponent },
           {
             path: 'irpfregime/:id',

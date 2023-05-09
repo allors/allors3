@@ -3,7 +3,8 @@ import { NgForm } from '@angular/forms';
 
 import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
-  OrganisationGlAccount,
+  GeneralLedgerAccount,
+  InternalOrganisationVatRateSettings,
   VatRate,
   VatRegime,
 } from '@allors/default/workspace/domain';
@@ -22,11 +23,10 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 export class VatRateFormComponent extends AllorsFormComponent<VatRate> {
   readonly m: M;
   vatRegime: VatRegime;
-  vatPayableAccount: OrganisationGlAccount;
-  vatToPayAccount: OrganisationGlAccount;
-  vatReceivableAccount: OrganisationGlAccount;
-  vatToReceiveAccount: OrganisationGlAccount;
-  organisationGlAccounts: OrganisationGlAccount[];
+  vatPayableAccount: GeneralLedgerAccount;
+  vatReceivableAccount: GeneralLedgerAccount;
+  glAccounts: GeneralLedgerAccount[];
+  vatRateSettings: InternalOrganisationVatRateSettings;
 
   constructor(
     @Self() public allors: ContextService,
@@ -44,14 +44,28 @@ export class VatRateFormComponent extends AllorsFormComponent<VatRate> {
 
     pulls.push(
       p.OrganisationGlAccount({
-        include: {
-          InternalOrganisation: {},
+        select: {
           GeneralLedgerAccount: {},
         },
         predicate: {
           kind: 'Equals',
           propertyType: m.OrganisationGlAccount.InternalOrganisation,
           value: this.internalOrganisationId.value,
+        },
+      }),
+      p.InternalOrganisation({
+        name: 'SettingsForVatRates',
+        objectId: this.internalOrganisationId.value,
+        select: {
+          SettingsForAccounting: {
+            SettingsForVatRates: {
+              include: {
+                VatRate: {},
+                VatPayableAccount: {},
+                VatReceivableAccount: {},
+              },
+            },
+          },
         },
       })
     );
@@ -61,12 +75,6 @@ export class VatRateFormComponent extends AllorsFormComponent<VatRate> {
         p.VatRate({
           name: '_object',
           objectId: this.editRequest.objectId,
-          include: {
-            VatPayableAccounts: { GeneralLedgerAccount: {} },
-            VatToPayAccounts: { GeneralLedgerAccount: {} },
-            VatReceivableAccounts: { GeneralLedgerAccount: {} },
-            VatToReceiveAccounts: { GeneralLedgerAccount: {} },
-          },
         })
       );
     }
@@ -76,14 +84,6 @@ export class VatRateFormComponent extends AllorsFormComponent<VatRate> {
       pulls.push(
         p.VatRegime({
           objectId: initializer.id,
-          include: {
-            VatRates: {
-              VatPayableAccounts: { GeneralLedgerAccount: {} },
-              VatToPayAccounts: { GeneralLedgerAccount: {} },
-              VatReceivableAccounts: { GeneralLedgerAccount: {} },
-              VatToReceiveAccounts: { GeneralLedgerAccount: {} },
-            },
-          },
         })
       );
     }
@@ -95,92 +95,54 @@ export class VatRateFormComponent extends AllorsFormComponent<VatRate> {
       : this.context.create(this.createRequest.objectType);
 
     this.vatRegime = pullResult.object<VatRegime>(this.m.VatRegime);
-    this.organisationGlAccounts = pullResult.collection<OrganisationGlAccount>(
-      this.m.OrganisationGlAccount
+    this.glAccounts = pullResult.collection<GeneralLedgerAccount>(
+      this.m.GeneralLedgerAccount
+    );
+
+    const vatRateSettingses = pullResult.collection(
+      'settingsForVatRates'
+    ) as InternalOrganisationVatRateSettings[];
+
+    this.vatRateSettings = vatRateSettingses.find(
+      (v) => v.VatRate === this.object
     );
 
     if (this.createRequest) {
       this.vatRegime.addVatRate(this.object);
     } else {
-      this.vatPayableAccount = this.object.VatPayableAccounts.find(
-        (v) => v.InternalOrganisation.id === this.internalOrganisationId.value
-      );
-      this.vatToPayAccount = this.object.VatToPayAccounts.find(
-        (v) => v.InternalOrganisation.id === this.internalOrganisationId.value
-      );
-      this.vatReceivableAccount = this.object.VatReceivableAccounts.find(
-        (v) => v.InternalOrganisation.id === this.internalOrganisationId.value
-      );
-      this.vatToReceiveAccount = this.object.VatToReceiveAccounts.find(
-        (v) => v.InternalOrganisation.id === this.internalOrganisationId.value
-      );
+      this.vatPayableAccount = this.vatRateSettings?.VatPayableAccount;
+      this.vatReceivableAccount = this.vatRateSettings?.VatReceivableAccount;
     }
   }
 
   public onVatPayableAccountChange(event): void {
-    const organisationGlAccount = event.source.value as OrganisationGlAccount;
+    const glAccount = event.source.value as GeneralLedgerAccount;
 
     if (event.isUserInput) {
       if (event.source.selected) {
-        this.object.addVatPayableAccount(organisationGlAccount);
-        this.vatPayableAccount = organisationGlAccount;
+        this.vatRateSettings.VatPayableAccount = glAccount;
       }
     } else {
       if (event.source.selected) {
-        this.object.addVatPayableAccount(organisationGlAccount);
+        this.vatRateSettings.VatPayableAccount = glAccount;
       } else {
-        this.object.removeVatPayableAccount(organisationGlAccount);
-      }
-    }
-  }
-
-  public onVatToPayAccountChange(event): void {
-    const organisationGlAccount = event.source.value as OrganisationGlAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.object.addVatToPayAccount(organisationGlAccount);
-        this.vatToPayAccount = organisationGlAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.object.addVatToPayAccount(organisationGlAccount);
-      } else {
-        this.object.removeVatToPayAccount(organisationGlAccount);
+        this.vatRateSettings.VatPayableAccount = null;
       }
     }
   }
 
   public onVatReceivableAccountChange(event): void {
-    const organisationGlAccount = event.source.value as OrganisationGlAccount;
+    const glAccount = event.source.value as GeneralLedgerAccount;
 
     if (event.isUserInput) {
       if (event.source.selected) {
-        this.object.addVatReceivableAccount(organisationGlAccount);
-        this.vatReceivableAccount = organisationGlAccount;
+        this.vatRateSettings.VatReceivableAccount = glAccount;
       }
     } else {
       if (event.source.selected) {
-        this.object.addVatReceivableAccount(organisationGlAccount);
+        this.vatRateSettings.VatReceivableAccount = glAccount;
       } else {
-        this.object.removeVatReceivableAccount(organisationGlAccount);
-      }
-    }
-  }
-
-  public onVatToReceiveAccountChange(event): void {
-    const organisationGlAccount = event.source.value as OrganisationGlAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.object.addVatToReceiveAccount(organisationGlAccount);
-        this.vatToReceiveAccount = organisationGlAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.object.addVatToReceiveAccount(organisationGlAccount);
-      } else {
-        this.object.removeVatToReceiveAccount(organisationGlAccount);
+        this.vatRateSettings.VatReceivableAccount = null;
       }
     }
   }

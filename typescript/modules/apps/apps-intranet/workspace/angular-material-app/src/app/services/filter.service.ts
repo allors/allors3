@@ -585,6 +585,20 @@ export class AppFilterService implements FilterService {
     );
 
     define(
+      m.InvoiceItemType,
+      new FilterDefinition({
+        kind: 'And',
+        operands: [
+          {
+            kind: 'Like',
+            roleType: m.InvoiceItemType.Name,
+            parameter: 'name',
+          },
+        ],
+      })
+    );
+
+    define(
       m.IrpfRegime,
       new FilterDefinition({
         kind: 'And',
@@ -1924,7 +1938,7 @@ export class AppFilterService implements FilterService {
             },
             {
               kind: 'ContainedIn',
-              propertyType: m.VatRegime.Country,
+              propertyType: m.VatRegime.Countries,
               parameter: 'country',
             },
           ],

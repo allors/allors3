@@ -118,6 +118,7 @@ export const dialogs = {
     [tags.GeneralLedgerAccount]: Edit,
     [tags.IncoTerm]: Edit,
     [tags.InventoryItemTransaction]: Edit,
+    [tags.InvoiceItemType]: Edit,
     [tags.InvoiceTerm]: Edit,
     [tags.IrpfRate]: Edit,
     [tags.IrpfRegime]: Edit,

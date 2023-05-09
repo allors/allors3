@@ -11,8 +11,8 @@ namespace Allors.Repository
     #region Allors
     [Id("c8b6ee7b-18ab-4921-96a0-01dfa76b577c")]
     #endregion
-    [Plural("InternalOrganisationIrpfRegimeSettingses")]
-    public partial class InternalOrganisationIrpfRegimeSettings : Deletable
+    [Plural("InternalOrganisationIrpfRateSettingses")]
+    public partial class InternalOrganisationIrpfRateSettings : Deletable
     {
         #region inherited properties
 
@@ -23,20 +23,28 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("9318df80-9760-4b7d-b304-b633211f19a3")]
+        [Id("7a75a987-6442-4fd1-868f-18aad12208d9")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public IrpfRegime IrpfRegime { get; set; }
+        public IrpfRate IrpfRate { get; set; }
 
         #region Allors
         [Id("9fa1006d-720f-4b95-9059-fd04c119df32")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount GeneralLedgerAccount { get; set; }
+        public GeneralLedgerAccount IrpfPayableAccount { get; set; }
+
+        #region Allors
+        [Id("fe8ebc0c-8e9c-4c39-8495-319d03e130b1")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public GeneralLedgerAccount IrpfReceivableAccount { get; set; }
 
         #region inherited methods
 

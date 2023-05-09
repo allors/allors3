@@ -1,4 +1,4 @@
-// <copyright file="InternalOrganisationInvoiceSettings.cs" company="Allors bvba">
+// <copyright file="InternalOrganisationVatRegimeSettings.cs" company="Allors bvba">
 // Copyright (c) Allors bvba. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,10 +9,10 @@ namespace Allors.Repository
     using static Workspaces;
 
     #region Allors
-    [Id("9a45a01f-2899-4162-bc01-6a0ac6ce8903")]
+    [Id("88a49ec6-3c06-432a-8894-b28fe76bb41f")]
     #endregion
-    [Plural("InternalOrganisationInvoiceSettingses")]
-    public partial class InternalOrganisationInvoiceSettings : Object
+    [Plural("InternalOrganisationVatRateSettingses")]
+    public partial class InternalOrganisationVatRateSettings : Deletable
     {
         #region inherited properties
 
@@ -23,28 +23,28 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("536aacbc-b5c4-42fa-9da7-ac36f6f3ec6c")]
+        [Id("5f4fd544-fdb4-486c-9376-7b6803eb2619")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public InvoiceItemType InvoiceItemType { get; set; }
+        public VatRate VatRate { get; set; }
 
         #region Allors
-        [Id("58089202-3fda-4ef4-8fba-dcc79ab86aa2")]
+        [Id("eee70b9b-9b97-4404-8f5e-2a416bb9373b")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount SalesGeneralLedgerAccount { get; set; }
+        public GeneralLedgerAccount VatPayableAccount { get; set; }
 
         #region Allors
-        [Id("5895baca-c71b-42f9-843a-a6a151fa3dda")]
+        [Id("eb562cec-d1b4-45f9-9d79-7182a9936ebb")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
-        public GeneralLedgerAccount PurchaseLedgerAccount { get; set; }
+        public GeneralLedgerAccount VatReceivableAccount { get; set; }
 
         #region inherited methods
 
@@ -57,6 +57,8 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+
+        public void Delete() { }
 
         #endregion
     }

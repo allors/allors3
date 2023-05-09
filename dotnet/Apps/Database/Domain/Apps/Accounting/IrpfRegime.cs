@@ -28,12 +28,6 @@ namespace Allors.Database.Domain
                 {
                     @this.Delete();
                 }
-
-                foreach (var @this in this.InternalOrganisationIrpfRegimeSettingsesWhereIrpfRegime)
-                {
-                    @this.Delete();
-                }
-
             }
         }
     }

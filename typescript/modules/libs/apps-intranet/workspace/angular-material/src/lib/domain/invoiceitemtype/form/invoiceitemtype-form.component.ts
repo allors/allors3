@@ -4,10 +4,8 @@ import { NgForm } from '@angular/forms';
 import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   GeneralLedgerAccount,
-  InternalOrganisation,
-  InternalOrganisationIrpfRateSettings,
-  IrpfRate,
-  IrpfRegime,
+  InternalOrganisationInvoiceItemTypeSettings,
+  InvoiceItemType,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -15,25 +13,27 @@ import {
   AllorsFormComponent,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
+
 import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
+import { FetcherService } from '../../../services/fetcher/fetcher-service';
 
 @Component({
-  templateUrl: './irpfrate-form.component.html',
+  templateUrl: './invoiceitemtype-form.component.html',
   providers: [ContextService],
 })
-export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
-  readonly m: M;
-  irpfRegime: IrpfRegime;
-  irpfPayableAccount: GeneralLedgerAccount;
-  irpfReceivableAccount: GeneralLedgerAccount;
+export class InvoiceItemTypeFormComponent extends AllorsFormComponent<InvoiceItemType> {
+  public m: M;
+
+  salesAccount: GeneralLedgerAccount;
+  purchaseAccount: GeneralLedgerAccount;
   glAccounts: GeneralLedgerAccount[];
-  irpfRateSettings: InternalOrganisationIrpfRateSettings;
-  applicable: boolean;
+  invoiceItemTypeSettings: InternalOrganisationInvoiceItemTypeSettings;
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
+    private fetcher: FetcherService,
     private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
@@ -56,45 +56,32 @@ export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
         },
       }),
       p.InternalOrganisation({
-        name: 'SettingsForIrpfRates',
+        name: 'SettingsForInvoiceItemTypes',
         objectId: this.internalOrganisationId.value,
         select: {
           SettingsForAccounting: {
-            SettingsForIrpfRates: {
+            SettingsForInvoiceItemTypes: {
               include: {
-                IrpfRate: {},
-                IrpfPayableAccount: {},
-                IrpfReceivableAccount: {},
+                InvoiceItemType: {},
+                SalesGeneralLedgerAccount: {},
+                PurchaseGeneralLedgerAccount: {},
               },
             },
           },
-        },
-      }),
-      p.Organisation({
-        objectId: this.internalOrganisationId.value,
-        include: {
-          Country: {},
         },
       })
     );
 
     if (this.editRequest) {
       pulls.push(
-        p.IrpfRate({
+        p.InvoiceItemType({
           name: '_object',
           objectId: this.editRequest.objectId,
         })
       );
     }
 
-    const initializer = this.createRequest?.initializer;
-    if (initializer) {
-      pulls.push(
-        p.IrpfRegime({
-          objectId: initializer.id,
-        })
-      );
-    }
+    this.onPrePullInitialize(pulls);
   }
 
   onPostPull(pullResult: IPullResult) {
@@ -102,61 +89,51 @@ export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
       ? pullResult.object('_object')
       : this.context.create(this.createRequest.objectType);
 
-    const internalOrganisation = pullResult.object<InternalOrganisation>(
-      this.m.InternalOrganisation
-    );
-
-    this.applicable = internalOrganisation.Country.IsoCode == 'ES';
-
-    this.irpfRegime = pullResult.object<IrpfRegime>(this.m.IrpfRegime);
     this.glAccounts = pullResult.collection<GeneralLedgerAccount>(
       this.m.GeneralLedgerAccount
     );
 
-    const irpfRateSettingses = pullResult.collection(
-      'settingsForIrpfRates'
-    ) as InternalOrganisationIrpfRateSettings[];
+    const invoiceItemTypeSettingses = pullResult.collection(
+      'SettingsForInvoiceItemTypes'
+    ) as InternalOrganisationInvoiceItemTypeSettings[];
 
-    this.irpfRateSettings = irpfRateSettingses.find(
-      (v) => v.IrpfRate === this.object
+    this.invoiceItemTypeSettings = invoiceItemTypeSettingses.find(
+      (v) => v.InvoiceItemType === this.object
     );
 
-    if (this.createRequest) {
-      this.irpfRegime.addIrpfRate(this.object);
-    } else {
-      this.irpfPayableAccount = this.irpfRateSettings?.IrpfPayableAccount;
-      this.irpfReceivableAccount = this.irpfRateSettings?.IrpfReceivableAccount;
-    }
+    this.salesAccount = this.invoiceItemTypeSettings?.SalesGeneralLedgerAccount;
+    this.purchaseAccount =
+      this.invoiceItemTypeSettings?.PurchaseGeneralLedgerAccount;
   }
 
-  public onVatPayableAccountChange(event): void {
+  public onSalesAccountChange(event): void {
     const glAccount = event.source.value as GeneralLedgerAccount;
 
     if (event.isUserInput) {
       if (event.source.selected) {
-        this.irpfRateSettings.IrpfPayableAccount = glAccount;
+        this.invoiceItemTypeSettings.SalesGeneralLedgerAccount = glAccount;
       }
     } else {
       if (event.source.selected) {
-        this.irpfRateSettings.IrpfPayableAccount = glAccount;
+        this.invoiceItemTypeSettings.SalesGeneralLedgerAccount = glAccount;
       } else {
-        this.irpfRateSettings.IrpfPayableAccount = null;
+        this.invoiceItemTypeSettings.SalesGeneralLedgerAccount = null;
       }
     }
   }
 
-  public onVatReceivableAccountChange(event): void {
+  public onPurchaseAccountChange(event): void {
     const glAccount = event.source.value as GeneralLedgerAccount;
 
     if (event.isUserInput) {
       if (event.source.selected) {
-        this.irpfRateSettings.IrpfReceivableAccount = glAccount;
+        this.invoiceItemTypeSettings.PurchaseGeneralLedgerAccount = glAccount;
       }
     } else {
       if (event.source.selected) {
-        this.irpfRateSettings.IrpfReceivableAccount = glAccount;
+        this.invoiceItemTypeSettings.PurchaseGeneralLedgerAccount = glAccount;
       } else {
-        this.irpfRateSettings.IrpfReceivableAccount = null;
+        this.invoiceItemTypeSettings.PurchaseGeneralLedgerAccount = null;
       }
     }
   }

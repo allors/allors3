@@ -20,7 +20,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnVatRateDeriveDeletePermission()
         {
-            Assert.DoesNotContain(this.deleteRevocation, new VatRates(this.Transaction).Belgium21.Revocations);
+            Assert.DoesNotContain(this.deleteRevocation, new VatRates(this.Transaction).BelgiumStandard.Revocations);
         }
 
         [Fact]

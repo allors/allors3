@@ -22,6 +22,11 @@ namespace Allors.Database.Domain
             {
                 throw new Exception("Cannot delete Vat Rate");
             }
+
+            foreach (var @this in this.InternalOrganisationVatRateSettingsesWhereVatRate)
+            {
+                @this.Delete();
+            }
         }
     }
 }

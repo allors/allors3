@@ -37,6 +37,8 @@ export { InlineModelComponent } from './lib/domain/model/inline/model-inline.com
 export { InlineWebAddressComponent } from './lib/domain/webaddress/inline/webaddress-inline.component';
 export { InternalOrganisationId } from './lib/services/state/internal-organisation-id';
 export { InventoryItemTransactionCreateFormComponent } from './lib/domain/inventoryitemtransaction/form/inventoryitemtransaction-create-form.component';
+export { InvoiceItemTypeFormComponent } from './lib/domain/invoiceitemtype/form/invoiceitemtype-form.component';
+export { InvoiceItemTypeListPageComponent } from './lib/domain/invoiceitemtype/list/invoiceitemtype-list-page.component';
 export { IrpfRateFormComponent } from './lib/domain/irpfrate/form/irpfrate-form.component';
 export { IrpfRegimeCreateFormComponent } from './lib/domain/irpfregime/create/irpfregime-create-form.component';
 export { IrpfRegimeEditFormComponent } from './lib/domain/irpfregime/edit/irpfregime-edit-form.component';

@@ -348,7 +348,7 @@ namespace Allors.Database.Domain.Tests
         {
             this.InstantiateObjects(this.Transaction);
 
-            var expected = new VatRates(this.Transaction).Belgium21;
+            var expected = new VatRates(this.Transaction).BelgiumStandard;
 
             var salesOrder = new SalesOrderBuilder(this.Transaction)
                 .WithBillToCustomer(this.billToCustomer)

@@ -88,6 +88,13 @@ export class AppSorterService implements SorterService {
     );
 
     define(
+      m.InvoiceItemType,
+      new Sorter({
+        name: m.InvoiceItemType.Name,
+      })
+    );
+
+    define(
       m.IrpfRegime,
       new Sorter({
         name: m.IrpfRegime.Name,
@@ -293,7 +300,6 @@ export class AppSorterService implements SorterService {
       m.VatRegime,
       new Sorter({
         name: m.VatRegime.Name,
-        country: m.VatRegime.CountryName,
       })
     );
 

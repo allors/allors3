@@ -25,6 +25,11 @@ namespace Allors.Database.Domain
             {
                 throw new Exception("Cannot delete IRPF Rate");
             }
+
+            foreach (var @this in this.InternalOrganisationIrpfRateSettingsesWhereIrpfRate)
+            {
+                @this.Delete();
+            }
         }
     }
 }

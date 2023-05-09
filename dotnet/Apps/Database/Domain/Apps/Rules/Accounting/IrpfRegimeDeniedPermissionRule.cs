@@ -21,7 +21,6 @@ namespace Allors.Database.Domain
             m.IrpfRegime.AssociationPattern(v => v.InvoiceItemVersionsWhereDerivedIrpfRegime, m.IrpfRegime),
             m.IrpfRegime.AssociationPattern(v => v.InvoicesWhereDerivedIrpfRegime, m.IrpfRegime),
             m.IrpfRegime.AssociationPattern(v => v.InvoiceVersionsWhereDerivedIrpfRegime, m.IrpfRegime),
-            m.IrpfRegime.AssociationPattern(v => v.InternalOrganisationIrpfRegimeSettingsesWhereIrpfRegime, m.IrpfRegime),
             m.IrpfRegime.AssociationPattern(v => v.OrderItemsWhereDerivedIrpfRegime, m.IrpfRegime),
             m.IrpfRegime.AssociationPattern(v => v.OrderItemVersionsWhereDerivedIrpfRegime, m.IrpfRegime),
             m.IrpfRegime.AssociationPattern(v => v.OrdersWhereDerivedIrpfRegime, m.IrpfRegime),

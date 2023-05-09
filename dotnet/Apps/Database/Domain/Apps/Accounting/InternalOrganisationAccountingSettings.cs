@@ -6,10 +6,11 @@
 namespace Allors.Database.Domain
 {
     using System;
+    using System.Linq;
 
     public partial class InternalOrganisationAccountingSettings
     {
-        public void BaseOnBuild(ObjectOnBuild method)
+        public void AppsOnBuild(ObjectOnBuild method)
         {
             if (!this.ExistSubAccountCounter)
             {
@@ -24,6 +25,18 @@ namespace Allors.Database.Domain
             if (!this.ExistFiscalYearStartDay)
             {
                 this.FiscalYearStartDay = 1;
+            }
+        }
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            foreach(InvoiceItemType invoiceItemType in new InvoiceItemTypes(this.Transaction()).Extent())
+            {
+                if (!this.SettingsForInvoiceItemTypes.Any(v => v.InvoiceItemType.Equals(invoiceItemType)))
+                {
+                   this.AddSettingsForInvoiceItemType(new InternalOrganisationInvoiceItemTypeSettingsBuilder(this.Transaction())
+                        .WithInvoiceItemType(invoiceItemType)
+                        .Build());
+                }
             }
         }
     }

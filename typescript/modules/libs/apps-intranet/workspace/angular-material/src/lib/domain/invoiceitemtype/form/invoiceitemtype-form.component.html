@@ -1,56 +1,41 @@
 <div class="container-fluid" *ngIf="object">
   <div class="row">
-    <a-mat-datepicker
-      class="col-md"
-      [object]="object"
-      [roleType]="m.VatRate.FromDate"
-    >
-    </a-mat-datepicker>
-    <a-mat-datepicker
-      class="col-md"
-      [object]="object"
-      [roleType]="m.VatRate.ThroughDate"
-    >
-    </a-mat-datepicker>
-  </div>
-
-  <div class="row">
     <a-mat-input
-      class="col-md-6"
+      class="col-md"
       [object]="object"
-      [roleType]="m.VatRate.Rate"
+      [roleType]="m.InvoiceItemType.Name"
     ></a-mat-input>
   </div>
 
   <div class="row">
     <mat-form-field class="col-md">
       <mat-select
-        name="vatPayableAccount"
-        [(ngModel)]="vatPayableAccount"
-        placeholder="Vat Payable Account"
+        name="salesAccount"
+        [(ngModel)]="salesAccount"
+        placeholder="Sales Account"
         multiple="false"
       >
         <mat-option>None</mat-option>
         <mat-option
           *ngFor="let glAccount of glAccounts"
           [value]="glAccount"
-          (onSelectionChange)="onVatPayableAccountChange($event)"
+          (onSelectionChange)="onSalesAccountChange($event)"
           >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
         >
       </mat-select>
     </mat-form-field>
     <mat-form-field class="col-md">
       <mat-select
-        name="vatReceivableAccount"
-        [(ngModel)]="vatReceivableAccount"
-        placeholder="Vat Receivable Account"
+        name="purchaseAccount"
+        [(ngModel)]="purchaseAccount"
+        placeholder="Purchase Account"
         multiple="false"
       >
         <mat-option>None</mat-option>
         <mat-option
           *ngFor="let glAccount of glAccounts"
           [value]="glAccount"
-          (onSelectionChange)="onVatReceivableAccountChange($event)"
+          (onSelectionChange)="onPurchaseAccountChange($event)"
           >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
         >
       </mat-select>
