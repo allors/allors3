@@ -129,7 +129,7 @@ export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
     }
   }
 
-  public onVatPayableAccountChange(event): void {
+  public onIrpfPayableAccountChange(event): void {
     const glAccount = event.source.value as GeneralLedgerAccount;
 
     if (event.isUserInput) {
@@ -145,7 +145,7 @@ export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
     }
   }
 
-  public onVatReceivableAccountChange(event): void {
+  public onIrpfReceivableAccountChange(event): void {
     const glAccount = event.source.value as GeneralLedgerAccount;
 
     if (event.isUserInput) {

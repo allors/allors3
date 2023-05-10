@@ -31,7 +31,10 @@
         multiple="false"
       >
         <mat-option>None</mat-option>
-        <mat-option *ngFor="let glAccount of glAccounts" [value]="glAccount"
+        <mat-option
+          *ngFor="let glAccount of glAccounts"
+          [value]="glAccount"
+          (onSelectionChange)="onIrpfPayableAccountChange($event)"
           >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
         >
       </mat-select>
@@ -44,7 +47,10 @@
         multiple="false"
       >
         <mat-option>None</mat-option>
-        <mat-option *ngFor="let glAccount of glAccounts" [value]="glAccount"
+        <mat-option
+          *ngFor="let glAccount of glAccounts"
+          [value]="glAccount"
+          (onSelectionChange)="onIrpfReceivableAccountChange($event)"
           >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
         >
       </mat-select>
