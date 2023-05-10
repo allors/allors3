@@ -70,7 +70,7 @@ export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
           },
         },
       }),
-      p.Organisation({
+      p.InternalOrganisation({
         objectId: this.internalOrganisationId.value,
         include: {
           Country: {},
