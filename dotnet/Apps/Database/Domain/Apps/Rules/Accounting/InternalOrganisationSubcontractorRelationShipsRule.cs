@@ -26,7 +26,7 @@ namespace Allors.Database.Domain
         {
             foreach (var @this in matches.Cast<SubContractorRelationship>())
             {
-                if (@this.Contractor.ExportAccounting)
+                if (@this.ExistContractor && @this.Contractor.ExportAccounting)
                 {
                     var partyFinancial = @this.Contractor.PartyFinancialRelationshipsWhereInternalOrganisation.FirstOrDefault(v => Equals(v.FinancialParty, @this.SubContractor) && v.Debtor);
 
