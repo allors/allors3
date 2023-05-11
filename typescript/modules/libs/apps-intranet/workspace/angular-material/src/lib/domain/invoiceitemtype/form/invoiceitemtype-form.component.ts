@@ -24,8 +24,6 @@ import { FetcherService } from '../../../services/fetcher/fetcher-service';
 export class InvoiceItemTypeFormComponent extends AllorsFormComponent<InvoiceItemType> {
   public m: M;
 
-  salesAccount: GeneralLedgerAccount;
-  purchaseAccount: GeneralLedgerAccount;
   glAccounts: GeneralLedgerAccount[];
   invoiceItemTypeSettings: InternalOrganisationInvoiceItemTypeSettings;
 
@@ -100,41 +98,5 @@ export class InvoiceItemTypeFormComponent extends AllorsFormComponent<InvoiceIte
     this.invoiceItemTypeSettings = invoiceItemTypeSettingses.find(
       (v) => v.InvoiceItemType === this.object
     );
-
-    this.salesAccount = this.invoiceItemTypeSettings?.SalesGeneralLedgerAccount;
-    this.purchaseAccount =
-      this.invoiceItemTypeSettings?.PurchaseGeneralLedgerAccount;
-  }
-
-  public onSalesAccountChange(event): void {
-    const glAccount = event.source.value as GeneralLedgerAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.invoiceItemTypeSettings.SalesGeneralLedgerAccount = glAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.invoiceItemTypeSettings.SalesGeneralLedgerAccount = glAccount;
-      } else {
-        this.invoiceItemTypeSettings.SalesGeneralLedgerAccount = null;
-      }
-    }
-  }
-
-  public onPurchaseAccountChange(event): void {
-    const glAccount = event.source.value as GeneralLedgerAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.invoiceItemTypeSettings.PurchaseGeneralLedgerAccount = glAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.invoiceItemTypeSettings.PurchaseGeneralLedgerAccount = glAccount;
-      } else {
-        this.invoiceItemTypeSettings.PurchaseGeneralLedgerAccount = null;
-      }
-    }
   }
 }

@@ -23,8 +23,6 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 export class VatRateFormComponent extends AllorsFormComponent<VatRate> {
   readonly m: M;
   vatRegime: VatRegime;
-  vatPayableAccount: GeneralLedgerAccount;
-  vatReceivableAccount: GeneralLedgerAccount;
   glAccounts: GeneralLedgerAccount[];
   vatRateSettings: InternalOrganisationVatRateSettings;
 
@@ -109,41 +107,6 @@ export class VatRateFormComponent extends AllorsFormComponent<VatRate> {
 
     if (this.createRequest) {
       this.vatRegime.addVatRate(this.object);
-    } else {
-      this.vatPayableAccount = this.vatRateSettings?.VatPayableAccount;
-      this.vatReceivableAccount = this.vatRateSettings?.VatReceivableAccount;
-    }
-  }
-
-  public onVatPayableAccountChange(event): void {
-    const glAccount = event.source.value as GeneralLedgerAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.vatRateSettings.VatPayableAccount = glAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.vatRateSettings.VatPayableAccount = glAccount;
-      } else {
-        this.vatRateSettings.VatPayableAccount = null;
-      }
-    }
-  }
-
-  public onVatReceivableAccountChange(event): void {
-    const glAccount = event.source.value as GeneralLedgerAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.vatRateSettings.VatReceivableAccount = glAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.vatRateSettings.VatReceivableAccount = glAccount;
-      } else {
-        this.vatRateSettings.VatReceivableAccount = null;
-      }
     }
   }
 }

@@ -23,37 +23,19 @@
   </div>
 
   <div class="row">
-    <mat-form-field class="col-md">
-      <mat-select
-        name="vatPayableAccount"
-        [(ngModel)]="vatPayableAccount"
-        placeholder="Vat Payable Account"
-        multiple="false"
-      >
-        <mat-option>None</mat-option>
-        <mat-option
-          *ngFor="let glAccount of glAccounts"
-          [value]="glAccount"
-          (onSelectionChange)="onVatPayableAccountChange($event)"
-          >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="col-md">
-      <mat-select
-        name="vatReceivableAccount"
-        [(ngModel)]="vatReceivableAccount"
-        placeholder="Vat Receivable Account"
-        multiple="false"
-      >
-        <mat-option>None</mat-option>
-        <mat-option
-          *ngFor="let glAccount of glAccounts"
-          [value]="glAccount"
-          (onSelectionChange)="onVatReceivableAccountChange($event)"
-          >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
+    <a-mat-select
+      class="col-md"
+      [object]="vatRateSettings"
+      [roleType]="m.InternalOrganisationVatRateSettings.VatPayableAccount"
+      [options]="glAccounts"
+      display="DisplayName"
+    ></a-mat-select>
+    <a-mat-select
+      class="col-md"
+      [object]="vatRateSettings"
+      [roleType]="m.InternalOrganisationVatRateSettings.VatReceivableAccount"
+      [options]="glAccounts"
+      display="DisplayName"
+    ></a-mat-select>
   </div>
 </div>

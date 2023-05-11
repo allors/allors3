@@ -14,7 +14,7 @@ namespace Allors.Repository
     #region Allors
     [Id("1a0e396b-69bd-4e77-a602-3d7f7938fd74")]
     #endregion
-    public partial class GeneralLedgerAccount : UniquelyIdentifiable, Object, ExternalWithPrimaryKey, Deletable
+    public partial class GeneralLedgerAccount : UniquelyIdentifiable, Object, ExternalWithPrimaryKey, Deletable, IDisplayName
     {
         #region inherited properties
         public Guid UniqueId { get; set; }
@@ -24,6 +24,8 @@ namespace Allors.Repository
         public SecurityToken[] SecurityTokens { get; set; }
 
         public string ExternalPrimaryKey { get; set; }
+
+        public string DisplayName { get; set; }
         #endregion
 
         #region Allors

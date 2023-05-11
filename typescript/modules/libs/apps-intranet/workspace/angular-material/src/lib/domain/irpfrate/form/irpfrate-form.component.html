@@ -23,37 +23,19 @@
   </div>
 
   <div class="row" *ngIf="applicable">
-    <mat-form-field class="col-md">
-      <mat-select
-        name="irpfPayableAccount"
-        [(ngModel)]="irpfPayableAccount"
-        placeholder="IRPF Payable Account"
-        multiple="false"
-      >
-        <mat-option>None</mat-option>
-        <mat-option
-          *ngFor="let glAccount of glAccounts"
-          [value]="glAccount"
-          (onSelectionChange)="onIrpfPayableAccountChange($event)"
-          >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="col-md">
-      <mat-select
-        name="irpfReceivableAccount"
-        [(ngModel)]="irpfReceivableAccount"
-        placeholder="IRPF Receivable Account"
-        multiple="false"
-      >
-        <mat-option>None</mat-option>
-        <mat-option
-          *ngFor="let glAccount of glAccounts"
-          [value]="glAccount"
-          (onSelectionChange)="onIrpfReceivableAccountChange($event)"
-          >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
+    <a-mat-select
+      class="col-md"
+      [object]="irpfRateSettings"
+      [roleType]="m.InternalOrganisationIrpfRateSettings.IrpfPayableAccount"
+      [options]="glAccounts"
+      display="DisplayName"
+    ></a-mat-select>
+    <a-mat-select
+      class="col-md"
+      [object]="irpfRateSettings"
+      [roleType]="m.InternalOrganisationIrpfRateSettings.IrpfReceivableAccount"
+      [options]="glAccounts"
+      display="DisplayName"
+    ></a-mat-select>
   </div>
 </div>

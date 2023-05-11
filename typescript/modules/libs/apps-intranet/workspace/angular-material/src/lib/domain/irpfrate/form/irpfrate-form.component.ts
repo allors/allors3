@@ -24,8 +24,6 @@ import { InternalOrganisationId } from '../../../services/state/internal-organis
 export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
   readonly m: M;
   irpfRegime: IrpfRegime;
-  irpfPayableAccount: GeneralLedgerAccount;
-  irpfReceivableAccount: GeneralLedgerAccount;
   glAccounts: GeneralLedgerAccount[];
   irpfRateSettings: InternalOrganisationIrpfRateSettings;
   applicable: boolean;
@@ -123,41 +121,6 @@ export class IrpfRateFormComponent extends AllorsFormComponent<IrpfRate> {
 
     if (this.createRequest) {
       this.irpfRegime.addIrpfRate(this.object);
-    } else {
-      this.irpfPayableAccount = this.irpfRateSettings?.IrpfPayableAccount;
-      this.irpfReceivableAccount = this.irpfRateSettings?.IrpfReceivableAccount;
-    }
-  }
-
-  public onIrpfPayableAccountChange(event): void {
-    const glAccount = event.source.value as GeneralLedgerAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.irpfRateSettings.IrpfPayableAccount = glAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.irpfRateSettings.IrpfPayableAccount = glAccount;
-      } else {
-        this.irpfRateSettings.IrpfPayableAccount = null;
-      }
-    }
-  }
-
-  public onIrpfReceivableAccountChange(event): void {
-    const glAccount = event.source.value as GeneralLedgerAccount;
-
-    if (event.isUserInput) {
-      if (event.source.selected) {
-        this.irpfRateSettings.IrpfReceivableAccount = glAccount;
-      }
-    } else {
-      if (event.source.selected) {
-        this.irpfRateSettings.IrpfReceivableAccount = glAccount;
-      } else {
-        this.irpfRateSettings.IrpfReceivableAccount = null;
-      }
     }
   }
 }

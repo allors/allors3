@@ -8,37 +8,24 @@
   </div>
 
   <div class="row">
-    <mat-form-field class="col-md">
-      <mat-select
-        name="salesAccount"
-        [(ngModel)]="salesAccount"
-        placeholder="Sales Account"
-        multiple="false"
-      >
-        <mat-option>None</mat-option>
-        <mat-option
-          *ngFor="let glAccount of glAccounts"
-          [value]="glAccount"
-          (onSelectionChange)="onSalesAccountChange($event)"
-          >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="col-md">
-      <mat-select
-        name="purchaseAccount"
-        [(ngModel)]="purchaseAccount"
-        placeholder="Purchase Account"
-        multiple="false"
-      >
-        <mat-option>None</mat-option>
-        <mat-option
-          *ngFor="let glAccount of glAccounts"
-          [value]="glAccount"
-          (onSelectionChange)="onPurchaseAccountChange($event)"
-          >{{ glAccount.ReferenceNumber }}: {{ glAccount.Name }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
+    <a-mat-select
+      class="col-md"
+      [object]="invoiceItemTypeSettings"
+      [roleType]="
+        m.InternalOrganisationInvoiceItemTypeSettings.SalesGeneralLedgerAccount
+      "
+      [options]="glAccounts"
+      display="DisplayName"
+    ></a-mat-select>
+    <a-mat-select
+      class="col-md"
+      [object]="invoiceItemTypeSettings"
+      [roleType]="
+        m.InternalOrganisationInvoiceItemTypeSettings
+          .PurchaseGeneralLedgerAccount
+      "
+      [options]="glAccounts"
+      display="DisplayName"
+    ></a-mat-select>
   </div>
 </div>

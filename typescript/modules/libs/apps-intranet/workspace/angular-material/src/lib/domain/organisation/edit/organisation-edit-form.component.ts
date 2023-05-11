@@ -5,8 +5,10 @@ import { Pull, IPullResult } from '@allors/system/workspace/domain';
 import {
   Currency,
   CustomOrganisationClassification,
+  GeneralLedgerAccount,
   IndustryClassification,
   InternalOrganisation,
+  InternalOrganisationAccountingSettings,
   LegalForm,
   Locale,
   Organisation,
@@ -19,8 +21,8 @@ import {
   SingletonId,
 } from '@allors/base/workspace/angular/foundation';
 import { ContextService } from '@allors/base/workspace/angular/foundation';
-
 import { FetcherService } from '../../../services/fetcher/fetcher-service';
+import { InternalOrganisationId } from '../../../services/state/internal-organisation-id';
 
 @Component({
   selector: 'organisation-edit-form',
@@ -36,13 +38,15 @@ export class OrganisationEditFormComponent extends AllorsFormComponent<Organisat
   legalForms: LegalForm[];
   currencies: Currency[];
   partyFinancial: PartyFinancialRelationship;
+  glAccounts: GeneralLedgerAccount[];
 
   constructor(
     @Self() public allors: ContextService,
     errorService: ErrorService,
     form: NgForm,
     private singletonId: SingletonId,
-    private fetcher: FetcherService
+    private fetcher: FetcherService,
+    private internalOrganisationId: InternalOrganisationId
   ) {
     super(allors, errorService, form);
     this.m = allors.metaPopulation as M;
@@ -74,6 +78,17 @@ export class OrganisationEditFormComponent extends AllorsFormComponent<Organisat
           CustomClassifications: {},
           PreferredCurrency: {},
           LogoImage: {},
+          SettingsForAccounting: {},
+        },
+      }),
+      p.OrganisationGlAccount({
+        select: {
+          GeneralLedgerAccount: {},
+        },
+        predicate: {
+          kind: 'Equals',
+          propertyType: m.OrganisationGlAccount.InternalOrganisation,
+          value: this.internalOrganisationId.value,
         },
       }),
       p.Currency({
@@ -122,6 +137,9 @@ export class OrganisationEditFormComponent extends AllorsFormComponent<Organisat
       this.m.IndustryClassification
     );
     this.legalForms = pullResult.collection<LegalForm>(this.m.LegalForm);
+    this.glAccounts = pullResult.collection<GeneralLedgerAccount>(
+      this.m.GeneralLedgerAccount
+    );
     this.partyFinancial = pullResult
       .collection<PartyFinancialRelationship>(
         this.m.Party.PartyFinancialRelationshipsWhereFinancialParty
