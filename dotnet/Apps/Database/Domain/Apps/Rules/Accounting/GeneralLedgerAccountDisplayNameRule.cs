@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.GeneralLedgerAccount.RolePattern(v => v.ReferenceNumber),
-                m.GeneralLedgerAccount.RolePattern(v => v.Description),
+                m.GeneralLedgerAccount.RolePattern(v => v.Name),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
     {
         public static void DeriveGeneralLedgerAccountDisplayName(this GeneralLedgerAccount @this, IValidation validation)
         {
-            @this.DisplayName = $"{@this.ReferenceNumber}: {@this.Description}";
+            @this.DisplayName = $"{@this.ReferenceNumber}: {@this.Name}";
         }
     }
 }
