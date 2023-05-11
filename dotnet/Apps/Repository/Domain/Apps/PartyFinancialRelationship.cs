@@ -56,9 +56,23 @@ namespace Allors.Repository
         #region Allors
         [Id("e3a06a1c-998a-4871-8f0e-2f166eac6c7b")]
         #endregion
+        [Derived]
         [Required]
         [Workspace(Default)]
-        public int SubAccountNumber { get; set; }
+        public int DerivedSubAccountNumber { get; set; }
+
+        #region Allors
+        [Id("28e524fa-64db-4699-aebc-96f9216a26c1")]
+        #endregion
+        [Workspace(Default)]
+        public int ExternalSubAccountNumber { get; set; }
+
+        #region Allors
+        [Id("c4c2b14d-3e32-447f-b93c-32ed40b7469d")]
+        #endregion
+        [Required]
+        [Workspace(Default)]
+        public int InternalSubAccountNumber { get; set; }
 
         #region Allors
         [Id("332e5b2f-5285-49fe-935d-4abb99cc084b")]

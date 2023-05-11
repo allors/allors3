@@ -10,6 +10,7 @@ import {
   LegalForm,
   Locale,
   Organisation,
+  PartyFinancialRelationship,
 } from '@allors/default/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import {
@@ -34,6 +35,7 @@ export class OrganisationEditFormComponent extends AllorsFormComponent<Organisat
   internalOrganisation: InternalOrganisation;
   legalForms: LegalForm[];
   currencies: Currency[];
+  partyFinancial: PartyFinancialRelationship;
 
   constructor(
     @Self() public allors: ContextService,
@@ -90,6 +92,12 @@ export class OrganisationEditFormComponent extends AllorsFormComponent<Organisat
       }),
       p.LegalForm({
         sorting: [{ roleType: m.LegalForm.Description }],
+      }),
+      p.Party({
+        objectId: this.editRequest.objectId,
+        select: {
+          PartyFinancialRelationshipsWhereFinancialParty: {},
+        },
       })
     );
 
@@ -114,5 +122,10 @@ export class OrganisationEditFormComponent extends AllorsFormComponent<Organisat
       this.m.IndustryClassification
     );
     this.legalForms = pullResult.collection<LegalForm>(this.m.LegalForm);
+    this.partyFinancial = pullResult
+      .collection<PartyFinancialRelationship>(
+        this.m.Party.PartyFinancialRelationshipsWhereFinancialParty
+      )
+      ?.find((v) => v.InternalOrganisation === this.internalOrganisation);
   }
 }

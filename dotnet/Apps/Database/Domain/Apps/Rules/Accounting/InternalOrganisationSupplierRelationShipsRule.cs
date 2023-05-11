@@ -17,16 +17,16 @@ namespace Allors.Database.Domain
         public InternalOrganisationSupplierRelationShipsRule(MetaPopulation m) : base(m, new Guid("91e75f3d-41c7-4185-845c-1b219675069a")) =>
             this.Patterns = new Pattern[]
             {
-                //m.Party.RolePattern(v => v.DerivationTrigger, v => v.Supplier),
+                m.Organisation.RolePattern(v => v.DerivationTrigger, v => v.SupplierRelationshipsWhereSupplier),
                 m.SupplierRelationship.RolePattern(v => v.InternalOrganisation),
-                m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting, v => v.SupplierRelationshipsWhereInternalOrganisation),
+                m.InternalOrganisation.RolePattern(v => v.ExportAccounting, v => v.SupplierRelationshipsWhereInternalOrganisation),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SupplierRelationship>())
             {
-                if (@this.InternalOrganisation.ExistSettingsForAccounting)
+                if (@this.InternalOrganisation.ExportAccounting)
                 {
                     var partyFinancial = @this.InternalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation.FirstOrDefault(v => Equals(v.FinancialParty, @this.Supplier) && !v.Debtor);
 
@@ -35,7 +35,7 @@ namespace Allors.Database.Domain
                         var partyFinancialRelationShip = new PartyFinancialRelationshipBuilder(@this.Strategy.Transaction)
                             .WithFinancialParty(@this.Supplier)
                             .WithInternalOrganisation(@this.InternalOrganisation)
-                            .WithSubAccountNumber(@this.InternalOrganisation.NextSubAccountNumber())
+                            .WithInternalSubAccountNumber(@this.InternalOrganisation.NextSubAccountNumber())
                             .WithFromDate(@this.FromDate)
                             .WithThroughDate(@this.ThroughDate)
                             .Build();

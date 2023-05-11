@@ -46,7 +46,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(1007, subContractor1Financial.SubAccountNumber);
+            Assert.Equal(1007, subContractor1Financial.InternalSubAccountNumber);
 
             var subcontractor2 = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
             new SubContractorRelationshipBuilder(this.Transaction).WithSubContractor(subcontractor2).Build();
@@ -57,7 +57,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(1015, subContractor2Financial.SubAccountNumber);
+            Assert.Equal(1015, subContractor2Financial.InternalSubAccountNumber);
 
             var subcontractor3 = new OrganisationBuilder(this.Transaction).WithDefaults().Build();
             new SubContractorRelationshipBuilder(this.Transaction).WithSubContractor(subcontractor3).Build();
@@ -68,7 +68,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            Assert.Equal(1023, subContractor3Financial.SubAccountNumber);
+            Assert.Equal(1023, subContractor3Financial.InternalSubAccountNumber);
         }
 
         [Fact]
@@ -93,7 +93,7 @@ namespace Allors.Database.Domain.Tests
                 .WithIsInternalOrganisation(true)
                 .WithName("internalOrganisation2")
                 .WithDefaultCollectionMethod(ownBankAccount)
-                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build())
+                .WithExportAccounting(true)
                 .Build();
 
             this.Derive();
@@ -108,7 +108,7 @@ namespace Allors.Database.Domain.Tests
 
             var partyFinancial2 = subcontractor2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, internalOrganisation2));
 
-            partyFinancial2.SubAccountNumber = 19;
+            partyFinancial2.InternalSubAccountNumber = 19;
 
             Assert.False(this.Derive().HasErrors);
         }

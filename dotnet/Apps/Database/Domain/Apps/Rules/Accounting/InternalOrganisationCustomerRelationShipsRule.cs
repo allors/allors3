@@ -19,14 +19,14 @@ namespace Allors.Database.Domain
             {
                 m.Party.RolePattern(v => v.DerivationTrigger, v => v.CustomerRelationshipsWhereCustomer),
                 m.CustomerRelationship.RolePattern(v => v.InternalOrganisation),
-                m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting, v => v.CustomerRelationshipsWhereInternalOrganisation),
+                m.InternalOrganisation.RolePattern(v => v.ExportAccounting, v => v.CustomerRelationshipsWhereInternalOrganisation),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<CustomerRelationship>())
             {
-                if (@this.InternalOrganisation.ExistSettingsForAccounting)
+                if (@this.InternalOrganisation.ExportAccounting)
                 {
                     var partyFinancial = @this.InternalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation.FirstOrDefault(v => Equals(v.FinancialParty, @this.Customer) && v.Debtor);
 
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                             .WithFinancialParty(@this.Customer)
                             .WithInternalOrganisation(@this.InternalOrganisation)
                             .WithDebtor(true)
-                            .WithSubAccountNumber(@this.InternalOrganisation.NextSubAccountNumber())
+                            .WithInternalSubAccountNumber(@this.InternalOrganisation.NextSubAccountNumber())
                             .WithFromDate(@this.FromDate)
                             .WithThroughDate(@this.ThroughDate)
                             .Build();

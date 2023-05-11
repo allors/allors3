@@ -100,7 +100,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnSetOfInternalOrganisationSettingsForAccountingCreatePartyFinancialRelationships()
         {
-            var interalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().Build();
+            var interalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().WithExportAccounting(false).Build();
             var organisation = new Organisations(this.Transaction).Extent().First(v => !Equals(v, interalOrganisation));
 
             new SupplierRelationshipBuilder(this.Transaction)
@@ -113,7 +113,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(organisation, interalOrganisation.ActiveSuppliers);
             Assert.False(interalOrganisation.PartyFinancialRelationshipsWhereInternalOrganisation.Any());
 
-            interalOrganisation.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build();
+            interalOrganisation.ExportAccounting = true;
 
             this.Derive();
 
@@ -123,7 +123,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnCreateOfNewPartyRelationShipWithInternalOrganisationThatUsesAccounting_PartyFinancialRealtionShipShouldBeCreated()
         {
-            var interalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().Build();
+            var interalOrganisation = new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().WithExportAccounting(true).Build();
             interalOrganisation.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build();
 
             var customer = new Parties(this.Transaction).Extent().First(v => !Equals(v, interalOrganisation));

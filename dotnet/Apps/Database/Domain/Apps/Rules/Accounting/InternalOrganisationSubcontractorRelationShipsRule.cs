@@ -17,16 +17,16 @@ namespace Allors.Database.Domain
         public InternalOrganisationSubcontractorRelationShipsRule(MetaPopulation m) : base(m, new Guid("5bf15691-7f9d-4220-b49a-9d5270a97e57")) =>
             this.Patterns = new Pattern[]
             {
-                //m.Party.RolePattern(v => v.DerivationTrigger, v => v.),
+                m.Organisation.RolePattern(v => v.DerivationTrigger, v => v.SubContractorRelationshipsWhereSubContractor),
                 m.SubContractorRelationship.RolePattern(v => v.Contractor),
-                m.InternalOrganisation.RolePattern(v => v.SettingsForAccounting, v => v.SubContractorRelationshipsWhereContractor),
+                m.InternalOrganisation.RolePattern(v => v.ExportAccounting, v => v.SubContractorRelationshipsWhereContractor),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             foreach (var @this in matches.Cast<SubContractorRelationship>())
             {
-                if (@this.Contractor.ExistSettingsForAccounting)
+                if (@this.Contractor.ExportAccounting)
                 {
                     var partyFinancial = @this.Contractor.PartyFinancialRelationshipsWhereInternalOrganisation.FirstOrDefault(v => Equals(v.FinancialParty, @this.SubContractor) && v.Debtor);
 
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                             .WithFinancialParty(@this.SubContractor)
                             .WithInternalOrganisation(@this.Contractor)
                             .WithDebtor(true)
-                            .WithSubAccountNumber(@this.Contractor.NextSubAccountNumber())
+                            .WithInternalSubAccountNumber(@this.Contractor.NextSubAccountNumber())
                             .WithFromDate(@this.FromDate)
                             .WithThroughDate(@this.ThroughDate)
                             .Build();

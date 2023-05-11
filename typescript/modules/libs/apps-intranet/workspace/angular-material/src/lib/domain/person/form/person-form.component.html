@@ -58,6 +58,16 @@
         ></a-mat-input>
       </div>
 
+      <div class="row" *ngIf="editRequest">
+        <a-mat-static
+          class="col-md-6"
+          [object]="partyFinancial"
+          [roleType]="m.PartyFinancialRelationship.DerivedSubAccountNumber"
+          display="Name"
+          label="Subaccount Number"
+        ></a-mat-static>
+      </div>
+
       <!-- <div class="row">
         <a-mat-autocomplete
           *ngIf="createRequest"

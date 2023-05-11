@@ -151,8 +151,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedAccountingTransactionDeleteDeriveDeletePermission()
         {
-            this.InternalOrganisation.ExportAccounting = true;
-
             var glAccount = new GeneralLedgerAccountBuilder(this.Transaction).Build();
             this.Derive();
 

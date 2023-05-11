@@ -81,8 +81,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void GivenCustomerRelationshipBuilder_WhenBuild_ThenSubAccountNumerIsValidElevenTestNumber()
         {
-            var internalOrganisation = this.InternalOrganisation;
-            internalOrganisation.SettingsForAccounting.SubAccountCounter.Value = 1000;
+            this.InternalOrganisation.SettingsForAccounting.SubAccountCounter.Value = 1000;
 
             this.Transaction.Commit();
 
@@ -96,7 +95,7 @@ namespace Allors.Database.Domain.Tests
 
             var partyFinancial1 = customer1.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship1.InternalOrganisation));
 
-            Assert.Equal(1007, partyFinancial1.SubAccountNumber);
+            Assert.Equal(1007, partyFinancial1.InternalSubAccountNumber);
 
             var customer2 = new PersonBuilder(this.Transaction).WithLastName("customer2").Build();
             var customerRelationship2 = new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer2).Build();
@@ -104,7 +103,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             var partyFinancial2 = customer2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
-            Assert.Equal(1015, partyFinancial2.SubAccountNumber);
+            Assert.Equal(1015, partyFinancial2.InternalSubAccountNumber);
 
             var customer3 = new PersonBuilder(this.Transaction).WithLastName("customer3").Build();
             var customerRelationship3 = new CustomerRelationshipBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithCustomer(customer3).Build();
@@ -112,7 +111,7 @@ namespace Allors.Database.Domain.Tests
             this.Transaction.Derive();
 
             var partyFinancial3 = customer3.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship3.InternalOrganisation));
-            Assert.Equal(1023, partyFinancial3.SubAccountNumber);
+            Assert.Equal(1023, partyFinancial3.InternalSubAccountNumber);
         }
 
         [Fact]
@@ -129,6 +128,7 @@ namespace Allors.Database.Domain.Tests
             var internalOrganisation2 = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithName("internalOrganisation2")
+                .WithExportAccounting(true)
                 .Build();
 
             var bank = new BankBuilder(this.Transaction).WithCountry(belgium).WithName("ING België").WithBic("BBRUBEBB").Build();
@@ -165,7 +165,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var partyFinancial = customer2.PartyFinancialRelationshipsWhereFinancialParty.First(v => Equals(v.InternalOrganisation, customerRelationship2.InternalOrganisation));
-            partyFinancial.SubAccountNumber = 19;
+            partyFinancial.InternalSubAccountNumber = 19;
 
             Assert.False(this.Derive().HasErrors);
         }

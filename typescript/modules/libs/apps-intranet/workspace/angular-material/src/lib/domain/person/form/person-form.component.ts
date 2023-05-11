@@ -14,6 +14,7 @@ import {
   OrganisationContactKind,
   OrganisationContactRelationship,
   PartyContactMechanism,
+  PartyFinancialRelationship,
   Person,
   Salutation,
   User,
@@ -57,6 +58,7 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
   emailFrequencies: EmailFrequency[];
   canWriteMembers: boolean;
   creatorUserGroup: UserGroup;
+  partyFinancial: PartyFinancialRelationship;
 
   constructor(
     @Self() public allors: ContextService,
@@ -177,6 +179,12 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
             },
           },
         }),
+        p.Party({
+          objectId: this.editRequest.objectId,
+          select: {
+            PartyFinancialRelationshipsWhereFinancialParty: {},
+          },
+        }),
         p.Person({
           name: 'ActiveUserGroups',
           objectId: this.editRequest.objectId,
@@ -235,6 +243,12 @@ export class PersonFormComponent extends AllorsFormComponent<Person> {
     if (this.editRequest) {
       this.selectedUserGroups =
         pullResult.collection<UserGroup>('ActiveUserGroups') ?? [];
+
+      this.partyFinancial = pullResult
+        .collection<PartyFinancialRelationship>(
+          this.m.Party.PartyFinancialRelationshipsWhereFinancialParty
+        )
+        ?.find((v) => v.InternalOrganisation === this.internalOrganisation);
     }
   }
 

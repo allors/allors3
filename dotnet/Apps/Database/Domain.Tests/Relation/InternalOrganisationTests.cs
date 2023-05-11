@@ -53,7 +53,6 @@ namespace Allors.Database.Domain.Tests
                 .WithIsInternalOrganisation(true)
                 .WithName("Internal")
                 .WithDefaultCollectionMethod(this.ownBankAccount)
-                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build())
                 .Build();
 
             this.Derive();
@@ -70,7 +69,6 @@ namespace Allors.Database.Domain.Tests
                 .WithIsInternalOrganisation(true)
                 .WithName("Internal")
                 .WithDefaultCollectionMethod(this.ownBankAccount)
-                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build())
                 .Build();
 
             this.Derive();
@@ -102,7 +100,6 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithName("Internal")
-                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build())
                 .Build();
 
             this.Derive();
@@ -151,7 +148,6 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithName("Internal")
-                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build())
                 .Build();
 
             this.Transaction.Derive();
@@ -205,7 +201,6 @@ namespace Allors.Database.Domain.Tests
             var organisation = new OrganisationBuilder(this.Transaction)
                 .WithIsInternalOrganisation(true)
                 .WithName("Internal")
-                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(this.Transaction).Build())
                 .Build();
 
             this.Derive();

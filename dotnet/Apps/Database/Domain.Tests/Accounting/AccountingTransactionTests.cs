@@ -21,8 +21,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnInternalOrganisationExportAccountingTrueDeriveDeletePermission()
         {
-            this.InternalOrganisation.ExportAccounting = true;
-
             var transaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 
@@ -32,6 +30,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnInternalOrganisationExportAccountingFalseDeriveDeletePermission()
         {
+            this.InternalOrganisation.ExportAccounting = false;
+
             var transaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 
@@ -41,8 +41,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedAccountingTransactionExportedIsFalseDeriveDeletePermission()
         {
-            this.InternalOrganisation.ExportAccounting = true;
-
             var transaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 
@@ -55,8 +53,6 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnChangedAccountingTransactionExportedIsTrueDeriveDeletePermission()
         {
-            this.InternalOrganisation.ExportAccounting = true;
-
             var transaction = new AccountingTransactionBuilder(this.Transaction).Build();
             this.Derive();
 

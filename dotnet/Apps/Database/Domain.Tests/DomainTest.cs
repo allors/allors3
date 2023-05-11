@@ -134,6 +134,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")
                 .WithPurchaseInvoiceNumberPrefix("incoming invoiceno: ")
                 .WithPurchaseOrderNumberPrefix("purchase orderno: ")
+                .WithExportAccounting(true)
                 .Build();
 
             this.Transaction.Derive();

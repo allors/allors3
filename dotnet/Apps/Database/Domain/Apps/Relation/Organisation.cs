@@ -95,6 +95,14 @@ namespace Allors.Database.Domain
             && !this.ExistWorkEffortsWhereExecutedBy
             && !this.ExistWorkEffortPartyAssignmentsWhereParty;
 
+        public void AppsOnInit(ObjectOnInit method)
+        {
+            if (this.IsInternalOrganisation && !this.ExistSettingsForAccounting)
+            {
+                this.SettingsForAccounting = new InternalOrganisationAccountingSettingsBuilder(this.Transaction()).Build();
+            }
+        }
+
         public void DeriveRelationships()
         {
             var now = this.Transaction().Now();

@@ -144,7 +144,6 @@ namespace Allors.Database.Domain
                 .WithShipmentIsAutomaticallyReturned(shipmentIsAutomaticallyReturned)
                 .WithCollectiveWorkEffortInvoice(collectiveWorkEffortInvoice)
                 .WithCountry(country)
-                .WithSettingsForAccounting(new InternalOrganisationAccountingSettingsBuilder(transaction).Build())
                 .Build();
 
             internalOrganisation.SerialisedItemSoldOns = serialisedItemSoldOns;
