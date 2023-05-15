@@ -55,6 +55,7 @@ namespace Allors.Repository
         #region Allors
         [Id("F5E0881D-E239-4B21-8E7A-C380E96E2A26")]
         #endregion
+        [Required]
         [Workspace(Default)]
         public decimal Quantity { get; set; }
 

@@ -101,6 +101,7 @@ namespace Allors.Repository
         #region Allors
         [Id("53857cc0-5fcb-43ee-960d-a9d0c2189b18")]
         #endregion
+        [Required]
         [Workspace(Default)]
         public bool AvailableForSale { get; set; }
 

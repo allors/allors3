@@ -28,18 +28,6 @@ namespace Allors.Database.Domain
                 return true;
             }
 
-            foreach (var organisationGlAccountBalance in this.OrganisationGlAccountBalancesWhereOrganisationGlAccount)
-            {
-                foreach (var accountingTransactionDetail in organisationGlAccountBalance.OrganisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount)
-                {
-                    if (accountingTransactionDetail.AccountingTransactionWhereAccountingTransactionDetail.AccountingTransactionNumber.AccountingTransactionType.Equals(new AccountingTransactionTypes(this.Strategy.Transaction).BankStatement))
-                    {
-                        this.HasBankStatementTransactions = true;
-                        return true;
-                    }
-                }
-            }
-
             return false;
         }
 

@@ -34,6 +34,7 @@ namespace Allors.Repository
         #endregion
         [Precision(19)]
         [Scale(2)]
+        [Required]
         [Workspace(Default)]
         public decimal Quantity { get; set; }
 
