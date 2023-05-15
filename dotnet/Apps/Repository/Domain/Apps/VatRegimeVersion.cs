@@ -33,7 +33,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         public Country ObsoleteCountry { get; set; }
 
         #region Allors
@@ -41,7 +41,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         [Multiplicity(Multiplicity.ManyToMany)]
-        [Indexed]
+        
         public Country[] Countries { get; set; }
 
         #region inherited methods

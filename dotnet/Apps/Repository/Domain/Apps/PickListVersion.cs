@@ -34,21 +34,17 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Indexed]
-        [Required]
         [Workspace(Default)]
         public PickListState PickListState { get; set; }
 
         #region Allors
         [Id("C793C53B-23DB-44E1-8BAB-B62E3C65FD5F")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public DateTime CreationDate { get; set; }
 
         #region Allors
         [Id("18C30DFC-988C-49E3-BC47-1EF70E54E004")]
-        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
@@ -56,7 +52,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("30DE831B-2D14-4E6C-9629-EEA958FDA6DD")]
-        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -64,7 +59,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("854D73F1-4D46-4B6D-9084-7D9A5497CA1A")]
-        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -72,7 +66,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("A0EC7FD3-298F-4453-A611-549125C2B646")]
-        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]

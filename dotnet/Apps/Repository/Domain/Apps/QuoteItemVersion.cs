@@ -31,7 +31,6 @@ namespace Allors.Repository
         [Id("EB4A6E73-333A-4BBD-BE8A-C7DCCFCC7A8A")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
         [Workspace(Default)]
         public QuoteItemState QuoteItemState { get; set; }
 
@@ -46,7 +45,6 @@ namespace Allors.Repository
         [Id("2FF532EE-F6C4-4DE9-9F6A-53EBB0747D51")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
         [Workspace(Default)]
         public Party Authorizer { get; set; }
 
@@ -54,7 +52,6 @@ namespace Allors.Repository
         [Id("36035A65-0806-4B96-9E57-5AC0176DA4C2")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
         [Workspace(Default)]
         public Deliverable Deliverable { get; set; }
 
@@ -62,7 +59,6 @@ namespace Allors.Repository
         [Id("95CF9D84-E1FE-40DC-AE7C-8CA2DDC6687C")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
         [Workspace(Default)]
         public UnifiedProduct Product { get; set; }
 
@@ -74,7 +70,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("4D54E4C2-E612-484C-B4A4-EAC04D96BD5A")]
-        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
@@ -84,7 +79,7 @@ namespace Allors.Repository
         [Id("9E8A5EBF-AE58-4F04-B29C-2A813713C52E")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public UnitOfMeasure UnitOfMeasure { get; set; }
 
@@ -92,7 +87,7 @@ namespace Allors.Repository
         [Id("9BD1DB0E-5215-4764-8C1D-C88B98917D5B")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public ProductFeature ProductFeature { get; set; }
 
@@ -100,7 +95,7 @@ namespace Allors.Repository
         [Id("14e62d23-d178-4445-81f2-f984447080d8")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
 
@@ -116,7 +111,7 @@ namespace Allors.Repository
         [Id("FCA1614D-45CD-4295-9911-B9464EA9A4C4")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public Skill Skill { get; set; }
 
@@ -124,7 +119,7 @@ namespace Allors.Repository
         [Id("E4C53A94-52F4-4A0D-8204-B315EECB16E2")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public WorkEffort WorkEffort { get; set; }
 
@@ -132,7 +127,7 @@ namespace Allors.Repository
         [Id("932A2BF0-AA86-431B-BC77-818E1EC5A837")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
+        
         [Workspace(Default)]
         public SalesTerm[] SalesTerms { get; set; }
 
@@ -146,7 +141,7 @@ namespace Allors.Repository
         [Id("24B8A678-F28D-4041-9514-490CDC1FDE7D")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public RequestItem RequestItem { get; set; }
 
@@ -154,7 +149,7 @@ namespace Allors.Repository
         [Id("2a181149-58cd-4b82-86eb-b2f28e439481")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public IrpfRegime DerivedIrpfRegime { get; set; }
 
@@ -162,7 +157,7 @@ namespace Allors.Repository
         [Id("81b88b1b-3718-48ed-bace-174b65aa83bc")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public IrpfRegime AssignedIrpfRegime { get; set; }
 
@@ -170,7 +165,7 @@ namespace Allors.Repository
         [Id("17f50756-7c9f-404c-974b-4af5b30a65d1")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public IrpfRate IrpfRate { get; set; }
 

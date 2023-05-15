@@ -29,23 +29,21 @@ namespace Allors.Repository
 
         #region Allors
         [Id("5CE3E9F4-BBD1-4134-A187-6570D1D7E52A")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Required]
         [Workspace(Default)]
         public InventoryItem InventoryItem { get; set; }
 
         #region Allors
         [Id("47239001-6F4D-4EDA-9DE4-3805629017F1")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public decimal Quantity { get; set; }
 
         #region Allors
         [Id("B05C8F82-ABA9-464A-852B-885F6C89AEEB")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Derived]

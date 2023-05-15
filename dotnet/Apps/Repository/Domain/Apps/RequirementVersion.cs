@@ -17,7 +17,7 @@ namespace Allors.Repository
     {
         #region Allors
         [Id("BB7D5EA4-6D52-4E64-B18C-CD74FA010102")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -31,7 +31,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("4F5BF6F8-C4B8-4E3B-A1F2-6E212322AB8B")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -39,7 +39,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("37EFDA28-11F6-45C1-8243-AE38F8DAD9C9")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -53,7 +53,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("58872073-760D-4E9C-9926-A6A784329010")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
@@ -61,7 +61,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("82377E0E-9AA2-4571-BB4C-A859AFB1DB22")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -69,7 +69,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("367D85A1-D463-440C-A0F0-1DA4633EE6F1")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -77,7 +77,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("dd839107-60fb-49f9-9b4d-25abc4c0dbda")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -85,7 +85,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("6775C4EA-06F2-48DC-854A-7913510D117A")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -93,7 +93,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("2FA42AB7-9B48-44E2-B929-3D7040555425")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]

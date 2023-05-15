@@ -17,7 +17,7 @@ namespace Allors.Repository
     {
         #region Allors
         [Id("4c541aac-1d5c-453c-bf7d-aba07bed78e1")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -25,7 +25,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("D2282505-6967-412B-8D92-53D10A8BE7BE")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         WorkEffortState WorkEffortState { get; set; }

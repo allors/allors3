@@ -17,7 +17,7 @@ namespace Allors.Repository
     {
         #region Allors
         [Id("2045FACF-3F58-4A6F-94CB-CC8369619EBB")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -25,7 +25,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("91A8835F-1628-43BC-8564-C5D3DB90F40F")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -34,14 +34,13 @@ namespace Allors.Repository
         #region Allors
         [Id("92BA5224-5123-462F-A1DF-EDDE727B2054")]
         #endregion
-        [Required]
         [Size(256)]
         [Workspace(Default)]
         string ShipmentNumber { get; set; }
 
         #region Allors
         [Id("DFFCADE4-DECB-4BC0-94E2-E1F1FC46D9B0")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -49,7 +48,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("C1E6385D-6893-49A0-B88B-CA1A0E3BC2DC")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -57,7 +56,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("01E13426-3D0A-44FE-A24D-6155BED5BFB7")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -72,7 +71,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("A8EBADA5-1B73-4FB5-86C0-FC2EDD9C3264")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -80,7 +79,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("37AF13D7-3530-4249-872F-FF1E835F33F1")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -102,7 +101,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("926845AF-224F-455E-B874-E5AF7D25F63F")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
@@ -110,7 +109,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("50757F14-FA1C-48B0-85E0-2EC4491C335C")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
@@ -138,7 +137,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("ACB742CA-0A75-4056-B17F-C3A163954757")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -159,7 +158,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("E29E9265-EFC3-41DF-9596-DF5F145549D3")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -167,7 +166,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("94A73829-633B-4DD0-8388-82E3BE795BBC")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
@@ -175,7 +174,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("35AE034A-73D8-4478-8E29-F9A2058CA6FE")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]

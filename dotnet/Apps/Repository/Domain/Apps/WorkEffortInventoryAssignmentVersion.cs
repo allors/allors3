@@ -34,7 +34,7 @@ namespace Allors.Repository
         [Id("1B695715-456E-4BE6-8B42-0386928BBE07")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
@@ -45,7 +45,7 @@ namespace Allors.Repository
         [Id("F1811C2A-9A4E-4949-9008-E3519EA4AB51")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public InventoryItem InventoryItem { get; set; }
 
@@ -55,7 +55,6 @@ namespace Allors.Repository
         #region Allors
         [Id("F5E0881D-E239-4B21-8E7A-C380E96E2A26")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public decimal Quantity { get; set; }
 
@@ -78,7 +77,7 @@ namespace Allors.Repository
         [Id("30EF280B-A7EA-400D-BA36-2DCD242C96F2")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
+        
         [Workspace(Default)]
         public InventoryItemTransaction[] InventoryItemTransactions { get; set; }
 

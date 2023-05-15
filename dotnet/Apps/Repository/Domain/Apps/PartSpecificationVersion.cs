@@ -29,7 +29,6 @@ namespace Allors.Repository
 
         #region Allors
         [Id("1232404A-DC5B-40DA-A542-EFBF9222639B")]
-        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         public PartSpecificationState PartSpecificationState { get; set; }
@@ -42,7 +41,6 @@ namespace Allors.Repository
         #region Allors
         [Id("268AE79C-47EE-4735-A970-BDC553508D5C")]
         #endregion
-        [Required]
         [Size(-1)]
         public string Description { get; set; }
 

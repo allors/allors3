@@ -32,7 +32,7 @@ namespace Allors.Repository
         [Id("4d9d54a1-893f-4540-b4e7-b1920a92f581")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public Party ObsoleteSupplier { get; set; }
 
@@ -40,7 +40,7 @@ namespace Allors.Repository
         [Id("cbfc7cb5-3c7d-43e5-a794-0d8cd6c85fc5")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public Organisation Supplier { get; set; }
 
@@ -48,7 +48,7 @@ namespace Allors.Repository
         [Id("e3a81cbe-1e90-4db8-8587-a8e0ff6e1619")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
+        
         [Workspace(Default)]
         public Part Part { get; set; }
 

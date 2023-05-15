@@ -12,7 +12,7 @@ namespace Allors.Repository
     {
         #region Allors
         [Id("561C7A91-5232-453F-BA26-9B84D871ECC9")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]

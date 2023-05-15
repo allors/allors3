@@ -31,7 +31,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("4EE6B72D-B1EC-4586-8666-1FE8006F147A")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -39,7 +39,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("60cf90a6-7049-4692-ac73-1394478b0fb6")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -53,7 +53,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("94F10411-FDDA-4A7D-8617-AF7BFE36BE9F")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
@@ -61,7 +61,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("7E46E5D7-FBFB-4D7A-9EC6-522FBE37826D")]
-        [Indexed]
+        
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -101,7 +101,6 @@ namespace Allors.Repository
         #region Allors
         [Id("53857cc0-5fcb-43ee-960d-a9d0c2189b18")]
         #endregion
-        [Required]
         [Workspace(Default)]
         public bool AvailableForSale { get; set; }
 

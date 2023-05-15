@@ -22,6 +22,19 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
+        [Id("a7fb7e5a-287a-41a1-b6b9-bd56601732f3")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        public AccountingTransactionNumber TransactionNumber { get; set; }
+
+        #region Allors
+        [Id("be061dda-bb8f-4bc1-b386-dc0c05dc6eaf")]
+        #endregion
+        [Required]
+        public DateTime EntryDate { get; set; }
+
+        #region Allors
         [Id("EF969E4C-ADD5-4A3D-A718-857CC99BBACA")]
         [Indexed]
         #endregion
@@ -129,19 +142,6 @@ namespace Allors.Repository
         [Precision(19)]
         [Scale(2)]
         public decimal DerivedTotalAmount { get; set; }
-
-        #region Allors
-        [Id("a7fb7e5a-287a-41a1-b6b9-bd56601732f3")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        public AccountingTransactionNumber AccountingTransactionNumber { get; set; }
-
-        #region Allors
-        [Id("be061dda-bb8f-4bc1-b386-dc0c05dc6eaf")]
-        #endregion
-        [Required]
-        public DateTime EntryDate { get; set; }
 
         #region Allors
         [Id("b68801be-f9be-4df7-b34d-609f1397dc07")]

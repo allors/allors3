@@ -32,7 +32,6 @@ namespace Allors.Repository
         [Id("f5ae22ec-f7de-4117-9dad-5d9b903c52ac")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
         [Workspace(Default)]
         public Product[] Variants { get; set; }
 

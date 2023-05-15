@@ -25,14 +25,12 @@ namespace Allors.Repository
         [Id("19eaba19-7179-4511-87b8-7a8f48e4a7a3")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
         DiscountAdjustment[] DiscountAdjustments { get; set; }
 
         #region Allors
         [Id("9db9535d-9dc9-4bbf-8a4f-aae8839383fe")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        [Indexed]
         SurchargeAdjustment[] SurchargeAdjustments { get; set; }
 
         #region Allors
@@ -48,7 +46,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Indexed]
         VatRegime DerivedVatRegime { get; set; }
 
         #region Allors
@@ -80,7 +77,6 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Indexed]
         VatRate VatRate { get; set; }
 
         #region Allors
@@ -142,7 +138,6 @@ namespace Allors.Repository
         [Id("6D73797C-EC9F-4C59-9234-4E67756AE365")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
         VatRegime AssignedVatRegime { get; set; }
 
         #region Allors

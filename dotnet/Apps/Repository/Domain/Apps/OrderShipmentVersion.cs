@@ -32,7 +32,6 @@ namespace Allors.Repository
         #region Allors
         [Id("75312912-569b-469f-9a00-57bf2faf6a79")]
         #endregion
-        [Required]
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]

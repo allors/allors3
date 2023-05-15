@@ -31,11 +31,9 @@ namespace Allors.Repository
 
         #region Allors
         [Id("00E6F8D6-4D49-4DE3-8B96-30E170250831")]
-        [Indexed]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        [Required]
         [Workspace(Default)]
         public CaseState CaseState { get; set; }
 
@@ -47,7 +45,6 @@ namespace Allors.Repository
         #region Allors
         [Id("6BF14869-E4B3-443C-8A04-761FEE122E44")]
         #endregion
-        [Required]
         [Size(-1)]
         public string Description { get; set; }
 
