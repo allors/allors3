@@ -182,7 +182,7 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(this.contact, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
             Assert.Contains(contact2, this.supplierRelationship.Supplier.ContactsUserGroup.Members);
 
-            contactRelationship2.ThroughDate = this.Transaction.Now().AddDays(-1);
+            contactRelationship2.ThroughDate = contactRelationship2.FromDate;
 
             this.Transaction.Derive();
 
