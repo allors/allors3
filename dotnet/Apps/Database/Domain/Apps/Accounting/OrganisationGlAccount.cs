@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 
     public partial class OrganisationGlAccount
     {
-        public bool IsDeletable => !this.ExistAccountingTransactionDetailsWhereOrganisationGlAccount;
+        public bool IsDeletable => !this.GeneralLedgerAccount.ExistAccountingTransactionDetailsWhereGeneralLedgerAccount;
 
         public bool IsNeutralAccount() =>
             !this.IsBankAccount() && !this.IsCashAccount() && !this.IsCostAccount() && !this.IsCostAccount()
@@ -17,12 +17,6 @@ namespace Allors.Database.Domain
 
         public bool IsBankAccount()
         {
-            if (this.ExistJournalWhereContraAccount &&
-                this.JournalWhereContraAccount.JournalType.Equals(new JournalTypes(this.Strategy.Transaction).Bank))
-            {
-                return true;
-            }
-
             if (this.HasBankStatementTransactions)
             {
                 return true;

@@ -91,16 +91,12 @@ namespace Allors.Repository
         #region Allors
         [Id("bc346c06-3d48-487a-9aa5-c72cd5abf268")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        public AccountingTransactionNumber TransactionNumber { get; set; }
+        public string TransactionNumber { get; set; }
 
         #region Allors
         [Id("b254656b-712a-43e9-a80d-30ea7d1ff222")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Indexed]
-        public AccountingTransactionNumber ReconciliationTransactionNumber { get; set; }
+        public string ReconciliationTransactionNumber { get; set; }
 
         #region Allors
         [Id("13dd1a92-8cb6-4899-8225-782b8213ca47")]

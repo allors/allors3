@@ -1427,7 +1427,7 @@ namespace Allors
             var journal = new JournalBuilder(this.Transaction)
                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
                 .WithName("Bank Journal")
-                .WithContraAccount(BLimBanRbaBg1Gl)
+                .WithContraAccount(BLimBanRbaBg1Gl.GeneralLedgerAccount)
                 .WithCurrency(euro)
                 .Build();
 

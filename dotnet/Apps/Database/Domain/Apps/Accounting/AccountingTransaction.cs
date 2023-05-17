@@ -11,6 +11,14 @@ namespace Allors.Database.Domain
     {
         public bool IsDeletable => this.InternalOrganisation.ExportAccounting && !this.Exported;
 
+        public void AppsOnBuild(ObjectOnBuild method)
+        {
+            if (!this.ExistEntryDate)
+            {
+                this.EntryDate = this.Transaction().Now();
+            }
+        }
+
         public void AppsOnInit(ObjectOnInit method)
         {
             // TODO: Don't extent for InternalOrganisations

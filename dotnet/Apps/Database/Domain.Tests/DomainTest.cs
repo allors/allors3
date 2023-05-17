@@ -9,6 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.Globalization;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using Adapters.Memory;
     using Configuration;
     using Database.Derivations;
@@ -134,6 +135,7 @@ namespace Allors.Database.Domain.Tests
                 .WithPurchaseShipmentNumberPrefix("incoming shipmentno: ")
                 .WithPurchaseInvoiceNumberPrefix("incoming invoiceno: ")
                 .WithPurchaseOrderNumberPrefix("purchase orderno: ")
+                .WithCountry(new Countries(this.Transaction).FindBy(M.Country.IsoCode, "NL"))
                 .WithExportAccounting(true)
                 .Build();
 
@@ -159,10 +161,88 @@ namespace Allors.Database.Domain.Tests
                 .WithGeneralLedgerAccountClassification(accountClassification)
                 .Build();
 
-            var organisationGlAccount = new OrganisationGlAccountBuilder(this.Transaction)
+            new OrganisationGlAccountBuilder(this.Transaction)
                 .WithInternalOrganisation(this.InternalOrganisation)
                 .WithGeneralLedgerAccount(glAccount0001)
                 .Build();
+
+            var glAccount0002 = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("A2")
+                .WithSortCode("A2")
+                .WithReferenceNumber("0002")
+                .WithName("Accounts Receivable")
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountClassification(accountClassification)
+                .Build();
+
+            new OrganisationGlAccountBuilder(this.Transaction)
+                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithGeneralLedgerAccount(glAccount0002)
+                .Build();
+
+            var glAccount0003 = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("A3")
+                .WithSortCode("A3")
+                .WithReferenceNumber("0003")
+                .WithName("Revenue")
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountClassification(accountClassification)
+                .Build();
+
+            new OrganisationGlAccountBuilder(this.Transaction)
+                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithGeneralLedgerAccount(glAccount0003)
+                .Build();
+
+            var glAccount0004 = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("A4")
+                .WithSortCode("A4")
+                .WithReferenceNumber("0004")
+                .WithName("VAT")
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountClassification(accountClassification)
+                .Build();
+
+            new OrganisationGlAccountBuilder(this.Transaction)
+                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithGeneralLedgerAccount(glAccount0004)
+                .Build();
+
+            var glAccount0005 = new GeneralLedgerAccountBuilder(this.Transaction)
+                .WithReferenceCode("A4")
+                .WithSortCode("A4")
+                .WithReferenceNumber("0005")
+                .WithName("CalculationDifferences")
+                .WithBalanceType(new BalanceTypes(this.Transaction).Balance)
+                .WithBalanceSide(new BalanceSides(this.Transaction).Debit)
+                .WithGeneralLedgerAccountType(new GeneralLedgerAccountTypeBuilder(this.Transaction).WithDescription("accountType").Build())
+                .WithGeneralLedgerAccountClassification(accountClassification)
+                .Build();
+
+            new OrganisationGlAccountBuilder(this.Transaction)
+                .WithInternalOrganisation(this.InternalOrganisation)
+                .WithGeneralLedgerAccount(glAccount0005)
+                .Build();
+
+            foreach (var setting in this.InternalOrganisation.SettingsForAccounting.SettingsForVatRates)
+            {
+                setting.VatReceivableAccount = glAccount0004;
+                setting.VatPayableAccount = glAccount0004;
+            }
+
+            foreach (var setting in this.InternalOrganisation.SettingsForAccounting.SettingsForInvoiceItemTypes)
+            {
+                setting.SalesGeneralLedgerAccount = glAccount0003;
+            }
+
+            this.InternalOrganisation.SettingsForAccounting.AccountsReceivable = glAccount0002;
+            this.InternalOrganisation.SettingsForAccounting.CalculationDifferences = glAccount0005;
 
             this.InternalOrganisation.DefaultCollectionMethod = new OwnBankAccountBuilder(this.Transaction)
                 .WithBankAccount(new BankAccountBuilder(this.Transaction).WithBank(bank)
@@ -175,7 +255,7 @@ namespace Allors.Database.Domain.Tests
                                 .WithName("name")
                                 .WithCurrency(euro)
                                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
-                                .WithContraAccount(organisationGlAccount)
+                                .WithContraAccount(glAccount0001)
                                 .Build())
                 .Build();
 

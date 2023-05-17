@@ -135,7 +135,7 @@ namespace Integration.Tests
                                 .WithName("name")
                                 .WithCurrency(euro)
                                 .WithJournalType(new JournalTypes(this.Transaction).Bank)
-                                .WithContraAccount(organisationGlAccount)
+                                .WithContraAccount(organisationGlAccount.GeneralLedgerAccount)
                                 .Build())
                 .Build();
 

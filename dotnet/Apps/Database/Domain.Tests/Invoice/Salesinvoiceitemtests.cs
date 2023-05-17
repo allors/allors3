@@ -1897,7 +1897,7 @@ namespace Allors.Database.Domain.Tests
                 .WithProduct(this.good)
                 .WithQuantity(1)
                 .WithAssignedUnitPrice(100M)
-                .WithAssignedVatRegime(new VatRegimes(this.Transaction).BelgiumStandard)
+                .WithAssignedVatRegime(new VatRegimes(this.Transaction).DutchStandardTariff)
                 .Build();
 
             this.invoice.AddSalesInvoiceItem(item1);

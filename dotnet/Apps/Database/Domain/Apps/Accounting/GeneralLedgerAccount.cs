@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 
     public partial class GeneralLedgerAccount
     {
-        public bool IsDeletable => !this.OrganisationGlAccountsWhereGeneralLedgerAccount.Any(v => v.ExistAccountingTransactionDetailsWhereOrganisationGlAccount);
+        public bool IsDeletable => !this.ExistAccountingTransactionDetailsWhereGeneralLedgerAccount;
 
         public void AppsDelete(DeletableDelete method)
         {

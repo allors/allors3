@@ -84,11 +84,11 @@ namespace Allors.Repository
         public AccountingTransaction[] AccountingTransactions { get; set; }
 
         #region Allors
-        [Id("04f786b4-66be-4616-9966-ac026384c0d3")]
+        [Id("afb3ccb3-3f5c-4018-9eab-3795773c7c06")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
-        public OrganisationGlAccount UnassignedAccount { get; set; }
+        public GeneralLedgerAccount UnassignedAccount { get; set; }
 
         #region Allors
         [Id("3a52aa7c-fa01-4845-866c-976e48ea2179")]
@@ -97,12 +97,12 @@ namespace Allors.Repository
         public bool BlockUnpaidTransactions { get; set; }
 
         #region Allors
-        [Id("4f1b0471-67f9-4fa1-9b69-b5d9cbeda5e7")]
+        [Id("1a8504e3-b7b9-4e60-aace-b1d5188a58ea")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
-        public OrganisationGlAccount ContraAccount { get; set; }
+        public GeneralLedgerAccount ContraAccount { get; set; }
 
         #region Allors
         [Id("9491207d-1e98-48e2-bbfc-de1b7563ce1d")]

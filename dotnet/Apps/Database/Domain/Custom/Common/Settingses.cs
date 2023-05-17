@@ -31,6 +31,7 @@ namespace Allors.Database.Domain
             settings.SerialisedItemCounter ??= new CounterBuilder(this.Transaction).Build();
             settings.ProductNumberCounter ??= new CounterBuilder(this.Transaction).Build();
             settings.PartNumberCounter ??= new CounterBuilder(this.Transaction).Build();
+            settings.TransactionNumberCounter ??= new CounterBuilder(this.Transaction).Build();
         }
     }
 }

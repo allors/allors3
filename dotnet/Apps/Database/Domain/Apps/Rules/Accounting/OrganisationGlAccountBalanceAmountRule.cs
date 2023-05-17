@@ -12,9 +12,9 @@ namespace Allors.Database.Domain
         public OrganisationGlAccountBalanceAmountRule(MetaPopulation m) : base(m, new Guid("aebf3ae1-4654-44dd-b4d3-a025afb203de")) =>
             this.Patterns = new Pattern[]
             {
-                //m.OrganisationGlAccountBalance.RolePattern(v => v.DerivationTrigger, v => v.OrganisationGlAccount),
                 m.AccountingTransactionDetail.RolePattern(v => v.Amount),
-                m.OrganisationGlAccount.AssociationPattern(v => v.AccountingTransactionDetailsWhereOrganisationGlAccount, v => v.AccountingTransactionDetailsWhereOrganisationGlAccount),
+                m.AccountingTransactionDetail.RolePattern(v => v.GeneralLedgerAccount),
+                m.GeneralLedgerAccount.AssociationPattern(v => v.AccountingTransactionDetailsWhereGeneralLedgerAccount, v => v.AccountingTransactionDetailsWhereGeneralLedgerAccount)
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
@@ -23,39 +23,38 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<AccountingTransactionDetail>())
             {
-                var accountingPeriod = @this.AccountingTransactionWhereAccountingTransactionDetail.AccountingPeriod;
-
-                var organisationGlAccount = @this.OrganisationGlAccount;
-                var generalLedgerAccount = organisationGlAccount.GeneralLedgerAccount;
-
-                var organisationGlAccountBalance = organisationGlAccount.
-                    OrganisationGlAccountBalancesWhereOrganisationGlAccount
-                    .FirstOrDefault(v => v.AccountingPeriod.Equals(accountingPeriod));
-
-                if (organisationGlAccountBalance != null)
+                if (@this.AccountingTransactionWhereAccountingTransactionDetail.ExistAccountingPeriod)
                 {
-                    if (generalLedgerAccount.RgsLevel == 4)
+                    var internalOrganisation = @this.AccountingTransactionWhereAccountingTransactionDetail.InternalOrganisation;
+                    var accountingPeriod = @this.AccountingTransactionWhereAccountingTransactionDetail.AccountingPeriod;
+
+                    var generalLedgerAccount = @this.GeneralLedgerAccount;
+                    var organisationGlAccount = @this.GeneralLedgerAccount.OrganisationGlAccountsWhereGeneralLedgerAccount.First(v => v.InternalOrganisation.Equals(internalOrganisation));
+                    var details = internalOrganisation.AccountingTransactionsWhereInternalOrganisation.Where(v => v.AccountingPeriod == accountingPeriod).SelectMany(v => v.AccountingTransactionDetails.Where(v => v.GeneralLedgerAccount.Equals(generalLedgerAccount))).ToList();
+
+                    var organisationGlAccountBalance = organisationGlAccount.
+                        OrganisationGlAccountBalancesWhereOrganisationGlAccount
+                        .FirstOrDefault(v => v.AccountingPeriod.Equals(accountingPeriod));
+
+                    if (organisationGlAccountBalance != null)
                     {
-                        var details = organisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount.ToList();
-                        var subDetails = new AccountingTransactionDetails(cycle.Transaction)
-                            .Extent()
-                            .Where(v => v.OrganisationGlAccount.GeneralLedgerAccount.Parent == generalLedgerAccount)
-                            .ToList();
-
-                        var allDetails = details.Concat(subDetails).ToList();
-
-                        this.CalculateAmounts(organisationGlAccountBalance, allDetails);
-                    }
-                    else
-                    {
-                        var details = organisationGlAccount.AccountingTransactionDetailsWhereOrganisationGlAccount.ToList();
-
-                        this.CalculateAmounts(organisationGlAccountBalance, details);
-
-                        if (generalLedgerAccount.ExistParent)
+                        if (generalLedgerAccount.RgsLevel == 4)
                         {
-                            organisationGlAccount.SubsidiaryOf.OrganisationGlAccountBalancesWhereOrganisationGlAccount.ToList()
-                                .ForEach(v => v.DerivationTrigger = Guid.NewGuid());
+                            var subDetails = internalOrganisation.AccountingTransactionsWhereInternalOrganisation.Where(v => v.AccountingPeriod == accountingPeriod).SelectMany(v => v.AccountingTransactionDetails.Where(v => v.GeneralLedgerAccount.Equals(generalLedgerAccount.Parent))).ToList();
+
+                            var allDetails = details.Concat(subDetails).ToList();
+
+                            this.CalculateAmounts(organisationGlAccountBalance, allDetails);
+                        }
+                        else
+                        {
+                            this.CalculateAmounts(organisationGlAccountBalance, details);
+
+                            if (generalLedgerAccount.ExistParent)
+                            {
+                                organisationGlAccount.SubsidiaryOf.OrganisationGlAccountBalancesWhereOrganisationGlAccount.ToList()
+                                    .ForEach(v => v.DerivationTrigger = Guid.NewGuid());
+                            }
                         }
                     }
                 }

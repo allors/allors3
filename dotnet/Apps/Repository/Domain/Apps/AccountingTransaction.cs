@@ -22,11 +22,20 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("a7fb7e5a-287a-41a1-b6b9-bd56601732f3")]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Id("4e93aa10-beae-4eb5-af92-c27a006380ae")]
         [Indexed]
-        public AccountingTransactionNumber TransactionNumber { get; set; }
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Required]
+        [Workspace]
+        public AccountingTransactionType AccountingTransactionType { get; set; }
+
+        #region Allors
+        [Id("a7fb7e5a-287a-41a1-b6b9-bd56601732f3")]
+        [Required]
+        [Derived]
+        #endregion
+        public string TransactionNumber { get; set; }
 
         #region Allors
         [Id("be061dda-bb8f-4bc1-b386-dc0c05dc6eaf")]
@@ -117,21 +126,18 @@ namespace Allors.Repository
         #region Allors
         [Id("657f2688-4af0-4580-add2-c8a30b32e016")]
         #endregion
-        [Required]
         [Size(-1)]
         public string Description { get; set; }
 
         #region Allors
         [Id("77910a3f-3547-4d6b-92e0-f1fc136e22da")]
         #endregion
-        [Required]
         public DateTime TransactionDate { get; set; }
 
         #region Allors
         [Id("2c2fd25f-2070-4594-8dc5-e9dcabbb1656")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        [Required]
         public AccountingPeriod AccountingPeriod { get; set; }
 
         #region Allors

@@ -31,13 +31,13 @@ namespace Allors.Repository
         public AccountingTransactionDetail AssociatedWith { get; set; }
 
         #region Allors
-        [Id("644b956b-58e3-465b-b431-5637d9a209e5")]
+        [Id("572263b1-8296-4341-9ccb-216c4013d473")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Required]
         [Workspace]
-        public OrganisationGlAccount OrganisationGlAccount { get; set; }
+        public GeneralLedgerAccount GeneralLedgerAccount { get; set; }
 
         #region Allors
         [Id("9b5a3978-9859-432a-939b-73838c2bb3b2")]

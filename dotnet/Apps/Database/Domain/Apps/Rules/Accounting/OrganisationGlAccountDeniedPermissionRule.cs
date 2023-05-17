@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public OrganisationGlAccountDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("fb99f1f6-2783-4f94-89b9-bfc4cae4bec9")) =>
             this.Patterns = new Pattern[]
         {
-            m.OrganisationGlAccount.AssociationPattern(v => v.AccountingTransactionDetailsWhereOrganisationGlAccount, m.OrganisationGlAccount),
+            m.GeneralLedgerAccount.AssociationPattern(v => v.AccountingTransactionDetailsWhereGeneralLedgerAccount, v => v.OrganisationGlAccountsWhereGeneralLedgerAccount.OrganisationGlAccount),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

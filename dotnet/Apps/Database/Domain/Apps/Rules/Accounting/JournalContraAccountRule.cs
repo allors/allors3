@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<Journal>())
             {
                 if (@this.ExistCurrentVersion
-                    && @this.CurrentVersion.ContraAccount.ExistAccountingTransactionDetailsWhereOrganisationGlAccount
+                    && @this.CurrentVersion.ContraAccount.ExistAccountingTransactionDetailsWhereGeneralLedgerAccount
                     && @this.CurrentVersion.ExistContraAccount
                     && @this.ContraAccount != @this.CurrentVersion.ContraAccount)
                 {

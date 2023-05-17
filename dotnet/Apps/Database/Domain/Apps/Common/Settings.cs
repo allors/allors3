@@ -36,6 +36,11 @@ namespace Allors.Database.Domain
             {
                 this.PartNumberCounter = new CounterBuilder(this.Strategy.Transaction).Build();
             }
+
+            if (!this.ExistTransactionNumberCounter)
+            {
+                this.TransactionNumberCounter = new CounterBuilder(this.Strategy.Transaction).Build();
+            }
         }
 
         public string NextSkuNumber()
@@ -61,5 +66,7 @@ namespace Allors.Database.Domain
             var partNumber = this.PartNumberCounter.NextValue();
             return string.Concat(this.ExistPartNumberPrefix ? this.PartNumberPrefix : string.Empty, partNumber);
         }
+
+        public string NextTransactionNumber() => this.TransactionNumberCounter.NextValue().ToString();
     }
 }

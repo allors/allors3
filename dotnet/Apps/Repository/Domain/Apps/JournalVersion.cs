@@ -28,10 +28,10 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("128c9089-cafe-4861-a101-ccefd4b93c46")]
+        [Id("ed04dda1-935b-4112-ac06-c543ec481b5b")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
-        public OrganisationGlAccount ContraAccount { get; set; }
+        public GeneralLedgerAccount ContraAccount { get; set; }
 
         #region Allors
         [Id("808e747b-3ebd-4300-9e11-4c3200d10d70")]

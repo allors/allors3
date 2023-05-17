@@ -141,7 +141,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var transaction = new AccountingTransactionBuilder(this.Transaction)
-                .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(organisationGlAccount).Build())
+                .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction).WithGeneralLedgerAccount(organisationGlAccount.GeneralLedgerAccount).Build())
                 .Build();
             this.Derive();
 
@@ -158,7 +158,7 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             var transaction = new AccountingTransactionBuilder(this.Transaction)
-                .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction).WithOrganisationGlAccount(organisationGlAccount).Build())
+                .WithAccountingTransactionDetail(new AccountingTransactionDetailBuilder(this.Transaction).WithGeneralLedgerAccount(organisationGlAccount.GeneralLedgerAccount).Build())
                 .Build();
             this.Derive();
 
