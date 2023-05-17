@@ -236,6 +236,20 @@ export class Filters {
     });
   }
 
+  static salesInvoiceFilter(m: M, internalOrganisationId: number) {
+    return new SearchFactory({
+      objectType: m.SalesInvoice,
+      roleTypes: [m.SalesInvoice.InvoiceNumber],
+      post: (predicate: And) => {
+        predicate.operands.push({
+          kind: 'Equals',
+          propertyType: m.SalesInvoice.BilledFrom,
+          value: internalOrganisationId,
+        });
+      },
+    });
+  }
+
   static serialisedgoodsFilter(m: M) {
     return new SearchFactory({
       objectType: m.UnifiedGood,

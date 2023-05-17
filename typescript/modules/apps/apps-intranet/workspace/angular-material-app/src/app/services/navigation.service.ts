@@ -28,6 +28,11 @@ export class AppNavigationService extends NavigationService {
     };
 
     // Navigation
+    define(
+      m.AccountingTransaction,
+      '/accounting/accountingtransactions',
+      '/accounting/accountingtransaction/:id'
+    );
     define(m.Person, '/contacts/people', '/contacts/person/:id');
     define(
       m.Organisation,

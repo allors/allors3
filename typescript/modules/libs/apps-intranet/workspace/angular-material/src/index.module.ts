@@ -87,6 +87,10 @@ import {
 } from '@allors/base/workspace/angular-material/application';
 
 import {
+  AccountingTransactionFormComponent,
+  AccountingTransactionListPageComponent,
+  AccountingTransactionOverviewPageComponent,
+  AccountingTransactionSummaryPanelComponent,
   BankAccountFormComponent,
   BankInlineComponent,
   BasepriceFormComponent,
@@ -349,6 +353,10 @@ import {
     AllorsMaterialDynamicViewDetailPanelComponent,
     AllorsMaterialDynamicViewExtentPanelComponent,
     // Intranet Material
+    AccountingTransactionFormComponent,
+    AccountingTransactionListPageComponent,
+    AccountingTransactionOverviewPageComponent,
+    AccountingTransactionSummaryPanelComponent,
     BankAccountFormComponent,
     BankInlineComponent,
     BasepriceFormComponent,

@@ -42,6 +42,10 @@ export class AppMetaService implements MetaService {
       ],
       [m.QuoteItem.QuoteWhereQuoteItem, 'Quote'],
       [m.RequestItem.RequestWhereRequestItem, 'Request for Quote'],
+      [
+        m.SalesInvoice.AccountingTransactionsWhereInvoice,
+        'Accounting Transaction',
+      ],
       [m.SalesInvoice.RepeatingSalesInvoiceWhereSource, 'Repeating Invoice'],
       [m.SalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, 'Sales Invoice'],
       [m.SalesOrderItem.SalesOrderWhereSalesOrderItem, 'Sales Order'],

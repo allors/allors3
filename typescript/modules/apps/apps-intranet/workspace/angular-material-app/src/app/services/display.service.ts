@@ -18,8 +18,10 @@ export class AppDisplayService implements DisplayService {
     const m = workspaceService.workspace.configuration.metaPopulation as M;
 
     this.nameByObjectType = new Map<Composite, RoleType>([
+      [m.AccountingTransaction, m.AccountingTransaction.TransactionNumber],
       [m.AgreementTerm, m.WorkRequirement.Description],
       [m.AgreementTerm, m.WorkRequirement.Description],
+      [m.BalanceSide, m.BalanceSide.Name],
       [m.BankAccount, m.BankAccount.NameOnAccount],
       [m.Brand, m.Brand.Name],
       [m.Carrier, m.Carrier.Name],
@@ -42,6 +44,7 @@ export class AppDisplayService implements DisplayService {
       [m.DropShipment, m.DropShipment.ShipmentNumber],
       [m.EanIdentification, m.EanIdentification.Identification],
       [m.EmailAddress, m.EmailAddress.DisplayName],
+      [m.GeneralLedgerAccount, m.GeneralLedgerAccount.DisplayName],
       [m.Facility, m.Facility.Name],
       [m.FacilityType, m.FacilityType.Name],
       [m.GenderType, m.GenderType.Name],
@@ -182,6 +185,24 @@ export class AppDisplayService implements DisplayService {
     this.descriptionByObjectType = new Map<Composite, RoleType>([]);
 
     this.primaryByObjectType = new Map<Composite, RoleType[]>([
+      [
+        m.AccountingTransaction,
+        [
+          m.AccountingTransaction.TransactionNumber,
+          m.AccountingTransaction.EntryDate,
+          m.AccountingTransaction.FromPartyDisplayName,
+          m.AccountingTransaction.ToPartyDisplayName,
+          m.AccountingTransaction.Exported,
+        ],
+      ],
+      [
+        m.AccountingTransactionDetail,
+        [
+          m.AccountingTransactionDetail.GeneralLedgerAccount,
+          m.AccountingTransactionDetail.BalanceSide,
+          m.AccountingTransactionDetail.Amount,
+        ],
+      ],
       [m.BankAccount, [m.BankAccount.NameOnAccount, m.BankAccount.Iban]],
       [
         m.CommunicationEvent,

@@ -38,6 +38,7 @@ import {
   RateType,
   RequestState,
   RequirementState,
+  SalesInvoice,
   SalesInvoiceState,
   SalesInvoiceType,
   SalesOrderState,
@@ -339,6 +340,34 @@ export class AppFilterService implements FilterService {
       objectType: m.User,
       roleTypes: [m.User.UserEmail],
     });
+
+    define(
+      m.AccountingTransaction,
+      new FilterDefinition(
+        {
+          kind: 'And',
+          operands: [
+            {
+              kind: 'Like',
+              roleType: m.AccountingTransaction.TransactionNumber,
+              parameter: 'Number',
+            },
+            {
+              kind: 'Equals',
+              propertyType: m.AccountingTransaction.Invoice,
+              parameter: 'SalesInvoice',
+            },
+          ],
+        },
+        {
+          SalesInvoice: {
+            search: () =>
+              Filters.salesInvoiceFilter(m, internalOrganisationId.value),
+            display: (v: SalesInvoice) => v && v.InvoiceNumber,
+          },
+        }
+      )
+    );
 
     define(
       m.Carrier,

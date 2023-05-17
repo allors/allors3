@@ -6,6 +6,8 @@ import { ErrorComponent } from './error/error.component';
 import { MainComponent } from './main/main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import {
+  AccountingTransactionListPageComponent,
+  AccountingTransactionOverviewPageComponent,
   BrandListPageComponent,
   CarrierListPageComponent,
   CataloguesListPageComponent,
@@ -257,6 +259,14 @@ export const routes: Routes = [
             path: 'glaccounts',
             component: GeneralLedgerAccountListPageComponent,
           },
+          {
+            path: 'accountingtransactions',
+            component: AccountingTransactionListPageComponent,
+          },
+          {
+            path: 'accountingtransaction/:id',
+            component: AccountingTransactionOverviewPageComponent,
+          },
         ],
       },
       {
@@ -286,6 +296,8 @@ export const components: any[] = [
   ErrorComponent,
   MainComponent,
   DashboardComponent,
+  AccountingTransactionListPageComponent,
+  AccountingTransactionOverviewPageComponent,
   CarrierListPageComponent,
   CataloguesListPageComponent,
   CommunicationEventListPageComponent,

@@ -1,6 +1,6 @@
 import { Component, Self } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SalesInvoice } from '@allors/default/workspace/domain';
+import { AccountingTransaction } from '@allors/default/workspace/domain';
 import {
   RefreshService,
   SharedPullService,
@@ -12,12 +12,12 @@ import {
   ScopedService,
   AllorsOverviewPageComponent,
 } from '@allors/base/workspace/angular/application';
-import { IPullResult, Path, Pull } from '@allors/system/workspace/domain';
+import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { AllorsMaterialPanelService } from '@allors/base/workspace/angular-material/application';
 import { M } from '@allors/default/workspace/meta';
 
 @Component({
-  templateUrl: './salesinvoice-overview-page.component.html',
+  templateUrl: './accountingtransaction-overview-page.component.html',
   providers: [
     ScopedService,
     {
@@ -26,12 +26,10 @@ import { M } from '@allors/default/workspace/meta';
     },
   ],
 })
-export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageComponent {
-  m: M;
+export class AccountingTransactionOverviewPageComponent extends AllorsOverviewPageComponent {
+  readonly m: M;
 
-  invoice: SalesInvoice;
-  exportAccounting: boolean;
-  canWrite: () => boolean;
+  accountingTransaction: AccountingTransaction;
 
   constructor(
     @Self() scopedService: ScopedService,
@@ -51,8 +49,6 @@ export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageCompone
       workspaceService
     );
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
-
-    this.canWrite = () => this.invoice.canWriteSalesInvoiceItems;
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -63,20 +59,19 @@ export class SalesInvoiceOverviewPageComponent extends AllorsOverviewPageCompone
     const id = this.scoped.id;
 
     pulls.push(
-      p.SalesInvoice({
+      p.AccountingTransaction({
         name: prefix,
         objectId: id,
         include: {
-          BilledFrom: {},
-          SalesInvoiceItems: {},
+          AccountingTransactionDetails: {
+            BalanceSide: {},
+          },
         },
       })
     );
   }
 
   onPostSharedPull(loaded: IPullResult, prefix?: string) {
-    this.invoice = loaded.object<SalesInvoice>(prefix);
-
-    this.exportAccounting = this.invoice.BilledFrom.ExportAccounting;
+    this.accountingTransaction = loaded.object<AccountingTransaction>(prefix);
   }
 }

@@ -89,6 +89,7 @@ export class AppMenuService implements MenuService {
         children: [
           { objectType: m.ExchangeRate },
           { objectType: m.GeneralLedgerAccount, title: 'GL Accounts' },
+          { objectType: m.AccountingTransaction, title: 'Transactions' },
         ],
       },
       {

@@ -21,6 +21,22 @@ export class AppSorterService implements SorterService {
     };
 
     define(
+      m.AccountingTransaction,
+      new Sorter({
+        transactionNumber: m.AccountingTransaction.TransactionNumber,
+        type: m.AccountingTransaction.AccountingTransactionTypeName,
+        from: m.AccountingTransaction.FromPartyDisplayName,
+        to: m.AccountingTransaction.ToPartyDisplayName,
+        entryDate: m.AccountingTransaction.EntryDate,
+        invoice: m.AccountingTransaction.InvoiceNumber,
+        shipment: m.AccountingTransaction.ShipmentNumber,
+        workEffort: m.AccountingTransaction.WorkEffortNumber,
+        amount: m.AccountingTransaction.DerivedTotalAmount,
+        exported: m.AccountingTransaction.Exported,
+      })
+    );
+
+    define(
       m.Carrier,
       new Sorter({
         name: m.Carrier.Name,

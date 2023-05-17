@@ -33,7 +33,7 @@ namespace Allors.Repository
         #region Allors
         [Id("b3e0675e-0937-4f3c-bb5e-67f9e3aa6afd")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
         public GeneralLedgerAccount GeneralLedgerAccount { get; set; }

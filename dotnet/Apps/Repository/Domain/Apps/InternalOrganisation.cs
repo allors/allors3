@@ -567,6 +567,7 @@ namespace Allors.Repository
         [Id("8f8af78b-932c-4c11-8b78-f6d9312d654c")]
         #endregion
         [Required]
+        [Workspace]
         public bool ExportAccounting { get; set; }
 
         #region inherited methods

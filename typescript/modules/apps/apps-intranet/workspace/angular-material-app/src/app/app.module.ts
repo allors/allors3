@@ -149,6 +149,9 @@ import {
   // Services
   PrintService,
   // Components
+  AccountingTransactionListPageComponent,
+  AccountingTransactionOverviewPageComponent,
+  AccountingTransactionSummaryPanelComponent,
   BankInlineComponent,
   BrandListPageComponent,
   CarrierListPageComponent,
@@ -335,6 +338,9 @@ import { AppActionService } from './services/action.service';
     ...formEditComponents,
     ...formComponents,
     // Non routed and non dialog components
+    AccountingTransactionListPageComponent,
+    AccountingTransactionOverviewPageComponent,
+    AccountingTransactionSummaryPanelComponent,
     BankInlineComponent,
     BrandListPageComponent,
     CarrierListPageComponent,

@@ -41,6 +41,15 @@
 
         <payment-panel-view></payment-panel-view>
         <payment-panel-edit></payment-panel-edit>
+
+        <a-mat-dyn-view-extent-panel
+          [init]="m.AccountingTransaction.Invoice"
+          [enabled]="exportAccounting"
+        ></a-mat-dyn-view-extent-panel>
+        <a-mat-dyn-edit-extent-panel
+          [init]="m.AccountingTransaction.Invoice"
+          [enabled]="exportAccounting"
+        ></a-mat-dyn-edit-extent-panel>
       </div>
     </div>
   </div>

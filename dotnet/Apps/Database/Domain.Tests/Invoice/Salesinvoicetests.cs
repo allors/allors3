@@ -3056,6 +3056,28 @@ namespace Allors.Database.Domain.Tests
         }
     }
 
+    public class SalesInvoiceAccountingTransactionRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public SalesInvoiceAccountingTransactionRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void ChangedSalesInvoiceItemStateDeriveAccountingTransaction()
+        {
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
+
+            this.Transaction.Derive();
+
+            var newItem = new SalesInvoiceItemBuilder(this.Transaction).WithDefaults().Build();
+            invoice.AddSalesInvoiceItem(newItem);
+            this.Transaction.Derive();
+
+            invoice.Send();
+            this.Transaction.Derive();
+
+            Assert.True(invoice.ExistAccountingTransactionsWhereInvoice);
+        }
+    }
+
     [Trait("Category", "Security")]
     public class SalesInvoiceDeniedPermissionRuleTests : DomainTest, IClassFixture<Fixture>
     {

@@ -33,7 +33,7 @@ namespace Allors.Repository
         #region Allors
         [Id("58089202-3fda-4ef4-8fba-dcc79ab86aa2")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
         public GeneralLedgerAccount SalesGeneralLedgerAccount { get; set; }
@@ -41,7 +41,7 @@ namespace Allors.Repository
         #region Allors
         [Id("5895baca-c71b-42f9-843a-a6a151fa3dda")]
         #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Indexed]
         [Workspace(Default)]
         public GeneralLedgerAccount PurchaseGeneralLedgerAccount { get; set; }

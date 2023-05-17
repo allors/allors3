@@ -1,0 +1,49 @@
+<mat-card *ngIf="accountingTransaction">
+  <mat-card-header (click)="toggle()" style="cursor: pointer">
+    <div mat-card-avatar>
+      <mat-icon style="font-size: 36px">business</mat-icon>
+    </div>
+    <mat-card-title
+      >{{ accountingTransaction.TransactionNumber }}
+    </mat-card-title>
+
+    <mat-card-subtitle>
+      <div>{{ accountingTransaction.AccountingTransactionTypeName }}</div>
+      <div>From: {{ accountingTransaction.FromPartyDisplayName }}</div>
+      <div>To: {{ accountingTransaction.ToPartyDisplayName }}</div>
+
+      <div
+        *ngIf="accountingTransaction.Invoice"
+        (click)="navigation.overview(accountingTransaction.Invoice)"
+        style="cursor: pointer"
+      >
+        <div style="color: grey">Invoice:</div>
+        <div>
+          {{ accountingTransaction.Invoice.InvoiceNumber }}
+        </div>
+      </div>
+
+      <div
+        *ngIf="accountingTransaction.Shipment"
+        (click)="navigation.overview(accountingTransaction.Shipment)"
+        style="cursor: pointer"
+      >
+        <div style="color: grey">Shipment:</div>
+        <div>
+          {{ accountingTransaction.Shipment.ShipmentNumber }}
+        </div>
+      </div>
+
+      <div
+        *ngIf="accountingTransaction.WorkEffort"
+        (click)="navigation.overview(accountingTransaction.WorkEffort)"
+        style="cursor: pointer"
+      >
+        <div style="color: grey">WorkEffort:</div>
+        <div>
+          {{ accountingTransaction.WorkEffort.WorkEffortNumber }}
+        </div>
+      </div>
+    </mat-card-subtitle>
+  </mat-card-header>
+</mat-card>

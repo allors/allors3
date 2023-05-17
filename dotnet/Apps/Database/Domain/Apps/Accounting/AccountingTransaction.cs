@@ -36,7 +36,8 @@ namespace Allors.Database.Domain
             {
                 foreach (var @this in this.AccountingTransactionDetails)
                 {
-                    @this.Delete();
+                    // Detail is not Deletable by itself
+                    @this.Strategy.Delete();
                 }
             }
         }
