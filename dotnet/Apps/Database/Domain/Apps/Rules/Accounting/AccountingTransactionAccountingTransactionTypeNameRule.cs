@@ -34,6 +34,6 @@ namespace Allors.Database.Domain
 
     public static class AccountingTransactionAccountingTransactionTypeNameRuleExtensions
     {
-        public static void DeriveAccountingTransactionAccountingTransactionTypeName(this AccountingTransaction @this, IValidation validation) => @this.AccountingTransactionTypeName = @this.AccountingTransactionType.Name;
+        public static void DeriveAccountingTransactionAccountingTransactionTypeName(this AccountingTransaction @this, IValidation validation) => @this.AccountingTransactionTypeName = @this.AccountingTransactionType?.Name;
     }
 }

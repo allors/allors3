@@ -34,6 +34,6 @@ namespace Allors.Database.Domain
 
     public static class AccountingTransactionDerivedTotalAmountRuleExtensions
     {
-        public static void DeriveAccountingTransactionDerivedTotalAmount(this AccountingTransaction @this, IValidation validation) => @this.DerivedTotalAmount = @this.AccountingTransactionDetails.Where(v => v.BalanceSide.Equals(new BalanceSides(@this.Transaction()).Debit)).Sum(v => v.Amount);
+        public static void DeriveAccountingTransactionDerivedTotalAmount(this AccountingTransaction @this, IValidation validation) => @this.DerivedTotalAmount = @this.AccountingTransactionDetails.Where(v => v.ExistBalanceSide && v.BalanceSide.Equals(new BalanceSides(@this.Transaction()).Debit)).Sum(v => v.Amount);
     }
 }
