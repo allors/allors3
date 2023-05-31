@@ -110,13 +110,13 @@ namespace Allors.Repository
         [Workspace(Default)]
         public Facility DefaultFacility { get; set; }
 
-        #region Allors
-        [Id("16d4ce6c-b415-4138-a080-134224027c69")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.OneToOne)]
-        [Workspace(Default)]
-        public Counter TransactionNumberCounter { get; set; }
+        //#region Allors
+        //[Id("16d4ce6c-b415-4138-a080-134224027c69")]
+        //[Indexed]
+        //#endregion
+        //[Multiplicity(Multiplicity.OneToOne)]
+        //[Workspace(Default)]
+        //public Counter TransactionNumberCounter { get; set; }
 
         /// <summary>
         /// Gets or Sets the InventoryStrategy used by this InternalOrganisation.

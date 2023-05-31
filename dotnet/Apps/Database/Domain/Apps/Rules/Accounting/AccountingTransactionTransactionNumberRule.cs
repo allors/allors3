@@ -33,6 +33,9 @@ namespace Allors.Database.Domain
 
     public static class AccountingTransactionTransactionNumberRuleExtensions
     {
-        public static void DeriveAccountingTransactionTransactionNumber(this AccountingTransaction @this, IValidation validation) => @this.TransactionNumber = @this.Strategy.Transaction.GetSingleton().Settings.NextTransactionNumber();
+        public static void DeriveAccountingTransactionTransactionNumber(this AccountingTransaction @this, IValidation validation)
+        {
+            //@this.TransactionNumber = @this.Strategy.Transaction.GetSingleton().Settings.NextTransactionNumber();
+        }
     }
 }
