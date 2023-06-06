@@ -368,6 +368,20 @@ namespace Allors.Database.Adapters.Sql
 
         public void Dispose() => this.Rollback();
 
+        public T[] Create<T>(int count) where T : IObject
+        {
+            var objectType = (IClass)this.Database.ObjectFactory.GetObjectType(typeof(T));
+            var objects = this.Create(objectType, count);
+
+            var result = new T[objects.Length];
+            for (var i = 0; i < objects.Length; i++)
+            {
+                result[i] = (T)objects[i];
+            }
+
+            return result;
+        }
+
         public T Create<T>() where T : IObject
         {
             var objectType = (IClass)this.Database.ObjectFactory.GetObjectType(typeof(T));

@@ -2,6 +2,7 @@ namespace Allors.Database.Domain
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Database.Derivations;
     using Derivations;
 
@@ -76,6 +77,22 @@ namespace Allors.Database.Domain
             return newObject;
         }
 
+        public static TObject[] Build<TObject, TArgument>(this ITransaction @this, IEnumerable<TArgument> args, Action<TObject, TArgument> builder) where TObject : IObject
+        {
+            var materializedArgs = args as IReadOnlyCollection<TArgument> ?? args.ToArray();
+
+            var newObjects = @this.Create<TObject>(materializedArgs.Count);
+
+            var index = 0;
+            foreach (var arg in materializedArgs)
+            {
+                var newObject = newObjects[index++];
+                builder?.Invoke(newObject, arg);
+                ((Object)newObject).OnPostBuild();
+            }
+
+            return newObjects;
+        }
 
         public static IValidation Derive(this ITransaction @this, bool throwExceptionOnError = true, bool continueOnError = false)
         {

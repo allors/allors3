@@ -94,6 +94,14 @@ namespace Allors.Database
 
         /// <summary>
         /// Creates an Allors Object.
+        /// Only works for static domains.
+        /// </summary>
+        /// <typeparam name="T">The IObjectType.</typeparam>
+        /// <returns>a new <see cref="IObject"/>.</returns>
+        T[] Create<T>(int count) where T : IObject;
+
+        /// <summary>
+        /// Creates an Allors Object.
         /// </summary>
         /// <param name="objectType">The IObjectType.</param>
         /// <returns>a new <see cref="IObject"/>.</returns>
