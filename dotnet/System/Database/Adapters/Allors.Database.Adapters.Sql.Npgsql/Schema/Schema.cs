@@ -100,9 +100,12 @@ AND C.table_schema = @tableSchema";
 
                     // Procedures
                     cmdText = @"
-SELECT routine_name, routine_definition
-FROM information_schema.routines
-WHERE routine_schema = @routineSchema";
+SELECT o.name as routine_name, m.definition as routine_definition
+    FROM sys.objects AS o     
+	INNER JOIN sys.schemas AS s ON o.[schema_id] = s.[schema_id]     
+	INNER JOIN sys.sql_modules AS m ON o.[object_id] = m.[object_id]
+    WHERE OBJECT_SCHEMA_NAME(o.[object_id]) = @routineSchema
+    AND o.[type] IN ('P')";
 
                     using (var command = new NpgsqlCommand(cmdText, connection))
                     {
