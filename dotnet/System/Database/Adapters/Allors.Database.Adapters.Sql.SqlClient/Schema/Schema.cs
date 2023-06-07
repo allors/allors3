@@ -156,6 +156,7 @@ SELECT o.name as routine_name, m.definition as routine_definition
                     using (var command = new SqlCommand(cmdText, connection))
                     {
                         command.Parameters.Add("@routineSchema", SqlDbType.NVarChar).Value = database.SchemaName;
+                        command.CommandTimeout = 60 * 5;
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
