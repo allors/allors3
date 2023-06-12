@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 new RolePattern(m.Scoreboard.AccumulatedScores),
-                m.Score.RolePattern(v=>v.Value, v=>v.GameWhereScore.Game.ScoreboardWhereGame)
+                m.Score.RolePattern(v=>v.Value, v=>v.GameWhereScore.ObjectType.ScoreboardWhereGame)
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
