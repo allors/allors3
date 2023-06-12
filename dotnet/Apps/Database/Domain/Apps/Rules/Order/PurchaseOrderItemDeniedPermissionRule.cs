@@ -24,7 +24,7 @@ namespace Allors.Database.Domain
             m.OrderItem.AssociationPattern(v => v.WorkEffortsWhereOrderItemFulfillment, m.PurchaseOrderItem),
             m.OrderItem.AssociationPattern(v => v.OrderShipmentsWhereOrderItem, m.PurchaseOrderItem),
             m.OrderShipment.RolePattern(v => v.OrderItem, v => v.OrderItem, m.PurchaseOrderItem),
-            m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.Part.Part.PurchaseOrderItemsWherePart),
+            m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.Part.ObjectType.PurchaseOrderItemsWherePart),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

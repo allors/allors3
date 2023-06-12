@@ -21,8 +21,8 @@ namespace Allors.Database.Domain
                 m.OrganisationContactRelationship.RolePattern(v => v.FromDate, v => v.Organisation),
                 m.OrganisationContactRelationship.RolePattern(v => v.ThroughDate, v => v.Organisation),
                 m.Party.AssociationPattern(v => v.PartyContactMechanismsWhereParty, m.Organisation),
-                m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.Party.Party, m.Organisation),
-                m.PartyContactMechanism.RolePattern(v => v.ThroughDate, v => v.Party.Party, m.Organisation),
+                m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.Party.ObjectType, m.Organisation),
+                m.PartyContactMechanism.RolePattern(v => v.ThroughDate, v => v.Party.ObjectType, m.Organisation),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

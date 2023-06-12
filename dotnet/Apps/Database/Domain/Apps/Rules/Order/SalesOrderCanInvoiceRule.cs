@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
             m.SalesOrder.RolePattern(v => v.SalesOrderState),
             m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState, v => v.SalesOrderWhereSalesOrderItem),
             m.OrderItem.AssociationPattern(v => v.OrderItemBillingsWhereOrderItem, v => v.AsSalesOrderItem.SalesOrderWhereSalesOrderItem , m.SalesOrder),
-            m.OrderItemBilling.RolePattern(v => v.Amount, v => v.OrderItem.OrderItem.AsSalesOrderItem.SalesOrderWhereSalesOrderItem.SalesOrder),
+            m.OrderItemBilling.RolePattern(v => v.Amount, v => v.OrderItem.ObjectType.AsSalesOrderItem.SalesOrderWhereSalesOrderItem.ObjectType),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

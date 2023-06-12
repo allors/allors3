@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SalesOrderPrintRule(MetaPopulation m) : base(m, new Guid("a02c04dd-fb87-4aee-a127-5907de69691b")) =>
             this.Patterns = new Pattern[]
             {
-                m.Currency.RolePattern(v => v.IsoCode, v => v.OrdersWhereDerivedCurrency.Order.AsSalesOrder),
+                m.Currency.RolePattern(v => v.IsoCode, v => v.OrdersWhereDerivedCurrency.ObjectType.AsSalesOrder),
                 m.SalesOrder.RolePattern(v => v.Description),
                 m.SalesOrder.RolePattern(v => v.OrderNumber),
                 m.SalesOrder.RolePattern(v => v.OrderDate),
@@ -33,20 +33,20 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.DerivedShipToAddress),
                 m.SalesOrder.RolePattern(v => v.BillToContactPerson),
                 m.SalesOrder.RolePattern(v => v.DerivedBillToContactMechanism),
-                m.AgreementTerm.RolePattern(v => v.TermType, v => v.AsSalesTerm.OrderWhereSalesTerm.Order.AsSalesOrder),
+                m.AgreementTerm.RolePattern(v => v.TermType, v => v.AsSalesTerm.OrderWhereSalesTerm.ObjectType.AsSalesOrder),
                 m.SalesOrder.RolePattern(v => v.TakenBy),
-                m.Organisation.RolePattern(v => v.DisplayName, v => v.SalesOrdersWhereTakenBy.SalesOrder),
-                m.EmailAddress.RolePattern(v => v.ElectronicAddressString, v => v.PartiesWhereGeneralEmail.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
-                m.EmailAddress.RolePattern(v => v.ElectronicAddressString, v => v.PartiesWhereInternetAddress.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
-                m.Organisation.RolePattern(v => v.TaxNumber, v => v.SalesOrdersWhereTakenBy.SalesOrder),
-                m.Organisation.RolePattern(v => v.BillingInquiriesPhone, v => v.SalesOrdersWhereTakenBy.SalesOrder),
-                m.Organisation.RolePattern(v => v.GeneralPhoneNumber, v => v.SalesOrdersWhereTakenBy.SalesOrder),
-                m.TelecommunicationsNumber.RolePattern(v => v.CountryCode, v => v.PartiesWhereBillingInquiriesPhone.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
-                m.TelecommunicationsNumber.RolePattern(v => v.CountryCode, v => v.PartiesWhereGeneralPhoneNumber.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
-                m.TelecommunicationsNumber.RolePattern(v => v.AreaCode, v => v.PartiesWhereBillingInquiriesPhone.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
-                m.TelecommunicationsNumber.RolePattern(v => v.AreaCode, v => v.PartiesWhereGeneralPhoneNumber.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
-                m.TelecommunicationsNumber.RolePattern(v => v.ContactNumber, v => v.PartiesWhereBillingInquiriesPhone.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
-                m.TelecommunicationsNumber.RolePattern(v => v.ContactNumber, v => v.PartiesWhereGeneralPhoneNumber.Party.AsOrganisation.SalesOrdersWhereTakenBy.SalesOrder),
+                m.Organisation.RolePattern(v => v.DisplayName, v => v.SalesOrdersWhereTakenBy.ObjectType),
+                m.EmailAddress.RolePattern(v => v.ElectronicAddressString, v => v.PartiesWhereGeneralEmail.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
+                m.EmailAddress.RolePattern(v => v.ElectronicAddressString, v => v.PartiesWhereInternetAddress.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
+                m.Organisation.RolePattern(v => v.TaxNumber, v => v.SalesOrdersWhereTakenBy.ObjectType),
+                m.Organisation.RolePattern(v => v.BillingInquiriesPhone, v => v.SalesOrdersWhereTakenBy.ObjectType),
+                m.Organisation.RolePattern(v => v.GeneralPhoneNumber, v => v.SalesOrdersWhereTakenBy.ObjectType),
+                m.TelecommunicationsNumber.RolePattern(v => v.CountryCode, v => v.PartiesWhereBillingInquiriesPhone.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
+                m.TelecommunicationsNumber.RolePattern(v => v.CountryCode, v => v.PartiesWhereGeneralPhoneNumber.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
+                m.TelecommunicationsNumber.RolePattern(v => v.AreaCode, v => v.PartiesWhereBillingInquiriesPhone.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
+                m.TelecommunicationsNumber.RolePattern(v => v.AreaCode, v => v.PartiesWhereGeneralPhoneNumber.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
+                m.TelecommunicationsNumber.RolePattern(v => v.ContactNumber, v => v.PartiesWhereBillingInquiriesPhone.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
+                m.TelecommunicationsNumber.RolePattern(v => v.ContactNumber, v => v.PartiesWhereGeneralPhoneNumber.ObjectType.AsOrganisation.SalesOrdersWhereTakenBy.ObjectType),
 
                 //Gestopt in TakenByModel
 

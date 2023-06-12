@@ -22,12 +22,12 @@ namespace Allors.Database.Domain
                 m.Good.RolePattern(v => v.Comment, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.InternalComment, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.LocalisedNames, m.NonUnifiedGood),
-                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedName.UnifiedProduct, m.NonUnifiedGood),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedName.ObjectType, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.LocalisedDescriptions, m.NonUnifiedGood),
-                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedDescription.UnifiedProduct, m.NonUnifiedGood),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedDescription.ObjectType, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.Keywords, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.LocalisedKeywords, m.NonUnifiedGood),
-                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedKeyword.UnifiedProduct, m.NonUnifiedGood),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.UnifiedProductWhereLocalisedKeyword.ObjectType, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.ProductIdentifications, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.PublicElectronicDocuments, m.NonUnifiedGood),
                 m.Good.RolePattern(v => v.PrivateElectronicDocuments, m.NonUnifiedGood),
@@ -36,7 +36,7 @@ namespace Allors.Database.Domain
                 m.Good.RolePattern(v => v.IntrastatCode, m.NonUnifiedGood),
                 m.Good.AssociationPattern(v => v.ProductCategoriesWhereAllProduct, m.NonUnifiedGood),
                 m.NonUnifiedGood.RolePattern(v => v.Part),
-                m.Part.RolePattern(v => v.DisplayName, v => v.NonUnifiedGoodsWherePart.NonUnifiedGood),
+                m.Part.RolePattern(v => v.DisplayName, v => v.NonUnifiedGoodsWherePart.ObjectType),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

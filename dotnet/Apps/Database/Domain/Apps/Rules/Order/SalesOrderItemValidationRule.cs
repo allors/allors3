@@ -31,7 +31,7 @@ namespace Allors.Database.Domain
                 m.SalesOrderItem.RolePattern(v => v.DiscountAdjustments),
                 m.SalesOrderItem.RolePattern(v => v.SurchargeAdjustments),
                 m.SalesOrderItem.RolePattern(v => v.SalesOrderItemInventoryAssignments),
-                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.SerialisedItem.SerialisedItem.SalesOrderItemsWhereSerialisedItem),
+                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.SerialisedItem.ObjectType.SalesOrderItemsWhereSerialisedItem),
                 m.Part.AssociationPattern(v => v.InventoryItemTransactionsWherePart, v => v.AsUnifiedGood.SalesOrderItemsWhereProduct),
             };
 

@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.SerialisedInventoryItem.RolePattern(v => v.SerialisedInventoryItemState),
-                m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem.InventoryItem.AsSerialisedInventoryItem),
+                m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem.ObjectType.AsSerialisedInventoryItem),
                 m.InventoryItem.AssociationPattern(v => v.InventoryItemTransactionsWhereInventoryItem, m.SerialisedInventoryItem),
                 m.InventoryItem.AssociationPattern(v => v.PickListItemsWhereInventoryItem, m.SerialisedInventoryItem),
             };

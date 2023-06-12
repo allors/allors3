@@ -17,9 +17,9 @@ namespace Allors.Database.Domain
         public CustomerShipmentShipmentValueRule(MetaPopulation m) : base(m, new Guid("fefff2c8-12dd-4ef5-b2c7-923bb80c2ec3")) =>
             this.Patterns = new Pattern[]
             {
-                m.OrderShipment.RolePattern(v => v.Quantity, v => v.ShipmentItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment.AsCustomerShipment),
-                m.SalesOrderItem.RolePattern(v => v.UnitPrice, v => v.OrderShipmentsWhereOrderItem.OrderShipment.ShipmentItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment.AsCustomerShipment),
-                m.ShipmentItem.AssociationPattern(v => v.OrderShipmentsWhereShipmentItem, v => v.ShipmentWhereShipmentItem.Shipment.AsCustomerShipment),
+                m.OrderShipment.RolePattern(v => v.Quantity, v => v.ShipmentItem.ObjectType.ShipmentWhereShipmentItem.ObjectType.AsCustomerShipment),
+                m.SalesOrderItem.RolePattern(v => v.UnitPrice, v => v.OrderShipmentsWhereOrderItem.ObjectType.ShipmentItem.ObjectType.ShipmentWhereShipmentItem.ObjectType.AsCustomerShipment),
+                m.ShipmentItem.AssociationPattern(v => v.OrderShipmentsWhereShipmentItem, v => v.ShipmentWhereShipmentItem.ObjectType.AsCustomerShipment),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

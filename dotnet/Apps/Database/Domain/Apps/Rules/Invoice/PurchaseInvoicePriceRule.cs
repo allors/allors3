@@ -30,14 +30,14 @@ namespace Allors.Database.Domain
                 m.PurchaseInvoiceItem.RolePattern(v => v.AssignedUnitPrice, v => v.PurchaseInvoiceWherePurchaseInvoiceItem),
                 m.PurchaseInvoiceItem.RolePattern(v => v.DiscountAdjustments, v => v.PurchaseInvoiceWherePurchaseInvoiceItem),
                 m.PurchaseInvoiceItem.RolePattern(v => v.SurchargeAdjustments, v => v.PurchaseInvoiceWherePurchaseInvoiceItem),
-                m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment.Priceable.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
+                m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment.ObjectType.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
                 m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
-                m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereDiscountAdjustment.Priceable.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
+                m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereDiscountAdjustment.ObjectType.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
                 m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.InvoiceVersionWhereOrderAdjustment, m.PurchaseInvoice),
                 m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
-                m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereSurchargeAdjustment.Priceable.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
+                m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereSurchargeAdjustment.ObjectType.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
                 m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
-                m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment.Priceable.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
+                m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment.ObjectType.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem, m.PurchaseInvoice),
                 m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.InvoiceWhereOrderAdjustment, m.PurchaseInvoice),
             };
 

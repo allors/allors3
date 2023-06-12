@@ -18,10 +18,10 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.CustomerShipment.RolePattern(v => v.ShipmentState),
-                m.PickList.RolePattern(v => v.PickListState, v => v.ShipToParty.Party.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
-                m.PickListVersion.RolePattern(v => v.ShipToParty, v => v.PickListWhereCurrentVersion.PickList.ShipToParty.Party.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
-                m.SalesOrder.RolePattern(v => v.SalesOrderState, v => v.SalesOrderItems.SalesOrderItem.OrderShipmentsWhereOrderItem.OrderShipment.ShipmentItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment.AsCustomerShipment),
-                m.Party.AssociationPattern(v => v.PickListsWhereShipToParty, v => v.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
+                m.PickList.RolePattern(v => v.PickListState, v => v.ShipToParty.ObjectType.ShipmentsWhereShipToParty.ObjectType.AsCustomerShipment),
+                m.PickListVersion.RolePattern(v => v.ShipToParty, v => v.PickListWhereCurrentVersion.ObjectType.ShipToParty.ObjectType.ShipmentsWhereShipToParty.ObjectType.AsCustomerShipment),
+                m.SalesOrder.RolePattern(v => v.SalesOrderState, v => v.SalesOrderItems.ObjectType.OrderShipmentsWhereOrderItem.ObjectType.ShipmentItem.ObjectType.ShipmentWhereShipmentItem.ObjectType.AsCustomerShipment),
+                m.Party.AssociationPattern(v => v.PickListsWhereShipToParty, v => v.ShipmentsWhereShipToParty.ObjectType.AsCustomerShipment),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

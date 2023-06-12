@@ -25,10 +25,10 @@ namespace Allors.Database.Domain
                 m.SalesOrderItem.RolePattern(v => v.TotalExVat),
                 m.SalesOrder.RolePattern(v => v.SalesOrderState, v => v.SalesOrderItems),
                 m.OrderItemBilling.RolePattern(v => v.OrderItem, v => v.OrderItem, m.SalesOrderItem),
-                m.ShipmentItem.AssociationPattern(v => v.ShipmentItemBillingsWhereShipmentItem,v => v.OrderShipmentsWhereShipmentItem.OrderShipment.OrderItem, m.SalesOrderItem),
+                m.ShipmentItem.AssociationPattern(v => v.ShipmentItemBillingsWhereShipmentItem,v => v.OrderShipmentsWhereShipmentItem.ObjectType.OrderItem, m.SalesOrderItem),
                 m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.SalesOrderItemsWhereReservedFromNonSerialisedInventoryItem),
-                m.SalesInvoiceItem.RolePattern(v => v.SalesInvoiceItemState, v => v.OrderItemBillingsWhereInvoiceItem.OrderItemBilling.OrderItem, m.SalesOrderItem),
-                m.SalesInvoiceItem.RolePattern(v => v.SalesInvoiceItemState, v => v.ShipmentItemBillingsWhereInvoiceItem.ShipmentItemBilling.ShipmentItem.ShipmentItem.OrderShipmentsWhereShipmentItem.OrderShipment.OrderItem, m.SalesOrderItem),
+                m.SalesInvoiceItem.RolePattern(v => v.SalesInvoiceItemState, v => v.OrderItemBillingsWhereInvoiceItem.ObjectType.OrderItem, m.SalesOrderItem),
+                m.SalesInvoiceItem.RolePattern(v => v.SalesInvoiceItemState, v => v.ShipmentItemBillingsWhereInvoiceItem.ObjectType.ShipmentItem.ObjectType.OrderShipmentsWhereShipmentItem.ObjectType.OrderItem, m.SalesOrderItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

@@ -21,9 +21,9 @@ namespace Allors.Database.Domain
                 m.PartCategory.RolePattern(v => v.Name),
                 m.PartCategory.RolePattern(v => v.Description),
                 m.PartCategory.RolePattern(v => v.LocalisedNames),
-                m.LocalisedText.RolePattern(v => v.Text, v => v.PartCategoryWhereLocalisedName.PartCategory),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.PartCategoryWhereLocalisedName.ObjectType),
                 m.PartCategory.RolePattern(v => v.LocalisedDescriptions),
-                m.LocalisedText.RolePattern(v => v.Text, v => v.PartCategoryWhereLocalisedDescription.PartCategory),
+                m.LocalisedText.RolePattern(v => v.Text, v => v.PartCategoryWhereLocalisedDescription.ObjectType),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

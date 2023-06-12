@@ -26,13 +26,13 @@ namespace Allors.Database.Domain
                 m.PurchaseOrderItem.RolePattern(v => v.AssignedUnitPrice, v => v.PurchaseOrderWherePurchaseOrderItem),
                 m.PurchaseOrderItem.RolePattern(v => v.DiscountAdjustments, v => v.PurchaseOrderWherePurchaseOrderItem),
                 m.PurchaseOrderItem.RolePattern(v => v.SurchargeAdjustments, v => v.PurchaseOrderWherePurchaseOrderItem),
-                m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment.Priceable.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
+                m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment.ObjectType.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
                 m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.OrderWhereOrderAdjustment, m.PurchaseOrder),
-                m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereDiscountAdjustment.Priceable.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
+                m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereDiscountAdjustment.ObjectType.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
                 m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.OrderWhereOrderAdjustment, m.PurchaseOrder),
-                m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereSurchargeAdjustment.Priceable.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
+                m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereSurchargeAdjustment.ObjectType.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
                 m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.OrderWhereOrderAdjustment, m.PurchaseOrder),
-                m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment.Priceable.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
+                m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment.ObjectType.AsPurchaseOrderItem.PurchaseOrderWherePurchaseOrderItem, m.PurchaseOrder),
                 m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.OrderWhereOrderAdjustment, m.PurchaseOrder),
             };
 

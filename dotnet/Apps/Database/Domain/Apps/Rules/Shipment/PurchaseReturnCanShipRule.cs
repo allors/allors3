@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public PurchaseReturnCanShipRule(MetaPopulation m) : base(m, new Guid("060150fe-5c85-47a9-832f-dc4058ab7f3b")) =>
             this.Patterns = new Pattern[]
             {
-                m.ShipmentItem.RolePattern(v => v.Quantity, v => v.ShipmentWhereShipmentItem.Shipment, m.PurchaseReturn),
-                m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.ShipmentItemsWhereReservedFromInventoryItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment, m.PurchaseReturn),
+                m.ShipmentItem.RolePattern(v => v.Quantity, v => v.ShipmentWhereShipmentItem.ObjectType, m.PurchaseReturn),
+                m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.ShipmentItemsWhereReservedFromInventoryItem.ObjectType.ShipmentWhereShipmentItem.ObjectType, m.PurchaseReturn),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

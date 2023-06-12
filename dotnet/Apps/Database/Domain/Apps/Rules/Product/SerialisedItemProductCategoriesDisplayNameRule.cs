@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SerialisedItemProductCategoriesDisplayNameRule(MetaPopulation m) : base(m, new Guid("8b6c78f6-f165-4179-acf5-1c3ef96b36b1")) =>
             this.Patterns = new Pattern[]
             {
-                m.Product.AssociationPattern(v => v.ProductCategoriesWhereAllProduct, v => v.ProductCategoriesWhereAllProduct.ProductCategory.AllParts.Part.SerialisedItems),
+                m.Product.AssociationPattern(v => v.ProductCategoriesWhereAllProduct, v => v.ProductCategoriesWhereAllProduct.ObjectType.AllParts.ObjectType.SerialisedItems),
                 m.SerialisedItem.RolePattern(v => v.DerivationTrigger),
             };
 

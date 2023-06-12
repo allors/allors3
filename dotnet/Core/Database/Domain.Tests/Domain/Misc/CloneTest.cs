@@ -117,7 +117,7 @@ namespace Allors.Database.Domain.Tests
                 .WithC1C2One2One(c2A)
                 .Build();
 
-            var deepClone = this.M.C1.Node(v => v.C1C2One2One.Node(w => w.C2.C2C2One2One.Node()));
+            var deepClone = this.M.C1.Node(v => v.C1C2One2One.Node(w => w.ObjectType.C2C2One2One.Node()));
 
             var cloned1A = c1A.Clone(deepClone);
             var cloned = cloned1A.C1C2One2One;

@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.Part.RolePattern(v => v.SuppliedBy, m.NonUnifiedPart),
-                m.SupplierOffering.RolePattern(v => v.SupplierProductId, v => v.Part.Part, m.NonUnifiedPart),
+                m.SupplierOffering.RolePattern(v => v.SupplierProductId, v => v.Part.ObjectType, m.NonUnifiedPart),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

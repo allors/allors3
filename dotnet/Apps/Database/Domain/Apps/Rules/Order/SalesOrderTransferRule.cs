@@ -36,12 +36,12 @@ namespace Allors.Database.Domain
                 {
                     var tree = @this.From.Meta.Nodes(
                                 v => v.SalesOrderItems.Node(
-                                        w => w.SalesOrderItem.Nodes(
+                                        w => w.ObjectType.Nodes(
                                             x => x.DiscountAdjustments.Node(),
                                             x => x.SurchargeAdjustments.Node(),
                                             x => x.SalesTerms.Node(),
                                             x => x.OrderedWithFeatures.Node(
-                                                y => y.OrderItem.Nodes(
+                                                y => y.ObjectType.Nodes(
                                                     z => z.DiscountAdjustments.Node(),
                                                     z => z.SurchargeAdjustments.Node(),
                                                     z => z.SalesTerms.Node()

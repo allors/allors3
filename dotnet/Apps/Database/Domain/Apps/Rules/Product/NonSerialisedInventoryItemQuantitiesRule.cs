@@ -21,10 +21,10 @@ namespace Allors.Database.Domain
                 m.NonSerialisedInventoryItem.RolePattern(v => v.NonSerialisedInventoryItemState),
                 m.InventoryItemTransaction.RolePattern(v => v.InventoryItem, v => v.InventoryItem, m.NonSerialisedInventoryItem),
                 m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem, m.NonSerialisedInventoryItem),
-                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems.PickListItem.InventoryItem, m.NonSerialisedInventoryItem),
+                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems.ObjectType.InventoryItem, m.NonSerialisedInventoryItem),
                 m.PickListItem.RolePattern(v => v.QuantityPicked, v => v.InventoryItem, m.NonSerialisedInventoryItem),
-                m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered, v => v.Part.Part.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
-                m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState, v => v.Part.Part.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
+                m.PurchaseOrderItem.RolePattern(v => v.QuantityOrdered, v => v.Part.ObjectType.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
+                m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState, v => v.Part.ObjectType.InventoryItemsWherePart, m.NonSerialisedInventoryItem),
                 m.InventoryItem.AssociationPattern(v => v.PickListItemsWhereInventoryItem, m.NonSerialisedInventoryItem),
             };
 

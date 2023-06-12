@@ -18,11 +18,11 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.CommunicationEvent.RolePattern(v => v.InvolvedParties, m.WebSiteCommunication),
-            m.Party.RolePattern(v => v.DisplayName, v => v.CommunicationEventsWhereInvolvedParty.CommunicationEvent, m.WebSiteCommunication),
+            m.Party.RolePattern(v => v.DisplayName, v => v.CommunicationEventsWhereInvolvedParty.ObjectType, m.WebSiteCommunication),
             m.CommunicationEvent.RolePattern(v => v.ContactMechanisms, m.WebSiteCommunication),
-            m.ContactMechanism.RolePattern(v => v.DisplayName, v => v.CommunicationEventsWhereContactMechanism.CommunicationEvent, m.WebSiteCommunication),
+            m.ContactMechanism.RolePattern(v => v.DisplayName, v => v.CommunicationEventsWhereContactMechanism.ObjectType, m.WebSiteCommunication),
             m.CommunicationEvent.RolePattern(v => v.WorkEfforts, m.WebSiteCommunication),
-            m.WorkEffort.RolePattern(v => v.Name, v => v.CommunicationEventsWhereWorkEffort.CommunicationEvent, m.WebSiteCommunication),
+            m.WorkEffort.RolePattern(v => v.Name, v => v.CommunicationEventsWhereWorkEffort.ObjectType, m.WebSiteCommunication),
             m.CommunicationEvent.RolePattern(v => v.EventPurposes, m.WebSiteCommunication),
             m.CommunicationEvent.RolePattern(v => v.Description, m.WebSiteCommunication),
             m.CommunicationEvent.RolePattern(v => v.Subject, m.WebSiteCommunication),

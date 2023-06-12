@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.WorkRequirement.RolePattern(v => v.TransitionalRevocations),
-            m.WorkEffort.RolePattern(v => v.WorkEffortState, v => v.WorkRequirementFulfillmentsWhereFullfillmentOf.WorkRequirementFulfillment.FullfilledBy),
+            m.WorkEffort.RolePattern(v => v.WorkEffortState, v => v.WorkRequirementFulfillmentsWhereFullfillmentOf.ObjectType.FullfilledBy),
             m.WorkRequirementFulfillment.RolePattern(v => v.FullfilledBy, v => v.FullfilledBy),
         };
 

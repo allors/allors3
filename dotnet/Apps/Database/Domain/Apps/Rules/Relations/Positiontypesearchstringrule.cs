@@ -20,9 +20,9 @@ namespace Allors.Database.Domain
                 m.PositionType.RolePattern(v => v.Description),
                 m.PositionType.RolePattern(v => v.Title),
                 m.PositionType.RolePattern(v => v.PositionTypeRate),
-                m.PositionTypeRate.RolePattern(v => v.SearchString, v => v.PositionTypesWherePositionTypeRate.PositionType),
+                m.PositionTypeRate.RolePattern(v => v.SearchString, v => v.PositionTypesWherePositionTypeRate.ObjectType),
                 m.PositionType.RolePattern(v => v.Responsibilities),
-                m.Responsibility.RolePattern(v => v.Description, v => v.PositionTypesWhereResponsibility.PositionType),
+                m.Responsibility.RolePattern(v => v.Description, v => v.PositionTypesWhereResponsibility.ObjectType),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         public WorkRequirementStateRule(MetaPopulation m) : base(m, new Guid("46237c5c-f159-4d8d-b4b0-5fc5b4cc3b89")) =>
             this.Patterns = new Pattern[]
         {
-            m.WorkTask.RolePattern(v => v.WorkEffortState, v => v.WorkRequirementFulfillmentsWhereFullfillmentOf.WorkRequirementFulfillment.FullfilledBy),
+            m.WorkTask.RolePattern(v => v.WorkEffortState, v => v.WorkRequirementFulfillmentsWhereFullfillmentOf.ObjectType.FullfilledBy),
             m.WorkRequirementFulfillment.RolePattern(v => v.FullfilledBy, v => v.FullfilledBy),
         };
 

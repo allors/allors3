@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PartQuantitiesRule(MetaPopulation m) : base(m, new Guid("d0fc5096-5ea8-4c50-8979-0ac66d43e6d0")) =>
             this.Patterns = new Pattern[]
             {
-                m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem.InventoryItem.Part),
+                m.InventoryItemTransaction.RolePattern(v => v.Quantity, v => v.InventoryItem.ObjectType.Part),
                 m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.Part),
                 m.SerialisedInventoryItem.RolePattern(v => v.SerialisedInventoryItemState, v => v.Part),
                 m.NonSerialisedInventoryItem.RolePattern(v => v.QuantityOnHand, v => v.Part),

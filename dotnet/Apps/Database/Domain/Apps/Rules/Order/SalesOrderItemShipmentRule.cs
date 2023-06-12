@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
                 m.SalesOrderItem.RolePattern(v => v.DerivationTrigger),
                 m.SalesOrderItem.RolePattern(v => v.QuantityOrdered),
                 m.OrderShipment.RolePattern(v => v.Quantity, v => v.OrderItem, m.SalesOrderItem),
-                m.ShipmentItem.RolePattern(v => v.ShipmentItemState, v => v.OrderShipmentsWhereShipmentItem.OrderShipment.OrderItem, m.SalesOrderItem),
+                m.ShipmentItem.RolePattern(v => v.ShipmentItemState, v => v.OrderShipmentsWhereShipmentItem.ObjectType.OrderItem, m.SalesOrderItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

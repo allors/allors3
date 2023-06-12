@@ -19,14 +19,14 @@ namespace Allors.Database.Domain
         {
             m.FixedAsset.RolePattern(v => v.DisplayName, m.Equipment),
             m.FixedAsset.RolePattern(v => v.LocalisedDescriptions, m.Equipment),
-            m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedDescription.FixedAsset, m.Equipment),
+            m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedDescription.ObjectType, m.Equipment),
             m.FixedAsset.RolePattern(v => v.Keywords, m.Equipment),
             m.FixedAsset.RolePattern(v => v.LocalisedKeywords, m.Equipment),
-            m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedKeyword.FixedAsset, m.Equipment),
+            m.LocalisedText.RolePattern(v => v.Text, v => v.FixedAssetWhereLocalisedKeyword.ObjectType, m.Equipment),
 
             m.FixedAsset.AssociationPattern(v => v.PartyFixedAssetAssignmentsWhereFixedAsset, m.Equipment),
-            m.Party.RolePattern(v => v.DisplayName, v => v.PartyFixedAssetAssignmentsWhereParty.PartyFixedAssetAssignment.FixedAsset.FixedAsset, m.Equipment),
-            m.AssetAssignmentStatus.RolePattern(v => v.Name, v => v.PartyFixedAssetAssignmentsWhereAssetAssignmentStatus.PartyFixedAssetAssignment.FixedAsset.FixedAsset, m.Equipment),
+            m.Party.RolePattern(v => v.DisplayName, v => v.PartyFixedAssetAssignmentsWhereParty.ObjectType.FixedAsset.ObjectType, m.Equipment),
+            m.AssetAssignmentStatus.RolePattern(v => v.Name, v => v.PartyFixedAssetAssignmentsWhereAssetAssignmentStatus.ObjectType.FixedAsset.ObjectType, m.Equipment),
             m.FixedAsset.AssociationPattern(v => v.WorkEffortFixedAssetAssignmentsWhereFixedAsset, m.Equipment),
             m.FixedAsset.AssociationPattern(v => v.WorkRequirementsWhereFixedAsset, m.Equipment),
        };

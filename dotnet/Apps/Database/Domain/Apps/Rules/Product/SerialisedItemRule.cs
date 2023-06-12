@@ -25,10 +25,10 @@ namespace Allors.Database.Domain
                 m.SerialisedItem.RolePattern(v => v.SerialisedItemAvailability),
                 m.Part.RolePattern(v => v.SerialisedItemCharacteristics, v => v.SerialisedItems),
                 m.Part.RolePattern(v => v.ProductType, v => v.SerialisedItems),
-                m.ProductType.RolePattern(v => v.SerialisedItemCharacteristicTypes, v => v.PartsWhereProductType.Part.SerialisedItems),
+                m.ProductType.RolePattern(v => v.SerialisedItemCharacteristicTypes, v => v.PartsWhereProductType.ObjectType.SerialisedItems),
                 m.SerialisedItem.AssociationPattern(v => v.PartWhereSerialisedItem),
                 m.Part.AssociationPattern(v => v.SupplierOfferingsWherePart, v => v.SerialisedItems),
-                m.SerialisedItemCharacteristic.RolePattern(v => v.Value, v => v.PartWhereSerialisedItemCharacteristic.Part.SerialisedItems.SerialisedItem),
+                m.SerialisedItemCharacteristic.RolePattern(v => v.Value, v => v.PartWhereSerialisedItemCharacteristic.ObjectType.SerialisedItems.ObjectType),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

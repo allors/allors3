@@ -24,10 +24,10 @@ namespace Allors.Database.Domain
                 m.PurchaseOrder.RolePattern(v => v.PurchaseOrderItems),
                 m.PurchaseOrder.RolePattern(v => v.OrderDate),
                 m.PurchaseOrderItem.RolePattern(v => v.PurchaseOrderItemState, v => v.PurchaseOrderWherePurchaseOrderItem),
-                m.SupplierRelationship.RolePattern(v => v.FromDate, v => v.Supplier.Organisation.PurchaseOrdersWhereTakenViaSupplier),
-                m.SupplierRelationship.RolePattern(v => v.ThroughDate, v => v.Supplier.Organisation.PurchaseOrdersWhereTakenViaSupplier),
-                m.SubContractorRelationship.RolePattern(v => v.FromDate, v => v.SubContractor.Organisation.PurchaseOrdersWhereTakenViaSubcontractor),
-                m.SubContractorRelationship.RolePattern(v => v.ThroughDate, v => v.SubContractor.Organisation.PurchaseOrdersWhereTakenViaSubcontractor),
+                m.SupplierRelationship.RolePattern(v => v.FromDate, v => v.Supplier.ObjectType.PurchaseOrdersWhereTakenViaSupplier),
+                m.SupplierRelationship.RolePattern(v => v.ThroughDate, v => v.Supplier.ObjectType.PurchaseOrdersWhereTakenViaSupplier),
+                m.SubContractorRelationship.RolePattern(v => v.FromDate, v => v.SubContractor.ObjectType.PurchaseOrdersWhereTakenViaSubcontractor),
+                m.SubContractorRelationship.RolePattern(v => v.ThroughDate, v => v.SubContractor.ObjectType.PurchaseOrdersWhereTakenViaSubcontractor),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
