@@ -282,9 +282,9 @@ build_relationType(relationType) ::= <<
 
             var relationType = new RelationType("$relationType.Tag$", associationType, m.$relationType.AssociationType.ObjectType.Name$, roleType, m.$relationType.RoleType.ObjectType.Name$$if(relationType.Multiplicity)$, Allors.Multiplicity.$relationType.Multiplicity$$endif$);
 
-            relationType.Init($Separated([origin(relationType), isDerived(relationType)], ",")$);
-
 $initRoleType(roleType=relationType.RoleType)$
+
+            relationType.Init($Separated([origin(relationType), isDerived(relationType)], ",")$);
 
             return relationType;
         }

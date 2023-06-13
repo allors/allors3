@@ -34,8 +34,7 @@ namespace Allors.Workspace.Meta
 
         #region IMetaObject
 
-        public IMetaPopulation MetaPopulation { get; }
-
+        public IMetaPopulation MetaPopulation => this.AssociationType.ObjectType.MetaPopulation;
         #endregion
 
         #region IMetaIdentifiableObject
@@ -66,9 +65,8 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}{this.RoleType.Name}";
 
-        public void Init(Origin origin = Origin.Database, bool isDerived = false)
+        public void Init(bool isDerived = false)
         {
-            this.Origin = origin;
             this.IsDerived = isDerived;
 
             ((AssociationType)this.AssociationType).Init();
