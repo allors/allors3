@@ -65,8 +65,9 @@ namespace Allors.Workspace.Meta
 
         public override string ToString() => $"{this.AssociationType.ObjectType.SingularName}{this.RoleType.Name}";
 
-        public void Init(bool isDerived = false)
+        public void Init(Origin origin = Origin.Database, bool isDerived = false)
         {
+            this.Origin = origin;
             this.IsDerived = isDerived;
 
             ((AssociationType)this.AssociationType).Init();
