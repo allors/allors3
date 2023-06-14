@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     public sealed class MethodType : IMethodTypeInternals
     {
-        public MetaPopulation MetaPopulation { get; set; }
+        public MetaPopulation MetaPopulation => this.ObjectType.MetaPopulation;
 
         private string Tag { get; set; }
         private ICompositeInternals ObjectType { get; set; }

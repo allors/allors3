@@ -15,7 +15,7 @@ namespace Allors.Workspace.Meta
     /// </summary>
     public abstract class AssociationType : IAssociationTypeInternals
     {
-        public MetaPopulation MetaPopulation { get; set; }
+        public MetaPopulation MetaPopulation => this.ObjectType.MetaPopulation;
 
         internal IRelationTypeInternals RelationType { get; set; }
         internal IRoleTypeInternals RoleType => this.RelationType.RoleType;
