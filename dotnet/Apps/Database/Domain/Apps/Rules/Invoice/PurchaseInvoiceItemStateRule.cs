@@ -33,8 +33,7 @@ namespace Allors.Database.Domain
                 var purchaseInvoiceItemStates = new PurchaseInvoiceItemStates(@this.Strategy.Transaction);
 
                 if (@this.ExistPurchaseInvoiceWherePurchaseInvoiceItem
-                    && @this.PurchaseInvoiceWherePurchaseInvoiceItem.ExistPurchaseInvoiceState
-                    && @this.IsValid)
+                    && @this.PurchaseInvoiceWherePurchaseInvoiceItem.ExistPurchaseInvoiceState)
                 {
                     var nextState = @this.PurchaseInvoiceItemState;
 
