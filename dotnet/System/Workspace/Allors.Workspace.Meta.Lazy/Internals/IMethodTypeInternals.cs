@@ -8,6 +8,6 @@ namespace Allors.Workspace.Meta
 {
     public interface IMethodTypeInternals : IMethodType
     {
-        new MetaPopulation MetaPopulation { get; set; }
+        new MetaPopulation MetaPopulation { get; }
     }
 }

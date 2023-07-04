@@ -23,12 +23,12 @@ namespace Allors.Database.Domain
                 m.CustomerShipment.RolePattern(v => v.ShipmentState),
                 m.CustomerShipment.RolePattern(v => v.ShipmentValue),
                 m.CustomerShipment.RolePattern(v => v.ReleasedManually),
-                m.ShipmentItem.RolePattern(v => v.Quantity, v => v.ShipmentWhereShipmentItem.Shipment.AsCustomerShipment),
-                m.PackagingContent.RolePattern(v => v.Quantity, v => v.ShipmentItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment.AsCustomerShipment),
-                m.PickList.RolePattern(v => v.PickListState, v => v.ShipToParty.Party.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
-                m.PickList.RolePattern(v => v.CurrentVersion, v => v.AllVersions.PickListVersion.ShipToParty.Party.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
-                m.Store.RolePattern(v => v.ShipmentThreshold, v => v.ShipmentsWhereStore.Shipment.AsCustomerShipment),
-                m.Party.AssociationPattern(v => v.PickListsWhereShipToParty, v => v.ShipmentsWhereShipToParty.Shipment.AsCustomerShipment),
+                m.ShipmentItem.RolePattern(v => v.Quantity, v => v.ShipmentWhereShipmentItem.ObjectType.AsCustomerShipment),
+                m.PackagingContent.RolePattern(v => v.Quantity, v => v.ShipmentItem.ObjectType.ShipmentWhereShipmentItem.ObjectType.AsCustomerShipment),
+                m.PickList.RolePattern(v => v.PickListState, v => v.ShipToParty.ObjectType.ShipmentsWhereShipToParty.ObjectType.AsCustomerShipment),
+                m.PickList.RolePattern(v => v.CurrentVersion, v => v.AllVersions.ObjectType.ShipToParty.ObjectType.ShipmentsWhereShipToParty.ObjectType.AsCustomerShipment),
+                m.Store.RolePattern(v => v.ShipmentThreshold, v => v.ShipmentsWhereStore.ObjectType.AsCustomerShipment),
+                m.Party.AssociationPattern(v => v.PickListsWhereShipToParty, v => v.ShipmentsWhereShipToParty.ObjectType.AsCustomerShipment),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

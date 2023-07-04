@@ -19,8 +19,8 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.ShipmentPackage.RolePattern(v => v.SequenceNumber),
-                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems.PickListItem.ItemIssuancesWherePickListItem.ItemIssuance.ShipmentItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment.ShipmentPackages),
-                m.ShipmentItem.AssociationPattern(v => v.ItemIssuancesWhereShipmentItem, v => v.ShipmentWhereShipmentItem.Shipment.ShipmentPackages),
+                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems.ObjectType.ItemIssuancesWherePickListItem.ObjectType.ShipmentItem.ObjectType.ShipmentWhereShipmentItem.ObjectType.ShipmentPackages),
+                m.ShipmentItem.AssociationPattern(v => v.ItemIssuancesWhereShipmentItem, v => v.ShipmentWhereShipmentItem.ObjectType.ShipmentPackages),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

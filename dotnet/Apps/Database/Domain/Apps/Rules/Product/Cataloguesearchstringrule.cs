@@ -20,12 +20,12 @@ namespace Allors.Database.Domain
             m.Catalogue.RolePattern(v => v.Name),
             m.Catalogue.RolePattern(v => v.Description),
             m.Catalogue.RolePattern(v => v.LocalisedNames),
-            m.LocalisedText.RolePattern(v => v.Text, v => v.CatalogueWhereLocalisedName.Catalogue),
+            m.LocalisedText.RolePattern(v => v.Text, v => v.CatalogueWhereLocalisedName.ObjectType),
             m.Catalogue.RolePattern(v => v.LocalisedDescriptions),
-            m.LocalisedText.RolePattern(v => v.Text, v => v.CatalogueWhereLocalisedDescription.Catalogue),
+            m.LocalisedText.RolePattern(v => v.Text, v => v.CatalogueWhereLocalisedDescription.ObjectType),
             m.Catalogue.RolePattern(v => v.CatScope),
             m.Catalogue.RolePattern(v => v.ProductCategories),
-            m.ProductCategory.RolePattern(v => v.DisplayName, v => v.CatalogueWhereProductCategory.Catalogue),
+            m.ProductCategory.RolePattern(v => v.DisplayName, v => v.CatalogueWhereProductCategory.ObjectType),
 
             m.Catalogue.AssociationPattern(v => v.StoreWhereCatalogue),
         };

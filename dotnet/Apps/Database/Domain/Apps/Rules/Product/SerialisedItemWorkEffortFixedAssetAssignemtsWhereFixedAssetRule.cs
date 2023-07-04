@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SerialisedItemWorkEffortFixedAssetAssignemtsWhereFixedAssetRule(MetaPopulation m) : base(m, new Guid("195a4083-b835-4e84-94d5-07a40f20806c")) =>
             this.Patterns = new Pattern[]
             {
-                m.WorkEffort.RolePattern(v => v.WorkEffortState, v => v.WorkEffortFixedAssetAssignmentsWhereAssignment.WorkEffortFixedAssetAssignment.FixedAsset, m.SerialisedItem),
+                m.WorkEffort.RolePattern(v => v.WorkEffortState, v => v.WorkEffortFixedAssetAssignmentsWhereAssignment.ObjectType.FixedAsset, m.SerialisedItem),
                 m.FixedAsset.AssociationPattern(v => v.WorkEffortFixedAssetAssignmentsWhereFixedAsset, m.SerialisedItem),
             };
 

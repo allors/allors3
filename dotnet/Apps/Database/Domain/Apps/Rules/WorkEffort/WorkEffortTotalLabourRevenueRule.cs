@@ -16,11 +16,11 @@ namespace Allors.Database.Domain
         public WorkEffortTotalLabourRevenueRule(MetaPopulation m) : base(m, new Guid("fb6c7fc1-e090-4c17-a799-1c562b258ec7")) =>
             this.Patterns = new Pattern[]
             {
-                m.TimeEntry.RolePattern(v => v.WorkEffort, v => v.WorkEffort.WorkEffort.ServiceEntriesWhereWorkEffort.ServiceEntry.WorkEffort),
-                m.TimeEntry.RolePattern(v => v.BillingAmount, v => v.WorkEffort.WorkEffort.ServiceEntriesWhereWorkEffort.ServiceEntry.WorkEffort),
-                m.TimeEntry.RolePattern(v => v.IsBillable, v => v.WorkEffort.WorkEffort.ServiceEntriesWhereWorkEffort.ServiceEntry.WorkEffort),
-                m.TimeEntry.RolePattern(v => v.AmountOfTime, v => v.WorkEffort.WorkEffort.ServiceEntriesWhereWorkEffort.ServiceEntry.WorkEffort),
-                m.TimeEntry.RolePattern(v => v.BillableAmountOfTime, v => v.WorkEffort.WorkEffort.ServiceEntriesWhereWorkEffort.ServiceEntry.WorkEffort),
+                m.TimeEntry.RolePattern(v => v.WorkEffort, v => v.WorkEffort.ObjectType.ServiceEntriesWhereWorkEffort.ObjectType.WorkEffort),
+                m.TimeEntry.RolePattern(v => v.BillingAmount, v => v.WorkEffort.ObjectType.ServiceEntriesWhereWorkEffort.ObjectType.WorkEffort),
+                m.TimeEntry.RolePattern(v => v.IsBillable, v => v.WorkEffort.ObjectType.ServiceEntriesWhereWorkEffort.ObjectType.WorkEffort),
+                m.TimeEntry.RolePattern(v => v.AmountOfTime, v => v.WorkEffort.ObjectType.ServiceEntriesWhereWorkEffort.ObjectType.WorkEffort),
+                m.TimeEntry.RolePattern(v => v.BillableAmountOfTime, v => v.WorkEffort.ObjectType.ServiceEntriesWhereWorkEffort.ObjectType.WorkEffort),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

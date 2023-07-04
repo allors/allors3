@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public PurchaseShipmentStateRule(MetaPopulation m) : base(m, new Guid("f5a01c30-1f20-4dba-a828-a32ab38d28de")) =>
             this.Patterns = new Pattern[]
             {
-                m.ShipmentReceipt.RolePattern(v => v.QuantityAccepted, v => v.ShipmentItem.ShipmentItem.ShipmentWhereShipmentItem.Shipment.AsPurchaseShipment),
-                m.ShipmentItem.RolePattern(v => v.ShipmentItemState, v => v.ShipmentWhereShipmentItem.Shipment.AsPurchaseShipment),
+                m.ShipmentReceipt.RolePattern(v => v.QuantityAccepted, v => v.ShipmentItem.ObjectType.ShipmentWhereShipmentItem.ObjectType.AsPurchaseShipment),
+                m.ShipmentItem.RolePattern(v => v.ShipmentItemState, v => v.ShipmentWhereShipmentItem.ObjectType.AsPurchaseShipment),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

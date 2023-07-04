@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System;
     using Xunit;
 
     public class BuilderTest : DomainTest, IClassFixture<Fixture>
@@ -12,11 +13,22 @@ namespace Allors.Database.Domain.Tests
         public BuilderTest(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void BaseOnPostBuild()
+        public void ClassBuilder()
         {
-            var person = new PersonBuilder(this.Transaction).Build();
+            var build = new BuildBuilder(this.Transaction).Build();
 
-            Assert.True(person.ExistUniqueId);
+            Assert.Equal(new Guid("DCE649A4-7CF6-48FA-93E4-CDE222DA2A94"), build.Guid);
+            Assert.Equal("Exist", build.String);
+        }
+
+
+        [Fact]
+        public void LambdaBuilder()
+        {
+            var build = this.Transaction.Build<Build>();
+
+            Assert.Equal(new Guid("DCE649A4-7CF6-48FA-93E4-CDE222DA2A94"), build.Guid);
+            Assert.Equal("Exist", build.String);
         }
     }
 }

@@ -17,10 +17,10 @@ namespace Allors.Database.Domain
         public ProductQuoteItemByProductRule(MetaPopulation m) : base(m, new Guid("fb8b7202-76c5-48f0-972f-e77a56b9a0ab")) =>
             this.Patterns = new Pattern[]
             {
-                m.QuoteItemVersion.RolePattern(v => v.Product, v => v.QuoteItemWhereCurrentVersion.QuoteItem.QuoteWhereQuoteItem.Quote.AsProductQuote.ProductQuoteItemsByProduct),
-                m.QuoteItem.RolePattern(v => v.Product, v => v.QuoteWhereQuoteItem.Quote.AsProductQuote.ProductQuoteItemsByProduct),
-                m.QuoteItem.RolePattern(v => v.Quantity, v => v.QuoteWhereQuoteItem.Quote.AsProductQuote.ProductQuoteItemsByProduct),
-                m.QuoteItem.RolePattern(v => v.TotalBasePrice, v => v.QuoteWhereQuoteItem.Quote.AsProductQuote.ProductQuoteItemsByProduct),
+                m.QuoteItemVersion.RolePattern(v => v.Product, v => v.QuoteItemWhereCurrentVersion.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote.ProductQuoteItemsByProduct),
+                m.QuoteItem.RolePattern(v => v.Product, v => v.QuoteWhereQuoteItem.ObjectType.AsProductQuote.ProductQuoteItemsByProduct),
+                m.QuoteItem.RolePattern(v => v.Quantity, v => v.QuoteWhereQuoteItem.ObjectType.AsProductQuote.ProductQuoteItemsByProduct),
+                m.QuoteItem.RolePattern(v => v.TotalBasePrice, v => v.QuoteWhereQuoteItem.ObjectType.AsProductQuote.ProductQuoteItemsByProduct),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

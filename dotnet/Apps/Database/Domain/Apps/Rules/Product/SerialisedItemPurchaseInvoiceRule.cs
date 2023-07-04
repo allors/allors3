@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public SerialisedItemPurchaseInvoiceRule(MetaPopulation m) : base(m, new Guid("510975a7-e210-4d30-8fde-b401cbbb3694")) =>
             this.Patterns = new Pattern[]
             {
-                m.PurchaseInvoice.RolePattern(v => v.ValidInvoiceItems, v => v.PurchaseInvoiceItems.PurchaseInvoiceItem.SerialisedItem),
-                m.PurchaseInvoice.RolePattern(v => v.PurchaseInvoiceState, v => v.PurchaseInvoiceItems.PurchaseInvoiceItem.SerialisedItem),
+                m.PurchaseInvoice.RolePattern(v => v.ValidInvoiceItems, v => v.PurchaseInvoiceItems.ObjectType.SerialisedItem),
+                m.PurchaseInvoice.RolePattern(v => v.PurchaseInvoiceState, v => v.PurchaseInvoiceItems.ObjectType.SerialisedItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

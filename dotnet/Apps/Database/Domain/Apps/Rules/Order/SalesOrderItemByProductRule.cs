@@ -17,10 +17,10 @@ namespace Allors.Database.Domain
         public SalesOrderItemByProductRule(MetaPopulation m) : base(m, new Guid("89dc8d53-d4a2-4e03-aa87-cbde9659cf87")) =>
             this.Patterns = new Pattern[]
             {
-                m.SalesOrderItemVersion.RolePattern(v => v.Product, v => v.SalesOrderItemWhereCurrentVersion.SalesOrderItem.SalesOrderWhereSalesOrderItem.SalesOrder.SalesOrderItemsByProduct ),
-                m.SalesOrderItem.RolePattern(v => v.Product, v => v.SalesOrderWhereSalesOrderItem.SalesOrder.SalesOrderItemsByProduct ),
-                m.SalesOrderItem.RolePattern(v => v.QuantityOrdered, v => v.SalesOrderWhereSalesOrderItem.SalesOrder.SalesOrderItemsByProduct ),
-                m.SalesOrderItem.RolePattern(v => v.TotalBasePrice, v => v.SalesOrderWhereSalesOrderItem.SalesOrder.SalesOrderItemsByProduct ),
+                m.SalesOrderItemVersion.RolePattern(v => v.Product, v => v.SalesOrderItemWhereCurrentVersion.ObjectType.SalesOrderWhereSalesOrderItem.ObjectType.SalesOrderItemsByProduct ),
+                m.SalesOrderItem.RolePattern(v => v.Product, v => v.SalesOrderWhereSalesOrderItem.ObjectType.SalesOrderItemsByProduct ),
+                m.SalesOrderItem.RolePattern(v => v.QuantityOrdered, v => v.SalesOrderWhereSalesOrderItem.ObjectType.SalesOrderItemsByProduct ),
+                m.SalesOrderItem.RolePattern(v => v.TotalBasePrice, v => v.SalesOrderWhereSalesOrderItem.ObjectType.SalesOrderItemsByProduct ),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseOrderOverdueRule(MetaPopulation m) : base(m, new Guid("fb640a78-f5c2-497f-b36f-b361dc2f67c9")) =>
             this.Patterns = new Pattern[]
             {
-                m.PurchaseOrderItem.RolePattern(v => v.DerivedDeliveryDate, v => v.PurchaseOrderWherePurchaseOrderItem.PurchaseOrder),
+                m.PurchaseOrderItem.RolePattern(v => v.DerivedDeliveryDate, v => v.PurchaseOrderWherePurchaseOrderItem.ObjectType),
                 m.PurchaseOrder.RolePattern(v => v.ValidOrderItems),
             };
 

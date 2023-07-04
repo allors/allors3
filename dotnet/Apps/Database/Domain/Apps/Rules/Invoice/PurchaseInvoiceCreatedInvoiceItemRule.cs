@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public PurchaseInvoiceCreatedInvoiceItemRule(MetaPopulation m) : base(m, new Guid("8c875a7d-ac54-4fcf-bd63-7223ed3217b4")) =>
             this.Patterns = new Pattern[]
             {
-                m.OrderItemBilling.RolePattern(v => v.InvoiceItem, v => v.InvoiceItem.InvoiceItem.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem),
+                m.OrderItemBilling.RolePattern(v => v.InvoiceItem, v => v.InvoiceItem.ObjectType.AsPurchaseInvoiceItem.PurchaseInvoiceWherePurchaseInvoiceItem),
                 m.PurchaseInvoice.RolePattern(v => v.PurchaseInvoiceItems),
             };
 

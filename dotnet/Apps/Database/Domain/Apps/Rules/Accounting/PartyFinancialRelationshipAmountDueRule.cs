@@ -17,10 +17,10 @@ namespace Allors.Database.Domain
         public PartyFinancialRelationshipAmountDueRule(MetaPopulation m) : base(m, new Guid("0f4cb6d0-79ca-4a5f-ba8f-d69b67448a96")) =>
             this.Patterns = new Pattern[]
             {
-                m.SalesInvoice.RolePattern(v => v.TotalIncVat, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
-                m.SalesInvoice.RolePattern(v => v.AmountPaid, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
-                m.SalesInvoice.RolePattern(v => v.DueDate, v => v.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
-                m.Store.RolePattern(v => v.PaymentGracePeriod, v => v.SalesInvoicesWhereStore.SalesInvoice.BillToCustomer.Party.PartyFinancialRelationshipsWhereFinancialParty),
+                m.SalesInvoice.RolePattern(v => v.TotalIncVat, v => v.BillToCustomer.ObjectType.PartyFinancialRelationshipsWhereFinancialParty),
+                m.SalesInvoice.RolePattern(v => v.AmountPaid, v => v.BillToCustomer.ObjectType.PartyFinancialRelationshipsWhereFinancialParty),
+                m.SalesInvoice.RolePattern(v => v.DueDate, v => v.BillToCustomer.ObjectType.PartyFinancialRelationshipsWhereFinancialParty),
+                m.Store.RolePattern(v => v.PaymentGracePeriod, v => v.SalesInvoicesWhereStore.ObjectType.BillToCustomer.ObjectType.PartyFinancialRelationshipsWhereFinancialParty),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

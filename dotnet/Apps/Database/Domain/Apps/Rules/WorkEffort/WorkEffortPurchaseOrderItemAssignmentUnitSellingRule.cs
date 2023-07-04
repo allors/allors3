@@ -23,9 +23,9 @@ namespace Allors.Database.Domain
             m.WorkEffort.RolePattern(v => v.TakenBy, v => v.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
             m.WorkEffort.RolePattern(v => v.ScheduledStart, v => v.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
             m.WorkEffort.RolePattern(v => v.ActualHours, v => v.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
-            m.PriceComponent.RolePattern(v => v.PricedBy, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
-            m.PriceComponent.RolePattern(v => v.FromDate, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
-            m.PriceComponent.RolePattern(v => v.ThroughDate, v => v.PricedBy.Party.AsOrganisation.WorkEffortsWhereTakenBy.WorkEffort.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.PriceComponent.RolePattern(v => v.PricedBy, v => v.PricedBy.ObjectType.AsOrganisation.WorkEffortsWhereTakenBy.ObjectType.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.PriceComponent.RolePattern(v => v.FromDate, v => v.PricedBy.ObjectType.AsOrganisation.WorkEffortsWhereTakenBy.ObjectType.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
+            m.PriceComponent.RolePattern(v => v.ThroughDate, v => v.PricedBy.ObjectType.AsOrganisation.WorkEffortsWhereTakenBy.ObjectType.WorkEffortPurchaseOrderItemAssignmentsWhereAssignment),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

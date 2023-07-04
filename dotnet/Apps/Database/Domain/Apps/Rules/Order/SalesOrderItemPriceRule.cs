@@ -33,9 +33,9 @@ namespace Allors.Database.Domain
                 m.SalesOrder.RolePattern(v => v.BillToCustomer, v => v.SalesOrderItems),
                 m.SalesOrder.RolePattern(v => v.OrderDate, v => v.SalesOrderItems),
                 m.SalesOrder.RolePattern(v => v.DerivationTrigger, v => v.SalesOrderItems),
-                m.SalesOrderItemByProduct.RolePattern(v => v.Product, v => v.SalesOrderWhereSalesOrderItemsByProduct.SalesOrder.SalesOrderItems),
-                m.SalesOrderItemByProduct.RolePattern(v => v.QuantityOrdered, v => v.SalesOrderWhereSalesOrderItemsByProduct.SalesOrder.SalesOrderItems),
-                m.SalesOrderItemByProduct.RolePattern(v => v.ValueOrdered, v => v.SalesOrderWhereSalesOrderItemsByProduct.SalesOrder.SalesOrderItems),
+                m.SalesOrderItemByProduct.RolePattern(v => v.Product, v => v.SalesOrderWhereSalesOrderItemsByProduct.ObjectType.SalesOrderItems),
+                m.SalesOrderItemByProduct.RolePattern(v => v.QuantityOrdered, v => v.SalesOrderWhereSalesOrderItemsByProduct.ObjectType.SalesOrderItems),
+                m.SalesOrderItemByProduct.RolePattern(v => v.ValueOrdered, v => v.SalesOrderWhereSalesOrderItemsByProduct.ObjectType.SalesOrderItems),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

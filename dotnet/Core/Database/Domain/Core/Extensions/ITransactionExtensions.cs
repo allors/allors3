@@ -14,6 +14,7 @@ namespace Allors.Database.Domain
 
             builder?.Invoke(newObject);
 
+            ((Object)newObject).OnBuild();
             ((Object)newObject).OnPostBuild();
 
             return newObject;
@@ -31,6 +32,7 @@ namespace Allors.Database.Domain
                 }
             }
 
+            ((Object)newObject).OnBuild();
             ((Object)newObject).OnPostBuild();
 
             return newObject;
@@ -50,6 +52,7 @@ namespace Allors.Database.Domain
 
             extraBuilder?.Invoke(newObject);
 
+            ((Object)newObject).OnBuild();
             ((Object)newObject).OnPostBuild();
 
             return newObject;
@@ -72,6 +75,7 @@ namespace Allors.Database.Domain
                 extraBuilder?.Invoke(newObject);
             }
 
+            ((Object)newObject).OnBuild();
             ((Object)newObject).OnPostBuild();
 
             return newObject;
@@ -88,6 +92,7 @@ namespace Allors.Database.Domain
             {
                 var newObject = newObjects[index++];
                 builder?.Invoke(newObject, arg);
+                ((Object)newObject).OnBuild();
                 ((Object)newObject).OnPostBuild();
             }
 

@@ -22,7 +22,7 @@ namespace Allors.Database.Domain
                 m.SalesOrderItem.RolePattern(v => v.ReservedFromNonSerialisedInventoryItem),
                 m.SalesOrderItem.RolePattern(v => v.ReservedFromSerialisedInventoryItem),
                 m.SalesOrderItem.RolePattern(v => v.SalesOrderItemState),
-                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.SerialisedItem.SerialisedItem.SalesOrderItemsWhereSerialisedItem),
+                m.SerialisedInventoryItem.RolePattern(v => v.Quantity, v => v.SerialisedItem.ObjectType.SalesOrderItemsWhereSerialisedItem),
                 m.Part.AssociationPattern(v => v.InventoryItemTransactionsWherePart, v => v.AsUnifiedGood.SalesOrderItemsWhereProduct),
             };
 

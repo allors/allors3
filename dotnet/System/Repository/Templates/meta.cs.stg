@@ -177,7 +177,7 @@ define_associationType(property) ::= <<
         {
         }
 
-        public $property.DefiningType.SingularName$ $property.DefiningType.SingularName$ => this.M.$property.DefiningType.SingularName$;
+        new public $property.DefiningType.SingularName$ ObjectType => this.M.$property.DefiningType.SingularName$;
     }
 >>
 
@@ -199,7 +199,7 @@ define_roleType(property) ::= <<
         {
         }
 $if(property.Type.IsComposite)$
-        public $property.Type.SingularName$ $property.Type.SingularName$ => this.M.$property.Type.SingularName$;
+        new public $property.Type.SingularName$ ObjectType => this.M.$property.Type.SingularName$;
 $endif$
     }
 >>

@@ -29,14 +29,14 @@ namespace Allors.Database.Domain
             m.SalesInvoiceItem.RolePattern(v => v.Quantity, v => v .SalesInvoiceWhereSalesInvoiceItem),
             m.SalesInvoiceItem.RolePattern(v => v.AssignedUnitPrice, v => v.SalesInvoiceWhereSalesInvoiceItem),
             m.SalesInvoiceItem.RolePattern(v => v.DiscountAdjustments, v => v.SalesInvoiceWhereSalesInvoiceItem),
-            m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment.Priceable.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
+            m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereDiscountAdjustment.ObjectType.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
             m.DiscountAdjustment.RolePattern(v => v.Percentage, v => v.InvoiceWhereOrderAdjustment, m.SalesInvoice),
-            m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereDiscountAdjustment.Priceable.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
+            m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereDiscountAdjustment.ObjectType.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
             m.DiscountAdjustment.RolePattern(v => v.Amount, v => v.InvoiceWhereOrderAdjustment, m.SalesInvoice),
             m.SalesInvoiceItem.RolePattern(v => v.SurchargeAdjustments, v => v.SalesInvoiceWhereSalesInvoiceItem),
-            m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereSurchargeAdjustment.Priceable.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
+            m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.PriceableWhereSurchargeAdjustment.ObjectType.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
             m.SurchargeAdjustment.RolePattern(v => v.Percentage, v => v.InvoiceWhereOrderAdjustment, m.SalesInvoice),
-            m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment.Priceable.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
+            m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.PriceableWhereSurchargeAdjustment.ObjectType.AsSalesInvoiceItem.SalesInvoiceWhereSalesInvoiceItem, m.SalesInvoice),
             m.SurchargeAdjustment.RolePattern(v => v.Amount, v => v.InvoiceWhereOrderAdjustment, m.SalesInvoice),
         };
 

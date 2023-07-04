@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     public interface IAssociationTypeInternals : IAssociationType
     {
-        MetaPopulation MetaPopulation { get; set; }
+        MetaPopulation MetaPopulation { get; }
 
         new ICompositeInternals ObjectType { get; set; }
 

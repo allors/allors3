@@ -16,7 +16,7 @@ namespace Allors.Workspace.Meta
         /// </summary>
         public const int MaximumSize = -1;
 
-        public MetaPopulation MetaPopulation { get; set; }
+        public MetaPopulation MetaPopulation => (MetaPopulation)this.RelationType.MetaPopulation;
 
         private IRelationTypeInternals RelationType { get; set; }
         private IAssociationTypeInternals AssociationType => this.RelationType.AssociationType;

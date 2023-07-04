@@ -34,8 +34,7 @@ namespace Allors.Workspace.Meta
 
         #region IMetaObject
 
-        public IMetaPopulation MetaPopulation { get; }
-
+        public IMetaPopulation MetaPopulation => this.AssociationType.ObjectType.MetaPopulation;
         #endregion
 
         #region IMetaIdentifiableObject

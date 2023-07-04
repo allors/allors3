@@ -18,12 +18,12 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.InventoryItem.RolePattern(v => v.Part, m.SerialisedInventoryItem),
-                m.Part.RolePattern(v => v.DisplayName, v => v.InventoryItemsWherePart.InventoryItem, m.SerialisedInventoryItem),
+                m.Part.RolePattern(v => v.DisplayName, v => v.InventoryItemsWherePart.ObjectType, m.SerialisedInventoryItem),
                 m.InventoryItem.RolePattern(v => v.Facility, m.SerialisedInventoryItem),
-                m.Facility.RolePattern(v => v.Name, v => v.InventoryItemsWhereFacility.InventoryItem, m.SerialisedInventoryItem),
+                m.Facility.RolePattern(v => v.Name, v => v.InventoryItemsWhereFacility.ObjectType, m.SerialisedInventoryItem),
                 m.InventoryItem.RolePattern(v => v.UnitOfMeasure, m.SerialisedInventoryItem),
                 m.SerialisedInventoryItem.RolePattern(v => v.SerialisedItem),
-                m.SerialisedItem.RolePattern(v => v.DisplayName, v => v.SerialisedInventoryItemsWhereSerialisedItem.SerialisedInventoryItem),
+                m.SerialisedItem.RolePattern(v => v.DisplayName, v => v.SerialisedInventoryItemsWhereSerialisedItem.ObjectType),
                 m.SerialisedInventoryItem.RolePattern(v => v.SerialisedInventoryItemState),
 
                 m.InventoryItem.AssociationPattern(v => v.WorkEffortInventoryAssignmentsWhereInventoryItem, m.SerialisedInventoryItem),

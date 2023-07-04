@@ -19,9 +19,9 @@ namespace Allors.Database.Domain
             {
                 m.Party.RolePattern(v => v.DerivationTrigger),
                 m.Party.AssociationPattern(v => v.PartyContactMechanismsWhereParty),
-                m.PartyContactMechanism.RolePattern(v => v.ContactPurposes, v => v.Party.Party),
-                m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.Party.Party),
-                m.PartyContactMechanism.RolePattern(v => v.ThroughDate, v => v.Party.Party),
+                m.PartyContactMechanism.RolePattern(v => v.ContactPurposes, v => v.Party.ObjectType),
+                m.PartyContactMechanism.RolePattern(v => v.FromDate, v => v.Party.ObjectType),
+                m.PartyContactMechanism.RolePattern(v => v.ThroughDate, v => v.Party.ObjectType),
                 m.Party.AssociationPattern(v => v.PartyRelationshipsWhereParty),
                 m.PartyRelationship.RolePattern(v => v.FromDate, v => v.Parties),
                 m.PartyRelationship.RolePattern(v => v.ThroughDate, v => v.Parties),

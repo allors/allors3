@@ -25,7 +25,7 @@ namespace Allors.Database.Domain
                 m.ShipmentItem.RolePattern(v => v.Part),
                 m.ShipmentItem.RolePattern(v => v.StoredInFacility),
                 m.ItemIssuance.RolePattern(v => v.Quantity, v => v.ShipmentItem),
-                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems.PickListItem.ItemIssuancesWherePickListItem.ItemIssuance.ShipmentItem),
+                m.PickList.RolePattern(v => v.PickListState, v => v.PickListItems.ObjectType.ItemIssuancesWherePickListItem.ObjectType.ShipmentItem),
                 m.Shipment.RolePattern(v => v.ShipmentState, v => v.ShipmentItems),
                 m.Shipment.RolePattern(v => v.ShipToFacility, v => v.ShipmentItems),
                 m.ShipmentReceipt.RolePattern(v => v.QuantityAccepted, v => v.ShipmentItem),

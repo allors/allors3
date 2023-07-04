@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.AccountingTransactionDetail.RolePattern(v => v.GeneralLedgerAccount, v => v.GeneralLedgerAccount),
-            m.InternalOrganisation.AssociationPattern(v => v.AccountingTransactionsWhereInternalOrganisation, v => v.OrganisationGlAccountsWhereInternalOrganisation.OrganisationGlAccount.GeneralLedgerAccount.GeneralLedgerAccount),
+            m.InternalOrganisation.AssociationPattern(v => v.AccountingTransactionsWhereInternalOrganisation, v => v.OrganisationGlAccountsWhereInternalOrganisation.ObjectType.GeneralLedgerAccount.ObjectType),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

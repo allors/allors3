@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
             {
                 m.SerialisedItem.RolePattern(v => v.Ownership),
-                m.Ownership.RolePattern(v => v.Name, v => v.SerialisedItemsWhereOwnership.SerialisedItem),
+                m.Ownership.RolePattern(v => v.Name, v => v.SerialisedItemsWhereOwnership.ObjectType),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

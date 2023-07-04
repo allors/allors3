@@ -32,7 +32,7 @@ namespace Allors.Database.Data.Tests
         {
             var m = this.M;
 
-            var node = m.UserGroup.Members.Node(v => v.User.UniqueId.Node());
+            var node = m.UserGroup.Members.Node(v => v.ObjectType.UniqueId.Node());
 
             Assert.Equal(m.UserGroup.Members, node.PropertyType);
             Assert.Single(node.Nodes);
@@ -50,8 +50,8 @@ namespace Allors.Database.Data.Tests
 
             var node = m.UserGroup.Members.Node(v => new[]
             {
-                v.User.UniqueId.Node(),
-                v.User.SecurityTokens.Node(),
+                v.ObjectType.UniqueId.Node(),
+                v.ObjectType.SecurityTokens.Node(),
             });
 
             Assert.Equal(m.UserGroup.Members, node.PropertyType);
@@ -75,8 +75,8 @@ namespace Allors.Database.Data.Tests
             var m = this.M;
 
             var node = m.UserGroup.Members.Node(
-                v => v.User.UniqueId.Node(),
-                v => v.User.SecurityTokens.Node());
+                v => v.ObjectType.UniqueId.Node(),
+                v => v.ObjectType.SecurityTokens.Node());
 
             Assert.Equal(m.UserGroup.Members, node.PropertyType);
             Assert.Equal(2, node.Nodes.Length);

@@ -17,8 +17,8 @@ namespace Allors.Database.Domain
         public RoleOne2ManyRule(MetaPopulation m) : base(m, new Guid("d40ab5c5-c248-4455-bad4-8c825f48e080")) =>
             this.Patterns = new Pattern[]
             {
-                m.CC.RolePattern(v=>v.Assigned, v=>v.BBWhereOne2Many.BB.AAWhereOne2Many),
-                m.CC.RolePattern(v=>v.Assigned, v=>v.BBWhereUnusedOne2Many.BB.AAWhereUnusedOne2Many)
+                m.CC.RolePattern(v=>v.Assigned, v=>v.BBWhereOne2Many.ObjectType.AAWhereOne2Many),
+                m.CC.RolePattern(v=>v.Assigned, v=>v.BBWhereUnusedOne2Many.ObjectType.AAWhereUnusedOne2Many)
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

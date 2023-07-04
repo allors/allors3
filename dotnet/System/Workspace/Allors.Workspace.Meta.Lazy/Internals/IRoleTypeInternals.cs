@@ -8,7 +8,7 @@ namespace Allors.Workspace.Meta
 {
     public interface IRoleTypeInternals : IRoleType
     {
-        MetaPopulation MetaPopulation { get; set; }
+        MetaPopulation MetaPopulation { get; }
 
         new IObjectType ObjectType { get; set; }
 

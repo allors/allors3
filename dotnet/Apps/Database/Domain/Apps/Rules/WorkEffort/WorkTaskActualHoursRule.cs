@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
             m.TimeEntry.RolePattern(v => v.FromDate, v => v.WorkEffort),
             m.TimeEntry.RolePattern(v => v.ThroughDate, v => v.WorkEffort),
             m.TimeEntry.RolePattern(v => v.WorkEffort, v => v.WorkEffort),
-            m.TimeSheet.RolePattern(v => v.TimeEntries, v => v.TimeEntries.TimeEntry.WorkEffort),
+            m.TimeSheet.RolePattern(v => v.TimeEntries, v => v.TimeEntries.ObjectType.WorkEffort),
             m.WorkTask.AssociationPattern(v => v.ServiceEntriesWhereWorkEffort)
         };
 

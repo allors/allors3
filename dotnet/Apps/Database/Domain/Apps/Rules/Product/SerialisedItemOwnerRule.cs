@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public SerialisedItemOwnerRule(MetaPopulation m) : base(m, new Guid("4505de7b-8e45-4683-a90b-ffd31d981c1c")) =>
             this.Patterns = new Pattern[]
             {
-                m.Shipment.RolePattern(v => v.ShipmentState, v => v.ShipmentItems.ShipmentItem.SerialisedItem),
+                m.Shipment.RolePattern(v => v.ShipmentState, v => v.ShipmentItems.ObjectType.SerialisedItem),
             };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

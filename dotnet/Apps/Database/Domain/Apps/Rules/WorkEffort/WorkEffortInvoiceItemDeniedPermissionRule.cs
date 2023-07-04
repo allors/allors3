@@ -17,7 +17,7 @@ namespace Allors.Database.Domain
         public WorkEffortInvoiceItemDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("8e46be35-c9ba-4a90-a54e-e07f0ee8fae4")) =>
             this.Patterns = new Pattern[]
         {
-            m.WorkTask.RolePattern(v => v.TransitionalRevocations, v => v.WorkEffortInvoiceItemAssignmentsWhereAssignment.WorkEffortInvoiceItemAssignment.WorkEffortInvoiceItem),
+            m.WorkTask.RolePattern(v => v.TransitionalRevocations, v => v.WorkEffortInvoiceItemAssignmentsWhereAssignment.ObjectType.WorkEffortInvoiceItem),
         };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)

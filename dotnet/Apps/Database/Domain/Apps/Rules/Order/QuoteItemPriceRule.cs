@@ -34,9 +34,9 @@ namespace Allors.Database.Domain
                 m.Quote.RolePattern(v => v.Receiver, v => v.QuoteItems),
                 m.Quote.RolePattern(v => v.IssueDate, v => v.QuoteItems),
                 m.Quote.RolePattern(v => v.DerivationTrigger, v => v.QuoteItems),
-                m.ProductQuoteItemByProduct.RolePattern(v => v.Product, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ProductQuote.QuoteItems),
-                m.ProductQuoteItemByProduct.RolePattern(v => v.QuantityOrdered, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ProductQuote.QuoteItems),
-                m.ProductQuoteItemByProduct.RolePattern(v => v.ValueOrdered, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ProductQuote.QuoteItems),
+                m.ProductQuoteItemByProduct.RolePattern(v => v.Product, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ObjectType.QuoteItems),
+                m.ProductQuoteItemByProduct.RolePattern(v => v.QuantityOrdered, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ObjectType.QuoteItems),
+                m.ProductQuoteItemByProduct.RolePattern(v => v.ValueOrdered, v => v.ProductQuoteWhereProductQuoteItemsByProduct.ObjectType.QuoteItems),
                 };
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
