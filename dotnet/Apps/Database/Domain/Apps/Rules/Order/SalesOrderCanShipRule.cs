@@ -29,37 +29,44 @@ namespace Allors.Database.Domain
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
             var validation = cycle.Validation;
-            var transaction = cycle.Transaction;
 
             foreach (var @this in matches.Cast<SalesOrder>())
             {
-                var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
+                @this.DeriveSalesOrderCanShip(validation);
+            }
+        }
+    }
 
-                if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Transaction).InProcess))
+    public static class SalesOrderCanShipRuleExtensions
+    {
+        public static void DeriveSalesOrderCanShip(this SalesOrder @this, IValidation validation)
+        {
+            var validOrderItems = @this.SalesOrderItems.Where(v => v.IsValid).ToArray();
+
+            if (@this.SalesOrderState.Equals(new SalesOrderStates(@this.Strategy.Transaction).InProcess))
+            {
+                var somethingToShip = false;
+                var allItemsAvailable = true;
+
+                foreach (var salesOrderItem in validOrderItems)
                 {
-                    var somethingToShip = false;
-                    var allItemsAvailable = true;
-
-                    foreach (var salesOrderItem in validOrderItems)
+                    if (!@this.PartiallyShip && salesOrderItem.QuantityRequestsShipping != salesOrderItem.QuantityOrdered)
                     {
-                        if (!@this.PartiallyShip && salesOrderItem.QuantityRequestsShipping != salesOrderItem.QuantityOrdered)
-                        {
-                            allItemsAvailable = false;
-                            break;
-                        }
-
-                        if (@this.PartiallyShip && salesOrderItem.QuantityRequestsShipping > 0)
-                        {
-                            somethingToShip = true;
-                        }
+                        allItemsAvailable = false;
+                        break;
                     }
 
-                    @this.CanShip = !@this.PartiallyShip && allItemsAvailable || somethingToShip;
+                    if (@this.PartiallyShip && salesOrderItem.QuantityRequestsShipping > 0)
+                    {
+                        somethingToShip = true;
+                    }
                 }
-                else
-                {
-                    @this.CanShip = false;
-                }
+
+                @this.CanShip = !@this.PartiallyShip && allItemsAvailable || somethingToShip;
+            }
+            else
+            {
+                @this.CanShip = false;
             }
         }
     }
