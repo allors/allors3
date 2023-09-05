@@ -144,6 +144,11 @@ namespace Allors.Meta.Generation.Model
                 .ToDictionary(v => v,
                     v => this.ExclusiveRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Tag));
 
+        public IReadOnlyDictionary<string, IOrderedEnumerable<RoleTypeModel>> WorkspaceExclusiveRoleTypesOrderedByNameByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v,
+                    v => this.ExclusiveRoleTypes.Where(w => w.RelationType.WorkspaceNames.Contains(v)).OrderBy(w => w.RelationType.Name));
+
         public IReadOnlyDictionary<string, IOrderedEnumerable<RoleTypeModel>> WorkspaceExclusiveRoleTypesWithDatabaseOriginByWorkspaceName =>
             this.WorkspaceNames
                 .ToDictionary(v => v,
@@ -162,6 +167,10 @@ namespace Allors.Meta.Generation.Model
         public IReadOnlyDictionary<string, IOrderedEnumerable<MethodTypeModel>> WorkspaceExclusiveMethodTypesByWorkspaceName =>
             this.WorkspaceNames
                 .ToDictionary(v => v, v => this.ExclusiveMethodTypes.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Tag));
+
+        public IReadOnlyDictionary<string, IOrderedEnumerable<MethodTypeModel>> WorkspaceExclusiveMethodTypesOrderedByNameByWorkspaceName =>
+            this.WorkspaceNames
+                .ToDictionary(v => v, v => this.ExclusiveMethodTypes.Where(w => w.WorkspaceNames.Contains(v)).OrderBy(w => w.Name));
 
         public IReadOnlyDictionary<string, IOrderedEnumerable<MethodTypeModel>> WorkspaceInheritedMethodTypesByWorkspaceName =>
             this.WorkspaceNames

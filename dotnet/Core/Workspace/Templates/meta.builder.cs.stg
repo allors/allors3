@@ -1,0 +1,52 @@
+group AllorsCSharpRepository;
+
+TemplateId() ::= <<5ABD8EBB-4AEC-476A-A25D-3B5D95D3A691>>
+TemplateName() ::= <<Allors C# Workspace Meta Builder>>
+TemplateVersion() ::= <<3.0.0>>
+TemplateAllors() ::= <<1.0>>
+TemplateConfiguration(meta, workspaceName) ::= <<
+$!
+Copyright 2002-2021 Allors bvba.
+
+Dual Licensed under
+  a) the Lesser General Public Licence v3 (LGPL)
+  b) the Allors License
+
+The LGPL License is included in the file lgpl.txt.
+The Allors License is an addendum to your contract.
+
+Allors Platform is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+For more information visit http://www.allors.com/legal
+!$
+<generations>
+    <generation template="m" output="$workspaceName$.builder.g.cs"/>
+</generations>
+>>
+
+m(meta, workspaceName) ::= <<
+    private void $workspaceName$Workspace(MetaPopulation meta, RelationTypes relationTypes, MethodTypes methodTypes)
+    {
+        var workspace = "$workspaceName$";
+
+$meta.WorkspaceCompositesOrderedByNameByWorkspaceName.(workspaceName):{composite|$composite(composite)$}; separator="\n"$
+
+$meta.WorkspaceClassesOrderedByNameByWorkspaceName.(workspaceName):{class|$class(class)$}; separator="\n"$
+
+    \}
+>>
+
+composite(composite) ::= <<
+        // $composite.SingularName$;
+$composite.WorkspaceExclusiveMethodTypesOrderedByNameByWorkspaceName.(workspaceName):{methodType|        AddWorkspace(methodTypes.$methodType.FullName$, workspace);}; separator="\n"$
+$composite.WorkspaceExclusiveRoleTypesOrderedByNameByWorkspaceName.(workspaceName):{roleType|        AddWorkspace(relationTypes.$roleType.FullName$, workspace);}; separator="\n"$
+
+>>
+
+class(class) ::= <<
+        AddWorkspace(meta.$class.Name$, workspace);
+>>
+
