@@ -9,6 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.Linq;
     using Database.Derivations;
+    using Resources;
     using Xunit;
 
     public class TimeEntryTests : DomainTest, IClassFixture<Fixture>
@@ -190,49 +191,48 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(errors, e => e.Message.StartsWith("TimeEntry.Worker is required"));
         }
 
-        //[Fact]
-        //public void GivenActiveTimeEntry_WhenCreatingNewEntryForSamePerson_ThenDerivationError()
-        //{
-        //    // Arrange
-        //    var frequencies = new TimeFrequencies(this.Transaction);
+        [Fact]
+        public void GivenActiveTimeEntry_WhenCreatingNewEntryForSamePerson_ThenDerivationError()
+        {
+            // Arrange
+            var frequencies = new TimeFrequencies(this.Transaction);
 
-        //    var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
-        //    var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
-        //    new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
+            var customer = new OrganisationBuilder(this.Transaction).WithName("Org1").Build();
+            var internalOrganisation = new Organisations(this.Transaction).Extent().First(o => o.IsInternalOrganisation);
+            new CustomerRelationshipBuilder(this.Transaction).WithCustomer(customer).WithInternalOrganisation(internalOrganisation).Build();
 
-        //    var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
-        //    var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
-        //    new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
+            var workOrder = new WorkTaskBuilder(this.Transaction).WithName("Task").WithCustomer(customer).WithTakenBy(internalOrganisation).Build();
+            var employee = new PersonBuilder(this.Transaction).WithFirstName("Good").WithLastName("Worker").Build();
+            new EmploymentBuilder(this.Transaction).WithEmployee(employee).WithEmployer(internalOrganisation).Build();
 
-        //    this.Transaction.Derive(true);
+            this.Transaction.Derive(true);
 
-        //    var now = DateTimeFactory.CreateDateTime(this.Transaction.Now());
-        //    var later = DateTimeFactory.CreateDateTime(now.AddHours(4));
+            var now = DateTimeFactory.CreateDateTime(this.Transaction.Now());
+            var later = DateTimeFactory.CreateDateTime(now.AddHours(4));
 
-        //    var timeEntry = new TimeEntryBuilder(this.Transaction)
-        //        .WithRateType(new RateTypes(this.Transaction).StandardRate)
-        //        .WithFromDate(now.AddSeconds(-1))
-        //        .WithTimeFrequency(frequencies.Hour)
-        //        .WithWorkEffort(workOrder)
-        //        .Build();
+            var timeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
+                .WithFromDate(now.AddSeconds(-1))
+                .WithTimeFrequency(frequencies.Hour)
+                .WithWorkEffort(workOrder)
+                .Build();
 
-        //    employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
+            employee.TimeSheetWhereWorker.AddTimeEntry(timeEntry);
 
-        //    this.Transaction.Derive(true);
+            this.Transaction.Derive(true);
 
-        //    var secondTimeEntry = new TimeEntryBuilder(this.Transaction)
-        //        .WithRateType(new RateTypes(this.Transaction).StandardRate)
-        //        .WithFromDate(now)
-        //        .WithTimeFrequency(frequencies.Hour)
-        //        .WithWorkEffort(workOrder)
-        //        .Build();
+            var secondTimeEntry = new TimeEntryBuilder(this.Transaction)
+                .WithRateType(new RateTypes(this.Transaction).StandardRate)
+                .WithFromDate(now)
+                .WithTimeFrequency(frequencies.Hour)
+                .WithWorkEffort(workOrder)
+                .Build();
 
-        //    employee.TimeSheetWhereWorker.AddTimeEntry(secondTimeEntry);
+            employee.TimeSheetWhereWorker.AddTimeEntry(secondTimeEntry);
 
-        //    var errors = this.Derive().Errors.ToList();
-        //    var expectedMessage = ErrorMessages.WorkerActiveTimeEntry.Replace("{0}", secondTimeEntry.WorkEffort?.WorkEffortNumber);
-        //    Assert.NotNull(errors.Find(e => e.Message.Contains(expectedMessage)));
-        //}
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
     }
 
     public class TimeEntryRuleTests : DomainTest, IClassFixture<Fixture>
@@ -1174,6 +1174,73 @@ namespace Allors.Database.Domain.Tests
             this.Derive();
 
             Assert.Equal(20, timeEntry.BillingAmount);
+        }
+    }
+
+    public class TimeEntryFromDateRuleTests : DomainTest, IClassFixture<Fixture>
+    {
+        public TimeEntryFromDateRuleTests(Fixture fixture) : base(fixture) { }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError()
+        {
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).Build());
+            Assert.False(this.Derive().HasErrors);
+
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddSeconds(1)).Build());
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_1()
+        {
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).Build());
+
+            Assert.False(this.Derive().HasErrors);
+
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddSeconds(-1)).Build());
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodActiveThrowValidationError_2()
+        {
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddSeconds(1)).Build());
+
+            Assert.False(this.Derive().HasErrors);
+
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddSeconds(1)).Build());
+
+            var errors = this.Derive().Errors.ToList();
+            Assert.Single(errors.FindAll(e => e.Message.Contains(ErrorMessages.PeriodActive)));
+        }
+
+        [Fact]
+        public void PeriodNotActive()
+        {
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddSeconds(1)).Build());
+
+            Assert.False(this.Derive().HasErrors);
+
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddSeconds(2)).Build());
+
+            Assert.False(this.Derive().HasErrors);
+        }
+
+        [Fact]
+        public void PeriodNotActive_1()
+        {
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).Build());
+
+            Assert.False(this.Derive().HasErrors);
+
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now().AddSeconds(-2)).WithThroughDate(this.Transaction.Now().AddSeconds(-1)).Build());
+
+            Assert.False(this.Derive().HasErrors);
         }
     }
 }
