@@ -1209,7 +1209,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void PeriodActiveThrowValidationError_2()
         {
-            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddSeconds(1)).Build());
+            this.Purchaser.TimeSheetWhereWorker.AddTimeEntry(new TimeEntryBuilder(this.Transaction).WithFromDate(this.Transaction.Now()).WithThroughDate(this.Transaction.Now().AddMinutes(1)).Build());
 
             Assert.False(this.Derive().HasErrors);
 
