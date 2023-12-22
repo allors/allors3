@@ -29,6 +29,7 @@ namespace Commands
         typeof(Upgrade),
         typeof(Populate),
         typeof(Print),
+        typeof(Roundtrip),
         typeof(Custom))]
     public class Program
     {

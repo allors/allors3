@@ -44,7 +44,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
 
-            merge(MobilePhoneId, v =>
+            merge(FaxId, v =>
             {
                 v.Name = "FaxId";
                 localisedName.Set(v, dutchLocale, "Fax");
