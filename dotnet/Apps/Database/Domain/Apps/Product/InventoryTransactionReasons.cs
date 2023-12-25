@@ -113,7 +113,7 @@ namespace Allors.Database.Domain
 
             merge(ShrinkageId, v =>
             {
-                v.Name = "Theft";
+                v.Name = "Shrinkage";
                 localisedName.Set(v, dutchLocale, "Shrinkage");
                 v.IsActive = true;
                 v.IsManualEntryAllowed = true;
