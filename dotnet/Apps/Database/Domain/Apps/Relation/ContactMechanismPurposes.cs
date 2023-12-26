@@ -88,7 +88,7 @@ namespace Allors.Database.Domain
 
             merge(RegisteredOfficeId, v =>
             {
-                v.Name = "Registerd Office";
+                v.Name = "Registered Office";
                 localisedName.Set(v, dutchLocale, "Statutaire zetel");
                 v.IsActive = true;
             });

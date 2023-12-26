@@ -11,6 +11,7 @@ namespace Commands
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;
+    using Allors.Database;
     using Allors.Database.Derivations;
     using Allors.Database.Meta;
     using Allors.Database.Services;
@@ -35,46 +36,95 @@ namespace Commands
 
             var excluded = new HashSet<IClass> { m.Country, m.Currency, m.Language };
 
-            var populationElement = new XElement("population");
+            var enumerations = transaction.Extent<Enumeration>().ToArray();
 
-            var grouped = transaction.Extent<Enumeration>()
-                .GroupBy(v => v.Strategy.Class);
-
-            foreach (var group in grouped.OrderBy(v => v.Key.Name.ToPascalCase(), StringComparer.OrdinalIgnoreCase))
             {
-                var @class = group.Key;
+                var populationElement = new XElement("population");
 
-                if (excluded.Contains(@class))
+                var grouped = enumerations
+                    .GroupBy(v => v.Strategy.Class);
+
+                foreach (var group in grouped.OrderBy(v => v.Key.Name.ToPascalCase(), StringComparer.OrdinalIgnoreCase))
                 {
-                    continue;
+                    var @class = group.Key;
+
+                    if (excluded.Contains(@class))
+                    {
+                        continue;
+                    }
+
+                    //if (Equals(@class, m.CostCenterSplitMethod))
+                    //{
+                    //    Debugger.Break();
+                    //}
+
+                    var classElement = new XElement(@class.PluralName.ToCamelCase());
+
+                    foreach (var @object in group.OrderBy(v => v.Name.ToPascalCase(), StringComparer.OrdinalIgnoreCase))
+                    {
+                        var key = new string(@object.Name.Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_').ToArray()).ToPascalCase();
+
+                        var objectElement = new XElement(@class.SingularName.ToCamelCase(),
+                            new XAttribute("handle", key),
+                            new XElement("key", key));
+
+                        classElement.Add(objectElement);
+                    }
+
+                    populationElement.Add(classElement);
                 }
 
-                //if (Equals(@class, m.CostCenterSplitMethod))
-                //{
-                //    Debugger.Break();
-                //}
+                var document = new XDocument(populationElement);
 
-                var classElement = new XElement(@class.PluralName.ToCamelCase());
-
-                foreach (var @object in group.OrderBy(v => v.Name.ToPascalCase(), StringComparer.OrdinalIgnoreCase))
-                {
-                    var key = new string(@object.Name.Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_').ToArray()).ToPascalCase();
-
-                    var objectElement = new XElement(@class.SingularName.ToCamelCase(),
-                        new XAttribute("handle", key),
-                        new XElement("key", key));
-
-                    classElement.Add(objectElement);
-                }
-
-                populationElement.Add(classElement);
+                var fileInfo = new FileInfo(@"\temp\enumerations.xml");
+                using var stream = File.Open(fileInfo.FullName, FileMode.Create);
+                document.Save(stream);
             }
 
-            var document = new XDocument(populationElement);
+            {
+                var populationElement = new XElement("population");
 
-            var fileInfo = new FileInfo(@"\temp\records.xml");
-            using var stream = File.Open(fileInfo.FullName, FileMode.Create);
-            document.Save(stream);
+                var excludedEnumerations = new HashSet<IObject>(enumerations);
+                var grouped = transaction.Extent<Allors.Database.Domain.ObjectState>()
+                    .Where(v => !excludedEnumerations.Contains(v))
+                    .GroupBy(v => v.Strategy.Class);
+                 
+                foreach (var group in grouped.OrderBy(v => v.Key.Name.ToPascalCase(), StringComparer.OrdinalIgnoreCase))
+                {
+                    var @class = group.Key;
+
+                    if (excluded.Contains(@class))
+                    {
+                        continue;
+                    }
+
+                    //if (Equals(@class, m.CostCenterSplitMethod))
+                    //{
+                    //    Debugger.Break();
+                    //}
+
+                    var classElement = new XElement(@class.PluralName.ToCamelCase());
+
+                    foreach (var @object in group.OrderBy(v => v.Name.ToPascalCase(), StringComparer.OrdinalIgnoreCase))
+                    {
+                        var key = new string(@object.Name.Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_').ToArray()).ToPascalCase();
+
+                        var objectElement = new XElement(@class.SingularName.ToCamelCase(),
+                            new XAttribute("handle", key),
+                            new XElement("key", key));
+
+                        classElement.Add(objectElement);
+                    }
+
+                    populationElement.Add(classElement);
+                }
+
+                var document = new XDocument(populationElement);
+
+                var fileInfo = new FileInfo(@"\temp\objectStates.xml");
+                using var stream = File.Open(fileInfo.FullName, FileMode.Create);
+                document.Save(stream);
+            }
 
             this.Logger.Info("End");
 
