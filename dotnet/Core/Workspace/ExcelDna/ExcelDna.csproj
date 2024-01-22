@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="ExcelDna.AddIn" Version="1.7.0" PrivateAssets="All" />
     <PackageReference Include="ExcelDna.Integration" Version="1.7.0" />
-    <PackageReference Include="NLog" Version="5.2.7" PrivateAssets="All" />
+    <PackageReference Include="NLog" Version="5.2.8" PrivateAssets="All" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="106.15.0" />
   </ItemGroup>
 
