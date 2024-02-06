@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         internal static readonly Guid MillimeterId = new Guid("A7F83AEF-20DB-42D8-9AB6-2D5821353BE8");
         internal static readonly Guid CentimeterId = new Guid("7D81FFC7-E77D-4a00-916D-49F2B1CCA12E");
         internal static readonly Guid MeterId = new Guid("2598BA8D-CF49-47f5-98E2-E65795C4178E");
-        internal static readonly Guid KilometerId = new Guid("2598BA8D-CF49-47f5-98E2-E65795C4178E");
+        internal static readonly Guid KilometerId = new Guid("58B94525-903A-4AF0-B1C2-8083272DF2D3");
         internal static readonly Guid YardId = new Guid("ec628e9e-b6d9-4003-a8c9-471f71ff948d");
         internal static readonly Guid FootId = new Guid("9e336529-224b-4df1-8e62-ee701fe8e85c");
         internal static readonly Guid InchId = new Guid("6fa9ff48-e5a4-4db8-899e-988c55bf4867");
@@ -518,26 +518,26 @@ namespace Allors.Database.Domain
                     .Build();
             }
 
-            if (this.KiloWattHour == null)
+            if (this.Ampere == null)
             {
                 new UnitOfMeasureBuilder(this.Transaction)
                     .WithName("ampere")
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("ampere").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("amperio").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("A")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(AmpereId)
                     .WithIsActive(true)
                     .Build();
             }
 
-            if (this.KiloWattHour == null)
+            if (this.Volt == null)
             {
                 new UnitOfMeasureBuilder(this.Transaction)
                     .WithName("volt")
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("volt").WithLocale(dutchLocale).Build())
                     .WithLocalisedName(new LocalisedTextBuilder(this.Transaction).WithText("voltios").WithLocale(spanishLocale).Build())
                     .WithAbbreviation("V")
-                    .WithUniqueId(KiloWattHourId)
+                    .WithUniqueId(VoltId)
                     .WithIsActive(true)
                     .Build();
             }

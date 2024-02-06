@@ -5,7 +5,7 @@ using static Nuke.Common.IO.FileSystemTasks;
 
 public partial class Build
 {
-    [Parameter("DotNet Verbosity")] private readonly DotNetVerbosity DotNetVerbosity = DotNetVerbosity.Quiet;
+    [Parameter("DotNet Verbosity")] private readonly DotNetVerbosity DotNetVerbosity = DotNetVerbosity.quiet;
 
     //[Solution] private readonly Solution Solution;
     //[GitRepository] private readonly GitRepository GitRepository;

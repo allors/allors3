@@ -69,13 +69,6 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
 
-            merge(PosChannelId, v =>
-            {
-                v.Name = "POS Channel";
-                localisedName.Set(v, dutchLocale, "Kassa Kanaal");
-                v.IsActive = true;
-            });
-
             merge(FaxChannelId, v =>
             {
                 v.Name = "by Fax";

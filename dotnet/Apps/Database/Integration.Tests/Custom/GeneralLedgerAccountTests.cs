@@ -1,15 +1,10 @@
 namespace Integration.Tests.custom
 {
     using System;
-    using System.Globalization;
     using System.IO;
     using System.Linq;
     using Allors.Database.Domain;
     using Allors.Integration.Source;
-    using Allors.Integration.Transform;
-    using CsvHelper;
-    using CsvHelper.Configuration;
-    using HtmlAgilityPack;
     using Integration.Extract;
     using Microsoft.Extensions.Logging.Abstractions;
     using NUnit.Framework;
@@ -87,9 +82,9 @@ namespace Integration.Tests.custom
             var newGeneralLedgerAccountTypes = new GeneralLedgerAccountTypes(this.Transaction).Extent().ToArray();
             var newGeneralLedgerAccountClassifications = new GeneralLedgerAccountClassifications(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(generalLedgerAccounts.Length + 1, newGeneralLedgerAccounts.Length);
-            Assert.AreEqual(generalLedgerAccountTypes.Length + 1, newGeneralLedgerAccountTypes.Length);
-            Assert.AreEqual(generalLedgerAccountClassifications.Length + 2, newGeneralLedgerAccountClassifications.Length);
+            Assert.That(newGeneralLedgerAccounts.Length, Is.EqualTo(generalLedgerAccounts.Length + 1));
+            Assert.That(newGeneralLedgerAccountTypes.Length, Is.EqualTo(generalLedgerAccountTypes.Length + 1));
+            Assert.That(newGeneralLedgerAccountClassifications.Length, Is.EqualTo(generalLedgerAccountClassifications.Length + 2));
 
             var newGeneralLedgerAccount = newGeneralLedgerAccounts.Except(generalLedgerAccounts).First();
             var newGeneralLedgerAccountType = newGeneralLedgerAccountTypes.Except(generalLedgerAccountTypes).First();
@@ -97,37 +92,37 @@ namespace Integration.Tests.custom
             var newGeneralLedgerAccountClassificationLevel3 = newGeneralLedgerAccountClassifications.Except(generalLedgerAccountClassifications).First(v => v.RgsLevel == 3);
 
             //Level 2 Assert
-            Assert.AreEqual(generalLedgerAccountLevel2.Name, newGeneralLedgerAccountType.Description);
+            Assert.That(newGeneralLedgerAccountType.Description, Is.EqualTo(generalLedgerAccountLevel2.Name));
 
-            Assert.AreEqual(generalLedgerAccountLevel2.Level, newGeneralLedgerAccountClassificationLevel2.RgsLevel);
-            Assert.AreEqual(generalLedgerAccountLevel2.ReferenceCode, newGeneralLedgerAccountClassificationLevel2.ReferenceCode);
-            Assert.AreEqual(generalLedgerAccountLevel2.SortCode, newGeneralLedgerAccountClassificationLevel2.SortCode);
-            Assert.AreEqual(generalLedgerAccountLevel2.ReferenceNumber, newGeneralLedgerAccountClassificationLevel2.ReferenceNumber); // TODO:
-            Assert.AreEqual(generalLedgerAccountLevel2.Name, newGeneralLedgerAccountClassificationLevel2.Name);
-            Assert.IsNull(newGeneralLedgerAccountClassificationLevel2.Parent);
+            Assert.That(newGeneralLedgerAccountClassificationLevel2.RgsLevel, Is.EqualTo(generalLedgerAccountLevel2.Level));
+            Assert.That(newGeneralLedgerAccountClassificationLevel2.ReferenceCode, Is.EqualTo(generalLedgerAccountLevel2.ReferenceCode));
+            Assert.That(newGeneralLedgerAccountClassificationLevel2.SortCode, Is.EqualTo(generalLedgerAccountLevel2.SortCode));
+            Assert.That(newGeneralLedgerAccountClassificationLevel2.ReferenceNumber, Is.EqualTo(generalLedgerAccountLevel2.ReferenceNumber)); // TODO:
+            Assert.That(newGeneralLedgerAccountClassificationLevel2.Name, Is.EqualTo(generalLedgerAccountLevel2.Name));
+            Assert.That(newGeneralLedgerAccountClassificationLevel2.Parent, Is.Null);
 
             //Level 3 Asserts
-            Assert.AreEqual(generalLedgerAccountLevel3.Level, newGeneralLedgerAccountClassificationLevel3.RgsLevel);
-            Assert.AreEqual(generalLedgerAccountLevel3.ReferenceCode, newGeneralLedgerAccountClassificationLevel3.ReferenceCode);
-            Assert.AreEqual(generalLedgerAccountLevel3.SortCode, newGeneralLedgerAccountClassificationLevel3.SortCode);
-            Assert.AreEqual(generalLedgerAccountLevel3.ReferenceNumber, newGeneralLedgerAccountClassificationLevel3.ReferenceNumber); // TODO:
-            Assert.AreEqual(generalLedgerAccountLevel3.Name, newGeneralLedgerAccountClassificationLevel3.Name);
-            Assert.AreEqual(newGeneralLedgerAccountClassificationLevel2, newGeneralLedgerAccountClassificationLevel3.Parent);
+            Assert.That(newGeneralLedgerAccountClassificationLevel3.RgsLevel, Is.EqualTo(generalLedgerAccountLevel3.Level));
+            Assert.That(newGeneralLedgerAccountClassificationLevel3.ReferenceCode, Is.EqualTo(generalLedgerAccountLevel3.ReferenceCode));
+            Assert.That(newGeneralLedgerAccountClassificationLevel3.SortCode, Is.EqualTo(generalLedgerAccountLevel3.SortCode));
+            Assert.That(newGeneralLedgerAccountClassificationLevel3.ReferenceNumber, Is.EqualTo(generalLedgerAccountLevel3.ReferenceNumber)); // TODO:
+            Assert.That(newGeneralLedgerAccountClassificationLevel3.Name, Is.EqualTo(generalLedgerAccountLevel3.Name));
+            Assert.That(newGeneralLedgerAccountClassificationLevel3.Parent, Is.EqualTo(newGeneralLedgerAccountClassificationLevel2));
 
             //Level 4 Asserts
-            Assert.AreEqual(generalLedgerAccountLevel4.ReferenceCode, newGeneralLedgerAccount.ReferenceCode);
-            Assert.AreEqual(generalLedgerAccountLevel4.SortCode, newGeneralLedgerAccount.SortCode);
-            Assert.AreEqual(generalLedgerAccountLevel4.ReferenceNumber, newGeneralLedgerAccount.ReferenceNumber);
-            Assert.AreEqual(generalLedgerAccountLevel4.Name, newGeneralLedgerAccount.Name);
-            Assert.AreEqual(generalLedgerAccountLevel4.Description, newGeneralLedgerAccount.Description);
-            Assert.AreEqual(new BalanceSides(this.Transaction).Debit, newGeneralLedgerAccount.BalanceSide);
-            Assert.AreEqual(generalLedgerAccountLevel4.Level, newGeneralLedgerAccount.RgsLevel);
-            Assert.AreEqual(generalLedgerAccountLevel4.IsRgsBase, newGeneralLedgerAccount.IsRgsBase);
-            Assert.AreEqual(generalLedgerAccountLevel4.ExcludeRgsUitbr5, newGeneralLedgerAccount.ExcludeRgsUitbr5);
-            Assert.AreEqual(generalLedgerAccountLevel4.ExcludeRgsBV, newGeneralLedgerAccount.ExcludeRgsBV);
-            Assert.AreEqual(newGeneralLedgerAccountType, newGeneralLedgerAccount.GeneralLedgerAccountType);
-            Assert.AreEqual(newGeneralLedgerAccountClassificationLevel3, newGeneralLedgerAccount.GeneralLedgerAccountClassification);
-            Assert.IsNull(newGeneralLedgerAccount.CounterPartAccount);
+            Assert.That(newGeneralLedgerAccount.ReferenceCode, Is.EqualTo(generalLedgerAccountLevel4.ReferenceCode));
+            Assert.That(newGeneralLedgerAccount.SortCode, Is.EqualTo(generalLedgerAccountLevel4.SortCode));
+            Assert.That(newGeneralLedgerAccount.ReferenceNumber, Is.EqualTo(generalLedgerAccountLevel4.ReferenceNumber));
+            Assert.That(newGeneralLedgerAccount.Name, Is.EqualTo(generalLedgerAccountLevel4.Name));
+            Assert.That(newGeneralLedgerAccount.Description, Is.EqualTo(generalLedgerAccountLevel4.Description));
+            Assert.That(newGeneralLedgerAccount.BalanceSide, Is.EqualTo(new BalanceSides(this.Transaction).Debit));
+            Assert.That(newGeneralLedgerAccount.RgsLevel, Is.EqualTo(generalLedgerAccountLevel4.Level));
+            Assert.That(newGeneralLedgerAccount.IsRgsBase, Is.EqualTo(generalLedgerAccountLevel4.IsRgsBase));
+            Assert.That(newGeneralLedgerAccount.ExcludeRgsUitbr5, Is.EqualTo(generalLedgerAccountLevel4.ExcludeRgsUitbr5));
+            Assert.That(newGeneralLedgerAccount.ExcludeRgsBV, Is.EqualTo(generalLedgerAccountLevel4.ExcludeRgsBV));
+            Assert.That(newGeneralLedgerAccount.GeneralLedgerAccountType, Is.EqualTo(newGeneralLedgerAccountType));
+            Assert.That(newGeneralLedgerAccount.GeneralLedgerAccountClassification, Is.EqualTo(newGeneralLedgerAccountClassificationLevel3));
+            Assert.That(newGeneralLedgerAccount.CounterPartAccount, Is.Null);
         }
 
         [Test]
@@ -145,9 +140,9 @@ namespace Integration.Tests.custom
             var newGeneralLedgerAccountTypes = new GeneralLedgerAccountTypes(this.Transaction).Extent().ToArray();
             var newGeneralLedgerAccountClassifications = new GeneralLedgerAccountClassifications(this.Transaction).Extent().ToArray();
 
-            Assert.Greater(newGeneralLedgerAccounts.Length, generalLedgerAccounts.Length);
-            Assert.Greater(newGeneralLedgerAccountTypes.Length, generalLedgerAccountTypes.Length);
-            Assert.Greater(newGeneralLedgerAccountClassifications.Length, generalLedgerAccountClassifications.Length);
+            Assert.That(newGeneralLedgerAccounts.Length, Is.GreaterThan(generalLedgerAccounts.Length));
+            Assert.That(newGeneralLedgerAccountTypes.Length, Is.GreaterThan(generalLedgerAccountTypes.Length));
+            Assert.That(newGeneralLedgerAccountClassifications.Length, Is.GreaterThan(generalLedgerAccountClassifications.Length));
         }
 
         [Test]
@@ -162,8 +157,8 @@ namespace Integration.Tests.custom
                 var associationsAndFoundationsExtractor = new MarAssociationsAndFoundationsGeneralLedgerAccountExtractor(marAssociationsAndFoundationsGeneralLedgerAccountGeneralLedgerAccountList, new NullLoggerFactory());
                 var associationsAndFoundationsResult = associationsAndFoundationsExtractor.Execute();
 
-                Assert.IsNotEmpty(accountingObligeeEnterprisesResult);
-                Assert.IsNotEmpty(associationsAndFoundationsResult);
+                Assert.That(accountingObligeeEnterprisesResult, Is.Not.Empty);
+                Assert.That(associationsAndFoundationsResult, Is.Not.Empty);
             }
 
 

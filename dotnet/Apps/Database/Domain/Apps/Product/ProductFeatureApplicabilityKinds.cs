@@ -40,7 +40,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
 
-            merge(RequiredId, v =>
+            merge(StandardId, v =>
             {
                 v.Name = "Standard";
                 localisedName.Set(v, dutchLocale, "Standaard");
@@ -54,7 +54,7 @@ namespace Allors.Database.Domain
                 v.IsActive = true;
             });
 
-            merge(OptionalId, v =>
+            merge(SelectableId, v =>
             {
                 v.Name = "Selectable";
                 localisedName.Set(v, dutchLocale, "Selecteerbaar");

@@ -64,6 +64,11 @@ namespace Allors.Ranges
                     Array.Sort(sortedArray);
                     return new ArrayRange<T>(sortedArray);
                 case ICollection<T> collection:
+                    if (collection.Count == 0)
+                    {
+                        return EmptyRange<T>.Instance;
+                    }
+
                     var newSortedArray = new T[collection.Count];
                     collection.CopyTo(newSortedArray, 0);
                     Array.Sort(newSortedArray);
