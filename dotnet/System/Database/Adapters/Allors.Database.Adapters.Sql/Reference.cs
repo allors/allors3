@@ -49,7 +49,21 @@ namespace Allors.Database.Adapters.Sql
             MaskExistsKnown = 4,
         }
 
-        internal virtual Strategy Strategy => this.strategy ??= this.CreateStrategy();
+        internal virtual Strategy Strategy
+        {
+            get
+            {
+                // Always use the active Reference
+                if (!this.Transaction.State.ReferenceByObjectId.TryGetValue(this.ObjectId, out var activeReference))
+                {
+                    // If there is no active Reference, then become the active reference
+                    activeReference = this;
+                    this.Transaction.State.ReferenceByObjectId[this.ObjectId] = activeReference;
+                }
+
+                return activeReference.strategy ??= new Strategy(this);
+            }
+        }
 
         internal Transaction Transaction { get; }
 
@@ -70,21 +84,12 @@ namespace Allors.Database.Adapters.Sql
                 return this.version;
             }
 
-            set
-            {
-                this.version = value;
-            }
+            set => this.version = value;
         }
 
         internal bool IsNew => this.FlagIsNew;
 
-        internal bool IsUnknownVersion
-        {
-            get
-            {
-                return this.version == (long)Allors.Version.Unknown;
-            }
-        }
+        internal bool IsUnknownVersion => this.version == (long)Allors.Version.Unknown;
 
         internal bool Exists
         {
@@ -107,33 +112,24 @@ namespace Allors.Database.Adapters.Sql
             }
         }
 
-        internal bool ExistsKnown
-        {
-            get
-            {
-                return this.FlagExistsKnown;
-            }
-        }
+        internal bool ExistsKnown => this.FlagExistsKnown;
 
         private bool FlagIsNew
         {
-            get { return this.flags.HasFlag(Flags.MaskIsNew); }
-
-            set { this.flags = value ? this.flags | Flags.MaskIsNew : this.flags & ~Flags.MaskIsNew; }
+            get => this.flags.HasFlag(Flags.MaskIsNew);
+            set => this.flags = value ? this.flags | Flags.MaskIsNew : this.flags & ~Flags.MaskIsNew;
         }
 
         private bool FlagExists
         {
-            get { return this.flags.HasFlag(Flags.MaskExists); }
-
-            set { this.flags = value ? this.flags | Flags.MaskExists : this.flags & ~Flags.MaskExists; }
+            get => this.flags.HasFlag(Flags.MaskExists);
+            set => this.flags = value ? this.flags | Flags.MaskExists : this.flags & ~Flags.MaskExists;
         }
 
         private bool FlagExistsKnown
         {
-            get { return this.flags.HasFlag(Flags.MaskExistsKnown); }
-
-            set { this.flags = value ? this.flags | Flags.MaskExistsKnown : this.flags & ~Flags.MaskExistsKnown; }
+            get => this.flags.HasFlag(Flags.MaskExistsKnown);
+            set => this.flags = value ? this.flags | Flags.MaskExistsKnown : this.flags & ~Flags.MaskExistsKnown;
         }
 
         public override int GetHashCode() => this.ObjectId.GetHashCode();
@@ -145,8 +141,6 @@ namespace Allors.Database.Adapters.Sql
         }
 
         public override string ToString() => "[" + this.Class + ":" + this.ObjectId + "]";
-
-        public virtual Strategy CreateStrategy() => new Strategy(this);
 
         internal virtual void Commit(HashSet<Reference> referencesWithStrategy)
         {
