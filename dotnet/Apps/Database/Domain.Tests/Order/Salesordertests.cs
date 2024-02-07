@@ -4548,16 +4548,27 @@ namespace Allors.Database.Domain.Tests
             order.PartiallyShip = false;
             this.Derive();
 
+            var item = order.SalesOrderItems.First(v => v.QuantityOrdered > 1);
+            new InventoryItemTransactionBuilder(this.Transaction)
+                .WithQuantity(item.QuantityOrdered)
+                .WithReason(new InventoryTransactionReasons(this.Transaction).Unknown)
+                .WithPart(item.Part)
+                .Build();
+
             order.SetReadyForPosting();
             this.Transaction.Derive();
 
             order.Post();
             this.Transaction.Derive();
 
+            Assert.True(order.SalesOrderShipmentState.IsNotShipped);
+            Assert.True(item.SalesOrderItemShipmentState.IsNotShipped);
+
             order.Accept();
             this.Transaction.Derive();
 
-            Assert.True(order.SalesOrderShipmentState.IsNotShipped);
+            Assert.True(order.SalesOrderShipmentState.IsInProgress);
+            Assert.True(item.SalesOrderItemShipmentState.IsInProgress);
         }
 
         [Fact]

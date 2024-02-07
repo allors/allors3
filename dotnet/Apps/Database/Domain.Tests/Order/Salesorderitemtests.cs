@@ -2562,7 +2562,7 @@ namespace Allors.Database.Domain.Tests
             order.AddSalesOrderItem(item);
             this.Derive();
 
-            Assert.True(item.SalesOrderItemShipmentState.IsNotShipped);
+            Assert.True(item.SalesOrderItemShipmentState.IsNotApplicable);
         }
 
         [Fact]

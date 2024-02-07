@@ -59,11 +59,6 @@ namespace Allors.Database.Domain
                 this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
             }
 
-            if (!this.ExistSalesOrderItemShipmentState)
-            {
-                this.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Strategy.Transaction).NotShipped;
-            }
-
             if (!this.ExistSalesOrderItemInvoiceState)
             {
                 this.SalesOrderItemInvoiceState = new SalesOrderItemInvoiceStates(this.Strategy.Transaction).NotInvoiced;
@@ -80,6 +75,18 @@ namespace Allors.Database.Domain
             if (this.ExistProduct && !this.ExistInvoiceItemType)
             {
                 this.InvoiceItemType = new InvoiceItemTypes(this.Strategy.Transaction).ProductItem;
+            }
+
+            if (!this.ExistSalesOrderItemShipmentState)
+            {
+                if (this.ExistProduct)
+                {
+                    this.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Strategy.Transaction).NotShipped;
+                }
+                else
+                {
+                    this.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Strategy.Transaction).NotApplicable;
+                }
             }
         }
 

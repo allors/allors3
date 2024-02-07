@@ -104,7 +104,11 @@ namespace Allors.Database.Domain
                     SalesOrderItemShipmentState shipmentState;
 
                     // ShipmentState
-                    if (!@this.ExistOrderShipmentsWhereOrderItem)
+                    if (!@this.ExistProduct)
+                    {
+                        shipmentState = salesOrderItemShipmentStates.NotApplicable;
+                    }
+                    else if (@this.QuantityShipped == 0 && @this.QuantityPendingShipment == 0)
                     {
                         shipmentState = salesOrderItemShipmentStates.NotShipped;
                     }

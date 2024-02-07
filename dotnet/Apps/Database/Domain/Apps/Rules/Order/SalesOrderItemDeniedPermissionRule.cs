@@ -39,7 +39,10 @@ namespace Allors.Database.Domain
                 var writeRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderItemWriteRevocation;
                 var executeRevocation = new Revocations(@this.Strategy.Transaction).SalesOrderItemExecuteRevocation;
 
-                if (!@this.SalesOrderItemInvoiceState.IsNotInvoiced || !@this.SalesOrderItemShipmentState.IsNotShipped)
+                if (!@this.SalesOrderItemInvoiceState.IsNotInvoiced
+                    || @this.SalesOrderItemShipmentState.IsInProgress
+                    || @this.SalesOrderItemShipmentState.IsPartiallyShipped
+                    || @this.SalesOrderItemShipmentState.IsShipped)
                 {
                     @this.AddRevocation(writeRevocation);
                     @this.AddRevocation(executeRevocation);

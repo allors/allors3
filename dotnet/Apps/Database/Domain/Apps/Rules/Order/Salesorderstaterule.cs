@@ -58,7 +58,7 @@ namespace Allors.Database.Domain
             // SalesOrder Shipment State
             if (validOrderItems.Any())
             {
-                if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsShipped))
+                if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsShipped || v.SalesOrderItemShipmentState.IsNotApplicable))
                 {
                     @this.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
                 }
