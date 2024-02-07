@@ -1631,49 +1631,27 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ChangedPickListPickListStateDeriveShipmentStatePicked()
         {
+            var good = new NonUnifiedGoods(this.Transaction).FindBy(this.M.Good.Name, "good1");
+            new InventoryItemTransactionBuilder(this.Transaction).WithQuantity(100).WithReason(new InventoryTransactionReasons(this.Transaction).PhysicalCount).WithPart(good.Part).Build();
+
             var shipment = new CustomerShipmentBuilder(this.Transaction)
                 .WithShipmentState(new ShipmentStates(this.Transaction).Picking)
                 .WithShipToParty(new PersonBuilder(this.Transaction).Build())
                 .Build();
             this.Derive();
 
-            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
+            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithGood(good).WithQuantity(1).Build();
             shipment.AddShipmentItem(shipmentItem);
             this.Derive();
 
-            var picklist = new PickListBuilder(this.Transaction).WithShipToParty(shipment.ShipToParty).WithStore(shipment.Store).Build();
+            shipment.Pick();
+
+            var picklist = shipmentItem.ItemIssuancesWhereShipmentItem.First().PickListItem.PickListWherePickListItem;
             this.Derive();
 
             Assert.NotEqual(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);
 
             picklist.PickListState = new PickListStates(this.Transaction).Picked;
-            this.Derive();
-
-            Assert.Equal(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);
-        }
-
-        [Fact]
-        public void ChangedShipmentStateDeriveShipmentStatePicked()
-        {
-            var shipment = new CustomerShipmentBuilder(this.Transaction)
-                .WithShipToParty(new PersonBuilder(this.Transaction).Build())
-                .Build();
-            this.Derive();
-
-            var shipmentItem = new ShipmentItemBuilder(this.Transaction).WithQuantity(1).Build();
-            shipment.AddShipmentItem(shipmentItem);
-            this.Derive();
-
-            var picklist = new PickListBuilder(this.Transaction)
-                .WithPickListState(new PickListStates(this.Transaction).Picked)
-                .WithShipToParty(shipment.ShipToParty)
-                .WithStore(shipment.Store)
-                .Build();
-            this.Derive();
-
-            Assert.NotEqual(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);
-
-            shipment.ShipmentState = new ShipmentStates(this.Transaction).Picking;
             this.Derive();
 
             Assert.Equal(new ShipmentStates(this.Transaction).Picked, shipment.ShipmentState);

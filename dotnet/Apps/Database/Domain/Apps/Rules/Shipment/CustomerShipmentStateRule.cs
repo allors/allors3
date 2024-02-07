@@ -61,16 +61,16 @@ namespace Allors.Database.Domain
                     if (@this.ShipmentState.IsPicking && @this.ShipToParty.ExistPickListsWhereShipToParty)
                     {
                         var isPicked = true;
-                        foreach (var pickList in @this.ShipToParty.PickListsWhereShipToParty)
+                        var pickList = @this.ShipmentItems.FirstOrDefault()?.ItemIssuancesWhereShipmentItem.FirstOrDefault()?.PickListItem.PickListWherePickListItem;
+
+                        if (pickList != null
+                            && @this.Store.Equals(pickList.Store)
+                            && !pickList.PickListState.Equals(new PickListStates(@this.Transaction()).Picked))
                         {
-                            if (@this.Store.Equals(pickList.Store) &&
-                                !pickList.PickListState.Equals(new PickListStates(@this.Transaction()).Picked))
-                            {
-                                isPicked = false;
-                            }
+                            isPicked = false;
                         }
 
-                        if (isPicked)
+                        if (pickList != null && isPicked)
                         {
                             @this.SetPicked();
                         }
