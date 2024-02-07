@@ -62,7 +62,7 @@ namespace Allors.Database.Domain
                 {
                     @this.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
                 }
-                else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsNotShipped))
+                else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsNotShipped || v.SalesOrderItemShipmentState.IsNotApplicable))
                 {
                     @this.SalesOrderShipmentState = salesOrderShipmentStates.NotShipped;
                 }
