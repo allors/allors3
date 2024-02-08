@@ -151,10 +151,15 @@ namespace Allors.Database.Domain
 
                         @this.AddSalesOrderItemInventoryAssignment(salesOrderItemInventoryAssignment);
 
+                        @this.QuantityReserved = 1;
                         @this.QuantityRequestsShipping = 1;
                     }
+                    else
+                    {
+                        @this.QuantityReserved = @this.ReservedFromSerialisedInventoryItem.Quantity;
+                        @this.QuantityRequestsShipping = @this.ReservedFromSerialisedInventoryItem.Quantity;
+                    }
 
-                    @this.QuantityReserved = 1;
                 }
             }
         }
