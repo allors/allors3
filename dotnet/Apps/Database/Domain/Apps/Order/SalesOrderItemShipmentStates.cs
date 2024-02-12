@@ -33,7 +33,7 @@ namespace Allors.Database.Domain
         {
             var merge = this.Cache.Merger().Action();
 
-            merge(NotApplicableId, v => v.Name = "NA");
+            merge(NotApplicableId, v => v.Name = "N/A");
             merge(NotShippedId, v => v.Name = "Not Shipped");
             merge(PartiallyShippedId, v => v.Name = "Partially Shipped");
             merge(ShippedId, v => v.Name = "Shipped");

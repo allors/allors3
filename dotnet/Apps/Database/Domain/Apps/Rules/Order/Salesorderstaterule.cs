@@ -58,7 +58,11 @@ namespace Allors.Database.Domain
             // SalesOrder Shipment State
             if (validOrderItems.Any())
             {
-                if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsShipped || v.SalesOrderItemShipmentState.IsNotApplicable))
+                if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsNotApplicable))
+                {
+                    @this.SalesOrderShipmentState = salesOrderShipmentStates.NotApplicable;
+                }
+                else if (validOrderItems.All(v => v.SalesOrderItemShipmentState.IsShipped || v.SalesOrderItemShipmentState.IsNotApplicable))
                 {
                     @this.SalesOrderShipmentState = salesOrderShipmentStates.Shipped;
                 }
@@ -104,7 +108,7 @@ namespace Allors.Database.Domain
                 }
 
                 // SalesOrder OrderState
-                if (@this.SalesOrderShipmentState.IsShipped
+                if ((@this.SalesOrderShipmentState.IsShipped || @this.SalesOrderShipmentState.IsNotApplicable)
                     && @this.SalesOrderInvoiceState.IsInvoiced
                     && !@this.SalesOrderState.IsCompleted
                     && !@this.SalesOrderState.IsFinished)

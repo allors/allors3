@@ -7,6 +7,8 @@ namespace Allors.Database.Domain
 {
     public partial class SalesOrderShipmentState
     {
+        public bool IsNotApplicable => Equals(this.UniqueId, SalesOrderShipmentStates.NotApplicableId);
+
         public bool IsNotShipped => Equals(this.UniqueId, SalesOrderShipmentStates.NotShippedId);
 
         public bool IsPartiallyShipped => Equals(this.UniqueId, SalesOrderShipmentStates.PartiallyShippedId);
