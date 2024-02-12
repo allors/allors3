@@ -63,7 +63,11 @@ namespace Allors.Database.Domain
                     @this.AddRevocation(invoiceRevocation);
                 }
 
-                if (!@this.SalesOrderInvoiceState.IsNotInvoiced || !@this.SalesOrderShipmentState.IsNotShipped)
+                if (@this.SalesOrderInvoiceState.IsPartiallyInvoiced
+                    || @this.SalesOrderInvoiceState.IsInvoiced
+                    || @this.SalesOrderShipmentState.IsInProgress
+                    || @this.SalesOrderShipmentState.IsPartiallyShipped
+                    || @this.SalesOrderShipmentState.IsShipped)
                 {
                     @this.AddRevocation(stateRevocation);
                     @this.AddRevocation(writeRevocation);
