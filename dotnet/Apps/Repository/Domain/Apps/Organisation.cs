@@ -93,10 +93,6 @@ namespace Allors.Repository
 
         public string RequestNumberPrefix { get; set; }
 
-        public Party[] ObsoleteCurrentCustomers { get; set; }
-
-        public Organisation[] ObsoleteCurrentSuppliers { get; set; }
-
         public Party[] ActiveCustomers { get; set; }
 
         public Person[] ActiveEmployees { get; set; }

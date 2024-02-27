@@ -317,22 +317,6 @@ namespace Allors.Repository
         string RequestNumberPrefix { get; set; }
 
         #region Allors
-        [Id("224518F0-2014-4BF4-B10A-406821A0FD39")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        Party[] ObsoleteCurrentCustomers { get; set; }
-
-        #region Allors
-        [Id("D4B532F9-12F0-4B51-AF8E-0E2160A2488E")]
-        [Indexed]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
-        [Workspace(Default)]
-        Organisation[] ObsoleteCurrentSuppliers { get; set; }
-
-        #region Allors
         [Id("9a2ab89e-c3bc-4b6b-a82d-417dc21c8f9e")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]

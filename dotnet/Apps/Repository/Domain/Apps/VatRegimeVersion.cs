@@ -29,14 +29,6 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("b4b5fdc5-7533-4d7e-b91a-80a630ca2ca2")]
-        #endregion
-        [Workspace(Default)]
-        [Multiplicity(Multiplicity.ManyToOne)]
-        
-        public Country ObsoleteCountry { get; set; }
-
-        #region Allors
         [Id("843285bd-abcf-4edb-88c4-5e9da8b45f91")]
         #endregion
         [Workspace(Default)]

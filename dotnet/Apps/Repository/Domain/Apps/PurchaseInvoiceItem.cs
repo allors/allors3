@@ -189,14 +189,6 @@ namespace Allors.Repository
         public Part Part { get; set; }
 
         #region Allors
-        [Id("2E3887BF-A895-4D25-9519-9B0ADA1DE6C4")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public Product ObsoleteProduct { get; set; }
-
-        #region Allors
         [Id("B036079F-0B4A-4F7A-87A2-F3854A01F73A")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

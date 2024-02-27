@@ -34,20 +34,6 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("3F3D9387-0758-4559-B33F-0C7B352B171C")]
-        #endregion
-        [Indexed]
-        [Workspace(Default)]
-        public DateTime ObsoleteFromDate { get; set; }
-
-        #region Allors
-        [Id("2A49EA68-DB8F-4186-9D7E-FE2CC1AFD6F5")]
-        #endregion
-        [Indexed]
-        [Workspace(Default)]
-        public DateTime ObsoleteThroughDate { get; set; }
-
-        #region Allors
         [Id("2723be72-6775-4f39-9bf6-e95abc2c0b24")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

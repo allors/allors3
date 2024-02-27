@@ -32,13 +32,6 @@ namespace Allors.Repository
         public string SalesInvoiceNumberPrefix { get; set; }
 
         #region Allors
-        [Id("14f064a8-461c-4726-93c4-91bc34c9c443")]
-        #endregion
-        [Derived]
-        [Required]
-        public int ObsoleteNextSalesInvoiceNumber { get; set; }
-
-        #region Allors
         [Id("c21f533a-cf7a-4c15-8af4-40d87d4ad162")]
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
@@ -52,13 +45,6 @@ namespace Allors.Repository
         [Size(256)]
         [Workspace(Default)]
         public string CreditNoteNumberPrefix { get; set; }
-
-        #region Allors
-        [Id("C349F8A9-82D8-406B-B026-AFBE67DCD375")]
-        #endregion
-        [Derived]
-        [Required]
-        public int ObsoleteNextCreditNoteNumber { get; set; }
 
         #region Allors
         [Id("a1f93578-bde7-427b-abf2-6eaffb9d9e99")]

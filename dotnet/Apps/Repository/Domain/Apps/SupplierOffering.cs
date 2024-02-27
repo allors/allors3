@@ -122,14 +122,6 @@ namespace Allors.Repository
         public int QuantityIncrements { get; set; }
 
         #region Allors
-        [Id("d2de1e9e-196f-43d7-903e-566a4858bc02")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        [Workspace(Default)]
-        public Party ObsoleteSupplier { get; set; }
-
-        #region Allors
         [Id("513c663b-85bb-4b11-a82e-d2b64c579fc4")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]

@@ -112,13 +112,6 @@ namespace Allors.Repository
         #endregion
 
         #region Allors
-        [Id("277D12EB-729E-419A-A9EB-35F30DFFBA15")]
-        #endregion
-        [Multiplicity(Multiplicity.ManyToOne)]
-        [Indexed]
-        public Party ObsoleteBilledFrom { get; set; }
-
-        #region Allors
         [Id("cf5b3e88-2436-471a-8259-534fe3f36849")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
