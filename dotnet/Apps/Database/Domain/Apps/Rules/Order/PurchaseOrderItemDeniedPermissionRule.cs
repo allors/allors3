@@ -61,7 +61,10 @@ namespace Allors.Database.Domain
             var quickReceiveRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemQuickReceiveRevocation;
             var returnRevocation = new Revocations(@this.Strategy.Transaction).PurchaseOrderItemReturnRevocation;
 
-            if (@this.ExistPurchaseOrderItemShipmentState
+            // Should be possible to change item price even after shipment is present.
+            // When revising order then OrderItemState.IsCreated
+            if (!@this.PurchaseOrderItemState.IsCreated
+                && @this.ExistPurchaseOrderItemShipmentState
                 && !@this.PurchaseOrderItemShipmentState.IsNotReceived
                 && !@this.PurchaseOrderItemShipmentState.IsNa)
             {
