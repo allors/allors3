@@ -7,7 +7,6 @@ import {
   Facility,
   InternalOrganisation,
   Locale,
-  Organisation,
   Ownership,
   Part,
   SerialisedInventoryItem,
@@ -41,11 +40,11 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
   serialisedItemStates: Enumeration[];
   ownerships: Enumeration[];
   part: Part;
-  currentSuppliers: Organisation[];
   currentFacility: Facility;
   serialisedItemAvailabilities: Enumeration[];
   internalOrganisationsFilter: SearchFactory;
   partiesFilter: SearchFactory;
+  suppliersFilter: SearchFactory;
   partWhereSerialisedItemPullName: string;
 
   constructor(
@@ -63,6 +62,7 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
       this.m
     );
     this.partiesFilter = Filters.partiesFilter(this.m);
+    this.suppliersFilter = Filters.allSuppliersFilter(this.m);
     this.partWhereSerialisedItemPullName = 'PartWhereSerialisedItem';
   }
 
@@ -129,12 +129,6 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
           },
         },
       }),
-      p.InternalOrganisation({
-        objectId: this.internalOrganisationId.value,
-        select: {
-          ObsoleteCurrentSuppliers: {},
-        },
-      }),
       p.SerialisedItemState({
         predicate: {
           kind: 'Equals',
@@ -168,10 +162,6 @@ export class SerialisedItemEditFormComponent extends AllorsFormComponent<Seriali
     this.object = pullResult.object('_object');
 
     this.onPostPullInitialize(pullResult);
-
-    this.currentSuppliers = pullResult.collection<Organisation>(
-      this.m.InternalOrganisation.ObsoleteCurrentSuppliers
-    );
 
     this.locales = this.fetcher.getAdditionalLocales(pullResult);
     this.serialisedItemStates = pullResult.collection<SerialisedItemState>(

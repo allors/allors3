@@ -380,15 +380,16 @@
           [roleType]="m.SerialisedItem.SuppliedBy"
           display="Name"
         ></a-mat-static>
-        <a-mat-select
+        <a-mat-autocomplete
           class="col-md"
           *ngIf="!object.PurchaseOrder"
           [object]="object"
           [roleType]="m.SerialisedItem.AssignedSuppliedBy"
-          [options]="currentSuppliers"
-          display="Name"
+          [filter]="suppliersFilter.create(allors.context)"
+          display="DisplayName"
           label="Supplied By"
-        ></a-mat-select>
+        >
+        </a-mat-autocomplete>
       </div>
     </div>
   </mat-tab>
