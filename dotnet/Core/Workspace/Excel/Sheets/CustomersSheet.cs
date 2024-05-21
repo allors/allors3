@@ -23,7 +23,7 @@ namespace Application.Sheets
             this.Session = program.Workspace.CreateSession();
         }
 
-        private async void Binder_ToDomained(object sender, EventArgs e) => await this.Sheet.Flush();
+        private void Binder_ToDomained(object sender, EventArgs e) => this.Sheet.Flush();
 
         public M M { get; set; }
 
@@ -88,7 +88,7 @@ namespace Application.Sheets
                 obsoleteCell.Clear();
             }
 
-            await this.Sheet.Flush();
+            this.Sheet.Flush();
         }
 
         public async System.Threading.Tasks.Task Save()
