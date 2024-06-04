@@ -45,5 +45,13 @@ namespace Allors.Database.Domain
                 this.SequenceNumber = highestNumber + 1;
             }
         }
+
+        public void AppsDelete(DeletableDelete method)
+        {
+            foreach (var deletable in this.PackagingContents)
+            {
+                deletable.Delete();
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("444e431b-f078-46e0-9c8e-694e15e807c7")]
     #endregion
-    public partial class ShipmentPackage : UniquelyIdentifiable, Object
+    public partial class ShipmentPackage : UniquelyIdentifiable, Object, Deletable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -65,6 +65,7 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+        public void Delete() { }
 
         #endregion
 
