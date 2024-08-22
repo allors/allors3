@@ -139,6 +139,12 @@ namespace Allors.Database.Domain
                 deletable.CascadingDelete();
             }
 
+
+            foreach (var deletable in this.CustomerRelationshipsWhereCustomer)
+            {
+                deletable.CascadingDelete();
+            }
+
             foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
             {
                 deletable.CascadingDelete();
