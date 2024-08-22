@@ -53,11 +53,9 @@ namespace Allors.Database.Domain
             && !this.ExistSerialisedItemsWhereOwnedBy
             && !this.ExistSerialisedItemsWhereRentedBy
             && !this.ExistWorkEffortsWhereCustomer
-            && !this.ExistWorkEffortPartyAssignmentsWhereParty
             && !this.ExistCashesWherePersonResponsible
             && !this.ExistCommunicationEventsWhereOwner
             && !this.ExistEngagementItemsWhereCurrentAssignedProfessional
-            && !this.ExistEmploymentsWhereEmployee
             && !this.ExistEngineeringChangesWhereAuthorizer
             && !this.ExistEngineeringChangesWhereDesigner
             && !this.ExistEngineeringChangesWhereRequestor
@@ -136,6 +134,11 @@ namespace Allors.Database.Domain
                 deletable.Strategy.Delete();
             }
 
+            foreach (var deletable in this.EmploymentsWhereEmployee)
+            {
+                deletable.CascadingDelete();
+            }
+
             foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
             {
                 deletable.CascadingDelete();
@@ -169,6 +172,11 @@ namespace Allors.Database.Domain
             }
 
             foreach (var deletable in this.OrganisationContactRelationshipsWhereContact)
+            {
+                deletable.CascadingDelete();
+            }
+
+            foreach (var deletable in this.WorkEffortPartyAssignmentsWhereParty)
             {
                 deletable.CascadingDelete();
             }
