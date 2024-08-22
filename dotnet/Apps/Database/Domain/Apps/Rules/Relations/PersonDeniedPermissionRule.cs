@@ -18,6 +18,7 @@ namespace Allors.Database.Domain
             this.Patterns = new Pattern[]
         {
             m.Person.AssociationPattern(v => v.TimeSheetWhereWorker, m.Person),
+            m.Person.AssociationPattern(v => v.TimeEntriesWhereWorker, m.Person),
             m.Party.AssociationPattern(v => v.AccountingTransactionsWhereFromParty, m.Person),
             m.Party.AssociationPattern(v => v.AccountingTransactionsWhereToParty, m.Person),
             m.Party.AssociationPattern(v => v.ShipmentsWhereShipFromParty, m.Person),
