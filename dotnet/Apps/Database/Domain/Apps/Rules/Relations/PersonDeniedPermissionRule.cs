@@ -55,11 +55,9 @@ namespace Allors.Database.Domain
             m.Party.AssociationPattern(v => v.SerialisedItemsWhereOwnedBy, m.Person),
             m.Party.AssociationPattern(v => v.SerialisedItemsWhereRentedBy, m.Person),
             m.Party.AssociationPattern(v => v.WorkEffortsWhereCustomer, m.Person),
-            m.Party.AssociationPattern(v => v.WorkEffortPartyAssignmentsWhereParty, m.Person),
             m.Person.AssociationPattern(v => v.CashesWherePersonResponsible, m.Person),
             m.Person.AssociationPattern(v => v.CommunicationEventsWhereOwner, m.Person),
             m.Person.AssociationPattern(v => v.EngagementItemsWhereCurrentAssignedProfessional, m.Person),
-            m.Person.AssociationPattern(v => v.EmploymentsWhereEmployee, m.Person),
             m.Person.AssociationPattern(v => v.EngineeringChangesWhereAuthorizer, m.Person),
             m.Person.AssociationPattern(v => v.EngineeringChangesWhereDesigner, m.Person),
             m.Person.AssociationPattern(v => v.EngineeringChangesWhereRequestor, m.Person),
@@ -80,31 +78,38 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
-            var transaction = cycle.Transaction;
             var validation = cycle.Validation;
 
             foreach (var @this in matches.Cast<Person>())
             {
-                var deleteRevocation = new Revocations(transaction).PersonDeleteRevocation;
-                var resetPasswordRevocation = new Revocations(transaction).PersonResetPasswordRevocation;
+                @this.DerivePersonDeniedPermission(validation);
+            }
+        }
+    }
 
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveRevocation(deleteRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(deleteRevocation);
-                }
+    public static class PersonDeniedPermissionRuleExtensions
+    {
+        public static void DerivePersonDeniedPermission(this Person @this, IValidation validation)
+        {
+            var deleteRevocation = new Revocations(@this.Transaction()).PersonDeleteRevocation;
+            var resetPasswordRevocation = new Revocations(@this.Transaction()).PersonResetPasswordRevocation;
 
-                if (@this.IsUser && @this.ExistUserEmail)
-                {
-                    @this.RemoveRevocation(resetPasswordRevocation);
-                }
-                else
-                {
-                    @this.AddRevocation(resetPasswordRevocation);
-                }
+            if (@this.IsDeletable)
+            {
+                @this.RemoveRevocation(deleteRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(deleteRevocation);
+            }
+
+            if (@this.IsUser && @this.ExistUserEmail)
+            {
+                @this.RemoveRevocation(resetPasswordRevocation);
+            }
+            else
+            {
+                @this.AddRevocation(resetPasswordRevocation);
             }
         }
     }
