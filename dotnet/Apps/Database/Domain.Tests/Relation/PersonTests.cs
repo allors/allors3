@@ -986,7 +986,7 @@ namespace Allors.Database.Domain.Tests
             employment.Employee = person;
             this.Derive();
 
-            Assert.Contains(this.deleteRevocation, person.Revocations);
+            Assert.DoesNotContain(this.deleteRevocation, person.Revocations);
         }
 
         [Fact]
