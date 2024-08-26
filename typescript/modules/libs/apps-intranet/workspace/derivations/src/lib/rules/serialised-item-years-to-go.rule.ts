@@ -21,7 +21,7 @@ export class SerialisedItemYearsToGoRule implements IRule<SerialisedItem> {
     const good = serialisedItem.PartWhereSerialisedItem as UnifiedGood | null;
 
     if (
-      serialisedItem.canReadPurchasePrice &&
+      serialisedItem.canReadDerivedPurchasePrice &&
       serialisedItem.ManufacturingYear != null &&
       good?.LifeTime != null
     ) {

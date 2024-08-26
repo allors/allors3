@@ -15,7 +15,7 @@ export class SerialisedItemAgeRule implements IRule<SerialisedItem> {
 
   derive(serialisedItem: SerialisedItem) {
     if (
-      serialisedItem.canReadPurchasePrice &&
+      serialisedItem.canReadDerivedPurchasePrice &&
       serialisedItem.ManufacturingYear != null
     ) {
       return new Date().getFullYear() - serialisedItem.ManufacturingYear;
