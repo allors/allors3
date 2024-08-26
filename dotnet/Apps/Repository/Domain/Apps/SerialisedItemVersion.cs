@@ -80,10 +80,16 @@ namespace Allors.Repository
         public int ManufacturingYear { get; set; }
 
         #region Allors
+        [Id("2de89cb3-fd19-4ba1-83f1-0bbf30a516a2")]
+        #endregion
+        [Workspace(Default)]
+        public decimal AssignedPurchasePrice { get; set; }
+
+        #region Allors
         [Id("03D549E9-0DCD-4674-A789-8D9CB6CF0377")]
         #endregion
         [Workspace(Default)]
-        public decimal PurchasePrice { get; set; }
+        public decimal DerivedPurchasePrice { get; set; }
 
         #region Allors
         [Id("D7B6361C-2387-4838-BBB1-B6F001D9E2B4")]
