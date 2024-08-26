@@ -39,11 +39,6 @@ namespace Allors.Database.Domain
             {
                 foreach (PurchaseInvoiceItem invoiceItem in @this.ValidInvoiceItems)
                 {
-                    if (invoiceItem.ExistSerialisedItem && !invoiceItem.SerialisedItem.ExistAssignedPurchasePrice)
-                    {
-                        invoiceItem.SerialisedItem.PurchasePrice = invoiceItem.TotalExVat;
-                    }
-
                     if (invoiceItem.ExistSerialisedItem
                         && @this.BilledTo.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(@this.Transaction()).PurchaseInvoiceConfirm))
                     {

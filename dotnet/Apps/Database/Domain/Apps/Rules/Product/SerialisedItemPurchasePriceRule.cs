@@ -27,7 +27,7 @@ namespace Allors.Database.Domain
 
             foreach (var @this in matches.Cast<SerialisedItem>())
             {
-                @this.PurchasePrice = @this.AssignedPurchasePrice ?? @this.PurchaseInvoiceItemsWhereSerialisedItem
+                @this.DerivedPurchasePrice = @this.AssignedPurchasePrice ?? @this.PurchaseInvoiceItemsWhereSerialisedItem
                     .Where(v => v.ExistInvoiceWhereValidInvoiceItem
                                         && (v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).PartItem)
                                             || v.InvoiceItemType.Equals(new InvoiceItemTypes(@this.Transaction()).ProductItem)))?

@@ -142,17 +142,17 @@ namespace Allors.Repository
         public int ManufacturingYear { get; set; }
 
         #region Allors
-        [Id("ECE5838C-6E0B-4889-91DA-4F9277760E9D")]
-        #endregion
-        [Derived]
-        [Workspace(Default)]
-        public decimal PurchasePrice { get; set; }
-
-        #region Allors
         [Id("D7BA117D-6C14-4A26-BAD2-F418E472A1A1")]
         #endregion
         [Workspace(Default)]
         public decimal AssignedPurchasePrice { get; set; }
+
+        #region Allors
+        [Id("ECE5838C-6E0B-4889-91DA-4F9277760E9D")]
+        #endregion
+        [Derived]
+        [Workspace(Default)]
+        public decimal DerivedPurchasePrice { get; set; }
 
         #region Allors
         [Id("53E31ACE-5F48-4CBF-9D35-003534E1A1F1")]
