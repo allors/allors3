@@ -720,7 +720,7 @@ namespace Allors.Database.Domain.Tests
         public SerialisedItemPurchasePriceDervivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedPurchaseInvoiceDerivePurchasePrice()
+        public void ChangedPurchaseInvoiceDeriveDerivedPurchasePrice()
         {
             var invoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Derive();
@@ -740,7 +740,7 @@ namespace Allors.Database.Domain.Tests
             invoice.Approve();
             this.Derive();
 
-            Assert.Equal(1, serialisedItem.PurchasePrice);
+            Assert.Equal(1, serialisedItem.DerivedPurchasePrice);
         }
     }
 

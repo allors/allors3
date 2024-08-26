@@ -583,7 +583,7 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedPurchaseInvoiceStateDeriveSerialisedItemPurchasePrice()
+        public void ChangedPurchaseInvoiceStateDeriveSerialisedItemDerivedPurchasePrice()
         {
             this.InternalOrganisation.AddSerialisedItemSoldOn(new SerialisedItemSoldOns(this.Transaction).PurchaseInvoiceConfirm);
 
@@ -598,7 +598,7 @@ namespace Allors.Database.Domain.Tests
             purchaseInvoice.Approve();
             this.Derive();
 
-            Assert.Equal(purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).TotalExVat, serialisedItem.PurchasePrice);
+            Assert.Equal(purchaseInvoice.PurchaseInvoiceItems.ElementAt(0).TotalExVat, serialisedItem.DerivedPurchasePrice);
         }
     }
 
