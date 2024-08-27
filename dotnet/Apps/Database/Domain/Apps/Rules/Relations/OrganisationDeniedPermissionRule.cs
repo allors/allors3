@@ -73,17 +73,28 @@ namespace Allors.Database.Domain
 
         public override void Derive(ICycle cycle, IEnumerable<IObject> matches)
         {
+            var validation = cycle.Validation;
+
             foreach (var @this in matches.Cast<Organisation>())
             {
-                var revocation = new Revocations(@this.Strategy.Transaction).OrganisationDeleteRevocation;
-                if (@this.IsDeletable)
-                {
-                    @this.RemoveRevocation(revocation);
-                }
-                else
-                {
-                    @this.AddRevocation(revocation);
-                }
+                @this.DeriveOrganisationDeniedPermission(validation);
+            }
+        }
+    }
+
+    public static class OrganisationDeniedPermissionRuleExtensions
+    {
+        public static void DeriveOrganisationDeniedPermission(this Organisation @this, IValidation validation)
+        {
+            var revocation = new Revocations(@this.Strategy.Transaction).OrganisationDeleteRevocation;
+
+            if (@this.IsDeletable)
+            {
+                @this.RemoveRevocation(revocation);
+            }
+            else
+            {
+                @this.AddRevocation(revocation);
             }
         }
     }
