@@ -47,89 +47,93 @@ namespace Allors.Database.Domain
                 this.NonSerialisedInventoryItemState = this.Reason?.DefaultNonSerialisedInventoryItemState;
             }
 
-            if (!this.ExistInventoryItem && this.ExistPart)
+            if (this.Quantity != 0)
             {
-                this.SyncInventoryItem();
-            }
 
-            // Match on required properties
-            var matched = false;
-            var matchingItems = this.Part?.InventoryItemsWherePart.ToArray();
-            var possibleMatches = matchingItems != null && matchingItems.Length > 0;
-
-            if (possibleMatches)
-            {
-                matchingItems = matchingItems.Where(i => i.Facility.Equals(this.Facility)).ToArray();
-                possibleMatches = matchingItems != null && matchingItems.Length > 0;
-            }
-
-            if (possibleMatches)
-            {
-                matchingItems = matchingItems.Where(m => m.UnitOfMeasure.Equals(this.UnitOfMeasure)).ToArray();
-                possibleMatches = matchingItems.Length > 0;
-            }
-
-            // Match on optional properties
-            if (possibleMatches && this.ExistLot)
-            {
-                matchingItems = matchingItems.Where(m => m.Lot.Equals(this.Lot)).ToArray();
-                possibleMatches = matchingItems.Length > 0;
-            }
-
-            if (possibleMatches && this.ExistSerialisedInventoryItemState)
-            {
-                if (matchingItems is SerialisedInventoryItem[] matchingSerialisedItems)
+                if (!this.ExistInventoryItem && this.ExistPart)
                 {
-                    matchingItems = matchingSerialisedItems.Where(m => m.InventoryItemState.Equals(this.SerialisedInventoryItemState)).ToArray();
+                    this.SyncInventoryItem();
+                }
+
+                // Match on required properties
+                var matched = false;
+                var matchingItems = this.Part?.InventoryItemsWherePart.ToArray();
+                var possibleMatches = matchingItems != null && matchingItems.Length > 0;
+
+                if (possibleMatches)
+                {
+                    matchingItems = matchingItems.Where(i => i.Facility.Equals(this.Facility)).ToArray();
+                    possibleMatches = matchingItems != null && matchingItems.Length > 0;
+                }
+
+                if (possibleMatches)
+                {
+                    matchingItems = matchingItems.Where(m => m.UnitOfMeasure.Equals(this.UnitOfMeasure)).ToArray();
                     possibleMatches = matchingItems.Length > 0;
                 }
-            }
 
-            if (possibleMatches && this.ExistNonSerialisedInventoryItemState)
-            {
-                if (matchingItems is NonSerialisedInventoryItem[] matchingNonSerialisedItems)
+                // Match on optional properties
+                if (possibleMatches && this.ExistLot)
                 {
-                    matchingItems = matchingNonSerialisedItems.Where(m => m.InventoryItemState.Equals(this.NonSerialisedInventoryItemState)).ToArray();
+                    matchingItems = matchingItems.Where(m => m.Lot.Equals(this.Lot)).ToArray();
                     possibleMatches = matchingItems.Length > 0;
                 }
-            }
 
-            if (possibleMatches)
-            {
-                // Match on Non/SerialisedInventoryItemState
-                foreach (var item in matchingItems)
+                if (possibleMatches && this.ExistSerialisedInventoryItemState)
                 {
-                    if (item is NonSerialisedInventoryItem nonSerialItem)
+                    if (matchingItems is SerialisedInventoryItem[] matchingSerialisedItems)
                     {
-                        if (nonSerialItem.NonSerialisedInventoryItemState.Equals(this.NonSerialisedInventoryItemState))
-                        {
-                            this.InventoryItem = item;
-                            matched = true;
-                            break;
-                        }
+                        matchingItems = matchingSerialisedItems.Where(m => m.InventoryItemState.Equals(this.SerialisedInventoryItemState)).ToArray();
+                        possibleMatches = matchingItems.Length > 0;
                     }
-                    else if (item is SerialisedInventoryItem serialItem)
+                }
+
+                if (possibleMatches && this.ExistNonSerialisedInventoryItemState)
+                {
+                    if (matchingItems is NonSerialisedInventoryItem[] matchingNonSerialisedItems)
                     {
-                        if (serialItem.SerialisedItem.Equals(this.SerialisedItem))
+                        matchingItems = matchingNonSerialisedItems.Where(m => m.InventoryItemState.Equals(this.NonSerialisedInventoryItemState)).ToArray();
+                        possibleMatches = matchingItems.Length > 0;
+                    }
+                }
+
+                if (possibleMatches)
+                {
+                    // Match on Non/SerialisedInventoryItemState
+                    foreach (var item in matchingItems)
+                    {
+                        if (item is NonSerialisedInventoryItem nonSerialItem)
                         {
-                            this.InventoryItem = item;
-                            matched = true;
-                            break;
+                            if (nonSerialItem.NonSerialisedInventoryItemState.Equals(this.NonSerialisedInventoryItemState))
+                            {
+                                this.InventoryItem = item;
+                                matched = true;
+                                break;
+                            }
+                        }
+                        else if (item is SerialisedInventoryItem serialItem)
+                        {
+                            if (serialItem.SerialisedItem.Equals(this.SerialisedItem))
+                            {
+                                this.InventoryItem = item;
+                                matched = true;
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            if (matched)
-            {
-                if (this.InventoryItem is SerialisedInventoryItem serialItem)
+                if (matched)
                 {
-                    serialItem.SerialisedInventoryItemState = this.SerialisedInventoryItemState;
-                }
+                    if (this.InventoryItem is SerialisedInventoryItem serialItem)
+                    {
+                        serialItem.SerialisedInventoryItemState = this.SerialisedInventoryItemState;
+                    }
 
-                if (this.InventoryItem is NonSerialisedInventoryItem nonSerialItem)
-                {
-                    nonSerialItem.NonSerialisedInventoryItemState = this.NonSerialisedInventoryItemState;
+                    if (this.InventoryItem is NonSerialisedInventoryItem nonSerialItem)
+                    {
+                        nonSerialItem.NonSerialisedInventoryItemState = this.NonSerialisedInventoryItemState;
+                    }
                 }
             }
         }
