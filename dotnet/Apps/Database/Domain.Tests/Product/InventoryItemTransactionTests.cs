@@ -187,6 +187,7 @@ namespace Allors.Database.Domain.Tests
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).Theft)
                 .WithSerialisedItem(serialisedItem)
+                .WithQuantity(1)
                 .Build();
             this.Derive();
 
@@ -201,6 +202,7 @@ namespace Allors.Database.Domain.Tests
             var inventoryItemTransaction = new InventoryItemTransactionBuilder(this.Transaction)
                 .WithReason(new InventoryTransactionReasons(this.Transaction).Theft)
                 .WithPart(part)
+                .WithQuantity(1)
                 .Build();
             this.Derive();
 
