@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
 
     public class TakenByModel
     {
-        public TakenByModel(Organisation billedFrom)
+        public TakenByModel(Organisation billedFrom, Currency currency)
         {
             if (billedFrom != null)
             {
@@ -48,7 +48,10 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
                     this.PrintCity = !this.PrintPostalCode;
                 }
 
-                var bankAccount = billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban);
+                var bankAccount = billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban && v.Currency.Equals(currency))
+                    ?? billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban && v.Currency.Equals(billedFrom.PreferredCurrency))
+                    ?? billedFrom.BankAccounts.FirstOrDefault(v => v.ExistIban);
+
                 if (bankAccount != null)
                 {
                     this.IBAN = bankAccount.Iban;

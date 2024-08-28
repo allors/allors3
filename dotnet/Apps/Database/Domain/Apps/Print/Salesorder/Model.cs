@@ -15,7 +15,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
 
             this.Order = new OrderModel(order);
 
-            this.TakenBy = new TakenByModel((Organisation)order.TakenBy);
+            this.TakenBy = new TakenByModel((Organisation)order.TakenBy, order.DerivedCurrency);
             this.BillTo = new BillToModel(order);
             this.ShipTo = new ShipToModel(order);
 
