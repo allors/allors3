@@ -379,7 +379,7 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
         loaded.collection<Person>(m.Party.CurrentContacts) ?? [];
 
       const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
-      this.takenViaContactMechanismInitialRole = selectedSupplier.OrderAddress;
+      this.takenViaContactMechanismInitialRole = selectedSupplier?.OrderAddress;
     });
   }
 
@@ -439,8 +439,8 @@ export class PurchaseOrderCreateFormComponent extends AllorsFormComponent<Purcha
       const selectedOrganisation = loaded.object<Organisation>(
         'selectedOrganisation'
       );
-      this.currencyInitialRole = selectedOrganisation.PreferredCurrency;
-      this.shipToAddressInitialRole = selectedOrganisation.ShippingAddress;
+      this.currencyInitialRole = selectedOrganisation?.PreferredCurrency;
+      this.shipToAddressInitialRole = selectedOrganisation?.ShippingAddress;
       this.billToContactMechanismInitialRole =
         selectedOrganisation.BillingAddress ??
         selectedOrganisation.GeneralCorrespondence;
