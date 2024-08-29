@@ -266,7 +266,8 @@ export class ProductQuoteCreateFormComponent extends AllorsFormComponent<Product
 
       const selectedParty = loaded.object<Party>('selectedParty');
       this.currencyInitialRole =
-        selectedParty.PreferredCurrency ?? this.object.Issuer.PreferredCurrency;
+        selectedParty?.PreferredCurrency ??
+        this.object.Issuer.PreferredCurrency;
     });
   }
 }

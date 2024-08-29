@@ -416,7 +416,7 @@ export class PurchaseInvoiceCreateFormComponent extends AllorsFormComponent<Purc
 
       const selectedSupplier = loaded.object<Organisation>('selectedSupplier');
       this.billedFromContactMechanismInitialRole =
-        selectedSupplier.OrderAddress;
+        selectedSupplier?.OrderAddress;
     });
   }
 
@@ -476,7 +476,7 @@ export class PurchaseInvoiceCreateFormComponent extends AllorsFormComponent<Purc
 
       const selectedparty = loaded.object<Party>('selectedParty');
       this.shipToCustomerAddressInitialRole =
-        selectedparty.BillingAddress ?? selectedparty.GeneralCorrespondence;
+        selectedparty?.BillingAddress ?? selectedparty.GeneralCorrespondence;
     });
   }
 
@@ -547,7 +547,7 @@ export class PurchaseInvoiceCreateFormComponent extends AllorsFormComponent<Purc
 
       const selectedparty = loaded.object<Party>('selectedParty');
       this.billToEndCustomerContactMechanismInitialRole =
-        selectedparty.BillingAddress ?? selectedparty.GeneralCorrespondence;
+        selectedparty?.BillingAddress ?? selectedparty.GeneralCorrespondence;
     });
   }
 
@@ -618,7 +618,7 @@ export class PurchaseInvoiceCreateFormComponent extends AllorsFormComponent<Purc
 
       const selectedparty = loaded.object<Party>('selectedParty');
       this.shipToEndCustomerAddressInitialRole =
-        selectedparty.BillingAddress ?? selectedparty.GeneralCorrespondence;
+        selectedparty?.BillingAddress ?? selectedparty.GeneralCorrespondence;
     });
   }
 }

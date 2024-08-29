@@ -264,7 +264,8 @@ export class ProposalCreateFormComponent extends AllorsFormComponent<Proposal> {
 
       const selectedParty = loaded.object<Party>('selectedParty');
       this.currencyInitialRole =
-        selectedParty.PreferredCurrency ?? this.object.Issuer.PreferredCurrency;
+        selectedParty?.PreferredCurrency ??
+        this.object.Issuer.PreferredCurrency;
     });
   }
 }
