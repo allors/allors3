@@ -6,6 +6,7 @@
 namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     using System.Globalization;
+    using System.Linq;
 
     public class SalesInvoiceItemAssignmentModel
     {
@@ -13,11 +14,14 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
         {
             var amount = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Amount ?? 0M;
 
+            this.Type = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.InvoiceItemType.Name;
             this.Description = workEffortInvoiceItemAssignment.WorkEffortInvoiceItem.Description;
             this.Quantity = 1;
             this.UnitSellingPrice = amount.ToString("N2", new CultureInfo("nl-BE"));
             this.SellingPrice = Rounder.RoundDecimal(this.Quantity * amount, 2).ToString("N2", new CultureInfo("nl-BE"));
         }
+
+        public string Type { get; }
 
         public string Description { get; }
 
