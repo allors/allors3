@@ -12,7 +12,7 @@ namespace Allors.Repository
     #region Allors
     [Id("066bf242-2710-4a68-8ff6-ce4d7d88a04a")]
     #endregion
-    public partial interface Quote : Transitional, WorkItem, Printable, Auditable, Commentable, Localised, Deletable, Searchable
+    public partial interface Quote : Transitional, WorkItem, Printable, Auditable, Commentable, Localised, Deletable, Searchable, Copyable
     {
         #region ObjectStates
         #region QuoteState
@@ -575,12 +575,6 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         void Cancel();
-
-        #region Allors
-        [Id("dd5a9861-7503-4533-96df-c087dc1974c5")]
-        #endregion
-        [Workspace(Default)]
-        void Copy() { }
 
         #region Allors
         [Id("6e1a0549-8a08-4efa-9e38-6ebe589d5858")]

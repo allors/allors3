@@ -20,6 +20,7 @@ import { IPullResult, Pull } from '@allors/system/workspace/domain';
 import { M } from '@allors/default/workspace/meta';
 import { Proposal, SalesOrder } from '@allors/default/workspace/domain';
 import { PrintService } from '../../../actions/print/print.service';
+import { CopyService } from '../../../actions/copy/copy.service';
 
 @Component({
   selector: 'proposal-summary-panel',
@@ -31,6 +32,7 @@ export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelCompone
   proposal: Proposal;
   salesOrder: SalesOrder;
   print: Action;
+  copy: Action;
 
   constructor(
     scopedService: ScopedService,
@@ -42,11 +44,13 @@ export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelCompone
     private snackBar: MatSnackBar,
     private invokeService: InvokeService,
     private errorService: ErrorService,
-    public navigation: NavigationService
+    public navigation: NavigationService,
+    public copyService: CopyService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
     this.print = printService.print();
+    this.copy = copyService.copy();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -172,13 +176,6 @@ export class ProposalSummaryPanelComponent extends AllorsViewSummaryPanelCompone
       this.snackBar.open('Successfully created a salesorder.', 'close', {
         duration: 5000,
       });
-    }, this.errorService.errorHandler);
-  }
-
-  public copy(): void {
-    this.invokeService.invoke(this.proposal.Copy).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Successfully copied.', 'close', { duration: 5000 });
     }, this.errorService.errorHandler);
   }
 }

@@ -133,7 +133,7 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
-        public SalesInvoice AppsCopy(SalesInvoiceCopy method)
+        public SalesInvoice AppsCopy(CopyableCopy method)
         {
             var salesInvoice = new SalesInvoiceBuilder(this.Strategy.Transaction)
                 .WithPurchaseInvoice(this.PurchaseInvoice)

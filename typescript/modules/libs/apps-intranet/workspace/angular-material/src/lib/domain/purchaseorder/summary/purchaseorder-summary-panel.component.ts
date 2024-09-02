@@ -24,6 +24,7 @@ import {
   Shipment,
 } from '@allors/default/workspace/domain';
 import { PrintService } from '../../../actions/print/print.service';
+import { CopyService } from '../../../actions/copy/copy.service';
 
 @Component({
   selector: 'purchaseorder-summary-panel',
@@ -36,6 +37,7 @@ export class PurchaseOrderSummaryPanelComponent extends AllorsViewSummaryPanelCo
   purchaseInvoices: PurchaseInvoice[] = [];
 
   print: Action;
+  copy: Action;
   shipments: Shipment[];
 
   constructor(
@@ -48,11 +50,13 @@ export class PurchaseOrderSummaryPanelComponent extends AllorsViewSummaryPanelCo
     private invokeService: InvokeService,
     private errorService: ErrorService,
     public printService: PrintService,
+    public copyService: CopyService,
     public navigation: NavigationService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
     this.print = printService.print();
+    this.copy = copyService.copy();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -204,13 +208,6 @@ export class PurchaseOrderSummaryPanelComponent extends AllorsViewSummaryPanelCo
         duration: 5000,
       });
       this.refreshService.refresh();
-    }, this.errorService.errorHandler);
-  }
-
-  public copy(): void {
-    this.invokeService.invoke(this.order.Copy).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Successfully copied.', 'close', { duration: 5000 });
     }, this.errorService.errorHandler);
   }
 }

@@ -157,7 +157,7 @@
       *ngIf="proposal.canExecuteCopy"
       mat-button
       type="button"
-      (throttleClick)="copy()"
+      (throttleClick)="copy.execute(proposal)"
     >
       Copy
     </button>

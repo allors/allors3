@@ -24,6 +24,7 @@ import {
   SalesOrder,
 } from '@allors/default/workspace/domain';
 import { PrintService } from '../../../actions/print/print.service';
+import { CopyService } from '../../../actions/copy/copy.service';
 
 @Component({
   selector: 'productquote-summary-panel',
@@ -36,6 +37,7 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
   salesOrder: SalesOrder;
   request: RequestForQuote;
   print: Action;
+  copy: Action;
 
   constructor(
     scopedService: ScopedService,
@@ -47,11 +49,13 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
     private snackBar: MatSnackBar,
     private invokeService: InvokeService,
     private errorService: ErrorService,
-    public navigation: NavigationService
+    public navigation: NavigationService,
+    public copyService: CopyService
   ) {
     super(scopedService, panelService, sharedPullService, refreshService);
     this.m = workspaceService.workspace.configuration.metaPopulation as M;
     this.print = printService.print();
+    this.copy = copyService.copy();
   }
 
   onPreSharedPull(pulls: Pull[], prefix?: string) {
@@ -185,13 +189,6 @@ export class ProductQuoteSummaryPanelComponent extends AllorsViewSummaryPanelCom
       this.snackBar.open('Successfully rejected.', 'close', {
         duration: 5000,
       });
-    }, this.errorService.errorHandler);
-  }
-
-  public copy(): void {
-    this.invokeService.invoke(this.productQuote.Copy).subscribe(() => {
-      this.refreshService.refresh();
-      this.snackBar.open('Successfully copied.', 'close', { duration: 5000 });
     }, this.errorService.errorHandler);
   }
 }

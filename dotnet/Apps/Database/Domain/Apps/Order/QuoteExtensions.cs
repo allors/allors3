@@ -219,7 +219,7 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
-        public static Quote AppsCopy(this Quote @this, QuoteCopy method)
+        public static Quote AppsCopy(this Quote @this, CopyableCopy method)
         {
             Quote copy = null;
             if (@this.GetType().Name.Equals(typeof(ProductQuote).Name))

@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("062bd939-9902-4747-a631-99ea10002156")]
     #endregion
-    public partial class PurchaseOrder : Order, Versioned, WorkItem, IDisplayName
+    public partial class PurchaseOrder : Order, Versioned, WorkItem, IDisplayName, Copyable
     {
         #region inherited properties
 
@@ -429,6 +429,7 @@ namespace Allors.Repository
         public void Reopen() { }
 
         public void Print() { }
+        public void Copy() { }
         #endregion
 
         #region Allors
@@ -454,11 +455,5 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public void Return() { }
-
-        #region Allors
-        [Id("6941ddef-9d2e-4db5-813d-52f42c148bb6")]
-        #endregion
-        [Workspace(Default)]
-        public void Copy() { }
     }
 }

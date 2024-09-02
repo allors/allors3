@@ -14,7 +14,7 @@ namespace Allors.Repository
     #region Allors
     [Id("6173fc23-115f-4356-a0ce-867872c151ac")]
     #endregion
-    public partial class SalesInvoice : Invoice, Versioned, Localised
+    public partial class SalesInvoice : Invoice, Versioned, Localised, Copyable
     {
         #region inherited properties
 
@@ -568,12 +568,6 @@ namespace Allors.Repository
         public void WriteOff() { }
 
         #region Allors
-        [Id("99F56814-6F90-4A6A-996B-84DDE7956544")]
-        #endregion
-        [Workspace(Default)]
-        public void Copy() { }
-
-        #region Allors
         [Id("1D9B28F2-1439-41F8-A556-59BDEFB4683E")]
         #endregion
         [Workspace(Default)]
@@ -609,6 +603,7 @@ namespace Allors.Repository
         public void Create() { }
 
         public void Revise() { }
+        public void Copy() { }
 
         #endregion
     }

@@ -157,7 +157,7 @@
       *ngIf="productQuote.canExecuteCopy"
       mat-button
       type="button"
-      (throttleClick)="copy()"
+      (throttleClick)="copy.execute(productQuote)"
     >
       Copy
     </button>

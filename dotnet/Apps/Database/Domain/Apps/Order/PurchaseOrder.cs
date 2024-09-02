@@ -474,7 +474,7 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
-        public PurchaseOrder AppsCopy(PurchaseOrderCopy method)
+        public PurchaseOrder AppsCopy(CopyableCopy method)
         {
             var copy = new PurchaseOrderBuilder(this.Strategy.Transaction)
                 .WithOrderKind(this.OrderKind)

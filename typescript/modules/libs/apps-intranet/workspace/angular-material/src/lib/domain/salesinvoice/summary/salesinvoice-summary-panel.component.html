@@ -133,7 +133,7 @@
       *ngIf="invoice.canExecuteCopy"
       mat-button
       type="button"
-      (throttleClick)="copy()"
+      (throttleClick)="copy.execute(invoice)"
     >
       Copy
     </button>
