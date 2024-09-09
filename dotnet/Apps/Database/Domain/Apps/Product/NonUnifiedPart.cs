@@ -39,6 +39,11 @@ namespace Allors.Database.Domain
         {
             if (this.IsDeletable)
             {
+                foreach (var @this in this.InventoryItemTransactionsWherePart)
+                {
+                    @this.Delete();
+                }
+
                 foreach (var @this in this.ProductIdentifications)
                 {
                     @this.CascadingDelete();

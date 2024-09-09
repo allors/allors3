@@ -13,7 +13,7 @@ namespace Allors.Repository
     #region Allors
     [Id("b00e2650-283f-4326-bdd3-46a2890e2037")]
     #endregion
-    public partial class InventoryItemTransaction : Commentable
+    public partial class InventoryItemTransaction : Commentable, Deletable
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -229,6 +229,7 @@ namespace Allors.Repository
         }
 
         public void OnPostDerive() { }
+        public void Delete() { }
 
         #endregion
     }
