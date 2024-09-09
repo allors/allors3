@@ -79,7 +79,7 @@ namespace Allors.Database.Domain
 
             if (!this.ExistSalesOrderItemShipmentState)
             {
-                if (this.ExistProduct)
+                if (this.ExistProduct && this.Product is UnifiedGood)
                 {
                     this.SalesOrderItemShipmentState = new SalesOrderItemShipmentStates(this.Strategy.Transaction).NotShipped;
                 }
