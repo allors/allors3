@@ -205,6 +205,28 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void OnChangedWorkEffortInventoryAssignmentInventoryItemDeletePermission()
+        {
+            var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();
+
+            var inventoryItem = new NonSerialisedInventoryItemBuilder(this.Transaction)
+                .WithPart(nonUnifiedPart)
+                .Build();
+
+            var workTask = new WorkTaskBuilder(this.Transaction).Build();
+
+            new WorkEffortInventoryAssignmentBuilder(this.Transaction)
+                .WithAssignment(workTask)
+                .WithInventoryItem(inventoryItem)
+                .WithQuantity(1)
+                .Build();
+
+            this.Derive();
+
+            Assert.Contains(this.deleteRevocation, nonUnifiedPart.Revocations);
+        }
+
+        [Fact]
         public void OnChangedWorkEffortInventoryProducedPartDeletePermission()
         {
             var nonUnifiedPart = new NonUnifiedPartBuilder(this.Transaction).Build();

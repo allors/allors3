@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Linq;
+
     public partial class NonUnifiedPart
     {
         public bool IsDeletable => !this.ExistNonUnifiedGoodsWherePart
@@ -15,7 +17,8 @@ namespace Allors.Database.Domain
             && !this.ExistPurchaseInvoiceItemsWherePart
             && !this.ExistPurchaseOrderItemsWherePart
             && !this.ExistSalesInvoiceItemsWherePart
-            && !this.ExistShipmentItemsWherePart;
+            && !this.ExistShipmentItemsWherePart
+            && !this.InventoryItemsWherePart.Any(v => v.ExistWorkEffortInventoryAssignmentsWhereInventoryItem);
 
         public void AppsOnBuild(ObjectOnBuild method)
         {

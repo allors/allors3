@@ -17,6 +17,7 @@ namespace Allors.Database.Domain
         public NonUnifiedPartDeniedPermissionRule(MetaPopulation m) : base(m, new Guid("ec943224-e151-4b7a-9ed9-6bb47f285932")) =>
             this.Patterns = new Pattern[]
         {
+            m.InventoryItem.AssociationPattern(v => v.WorkEffortInventoryAssignmentsWhereInventoryItem, v => v.Part, m.NonUnifiedPart),
             m.Part.AssociationPattern(v => v.WorkEffortInventoryProducedsWherePart, m.NonUnifiedPart),
             m.Part.AssociationPattern(v => v.WorkEffortPartStandardsWherePart, m.NonUnifiedPart),
             m.Part.AssociationPattern(v => v.PartBillOfMaterialsWherePart, m.NonUnifiedPart),
