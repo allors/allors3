@@ -98,6 +98,7 @@ namespace Allors.Database.Domain
                 m.Brand.RolePattern(v => v.Name, v => v.PartsWhereBrand.ObjectType.AsNonUnifiedPart.NonUnifiedGoodsWherePart.ObjectType.QuoteItemsWhereProduct.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote),
                 m.Model.RolePattern(v => v.Name, v => v.PartsWhereModel.ObjectType.AsNonUnifiedPart.NonUnifiedGoodsWherePart.ObjectType.QuoteItemsWhereProduct.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote),
                 m.SerialisedItem.RolePattern(v => v.ItemNumber, v => v.QuoteItemsWhereSerialisedItem.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote),
+                m.SerialisedItem.RolePattern(v => v.Comment, v => v.QuoteItemsWhereSerialisedItem.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote),
                 m.SerialisedItem.RolePattern(v => v.ManufacturingYear, v => v.QuoteItemsWhereSerialisedItem.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote),
                 m.SerialisedItemCharacteristic.AssociationPattern(v => v.SerialisedItemWhereSerialisedItemCharacteristic, v => v.SerialisedItemWhereSerialisedItemCharacteristic.ObjectType.QuoteItemsWhereSerialisedItem.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote),
                 m.SerialisedItemCharacteristic.RolePattern(v => v.Value, v => v.SerialisedItemWhereSerialisedItemCharacteristic.ObjectType.QuoteItemsWhereSerialisedItem.ObjectType.QuoteWhereQuoteItem.ObjectType.AsProductQuote),
