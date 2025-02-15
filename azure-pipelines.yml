@@ -42,8 +42,6 @@ stages:
           target: 'CiTypescriptWorkspacesE2EAngularAppsIntranetTest'
         #typescript_workspace_e2e_angular_apps_extranet:
         #  target: 'CiTypescriptWorkspacesE2EAngularAppsExtranetTest'
-        demos:
-          target: 'CiDemosTest'
 
     steps:
     - checkout: self

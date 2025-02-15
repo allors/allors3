@@ -3,7 +3,6 @@ namespace Tests.Workspace
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using Allors;
     using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
