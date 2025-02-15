@@ -30,10 +30,6 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonRestSharpTest);
 
-    private Target CiDotnetLegacyDatabaseTest => _ => _
-        .DependsOn(Reset)
-        .DependsOn(DotnetLegacyDatabaseTest);
-
     private Target CiDotnetBaseDatabaseTest => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetBaseDatabaseTest);

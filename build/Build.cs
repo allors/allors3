@@ -46,14 +46,12 @@ partial class Build : NukeBuild
 
     private Target Merge => _ => _
        .DependsOn(DotnetCoreMerge)
-       .DependsOn(DotnetLegacyMerge)
        .DependsOn(DotnetBaseMerge)
        .DependsOn(DotnetAppsMerge);
 
     private Target Generate => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .DependsOn(DotnetCoreGenerate)
-        .DependsOn(DotnetLegacyGenerate)
         .DependsOn(DotnetBaseGenerate)
         .DependsOn(DotnetAppsGenerate);
 
