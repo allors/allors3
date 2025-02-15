@@ -38,8 +38,7 @@ partial class Build
         {
             DotNetRun(s => s
                 .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
-                .SetApplicationArguments(
-                    $"{Paths.DotnetAppsRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DotnetAppsDatabaseMetaGenerated}"));
+                .SetApplicationArguments(Paths.DotnetAppsRepositoryDomainRepository, Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetAppsDatabaseMetaGenerated));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(Paths.DotnetApps)
                 .SetProjectFile(Paths.DotnetAppsDatabaseGenerate));
@@ -64,7 +63,7 @@ partial class Build
                 .SetOutput(Paths.ArtifactsAppsServer);
             DotNetPublish(dotNetPublishSettings);
         });
-    
+
     private Target DotnetAppsWorkspaceTypescriptSession => _ => _
         .DependsOn(DotnetAppsGenerate)
         .DependsOn(EnsureDirectories)

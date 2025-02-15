@@ -16,8 +16,7 @@ partial class Build
     private Target DotnetCoreMerge => _ => _
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
-            .SetApplicationArguments(
-                $"{Paths.DotnetCoreDatabaseResourcesCore} {Paths.DotnetCoreDatabaseResourcesCustom} {Paths.DotnetCoreDatabaseResources}")));
+            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetCoreDatabaseResourcesCustom, Paths.DotnetCoreDatabaseResources)));
 
     private Target DotnetCoreGenerate => _ => _
         .After(Clean)
@@ -26,8 +25,7 @@ partial class Build
         {
             DotNetRun(s => s
                 .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
-                .SetApplicationArguments(
-                    $"{Paths.DotnetCoreRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DotnetCoreDatabaseMetaGenerated}"));
+                .SetApplicationArguments(Paths.DotnetCoreRepositoryDomainRepository, Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetCoreDatabaseMetaGenerated));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(Paths.DotnetCore)
                 .SetProjectFile(Paths.DotnetCoreDatabaseGenerate));
@@ -114,7 +112,7 @@ partial class Build
         {
             DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
 
-           
+
             {
                 using var server = new Server(Paths.ArtifactsCoreServer);
                 await server.Ready();

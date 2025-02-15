@@ -13,8 +13,7 @@ partial class Build
         {
             DotNetRun(s => s
                 .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
-                .SetApplicationArguments(
-                    $"{Paths.DotnetSystemAdaptersRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DotnetSystemAdaptersMetaGenerated}"));
+                .SetApplicationArguments(Paths.DotnetSystemAdaptersRepositoryDomainRepository, Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetSystemAdaptersMetaGenerated));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(Paths.DotnetSystemAdapters)
                 .SetProjectFile(Paths.DotnetSystemAdaptersGenerate));

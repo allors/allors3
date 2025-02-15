@@ -1,7 +1,6 @@
 using System;
 using MartinCostello.SqlLocalDb;
 using Microsoft.Data.SqlClient;
-using static Nuke.Common.Logger;
 
 internal class SqlLocalDB : IDisposable
 {
@@ -17,7 +16,7 @@ internal class SqlLocalDB : IDisposable
 
         if (!dbInstance.IsRunning)
         {
-            Normal("SqlServer: Start");
+            Serilog.Log.Debug("SqlServer: Start");
             manager.Start();
         }
     }

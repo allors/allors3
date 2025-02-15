@@ -5,17 +5,16 @@ using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Npm;
 using static Serilog.Log;
+using static Nuke.Common.Tools.Npm.NpmTasks;
 
 internal class Angular : IDisposable
 {
     public Angular(AbsolutePath path, string command)
     {
-        var npmRunSetting = new NpmRunSettings()
+        NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
             .SetProcessWorkingDirectory(path)
-            .SetCommand(command);
-
-        Process = ProcessTasks.StartProcess(npmRunSetting);
+            .SetCommand(command));
     }
 
     private IProcess Process { get; set; }

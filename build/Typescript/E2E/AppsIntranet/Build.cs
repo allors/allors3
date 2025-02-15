@@ -1,19 +1,19 @@
 using Nuke.Common;
+using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using static Nuke.Common.IO.FileSystemTasks;
 
 partial class Build
 {
     private Target TypescriptE2EAngularAppsIntranetScaffold => _ => _
         .Executes(() =>
         {
-            DeleteDirectory(Paths.TypescriptE2EAppsIntranetE2EGenerated);
+            Paths.TypescriptE2EAppsIntranetE2EGenerated.DeleteDirectory();
 
             DotNetRun(s => s
                 .SetProjectFile(Paths.TypescriptE2EAppsIntranetScaffoldProject)
-                .SetApplicationArguments($"--output { Paths.TypescriptE2EAppsIntranetE2EGenerated } {Paths.TypescriptModulesAppsAppsIntranetAngularMaterial}"));
+                .SetApplicationArguments("--output", Paths.TypescriptE2EAppsIntranetE2EGenerated, Paths.TypescriptModulesAppsAppsIntranetAngularMaterial));
         });
 
     private Target TypescriptE2EAngularAppsIntranetTest => _ => _

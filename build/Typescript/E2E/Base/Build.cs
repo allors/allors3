@@ -1,19 +1,19 @@
 using Nuke.Common;
+using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using static Nuke.Common.IO.FileSystemTasks;
 
 partial class Build
 {
     private Target TypescriptE2EAngularBaseScaffold => _ => _
         .Executes(() =>
         {
-            DeleteDirectory(Paths.TypescriptE2EBaseE2EGenerated);
+            Paths.TypescriptE2EBaseE2EGenerated.DeleteDirectory();
 
             DotNetRun(s => s
                 .SetProjectFile(Paths.TypescriptE2EBaseScaffoldProject)
-                .SetApplicationArguments($"--output { Paths.TypescriptE2EBaseE2EGenerated } {Paths.TypescriptModulesAppsBaseAngularMaterial}"));
+                .SetApplicationArguments("--output", Paths.TypescriptE2EBaseE2EGenerated, Paths.TypescriptModulesAppsBaseAngularMaterial));
         });
 
     private Target TypescriptE2EAngularBaseTest => _ => _

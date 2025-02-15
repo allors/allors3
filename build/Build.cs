@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 using Nuke.Common;
-using static Nuke.Common.IO.FileSystemTasks;
+using Nuke.Common.IO;
 
 partial class Build : NukeBuild
 {
@@ -18,7 +18,7 @@ partial class Build : NukeBuild
                 if (new[] { "node_modules", "packages", "out-tsc", "bin", "obj", "generated" }.Contains(
                     directoryInfo.Name.ToLowerInvariant()))
                 {
-                    DeleteDirectory(directoryInfo.FullName);
+                    ((AbsolutePath)directoryInfo.FullName).DeleteDirectory();
                     return;
                 }
 
@@ -37,7 +37,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            DeleteDirectory(Paths.Artifacts);
+            Paths.Artifacts.DeleteDirectory();
         });
 
 

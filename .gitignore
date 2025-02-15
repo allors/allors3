@@ -343,3 +343,4 @@ paket-files/
 Core/Workspace/Typescript.legacy/Site/wwwroot/tsc.js
 Core/Workspace/Typescript.legacy/Site/wwwroot/tsc.js.map
 Core/Workspace/Typescript.legacy/Site/wwwroot/tsc.tsbuildinfo
+/.nuke/temp

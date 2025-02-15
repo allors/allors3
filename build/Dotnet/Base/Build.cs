@@ -21,8 +21,7 @@ partial class Build
     private Target DotnetBaseMerge => _ => _
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
-            .SetApplicationArguments(
-                $"{Paths.DotnetCoreDatabaseResourcesCore} {Paths.DotnetBaseDatabaseResourcesBase} {Paths.DotnetBaseDatabaseResources}")));
+            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetBaseDatabaseResourcesBase, Paths.DotnetBaseDatabaseResources)));
 
     private Target DotnetBaseDatabaseTestDomain => _ => _
         .DependsOn(DotnetBaseGenerate)
@@ -38,8 +37,7 @@ partial class Build
         {
             DotNetRun(s => s
                 .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
-                .SetApplicationArguments(
-                    $"{Paths.DotnetBaseRepositoryDomainRepository} {Paths.DotnetSystemRepositoryTemplatesMetaCs} {Paths.DotnetBaseDatabaseMetaGenerated}"));
+                .SetApplicationArguments(Paths.DotnetBaseRepositoryDomainRepository, Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetBaseDatabaseMetaGenerated));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(Paths.DotnetBase)
                 .SetProjectFile(Paths.DotnetBaseDatabaseGenerate));
