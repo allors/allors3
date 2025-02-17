@@ -54,7 +54,7 @@ namespace Tests.Workspace.Remote
 
         public async Task InitializeAsync()
         {
-            var request = new RestRequest($"{Url}{SetupUrl}", RestSharp.Method.GET, DataFormat.Json);
+            var request = new RestRequest($"{Url}{SetupUrl}", RestSharp.Method.Get);
             var restClient = this.CreateRestClient();
             var response = await restClient.ExecuteAsync(request);
             Assert.True(response.IsSuccessful);
@@ -83,6 +83,6 @@ namespace Tests.Workspace.Remote
             Assert.True(response);
         }
 
-        private IRestClient CreateRestClient() => new RestClient(Url).UseNewtonsoftJson();
+        private IRestClient CreateRestClient() => new RestClient(Url, configureSerialization: s => s.UseNewtonsoftJson());
     }
 }

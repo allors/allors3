@@ -9,11 +9,10 @@ namespace Allors.Database.Configuration
     using Database.Derivations;
     using Derivations.Default;
     using Domain;
-    using Microsoft.AspNetCore.Http;
 
     public class TestDatabaseServices : DatabaseServices
     {
-        public TestDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
+        public TestDatabaseServices(Engine engine) : base(engine) { }
 
         protected override IPasswordHasher CreatePasswordHasher() => new TestPasswordHasher();
 

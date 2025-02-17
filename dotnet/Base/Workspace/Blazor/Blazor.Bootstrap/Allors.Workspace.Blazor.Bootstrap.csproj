@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorStrap" Version="5.1.102.51923" />
-    <PackageReference Include="BlazorStrap.V5" Version="5.1.102.51723" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.1" />
+    <PackageReference Include="BlazorStrap" Version="5.2.103.250102" />
+    <PackageReference Include="BlazorStrap.V5" Version="5.2.103.122024" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>

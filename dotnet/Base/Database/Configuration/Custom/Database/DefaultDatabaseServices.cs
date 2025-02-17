@@ -9,11 +9,10 @@ namespace Allors.Database.Configuration
     using Database.Derivations;
     using Derivations.Default;
     using Domain;
-    using Microsoft.AspNetCore.Http;
 
     public class DefaultDatabaseServices : DatabaseServices
     {
-        public DefaultDatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null) : base(engine, httpContextAccessor) { }
+        public DefaultDatabaseServices(Engine engine) : base(engine) { }
 
         protected override IPasswordHasher CreatePasswordHasher() => new PasswordHasher();
 

@@ -75,7 +75,7 @@ namespace Allors.Workspace.Adapters.Remote.ResthSharp
 
         internal async Task<T> PostOnce<T>(Uri uri, object data)
         {
-            var request = new RestRequest(uri, Method.POST, DataFormat.Json);
+            var request = new RestRequest(uri, Method.Post);
             if (data != null)
             {
                 request.AddJsonBody(data);

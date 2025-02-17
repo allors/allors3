@@ -12,14 +12,11 @@ namespace Allors.Database.Configuration
     using Derivations.Default;
     using Domain;
     using Meta;
-    using Microsoft.AspNetCore.Http;
     using Ranges;
     using Services;
 
     public abstract class DatabaseServices : IDatabaseServices
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
-
         private IRanges<long> ranges;
 
         private IMetaCache metaCache;
@@ -60,10 +57,9 @@ namespace Allors.Database.Configuration
 
         private IWorkspaceMask workspaceMask;
 
-        protected DatabaseServices(Engine engine, IHttpContextAccessor httpContextAccessor = null)
+        protected DatabaseServices(Engine engine)
         {
             this.Engine = engine;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         internal IDatabase Database { get; private set; }
