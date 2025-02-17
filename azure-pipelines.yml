@@ -26,8 +26,8 @@ stages:
           target: 'CiDotnetCoreWorkspaceLocalTest'
         core_workspace_remote_json_systemtext:
           target: 'CiDotnetCoreWorkspaceRemoteJsonSystemTextTest'
-        core_workspace_remote_json_restsharp:
-          target: 'CiDotnetCoreWorkspaceRemoteJsonRestSharpTest'
+        core_workspace_remote_json_newtonsoft:
+          target: 'CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest'
         base_database:
           target: 'CiDotnetBaseDatabaseTest'
         apps_database:

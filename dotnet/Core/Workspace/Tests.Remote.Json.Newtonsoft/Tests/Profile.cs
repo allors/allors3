@@ -6,20 +6,19 @@
 namespace Tests.Workspace.Remote
 {
     using System;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using Allors.Ranges;
     using Allors.Workspace;
     using Allors.Workspace.Adapters;
-    using Allors.Workspace.Adapters.Remote.ResthSharp;
     using Allors.Workspace.Derivations;
     using Allors.Workspace.Domain;
     using Allors.Workspace.Meta;
     using Allors.Workspace.Meta.Lazy;
-    using RestSharp;
-    using RestSharp.Serializers.NewtonsoftJson;
     using Xunit;
     using Configuration = Allors.Workspace.Adapters.Remote.Configuration;
-    using DatabaseConnection = Allors.Workspace.Adapters.Remote.ResthSharp.DatabaseConnection;
+    using DatabaseConnection = Allors.Workspace.Adapters.Remote.Newtonsoft.DatabaseConnection;
+    using IWorkspaceServices = Allors.Workspace.IWorkspaceServices;
 
     public class Profile : IProfile
     {
@@ -28,11 +27,24 @@ namespace Tests.Workspace.Remote
         public const string SetupUrl = "Test/Setup?population=full";
         public const string LoginUrl = "TestAuthentication/Token";
 
-        private readonly Configuration configuration;
+        private readonly Func<IWorkspaceServices> servicesBuilder;
         private readonly IdGenerator idGenerator;
         private readonly DefaultRanges<long> defaultRanges;
+        private readonly Configuration configuration;
 
-        private Client client;
+        private HttpClient httpClient;
+
+        public Profile()
+        {
+            this.servicesBuilder = () => new WorkspaceServices();
+            this.idGenerator = new IdGenerator();
+            this.defaultRanges = new DefaultStructRanges<long>();
+
+            var metaPopulation = new MetaBuilder().Build();
+            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
+            var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
+            this.configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
+        }
 
         IWorkspace IProfile.Workspace => this.Workspace;
 
@@ -40,27 +52,15 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace Workspace { get; private set; }
 
-        public M M => this.Workspace.Services.Get<M>();
-
-        public Profile()
-        {
-            var metaPopulation = new MetaBuilder().Build();
-            var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-            var rules = new IRule[] { new PersonSessionFullNameRule(metaPopulation) };
-            this.configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
-            this.idGenerator = new IdGenerator();
-            this.defaultRanges = new DefaultStructRanges<long>();
-        }
+        public M M => ((IWorkspaceServices)this.Workspace.Services).Get<M>();
 
         public async Task InitializeAsync()
         {
-            var request = new RestRequest($"{Url}{SetupUrl}", RestSharp.Method.Get);
-            var restClient = this.CreateRestClient();
-            var response = await restClient.ExecuteAsync(request);
-            Assert.True(response.IsSuccessful);
+            this.httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };
+            var response = await this.httpClient.GetAsync(SetupUrl);
+            Assert.True(response.IsSuccessStatusCode);
 
-            this.client = new Client(this.CreateRestClient);
-            this.DatabaseConnection = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator, this.defaultRanges);
+            this.DatabaseConnection = new DatabaseConnection(this.configuration, this.servicesBuilder, this.httpClient, this.idGenerator, this.defaultRanges);
             this.Workspace = this.DatabaseConnection.CreateWorkspace();
 
             await this.Login("administrator");
@@ -70,7 +70,7 @@ namespace Tests.Workspace.Remote
 
         public IWorkspace CreateExclusiveWorkspace()
         {
-            var database = new DatabaseConnection(this.configuration, () => new WorkspaceServices(), this.client, this.idGenerator, this.defaultRanges);
+            var database = new DatabaseConnection(this.configuration, this.servicesBuilder, this.httpClient, this.idGenerator, this.defaultRanges);
             return database.CreateWorkspace();
         }
 
@@ -79,10 +79,8 @@ namespace Tests.Workspace.Remote
         public async Task Login(string user)
         {
             var uri = new Uri(LoginUrl, UriKind.Relative);
-            var response = await this.client.Login(uri, user, null);
+            var response = await this.DatabaseConnection.Login(uri, user, null);
             Assert.True(response);
         }
-
-        private IRestClient CreateRestClient() => new RestClient(Url, configureSerialization: s => s.UseNewtonsoftJson());
     }
 }

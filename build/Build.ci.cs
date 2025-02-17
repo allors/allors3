@@ -26,9 +26,9 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonSystemTextTest);
 
-    private Target CiDotnetCoreWorkspaceRemoteJsonRestSharpTest => _ => _
+    private Target CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
         .DependsOn(Reset)
-        .DependsOn(DotnetCoreWorkspaceRemoteJsonRestSharpTest);
+        .DependsOn(DotnetCoreWorkspaceRemoteJsonNewtonsoftTest);
 
     private Target CiDotnetBaseDatabaseTest => _ => _
         .DependsOn(Reset)

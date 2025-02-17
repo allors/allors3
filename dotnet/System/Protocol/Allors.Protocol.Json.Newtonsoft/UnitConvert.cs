@@ -3,7 +3,7 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Protocol.Json.RestSharp
+namespace Allors.Protocol.Json.Newtonsoft
 {
     using System;
     using System.Collections;

@@ -125,7 +125,7 @@ partial class Build
 
         });
 
-    private Target DotnetCoreWorkspaceRemoteJsonRestSharpTest => _ => _
+    private Target DotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
         .DependsOn(DotnetCoreResetDatabase)
@@ -137,8 +137,8 @@ partial class Build
                 await server.Ready();
 
                 DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceTestsRemoteJsonRestSharp)
-                    .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsRemoteJsonRestSharp.trx")
+                    .SetProjectFile(Paths.DotnetCoreWorkspaceTestsRemoteNewtonsoftSharp)
+                    .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsRemoteJsonNewtonsoft.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
         });
@@ -152,7 +152,7 @@ partial class Build
     private Target DotnetCoreWorkspaceTest => _ => _
         .DependsOn(DotnetCoreWorkspaceLocalTest)
         .DependsOn(DotnetCoreWorkspaceRemoteJsonSystemTextTest)
-        .DependsOn(DotnetCoreWorkspaceRemoteJsonRestSharpTest);
+        .DependsOn(DotnetCoreWorkspaceRemoteJsonNewtonsoftTest);
 
     private Target DotnetCoreTest => _ => _
         .DependsOn(DotnetCoreDatabaseTest)
