@@ -1,5 +1,5 @@
-// <copyright file="SerialisedItemTests.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="SerialisedItemTests.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
@@ -193,7 +193,7 @@ namespace Allors.Database.Domain.Tests
         {
             var part = new UnifiedGoodBuilder(this.Transaction).WithInventoryItemKind(new InventoryItemKinds(this.Transaction).Serialised).Build();
             var supplier = new OrganisationBuilder(this.Transaction).Build();
-            new SupplierOfferingBuilder(this.Transaction).WithPart(part).WithSupplier(supplier).Build(); 
+            new SupplierOfferingBuilder(this.Transaction).WithPart(part).WithSupplier(supplier).Build();
 
             var serialisedItem = new SerialisedItemBuilder(this.Transaction).Build();
             this.Derive();

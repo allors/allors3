@@ -1,5 +1,5 @@
-// <copyright file="Domain.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Domain.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain
             foreach (var @this in matches.Cast<SalesOrder>().Where(v => v.SalesOrderState.IsProvisional))
             {
                 @this.DerivedIrpfRegime = @this.AssignedIrpfRegime;
-                
+
                 if (@this.ExistOrderDate)
                 {
                     @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));

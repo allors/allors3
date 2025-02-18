@@ -1,5 +1,5 @@
-// <copyright file="Party.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Party.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -58,7 +58,7 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         TelecommunicationsNumber OrderInquiriesFax { get; set; }
-        
+
         #region Allors
         [Id("25068a0e-15f7-41bd-b16d-a7dd51ca9aa3")]
         #endregion

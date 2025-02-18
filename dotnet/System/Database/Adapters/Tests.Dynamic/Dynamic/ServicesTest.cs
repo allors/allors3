@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ServicesTest.cs" company="Allors bvba">
-//   Copyright 2002-2009 Allors bvba.
+// <copyright file="ServicesTest.cs" company="Allors bv">
+//   Copyright 2002-2009 Allors bv.
 // Dual Licensed under
 //   a) the Lesser General Public Licence v3 (LGPL)
 //   b) the Allors License
@@ -3047,7 +3047,7 @@ namespace Allors.Database.Adapters
 
                                             this.GetTransaction().Commit();
 
-                                            // instantiate both , set subject 
+                                            // instantiate both , set subject
                                             subject = this.Instantiate(id, manyFlag);
                                             proxy = this.Instantiate(id, manyFlag);
                                             subject.Strategy.SetUnitRole(testRoleType.RoleType, valueA);
@@ -3057,7 +3057,7 @@ namespace Allors.Database.Adapters
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
 
-                                            // instantiate both , set proxy 
+                                            // instantiate both , set proxy
                                             subject = this.Instantiate(id, manyFlag);
                                             proxy = this.Instantiate(id, manyFlag);
                                             proxy.Strategy.SetUnitRole(testRoleType.RoleType, valueB);
@@ -3078,7 +3078,7 @@ namespace Allors.Database.Adapters
                                             Assert.False(subject.Strategy.ExistRole(testRoleType.RoleType));
                                             Assert.False(proxy.Strategy.ExistRole(testRoleType.RoleType));
 
-                                            // instantiate both , set proxy & subject  
+                                            // instantiate both , set proxy & subject
                                             subject = this.Instantiate(id, manyFlag);
                                             proxy = this.Instantiate(id, manyFlag);
                                             proxy.Strategy.SetUnitRole(testRoleType.RoleType, valueB);

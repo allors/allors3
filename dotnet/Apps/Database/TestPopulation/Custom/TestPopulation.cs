@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TestPopulation.cs" company="Allors bvba">
-//   Copyright 2002-2012 Allors bvba.
+// <copyright file="TestPopulation.cs" company="Allors bv">
+//   Copyright 2002-2012 Allors bv.
 //
 // Dual Licensed under
 //   a) the General Public Licence v3 (GPL)

@@ -1,5 +1,5 @@
-// <copyright file="RequestItemVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="RequestItemVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -32,7 +32,7 @@ namespace Allors.Repository
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Derived]
-        
+
         [Workspace(Default)]
         public RequestItemState RequestItemState { get; set; }
 
@@ -58,7 +58,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("8A087F8A-6E70-45F2-9E4D-65465D0B8939")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -68,7 +68,7 @@ namespace Allors.Repository
         [Id("D6CF8624-A47B-44D8-BDA2-208EBFF7D55A")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        
+
         [Workspace(Default)]
         public Requirement[] Requirements { get; set; }
 
@@ -76,7 +76,7 @@ namespace Allors.Repository
         [Id("7285DB03-008F-45BF-9449-A596B22494B0")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public Deliverable Deliverable { get; set; }
 
@@ -84,7 +84,7 @@ namespace Allors.Repository
         [Id("DD74F2CE-9738-41D8-B683-94BFCC30B604")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public ProductFeature ProductFeature { get; set; }
 
@@ -92,7 +92,7 @@ namespace Allors.Repository
         [Id("6CA576BB-FD8A-43E2-B504-23BE0237072B")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public NeededSkill NeededSkill { get; set; }
 
@@ -100,7 +100,7 @@ namespace Allors.Repository
         [Id("C8D8AB3A-42F9-40C2-951A-F806EC16A3E9")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public Product Product { get; set; }
 

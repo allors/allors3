@@ -1,5 +1,5 @@
-// <copyright file="Permission.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Permission.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -59,7 +59,7 @@ namespace Allors.Database.Domain
         public Operations Operation => Operations.Write;
 
         public bool InWorkspace(string workspaceName) => this.Class.WorkspaceNames.Contains(workspaceName) && this.RelationType.WorkspaceNames.Contains(workspaceName);
-        
+
         public override string ToString()
         {
             var toString = new StringBuilder();

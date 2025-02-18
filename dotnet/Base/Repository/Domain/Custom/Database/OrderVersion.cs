@@ -1,5 +1,5 @@
-// <copyright file="OrderVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="OrderVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -28,14 +28,14 @@ namespace Allors.Repository
 
         #region Allors
         [Id("88BE9AFA-122A-469B-BD47-388ECC835EAB")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         public OrderState OrderState { get; set; }
 
         #region Allors
         [Id("F144557C-B63C-49F7-B713-F2493BCA1E55")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
         public OrderLine[] OrderLines { get; set; }

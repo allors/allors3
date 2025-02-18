@@ -1,5 +1,5 @@
-// <copyright file="WorkEffortInventoryProducedVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="WorkEffortInventoryProducedVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -63,7 +63,7 @@ namespace Allors.Repository
         [Id("C1D81C5C-2BCF-4971-AFB7-146A2B4D7DEB")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        
+
         [Derived]
         [Workspace(Default)]
         public InventoryItemTransaction[] InventoryItemTransactions { get; set; }

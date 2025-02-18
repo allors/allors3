@@ -1,5 +1,5 @@
-// <copyright file="CommunicationEventVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="CommunicationEventVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -173,7 +173,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("B5DF3131-04F2-4DEF-BC41-2581F3CC5923")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -181,7 +181,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("C7CE474E-1677-4EF2-ABF9-CE5FF26CA075")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -189,7 +189,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("48329980-DACF-436E-A8B2-2E46CE0B07C3")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]

@@ -1,5 +1,5 @@
-// <copyright file="DatabaseObject.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="DatabaseObject.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -186,7 +186,7 @@ namespace Allors.Workspace.Adapters
         {
             /*                        delete
             *
-            *   A ----- R    ->     A       R  =   A       R 
+            *   A ----- R    ->     A       R  =   A       R
             */
 
             // A <---- R
@@ -226,7 +226,7 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
             var previousRoles = this.store.GetComposites(association, roleType);
 
-            // R in PR 
+            // R in PR
             if (previousRoles.Contains(role))
             {
                 return;
@@ -259,7 +259,7 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
             var previousRoles = this.store.GetComposites(association, roleType);
 
-            // R in PR 
+            // R in PR
             if (previousRoles.Contains(role))
             {
                 return;
@@ -281,7 +281,7 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
             var roles = this.store.GetComposites(association, roleType);
 
-            // R not in PR 
+            // R not in PR
             if (!roles.Contains(role))
             {
                 return;
@@ -300,7 +300,7 @@ namespace Allors.Workspace.Adapters
             var associationType = roleType.AssociationType;
             var roles = this.store.GetComposites(association, roleType);
 
-            // R not in PR 
+            // R not in PR
             if (!roles.Contains(role))
             {
                 return;

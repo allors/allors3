@@ -1,5 +1,5 @@
-// <copyright file="PersonTests.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="PersonTests.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 // <summary>
@@ -416,7 +416,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedExternalAccountingTransactionFromPartyDeriveDeletePermission()
         {
@@ -521,7 +521,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
        [Fact]
         public void OnChangedEngagementPlacingPartyDeriveDeletePermission()
         {
@@ -613,7 +613,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPurchaseInvoiceShipToCustomerDeriveDeletePermission()
         {
@@ -628,13 +628,13 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPurchaseInvoiceBillToEndCustomerDeriveDeletePermission()
         {
             var person = new PersonBuilder(this.Transaction).Build();
             this.Derive();
-            
+
             var purchaseInvoice = new PurchaseInvoiceBuilder(this.Transaction).Build();
             this.Derive();
 
@@ -643,7 +643,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPurchaseInvoiceShipToEndCustomerDeriveDeletePermission()
         {
@@ -658,7 +658,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedRequestOriginatorDeriveDeletePermission()
         {
@@ -688,7 +688,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedRequirementNeededForDeriveDeletePermission()
         {
@@ -763,7 +763,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedSalesInvoiceShipToEndCustomerDeriveDeletePermission()
         {
@@ -823,7 +823,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedSalesOrderPlacingCustomerDeriveDeletePermission()
         {
@@ -838,7 +838,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedSalesOrderItemAssignedShipToPartyDeriveDeletePermission()
         {
@@ -853,7 +853,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedSerialisedItemSuppliedByDeriveDeletePermission()
         {
@@ -868,7 +868,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedSerialisedItemOwnedByDeriveDeletePermission()
         {
@@ -883,7 +883,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedSerialisedItemRentedByDeriveDeletePermission()
         {
@@ -898,7 +898,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedWorkEffortCustomerDeriveDeletePermission()
         {
@@ -913,7 +913,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedWorkEffortPartyAssignmentPartyDeletePermission()
         {
@@ -943,7 +943,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedCommunicationEventOwnerDeletePermission()
         {
@@ -958,7 +958,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedEngagementItemCurrentAssignedProfessionalDeletePermission()
         {
@@ -973,7 +973,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedEmploymentEmployeeDeletePermission()
         {
@@ -1063,7 +1063,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedOwnCreditCardOwnerDeletePermission()
         {
@@ -1078,7 +1078,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPerformanceNoteEmployeeDeletePermission()
         {
@@ -1093,7 +1093,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPerformanceNoteGivenByManagerDeletePermission()
         {
@@ -1108,7 +1108,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPerformanceReviewEmployeeDeletePermission()
         {
@@ -1123,7 +1123,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPerformanceReviewManagerDeletePermission()
         {
@@ -1138,7 +1138,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPickListPickerDeletePermission()
         {
@@ -1153,7 +1153,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, person.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedPositionFulfillmentPersonDeletePermission()
         {

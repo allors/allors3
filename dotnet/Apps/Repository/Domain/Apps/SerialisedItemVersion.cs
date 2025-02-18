@@ -1,5 +1,5 @@
-// <copyright file="SerialisedItemVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="SerialisedItemVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -31,7 +31,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("4EE6B72D-B1EC-4586-8666-1FE8006F147A")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -39,7 +39,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("60cf90a6-7049-4692-ac73-1394478b0fb6")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -53,7 +53,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("94F10411-FDDA-4A7D-8617-AF7BFE36BE9F")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
         [Workspace(Default)]
@@ -61,7 +61,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("7E46E5D7-FBFB-4D7A-9EC6-522FBE37826D")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]

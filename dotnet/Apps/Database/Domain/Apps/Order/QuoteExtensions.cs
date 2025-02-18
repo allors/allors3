@@ -1,5 +1,5 @@
-// <copyright file="QuoteExtensions.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="QuoteExtensions.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -46,7 +46,7 @@ namespace Allors.Database.Domain
                         || @this.QuoteState.Equals(new QuoteStates(@this.Strategy.Transaction).Rejected))
                        && !@this.ExistRequest;
             }
-        } 
+        }
 
         public static void AppsDelete(this Quote @this, DeletableDelete method)
         {

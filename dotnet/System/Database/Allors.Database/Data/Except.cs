@@ -1,5 +1,5 @@
-// <copyright file="Except.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Except.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace Allors.Database.Data
 {
     using System.Linq;
     using Meta;
-    
+
 
     public class Except : IExtentOperator
     {
@@ -18,7 +18,7 @@ namespace Allors.Database.Data
         public IExtent[] Operands { get; set; }
 
         public Sort[] Sorting { get; set; }
-        
+
         bool IExtent.HasMissingArguments(IArguments arguments) => this.Operands.Any(v => v.HasMissingArguments(arguments));
 
         Database.Extent IExtent.Build(ITransaction transaction, IArguments arguments)

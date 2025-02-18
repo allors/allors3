@@ -1,5 +1,5 @@
-// <copyright file="Person.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Person.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -324,7 +324,7 @@ namespace Allors.Repository
 
         /// <summary>
         /// Indicates how often a Person gets email from the system.
-        /// <remarks>This value is set manually.</remarks> 
+        /// <remarks>This value is set manually.</remarks>
         /// <remarks>Possible values are: No Emails (Application only), Send emails at once,  Send daily digest emails, Send weekly digest emails.</remarks>
         /// </summary>
         #region Allors

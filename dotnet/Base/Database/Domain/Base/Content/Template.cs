@@ -1,5 +1,5 @@
-// <copyright file="Template.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Template.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -13,7 +13,7 @@ namespace Allors.Database.Domain
     public partial class Template
     {
         public object Object => this.Strategy.Transaction.Database.Services.Get<ITemplateObjectCache>().Get(this);
-            
+
         public byte[] Render(object model, IDictionary<string, byte[]> images = null)
         {
             var properties = model.GetType().GetProperties();

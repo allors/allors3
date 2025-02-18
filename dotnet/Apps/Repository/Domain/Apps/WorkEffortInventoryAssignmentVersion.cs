@@ -1,5 +1,5 @@
-// <copyright file="WorkEffortInventoryAssignmentVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="WorkEffortInventoryAssignmentVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -34,7 +34,7 @@ namespace Allors.Repository
         [Id("1B695715-456E-4BE6-8B42-0386928BBE07")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public WorkEffort Assignment { get; set; }
 
@@ -45,7 +45,7 @@ namespace Allors.Repository
         [Id("F1811C2A-9A4E-4949-9008-E3519EA4AB51")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public InventoryItem InventoryItem { get; set; }
 
@@ -78,7 +78,7 @@ namespace Allors.Repository
         [Id("30EF280B-A7EA-400D-BA36-2DCD242C96F2")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        
+
         [Workspace(Default)]
         public InventoryItemTransaction[] InventoryItemTransactions { get; set; }
 

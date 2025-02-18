@@ -1,6 +1,6 @@
 
-// <copyright file="OrderTermTests.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="OrderTermTests.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
@@ -313,7 +313,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, nonUnifiedGood.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedMarketingPackageProductDeriveDeletePermission()
         {
@@ -403,7 +403,7 @@ namespace Allors.Database.Domain.Tests
 
             Assert.Contains(this.deleteRevocation, nonUnifiedGood.Revocations);
         }
-        
+
         [Fact]
         public void OnChangedSalesOrderItemProductDeriveDeletePermission()
         {

@@ -1,5 +1,5 @@
-// <copyright file="Person.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Person.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -106,7 +106,7 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         public DateTime BirthDate { get; set; }
-        
+
         #region Allors
         [Id("4F2E08E1-2892-41F9-A71F-4148AD9803F4")]
         [Size(256)]

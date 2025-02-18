@@ -1,5 +1,5 @@
-// <copyright file="Profile.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Profile.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -137,8 +137,8 @@ END
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = @"
-SELECT COUNT(*) 
-FROM information_schema.tables 
+SELECT COUNT(*)
+FROM information_schema.tables
 WHERE table_name = @tableName AND table_schema = @tableSchema";
 
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
@@ -235,7 +235,7 @@ and col_name(idx.object_id,idxcol.column_id) = @columnName";
                     command.CommandText = @"
 SELECT count(*)
 FROM INFORMATION_SCHEMA.ROUTINES
-WHERE routine_schema = @routineSchema 
+WHERE routine_schema = @routineSchema
 AND routine_name=@routineName";
                     command.Parameters.Add("@routineSchema", SqlDbType.NVarChar).Value = schema;
                     command.Parameters.Add("@routineName", SqlDbType.NVarChar).Value = procedure;
@@ -258,8 +258,8 @@ AND routine_name=@routineName";
 SELECT count(*)
 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 WHERE OBJECTPROPERTY(OBJECT_ID(constraint_name), 'IsPrimaryKey') = 1
-AND table_name = @tableName 
-AND table_schema = @tableSchema 
+AND table_name = @tableName
+AND table_schema = @tableSchema
 AND column_name=@columnName";
                     command.Parameters.Add("@tableName", SqlDbType.NVarChar).Value = table;
                     command.Parameters.Add("@tableSchema", SqlDbType.NVarChar).Value = schema;

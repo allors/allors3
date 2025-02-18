@@ -1,5 +1,5 @@
-// <copyright file="VatSystems.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="VatSystems.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -28,7 +28,7 @@ namespace Allors.Database.Domain
             var localisedName = new LocalisedTextAccessor(this.Meta.LocalisedNames);
 
             // Account for receipts and expenses in period where money is actually transferred.
-            // Primarily used when goods/services (> 90%) are delivered to private customers   
+            // Primarily used when goods/services (> 90%) are delivered to private customers
             merge(CashId, v =>
             {
                 v.Name = "Cash management scheme";

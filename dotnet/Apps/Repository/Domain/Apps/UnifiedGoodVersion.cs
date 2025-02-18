@@ -1,5 +1,5 @@
-// <copyright file="UnifiedGoodVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="UnifiedGoodVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -32,7 +32,7 @@ namespace Allors.Repository
         [Id("147f2a6c-af07-44a4-bb9f-ca6f7d3e1c2c")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        
+
         [Workspace(Default)]
         public Product[] Variants { get; set; }
 

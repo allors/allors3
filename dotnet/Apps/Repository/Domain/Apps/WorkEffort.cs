@@ -1,5 +1,5 @@
-// <copyright file="WorkEffort.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="WorkEffort.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -248,8 +248,8 @@ namespace Allors.Repository
 
         #region Allors
         [Id("534a72d6-4b54-466c-a041-733b2a28594f")]
-        
-        
+
+
         #endregion
         [Derived]
         [Required]
@@ -260,8 +260,8 @@ namespace Allors.Repository
 
         #region Allors
         [Id("7aa98d1d-41bb-4ae7-9b6f-9cedaff4248a")]
-        
-        
+
+
         #endregion
         [Derived]
         [Required]
@@ -272,8 +272,8 @@ namespace Allors.Repository
 
         #region Allors
         [Id("7768e1d0-4b7b-41c3-a403-83ddf7117d16")]
-        
-        
+
+
         #endregion
         [Derived]
         [Required]
@@ -314,8 +314,8 @@ namespace Allors.Repository
 
         #region Allors
         [Id("e9d47579-1eb2-4023-953d-64b6826e82ac")]
-        
-        
+
+
         #endregion
         [Derived]
         [Required]

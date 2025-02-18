@@ -1,6 +1,6 @@
 
-// <copyright file="PurchaseInvoiceItem.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="PurchaseInvoiceItem.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -210,7 +210,7 @@ namespace Allors.Repository
 
         public void Delete() { }
 
-        
+
         #endregion
 
         #region Allors

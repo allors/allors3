@@ -1,5 +1,5 @@
-// <copyright file="Strategy.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Strategy.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 // <summary>
@@ -700,7 +700,7 @@ namespace Allors.Database.Adapters.Sql
         {
             /*                        delete
              *
-             *   A ----- R    ->     A       R  =   A       R 
+             *   A ----- R    ->     A       R  =   A       R
              */
 
             // A <---- R
@@ -757,7 +757,7 @@ namespace Allors.Database.Adapters.Sql
              */
             var previousRoleIds = this.GetCompositesRole(roleType);
 
-            // R in PR 
+            // R in PR
             if (previousRoleIds.Contains(role.ObjectId))
             {
                 return;
@@ -789,7 +789,7 @@ namespace Allors.Database.Adapters.Sql
              */
             var previousRoleIds = this.GetCompositesRole(roleType);
 
-            // R in PR 
+            // R in PR
             if (previousRoleIds.Contains(role.ObjectId))
             {
                 return;
@@ -816,7 +816,7 @@ namespace Allors.Database.Adapters.Sql
         {
             var previousRoleIds = this.GetCompositesRole(roleType);
 
-            // R not in PR 
+            // R not in PR
             if (!previousRoleIds.Contains(role.ObjectId))
             {
                 return;
@@ -838,7 +838,7 @@ namespace Allors.Database.Adapters.Sql
         {
             var previousRoleIds = this.GetCompositesRole(roleType);
 
-            // R not in PR 
+            // R not in PR
             if (!previousRoleIds.Contains(role.ObjectId))
             {
                 return;

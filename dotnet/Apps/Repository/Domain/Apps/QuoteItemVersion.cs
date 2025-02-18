@@ -1,5 +1,5 @@
-// <copyright file="QuoteItemVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="QuoteItemVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -79,7 +79,7 @@ namespace Allors.Repository
         [Id("9E8A5EBF-AE58-4F04-B29C-2A813713C52E")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public UnitOfMeasure UnitOfMeasure { get; set; }
 
@@ -87,7 +87,7 @@ namespace Allors.Repository
         [Id("9BD1DB0E-5215-4764-8C1D-C88B98917D5B")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public ProductFeature ProductFeature { get; set; }
 
@@ -95,7 +95,7 @@ namespace Allors.Repository
         [Id("14e62d23-d178-4445-81f2-f984447080d8")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public SerialisedItem SerialisedItem { get; set; }
 
@@ -111,7 +111,7 @@ namespace Allors.Repository
         [Id("FCA1614D-45CD-4295-9911-B9464EA9A4C4")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public Skill Skill { get; set; }
 
@@ -119,7 +119,7 @@ namespace Allors.Repository
         [Id("E4C53A94-52F4-4A0D-8204-B315EECB16E2")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public WorkEffort WorkEffort { get; set; }
 
@@ -127,7 +127,7 @@ namespace Allors.Repository
         [Id("932A2BF0-AA86-431B-BC77-818E1EC5A837")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        
+
         [Workspace(Default)]
         public SalesTerm[] SalesTerms { get; set; }
 
@@ -141,7 +141,7 @@ namespace Allors.Repository
         [Id("24B8A678-F28D-4041-9514-490CDC1FDE7D")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public RequestItem RequestItem { get; set; }
 
@@ -149,7 +149,7 @@ namespace Allors.Repository
         [Id("2a181149-58cd-4b82-86eb-b2f28e439481")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public IrpfRegime DerivedIrpfRegime { get; set; }
 
@@ -157,7 +157,7 @@ namespace Allors.Repository
         [Id("81b88b1b-3718-48ed-bace-174b65aa83bc")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public IrpfRegime AssignedIrpfRegime { get; set; }
 
@@ -165,7 +165,7 @@ namespace Allors.Repository
         [Id("17f50756-7c9f-404c-974b-4af5b30a65d1")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public IrpfRate IrpfRate { get; set; }
 

@@ -1,5 +1,5 @@
-// <copyright file="SupplierOfferingVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="SupplierOfferingVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -32,7 +32,7 @@ namespace Allors.Repository
         [Id("cbfc7cb5-3c7d-43e5-a794-0d8cd6c85fc5")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public Organisation Supplier { get; set; }
 
@@ -40,7 +40,7 @@ namespace Allors.Repository
         [Id("e3a81cbe-1e90-4db8-8587-a8e0ff6e1619")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         public Part Part { get; set; }
 

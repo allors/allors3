@@ -1,5 +1,5 @@
-// <copyright file="Initialization.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Initialization.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -81,7 +81,7 @@ set allow_snapshot_isolation on";
                 connection.Close();
             }
         }
-        
+
         private void CreateSchema()
         {
             if (!this.validation.Schema.Exists)

@@ -1,5 +1,5 @@
-// <copyright file="RequestVersion.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="RequestVersion.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -17,7 +17,7 @@ namespace Allors.Repository
     {
         #region Allors
         [Id("eacf2758-d19a-4ea0-808e-b647a758f493")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -25,7 +25,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("649F4856-6B08-4AC1-B4CB-87A1CCAFAAF8")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.OneToOne)]
         [Workspace(Default)]
@@ -61,7 +61,7 @@ namespace Allors.Repository
         [Id("A85396E8-4B3A-4B2F-AE61-EA8D87418DAD")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]
-        
+
         [Workspace(Default)]
         RequestItem[] RequestItems { get; set; }
 
@@ -76,7 +76,7 @@ namespace Allors.Repository
         [Id("9ECA802A-F588-4241-BC4C-8083D56DFE1E")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
-        
+
         [Workspace(Default)]
         RespondingParty[] RespondingParties { get; set; }
 
@@ -84,13 +84,13 @@ namespace Allors.Repository
         [Id("7A6D4128-55C4-4E48-A3A0-07EF25ACF85E")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
-        
+
         [Workspace(Default)]
         Party Originator { get; set; }
 
         #region Allors
         [Id("A15D9E5E-2300-4618-B3F1-F572B1729231")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
@@ -98,7 +98,7 @@ namespace Allors.Repository
 
         #region Allors
         [Id("6ED70134-E2A9-4F73-A300-78DFC79F0004")]
-        
+
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]

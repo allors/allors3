@@ -1,5 +1,5 @@
-// <copyright file="DemoTests.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="DemoTests.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
             new Setup(database, config).Apply();
 
             transaction.Rollback();
- 
+
             var objects2 = new Objects(transaction).Extent().ToArray();
 
             var diff = objects2.Except(objects1).ToArray();

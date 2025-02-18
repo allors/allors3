@@ -1,5 +1,5 @@
-// <copyright file="C2.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="C2.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -136,7 +136,7 @@ namespace Allors.Repository
         public C1 I12C1Many2One { get; set; }
 
         public DateTime I12AllorsDateTime { get; set; }
-        
+
         public bool ChangedRolePingS12 { get; set; }
         public bool ChangedRolePongS12 { get; set; }
         public bool ChangedRolePingI12 { get; set; }
@@ -163,7 +163,7 @@ namespace Allors.Repository
         [Workspace(Default)]
         #endregion
         public C1 C2C1One2One { get; set; }
-        
+
         #region Allors
         [Id("1444d919-6ca1-4642-8d18-9d955c817581")]
         [Workspace(Default)]

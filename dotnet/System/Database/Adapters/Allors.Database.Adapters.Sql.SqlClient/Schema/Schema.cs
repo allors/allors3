@@ -1,5 +1,5 @@
-// <copyright file="Schema.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Schema.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -147,8 +147,8 @@ where tt.schema_id = SCHEMA_ID(@domainSchema)";
                     // Procedures
                     cmdText = @"
 SELECT o.name as routine_name, m.definition as routine_definition
-    FROM sys.objects AS o     
-	INNER JOIN sys.schemas AS s ON o.[schema_id] = s.[schema_id]     
+    FROM sys.objects AS o
+	INNER JOIN sys.schemas AS s ON o.[schema_id] = s.[schema_id]
 	INNER JOIN sys.sql_modules AS m ON o.[object_id] = m.[object_id]
     WHERE OBJECT_SCHEMA_NAME(o.[object_id]) = @routineSchema
     AND o.[type] IN ('P')";

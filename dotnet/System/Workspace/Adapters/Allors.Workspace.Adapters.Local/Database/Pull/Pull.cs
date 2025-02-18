@@ -1,5 +1,5 @@
-// <copyright file="LocalPullResult.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="LocalPullResult.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -31,7 +31,7 @@ namespace Allors.Workspace.Adapters.Local
         {
             this.Workspace = session.Workspace;
             this.Transaction = this.Workspace.DatabaseConnection.CreateTransaction();
-            
+
             var databaseServices = this.Workspace.DatabaseConnection.DatabaseServices;
             this.AllowedClasses = databaseServices.Get<IMetaCache>()
                 .GetWorkspaceClasses(this.Workspace.DatabaseConnection.Configuration.Name);
@@ -191,7 +191,7 @@ namespace Allors.Workspace.Adapters.Local
 
                 if (tree != null)
                 {
-                    // TODO: 
+                    // TODO:
                     //var prefetchPolicy = tree.BuildPrefetchPolicy();
 
                     ICollection<Database.IObject> newCollection;

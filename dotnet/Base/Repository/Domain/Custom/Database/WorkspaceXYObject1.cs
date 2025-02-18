@@ -1,5 +1,5 @@
-// <copyright file="Data.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="Data.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace Allors.Repository
 {
     using Attributes;
     using static Workspaces;
-    
+
     #region Allors
     [Id("98C0FF20-FE92-49EB-B99D-D0008F17AE98")]
     #endregion

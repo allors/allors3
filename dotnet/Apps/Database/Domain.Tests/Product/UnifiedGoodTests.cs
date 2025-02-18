@@ -1,5 +1,5 @@
-// <copyright file="PartTests.cs" company="Allors bvba">
-// Copyright (c) Allors bvba. All rights reserved.
+// <copyright file="PartTests.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 // <summary>Defines the MediaTests type.</summary>
@@ -469,7 +469,7 @@ namespace Allors.Database.Domain.Tests
             var unifiedGood = new UnifiedGoodBuilder(this.Transaction).Build();
             this.Derive();
 
-            var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();          
+            var workEffortType = new WorkEffortTypeBuilder(this.Transaction).Build();
             this.Derive();
 
             workEffortType.ProductToProduce = unifiedGood;
