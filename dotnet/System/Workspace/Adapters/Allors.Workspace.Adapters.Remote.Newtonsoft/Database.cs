@@ -19,7 +19,6 @@ namespace Allors.Workspace.Adapters.Remote.Newtonsoft
     using Allors.Protocol.Json.Api.Sync;
     using Allors.Protocol.Json.Auth;
     using Allors.Protocol.Json.Newtonsoft;
-    using global::Newtonsoft.Json;
     using Polly;
     using Ranges;
 

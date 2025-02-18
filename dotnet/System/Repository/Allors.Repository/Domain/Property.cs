@@ -8,7 +8,6 @@ namespace Allors.Repository.Domain
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using Inflector;
     using Text;
 

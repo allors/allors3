@@ -6,7 +6,6 @@
 namespace Allors.Database.Data
 {
     using Meta;
-    using Data;
 
 
     public class Like : IRolePredicate

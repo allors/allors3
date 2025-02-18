@@ -2,7 +2,6 @@ namespace Allors.Workspace.Blazor.Bootstrap.Forms.Roles
 {
     using System;
     using Microsoft.AspNetCore.Components;
-    using Microsoft.Extensions.Options;
 
     public class ABSRadioGroupBase : RoleField
     {

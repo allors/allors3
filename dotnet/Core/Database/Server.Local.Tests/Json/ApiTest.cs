@@ -21,7 +21,6 @@ namespace Tests
     using Microsoft.Extensions.Configuration;
     using C1 = Allors.Database.Domain.C1;
     using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
-    using User = Allors.Database.Domain.User;
 
     public class ApiTest : IDisposable
     {

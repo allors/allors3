@@ -9,9 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
-    using Allors.Workspace;
     using Allors.Workspace.Data;
-    using Allors.Workspace.Derivations;
     using Allors.Workspace.Domain;
     using Xunit;
 

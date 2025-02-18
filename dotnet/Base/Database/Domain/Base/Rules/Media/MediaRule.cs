@@ -11,7 +11,6 @@ namespace Allors.Database.Domain
     using Database.Derivations;
     using Derivations.Rules;
     using DataUtils;
-    using HeyRed.Mime;
     using Meta;
 
     public class MediaRule : Rule

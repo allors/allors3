@@ -8,7 +8,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Linq;
     using Xunit;
 
     public class PartyRuleTests : DomainTest, IClassFixture<Fixture>

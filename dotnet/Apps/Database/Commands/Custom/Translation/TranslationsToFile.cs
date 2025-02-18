@@ -4,7 +4,6 @@ namespace Allors.Database.Population.Resx
     using System.IO;
     using System.Linq;
     using Database.Meta;
-    using Database.Population;
     using KGySoft.Resources;
 
     public partial class TranslationsToFile

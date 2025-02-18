@@ -14,7 +14,6 @@ namespace Allors.Database.Domain.Tests
     using Allors;
     using Database.Services;
     using Organisation = Domain.Organisation;
-    using Person = Domain.Person;
     using User = Domain.User;
 
     public class DomainTest : IDisposable

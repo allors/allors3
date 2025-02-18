@@ -22,7 +22,6 @@ namespace Allors.Database.Protocol.Json
     using Security;
     using Services;
     using Tracing;
-    using User = Domain.User;
 
     public class Api
     {

@@ -7,15 +7,12 @@ namespace Commands
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;
     using Allors.Database;
-    using Allors.Database.Derivations;
     using Allors.Database.Meta;
     using Allors.Database.Population.Resx;
-    using Allors.Database.Services;
     using CaseExtensions;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;

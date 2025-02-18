@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     using System.Globalization;
-    using System.Linq;
 
     public class SalesInvoiceItemAssignmentModel
     {

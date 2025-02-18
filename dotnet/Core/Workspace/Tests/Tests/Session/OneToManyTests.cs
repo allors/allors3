@@ -7,7 +7,6 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 {
     using System.Threading.Tasks;
     using Allors.Workspace.Domain;
-    using Allors.Workspace;
     using Xunit;
     using Allors.Workspace.Data;
     using System;

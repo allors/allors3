@@ -6,7 +6,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.Threading;
     using Xunit;
 
     [Trait("Category", "Security")]

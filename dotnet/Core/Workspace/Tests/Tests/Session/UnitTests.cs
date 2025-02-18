@@ -7,7 +7,6 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
 {
     using System;
     using System.Threading.Tasks;
-    using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;

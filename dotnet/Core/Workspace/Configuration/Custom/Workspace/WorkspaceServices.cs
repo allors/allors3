@@ -7,8 +7,6 @@ namespace Allors.Workspace
 {
     using System;
     using Configuration;
-    using Derivations;
-    using Domain;
     using Meta;
 
     public partial class WorkspaceServices : IWorkspaceServices

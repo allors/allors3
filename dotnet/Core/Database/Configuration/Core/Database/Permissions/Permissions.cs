@@ -8,7 +8,6 @@ namespace Allors.Database.Configuration
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Database.Derivations;
     using Domain;
     using Services;
 

@@ -10,7 +10,6 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation
     using Allors.Workspace.Domain;
     using Xunit;
     using Allors.Workspace.Data;
-    using Allors.Workspace;
 
     public abstract class UnitTests : Test
     {

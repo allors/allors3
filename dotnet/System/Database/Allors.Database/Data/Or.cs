@@ -6,7 +6,6 @@
 namespace Allors.Database.Data
 {
     using System.Linq;
-    using Data;
 
     public class Or : ICompositePredicate
     {

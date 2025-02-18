@@ -7,7 +7,6 @@
 namespace Allors.Database.Domain.Tests
 {
     using System.Linq;
-    using Resources;
     using Xunit;
 
     public class RgsFilterTests : DomainTest, IClassFixture<Fixture>
