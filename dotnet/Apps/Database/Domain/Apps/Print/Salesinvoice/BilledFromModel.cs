@@ -18,6 +18,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
                 this.Email = billedFrom.GeneralEmail?.ElectronicAddressString;
                 this.Website = billedFrom.InternetAddress?.ElectronicAddressString;
                 this.TaxId = billedFrom.TaxNumber;
+                this.CocNumber = billedFrom.CoCNumber;
 
                 var phone = billedFrom.BillingInquiriesPhone ?? billedFrom.GeneralPhoneNumber;
                 if (phone != null)
@@ -96,5 +97,7 @@ namespace Allors.Database.Domain.Print.SalesInvoiceModel
         public string Swift { get; }
 
         public string TaxId { get; }
+
+        public string CocNumber { get; }
     }
 }
