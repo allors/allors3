@@ -343,6 +343,13 @@ namespace Allors.Repository
         public string TaxNumber { get; set; }
 
         #region Allors
+        [Id("0ee91023-a80c-4dc8-a607-a9eaf44b3af1")]
+        #endregion
+        [Size(256)]
+        [Workspace(Default)]
+        public string CoCNumber { get; set; }
+
+        #region Allors
         [Id("a5318bd4-da7d-48bd-9d41-00c3261caa09")]
         #endregion
         [Multiplicity(Multiplicity.ManyToMany)]
