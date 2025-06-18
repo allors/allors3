@@ -64,7 +64,7 @@ namespace Allors.Database.Domain
                 }
                 else
                 {
-                    purchaseOrderItem.UnitBasePrice = new SupplierOfferings(@this.Strategy.Transaction).PurchasePrice(@this.TakenViaSupplier, @this.OrderDate, purchaseOrderItem.Part);
+                    purchaseOrderItem.UnitBasePrice = new SupplierOfferings(@this.Strategy.Transaction).PurchasePrice(@this.TakenViaSupplier, @this.OrderDate, @this.DerivedCurrency, purchaseOrderItem.Part);
                 }
 
                 if (purchaseOrderItem.ExistUnitBasePrice)

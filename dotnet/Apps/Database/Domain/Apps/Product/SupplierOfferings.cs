@@ -9,7 +9,7 @@ namespace Allors.Database.Domain
 
     public partial class SupplierOfferings
     {
-        public decimal PurchasePrice(Organisation supplier, DateTime orderDate, Part part = null)
+        public decimal PurchasePrice(Organisation supplier, DateTime orderDate, Currency toCurrency, Part part = null)
         {
             decimal price = 0;
 
@@ -21,7 +21,7 @@ namespace Allors.Database.Domain
                     {
                         if (supplierOffering.FromDate.Date <= orderDate.Date && (!supplierOffering.ExistThroughDate || supplierOffering.ThroughDate.Value.Date >= orderDate.Date))
                         {
-                            price = supplierOffering.Price;
+                            price = Currencies.ConvertCurrency(supplierOffering.Price, orderDate, supplierOffering.Currency, toCurrency);
                             break;
                         }
                     }
