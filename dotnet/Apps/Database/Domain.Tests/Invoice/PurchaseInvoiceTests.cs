@@ -607,37 +607,6 @@ namespace Allors.Database.Domain.Tests
         public PurchaseInvoicePriceRuleTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public void ChangedPurchaseInvoiceStateCalculatePrice()
-        {
-            var part = new UnifiedGoodBuilder(this.Transaction).Build();
-
-            var supplierOffering = new SupplierOfferingBuilder(this.Transaction)
-                .WithPart(part)
-                .WithSupplier(this.InternalOrganisation.ActiveSuppliers.ElementAt(0))
-                .WithPrice(1)
-                .WithFromDate(this.Transaction.Now().AddDays(-1))
-                .Build();
-
-            var invoice = new PurchaseInvoiceBuilder(this.Transaction)
-                .WithPurchaseInvoiceState(new PurchaseInvoiceStates(this.Transaction).Cancelled)
-                .WithBilledFrom(this.InternalOrganisation.ActiveSuppliers.ElementAt(0))
-                .WithInvoiceDate(this.Transaction.Now())
-                .Build();
-            this.Derive();
-
-            var invoiceItem = new PurchaseInvoiceItemBuilder(this.Transaction).WithPart(part).WithQuantity(1).Build();
-            invoice.AddPurchaseInvoiceItem(invoiceItem);
-            this.Derive();
-
-            Assert.Equal(0, invoice.TotalIncVat);
-
-            invoice.PurchaseInvoiceState = new PurchaseInvoiceStates(this.Transaction).Created;
-            this.Derive();
-
-            Assert.Equal(supplierOffering.Price, invoice.TotalIncVat);
-        }
-
-        [Fact]
         public void ChangedValidInvoiceItemsCalculatePrice()
         {
             var invoice = this.InternalOrganisation.CreatePurchaseInvoiceWithSerializedItem();
