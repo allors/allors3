@@ -24,7 +24,10 @@ namespace Allors.Database.Domain
             {
                 this.TakenBy = internalOrganisations.First();
             }
+        }
 
+        public void AppsOnInit(ObjectOnInit method)
+        {
             if (this.ExistTakenBy && !this.ExistCurrency)
             {
                 this.Currency = this.TakenBy.PreferredCurrency;
