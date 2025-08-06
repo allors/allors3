@@ -17,7 +17,8 @@ namespace Allors.Database.Domain
         public SerialisedItemProductCategoriesDisplayNameRule(MetaPopulation m) : base(m, new Guid("8b6c78f6-f165-4179-acf5-1c3ef96b36b1")) =>
             this.Patterns = new Pattern[]
             {
-                m.Product.AssociationPattern(v => v.ProductCategoriesWhereAllProduct, v => v.ProductCategoriesWhereAllProduct.ObjectType.AllParts.ObjectType.SerialisedItems),
+                m.SerialisedItem.AssociationPattern(v=>v.AccountingTransactionsWhereFixedAsset),
+                m.Part.AssociationPattern(v=>v.ProductCategoriesWhereProduct, v=>v.SerialisedItems),
                 m.SerialisedItem.RolePattern(v => v.DerivationTrigger),
             };
 
@@ -36,9 +37,8 @@ namespace Allors.Database.Domain
     {
         public static void DeriveSerialisedItemProductCategoriesDisplayName(this SerialisedItem @this, IValidation validation)
         {
-            if (@this.ExistPartWhereSerialisedItem && @this.PartWhereSerialisedItem.GetType().Name == typeof(UnifiedGood).Name)
+            if (@this.PartWhereSerialisedItem is UnifiedGood unifiedGood)
             {
-                var unifiedGood = @this.PartWhereSerialisedItem as UnifiedGood;
                 @this.ProductCategoriesDisplayName = string.Join(", ", unifiedGood.ProductCategoriesWhereProduct.Select(v => v.DisplayName));
             }
         }
