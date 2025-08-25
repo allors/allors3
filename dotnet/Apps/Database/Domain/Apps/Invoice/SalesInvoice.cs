@@ -386,8 +386,6 @@ namespace Allors.Database.Domain
                         .WithWorkEffort(workEffortBilling.WorkEffort)
                         .WithInvoiceItem(invoiceItem)
                         .Build();
-
-                    workEffortBilling.WorkEffort.CanInvoice = true;
                 }
             }
 
