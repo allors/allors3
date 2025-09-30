@@ -153,7 +153,7 @@ namespace Allors.Database.Domain
 
             if (this.ExistSerialisedItem && this.Part.InventoryItemKind.IsSerialised)
             {
-                var inventoryItem = this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.FirstOrDefault(v => Equals(this.Part, v.Part) && Equals(facility, v.Facility));
+                var inventoryItem = this.SerialisedItem.SerialisedInventoryItemsWhereSerialisedItem.FirstOrDefault(v => Equals(facility, v.Facility));
                 if (inventoryItem == null)
                 {
                     var builder = new SerialisedInventoryItemBuilder(this.Strategy.Transaction)
