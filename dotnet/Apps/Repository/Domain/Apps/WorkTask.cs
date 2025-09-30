@@ -215,6 +215,8 @@ namespace Allors.Repository
 
         public void Revise() { }
 
+        public void Finish() { }
+
         #endregion
     }
 }

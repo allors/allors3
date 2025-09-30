@@ -50,11 +50,6 @@ namespace Allors.Database.Domain
             {
                 @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Created;
             }
-
-            if (@this.WorkEffortState.IsFinished && @this.CanInvoice)
-            {
-                @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Completed;
-            }
         }
     }
 }

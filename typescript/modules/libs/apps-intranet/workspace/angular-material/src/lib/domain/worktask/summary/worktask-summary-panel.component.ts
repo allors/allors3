@@ -174,6 +174,15 @@ export class WorkTaskSummaryPanelComponent extends AllorsViewSummaryPanelCompone
     }, this.errorService.errorHandler);
   }
 
+  public finish(): void {
+    this.invokeService.invoke(this.workTask.Finish).subscribe(() => {
+      this.refreshService.refresh();
+      this.snackBar.open('Successfully finished.', 'close', {
+        duration: 5000,
+      });
+    }, this.errorService.errorHandler);
+  }
+
   public invoice(): void {
     this.invokeService.invoke(this.workTask.Invoice).subscribe(() => {
       this.refreshService.refresh();

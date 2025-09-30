@@ -77,6 +77,30 @@
     </button>
     <button
       throttled
+      *ngIf="workTask.canExecuteComplete"
+      mat-button
+      (throttleClick)="complete()"
+    >
+      Complete
+    </button>
+    <button
+      throttled
+      *ngIf="workTask.canExecuteFinish"
+      mat-button
+      (throttleClick)="finish()"
+    >
+      Mark as finished
+    </button>
+    <button
+      throttled
+      *ngIf="workTask.canExecuteRevise"
+      mat-button
+      (throttleClick)="revise()"
+    >
+      Revise
+    </button>
+    <button
+      throttled
       *ngIf="workTask.canExecuteReopen"
       mat-button
       (throttleClick)="reopen()"
@@ -85,27 +109,11 @@
     </button>
     <button
       throttled
-      *ngIf="workTask.canExecuteComplete"
-      mat-button
-      (clthrottleClickick)="complete()"
-    >
-      Complete
-    </button>
-    <button
-      throttled
       *ngIf="workTask.canExecuteInvoice"
       mat-button
       (throttleClick)="invoice()"
     >
       Invoice
-    </button>
-    <button
-      throttled
-      *ngIf="workTask.canExecuteRevise"
-      mat-button
-      (clthrottleClickick)="revise()"
-    >
-      Revise
     </button>
     <button
       throttled

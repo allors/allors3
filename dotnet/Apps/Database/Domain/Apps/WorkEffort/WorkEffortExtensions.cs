@@ -51,6 +51,12 @@ namespace Allors.Database.Domain
             method.StopPropagation = true;
         }
 
+        public static void AppsFinish(this WorkEffort @this, WorkEffortFinish method)
+        {
+            @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Finished;
+            method.StopPropagation = true;
+        }
+
         public static void AppsCancel(this WorkEffort @this, WorkEffortCancel method)
         {
             @this.WorkEffortState = new WorkEffortStates(@this.Strategy.Transaction).Cancelled;

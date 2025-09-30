@@ -56,7 +56,11 @@ namespace Allors.Database.Domain
                     @this.RemoveRevocation(completeRevocation);
                 }
 
-                if (@this.WorkEffortState.IsFinished && !@this.ExecutedBy.Equals(@this.Customer))
+                if (@this.WorkEffortState.IsFinished || @this.WorkEffortState.IsCompleted)
+                {
+                    @this.RemoveRevocation(reviseRevocation);
+                }
+                else
                 {
                     @this.AddRevocation(reviseRevocation);
                 }

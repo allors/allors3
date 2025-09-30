@@ -446,5 +446,11 @@ namespace Allors.Repository
         #endregion
         [Workspace(Default)]
         void Revise();
+
+        #region Allors
+        [Id("a2fd09b4-39ea-4e4a-938a-31ad20c59328")]
+        #endregion
+        [Workspace(Default)]
+        void Finish();
     }
 }

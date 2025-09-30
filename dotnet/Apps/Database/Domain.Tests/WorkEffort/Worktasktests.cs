@@ -1052,18 +1052,6 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ChangedCanInvoiceDeriveWorkEffortState()
-        {
-            var workTask = new WorkTaskBuilder(this.Transaction).WithWorkEffortState(new WorkEffortStates(this.Transaction).Finished).Build();
-            this.Derive();
-
-            workTask.CanInvoice = true;
-            this.Derive();
-
-            Assert.True(workTask.WorkEffortState.IsCompleted);
-        }
-
-        [Fact]
         public void ChangedWorkEffortInventoryAssignmentAssignmentCreateWorkEffortInventoryAssignmentInventoryItemTransaction()
         {
             var workTask = new WorkTaskBuilder(this.Transaction).Build();
