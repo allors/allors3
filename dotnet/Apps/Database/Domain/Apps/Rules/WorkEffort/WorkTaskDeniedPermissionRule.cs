@@ -21,6 +21,7 @@ namespace Allors.Database.Domain
             m.WorkTask.RolePattern(v => v.CanInvoice),
             m.WorkTask.RolePattern(v => v.Customer),
             m.WorkTask.RolePattern(v => v.ExecutedBy),
+            m.WorkTask.RolePattern(v => v.WorkEffortState),
             m.WorkEffort.AssociationPattern(v => v.ServiceEntriesWhereWorkEffort),
             m.ServiceEntry.RolePattern(v => v.ThroughDate, v => v.WorkEffort.ObjectType.ServiceEntriesWhereWorkEffort.ObjectType.WorkEffort),
         };
