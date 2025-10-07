@@ -5,6 +5,7 @@
 
 namespace Allors.Database.Domain
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -416,6 +417,11 @@ namespace Allors.Database.Domain
                 foreach (var salesTerm in this.SalesTerms)
                 {
                     salesTerm.CascadingDelete();
+                }
+
+                foreach (var workEffort in this.WorkEfforts)
+                {
+                    workEffort.DerivationTrigger = Guid.NewGuid();
                 }
             }
         }
