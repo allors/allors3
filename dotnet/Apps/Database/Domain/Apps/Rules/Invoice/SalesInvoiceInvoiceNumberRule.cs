@@ -78,7 +78,8 @@ namespace Allors.Database.Domain
 
                     if (@this.SalesInvoiceType.Equals(new SalesInvoiceTypes(transaction).SalesInvoice)
                         && salesInvoiceItem.ExistSerialisedItem
-                        && (@this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
+                        && ((@this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
+                            || @this.BillToCustomer.GetType().Name.Equals(typeof(Person).Name))
                         && @this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(transaction).SalesInvoiceSend))
                     {
                         if (salesInvoiceItem.NextSerialisedItemAvailability?.Equals(new SerialisedItemAvailabilities(transaction).Sold) == true)
@@ -103,7 +104,8 @@ namespace Allors.Database.Domain
                     if (@this.SalesInvoiceType.Equals(new SalesInvoiceTypes(transaction).CreditNote)
                         && salesInvoiceItem.ExistSerialisedItem
                         && salesInvoiceItem.ExistSerialisedItemVersionBeforeSale
-                        && (@this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
+                        && ((@this.BillToCustomer as InternalOrganisation)?.IsInternalOrganisation == false
+                            || @this.BillToCustomer.GetType().Name.Equals(typeof(Person).Name))
                         && @this.BilledFrom.SerialisedItemSoldOns.Contains(new SerialisedItemSoldOns(transaction).SalesInvoiceSend))
                     {
                         salesInvoiceItem.SerialisedItem.Seller = salesInvoiceItem.SerialisedItemVersionBeforeSale.Seller;
