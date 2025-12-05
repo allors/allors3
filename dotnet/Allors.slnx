@@ -67,6 +67,14 @@
     <Project Path="Core/Database/Server.Remote.Tests/Server.Remote.Tests.csproj" />
     <Project Path="Core/Database/Server/Server.csproj" />
   </Folder>
+  <Folder Name="/Core/Database/Templates/">
+    <File Path="Core\Database\Templates\docs.html.stg" />
+    <File Path="Core\Database\Templates\domain.cs.stg" />
+    <File Path="Core\Database\Templates\domain.ecore.stg" />
+    <File Path="Core\Database\Templates\repository.cs.stg" />
+    <File Path="Core\Database\Templates\uml.cs.stg" />
+    <File Path="Core\Database\Templates\uml.java.stg" />
+  </Folder>
   <Folder Name="/Core/Repository/">
     <Project Path="Core/Repository/Domain/Repository.csproj" />
   </Folder>
@@ -114,6 +122,9 @@
     <Project Path="System/Repository/Allors.Repository/Allors.Repository.csproj" />
     <Project Path="System/Repository/Attributes/Attributes.csproj" />
     <Project Path="System/Repository/Generate/Generate.csproj" />
+  </Folder>
+  <Folder Name="/System/Repository/Templates/">
+    <File Path="System\Repository\Templates\meta.cs.stg" />
   </Folder>
   <Folder Name="/System/Store/">
     <Project Path="System/Store/Allors.Store.Files/Allors.Store.Files.csproj" />

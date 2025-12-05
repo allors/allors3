@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Protocol\Allors.Protocol.Json\Allors.Protocol.Json.csproj" />
     <ProjectReference Include="..\Allors.Database.Workspace\Allors.Database.Workspace.csproj" />
   </ItemGroup>
- 
+
 </Project>
