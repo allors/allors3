@@ -38,7 +38,7 @@ namespace Allors.Repository.Domain
 
         public Dictionary<string, Property> InheritedPropertyByRoleName { get; }
 
-        public Property[] InheritedProperties => this.InheritedPropertyByRoleName.Values.ToArray();
+        public new Property[] InheritedProperties => this.InheritedPropertyByRoleName.Values.ToArray();
 
         public override string ToString() => this.SingularName;
 

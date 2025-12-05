@@ -27,7 +27,7 @@ namespace Allors
                 merger.Output(outputDirectory);
                 return 0;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 1;
             }

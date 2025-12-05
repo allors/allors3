@@ -100,10 +100,12 @@ define_unit(unit) ::= <<
 >>
 
 interfaces(repository) ::= <<
+#pragma warning disable CS0108
 namespace Allors.Database.Meta
 {
 $repository.Interfaces:{interface|$define_interface(interface)$}; separator="\n"$
 }
+#pragma warning restore CS0108
 >>
 
 define_interface(interface) ::= <<
@@ -111,8 +113,6 @@ define_interface(interface) ::= <<
         public $interface.SingularName$(MetaPopulation metaPopulation, System.Guid id, string tag = null) : base(metaPopulation, id, tag)
         {
         }
-
-        MetaPopulation M;
 
 $interface.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.SingularName$ => this.M.$subtype.SingularName$;}; separator="\n"$
 
@@ -131,10 +131,12 @@ $interface.Subtypes:{subtype|        public $subtype.SingularName$ As$subtype.Si
 >>
 
 classes(repository) ::= <<
+#pragma warning disable CS0108
 namespace Allors.Database.Meta
 {
 $repository.Classes:{class|$define_class(class)$}; separator="\n"$
 }
+#pragma warning restore CS0108
 >>
 
 define_class(class) ::= <<
@@ -177,7 +179,7 @@ define_associationType(property) ::= <<
         {
         }
 
-        new public $property.DefiningType.SingularName$ ObjectType => this.M.$property.DefiningType.SingularName$;
+        public $property.DefiningType.SingularName$ ObjectType => this.M.$property.DefiningType.SingularName$;
     }
 >>
 

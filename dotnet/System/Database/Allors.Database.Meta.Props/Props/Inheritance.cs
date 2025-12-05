@@ -104,7 +104,7 @@ namespace Allors.Database.Meta
         /// Validates this state.
         /// </summary>
         /// <param name="validationLog">The validation.</param>
-        protected internal void Validate(ValidationLog validationLog)
+        internal void Validate(ValidationLog validationLog)
         {
             if (this.Subtype != null && this.Supertype != null)
             {
