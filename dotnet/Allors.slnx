@@ -1,27 +1,4 @@
 <Solution>
-  <Folder Name="/Apps/" />
-  <Folder Name="/Apps/Database/">
-    <Project Path="Apps/Database/Commands/Commands.csproj" />
-    <Project Path="Apps/Database/Configuration.Tests/Configuration.Tests.csproj" />
-    <Project Path="Apps/Database/Configuration/Configuration.csproj" />
-    <Project Path="Apps/Database/Domain.Tests/Domain.Tests.csproj" />
-    <Project Path="Apps/Database/Domain/Domain.csproj" />
-    <Project Path="Apps/Database/Generate/Generate.csproj" />
-    <Project Path="Apps/Database/Meta/Meta.csproj" />
-    <Project Path="Apps/Database/Resources/Resources.csproj" />
-    <Project Path="Apps/Database/Server/Server.csproj" />
-    <Project Path="Apps/Database/TestPopulation.Tests/TestPopulation.Tests.csproj" />
-    <Project Path="Apps/Database/TestPopulation/TestPopulation.csproj" />
-  </Folder>
-  <Folder Name="/Apps/Repository/">
-    <Project Path="Apps/Repository/Domain/Repository.csproj" />
-  </Folder>
-  <Folder Name="/Apps/Workspace/">
-    <Project Path="Apps/Workspace/Domain/Workspace.Domain.csproj" />
-    <Project Path="Apps/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
-    <Project Path="Apps/Workspace/Meta/Workspace.Meta.csproj" />
-    <Project Path="Apps/Workspace/Tests/Workspace.Tests.csproj" />
-  </Folder>
   <Folder Name="/Base/" />
   <Folder Name="/Base/Database/">
     <Project Path="Base/Database/Commands/Commands.csproj" />
