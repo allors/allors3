@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/*'
+      - 'issue/*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 480
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: CiDotnetSystemAdaptersTestMemory
+            name: adapters_memory
+          - target: CiDotnetSystemAdaptersTestSqlClient
+            name: adapters_sqlclient
+          - target: CiDotnetSystemAdaptersTestNpgsql
+            name: adapters_npgsql
+          - target: CiDotnetCoreDatabaseTest
+            name: core_database
+          - target: CiDotnetCoreWorkspaceLocalTest
+            name: core_workspace_local
+          - target: CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
+            name: core_workspace_remote_json_systemtext
+          - target: CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
+            name: core_workspace_remote_json_newtonsoft
+          - target: CiTypescriptWorkspaceTest
+            name: typescript_workspace
+          - target: CiTypescriptWorkspaceAdaptersJsonTest
+            name: typescript_workspace_adapters_json
+
+    name: ${{ matrix.name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set Culture to nl-BE
+        run: Set-Culture -CultureInfo nl-BE
+        shell: pwsh
+
+      - name: Setup PostgreSQL
+        run: |
+          Set-Service postgresql-x64-17 -StartupType manual
+          Start-Service postgresql-x64-17
+          Get-CimInstance win32_service | Where-Object Name -eq "postgresql-x64-17"
+        shell: pwsh
+
+      - name: Run ${{ matrix.target }}
+        run: ./build.ps1 -target ${{ matrix.target }}
+        shell: pwsh
+        env:
+          NODE_OPTIONS: --max_old_space_size=16384
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: ${{ matrix.name }}
+          path: artifacts/tests/*.trx
+          reporter: dotnet-trx
