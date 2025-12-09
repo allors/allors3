@@ -28,8 +28,6 @@ stages:
           target: 'CiDotnetCoreWorkspaceRemoteJsonSystemTextTest'
         core_workspace_remote_json_newtonsoft:
           target: 'CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest'
-        base_database:
-          target: 'CiDotnetBaseDatabaseTest'
         typescript_workspace:
           target: 'CiTypescriptWorkspaceTest'
         typescript_workspace_adapters_json:
