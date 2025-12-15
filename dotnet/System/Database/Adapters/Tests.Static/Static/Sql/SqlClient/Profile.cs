@@ -58,8 +58,12 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        protected string ConnectionString => $@"server=(localdb)\MSSQLLocalDB;database={this.database};Integrated Security=true";
-
+        private string ConnectionString =>
+            new SqlConnectionStringBuilder(Config.ConnectionString)
+            {
+                InitialCatalog = this.database
+            }.ConnectionString;
+        
         public override IDatabase CreateDatabase()
         {
             var metaPopulation = new MetaBuilder().Build();

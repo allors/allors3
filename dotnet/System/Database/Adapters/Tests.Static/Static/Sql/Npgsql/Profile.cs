@@ -41,7 +41,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
         }
 
-        protected string ConnectionString => $"Server=localhost; User Id=postgres; Password=root; Database={this.database}; Pooling=false; Enlist=false; CommandTimeout=300";
+        private string ConnectionString =>
+            new NpgsqlConnectionStringBuilder(Config.ConnectionString)
+            {
+                Database = this.database
+            }.ConnectionString;
 
         public override IDatabase CreateDatabase()
         {

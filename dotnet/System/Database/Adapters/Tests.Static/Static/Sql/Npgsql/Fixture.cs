@@ -10,7 +10,6 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
     public class Fixture<T>
     {
-
         static Fixture()
         {
             // TODO: replace timestamp with timestamp with time zone
@@ -23,13 +22,11 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public Fixture()
         {
             var database = typeof(T).Name;
-            var connectionString = "Server=localhost; User Id=postgres; Password=root; Database=postgres; Pooling=false; CommandTimeout=300";
-
             int version;
 
             {
                 // version 13+
-                using var connection = new NpgsqlConnection(connectionString);
+                using var connection = new NpgsqlConnection(Config.ConnectionString);
                 connection.Open();
                 using var command = connection.CreateCommand();
                 command.CommandText = "SHOW server_version";
@@ -43,7 +40,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 
             {
                 // version 13+
-                using var connection = new NpgsqlConnection(connectionString);
+                using var connection = new NpgsqlConnection(Config.ConnectionString);
                 connection.Open();
                 using var command = connection.CreateCommand();
                 var withForce = version >= 13 ? "WITH (FORCE)" : string.Empty;
@@ -53,7 +50,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
 
             {
-                using var connection = new NpgsqlConnection(connectionString);
+                using var connection = new NpgsqlConnection(Config.ConnectionString);
                 connection.Open();
                 using var command = connection.CreateCommand();
                 command.CommandText = $"CREATE DATABASE {database}";
