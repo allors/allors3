@@ -9,7 +9,7 @@ namespace Allors.Server
 
     public class Program
     {
-        private const string ConfigPath = "/config/core";
+        private const string ConfigPath = "/opt/core";
 
         public static void Main(string[] args)
         {

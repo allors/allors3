@@ -54,7 +54,7 @@ namespace Commands
             {
                 if (this.configuration == null)
                 {
-                    const string root = "/config/apps";
+                    const string root = "/opt/apps";
 
                     var configurationBuilder = new ConfigurationBuilder();
 

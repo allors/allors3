@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-configuration.AddJsonFile("/config/base", optional: true, reloadOnChange: true);
+configuration.AddJsonFile("/opt/base", optional: true, reloadOnChange: true);
 
 // Add services to the container.
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

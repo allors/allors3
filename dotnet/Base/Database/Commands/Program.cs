@@ -53,7 +53,7 @@ namespace Commands
             {
                 if (this.configuration == null)
                 {
-                    const string root = "/config/core";
+                    const string root = "/opt/core";
 
                     var configurationBuilder = new ConfigurationBuilder();
 

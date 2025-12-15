@@ -9,7 +9,7 @@ namespace Allors.Database.Server.Controllers
 
     public class Program
     {
-        private const string ConfigPath = "/config/apps";
+        private const string ConfigPath = "/opt/apps";
 
         public static void Main(string[] args)
         {

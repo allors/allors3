@@ -28,7 +28,7 @@ namespace Tests
         {
             var configurationBuilder = new ConfigurationBuilder();
 
-            const string root = "/config/core";
+            const string root = "/opt/core";
             configurationBuilder.AddCrossPlatform(".");
             configurationBuilder.AddCrossPlatform(root);
             configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
