@@ -63,7 +63,7 @@ namespace Allors.Database.Adapters
 
         public abstract IDatabase CreateDatabase();
 
-        internal ITransaction CreateTransaction() => this.Database.CreateTransaction();
+        public ITransaction CreateTransaction() => this.Database.CreateTransaction();
 
         protected internal void Init()
         {

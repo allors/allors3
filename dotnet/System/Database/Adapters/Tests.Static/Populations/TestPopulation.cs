@@ -9,7 +9,7 @@ namespace Allors.Database.Adapters
     using Domain;
 
     // TODO: One2One (c1->c3 & i12->c3)
-    internal sealed class TestPopulation
+    public sealed class TestPopulation
     {
         public C1 C1A { get; private set; }
         public C1 C1B { get; private set; }

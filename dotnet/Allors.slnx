@@ -111,6 +111,9 @@
     <Project Path="System/Database/Adapters/Meta/Meta.csproj" />
     <Project Path="System/Database/Adapters/Repository/Domain/Repository.csproj" />
     <Project Path="System/Database/Adapters/Tests.Static/Tests.Static.csproj" />
+    <Project Path="System/Database/Adapters/Tests.Static.Memory/Tests.Static.Memory.csproj" />
+    <Project Path="System/Database/Adapters/Tests.Static.SqlClient/Tests.Static.SqlClient.csproj" />
+    <Project Path="System/Database/Adapters/Tests.Static.Npgsql/Tests.Static.Npgsql.csproj" />
   </Folder>
   <Folder Name="/System/Protocol/">
     <Project Path="System/Protocol/Allors.Protocol.Json.Newtonsoft/Allors.Protocol.Json.Newtonsoft.csproj" />
