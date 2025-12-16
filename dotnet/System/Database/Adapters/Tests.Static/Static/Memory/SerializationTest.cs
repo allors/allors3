@@ -8,7 +8,7 @@ namespace Allors.Database.Adapters.Memory
     using System;
     using Adapters;
 
-    public class ObsoleteSerializationTest : Adapters.ObsoleteSerializationTest, IDisposable
+    public class SerializationTest : Adapters.SerializationTest, IDisposable
     {
         private readonly Profile profile = new Profile();
 
@@ -17,5 +17,8 @@ namespace Allors.Database.Adapters.Memory
         public override void Dispose() => this.profile.Dispose();
 
         protected override IDatabase CreatePopulation() => this.profile.CreateMemoryDatabase();
+
+        protected override IDatabase CreateDatabaseWithVersion1Mode(SerializationVersion1Mode mode)
+            => this.profile.CreateDatabaseWithVersion1Mode(mode);
     }
 }

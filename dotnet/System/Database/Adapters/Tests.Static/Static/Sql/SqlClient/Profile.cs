@@ -275,5 +275,19 @@ AND column_name=@columnName";
                 }
             }
         }
+
+        public IDatabase CreateDatabaseWithVersion1Mode(SerializationVersion1Mode mode)
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            var scope = new DefaultDomainDatabaseServices();
+            return new Database(scope, new Sql.Configuration
+            {
+                ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
+                ConnectionString = this.ConnectionString,
+                ConnectionFactory = this.connectionFactory,
+                CacheFactory = this.cacheFactory,
+                SerializationVersion1Mode = mode,
+            });
+        }
     }
 }

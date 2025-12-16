@@ -61,6 +61,17 @@ namespace Allors.Database.Adapters
             });
         }
 
+        public IDatabase CreateMemoryDatabaseWithVersion1Mode(SerializationVersion1Mode mode)
+        {
+            var metaPopulation = new MetaBuilder().Build();
+            var scope = new DefaultDomainDatabaseServices();
+            return new Database(scope, new Memory.Configuration
+            {
+                ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
+                SerializationVersion1Mode = mode,
+            });
+        }
+
         public abstract IDatabase CreateDatabase();
 
         internal ITransaction CreateTransaction() => this.Database.CreateTransaction();

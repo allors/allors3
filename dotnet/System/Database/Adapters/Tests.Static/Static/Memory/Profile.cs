@@ -35,5 +35,8 @@ namespace Allors.Database.Adapters.Memory
         }
 
         public override IDatabase CreateDatabase() => this.CreateMemoryDatabase();
+
+        public IDatabase CreateDatabaseWithVersion1Mode(SerializationVersion1Mode mode)
+            => this.CreateMemoryDatabaseWithVersion1Mode(mode);
     }
 }

@@ -20,7 +20,7 @@ namespace Allors.Database.Adapters
     using DateTime = System.DateTime;
     using S1234 = Domain.S1234;
 
-    public abstract class ObsoleteSerializationTest : IDisposable
+    public abstract class SerializationTest : IDisposable
     {
         protected static readonly bool[] TrueFalse = { true, false };
         private static readonly string GuidString = Guid.NewGuid().ToString();
@@ -83,6 +83,8 @@ namespace Allors.Database.Adapters
                     var xmlDocument = new XmlDocument();
                     xmlDocument.LoadXml(xml);
                     var populationElement = (XmlElement)xmlDocument.SelectSingleNode("//population");
+
+                    // Version 0 should fail
                     populationElement.SetAttribute("version", "0");
                     xml = xmlDocument.OuterXml;
 
@@ -102,7 +104,30 @@ namespace Allors.Database.Adapters
                     {
                     }
 
-                    populationElement.SetAttribute("version", "2");
+                    // Version 1 should fail by default (ambiguous between Allors 2 and early Allors 3)
+                    populationElement.SetAttribute("version", "1");
+                    xml = xmlDocument.OuterXml;
+
+                    try
+                    {
+                        using (var stringReader = new StringReader(xml))
+                        {
+                            using (var reader = XmlReader.Create(stringReader))
+                            {
+                                this.Population.Load(reader);
+                            }
+                        }
+
+                        Assert.True(false); // Fail
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Assert.Contains("Version 1", e.Message);
+                        Assert.Contains("ambiguous", e.Message);
+                    }
+
+                    // Version 3 should fail
+                    populationElement.SetAttribute("version", "3");
                     xml = xmlDocument.OuterXml;
 
                     try
@@ -121,6 +146,7 @@ namespace Allors.Database.Adapters
                     {
                     }
 
+                    // Invalid version "a" should fail
                     populationElement.SetAttribute("version", "a");
                     xml = xmlDocument.OuterXml;
 
@@ -142,6 +168,7 @@ namespace Allors.Database.Adapters
 
                     Assert.True(exception);
 
+                    // Empty version should fail
                     populationElement.SetAttribute("version", string.Empty);
                     xml = xmlDocument.OuterXml;
 
@@ -731,7 +758,7 @@ namespace Allors.Database.Adapters
                 var xml =
                     @"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
-  <population version=""1"">
+  <population version=""2"">
     <objects>
       <database>
         <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
@@ -768,7 +795,7 @@ namespace Allors.Database.Adapters
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
-  <population version=""1"">
+  <population version=""2"">
     <objects>
       <database>
         <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
@@ -815,7 +842,7 @@ namespace Allors.Database.Adapters
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
-  <population version=""1"">
+  <population version=""2"">
     <objects>
       <database>
         <ot i=""7041c691d89646288f501c24f5d03414"">1:0,2:0,3:0,4:0</ot>
@@ -880,7 +907,7 @@ namespace Allors.Database.Adapters
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
-  <population version=""1"">
+  <population version=""2"">
     <objects>
       <database>
         <ot i=""7041c691d89646288f501c24f5d03414"">1:0,2:0,3:0,4:0</ot>
@@ -944,7 +971,7 @@ namespace Allors.Database.Adapters
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
-  <population version=""1"">
+  <population version=""2"">
     <objects>
       <database>
         <ot i=""7041c691d89646288f501c24f5d03414"">1:0,2:0,3:0,4:0</ot>
@@ -1013,7 +1040,7 @@ namespace Allors.Database.Adapters
                 var xml =
 @"<?xml version=""1.0"" encoding=""utf-16""?>
 <allors>
-  <population version=""1"">
+  <population version=""2"">
     <objects>
       <database>
         <ot i=""7041c691d89646288f501c24f5d03414"">1:0,2:0,3:0,4:0</ot>
@@ -1071,7 +1098,211 @@ namespace Allors.Database.Adapters
             }
         }
 
+        [Fact]
+        public void LoadV1RejectedByDefault()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                // V1 format is rejected by default because it's ambiguous between Allors 2 and Allors 3
+                var xml =
+@"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""1"">
+    <objects>
+      <database>
+        <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
+      </database>
+    </objects>
+    <relations>
+      <database>
+        <rtu i=""207138608abd4d718ccc2b4d1b88bce3"">
+          <r a=""1"">Hello World</r>
+        </rtu>
+      </database>
+    </relations>
+  </population>
+</allors>";
+
+                var stringReader = new StringReader(xml);
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    var exception = Assert.Throws<ArgumentException>(() => this.Population.Load(reader));
+                    Assert.Contains("Version 1", exception.Message);
+                    Assert.Contains("ambiguous", exception.Message);
+                }
+            }
+        }
+
+        [Fact]
+        public void LoadV2StringFormat()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                // V2 format: strings are stored as base64 encoded
+                // "Hello World" in UTF-8 base64 is "SGVsbG8gV29ybGQ="
+                var xml =
+@"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""2"">
+    <objects>
+      <database>
+        <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
+      </database>
+    </objects>
+    <relations>
+      <database>
+        <rtu i=""207138608abd4d718ccc2b4d1b88bce3"">
+          <r a=""1"">SGVsbG8gV29ybGQ=</r>
+        </rtu>
+      </database>
+    </relations>
+  </population>
+</allors>";
+
+                var stringReader = new StringReader(xml);
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    this.Population.Load(reader);
+                }
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    var c1 = (C1)transaction.Instantiate(1);
+                    Assert.Equal("Hello World", c1.C1AllorsString);
+                }
+            }
+        }
+
+        [Fact]
+        public void SaveOutputsV2()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                using (var transaction = this.Population.CreateTransaction())
+                {
+                    var c1 = transaction.Create<C1>();
+                    c1.C1AllorsString = "Test String";
+                    transaction.Commit();
+
+                    var stringWriter = new StringWriter();
+                    using (var writer = XmlWriter.Create(stringWriter))
+                    {
+                        this.Population.Save(writer);
+                    }
+
+                    var xml = stringWriter.ToString();
+
+                    // Verify version is 2
+                    var xmlDocument = new XmlDocument();
+                    xmlDocument.LoadXml(xml);
+                    var populationElement = (XmlElement)xmlDocument.SelectSingleNode("//population");
+                    Assert.Equal("2", populationElement.GetAttribute("version"));
+
+                    // Verify string is base64 encoded
+                    // "Test String" in UTF-8 base64 is "VGVzdCBTdHJpbmc="
+                    Assert.Contains("VGVzdCBTdHJpbmc=", xml);
+                }
+            }
+        }
+
+        [Fact]
+        public void LoadV1PlainText()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                // V1 format with plain text string (Allors 2 format)
+                var xml =
+@"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""1"">
+    <objects>
+      <database>
+        <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
+      </database>
+    </objects>
+    <relations>
+      <database>
+        <rtu i=""207138608abd4d718ccc2b4d1b88bce3"">
+          <r a=""1"">Hello World</r>
+        </rtu>
+      </database>
+    </relations>
+  </population>
+</allors>";
+
+                var database = this.CreateDatabaseWithVersion1Mode(SerializationVersion1Mode.PlainText);
+                database.Init();
+
+                var stringReader = new StringReader(xml);
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    database.Load(reader);
+                }
+
+                using (var transaction = database.CreateTransaction())
+                {
+                    var c1 = (C1)transaction.Instantiate(1);
+                    Assert.Equal("Hello World", c1.C1AllorsString);
+                }
+            }
+        }
+
+        [Fact]
+        public void LoadV1Base64()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+
+                // V1 format with base64 encoded string (early Allors 3 format)
+                // "Hello World" in UTF-8 base64 is "SGVsbG8gV29ybGQ="
+                var xml =
+@"<?xml version=""1.0"" encoding=""utf-16""?>
+<allors>
+  <population version=""1"">
+    <objects>
+      <database>
+        <ot i=""7041c691d89646288f501c24f5d03414"">1:0</ot>
+      </database>
+    </objects>
+    <relations>
+      <database>
+        <rtu i=""207138608abd4d718ccc2b4d1b88bce3"">
+          <r a=""1"">SGVsbG8gV29ybGQ=</r>
+        </rtu>
+      </database>
+    </relations>
+  </population>
+</allors>";
+
+                var database = this.CreateDatabaseWithVersion1Mode(SerializationVersion1Mode.Base64);
+                database.Init();
+
+                var stringReader = new StringReader(xml);
+                using (var reader = XmlReader.Create(stringReader))
+                {
+                    database.Load(reader);
+                }
+
+                using (var transaction = database.CreateTransaction())
+                {
+                    var c1 = (C1)transaction.Instantiate(1);
+                    Assert.Equal("Hello World", c1.C1AllorsString);
+                }
+            }
+        }
+
         protected abstract IDatabase CreatePopulation();
+
+        protected abstract IDatabase CreateDatabaseWithVersion1Mode(SerializationVersion1Mode mode);
 
         private static string DoSave(IDatabase otherPopulation)
         {
