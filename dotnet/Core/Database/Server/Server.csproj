@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Server.Local.Tests" />
+    <InternalsVisibleTo Include="Workspace.Tests.Remote.Json.Newtonsoft" />
+    <InternalsVisibleTo Include="Workspace.Tests.Remote.Json.SystemText" />
   </ItemGroup>
 
   <ItemGroup>

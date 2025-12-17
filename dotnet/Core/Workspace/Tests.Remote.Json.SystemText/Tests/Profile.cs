@@ -22,8 +22,6 @@ namespace Tests.Workspace.Remote
 
     public class Profile : IProfile
     {
-        public const string Url = "http://localhost:5000/allors/";
-
         public const string SetupUrl = "Test/Setup?population=full";
         public const string LoginUrl = "TestAuthentication/Token";
 
@@ -32,6 +30,7 @@ namespace Tests.Workspace.Remote
         private readonly DefaultRanges<long> defaultRanges;
         private readonly Configuration configuration;
 
+        private AllorsWebApplicationFactory factory;
         private HttpClient httpClient;
 
         public Profile()
@@ -56,7 +55,11 @@ namespace Tests.Workspace.Remote
 
         public async Task InitializeAsync()
         {
-            this.httpClient = new HttpClient { BaseAddress = new Uri(Url), Timeout = TimeSpan.FromMinutes(30) };
+            this.factory = new AllorsWebApplicationFactory();
+            this.httpClient = this.factory.CreateClient();
+            this.httpClient.BaseAddress = new Uri(this.httpClient.BaseAddress, "allors/");
+            this.httpClient.Timeout = TimeSpan.FromMinutes(30);
+
             var response = await this.httpClient.GetAsync(SetupUrl);
             Assert.True(response.IsSuccessStatusCode);
 
@@ -66,7 +69,12 @@ namespace Tests.Workspace.Remote
             await this.Login("administrator");
         }
 
-        public Task DisposeAsync() => Task.CompletedTask;
+        public Task DisposeAsync()
+        {
+            this.httpClient?.Dispose();
+            this.factory?.Dispose();
+            return Task.CompletedTask;
+        }
 
         public IWorkspace CreateExclusiveWorkspace()
         {

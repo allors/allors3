@@ -83,39 +83,21 @@ partial class Build
         });
 
     private Target DotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
-        .DependsOn(DotnetCorePublishServer)
-        .DependsOn(DotnetCorePublishCommands)
         .Executes(async () =>
         {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
-
-
-            {
-                using var server = new Server(Paths.ArtifactsCoreServer);
-                await server.Ready();
-
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceTestsRemoteJsonSystemText)
-                    .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsRemoteJsonSystemText.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-            }
+            DotNetTest(s => s
+                .SetProjectFile(Paths.DotnetCoreWorkspaceTestsRemoteJsonSystemText)
+                .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsRemoteJsonSystemText.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
     private Target DotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
-        .DependsOn(DotnetCorePublishServer)
-        .DependsOn(DotnetCorePublishCommands)
         .Executes(async () =>
         {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
-            {
-                using var server = new Server(Paths.ArtifactsCoreServer);
-                await server.Ready();
-
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceTestsRemoteNewtonsoftSharp)
-                    .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsRemoteJsonNewtonsoft.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-            }
+            DotNetTest(s => s
+                .SetProjectFile(Paths.DotnetCoreWorkspaceTestsRemoteNewtonsoftSharp)
+                .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsRemoteJsonNewtonsoft.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
     private Target DotnetCoreDatabaseTest => _ => _
