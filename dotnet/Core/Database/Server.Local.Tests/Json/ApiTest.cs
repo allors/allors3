@@ -10,44 +10,27 @@ namespace Tests
     using System.IO;
     using System.Reflection;
     using Allors.Database;
-    using Allors.Database.Adapters.Sql;
     using Allors.Database.Configuration;
-    using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Derivations;
     using Allors.Database.Domain;
     using Allors.Database.Meta;
     using Allors.Database.Security;
     using Allors.Database.Services;
-    using Microsoft.Extensions.Configuration;
-    using C1 = Allors.Database.Domain.C1;
-    using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
 
     public class ApiTest : IDisposable
     {
+        private readonly AllorsWebApplicationFactory factory;
+
         public ApiTest(Fixture fixture, bool populate = true)
         {
-            var configurationBuilder = new ConfigurationBuilder();
+            this.factory = new AllorsWebApplicationFactory();
 
-            const string root = "/opt/core";
-            configurationBuilder.AddCrossPlatform(".");
-            configurationBuilder.AddCrossPlatform(root);
-            configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-            configurationBuilder.AddEnvironmentVariables();
+            // Force the factory to create the host, which triggers Startup.Configure
+            // and builds the database via DatabaseBuilder with MEMORY adapter
+            _ = this.factory.Server;
 
-            var configuration = configurationBuilder.Build();
-
-            var metaPopulation = new MetaBuilder().Build();
-            var rules = Rules.Create(metaPopulation);
-            var engine = new Engine(rules);
-            var database = new Database(
-                new DefaultDatabaseServices(engine),
-                new Configuration
-                {
-                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
-                });
-
-            this.M = metaPopulation;
+            var database = this.factory.Database;
+            this.M = (MetaPopulation)database.MetaPopulation;
 
             this.Setup(database, populate);
         }
@@ -75,6 +58,7 @@ namespace Tests
         {
             this.Transaction.Rollback();
             this.Transaction = null;
+            this.factory.Dispose();
         }
 
         protected void Setup(IDatabase database, bool populate)

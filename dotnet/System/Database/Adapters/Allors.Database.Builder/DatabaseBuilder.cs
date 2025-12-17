@@ -11,6 +11,7 @@ namespace Allors.Database.Adapters
     using System;
     using System.Data;
     using Microsoft.Extensions.Configuration;
+    using Memory;
 
     public class DatabaseBuilder
     {
@@ -37,7 +38,10 @@ namespace Allors.Database.Adapters
             switch (adapter)
             {
                 case "MEMORY":
-                    throw new NotImplementedException();
+                    return new Memory.Database(this.scope, new Memory.Configuration
+                    {
+                        ObjectFactory = this.objectFactory,
+                    });
 
                 case "NPGSQL":
 
