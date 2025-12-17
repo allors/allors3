@@ -39,4 +39,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
+  </ItemGroup>
 </Project>

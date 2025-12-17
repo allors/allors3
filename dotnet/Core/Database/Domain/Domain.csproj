@@ -21,6 +21,7 @@
     <PackageReference Include="Allors.Documents" Version="1.0.10" />
     <PackageReference Include="DataUtils.DataUrl" Version="1.0.2" />
     <PackageReference Include="MimeTypesMap" Version="1.0.9" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
   </ItemGroup>
 
   <ItemGroup>

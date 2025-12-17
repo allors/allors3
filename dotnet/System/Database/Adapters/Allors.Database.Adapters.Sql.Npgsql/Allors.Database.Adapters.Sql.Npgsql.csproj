@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="10.0.0" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Allors.Database\Allors.Database.csproj" />

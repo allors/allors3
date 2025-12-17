@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
   </ItemGroup>
 
   <ItemGroup>

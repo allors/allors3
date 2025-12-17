@@ -8,5 +8,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\System\Shared\Allors.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
+  </ItemGroup>
 
 </Project>

@@ -6,5 +6,8 @@
     <ProjectReference Include="..\..\Database\Allors.Database\Allors.Database.csproj" />
     <ProjectReference Include="..\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
+  </ItemGroup>
 
 </Project>

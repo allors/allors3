@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" Version="18.0.2" />
     <PackageReference Include="StringTemplate4" Version="4.0.8" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
   </ItemGroup>
 
   <ItemGroup>

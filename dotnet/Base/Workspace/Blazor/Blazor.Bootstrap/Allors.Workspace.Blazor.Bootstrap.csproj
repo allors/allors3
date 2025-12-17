@@ -11,7 +11,8 @@
   <ItemGroup>
     <PackageReference Include="BlazorStrap" Version="5.2.104" />
     <PackageReference Include="BlazorStrap.V5" Version="5.2.104" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
   </ItemGroup>
 
   <ItemGroup>
