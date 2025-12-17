@@ -15,75 +15,42 @@ namespace Allors.Server.Tests
     using System.Text.Json;
     using System.Threading.Tasks;
     using Database;
-    using Database.Adapters.Sql;
-    using Database.Domain;
-    using Database.Configuration;
-    using Database.Configuration.Derivations.Default;
     using Database.Meta;
-    using Microsoft.Extensions.Configuration;
     using Protocol.Json.Auth;
+    using Services;
+    using Microsoft.Extensions.DependencyInjection;
     using Xunit;
-    using C1 = Database.Domain.C1;
-    using Database = Database.Adapters.Sql.SqlClient.Database;
-    using ObjectFactory = Database.ObjectFactory;
-    using Path = System.IO.Path;
     using User = Database.Domain.User;
 
     public abstract class ApiTest : IDisposable
     {
-        public const string Url = "http://localhost:5000/allors/";
-        public const string SetupUrl = "Test/Setup?population=full";
-        public const string LoginUrl = "TestAuthentication/Token";
+        public const string SetupUrl = "allors/Test/Setup?population=full";
+        public const string LoginUrl = "allors/TestAuthentication/Token";
+
+        private readonly AllorsWebApplicationFactory factory;
 
         protected ApiTest()
         {
-            var configurationBuilder = new ConfigurationBuilder();
+            this.factory = new AllorsWebApplicationFactory();
 
-            const string root = "/opt/core";
-            configurationBuilder.AddCrossPlatform(".");
-            configurationBuilder.AddCrossPlatform(root);
-            configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-            configurationBuilder.AddEnvironmentVariables();
-
-            var configuration = configurationBuilder.Build();
-
-            var metaPopulation = new MetaBuilder().Build();
-            var rules = Rules.Create(metaPopulation);
-            var engine = new Engine(rules);
-            var database = new Database(
-                new DefaultDatabaseServices(engine),
-                new Configuration
-                {
-                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
-                });
-
-            this.HttpClientHandler = new HttpClientHandler();
-            this.HttpClient = new HttpClient(this.HttpClientHandler)
-            {
-                BaseAddress = new Uri(Url),
-            };
-
+            this.HttpClient = this.factory.CreateClient();
             this.HttpClient.DefaultRequestHeaders.Accept.Clear();
             this.HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var response = this.HttpClient.GetAsync(SetupUrl).Result;
 
+            var response = this.HttpClient.GetAsync(SetupUrl).Result;
             Assert.True(response.IsSuccessStatusCode);
 
+            var database = this.factory.Services.GetRequiredService<IDatabaseService>().Database;
             this.Transaction = database.CreateTransaction();
         }
 
-        public MetaPopulation M => this.Transaction.Database.Services.Get<Allors.Database.Meta.MetaPopulation>();
-
-        public IConfigurationRoot Configuration { get; set; }
+        public MetaPopulation M => this.Transaction.Database.Services.Get<MetaPopulation>();
 
         protected ITransaction Transaction { get; private set; }
 
         protected HttpClient HttpClient { get; set; }
 
-        protected HttpClientHandler HttpClientHandler { get; set; }
-
-        protected User Administrator => new Users(this.Transaction).FindBy(this.M.User.UserName, "jane@example.com");
+        protected User Administrator => new Database.Domain.Users(this.Transaction).FindBy(this.M.User.UserName, "jane@example.com");
 
         public void Dispose()
         {
@@ -92,6 +59,8 @@ namespace Allors.Server.Tests
 
             this.HttpClient.Dispose();
             this.HttpClient = null;
+
+            this.factory.Dispose();
         }
 
         protected async Task SignIn(User user)
