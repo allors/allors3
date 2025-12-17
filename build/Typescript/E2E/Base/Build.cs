@@ -19,7 +19,6 @@ partial class Build
     private Target TypescriptE2EAngularBaseTest => _ => _
          .DependsOn(DotnetBasePublishCommands)
          .DependsOn(DotnetBasePublishServer)
-         .DependsOn(DotnetBaseResetDatabase)
          .DependsOn(TypescriptE2EAngularBaseScaffold)
          .Executes(async () =>
          {

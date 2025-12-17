@@ -5,14 +5,6 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
-    private Target DotnetCoreResetDatabase => _ => _
-        .Executes(() =>
-        {
-            var database = "Core";
-            using var sqlLocalDb = new SqlLocalDB();
-            sqlLocalDb.Init(database);
-        });
-
     private Target DotnetCoreMerge => _ => _
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
@@ -76,7 +68,6 @@ partial class Build
         .DependsOn(DotnetCoreGenerate)
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
-        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
             DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
@@ -91,7 +82,6 @@ partial class Build
     private Target DotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
-        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
             DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
@@ -107,7 +97,6 @@ partial class Build
     private Target DotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
-        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
             DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
@@ -128,7 +117,6 @@ partial class Build
     private Target DotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
-        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
             DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);

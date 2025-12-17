@@ -7,14 +7,6 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 
 partial class Build
 {
-    private Target DotnetBaseResetDatabase => _ => _
-        .Executes(() =>
-        {
-            var database = "Base";
-            using var sqlLocalDb = new SqlLocalDB();
-            sqlLocalDb.Init(database);
-        });
-
     private Target DotnetBaseDatabaseTest => _ => _
         .DependsOn(DotnetBaseDatabaseTestDomain);
 

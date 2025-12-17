@@ -7,7 +7,6 @@ partial class Build
     private Target TypescriptE2EAngularAppsExtranetTest => _ => _
         .DependsOn(DotnetAppsPublishCommands)
         .DependsOn(DotnetAppsPublishServer)
-        .DependsOn(DotnetAppsResetDataapps)
         .Executes(async () =>
         {
 

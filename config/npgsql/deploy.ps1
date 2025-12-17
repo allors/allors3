@@ -5,6 +5,5 @@ New-Item -ItemType Directory -Force -Path /opt/apps, /opt/base, /opt/core, /opt/
 Copy-Item "$scriptDir/apps/appSettings.json" -Destination /opt/apps/
 Copy-Item "$scriptDir/base/appSettings.json" -Destination /opt/base/
 Copy-Item "$scriptDir/core/appSettings.json" -Destination /opt/core/
-Copy-Item "$scriptDir/npgsql/appSettings.json" -Destination /opt/npgsql/
 
 Write-Host "Synced npgsql config files to /opt"

@@ -11,7 +11,8 @@ partial class Build
         {
             DotNetRun(s => s
                 .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
-                .SetApplicationArguments(Paths.DotnetSystemAdaptersRepositoryDomainRepository, Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetSystemAdaptersMetaGenerated));
+                .SetApplicationArguments(Paths.DotnetSystemAdaptersRepositoryDomainRepository,
+                    Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetSystemAdaptersMetaGenerated));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(Paths.DotnetSystemAdapters)
                 .SetProjectFile(Paths.DotnetSystemAdaptersGenerate));
@@ -29,14 +30,11 @@ partial class Build
         .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() =>
         {
-            using (new SqlLocalDB())
-            {
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
-                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.SqlClient")
-                    .AddLoggers("trx;LogFileName=AdaptersSqlClient.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-            }
+            DotNetTest(s => s
+                .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
+                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.SqlClient")
+                .AddLoggers("trx;LogFileName=AdaptersSqlClient.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
     private Target DotnetSystemAdaptersTestNpgsql => _ => _

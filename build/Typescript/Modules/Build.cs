@@ -45,7 +45,6 @@ partial class Build
         .DependsOn(DotnetCoreGenerate)
         .DependsOn(DotnetCorePublishServer)
         .DependsOn(DotnetCorePublishCommands)
-        .DependsOn(DotnetCoreResetDatabase)
         .Executes(async () =>
         {
             DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
