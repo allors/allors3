@@ -8,7 +8,8 @@ partial class Build
     private Target DotnetCoreMerge => _ => _
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
-            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetCoreDatabaseResourcesCustom, Paths.DotnetCoreDatabaseResources)));
+            .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetCoreDatabaseResourcesCustom,
+                Paths.DotnetCoreDatabaseResources)));
 
     private Target DotnetCoreGenerate => _ => _
         .After(Clean)
@@ -17,7 +18,8 @@ partial class Build
         {
             DotNetRun(s => s
                 .SetProjectFile(Paths.DotnetSystemRepositoryGenerate)
-                .SetApplicationArguments(Paths.DotnetCoreRepositoryDomainRepository, Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetCoreDatabaseMetaGenerated));
+                .SetApplicationArguments(Paths.DotnetCoreRepositoryDomainRepository,
+                    Paths.DotnetSystemRepositoryTemplatesMetaCs, Paths.DotnetCoreDatabaseMetaGenerated));
             DotNetRun(s => s
                 .SetProcessWorkingDirectory(Paths.DotnetCore)
                 .SetProjectFile(Paths.DotnetCoreDatabaseGenerate));
@@ -72,18 +74,12 @@ partial class Build
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreWorkspaceLocalTest => _ => _
-        .DependsOn(DotnetCorePublishServer)
-        .DependsOn(DotnetCorePublishCommands)
-        .Executes(async () =>
+        .Executes(() =>
         {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
-
-            {
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetCoreWorkspaceTestsLocal)
-                    .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsLocal.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-            }
+            DotNetTest(s => s
+                .SetProjectFile(Paths.DotnetCoreWorkspaceTestsLocal)
+                .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsLocal.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
     private Target DotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
@@ -103,7 +99,6 @@ partial class Build
                     .AddLoggers("trx;LogFileName=DotnetCoreWorkspaceTestsRemoteJsonSystemText.trx")
                     .SetResultsDirectory(Paths.ArtifactsTests));
             }
-
         });
 
     private Target DotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
