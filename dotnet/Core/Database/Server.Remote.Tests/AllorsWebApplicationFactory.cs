@@ -8,6 +8,7 @@ namespace Allors.Server.Tests
     using System.Collections.Generic;
     using Database;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,15 @@ namespace Allors.Server.Tests
                     ["adapter"] = "MEMORY",
                     ["JwtToken:Key"] = "TestSecretKeyForJwtTokenSigningThatIsLongEnough",
                 });
+            });
+
+            builder.ConfigureServices(services =>
+            {
+                services.AddSingleton(new WorkspaceConfig(new Dictionary<HostString, string>
+                {
+                    { new HostString("localhost"), "Default" },
+                    { new HostString("localhost", 5000), "Default" },
+                }));
             });
 
             builder.UseEnvironment("Development");
