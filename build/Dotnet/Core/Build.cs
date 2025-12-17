@@ -66,18 +66,10 @@ partial class Build
 
     private Target DotnetCoreDatabaseTestServerRemote => _ => _
         .DependsOn(DotnetCoreGenerate)
-        .DependsOn(DotnetCorePublishServer)
-        .DependsOn(DotnetCorePublishCommands)
-        .Executes(async () =>
-        {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
-            using var server = new Server(Paths.ArtifactsCoreServer);
-            await server.Ready();
-            DotNetTest(s => s
-                .SetProjectFile(Paths.DotnetCoreDatabaseServerRemoteTests)
-                .AddLoggers("trx;LogFileName=CoreDatabaseServer.trx")
-                .SetResultsDirectory(Paths.ArtifactsTests));
-        });
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetCoreDatabaseServerRemoteTests)
+            .AddLoggers("trx;LogFileName=CoreDatabaseServer.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(DotnetCorePublishServer)

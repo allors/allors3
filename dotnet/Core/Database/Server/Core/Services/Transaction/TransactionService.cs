@@ -18,6 +18,8 @@ namespace Allors.Services
         {
             this.Transaction = databaseService.Database.CreateTransaction();
 
+            var userService = this.Transaction.Services.Get<IUserService>();
+
             if (claimsPrincipalService.User != null)
             {
                 var nameIdentifier = claimsPrincipalService.User.Claims
@@ -26,13 +28,16 @@ namespace Allors.Services
 
                 if (long.TryParse(nameIdentifier, out var userId))
                 {
-                    this.Transaction.Services.Get<IUserService>().User = (User)this.Transaction.Instantiate(userId);
+                    userService.User = (User)this.Transaction.Instantiate(userId);
+                }
+                else
+                {
+                    userService.User = null;
                 }
             }
             else
             {
-                // TODO: move to base
-                //this.Transaction.Services.Get<IUserService>().User = new AutomatedAgents(this.Transaction).Guest;
+                userService.User = null;
             }
         }
 
