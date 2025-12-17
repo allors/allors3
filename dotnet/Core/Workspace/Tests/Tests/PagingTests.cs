@@ -8,6 +8,7 @@
 
 namespace Tests.Workspace
 {
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Xunit;
     using I12 = Allors.Workspace.Domain.I12;
@@ -21,7 +22,7 @@ namespace Tests.Workspace
         // c2D -> c2C -> c1B -> c1A -> c2A -> c2B -> c1D -> c1C
 
         [Fact]
-        public async void Take()
+        public async Task Take()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();

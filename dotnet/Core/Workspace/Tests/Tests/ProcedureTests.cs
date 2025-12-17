@@ -7,6 +7,7 @@ namespace Tests.Workspace
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -18,7 +19,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void TestUnitSamplesWithNulls()
+        public async Task TestUnitSamplesWithNulls()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -45,7 +46,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void TestUnitSamplesWithValues()
+        public async Task TestUnitSamplesWithValues()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -81,7 +82,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void NonExistingProcedure()
+        public async Task NonExistingProcedure()
         {
             await this.Login("administrator");
 

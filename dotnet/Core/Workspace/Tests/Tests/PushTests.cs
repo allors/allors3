@@ -6,6 +6,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
@@ -19,7 +20,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushNewObject()
+        public async Task PushNewObject()
         {
             await this.Login("administrator");
 
@@ -52,7 +53,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushAndPullNewObject()
+        public async Task PushAndPullNewObject()
         {
             await this.Login("administrator");
 
@@ -87,7 +88,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushNewObjectWithChangedRoles()
+        public async Task PushNewObjectWithChangedRoles()
         {
             await this.Login("administrator");
 
@@ -105,7 +106,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushExistingObjectWithChangedRoles()
+        public async Task PushExistingObjectWithChangedRoles()
         {
             await this.Login("administrator");
 
@@ -133,7 +134,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangesBeforeCheckpointShouldBePushed()
+        public async Task ChangesBeforeCheckpointShouldBePushed()
         {
             await this.Login("administrator");
 
@@ -172,7 +173,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushShouldUpdateId()
+        public async Task PushShouldUpdateId()
         {
             await this.Login("administrator");
 
@@ -190,7 +191,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushShouldNotUpdateVersion()
+        public async Task PushShouldNotUpdateVersion()
         {
             await this.Login("administrator");
 
@@ -208,7 +209,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushShouldDerive()
+        public async Task PushShouldDerive()
         {
             await this.Login("administrator");
 
@@ -231,7 +232,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PushTwice()
+        public async Task PushTwice()
         {
             await this.Login("administrator");
 

@@ -9,6 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
@@ -19,7 +20,7 @@ namespace Tests.Workspace
         protected DiffTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void DatabaseUnitDiffTest()
+        public async Task DatabaseUnitDiffTest()
         {
             await this.Login("administrator");
 
@@ -48,7 +49,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void DatabaseUnitDiffAfterResetTest()
+        public async Task DatabaseUnitDiffAfterResetTest()
         {
             await this.Login("administrator");
 
@@ -74,7 +75,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void DatabaseUnitDiffAfterDoubleResetTest()
+        public async Task DatabaseUnitDiffAfterDoubleResetTest()
         {
             await this.Login("administrator");
 
@@ -103,7 +104,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void DatabaseMultipleUnitDiffTest()
+        public async Task DatabaseMultipleUnitDiffTest()
         {
             await this.Login("administrator");
 

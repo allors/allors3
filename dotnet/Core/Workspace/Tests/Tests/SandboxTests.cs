@@ -38,7 +38,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Test()
+        public async Task Test()
         {
             var contextFactory = this.contextFactories[0];
 

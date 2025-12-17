@@ -10,6 +10,7 @@ namespace Tests.Workspace
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors;
     using Allors.Workspace.Data;
     using Allors.Workspace.Meta;
@@ -25,7 +26,7 @@ namespace Tests.Workspace
         protected PullTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void AndGreaterThanLessThan()
+        public async Task AndGreaterThanLessThan()
         {
             await this.Login("administrator");
 
@@ -82,7 +83,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationMany2ManyContainedIn()
+        public async Task AssociationMany2ManyContainedIn()
         {
             await this.Login("administrator");
 
@@ -155,7 +156,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationMany2ManyContains()
+        public async Task AssociationMany2ManyContains()
         {
             await this.Login("administrator");
 
@@ -186,7 +187,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationMany2ManyExist()
+        public async Task AssociationMany2ManyExist()
         {
             await this.Login("administrator");
 
@@ -212,7 +213,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationMany2OneContainedIn()
+        public async Task AssociationMany2OneContainedIn()
         {
             await this.Login("administrator");
 
@@ -243,7 +244,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationMany2OneContains()
+        public async Task AssociationMany2OneContains()
         {
             await this.Login("administrator");
 
@@ -274,7 +275,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2ManyContainedIn()
+        public async Task AssociationOne2ManyContainedIn()
         {
             await this.Login("administrator");
 
@@ -305,7 +306,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2ManyEquals()
+        public async Task AssociationOne2ManyEquals()
         {
             await this.Login("administrator");
 
@@ -355,7 +356,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2ManyExists()
+        public async Task AssociationOne2ManyExists()
         {
             await this.Login("administrator");
 
@@ -398,7 +399,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2ManyInstanceOf()
+        public async Task AssociationOne2ManyInstanceOf()
         {
             await this.Login("administrator");
 
@@ -423,7 +424,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2OneContainedIn()
+        public async Task AssociationOne2OneContainedIn()
         {
             await this.Login("administrator");
 
@@ -454,7 +455,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2OneEquals()
+        public async Task AssociationOne2OneEquals()
         {
             await this.Login("administrator");
 
@@ -504,7 +505,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2OneExists()
+        public async Task AssociationOne2OneExists()
         {
             await this.Login("administrator");
 
@@ -546,7 +547,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void AssociationOne2OneInstanceOf()
+        public async Task AssociationOne2OneInstanceOf()
         {
             await this.Login("administrator");
 
@@ -587,7 +588,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ObjectEquals()
+        public async Task ObjectEquals()
         {
             await this.Login("administrator");
 
@@ -614,7 +615,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ExtentInterface()
+        public async Task ExtentInterface()
         {
             await this.Login("administrator");
 
@@ -636,7 +637,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void InstanceOf()
+        public async Task InstanceOf()
         {
             await this.Login("administrator");
 
@@ -664,7 +665,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void NotEquals()
+        public async Task NotEquals()
         {
             await this.Login("administrator");
 
@@ -694,7 +695,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void OrEquals()
+        public async Task OrEquals()
         {
             await this.Login("administrator");
 
@@ -729,7 +730,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void OperatorExcept()
+        public async Task OperatorExcept()
         {
             await this.Login("administrator");
 
@@ -761,7 +762,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void OperatorIntersect()
+        public async Task OperatorIntersect()
         {
             await this.Login("administrator");
 
@@ -793,7 +794,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void OperatorUnion()
+        public async Task OperatorUnion()
         {
             await this.Login("administrator");
 
@@ -822,7 +823,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDateTimeBetweenPath()
+        public async Task RoleDateTimeBetweenPath()
         {
             await this.Login("administrator");
 
@@ -850,7 +851,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDateTimeBetweenValue()
+        public async Task RoleDateTimeBetweenValue()
         {
             await this.Login("administrator");
 
@@ -882,7 +883,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDateTimeGreaterThanPath()
+        public async Task RoleDateTimeGreaterThanPath()
         {
             await this.Login("administrator");
 
@@ -910,7 +911,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDateTimeGreaterThanValue()
+        public async Task RoleDateTimeGreaterThanValue()
         {
             await this.Login("administrator");
 
@@ -938,7 +939,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDateTimeLessThanPath()
+        public async Task RoleDateTimeLessThanPath()
         {
             await this.Login("administrator");
 
@@ -966,7 +967,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDateTimeLessThanValue()
+        public async Task RoleDateTimeLessThanValue()
         {
             await this.Login("administrator");
 
@@ -994,7 +995,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDateTimeEquals()
+        public async Task RoleDateTimeEquals()
         {
             await this.Login("administrator");
 
@@ -1022,7 +1023,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDecimalBetweenPath()
+        public async Task RoleDecimalBetweenPath()
         {
             await this.Login("administrator");
 
@@ -1050,7 +1051,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDecimalBetweenValue()
+        public async Task RoleDecimalBetweenValue()
         {
             await this.Login("administrator");
 
@@ -1078,7 +1079,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDecimalGreaterThanPath()
+        public async Task RoleDecimalGreaterThanPath()
         {
             await this.Login("administrator");
 
@@ -1106,7 +1107,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDecimalGreaterThanValue()
+        public async Task RoleDecimalGreaterThanValue()
         {
             await this.Login("administrator");
 
@@ -1134,7 +1135,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDecimalLessThanPath()
+        public async Task RoleDecimalLessThanPath()
         {
             await this.Login("administrator");
 
@@ -1162,7 +1163,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDecimalLessThanValue()
+        public async Task RoleDecimalLessThanValue()
         {
             await this.Login("administrator");
 
@@ -1190,7 +1191,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDecimalEquals()
+        public async Task RoleDecimalEquals()
         {
             await this.Login("administrator");
 
@@ -1218,7 +1219,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDoubleBetweenPath()
+        public async Task RoleDoubleBetweenPath()
         {
             await this.Login("administrator");
 
@@ -1246,7 +1247,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDoubleBetweenValue()
+        public async Task RoleDoubleBetweenValue()
         {
             await this.Login("administrator");
 
@@ -1274,7 +1275,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDoubleGreaterThanPath()
+        public async Task RoleDoubleGreaterThanPath()
         {
             await this.Login("administrator");
 
@@ -1302,7 +1303,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDoubleGreaterThanValue()
+        public async Task RoleDoubleGreaterThanValue()
         {
             await this.Login("administrator");
 
@@ -1330,7 +1331,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDoubleLessThanPath()
+        public async Task RoleDoubleLessThanPath()
         {
             await this.Login("administrator");
 
@@ -1358,7 +1359,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDoubleLessThanValue()
+        public async Task RoleDoubleLessThanValue()
         {
             await this.Login("administrator");
 
@@ -1386,7 +1387,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleDoubleEquals()
+        public async Task RoleDoubleEquals()
         {
             await this.Login("administrator");
 
@@ -1414,7 +1415,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerBetweenPath()
+        public async Task RoleIntegerBetweenPath()
         {
             await this.Login("administrator");
 
@@ -1442,7 +1443,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerBetweenValue()
+        public async Task RoleIntegerBetweenValue()
         {
             await this.Login("administrator");
 
@@ -1470,7 +1471,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerGreaterThanPath()
+        public async Task RoleIntegerGreaterThanPath()
         {
             await this.Login("administrator");
 
@@ -1498,7 +1499,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerGreaterThanValue()
+        public async Task RoleIntegerGreaterThanValue()
         {
             await this.Login("administrator");
 
@@ -1526,7 +1527,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerLessThanPath()
+        public async Task RoleIntegerLessThanPath()
         {
             await this.Login("administrator");
 
@@ -1554,7 +1555,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerLessThanValue()
+        public async Task RoleIntegerLessThanValue()
         {
             await this.Login("administrator");
 
@@ -1582,7 +1583,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerEquals()
+        public async Task RoleIntegerEquals()
         {
             await this.Login("administrator");
 
@@ -1610,7 +1611,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleIntegerExist()
+        public async Task RoleIntegerExist()
         {
             await this.Login("administrator");
 
@@ -1635,7 +1636,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleStringEqualsPath()
+        public async Task RoleStringEqualsPath()
         {
             await this.Login("administrator");
 
@@ -1663,7 +1664,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleStringEqualsValue()
+        public async Task RoleStringEqualsValue()
         {
             await this.Login("administrator");
 
@@ -1691,7 +1692,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleStringLike()
+        public async Task RoleStringLike()
         {
             await this.Login("administrator");
 
@@ -1719,7 +1720,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleUniqueEquals()
+        public async Task RoleUniqueEquals()
         {
             await this.Login("administrator");
 
@@ -1747,7 +1748,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleMany2ManyContainedIn()
+        public async Task RoleMany2ManyContainedIn()
         {
             await this.Login("administrator");
 
@@ -1820,7 +1821,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleMany2ManyContains()
+        public async Task RoleMany2ManyContains()
         {
             await this.Login("administrator");
 
@@ -1850,7 +1851,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleOne2ManyContainedIn()
+        public async Task RoleOne2ManyContainedIn()
         {
             await this.Login("administrator");
 
@@ -1881,7 +1882,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleOne2ManyContains()
+        public async Task RoleOne2ManyContains()
         {
             await this.Login("administrator");
 
@@ -1911,7 +1912,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleMany2OneContainedIn()
+        public async Task RoleMany2OneContainedIn()
         {
             await this.Login("administrator");
 
@@ -1942,7 +1943,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void RoleOne2OneContainedIn()
+        public async Task RoleOne2OneContainedIn()
         {
             await this.Login("administrator");
 
@@ -1973,7 +1974,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void WithResultName()
+        public async Task WithResultName()
         {
             await this.Login("administrator");
 
@@ -2007,7 +2008,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PullWithObjectId()
+        public async Task PullWithObjectId()
         {
             await this.Login("administrator");
 
@@ -2029,7 +2030,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PullWithInclude()
+        public async Task PullWithInclude()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -2064,7 +2065,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void SortDirectionDefault()
+        public async Task SortDirectionDefault()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -2089,7 +2090,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void SortDirectionAscending()
+        public async Task SortDirectionAscending()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -2115,7 +2116,7 @@ namespace Tests.Workspace
 
 
         [Fact]
-        public async void SortDirectionDescending()
+        public async Task SortDirectionDescending()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();

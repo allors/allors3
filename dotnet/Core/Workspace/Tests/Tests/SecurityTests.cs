@@ -24,7 +24,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void WithGrant()
+        public async Task WithGrant()
         {
             await this.Login("administrator");
 
@@ -49,7 +49,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void WithoutAccessControl()
+        public async Task WithoutAccessControl()
         {
             await this.Login("noacl");
 
@@ -81,7 +81,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void WithoutPermissions()
+        public async Task WithoutPermissions()
         {
             await this.Login("noperm");
 
@@ -113,7 +113,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void DeniedPermissions()
+        public async Task DeniedPermissions()
         {
             var session = this.Workspace.CreateSession();
 

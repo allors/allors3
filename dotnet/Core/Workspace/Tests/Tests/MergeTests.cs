@@ -9,6 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -18,7 +19,7 @@ namespace Tests.Workspace
         protected MergeTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void DatabaseMergeError()
+        public async Task DatabaseMergeError()
         {
             await this.Login("administrator");
 
