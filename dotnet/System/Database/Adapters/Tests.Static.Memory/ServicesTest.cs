@@ -7,18 +7,12 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using Adapters;
-    using Xunit;
 
     public class ServicesTest : Adapters.ServicesTest, IDisposable
     {
         private readonly Profile profile = new Profile();
 
         protected override IProfile Profile => this.profile;
-
-        [Fact]
-        public override void DifferentTransactions()
-        {
-        }
 
         public override void Dispose() => this.profile.Dispose();
 
