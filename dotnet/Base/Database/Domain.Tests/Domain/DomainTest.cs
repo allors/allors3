@@ -30,7 +30,7 @@ namespace Allors.Database.Domain.Tests
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),
                 });
 
-            this.M = database.Services.Get<MetaPopulation>();
+            this.M = ((IDatabase)database).Services.Get<MetaPopulation>();
 
             this.Setup(database, populate);
         }
