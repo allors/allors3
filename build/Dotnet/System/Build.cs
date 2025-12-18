@@ -21,8 +21,7 @@ partial class Build
     private Target DotnetSystemAdaptersTestMemory => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
-            .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Memory")
+            .SetProjectFile(Paths.DotnetSystemAdaptersStaticMemoryTests)
             .AddLoggers("trx;LogFileName=AdaptersMemory.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
@@ -31,8 +30,7 @@ partial class Build
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
-                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.SqlClient")
+                .SetProjectFile(Paths.DotnetSystemAdaptersStaticSqlClientTests)
                 .AddLoggers("trx;LogFileName=AdaptersSqlClient.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
@@ -42,9 +40,18 @@ partial class Build
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
-                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.Npgsql")
+                .SetProjectFile(Paths.DotnetSystemAdaptersStaticNpgsqlTests)
                 .AddLoggers("trx;LogFileName=AdaptersNpgsql.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
+        });
+
+    private Target DotnetSystemAdaptersTestUnified => _ => _
+        .DependsOn(DotnetSystemAdaptersGenerate)
+        .Executes(() =>
+        {
+            DotNetTest(s => s
+                .SetProjectFile(Paths.DotnetSystemAdaptersStaticUnifiedTests)
+                .AddLoggers("trx;LogFileName=AdaptersUnified.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
@@ -52,5 +59,6 @@ partial class Build
         .DependsOn(Clean)
         .DependsOn(DotnetSystemAdaptersTestMemory)
         .DependsOn(DotnetSystemAdaptersTestSqlClient)
-        .DependsOn(DotnetSystemAdaptersTestNpgsql);
+        .DependsOn(DotnetSystemAdaptersTestNpgsql)
+        .DependsOn(DotnetSystemAdaptersTestUnified);
 }
