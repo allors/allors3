@@ -48,7 +48,7 @@ namespace Allors.Database.Adapters.Memory
 
         public string Id { get; }
 
-        public bool IsShared => false;
+        public bool IsShared => true;
 
         public IObjectFactory ObjectFactory { get; }
 
