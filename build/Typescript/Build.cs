@@ -1,4 +1,5 @@
 using Nuke.Common;
+using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Npm;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
@@ -9,7 +10,7 @@ partial class Build
     private Target TypescriptInstall => _ => _
         .Executes(() => NpmInstall(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.TypescriptModules)));
+            .SetProcessWorkingDirectory(Paths.Typescript)));
 
     private Target TypescriptSystemWorkspaceMeta => _ => _
     .After(TypescriptInstall)
@@ -17,7 +18,7 @@ partial class Build
     .DependsOn(EnsureDirectories)
     .Executes(() => NpmRun(s => s
         .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-        .SetProcessWorkingDirectory(Paths.TypescriptModules)
+        .SetProcessWorkingDirectory(Paths.Typescript)
         .SetCommand("system-workspace-meta:test")));
 
 
@@ -27,7 +28,7 @@ partial class Build
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.TypescriptModules)
+            .SetProcessWorkingDirectory(Paths.Typescript)
             .SetCommand("system-workspace-meta-json:test")));
 
     private Target TypescriptSystemWorkspaceAdapters => _ => _
@@ -36,7 +37,7 @@ partial class Build
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .SetProcessWorkingDirectory(Paths.TypescriptModules)
+            .SetProcessWorkingDirectory(Paths.Typescript)
             .SetCommand("system-workspace-adapters:test")));
 
     private Target TypescriptSystemWorkspaceAdaptersJson => _ => _
@@ -52,7 +53,7 @@ partial class Build
             await server.Ready();
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-                .SetProcessWorkingDirectory(Paths.TypescriptModules)
+                .SetProcessWorkingDirectory(Paths.Typescript)
                 .SetCommand("system-workspace-adapters-json:test"));
         });
 
