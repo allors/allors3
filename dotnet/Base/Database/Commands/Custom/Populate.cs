@@ -5,11 +5,9 @@
 
 namespace Commands
 {
-    using Allors.Database.Domain;
-    using Allors.Database.Services;
+    using System.Threading.Tasks;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
-    using Setup = Allors.Database.Domain.Setup;
 
     [Command(Description = "Add file contents to the index")]
     public class Populate
@@ -18,26 +16,13 @@ namespace Commands
 
         public Logger Logger => LogManager.GetCurrentClassLogger();
 
-        public int OnExecute(CommandLineApplication app)
+        public async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
             this.Logger.Info("Begin");
 
-            var database = this.Parent.Database;
-
-            database.Init();
-
-            var config = new Config { DataPath = this.Parent.DataPath };
-            new Setup(database, config).Apply();
-
-            using (var session = database.CreateTransaction())
+            using (var client = this.Parent.ApiClient)
             {
-                var scheduler = new AutomatedAgents(session).System;
-                session.Services.Get<IUserService>().User = scheduler;
-
-                new Allors.Database.Domain.Upgrade(session, this.Parent.DataPath).Execute();
-
-                session.Derive();
-                session.Commit();
+                await client.PopulateAsync();
             }
 
             this.Logger.Info("End");

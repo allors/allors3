@@ -6,7 +6,7 @@
 namespace Commands
 {
     using System.IO;
-    using System.Xml;
+    using System.Threading.Tasks;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
@@ -20,17 +20,20 @@ namespace Commands
         [Option("-f", Description = "File to load (default is population.xml)")]
         public string FileName { get; set; }
 
-        public int OnExecute(CommandLineApplication app)
+        public async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
             this.Logger.Info("Begin");
 
             var fileName = this.FileName ?? this.Parent.Configuration["populationFile"] ?? "population.xml";
             var fileInfo = new FileInfo(fileName);
 
-            using (var reader = XmlReader.Create(fileInfo.FullName))
+            using (var client = this.Parent.ApiClient)
             {
                 this.Logger.Info("Loading {file}", fileInfo.FullName);
-                this.Parent.Database.Load(reader);
+                using (var fileStream = File.OpenRead(fileInfo.FullName))
+                {
+                    await client.LoadAsync(fileStream, fileInfo.Name);
+                }
             }
 
             this.Logger.Info("End");

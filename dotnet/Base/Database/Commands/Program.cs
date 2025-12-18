@@ -18,10 +18,12 @@ namespace Commands
 
     using Microsoft.Extensions.Configuration;
     using NLog;
+    using Services;
     using ObjectFactory = Allors.Database.ObjectFactory;
+    using Path = System.IO.Path;
     using User = Allors.Database.Domain.User;
 
-    [Command(Description = "Allors Core Commands")]
+    [Command(Description = "Allors Base Commands")]
     [Subcommand(
         typeof(Save),
         typeof(Load),
@@ -32,8 +34,10 @@ namespace Commands
     public class Program
     {
         private IConfigurationRoot configuration;
-
         private IDatabase database;
+
+        [Option("-s|--server", Description = "Server URL (default: http://localhost:5000)")]
+        public string ServerUrl { get; set; }
 
         [Option("-i", Description = "Isolation Level (Snapshot|RepeatableRead|Serializable)")]
         public IsolationLevel? IsolationLevel { get; set; }
@@ -53,13 +57,13 @@ namespace Commands
             {
                 if (this.configuration == null)
                 {
-                    const string root = "/opt/core";
+                    const string root = "/opt/base";
 
                     var configurationBuilder = new ConfigurationBuilder();
 
                     configurationBuilder.AddCrossPlatform(".");
                     configurationBuilder.AddCrossPlatform(root);
-                    configurationBuilder.AddCrossPlatform(System.IO.Path.Combine(root, "commands"));
+                    configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
                     configurationBuilder.AddEnvironmentVariables();
 
                     this.configuration = configurationBuilder.Build();
@@ -68,6 +72,10 @@ namespace Commands
                 return this.configuration;
             }
         }
+
+        public string ResolvedServerUrl => this.ServerUrl ?? this.Configuration["serverUrl"] ?? "http://localhost:5000";
+
+        public AdminApiClient ApiClient => new AdminApiClient(this.ResolvedServerUrl);
 
         public DirectoryInfo DataPath => new DirectoryInfo(".").GetAncestorSibling(this.Configuration["datapath"]);
 

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Commands\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Core\Database\Commands\Services\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>

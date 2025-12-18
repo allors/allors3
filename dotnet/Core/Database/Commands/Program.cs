@@ -6,21 +6,13 @@
 namespace Commands
 {
     using System;
-    using System.Data;
-    using System.IO;
-    using Allors.Database;
-    using Allors.Database.Adapters;
     using Allors.Database.Configuration;
-    using Allors.Database.Configuration.Derivations.Default;
-    using Allors.Database.Domain;
-    using Allors.Database.Meta;
     using McMaster.Extensions.CommandLineUtils;
 
     using Microsoft.Extensions.Configuration;
     using NLog;
-    using ObjectFactory = Allors.Database.ObjectFactory;
+    using Services;
     using Path = System.IO.Path;
-    using User = Allors.Database.Domain.User;
 
     [Command(Description = "Allors Core Commands")]
     [Subcommand(
@@ -33,13 +25,8 @@ namespace Commands
     {
         private IConfigurationRoot configuration;
 
-        private IDatabase database;
-
-        [Option("-i", Description = "Isolation Level (Snapshot|RepeatableRead|Serializable)")]
-        public IsolationLevel? IsolationLevel { get; set; }
-
-        [Option("-t", Description = "Command Timeout in seconds")]
-        public int? CommandTimeout { get; set; }
+        [Option("-s|--server", Description = "Server URL (default: http://localhost:5000)")]
+        public string ServerUrl { get; set; }
 
         public int OnExecute(CommandLineApplication app)
         {
@@ -69,26 +56,9 @@ namespace Commands
             }
         }
 
-        public DirectoryInfo DataPath => new DirectoryInfo(".").GetAncestorSibling(this.Configuration["datapath"]);
+        public string ResolvedServerUrl => this.ServerUrl ?? this.Configuration["serverUrl"] ?? "http://localhost:5000";
 
-        public IDatabase Database
-        {
-            get
-            {
-                if (this.database == null)
-                {
-                    var metaPopulation = new MetaBuilder().Build();
-                    var engine = new Engine(Rules.Create(metaPopulation));
-                    var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
-                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine), this.Configuration, objectFactory, this.IsolationLevel, this.CommandTimeout);
-                    this.database = databaseBuilder.Build();
-                }
-
-                return this.database;
-            }
-        }
-
-        public MetaPopulation M => this.Database.Services.Get<Allors.Database.Meta.MetaPopulation>();
+        public AdminApiClient ApiClient => new AdminApiClient(this.ResolvedServerUrl);
 
         public static int Main(string[] args)
         {

@@ -32,17 +32,11 @@ namespace Allors.Database.Adapters
 
         public IDatabase Build()
         {
-            var adapter = this.configuration["adapter"]?.Trim().ToUpperInvariant();
+            var adapter = this.configuration["adapter"]?.Trim().ToUpperInvariant() ?? "MEMORY";
             var connectionString = this.configuration["ConnectionStrings:DefaultConnection"];
 
             switch (adapter)
             {
-                case "MEMORY":
-                    return new Memory.Database(this.scope, new Memory.Configuration
-                    {
-                        ObjectFactory = this.objectFactory,
-                    });
-
                 case "NPGSQL":
 
                     return new Sql.Npgsql.Database(this.scope, new Sql.Configuration
@@ -63,8 +57,12 @@ namespace Allors.Database.Adapters
                         CommandTimeout = this.commandTimeout,
                     });
 
+                case "MEMORY":
                 default:
-                    throw new ArgumentOutOfRangeException(adapter);
+                    return new Memory.Database(this.scope, new Memory.Configuration
+                    {
+                        ObjectFactory = this.objectFactory,
+                    });
             }
         }
     }

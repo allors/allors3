@@ -5,31 +5,15 @@
 
 namespace Commands
 {
-    using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Xml;
-    using Allors.Database.Domain;
-    using Allors.Database.Services;
+    using System.Threading.Tasks;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
     [Command(Description = "Add file contents to the index")]
     public class Upgrade
     {
-        private readonly HashSet<Guid> excludedObjectTypes = new HashSet<Guid>
-        {
-        };
-
-        private readonly HashSet<Guid> excludedRelationTypes = new HashSet<Guid>
-        {
-        };
-
-        private readonly HashSet<Guid> movedRelationTypes = new HashSet<Guid>
-        {
-        };
-
         public Program Parent { get; set; }
 
         public Logger Logger => LogManager.GetCurrentClassLogger();
@@ -37,75 +21,40 @@ namespace Commands
         [Option("-f", Description = "File to load")]
         public string FileName { get; set; } = "population.xml";
 
-        public int OnExecute(CommandLineApplication app)
+        public async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
             var fileInfo = new FileInfo(this.FileName);
 
             this.Logger.Info("Begin");
 
-            var notLoadedObjectTypeIds = new HashSet<Guid>();
-            var notLoadedRelationTypeIds = new HashSet<Guid>();
-
-            var notLoadedObjects = new HashSet<long>();
-
-            using (var reader = XmlReader.Create(fileInfo.FullName))
+            using (var client = this.Parent.ApiClient)
             {
-                this.Parent.Database.ObjectNotLoaded += (sender, args) =>
+                this.Logger.Info("Upgrading from {file}", fileInfo.FullName);
+                using (var fileStream = File.OpenRead(fileInfo.FullName))
                 {
-                    if (!this.excludedObjectTypes.Contains(args.ObjectTypeId))
-                    {
-                        notLoadedObjectTypeIds.Add(args.ObjectTypeId);
-                    }
-                    else
-                    {
-                        var id = args.ObjectId;
-                        notLoadedObjects.Add(id);
-                    }
-                };
+                    var response = await client.UpgradeAsync(fileStream, fileInfo.Name);
 
-                this.Parent.Database.RelationNotLoaded += (sender, args) =>
-                {
-                    if (!this.excludedRelationTypes.Contains(args.RelationTypeId))
+                    if (!response.Success)
                     {
-                        if (!notLoadedObjects.Contains(args.AssociationId))
+                        this.Logger.Error(response.ErrorMessage);
+
+                        if (response.NotLoadedObjectTypeIds?.Length > 0)
                         {
-                            notLoadedRelationTypeIds.Add(args.RelationTypeId);
+                            var notLoaded = response.NotLoadedObjectTypeIds
+                                .Aggregate("Could not load following ObjectTypeIds: ", (current, objectTypeId) => current + "- " + objectTypeId);
+                            this.Logger.Error(notLoaded);
                         }
+
+                        if (response.NotLoadedRelationTypeIds?.Length > 0)
+                        {
+                            var notLoaded = response.NotLoadedRelationTypeIds
+                                .Aggregate("Could not load following RelationTypeIds: ", (current, relationTypeId) => current + "- " + relationTypeId);
+                            this.Logger.Error(notLoaded);
+                        }
+
+                        return 1;
                     }
-                };
-
-                this.Logger.Info("Loading {file}", fileInfo.FullName);
-                this.Parent.Database.Load(reader);
-            }
-
-            if (notLoadedObjectTypeIds.Count > 0)
-            {
-                var notLoaded = notLoadedObjectTypeIds
-                    .Aggregate("Could not load following ObjectTypeIds: ", (current, objectTypeId) => current + "- " + objectTypeId);
-
-                this.Logger.Error(notLoaded);
-                return 1;
-            }
-
-            if (notLoadedRelationTypeIds.Count > 0)
-            {
-                var notLoaded = notLoadedRelationTypeIds
-                    .Aggregate("Could not load following RelationTypeIds: ", (current, relationTypeId) => current + "- " + relationTypeId);
-
-                this.Logger.Error(notLoaded);
-                return 1;
-            }
-
-            using (var transaction = this.Parent.Database.CreateTransaction())
-            {
-                this.Parent.Database.Services.Get<IPermissions>().Sync(transaction);
-
-                new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
-                transaction.Commit();
-
-                new Security(transaction).Apply();
-
-                transaction.Commit();
+                }
             }
 
             this.Logger.Info("End");

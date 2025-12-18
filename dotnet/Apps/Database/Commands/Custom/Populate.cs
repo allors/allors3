@@ -5,9 +5,7 @@
 
 namespace Commands
 {
-    using Allors;
-    using Allors.Database.Domain;
-    using Allors.Database.Services;
+    using System.Threading.Tasks;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
@@ -18,30 +16,13 @@ namespace Commands
 
         public Logger Logger => LogManager.GetCurrentClassLogger();
 
-        public int OnExecute(CommandLineApplication app)
+        public async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
             this.Logger.Info("Begin");
 
-            var database = this.Parent.Database;
-
-            database.Init();
-
-            var config = new Config { DataPath = this.Parent.DataPath };
-            new Setup(database, config).Apply();
-
-            using (var transaction = database.CreateTransaction())
+            using (var client = this.Parent.ApiClient)
             {
-                transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
-
-                new TestPopulation(transaction, config).Populate(database);
-
-                transaction.Derive();
-                transaction.Commit();
-
-                new Allors.Database.Domain.Upgrade(transaction, this.Parent.DataPath).Execute();
-
-                transaction.Derive();
-                transaction.Commit();
+                await client.PopulateAsync();
             }
 
             this.Logger.Info("End");

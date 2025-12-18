@@ -6,7 +6,7 @@
 namespace Commands
 {
     using System.IO;
-    using System.Xml;
+    using System.Threading.Tasks;
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
@@ -20,19 +20,22 @@ namespace Commands
         [Option("-f", Description = "File to save")]
         public string FileName { get; set; } = "population.xml";
 
-        public int OnExecute(CommandLineApplication app)
+        public async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
             this.Logger.Info("Begin");
 
-            var fileName = this.FileName ?? this.Parent.Configuration["populationFile"];
+            var fileName = this.FileName ?? this.Parent.Configuration["populationFile"] ?? "population.xml";
             var fileInfo = new FileInfo(fileName);
 
-            using (var stream = File.Create(fileInfo.FullName))
+            using (var client = this.Parent.ApiClient)
             {
-                using (var writer = XmlWriter.Create(stream))
+                this.Logger.Info("Saving to {file}", fileInfo.FullName);
+                using (var stream = await client.SaveAsync())
                 {
-                    this.Logger.Info("Saving {file}", fileInfo.FullName);
-                    this.Parent.Database.Save(writer);
+                    using (var fileStream = File.Create(fileInfo.FullName))
+                    {
+                        await stream.CopyToAsync(fileStream);
+                    }
                 }
             }
 
