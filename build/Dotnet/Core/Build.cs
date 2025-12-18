@@ -74,6 +74,7 @@ partial class Build
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
     private Target DotnetCoreWorkspaceLocalTest => _ => _
+        .DependsOn(DotnetCoreGenerate)
         .Executes(() =>
         {
             DotNetTest(s => s
@@ -83,6 +84,7 @@ partial class Build
         });
 
     private Target DotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
+        .DependsOn(DotnetCoreGenerate)
         .Executes(async () =>
         {
             DotNetTest(s => s
@@ -92,6 +94,7 @@ partial class Build
         });
 
     private Target DotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
+        .DependsOn(DotnetCoreGenerate)
         .Executes(async () =>
         {
             DotNetTest(s => s
