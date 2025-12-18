@@ -28,9 +28,9 @@ namespace Allors.Database.Adapters.Unified
         private bool isDeletedOnRollback;
         private WeakReference allorizedObjectWeakReference;
 
-        internal Strategy(Transaction transaction, IClass objectType, long objectId, long version)
+        internal Strategy(Database database, IClass objectType, long objectId, long version)
         {
-            this.Transaction = transaction;
+            this.Database = database;
             this.UncheckedObjectType = objectType;
             this.ObjectId = objectId;
 
@@ -70,13 +70,13 @@ namespace Allors.Database.Adapters.Unified
             }
         }
 
-        ITransaction IStrategy.Transaction => this.Transaction;
+        ITransaction IStrategy.Transaction => this.Database;
 
         internal IClass UncheckedObjectType { get; }
 
-        internal Transaction Transaction { get; }
+        internal Database Database { get; }
 
-        private ChangeLog ChangeLog => this.Transaction.ChangeLog;
+        private ChangeLog ChangeLog => this.Database.ChangeLog;
 
         private Dictionary<IRoleType, object> RollbackUnitRoleByRoleType => this.rollbackUnitRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
@@ -147,7 +147,7 @@ namespace Allors.Database.Adapters.Unified
         public void SetUnitRole(IRoleType roleType, object role)
         {
             this.AssertNotDeleted();
-            this.Transaction.Database.UnitRoleChecks(this, roleType);
+            this.Database.UnitRoleChecks(this, roleType);
 
             var previousRole = this.GetInternalizedUnitRole(roleType);
             role = roleType.Normalize(role);
@@ -255,7 +255,7 @@ namespace Allors.Database.Adapters.Unified
             {
                 var strategies = roles
                     .Where(v => v != null)
-                    .Select(v => this.Transaction.Database.CompositeRolesChecks(this, roleType, (Strategy)v.Strategy))
+                    .Select(v => this.Database.CompositeRolesChecks(this, roleType, (Strategy)v.Strategy))
                     .Distinct();
 
                 if (roleType.AssociationType.IsMany)
@@ -277,7 +277,7 @@ namespace Allors.Database.Adapters.Unified
                 return;
             }
 
-            var roleStrategy = this.Transaction.Database.CompositeRolesChecks(this, roleType, (Strategy)role.Strategy);
+            var roleStrategy = this.Database.CompositeRolesChecks(this, roleType, (Strategy)role.Strategy);
 
             if (roleType.AssociationType.IsMany)
             {
@@ -298,7 +298,7 @@ namespace Allors.Database.Adapters.Unified
                 return;
             }
 
-            var roleStrategy = this.Transaction.Database.CompositeRolesChecks(this, roleType, (Strategy)role.Strategy);
+            var roleStrategy = this.Database.CompositeRolesChecks(this, roleType, (Strategy)role.Strategy);
 
             if (roleType.AssociationType.IsMany)
             {
@@ -463,7 +463,7 @@ namespace Allors.Database.Adapters.Unified
             IObject allorsObject;
             if (this.allorizedObjectWeakReference == null)
             {
-                allorsObject = this.Transaction.Database.ObjectFactory.Create(this);
+                allorsObject = this.Database.ObjectFactory.Create(this);
                 this.allorizedObjectWeakReference = new WeakReference(allorsObject);
             }
             else
@@ -471,7 +471,7 @@ namespace Allors.Database.Adapters.Unified
                 allorsObject = (IObject)this.allorizedObjectWeakReference.Target;
                 if (allorsObject == null)
                 {
-                    allorsObject = this.Transaction.Database.ObjectFactory.Create(this);
+                    allorsObject = this.Database.ObjectFactory.Create(this);
                     this.allorizedObjectWeakReference.Target = allorsObject;
                 }
             }
@@ -481,7 +481,7 @@ namespace Allors.Database.Adapters.Unified
 
         internal void Commit()
         {
-            if (!this.IsDeleted && !this.Transaction.Database.IsLoading)
+            if (!this.IsDeleted && !this.Database.IsLoading)
             {
                 // TODO: Test
                 /*
@@ -610,7 +610,7 @@ namespace Allors.Database.Adapters.Unified
         internal void SetCompositeRoleOne2One(IRoleType roleType, Strategy @new)
         {
             this.AssertNotDeleted();
-            this.Transaction.Database.CompositeRoleChecks(this, roleType, @new);
+            this.Database.CompositeRoleChecks(this, roleType, @new);
 
             this.compositeRoleByRoleType.TryGetValue(roleType, out var previousRole);
 
@@ -656,7 +656,7 @@ namespace Allors.Database.Adapters.Unified
         internal void SetCompositeRoleMany2One(IRoleType roleType, Strategy @new)
         {
             this.AssertNotDeleted();
-            this.Transaction.Database.CompositeRoleChecks(this, roleType, @new);
+            this.Database.CompositeRoleChecks(this, roleType, @new);
 
             this.compositeRoleByRoleType.TryGetValue(roleType, out var previousRole);
 
@@ -983,7 +983,7 @@ namespace Allors.Database.Adapters.Unified
         private void RemoveCompositeRoleOne2One(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.Transaction.Database.CompositeRoleChecks(this, roleType);
+            this.Database.CompositeRoleChecks(this, roleType);
 
             var previousRole = (Strategy)this.GetCompositeRole(roleType)?.Strategy;
             if (previousRole != null)
@@ -1007,7 +1007,7 @@ namespace Allors.Database.Adapters.Unified
         private void RemoveCompositeRoleMany2One(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.Transaction.Database.CompositeRoleChecks(this, roleType);
+            this.Database.CompositeRoleChecks(this, roleType);
 
             var previousRole = (Strategy)this.GetCompositeRole(roleType)?.Strategy;
 

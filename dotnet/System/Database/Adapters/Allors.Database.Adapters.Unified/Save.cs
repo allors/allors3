@@ -12,13 +12,13 @@ namespace Allors.Database.Adapters.Unified
 
     public class Save
     {
-        private readonly Transaction transaction;
+        private readonly Database database;
         private readonly XmlWriter writer;
         private readonly Dictionary<IObjectType, List<Strategy>> sortedNonDeletedStrategiesByObjectType;
 
-        public Save(Transaction transaction, XmlWriter writer, Dictionary<IObjectType, List<Strategy>> sortedNonDeletedStrategiesByObjectType)
+        public Save(Database database, XmlWriter writer, Dictionary<IObjectType, List<Strategy>> sortedNonDeletedStrategiesByObjectType)
         {
-            this.transaction = transaction;
+            this.database = database;
             this.writer = writer;
             this.sortedNonDeletedStrategiesByObjectType = sortedNonDeletedStrategiesByObjectType;
         }
@@ -111,7 +111,7 @@ namespace Allors.Database.Adapters.Unified
                 strategies.Sort(strategySorter);
             }
 
-            var sortedRelationTypes = new List<IRelationType>(this.transaction.Population.MetaPopulation.DatabaseRelationTypes);
+            var sortedRelationTypes = new List<IRelationType>(this.database.MetaPopulation.DatabaseRelationTypes);
             sortedRelationTypes.Sort();
             foreach (var relationType in sortedRelationTypes)
             {

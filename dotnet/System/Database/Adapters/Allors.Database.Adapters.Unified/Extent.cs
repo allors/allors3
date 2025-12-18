@@ -18,7 +18,7 @@ namespace Allors.Database.Adapters.Unified
         private IObject[] defaultObjectArray;
         private Extent parent;
 
-        protected Extent(Transaction transaction) => this.Transaction = transaction;
+        protected Extent(Database database) => this.Database = database;
 
         public override int Count
         {
@@ -44,7 +44,7 @@ namespace Allors.Database.Adapters.Unified
             }
         }
 
-        internal Transaction Transaction { get; }
+        internal Database Database { get; }
 
         internal ExtentSort Sorter { get; private set; }
 
@@ -109,7 +109,7 @@ namespace Allors.Database.Adapters.Unified
         public override IObject[] ToArray()
         {
             this.Evaluate();
-            var clrType = this.Transaction.GetTypeForObjectType(this.ObjectType);
+            var clrType = this.Database.GetTypeForObjectType(this.ObjectType);
 
             if (this.Strategies.Count > 0)
             {

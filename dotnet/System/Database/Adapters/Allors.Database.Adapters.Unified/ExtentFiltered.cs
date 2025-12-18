@@ -15,8 +15,8 @@ namespace Allors.Database.Adapters.Unified
 
         private And filter;
 
-        internal ExtentFiltered(Transaction transaction, IComposite objectType)
-            : base(transaction) =>
+        internal ExtentFiltered(Database database, IComposite objectType)
+            : base(database) =>
             this.objectType = objectType;
 
         public override ICompositePredicate Filter => this.filter ??= new And(this);
@@ -45,7 +45,7 @@ namespace Allors.Database.Adapters.Unified
             {
                 this.Strategies = new List<Strategy>();
 
-                foreach (var strategy in this.Transaction.GetStrategiesForExtentIncludingDeleted(this.objectType))
+                foreach (var strategy in this.Database.GetStrategiesForExtentIncludingDeleted(this.objectType))
                 {
                     if (!strategy.IsDeleted)
                     {

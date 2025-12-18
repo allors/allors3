@@ -15,8 +15,8 @@ namespace Allors.Database.Adapters.Unified
         private readonly ExtentOperationType operationType;
         private readonly Extent secondOperand;
 
-        public ExtentOperation(Transaction transaction, Extent firstOperand, Extent secondOperand, ExtentOperationType operationType)
-            : base(transaction)
+        public ExtentOperation(Database database, Extent firstOperand, Extent secondOperand, ExtentOperationType operationType)
+            : base(database)
         {
             if (!firstOperand.ObjectType.Equals(secondOperand.ObjectType))
             {
