@@ -48,9 +48,9 @@ partial class Build
         .DependsOn(DotnetCorePublishCommands)
         .Executes(async () =>
         {
-            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
             using var server = new Server(Paths.ArtifactsCoreServer);
             await server.Ready();
+            DotNet("Commands.dll Populate", Paths.ArtifactsCoreCommands);
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.Typescript)
