@@ -9,7 +9,7 @@ namespace Allors.Database.Domain.Tests
     using System;
     using System.Globalization;
     using System.Linq;
-    using Adapters.Memory;
+    using Adapters.Unified;
     using Configuration;
     using Database.Derivations;
     using Database.Services;

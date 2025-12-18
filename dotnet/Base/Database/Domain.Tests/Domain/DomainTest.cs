@@ -10,7 +10,7 @@ namespace Allors.Database.Domain.Tests
     using System.IO;
     using System.Reflection;
     using Database;
-    using Adapters.Memory;
+    using Adapters.Unified;
     using Domain;
     using Allors.Database.Security;
     using Configuration;

@@ -104,12 +104,14 @@
     <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql.SqlClient/Allors.Database.Adapters.Sql.SqlClient.csproj" />
     <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql/Allors.Database.Adapters.Sql.csproj" />
     <Project Path="System/Database/Adapters/Allors.Database.Adapters.Tracing/Allors.Database.Adapters.Tracing.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters.Unified/Allors.Database.Adapters.Unified.csproj" />
     <Project Path="System/Database/Adapters/Allors.Database.Adapters/Allors.Database.Adapters.csproj" />
     <Project Path="System/Database/Adapters/Allors.Database.Builder/Allors.Database.Builder.csproj" />
     <Project Path="System/Database/Adapters/Domain/Domain.csproj" />
     <Project Path="System/Database/Adapters/Generate/Generate.csproj" />
     <Project Path="System/Database/Adapters/Meta/Meta.csproj" />
     <Project Path="System/Database/Adapters/Repository/Domain/Repository.csproj" />
+    <Project Path="System/Database/Adapters/Tests.Static.Unified/Tests.Static.Unified.csproj" />
     <Project Path="System/Database/Adapters/Tests.Static/Tests.Static.csproj" />
     <Project Path="System/Database/Adapters/Tests.Static.Memory/Tests.Static.Memory.csproj" />
     <Project Path="System/Database/Adapters/Tests.Static.SqlClient/Tests.Static.SqlClient.csproj" />
