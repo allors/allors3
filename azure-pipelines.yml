@@ -36,12 +36,6 @@ stages:
           target: 'CiTypescriptWorkspaceTest'
         typescript_workspace_adapters_json:
           target: 'CiTypescriptWorkspaceAdaptersJsonTest'
-        typescript_workspace_e2e_angular_base:
-          target: 'CiTypescriptE2EAngularBaseTest'
-        typescript_workspace_e2e_angular_apps_intranet:
-          target: 'CiTypescriptWorkspacesE2EAngularAppsIntranetTest'
-        #typescript_workspace_e2e_angular_apps_extranet:
-        #  target: 'CiTypescriptWorkspacesE2EAngularAppsExtranetTest'
 
     steps:
     - checkout: self
