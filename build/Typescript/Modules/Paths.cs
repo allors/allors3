@@ -2,7 +2,7 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath TypescriptModules => Typescript / "modules";
+    public AbsolutePath TypescriptModules => Typescript;
 
     public AbsolutePath TypescriptModulesApps => TypescriptModules / "apps";
 
