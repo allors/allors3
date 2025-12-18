@@ -14,7 +14,8 @@ namespace Allors.Database.Adapters.Memory
     public class Database : IDatabase
     {
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
-        private Transaction transaction;
+        private readonly CommittedStore committedStore;
+        private readonly object commitLock;
 
         public Database(IDatabaseServices state, Configuration configuration)
         {
@@ -33,6 +34,8 @@ namespace Allors.Database.Adapters.Memory
             this.MetaPopulation = this.ObjectFactory.MetaPopulation;
 
             this.concreteClassesByObjectType = new Dictionary<IObjectType, object>();
+            this.committedStore = new CommittedStore();
+            this.commitLock = new object();
 
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
 
@@ -53,15 +56,17 @@ namespace Allors.Database.Adapters.Memory
 
         public IDatabaseServices Services { get; }
 
+        public ISink Sink { get; set; }
+
         internal bool IsLoading { get; private set; }
 
-        protected virtual Transaction Transaction => this.transaction ??= new Transaction(this, this.Services.CreateTransactionServices());
+        internal CommittedStore CommittedStore => this.committedStore;
 
         public ITransaction CreateTransaction() => this.CreateDatabaseTransaction();
 
         ITransaction IDatabase.CreateTransaction() => this.CreateDatabaseTransaction();
 
-        public ITransaction CreateDatabaseTransaction() => this.Transaction;
+        public ITransaction CreateDatabaseTransaction() => new Transaction(this, this.Services.CreateTransactionServices());
 
         public void Load(XmlReader reader)
         {
@@ -71,10 +76,10 @@ namespace Allors.Database.Adapters.Memory
             {
                 this.IsLoading = true;
 
-                var load = new Load(this.Transaction, reader);
+                using var transaction = (Transaction)this.CreateDatabaseTransaction();
+                var load = new Load(transaction, reader);
                 load.Execute();
-
-                this.Transaction.Commit();
+                transaction.Commit();
             }
             finally
             {
@@ -82,9 +87,11 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        public void Save(XmlWriter writer) => this.Transaction.Save(writer);
-
-        public ISink Sink { get; set; }
+        public void Save(XmlWriter writer)
+        {
+            using var transaction = (Transaction)this.CreateDatabaseTransaction();
+            transaction.Save(writer);
+        }
 
         public bool ContainsClass(IComposite objectType, IObjectType concreteClass)
         {
@@ -148,11 +155,20 @@ namespace Allors.Database.Adapters.Memory
 
         public virtual void Init()
         {
-            this.Transaction.Init();
-
-            this.transaction = null;
-
+            this.committedStore.Reset();
             this.Services.OnInit(this);
+        }
+
+        internal long NextId() => this.committedStore.NextId();
+
+        internal void UpdateCurrentId(long objectId) => this.committedStore.UpdateCurrentId(objectId);
+
+        internal void CommitTransaction(TransactionChanges changes)
+        {
+            lock (this.commitLock)
+            {
+                this.committedStore.Commit(changes);
+            }
         }
 
         internal void OnObjectNotLoaded(Guid metaTypeId, long allorsObjectId)

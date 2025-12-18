@@ -14,17 +14,19 @@ namespace Allors.Database.Adapters.Memory
 
     public sealed class Strategy : IStrategy
     {
-        private readonly Dictionary<IRoleType, object> unitRoleByRoleType;
-        private readonly Dictionary<IRoleType, Strategy> compositeRoleByRoleType;
-        private readonly Dictionary<IRoleType, HashSet<Strategy>> compositesRoleByRoleType;
-        private readonly Dictionary<IAssociationType, Strategy> compositeAssociationByAssociationType;
-        private readonly Dictionary<IAssociationType, HashSet<Strategy>> compositesAssociationByAssociationType;
+        private CommittedObject snapshot;
+
+        private Dictionary<IRoleType, object> unitRoleByRoleType;
+        private Dictionary<IRoleType, long?> compositeRoleByRoleType;
+        private Dictionary<IRoleType, HashSet<long>> compositesRoleByRoleType;
+        private Dictionary<IAssociationType, long?> compositeAssociationByAssociationType;
+        private Dictionary<IAssociationType, HashSet<long>> compositesAssociationByAssociationType;
 
         private Dictionary<IRoleType, object> rollbackUnitRoleByRoleType;
-        private Dictionary<IRoleType, Strategy> rollbackCompositeRoleByRoleType;
-        private Dictionary<IRoleType, HashSet<Strategy>> rollbackCompositesRoleByRoleType;
-        private Dictionary<IAssociationType, Strategy> rollbackCompositeAssociationByAssociationType;
-        private Dictionary<IAssociationType, HashSet<Strategy>> rollbackCompositesAssociationByAssociationType;
+        private Dictionary<IRoleType, long?> rollbackCompositeRoleByRoleType;
+        private Dictionary<IRoleType, HashSet<long>> rollbackCompositesRoleByRoleType;
+        private Dictionary<IAssociationType, long?> rollbackCompositeAssociationByAssociationType;
+        private Dictionary<IAssociationType, HashSet<long>> rollbackCompositesAssociationByAssociationType;
         private bool isDeletedOnRollback;
         private WeakReference allorizedObjectWeakReference;
 
@@ -34,6 +36,8 @@ namespace Allors.Database.Adapters.Memory
             this.UncheckedObjectType = objectType;
             this.ObjectId = objectId;
 
+            this.snapshot = null;
+
             this.IsDeleted = false;
             this.isDeletedOnRollback = true;
             this.IsNewInTransaction = true;
@@ -41,10 +45,37 @@ namespace Allors.Database.Adapters.Memory
             this.ObjectVersion = version;
 
             this.unitRoleByRoleType = new Dictionary<IRoleType, object>();
-            this.compositeRoleByRoleType = new Dictionary<IRoleType, Strategy>();
-            this.compositesRoleByRoleType = new Dictionary<IRoleType, HashSet<Strategy>>();
-            this.compositeAssociationByAssociationType = new Dictionary<IAssociationType, Strategy>();
-            this.compositesAssociationByAssociationType = new Dictionary<IAssociationType, HashSet<Strategy>>();
+            this.compositeRoleByRoleType = new Dictionary<IRoleType, long?>();
+            this.compositesRoleByRoleType = new Dictionary<IRoleType, HashSet<long>>();
+            this.compositeAssociationByAssociationType = new Dictionary<IAssociationType, long?>();
+            this.compositesAssociationByAssociationType = new Dictionary<IAssociationType, HashSet<long>>();
+
+            this.rollbackUnitRoleByRoleType = null;
+            this.rollbackCompositeRoleByRoleType = null;
+            this.rollbackCompositesRoleByRoleType = null;
+            this.rollbackCompositeAssociationByAssociationType = null;
+            this.rollbackCompositesAssociationByAssociationType = null;
+        }
+
+        internal Strategy(Transaction transaction, CommittedObject snapshot)
+        {
+            this.Transaction = transaction;
+            this.UncheckedObjectType = snapshot.ObjectType;
+            this.ObjectId = snapshot.ObjectId;
+
+            this.snapshot = snapshot;
+
+            this.IsDeleted = false;
+            this.isDeletedOnRollback = false;
+            this.IsNewInTransaction = false;
+
+            this.ObjectVersion = snapshot.Version;
+
+            this.unitRoleByRoleType = null;
+            this.compositeRoleByRoleType = null;
+            this.compositesRoleByRoleType = null;
+            this.compositeAssociationByAssociationType = null;
+            this.compositesAssociationByAssociationType = null;
 
             this.rollbackUnitRoleByRoleType = null;
             this.rollbackCompositeRoleByRoleType = null;
@@ -80,13 +111,13 @@ namespace Allors.Database.Adapters.Memory
 
         private Dictionary<IRoleType, object> RollbackUnitRoleByRoleType => this.rollbackUnitRoleByRoleType ??= new Dictionary<IRoleType, object>();
 
-        private Dictionary<IRoleType, Strategy> RollbackCompositeRoleByRoleType => this.rollbackCompositeRoleByRoleType ??= new Dictionary<IRoleType, Strategy>();
+        private Dictionary<IRoleType, long?> RollbackCompositeRoleByRoleType => this.rollbackCompositeRoleByRoleType ??= new Dictionary<IRoleType, long?>();
 
-        private Dictionary<IRoleType, HashSet<Strategy>> RollbackCompositesRoleByRoleType => this.rollbackCompositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<Strategy>>();
+        private Dictionary<IRoleType, HashSet<long>> RollbackCompositesRoleByRoleType => this.rollbackCompositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<long>>();
 
-        private Dictionary<IAssociationType, Strategy> RollbackCompositeAssociationByAssociationType => this.rollbackCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, Strategy>();
+        private Dictionary<IAssociationType, long?> RollbackCompositeAssociationByAssociationType => this.rollbackCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, long?>();
 
-        private Dictionary<IAssociationType, HashSet<Strategy>> RollbackCompositesAssociationByAssociationType => this.rollbackCompositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<Strategy>>();
+        private Dictionary<IAssociationType, HashSet<long>> RollbackCompositesAssociationByAssociationType => this.rollbackCompositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<long>>();
 
         public override string ToString() => this.UncheckedObjectType.Name + " " + this.ObjectId;
 
@@ -157,9 +188,11 @@ namespace Allors.Database.Adapters.Memory
                 return;
             }
 
+            this.unitRoleByRoleType ??= new Dictionary<IRoleType, object>();
+
             if (!this.RollbackUnitRoleByRoleType.ContainsKey(roleType))
             {
-                this.RollbackUnitRoleByRoleType[roleType] = this.GetInternalizedUnitRole(roleType);
+                this.RollbackUnitRoleByRoleType[roleType] = previousRole;
             }
 
             this.ChangeLog.OnChangingUnitRole(this, roleType, previousRole);
@@ -173,6 +206,8 @@ namespace Allors.Database.Adapters.Memory
                     this.unitRoleByRoleType[roleType] = role;
                     break;
             }
+
+            this.Transaction.MarkModified(this.ObjectId);
         }
 
         public void RemoveUnitRole(IRoleType roleType) => this.SetUnitRole(roleType, null);
@@ -180,13 +215,19 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistUnitRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            return this.unitRoleByRoleType.ContainsKey(roleType);
+            return this.GetInternalizedUnitRole(roleType) != null;
         }
 
         public IObject GetCompositeRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.compositeRoleByRoleType.TryGetValue(roleType, out var strategy);
+            var roleId = this.GetCompositeRoleId(roleType);
+            if (roleId == null)
+            {
+                return null;
+            }
+
+            var strategy = this.Transaction.InstantiateMemoryStrategy(roleId.Value);
             return strategy?.GetObject();
         }
 
@@ -198,12 +239,10 @@ namespace Allors.Database.Adapters.Memory
             }
             else if (roleType.AssociationType.IsOne)
             {
-                // 1-1
                 this.SetCompositeRoleOne2One(roleType, (Strategy)newRole.Strategy);
             }
             else
             {
-                // *-1
                 this.SetCompositeRoleMany2One(roleType, (Strategy)newRole.Strategy);
             }
         }
@@ -212,12 +251,10 @@ namespace Allors.Database.Adapters.Memory
         {
             if (roleType.AssociationType.IsOne)
             {
-                // 1-1
                 this.RemoveCompositeRoleOne2One(roleType);
             }
             else
             {
-                // *-1
                 this.RemoveCompositeRoleMany2One(roleType);
             }
         }
@@ -225,23 +262,26 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistCompositeRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            return this.compositeRoleByRoleType.ContainsKey(roleType);
+            return this.GetCompositeRoleId(roleType) != null;
         }
 
         public IEnumerable<T> GetCompositesRole<T>(IRoleType roleType) where T : IObject
         {
             this.AssertNotDeleted();
 
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var strategies);
-
-            if (strategies == null)
+            var roleIds = this.GetCompositesRoleIds(roleType);
+            if (roleIds == null)
             {
                 yield break;
             }
 
-            foreach (var strategy in strategies.ToArray())
+            foreach (var roleId in roleIds.ToArray())
             {
-                yield return (T)strategy.GetObject();
+                var strategy = this.Transaction.InstantiateMemoryStrategy(roleId);
+                if (strategy != null)
+                {
+                    yield return (T)strategy.GetObject();
+                }
             }
         }
 
@@ -327,8 +367,8 @@ namespace Allors.Database.Adapters.Memory
         public bool ExistCompositesRole(IRoleType roleType)
         {
             this.AssertNotDeleted();
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var roleStrategies);
-            return roleStrategies != null;
+            var roleIds = this.GetCompositesRoleIds(roleType);
+            return roleIds != null && roleIds.Count > 0;
         }
 
         public object GetAssociation(IAssociationType associationType) => associationType.IsMany ? this.GetCompositesAssociation<IObject>(associationType) : (object)this.GetCompositeAssociation(associationType);
@@ -338,7 +378,13 @@ namespace Allors.Database.Adapters.Memory
         public IObject GetCompositeAssociation(IAssociationType associationType)
         {
             this.AssertNotDeleted();
-            this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
+            var associationId = this.GetCompositeAssociationId(associationType);
+            if (associationId == null)
+            {
+                return null;
+            }
+
+            var strategy = this.Transaction.InstantiateMemoryStrategy(associationId.Value);
             return strategy?.GetObject();
         }
 
@@ -348,31 +394,33 @@ namespace Allors.Database.Adapters.Memory
         {
             this.AssertNotDeleted();
 
-            this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
-
-            if (strategies == null)
+            var associationIds = this.GetCompositesAssociationIds(associationType);
+            if (associationIds == null)
             {
                 yield break;
             }
 
-            foreach (var strategy in strategies.ToArray())
+            foreach (var associationId in associationIds.ToArray())
             {
-                yield return (T)strategy.GetObject();
+                var strategy = this.Transaction.InstantiateMemoryStrategy(associationId);
+                if (strategy != null)
+                {
+                    yield return (T)strategy.GetObject();
+                }
             }
         }
 
         public bool ExistCompositesAssociation(IAssociationType associationType)
         {
             this.AssertNotDeleted();
-            this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
-            return strategies != null;
+            var associationIds = this.GetCompositesAssociationIds(associationType);
+            return associationIds != null && associationIds.Count > 0;
         }
 
         public void Delete()
         {
             this.AssertNotDeleted();
 
-            // Roles
             foreach (var roleType in this.UncheckedObjectType.DatabaseRoleTypes)
             {
                 if (this.ExistRole(roleType))
@@ -407,7 +455,6 @@ namespace Allors.Database.Adapters.Memory
                 }
             }
 
-            // Associations
             foreach (var associationType in this.UncheckedObjectType.DatabaseAssociationTypes)
             {
                 var roleType = associationType.RoleType;
@@ -416,37 +463,44 @@ namespace Allors.Database.Adapters.Memory
                 {
                     if (associationType.IsMany)
                     {
-                        this.compositesAssociationByAssociationType.TryGetValue(associationType, out var associationStrategies);
+                        var associationIds = this.GetCompositesAssociationIds(associationType);
 
-                        // TODO: Optimize
-                        if (associationStrategies != null)
+                        if (associationIds != null)
                         {
-                            foreach (var associationStrategy in new HashSet<Strategy>(associationStrategies))
+                            foreach (var associationId in new HashSet<long>(associationIds))
                             {
-                                if (roleType.IsMany)
+                                var associationStrategy = this.Transaction.InstantiateMemoryStrategy(associationId);
+                                if (associationStrategy != null)
                                 {
-                                    associationStrategy.RemoveCompositeRoleMany2Many(roleType, this);
-                                }
-                                else
-                                {
-                                    associationStrategy.RemoveCompositeRoleMany2One(roleType);
+                                    if (roleType.IsMany)
+                                    {
+                                        associationStrategy.RemoveCompositeRoleMany2Many(roleType, this);
+                                    }
+                                    else
+                                    {
+                                        associationStrategy.RemoveCompositeRoleMany2One(roleType);
+                                    }
                                 }
                             }
                         }
                     }
                     else
                     {
-                        this.compositeAssociationByAssociationType.TryGetValue(associationType, out var associationStrategy);
+                        var associationId = this.GetCompositeAssociationId(associationType);
 
-                        if (associationStrategy != null)
+                        if (associationId != null)
                         {
-                            if (roleType.IsMany)
+                            var associationStrategy = this.Transaction.InstantiateMemoryStrategy(associationId.Value);
+                            if (associationStrategy != null)
                             {
-                                associationStrategy.RemoveCompositeRoleOne2Many(roleType, this);
-                            }
-                            else
-                            {
-                                associationStrategy.RemoveCompositeRoleOne2One(roleType);
+                                if (roleType.IsMany)
+                                {
+                                    associationStrategy.RemoveCompositeRoleOne2Many(roleType, this);
+                                }
+                                else
+                                {
+                                    associationStrategy.RemoveCompositeRoleOne2One(roleType);
+                                }
                             }
                         }
                     }
@@ -454,6 +508,7 @@ namespace Allors.Database.Adapters.Memory
             }
 
             this.IsDeleted = true;
+            this.Transaction.MarkDeleted(this.ObjectId);
 
             this.ChangeLog.OnDeleted(this);
         }
@@ -483,19 +538,6 @@ namespace Allors.Database.Adapters.Memory
         {
             if (!this.IsDeleted && !this.Transaction.Database.IsLoading)
             {
-                // TODO: Test
-                /*
-                if (this.rollbackUnitRoleByRoleType != null ||
-                    this.rollbackCompositeRoleByRoleType != null ||
-                    this.rollbackCompositeRoleByRoleType != null ||
-                    this.rollbackCompositeRoleByRoleType != null ||
-                    this.rollbackCompositeRoleByRoleType != null ||
-                    this.rollbackCompositeRoleByRoleType != null)
-                {
-                    ++this.ObjectVersion;
-                }
-                */
-
                 if (this.rollbackUnitRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
                     this.rollbackCompositesRoleByRoleType != null)
@@ -516,78 +558,103 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Rollback()
         {
-            foreach (var dictionaryItem in this.RollbackUnitRoleByRoleType)
+            if (this.rollbackUnitRoleByRoleType != null)
             {
-                var roleType = dictionaryItem.Key;
-                var role = dictionaryItem.Value;
+                foreach (var dictionaryItem in this.rollbackUnitRoleByRoleType)
+                {
+                    var roleType = dictionaryItem.Key;
+                    var role = dictionaryItem.Value;
 
-                if (role != null)
-                {
-                    this.unitRoleByRoleType[roleType] = role;
-                }
-                else
-                {
-                    this.unitRoleByRoleType.Remove(roleType);
+                    this.unitRoleByRoleType ??= new Dictionary<IRoleType, object>();
+
+                    if (role != null)
+                    {
+                        this.unitRoleByRoleType[roleType] = role;
+                    }
+                    else
+                    {
+                        this.unitRoleByRoleType.Remove(roleType);
+                    }
                 }
             }
 
-            foreach (var dictionaryItem in this.RollbackCompositeRoleByRoleType)
+            if (this.rollbackCompositeRoleByRoleType != null)
             {
-                var roleType = dictionaryItem.Key;
-                var role = dictionaryItem.Value;
+                foreach (var dictionaryItem in this.rollbackCompositeRoleByRoleType)
+                {
+                    var roleType = dictionaryItem.Key;
+                    var role = dictionaryItem.Value;
 
-                if (role != null)
-                {
-                    this.compositeRoleByRoleType[roleType] = role;
-                }
-                else
-                {
-                    this.compositeRoleByRoleType.Remove(roleType);
+                    this.compositeRoleByRoleType ??= new Dictionary<IRoleType, long?>();
+
+                    if (role != null)
+                    {
+                        this.compositeRoleByRoleType[roleType] = role;
+                    }
+                    else
+                    {
+                        this.compositeRoleByRoleType.Remove(roleType);
+                    }
                 }
             }
 
-            foreach (var dictionaryItem in this.RollbackCompositesRoleByRoleType)
+            if (this.rollbackCompositesRoleByRoleType != null)
             {
-                var roleType = dictionaryItem.Key;
-                var role = dictionaryItem.Value;
+                foreach (var dictionaryItem in this.rollbackCompositesRoleByRoleType)
+                {
+                    var roleType = dictionaryItem.Key;
+                    var role = dictionaryItem.Value;
 
-                if (role != null)
-                {
-                    this.compositesRoleByRoleType[roleType] = role;
-                }
-                else
-                {
-                    this.compositesRoleByRoleType.Remove(roleType);
+                    this.compositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<long>>();
+
+                    if (role != null)
+                    {
+                        this.compositesRoleByRoleType[roleType] = role;
+                    }
+                    else
+                    {
+                        this.compositesRoleByRoleType.Remove(roleType);
+                    }
                 }
             }
 
-            foreach (var dictionaryItem in this.RollbackCompositeAssociationByAssociationType)
+            if (this.rollbackCompositeAssociationByAssociationType != null)
             {
-                var associationType = dictionaryItem.Key;
-                var association = dictionaryItem.Value;
+                foreach (var dictionaryItem in this.rollbackCompositeAssociationByAssociationType)
+                {
+                    var associationType = dictionaryItem.Key;
+                    var association = dictionaryItem.Value;
 
-                if (association != null)
-                {
-                    this.compositeAssociationByAssociationType[associationType] = association;
-                }
-                else
-                {
-                    this.compositeAssociationByAssociationType.Remove(associationType);
+                    this.compositeAssociationByAssociationType ??= new Dictionary<IAssociationType, long?>();
+
+                    if (association != null)
+                    {
+                        this.compositeAssociationByAssociationType[associationType] = association;
+                    }
+                    else
+                    {
+                        this.compositeAssociationByAssociationType.Remove(associationType);
+                    }
                 }
             }
 
-            foreach (var dictionaryItem in this.RollbackCompositesAssociationByAssociationType)
+            if (this.rollbackCompositesAssociationByAssociationType != null)
             {
-                var associationType = dictionaryItem.Key;
-                var association = dictionaryItem.Value;
+                foreach (var dictionaryItem in this.rollbackCompositesAssociationByAssociationType)
+                {
+                    var associationType = dictionaryItem.Key;
+                    var association = dictionaryItem.Value;
 
-                if (association != null)
-                {
-                    this.compositesAssociationByAssociationType[associationType] = association;
-                }
-                else
-                {
-                    this.compositesAssociationByAssociationType.Remove(associationType);
+                    this.compositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<long>>();
+
+                    if (association != null)
+                    {
+                        this.compositesAssociationByAssociationType[associationType] = association;
+                    }
+                    else
+                    {
+                        this.compositesAssociationByAssociationType.Remove(associationType);
+                    }
                 }
             }
 
@@ -601,10 +668,120 @@ namespace Allors.Database.Adapters.Memory
             this.IsNewInTransaction = false;
         }
 
+        internal void Refresh()
+        {
+            // Get a fresh snapshot from the committed store
+            var freshSnapshot = this.Transaction.Database.CommittedStore.GetSnapshot(this.ObjectId);
+            if (freshSnapshot != null)
+            {
+                this.snapshot = freshSnapshot;
+                this.ObjectVersion = freshSnapshot.Version;
+
+                // Clear local modifications to use snapshot values
+                this.unitRoleByRoleType = null;
+                this.compositeRoleByRoleType = null;
+                this.compositesRoleByRoleType = null;
+                this.compositeAssociationByAssociationType = null;
+                this.compositesAssociationByAssociationType = null;
+
+                this.rollbackUnitRoleByRoleType = null;
+                this.rollbackCompositeRoleByRoleType = null;
+                this.rollbackCompositesRoleByRoleType = null;
+                this.rollbackCompositeAssociationByAssociationType = null;
+                this.rollbackCompositesAssociationByAssociationType = null;
+
+                this.isDeletedOnRollback = false;
+            }
+        }
+
+        internal CommittedObject BuildCommittedObject()
+        {
+            var committed = new CommittedObject(this.ObjectId, this.UncheckedObjectType, this.ObjectVersion);
+
+            if (this.snapshot != null)
+            {
+                foreach (var kvp in this.snapshot.UnitRoleByRoleType)
+                {
+                    committed.UnitRoleByRoleType[kvp.Key] = kvp.Value;
+                }
+
+                foreach (var kvp in this.snapshot.CompositeRoleByRoleType)
+                {
+                    committed.CompositeRoleByRoleType[kvp.Key] = kvp.Value;
+                }
+
+                foreach (var kvp in this.snapshot.CompositesRoleByRoleType)
+                {
+                    committed.CompositesRoleByRoleType[kvp.Key] = (long[])kvp.Value.Clone();
+                }
+
+                foreach (var kvp in this.snapshot.CompositeAssociationByAssociationType)
+                {
+                    committed.CompositeAssociationByAssociationType[kvp.Key] = kvp.Value;
+                }
+
+                foreach (var kvp in this.snapshot.CompositesAssociationByAssociationType)
+                {
+                    committed.CompositesAssociationByAssociationType[kvp.Key] = (long[])kvp.Value.Clone();
+                }
+            }
+
+            if (this.unitRoleByRoleType != null)
+            {
+                foreach (var kvp in this.unitRoleByRoleType)
+                {
+                    committed.SetUnitRole(kvp.Key, kvp.Value);
+                }
+            }
+
+            if (this.compositeRoleByRoleType != null)
+            {
+                foreach (var kvp in this.compositeRoleByRoleType)
+                {
+                    committed.SetCompositeRole(kvp.Key, kvp.Value);
+                }
+            }
+
+            if (this.compositesRoleByRoleType != null)
+            {
+                foreach (var kvp in this.compositesRoleByRoleType)
+                {
+                    committed.SetCompositesRole(kvp.Key, kvp.Value);
+                }
+            }
+
+            if (this.compositeAssociationByAssociationType != null)
+            {
+                foreach (var kvp in this.compositeAssociationByAssociationType)
+                {
+                    committed.SetCompositeAssociation(kvp.Key, kvp.Value);
+                }
+            }
+
+            if (this.compositesAssociationByAssociationType != null)
+            {
+                foreach (var kvp in this.compositesAssociationByAssociationType)
+                {
+                    committed.SetCompositesAssociation(kvp.Key, kvp.Value);
+                }
+            }
+
+            return committed;
+        }
+
         internal object GetInternalizedUnitRole(IRoleType roleType)
         {
-            this.unitRoleByRoleType.TryGetValue(roleType, out var unitRole);
-            return unitRole;
+            if (this.unitRoleByRoleType != null && this.unitRoleByRoleType.TryGetValue(roleType, out var role))
+            {
+                return role;
+            }
+
+            if (this.snapshot != null && this.snapshot.UnitRoleByRoleType.TryGetValue(roleType, out role))
+            {
+                return role;
+            }
+
+            return null;
         }
 
         internal void SetCompositeRoleOne2One(IRoleType roleType, Strategy @new)
@@ -612,45 +789,55 @@ namespace Allors.Database.Adapters.Memory
             this.AssertNotDeleted();
             this.Transaction.Database.CompositeRoleChecks(this, roleType, @new);
 
-            this.compositeRoleByRoleType.TryGetValue(roleType, out var previousRole);
+            var previousRoleId = this.GetCompositeRoleId(roleType);
+            var newRoleId = @new.ObjectId;
 
-            if (!@new.Equals(previousRole))
+            if (newRoleId == previousRoleId)
             {
-                this.ChangeLog.OnChangingCompositeRole(this, roleType, @new, previousRole);
+                return;
+            }
 
-                var associationType = roleType.AssociationType;
+            var associationType = roleType.AssociationType;
 
+            if (previousRoleId != null)
+            {
+                var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId.Value);
                 if (previousRole != null)
                 {
-                    previousRole.compositeAssociationByAssociationType.TryGetValue(associationType, out var previousRoleAssociation);
-                    this.ChangeLog.OnChangingCompositeAssociation(previousRole, associationType, previousRoleAssociation);
+                    var previousRoleAssociationId = previousRole.GetCompositeAssociationId(associationType);
+                    this.ChangeLog.OnChangingCompositeAssociation(previousRole, associationType, previousRoleAssociationId.HasValue ? previousRole : null);
 
-                    // previous role
-                    previousRole.Backup(associationType);
-                    previousRole.compositeAssociationByAssociationType.Remove(associationType);
+                    previousRole.BackupCompositeAssociation(associationType);
+                    previousRole.SetCompositeAssociationId(associationType, null);
+                    this.Transaction.MarkModified(previousRole.ObjectId);
                 }
-
-                // previous association of newRole
-                @new.compositeAssociationByAssociationType.TryGetValue(roleType.AssociationType, out var newPreviousAssociation);
-
-                this.ChangeLog.OnChangingCompositeAssociation(@new, associationType, newPreviousAssociation);
-
-                if (newPreviousAssociation != null && !this.Equals(newPreviousAssociation))
-                {
-                    this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, previousRole);
-
-                    newPreviousAssociation.Backup(roleType);
-                    newPreviousAssociation.compositeRoleByRoleType.Remove(roleType);
-                }
-
-                // Set new role
-                this.Backup(roleType);
-                this.compositeRoleByRoleType[roleType] = @new;
-
-                // Set new role's association
-                @new.Backup(associationType);
-                @new.compositeAssociationByAssociationType[associationType] = this;
             }
+
+            var newPreviousAssociationId = @new.GetCompositeAssociationId(associationType);
+            this.ChangeLog.OnChangingCompositeAssociation(@new, associationType, newPreviousAssociationId.HasValue ? this.Transaction.InstantiateMemoryStrategy(newPreviousAssociationId.Value) : null);
+
+            if (newPreviousAssociationId != null && newPreviousAssociationId != this.ObjectId)
+            {
+                var newPreviousAssociation = this.Transaction.InstantiateMemoryStrategy(newPreviousAssociationId.Value);
+                if (newPreviousAssociation != null)
+                {
+                    this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, previousRoleId.HasValue ? @new : null);
+
+                    newPreviousAssociation.BackupCompositeRole(roleType);
+                    newPreviousAssociation.SetCompositeRoleId(roleType, null);
+                    this.Transaction.MarkModified(newPreviousAssociation.ObjectId);
+                }
+            }
+
+            this.ChangeLog.OnChangingCompositeRole(this, roleType, @new, previousRoleId.HasValue ? this.Transaction.InstantiateMemoryStrategy(previousRoleId.Value) : null);
+
+            this.BackupCompositeRole(roleType);
+            this.SetCompositeRoleId(roleType, newRoleId);
+            this.Transaction.MarkModified(this.ObjectId);
+
+            @new.BackupCompositeAssociation(associationType);
+            @new.SetCompositeAssociationId(associationType, this.ObjectId);
+            this.Transaction.MarkModified(@new.ObjectId);
         }
 
         internal void SetCompositeRoleMany2One(IRoleType roleType, Strategy @new)
@@ -658,54 +845,51 @@ namespace Allors.Database.Adapters.Memory
             this.AssertNotDeleted();
             this.Transaction.Database.CompositeRoleChecks(this, roleType, @new);
 
-            this.compositeRoleByRoleType.TryGetValue(roleType, out var previousRole);
+            var previousRoleId = this.GetCompositeRoleId(roleType);
+            var newRoleId = @new.ObjectId;
 
-            if (!@new.Equals(previousRole))
+            if (newRoleId == previousRoleId)
             {
-                this.ChangeLog.OnChangingCompositeRole(this, roleType, @new, previousRole);
+                return;
+            }
 
-                var associationType = roleType.AssociationType;
+            var associationType = roleType.AssociationType;
 
-                // Update association of previous role
+            if (previousRoleId != null)
+            {
+                var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId.Value);
                 if (previousRole != null)
                 {
-                    previousRole.compositesAssociationByAssociationType.TryGetValue(associationType, out var previousRoleAssociation);
-                    this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociation);
+                    var previousRoleAssociations = previousRole.GetCompositesAssociationIds(associationType);
+                    this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociations != null ? previousRoleAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
 
-                    previousRole.Backup(associationType);
-                    previousRoleAssociation.Remove(this);
-
-                    if (previousRoleAssociation.Count == 0)
-                    {
-                        previousRole.compositesAssociationByAssociationType.Remove(associationType);
-                    }
+                    previousRole.BackupCompositesAssociation(associationType);
+                    previousRole.RemoveCompositesAssociationId(associationType, this.ObjectId);
+                    this.Transaction.MarkModified(previousRole.ObjectId);
                 }
-
-                this.Backup(roleType);
-                this.compositeRoleByRoleType[roleType] = @new;
-
-                @new.compositesAssociationByAssociationType.TryGetValue(associationType, out var previousAssociations);
-
-                this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, previousAssociations);
-
-                @new.Backup(associationType);
-                if (previousAssociations == null)
-                {
-                    previousAssociations = new HashSet<Strategy>();
-                    @new.compositesAssociationByAssociationType[associationType] = previousAssociations;
-                }
-
-                previousAssociations.Add(this);
             }
+
+            this.ChangeLog.OnChangingCompositeRole(this, roleType, @new, previousRoleId.HasValue ? this.Transaction.InstantiateMemoryStrategy(previousRoleId.Value) : null);
+
+            this.BackupCompositeRole(roleType);
+            this.SetCompositeRoleId(roleType, newRoleId);
+            this.Transaction.MarkModified(this.ObjectId);
+
+            var newAssociations = @new.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, newAssociations != null ? newAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
+
+            @new.BackupCompositesAssociation(associationType);
+            @new.AddCompositesAssociationId(associationType, this.ObjectId);
+            this.Transaction.MarkModified(@new.ObjectId);
         }
 
         internal void SetCompositesRolesOne2Many(IRoleType roleType, IEnumerable<Strategy> roles)
         {
             this.AssertNotDeleted();
 
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var originalRoles);
+            var originalRoleIds = this.GetCompositesRoleIds(roleType);
 
-            if (originalRoles == null || originalRoles.Count == 0)
+            if (originalRoleIds == null || originalRoleIds.Count == 0)
             {
                 foreach (var role in roles)
                 {
@@ -714,13 +898,13 @@ namespace Allors.Database.Adapters.Memory
             }
             else
             {
-                ISet<Strategy> toRemove = new HashSet<Strategy>(originalRoles);
+                var toRemove = new HashSet<long>(originalRoleIds);
 
                 foreach (var role in roles)
                 {
-                    if (toRemove.Contains(role))
+                    if (toRemove.Contains(role.ObjectId))
                     {
-                        toRemove.Remove(role);
+                        toRemove.Remove(role.ObjectId);
                     }
                     else
                     {
@@ -728,9 +912,13 @@ namespace Allors.Database.Adapters.Memory
                     }
                 }
 
-                foreach (var strategy in toRemove)
+                foreach (var roleId in toRemove)
                 {
-                    this.RemoveCompositeRoleOne2Many(roleType, strategy);
+                    var roleStrategy = this.Transaction.InstantiateMemoryStrategy(roleId);
+                    if (roleStrategy != null)
+                    {
+                        this.RemoveCompositeRoleOne2Many(roleType, roleStrategy);
+                    }
                 }
             }
         }
@@ -739,9 +927,9 @@ namespace Allors.Database.Adapters.Memory
         {
             this.AssertNotDeleted();
 
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var originalRoles);
+            var originalRoleIds = this.GetCompositesRoleIds(roleType);
 
-            if (originalRoles == null || originalRoles.Count == 0)
+            if (originalRoleIds == null || originalRoleIds.Count == 0)
             {
                 foreach (var role in roles)
                 {
@@ -750,13 +938,13 @@ namespace Allors.Database.Adapters.Memory
             }
             else
             {
-                ISet<Strategy> toRemove = new HashSet<Strategy>(originalRoles);
+                var toRemove = new HashSet<long>(originalRoleIds);
 
                 foreach (var role in roles)
                 {
-                    if (toRemove.Contains(role))
+                    if (toRemove.Contains(role.ObjectId))
                     {
-                        toRemove.Remove(role);
+                        toRemove.Remove(role.ObjectId);
                     }
                     else
                     {
@@ -764,9 +952,13 @@ namespace Allors.Database.Adapters.Memory
                     }
                 }
 
-                foreach (var strategy in toRemove)
+                foreach (var roleId in toRemove)
                 {
-                    this.RemoveCompositeRoleMany2Many(roleType, strategy);
+                    var roleStrategy = this.Transaction.InstantiateMemoryStrategy(roleId);
+                    if (roleStrategy != null)
+                    {
+                        this.RemoveCompositeRoleMany2Many(roleType, roleStrategy);
+                    }
                 }
             }
         }
@@ -778,51 +970,47 @@ namespace Allors.Database.Adapters.Memory
                 return;
             }
 
-            if (this.unitRoleByRoleType != null)
+            foreach (var roleType in this.UncheckedObjectType.DatabaseRoleTypes)
             {
-                foreach (var dictionaryEntry in this.unitRoleByRoleType)
+                if (roleType.ObjectType is IUnit)
                 {
-                    var roleType = dictionaryEntry.Key;
-
-                    if (!strategiesByRoleType.TryGetValue(roleType, out var strategies))
+                    if (this.GetInternalizedUnitRole(roleType) != null)
                     {
-                        strategies = new List<Strategy>();
-                        strategiesByRoleType.Add(roleType, strategies);
-                    }
+                        if (!strategiesByRoleType.TryGetValue(roleType, out var strategies))
+                        {
+                            strategies = new List<Strategy>();
+                            strategiesByRoleType.Add(roleType, strategies);
+                        }
 
-                    strategies.Add(this);
+                        strategies.Add(this);
+                    }
                 }
-            }
-
-            if (this.compositeRoleByRoleType != null)
-            {
-                foreach (var dictionaryEntry in this.compositeRoleByRoleType)
+                else if (roleType.IsOne)
                 {
-                    var roleType = dictionaryEntry.Key;
-
-                    if (!strategiesByRoleType.TryGetValue(roleType, out var strategies))
+                    if (this.GetCompositeRoleId(roleType) != null)
                     {
-                        strategies = new List<Strategy>();
-                        strategiesByRoleType.Add(roleType, strategies);
-                    }
+                        if (!strategiesByRoleType.TryGetValue(roleType, out var strategies))
+                        {
+                            strategies = new List<Strategy>();
+                            strategiesByRoleType.Add(roleType, strategies);
+                        }
 
-                    strategies.Add(this);
+                        strategies.Add(this);
+                    }
                 }
-            }
-
-            if (this.compositesRoleByRoleType != null)
-            {
-                foreach (var dictionaryEntry in this.compositesRoleByRoleType)
+                else
                 {
-                    var roleType = dictionaryEntry.Key;
-
-                    if (!strategiesByRoleType.TryGetValue(roleType, out var strategies))
+                    var roleIds = this.GetCompositesRoleIds(roleType);
+                    if (roleIds != null && roleIds.Count > 0)
                     {
-                        strategies = new List<Strategy>();
-                        strategiesByRoleType.Add(roleType, strategies);
-                    }
+                        if (!strategiesByRoleType.TryGetValue(roleType, out var strategies))
+                        {
+                            strategies = new List<Strategy>();
+                            strategiesByRoleType.Add(roleType, strategies);
+                        }
 
-                    strategies.Add(this);
+                        strategies.Add(this);
+                    }
                 }
             }
         }
@@ -830,7 +1018,7 @@ namespace Allors.Database.Adapters.Memory
         internal void SaveUnit(XmlWriter writer, IRoleType roleType)
         {
             var unitType = (IUnit)roleType.ObjectType;
-            var value = Serialization.WriteString(unitType.Tag, this.unitRoleByRoleType[roleType]);
+            var value = Serialization.WriteString(unitType.Tag, this.GetInternalizedUnitRole(roleType));
 
             writer.WriteStartElement(Serialization.Relation);
             writer.WriteAttributeString(Serialization.Association, this.ObjectId.ToString());
@@ -843,16 +1031,16 @@ namespace Allors.Database.Adapters.Memory
             writer.WriteStartElement(Serialization.Relation);
             writer.WriteAttributeString(Serialization.Association, this.ObjectId.ToString());
 
-            var roleStragies = this.compositesRoleByRoleType[roleType];
+            var roleIds = this.GetCompositesRoleIds(roleType);
             var i = 0;
-            foreach (var roleStrategy in roleStragies)
+            foreach (var roleId in roleIds)
             {
                 if (i > 0)
                 {
                     writer.WriteString(Serialization.ObjectsSplitter);
                 }
 
-                writer.WriteString(roleStrategy.ObjectId.ToString());
+                writer.WriteString(roleId.ToString());
                 ++i;
             }
 
@@ -864,8 +1052,8 @@ namespace Allors.Database.Adapters.Memory
             writer.WriteStartElement(Serialization.Relation);
             writer.WriteAttributeString(Serialization.Association, this.ObjectId.ToString());
 
-            var roleStragy = this.compositeRoleByRoleType[roleType];
-            writer.WriteString(roleStragy.ObjectId.ToString());
+            var roleId = this.GetCompositeRoleId(roleType);
+            writer.WriteString(roleId.ToString());
 
             writer.WriteEndElement();
         }
@@ -878,105 +1066,219 @@ namespace Allors.Database.Adapters.Memory
 
         internal bool ShouldTrim(IRoleType roleType, Strategy originalRole)
         {
-            this.compositeRoleByRoleType.TryGetValue(roleType, out var role);
-            return Equals(role, originalRole);
+            var roleId = this.GetCompositeRoleId(roleType);
+            var originalRoleId = originalRole?.ObjectId;
+            return roleId == originalRoleId;
         }
 
-        internal bool ShouldTrim(IRoleType roleType, Strategy[] originalRole)
+        internal bool ShouldTrim(IRoleType roleType, Strategy[] originalRoles)
         {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var role);
+            var roleIds = this.GetCompositesRoleIds(roleType);
 
-            if (role == null)
+            if (roleIds == null || roleIds.Count == 0)
             {
-                return originalRole == null || originalRole.Length == 0;
+                return originalRoles == null || originalRoles.Length == 0;
             }
 
-            if (originalRole == null)
+            if (originalRoles == null)
             {
-                return role.Count == 0;
+                return roleIds.Count == 0;
             }
 
-            return role.SetEquals(originalRole);
+            var originalRoleIds = new HashSet<long>(originalRoles.Select(r => r.ObjectId));
+            return roleIds.SetEquals(originalRoleIds);
         }
 
         internal bool ShouldTrim(IAssociationType associationType, Strategy originalAssociation)
         {
-            this.compositeAssociationByAssociationType.TryGetValue(associationType, out var association);
-            return Equals(association, originalAssociation);
+            var associationId = this.GetCompositeAssociationId(associationType);
+            var originalAssociationId = originalAssociation?.ObjectId;
+            return associationId == originalAssociationId;
         }
 
-        internal bool ShouldTrim(IAssociationType associationType, Strategy[] originalAssociation)
+        internal bool ShouldTrim(IAssociationType associationType, Strategy[] originalAssociations)
         {
-            this.compositesAssociationByAssociationType.TryGetValue(associationType, out var association);
+            var associationIds = this.GetCompositesAssociationIds(associationType);
 
-            if (association == null)
+            if (associationIds == null || associationIds.Count == 0)
             {
-                return originalAssociation == null || originalAssociation.Length == 0;
+                return originalAssociations == null || originalAssociations.Length == 0;
             }
 
-            if (originalAssociation == null)
+            if (originalAssociations == null)
             {
-                return association.Count == 0;
+                return associationIds.Count == 0;
             }
 
-            return association.SetEquals(originalAssociation);
+            var originalAssociationIds = new HashSet<long>(originalAssociations.Select(a => a.ObjectId));
+            return associationIds.SetEquals(originalAssociationIds);
         }
 
-        private void Backup(IRoleType roleType)
+        private long? GetCompositeRoleId(IRoleType roleType)
         {
-            if (roleType.IsMany)
+            if (this.compositeRoleByRoleType != null && this.compositeRoleByRoleType.TryGetValue(roleType, out var roleId))
             {
-                if (!this.RollbackCompositesRoleByRoleType.ContainsKey(roleType))
-                {
-                    this.compositesRoleByRoleType.TryGetValue(roleType, out var strategies);
-
-                    if (strategies == null)
-                    {
-                        this.RollbackCompositesRoleByRoleType[roleType] = null;
-                    }
-                    else
-                    {
-                        this.RollbackCompositesRoleByRoleType[roleType] = new HashSet<Strategy>(strategies);
-                    }
-                }
+                return roleId;
             }
-            else if (!this.RollbackCompositeRoleByRoleType.ContainsKey(roleType))
-            {
-                this.compositeRoleByRoleType.TryGetValue(roleType, out var strategy);
 
-                if (strategy == null)
+            if (this.snapshot != null && this.snapshot.CompositeRoleByRoleType.TryGetValue(roleType, out var snapshotRoleId))
+            {
+                return snapshotRoleId;
+            }
+
+            return null;
+        }
+
+        private void SetCompositeRoleId(IRoleType roleType, long? roleId)
+        {
+            this.compositeRoleByRoleType ??= new Dictionary<IRoleType, long?>();
+            if (roleId == null)
+            {
+                this.compositeRoleByRoleType.Remove(roleType);
+            }
+            else
+            {
+                this.compositeRoleByRoleType[roleType] = roleId;
+            }
+        }
+
+        private HashSet<long> GetCompositesRoleIds(IRoleType roleType)
+        {
+            if (this.compositesRoleByRoleType != null && this.compositesRoleByRoleType.TryGetValue(roleType, out var roleIds))
+            {
+                return roleIds;
+            }
+
+            if (this.snapshot != null && this.snapshot.CompositesRoleByRoleType.TryGetValue(roleType, out var snapshotRoleIds))
+            {
+                return new HashSet<long>(snapshotRoleIds);
+            }
+
+            return null;
+        }
+
+        private void EnsureCompositesRoleIds(IRoleType roleType)
+        {
+            this.compositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<long>>();
+            if (!this.compositesRoleByRoleType.ContainsKey(roleType))
+            {
+                if (this.snapshot != null && this.snapshot.CompositesRoleByRoleType.TryGetValue(roleType, out var snapshotRoleIds))
                 {
-                    this.RollbackCompositeRoleByRoleType[roleType] = null;
+                    this.compositesRoleByRoleType[roleType] = new HashSet<long>(snapshotRoleIds);
                 }
                 else
                 {
-                    this.RollbackCompositeRoleByRoleType[roleType] = strategy;
+                    this.compositesRoleByRoleType[roleType] = new HashSet<long>();
                 }
             }
         }
 
-        private void Backup(IAssociationType associationType)
+        private long? GetCompositeAssociationId(IAssociationType associationType)
         {
-            if (associationType.IsMany)
+            if (this.compositeAssociationByAssociationType != null && this.compositeAssociationByAssociationType.TryGetValue(associationType, out var associationId))
             {
-                if (!this.RollbackCompositesAssociationByAssociationType.ContainsKey(associationType))
-                {
-                    this.compositesAssociationByAssociationType.TryGetValue(associationType, out var strategies);
+                return associationId;
+            }
 
-                    if (strategies == null)
-                    {
-                        this.RollbackCompositesAssociationByAssociationType[associationType] = null;
-                    }
-                    else
-                    {
-                        this.RollbackCompositesAssociationByAssociationType[associationType] = new HashSet<Strategy>(strategies);
-                    }
+            if (this.snapshot != null && this.snapshot.CompositeAssociationByAssociationType.TryGetValue(associationType, out var snapshotAssociationId))
+            {
+                return snapshotAssociationId;
+            }
+
+            return null;
+        }
+
+        private void SetCompositeAssociationId(IAssociationType associationType, long? associationId)
+        {
+            this.compositeAssociationByAssociationType ??= new Dictionary<IAssociationType, long?>();
+            if (associationId == null)
+            {
+                this.compositeAssociationByAssociationType.Remove(associationType);
+            }
+            else
+            {
+                this.compositeAssociationByAssociationType[associationType] = associationId;
+            }
+        }
+
+        private HashSet<long> GetCompositesAssociationIds(IAssociationType associationType)
+        {
+            if (this.compositesAssociationByAssociationType != null && this.compositesAssociationByAssociationType.TryGetValue(associationType, out var associationIds))
+            {
+                return associationIds;
+            }
+
+            if (this.snapshot != null && this.snapshot.CompositesAssociationByAssociationType.TryGetValue(associationType, out var snapshotAssociationIds))
+            {
+                return new HashSet<long>(snapshotAssociationIds);
+            }
+
+            return null;
+        }
+
+        private void EnsureCompositesAssociationIds(IAssociationType associationType)
+        {
+            this.compositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<long>>();
+            if (!this.compositesAssociationByAssociationType.ContainsKey(associationType))
+            {
+                if (this.snapshot != null && this.snapshot.CompositesAssociationByAssociationType.TryGetValue(associationType, out var snapshotAssociationIds))
+                {
+                    this.compositesAssociationByAssociationType[associationType] = new HashSet<long>(snapshotAssociationIds);
+                }
+                else
+                {
+                    this.compositesAssociationByAssociationType[associationType] = new HashSet<long>();
                 }
             }
-            else if (!this.RollbackCompositeAssociationByAssociationType.ContainsKey(associationType))
+        }
+
+        private void AddCompositesAssociationId(IAssociationType associationType, long associationId)
+        {
+            this.EnsureCompositesAssociationIds(associationType);
+            this.compositesAssociationByAssociationType[associationType].Add(associationId);
+        }
+
+        private void RemoveCompositesAssociationId(IAssociationType associationType, long associationId)
+        {
+            this.EnsureCompositesAssociationIds(associationType);
+            this.compositesAssociationByAssociationType[associationType].Remove(associationId);
+            if (this.compositesAssociationByAssociationType[associationType].Count == 0)
             {
-                this.compositeAssociationByAssociationType.TryGetValue(associationType, out var strategy);
-                this.RollbackCompositeAssociationByAssociationType[associationType] = strategy;
+                this.compositesAssociationByAssociationType.Remove(associationType);
+            }
+        }
+
+        private void BackupCompositeRole(IRoleType roleType)
+        {
+            if (!this.RollbackCompositeRoleByRoleType.ContainsKey(roleType))
+            {
+                this.RollbackCompositeRoleByRoleType[roleType] = this.GetCompositeRoleId(roleType);
+            }
+        }
+
+        private void BackupCompositesRole(IRoleType roleType)
+        {
+            if (!this.RollbackCompositesRoleByRoleType.ContainsKey(roleType))
+            {
+                var roleIds = this.GetCompositesRoleIds(roleType);
+                this.RollbackCompositesRoleByRoleType[roleType] = roleIds != null ? new HashSet<long>(roleIds) : null;
+            }
+        }
+
+        private void BackupCompositeAssociation(IAssociationType associationType)
+        {
+            if (!this.RollbackCompositeAssociationByAssociationType.ContainsKey(associationType))
+            {
+                this.RollbackCompositeAssociationByAssociationType[associationType] = this.GetCompositeAssociationId(associationType);
+            }
+        }
+
+        private void BackupCompositesAssociation(IAssociationType associationType)
+        {
+            if (!this.RollbackCompositesAssociationByAssociationType.ContainsKey(associationType))
+            {
+                var associationIds = this.GetCompositesAssociationIds(associationType);
+                this.RollbackCompositesAssociationByAssociationType[associationType] = associationIds != null ? new HashSet<long>(associationIds) : null;
             }
         }
 
@@ -985,23 +1287,32 @@ namespace Allors.Database.Adapters.Memory
             this.AssertNotDeleted();
             this.Transaction.Database.CompositeRoleChecks(this, roleType);
 
-            var previousRole = (Strategy)this.GetCompositeRole(roleType)?.Strategy;
-            if (previousRole != null)
+            var previousRoleId = this.GetCompositeRoleId(roleType);
+            if (previousRoleId == null)
             {
-                var associationType = roleType.AssociationType;
-
-                this.ChangeLog.OnChangingCompositeRole(this, roleType, null, previousRole);
-
-                previousRole.compositeAssociationByAssociationType.TryGetValue(associationType, out var previousRoleAssociation);
-                this.ChangeLog.OnChangingCompositeAssociation(previousRole, associationType, previousRoleAssociation);
-
-                previousRole.Backup(associationType);
-                previousRole.compositeAssociationByAssociationType.Remove(associationType);
-
-                // remove role
-                this.Backup(roleType);
-                this.compositeRoleByRoleType.Remove(roleType);
+                return;
             }
+
+            var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId.Value);
+            if (previousRole == null)
+            {
+                return;
+            }
+
+            var associationType = roleType.AssociationType;
+
+            this.ChangeLog.OnChangingCompositeRole(this, roleType, null, previousRole);
+
+            var previousRoleAssociationId = previousRole.GetCompositeAssociationId(associationType);
+            this.ChangeLog.OnChangingCompositeAssociation(previousRole, associationType, previousRoleAssociationId.HasValue ? this : null);
+
+            previousRole.BackupCompositeAssociation(associationType);
+            previousRole.SetCompositeAssociationId(associationType, null);
+            this.Transaction.MarkModified(previousRole.ObjectId);
+
+            this.BackupCompositeRole(roleType);
+            this.SetCompositeRoleId(roleType, null);
+            this.Transaction.MarkModified(this.ObjectId);
         }
 
         private void RemoveCompositeRoleMany2One(IRoleType roleType)
@@ -1009,212 +1320,198 @@ namespace Allors.Database.Adapters.Memory
             this.AssertNotDeleted();
             this.Transaction.Database.CompositeRoleChecks(this, roleType);
 
-            var previousRole = (Strategy)this.GetCompositeRole(roleType)?.Strategy;
-
-            if (previousRole != null)
+            var previousRoleId = this.GetCompositeRoleId(roleType);
+            if (previousRoleId == null)
             {
-                this.ChangeLog.OnChangingCompositeRole(this, roleType, null, previousRole);
-
-                var associationType = roleType.AssociationType;
-
-                previousRole.compositesAssociationByAssociationType.TryGetValue(associationType, out var previousRoleAssociation);
-                this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociation);
-
-                previousRole.Backup(associationType);
-                previousRoleAssociation.Remove(this);
-
-                if (previousRoleAssociation.Count == 0)
-                {
-                    previousRole.compositesAssociationByAssociationType.Remove(associationType);
-                }
-
-                // remove role
-                this.Backup(roleType);
-                this.compositeRoleByRoleType.Remove(roleType);
+                return;
             }
+
+            var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId.Value);
+            if (previousRole == null)
+            {
+                return;
+            }
+
+            this.ChangeLog.OnChangingCompositeRole(this, roleType, null, previousRole);
+
+            var associationType = roleType.AssociationType;
+
+            var previousRoleAssociations = previousRole.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociations?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+
+            previousRole.BackupCompositesAssociation(associationType);
+            previousRole.RemoveCompositesAssociationId(associationType, this.ObjectId);
+            this.Transaction.MarkModified(previousRole.ObjectId);
+
+            this.BackupCompositeRole(roleType);
+            this.SetCompositeRoleId(roleType, null);
+            this.Transaction.MarkModified(this.ObjectId);
         }
 
         private void AddCompositeRoleMany2Many(IRoleType roleType, Strategy add)
         {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
-            if (previousRole?.Contains(add) == true)
+            var previousRoleIds = this.GetCompositesRoleIds(roleType);
+            if (previousRoleIds?.Contains(add.ObjectId) == true)
             {
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRole);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
 
-            // Add the new role
-            this.Backup(roleType);
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var role);
-            if (role == null)
-            {
-                role = new HashSet<Strategy>();
-                this.compositesRoleByRoleType[roleType] = role;
-            }
+            this.BackupCompositesRole(roleType);
+            this.EnsureCompositesRoleIds(roleType);
+            this.compositesRoleByRoleType[roleType].Add(add.ObjectId);
+            this.Transaction.MarkModified(this.ObjectId);
 
-            role.Add(add);
-
-            // Add the new association
             var associationType = roleType.AssociationType;
 
-            add.compositesAssociationByAssociationType.TryGetValue(associationType, out var addAssociation);
-            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, addAssociation);
+            var addAssociationIds = add.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, addAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
 
-            add.Backup(associationType);
-            if (addAssociation == null)
-            {
-                addAssociation = new HashSet<Strategy>();
-                add.compositesAssociationByAssociationType[associationType] = addAssociation;
-            }
-
-            addAssociation.Add(this);
+            add.BackupCompositesAssociation(associationType);
+            add.AddCompositesAssociationId(associationType, this.ObjectId);
+            this.Transaction.MarkModified(add.ObjectId);
         }
 
         private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy add)
         {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRole);
-            if (previousRole?.Contains(add) == true)
+            var previousRoleIds = this.GetCompositesRoleIds(roleType);
+            if (previousRoleIds?.Contains(add.ObjectId) == true)
             {
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRole);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
 
             var associationType = roleType.AssociationType;
 
-            // 1-...
-            add.compositeAssociationByAssociationType.TryGetValue(roleType.AssociationType, out var addPreviousAssociation);
+            var addPreviousAssociationId = add.GetCompositeAssociationId(associationType);
 
-            this.ChangeLog.OnChangingCompositeAssociation(add, associationType, addPreviousAssociation);
+            this.ChangeLog.OnChangingCompositeAssociation(add, associationType, addPreviousAssociationId.HasValue ? this.Transaction.InstantiateMemoryStrategy(addPreviousAssociationId.Value) : null);
 
-            if (addPreviousAssociation != null)
+            if (addPreviousAssociationId != null && addPreviousAssociationId != this.ObjectId)
             {
-                addPreviousAssociation.compositesRoleByRoleType.TryGetValue(roleType, out var newRolePreviousAssociationRole);
-                this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, newRolePreviousAssociationRole);
-
-                // Remove obsolete role
-                addPreviousAssociation.Backup(roleType);
-                if (newRolePreviousAssociationRole == null)
+                var addPreviousAssociation = this.Transaction.InstantiateMemoryStrategy(addPreviousAssociationId.Value);
+                if (addPreviousAssociation != null)
                 {
-                    newRolePreviousAssociationRole = new HashSet<Strategy>();
-                    addPreviousAssociation.compositesRoleByRoleType[roleType] = newRolePreviousAssociationRole;
-                }
+                    var addPreviousAssociationRoleIds = addPreviousAssociation.GetCompositesRoleIds(roleType);
+                    this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, addPreviousAssociationRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
 
-                newRolePreviousAssociationRole.Remove(add);
-                if (newRolePreviousAssociationRole.Count == 0)
-                {
-                    addPreviousAssociation.compositesRoleByRoleType.Remove(roleType);
+                    addPreviousAssociation.BackupCompositesRole(roleType);
+                    addPreviousAssociation.EnsureCompositesRoleIds(roleType);
+                    addPreviousAssociation.compositesRoleByRoleType[roleType].Remove(add.ObjectId);
+                    if (addPreviousAssociation.compositesRoleByRoleType[roleType].Count == 0)
+                    {
+                        addPreviousAssociation.compositesRoleByRoleType.Remove(roleType);
+                    }
+
+                    this.Transaction.MarkModified(addPreviousAssociation.ObjectId);
                 }
             }
 
-            // Add the new role
-            this.Backup(roleType);
-            var role = previousRole;
-            if (role == null)
-            {
-                role = new HashSet<Strategy>();
-                this.compositesRoleByRoleType[roleType] = role;
-            }
+            this.BackupCompositesRole(roleType);
+            this.EnsureCompositesRoleIds(roleType);
+            this.compositesRoleByRoleType[roleType].Add(add.ObjectId);
+            this.Transaction.MarkModified(this.ObjectId);
 
-            role.Add(add);
-
-            // Set new association
-            this.compositeAssociationByAssociationType.TryGetValue(associationType, out var previousAssociation);
-            this.ChangeLog.OnChangingCompositeAssociation(add, associationType, previousAssociation);
-
-            add.Backup(associationType);
-            add.compositeAssociationByAssociationType[associationType] = this;
+            add.BackupCompositeAssociation(associationType);
+            add.SetCompositeAssociationId(associationType, this.ObjectId);
+            this.Transaction.MarkModified(add.ObjectId);
         }
 
         private void RemoveCompositeRoleMany2Many(IRoleType roleType, Strategy remove)
         {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var roleStrategies);
-            if (roleStrategies?.Contains(remove) != true)
+            var roleIds = this.GetCompositesRoleIds(roleType);
+            if (roleIds?.Contains(remove.ObjectId) != true)
             {
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, roleStrategies);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
 
-            // Remove role
-            this.Backup(roleType);
-            roleStrategies.Remove(remove);
-            if (roleStrategies.Count == 0)
+            this.BackupCompositesRole(roleType);
+            this.EnsureCompositesRoleIds(roleType);
+            this.compositesRoleByRoleType[roleType].Remove(remove.ObjectId);
+            if (this.compositesRoleByRoleType[roleType].Count == 0)
             {
                 this.compositesRoleByRoleType.Remove(roleType);
             }
 
-            // Remove association
+            this.Transaction.MarkModified(this.ObjectId);
+
             var associationType = roleType.AssociationType;
 
-            remove.compositesAssociationByAssociationType.TryGetValue(associationType, out var association);
-            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, association);
+            var removeAssociationIds = remove.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, removeAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
 
-            remove.Backup(associationType);
-            association.Remove(this);
-
-            if (association.Count == 0)
-            {
-                remove.compositesAssociationByAssociationType.Remove(associationType);
-            }
+            remove.BackupCompositesAssociation(associationType);
+            remove.RemoveCompositesAssociationId(associationType, this.ObjectId);
+            this.Transaction.MarkModified(remove.ObjectId);
         }
 
         private void RemoveCompositeRoleOne2Many(IRoleType roleType, Strategy roleToRemove)
         {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var role);
-            if (role?.Contains(roleToRemove) != true)
+            var roleIds = this.GetCompositesRoleIds(roleType);
+            if (roleIds?.Contains(roleToRemove.ObjectId) != true)
             {
                 return;
             }
 
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, role);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
 
-            this.Backup(roleType);
-
-            // Remove role
-            role.Remove(roleToRemove);
-            if (role.Count == 0)
+            this.BackupCompositesRole(roleType);
+            this.EnsureCompositesRoleIds(roleType);
+            this.compositesRoleByRoleType[roleType].Remove(roleToRemove.ObjectId);
+            if (this.compositesRoleByRoleType[roleType].Count == 0)
             {
                 this.compositesRoleByRoleType.Remove(roleType);
             }
 
-            // Remove association
+            this.Transaction.MarkModified(this.ObjectId);
+
             var associationType = roleType.AssociationType;
 
-            roleToRemove.compositeAssociationByAssociationType.TryGetValue(associationType, out var previousAssociation);
-            this.ChangeLog.OnChangingCompositeAssociation(roleToRemove, associationType, previousAssociation);
+            var previousAssociationId = roleToRemove.GetCompositeAssociationId(associationType);
+            this.ChangeLog.OnChangingCompositeAssociation(roleToRemove, associationType, previousAssociationId.HasValue ? this : null);
 
-            roleToRemove.Backup(associationType);
-            roleToRemove.compositeAssociationByAssociationType.Remove(associationType);
+            roleToRemove.BackupCompositeAssociation(associationType);
+            roleToRemove.SetCompositeAssociationId(associationType, null);
+            this.Transaction.MarkModified(roleToRemove.ObjectId);
         }
 
         private void RemoveCompositeRolesMany2Many(IRoleType roleType)
         {
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRoleStrategies);
-            if (previousRoleStrategies != null)
+            var previousRoleIds = this.GetCompositesRoleIds(roleType);
+            if (previousRoleIds == null)
             {
-                foreach (var previousRoleStrategy in previousRoleStrategies)
-                {
-                    this.ChangeLog.OnChangingCompositesRole(this, roleType, previousRoleStrategy, previousRoleStrategies);
-                }
+                return;
+            }
 
-                foreach (var strategy in new List<Strategy>(previousRoleStrategies))
+            foreach (var previousRoleId in previousRoleIds.ToList())
+            {
+                var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId);
+                if (previousRole != null)
                 {
-                    this.RemoveCompositeRoleMany2Many(roleType, strategy);
+                    this.ChangeLog.OnChangingCompositesRole(this, roleType, previousRole, previousRoleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+                    this.RemoveCompositeRoleMany2Many(roleType, previousRole);
                 }
             }
         }
 
         private void RemoveCompositeRolesOne2Many(IRoleType roleType)
         {
-            // TODO: Optimize
-            this.compositesRoleByRoleType.TryGetValue(roleType, out var previousRoleStrategies);
-            if (previousRoleStrategies != null)
+            var previousRoleIds = this.GetCompositesRoleIds(roleType);
+            if (previousRoleIds == null)
             {
-                foreach (var strategy in new List<Strategy>(previousRoleStrategies))
+                return;
+            }
+
+            foreach (var previousRoleId in previousRoleIds.ToList())
+            {
+                var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId);
+                if (previousRole != null)
                 {
-                    this.RemoveCompositeRoleOne2Many(roleType, strategy);
+                    this.RemoveCompositeRoleOne2Many(roleType, previousRole);
                 }
             }
         }

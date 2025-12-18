@@ -20,10 +20,11 @@ namespace Allors.Database.Adapters.Memory
         private readonly Dictionary<IObjectType, IObjectType[]> concreteClassesByObjectType;
         private bool busyCommittingOrRollingBack;
 
-        private Dictionary<long, Strategy> strategyByObjectId;
-        private Dictionary<IObjectType, HashSet<Strategy>> strategiesByObjectType;
-
-        private long currentId;
+        private Dictionary<long, Strategy> instantiatedStrategies;
+        private HashSet<long> newObjectIds;
+        private HashSet<long> deletedObjectIds;
+        private HashSet<long> modifiedObjectIds;
+        private Dictionary<long, long> snapshotVersionByObjectId;
 
         internal Transaction(Database database, ITransactionServices scope)
         {
@@ -59,32 +60,61 @@ namespace Allors.Database.Adapters.Memory
                 {
                     this.busyCommittingOrRollingBack = true;
 
-                    IList<Strategy> strategiesToDelete = null;
-                    foreach (var dictionaryEntry in this.strategyByObjectId)
-                    {
-                        var strategy = dictionaryEntry.Value;
+                    var changes = new TransactionChanges();
 
-                        strategy.Commit();
+                    foreach (var objectId in this.deletedObjectIds)
+                    {
+                        changes.DeletedObjectIds.Add(objectId);
+                    }
+
+                    foreach (var kvp in this.instantiatedStrategies)
+                    {
+                        var strategy = kvp.Value;
+                        var objectId = kvp.Key;
 
                         if (strategy.IsDeleted)
                         {
-                            strategiesToDelete ??= new List<Strategy>();
-                            strategiesToDelete.Add(strategy);
+                            continue;
                         }
-                    }
 
-                    if (strategiesToDelete != null)
-                    {
-                        foreach (var strategy in strategiesToDelete)
+                        strategy.Commit();
+
+                        if (this.newObjectIds.Contains(objectId))
                         {
-                            this.strategyByObjectId.Remove(strategy.ObjectId);
-
-                            if (this.strategiesByObjectType.TryGetValue(strategy.UncheckedObjectType, out var strategies))
-                            {
-                                strategies.Remove(strategy);
-                            }
+                            var committedObject = strategy.BuildCommittedObject();
+                            changes.NewObjects.Add(committedObject);
+                        }
+                        else if (this.modifiedObjectIds.Contains(objectId))
+                        {
+                            var committedObject = strategy.BuildCommittedObject();
+                            committedObject.OriginalVersion = this.snapshotVersionByObjectId[objectId];
+                            changes.ModifiedObjects.Add(committedObject);
                         }
                     }
+
+                    this.Database.CommitTransaction(changes);
+
+                    // Remove deleted strategies
+                    foreach (var deletedId in this.deletedObjectIds)
+                    {
+                        this.instantiatedStrategies.Remove(deletedId);
+                    }
+
+                    // Update snapshot versions for all surviving instantiated strategies
+                    // This enables the rolling transaction model where objects can be modified
+                    // again after a commit
+                    this.snapshotVersionByObjectId.Clear();
+                    foreach (var kvp in this.instantiatedStrategies)
+                    {
+                        if (!kvp.Value.IsDeleted)
+                        {
+                            this.snapshotVersionByObjectId[kvp.Key] = kvp.Value.ObjectVersion;
+                        }
+                    }
+
+                    this.newObjectIds.Clear();
+                    this.deletedObjectIds.Clear();
+                    this.modifiedObjectIds.Clear();
 
                     this.ChangeLog = new ChangeLog();
                 }
@@ -103,19 +133,35 @@ namespace Allors.Database.Adapters.Memory
                 {
                     this.busyCommittingOrRollingBack = true;
 
-                    foreach (var strategy in new List<Strategy>(this.strategyByObjectId.Values))
+                    foreach (var strategy in new List<Strategy>(this.instantiatedStrategies.Values))
                     {
                         strategy.Rollback();
-                        if (strategy.IsDeleted)
-                        {
-                            this.strategyByObjectId.Remove(strategy.ObjectId);
 
-                            if (this.strategiesByObjectType.TryGetValue(strategy.UncheckedObjectType, out var strategies))
-                            {
-                                strategies.Remove(strategy);
-                            }
+                        if (this.newObjectIds.Contains(strategy.ObjectId))
+                        {
+                            this.instantiatedStrategies.Remove(strategy.ObjectId);
+                        }
+                        else
+                        {
+                            // Refresh from committed store to get latest state
+                            // (other transactions may have committed changes)
+                            strategy.Refresh();
                         }
                     }
+
+                    // Update snapshot versions from refreshed strategies
+                    this.snapshotVersionByObjectId.Clear();
+                    foreach (var kvp in this.instantiatedStrategies)
+                    {
+                        if (!kvp.Value.IsDeleted)
+                        {
+                            this.snapshotVersionByObjectId[kvp.Key] = kvp.Value.ObjectVersion;
+                        }
+                    }
+
+                    this.newObjectIds.Clear();
+                    this.deletedObjectIds.Clear();
+                    this.modifiedObjectIds.Clear();
 
                     this.ChangeLog = new ChangeLog();
                 }
@@ -253,8 +299,11 @@ namespace Allors.Database.Adapters.Memory
 
         public virtual IObject Create(IClass objectType)
         {
-            var strategy = new Strategy(this, objectType, ++this.currentId, Version.DatabaseInitial);
-            this.AddStrategy(strategy);
+            var objectId = this.Database.NextId();
+            var strategy = new Strategy(this, objectType, objectId, Version.DatabaseInitial);
+
+            this.instantiatedStrategies[objectId] = strategy;
+            this.newObjectIds.Add(objectId);
 
             this.ChangeLog.OnCreated(strategy);
 
@@ -267,26 +316,47 @@ namespace Allors.Database.Adapters.Memory
 
         internal virtual Strategy InsertStrategy(IClass objectType, long objectId, long objectVersion)
         {
-            var strategy = this.GetStrategy(objectId);
-            if (strategy != null)
+            if (this.instantiatedStrategies.TryGetValue(objectId, out var existing) && !existing.IsDeleted)
             {
                 throw new Exception("Duplicate id error");
             }
 
-            if (this.currentId < objectId)
-            {
-                this.currentId = objectId;
-            }
+            this.Database.UpdateCurrentId(objectId);
 
-            strategy = new Strategy(this, objectType, objectId, objectVersion);
-            this.AddStrategy(strategy);
+            var strategy = new Strategy(this, objectType, objectId, objectVersion);
+
+            this.instantiatedStrategies[objectId] = strategy;
+            this.newObjectIds.Add(objectId);
 
             this.ChangeLog.OnCreated(strategy);
 
             return strategy;
         }
 
-        internal virtual Strategy InstantiateMemoryStrategy(long objectId) => this.GetStrategy(objectId);
+        internal virtual Strategy InstantiateMemoryStrategy(long objectId)
+        {
+            if (this.deletedObjectIds.Contains(objectId))
+            {
+                return null;
+            }
+
+            if (this.instantiatedStrategies.TryGetValue(objectId, out var strategy))
+            {
+                return strategy.IsDeleted ? null : strategy;
+            }
+
+            var snapshot = this.Database.CommittedStore.GetSnapshot(objectId);
+            if (snapshot == null)
+            {
+                return null;
+            }
+
+            strategy = new Strategy(this, snapshot);
+            this.instantiatedStrategies[objectId] = strategy;
+            this.snapshotVersionByObjectId[objectId] = snapshot.Version;
+
+            return strategy;
+        }
 
         internal Strategy GetStrategy(IObject obj)
         {
@@ -300,91 +370,84 @@ namespace Allors.Database.Adapters.Memory
 
         internal Strategy GetStrategy(long objectId)
         {
-            if (!this.strategyByObjectId.TryGetValue(objectId, out var strategy))
+            if (this.deletedObjectIds.Contains(objectId))
             {
                 return null;
             }
 
-            return strategy.IsDeleted ? null : strategy;
-        }
-
-        internal void AddStrategy(Strategy strategy)
-        {
-            this.strategyByObjectId.Add(strategy.ObjectId, strategy);
-
-            if (!this.strategiesByObjectType.TryGetValue(strategy.UncheckedObjectType, out var strategies))
+            if (this.instantiatedStrategies.TryGetValue(objectId, out var strategy))
             {
-                strategies = new HashSet<Strategy>();
-                this.strategiesByObjectType.Add(strategy.UncheckedObjectType, strategies);
+                return strategy.IsDeleted ? null : strategy;
             }
 
-            strategies.Add(strategy);
+            return null;
+        }
+
+        internal void MarkModified(long objectId)
+        {
+            if (!this.newObjectIds.Contains(objectId))
+            {
+                this.modifiedObjectIds.Add(objectId);
+            }
+        }
+
+        internal void MarkDeleted(long objectId)
+        {
+            this.deletedObjectIds.Add(objectId);
+            this.modifiedObjectIds.Remove(objectId);
         }
 
         internal virtual HashSet<Strategy> GetStrategiesForExtentIncludingDeleted(IObjectType type)
         {
-            if (!this.concreteClassesByObjectType.TryGetValue(type, out var concreteClasses))
+            var concreteClasses = this.GetConcreteClasses(type);
+
+            if (concreteClasses.Length == 0)
             {
-                var sortedClassAndSubclassList = new List<IObjectType>();
-
-                if (type is IClass)
-                {
-                    sortedClassAndSubclassList.Add(type);
-                }
-
-                if (type is IInterface)
-                {
-                    foreach (var subClass in ((IInterface)type).DatabaseClasses)
-                    {
-                        sortedClassAndSubclassList.Add(subClass);
-                    }
-                }
-
-                concreteClasses = sortedClassAndSubclassList.ToArray();
-
-                this.concreteClassesByObjectType[type] = concreteClasses;
+                return EmptyStrategies;
             }
 
-            switch (concreteClasses.Length)
+            var strategies = new HashSet<Strategy>();
+
+            foreach (var concreteClass in concreteClasses)
             {
-                case 0:
-                    return EmptyStrategies;
-
-                case 1:
+                var committedIds = this.Database.CommittedStore.GetObjectIdsForType(concreteClass);
+                foreach (var objectId in committedIds)
                 {
-                    var objectType = concreteClasses[0];
-                    if (this.strategiesByObjectType.TryGetValue(objectType, out var strategies))
+                    var strategy = this.InstantiateMemoryStrategy(objectId);
+                    if (strategy != null)
                     {
-                        return strategies;
+                        strategies.Add(strategy);
                     }
-
-                    return EmptyStrategies;
                 }
+            }
 
-                default:
+            foreach (var newId in this.newObjectIds)
+            {
+                if (this.instantiatedStrategies.TryGetValue(newId, out var strategy))
                 {
-                    var strategies = new HashSet<Strategy>();
-
-                    foreach (var objectType in concreteClasses)
+                    foreach (var concreteClass in concreteClasses)
                     {
-                        if (this.strategiesByObjectType.TryGetValue(objectType, out var objectTypeStrategies))
+                        if (strategy.UncheckedObjectType.Equals(concreteClass))
                         {
-                            strategies.UnionWith(objectTypeStrategies);
+                            strategies.Add(strategy);
+                            break;
                         }
                     }
-
-                    return strategies;
                 }
             }
+
+            return strategies;
         }
 
         internal void Save(XmlWriter writer)
         {
             var sortedNonDeletedStrategiesByObjectType = new Dictionary<IObjectType, List<Strategy>>();
-            foreach (var dictionaryEntry in this.strategyByObjectId)
+
+            var committedObjects = this.Database.CommittedStore.GetAllObjects();
+            foreach (var committed in committedObjects)
             {
-                var strategy = dictionaryEntry.Value;
-                if (!strategy.IsDeleted)
+                var strategy = this.InstantiateMemoryStrategy(committed.ObjectId);
+                if (strategy != null && !strategy.IsDeleted)
                 {
                     var objectType = strategy.UncheckedObjectType;
 
@@ -408,11 +471,40 @@ namespace Allors.Database.Adapters.Memory
             save.Execute();
         }
 
+        private IObjectType[] GetConcreteClasses(IObjectType type)
+        {
+            if (!this.concreteClassesByObjectType.TryGetValue(type, out var concreteClasses))
+            {
+                var sortedClassAndSubclassList = new List<IObjectType>();
+
+                if (type is IClass)
+                {
+                    sortedClassAndSubclassList.Add(type);
+                }
+
+                if (type is IInterface @interface)
+                {
+                    foreach (var subClass in @interface.DatabaseClasses)
+                    {
+                        sortedClassAndSubclassList.Add(subClass);
+                    }
+                }
+
+                concreteClasses = sortedClassAndSubclassList.ToArray();
+
+                this.concreteClassesByObjectType[type] = concreteClasses;
+            }
+
+            return concreteClasses;
+        }
+
         private void Reset()
         {
-            // Strategies
-            this.strategyByObjectId = new Dictionary<long, Strategy>();
-            this.strategiesByObjectType = new Dictionary<IObjectType, HashSet<Strategy>>();
+            this.instantiatedStrategies = new Dictionary<long, Strategy>();
+            this.newObjectIds = new HashSet<long>();
+            this.deletedObjectIds = new HashSet<long>();
+            this.modifiedObjectIds = new HashSet<long>();
+            this.snapshotVersionByObjectId = new Dictionary<long, long>();
         }
     }
 }
