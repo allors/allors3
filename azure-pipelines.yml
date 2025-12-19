@@ -57,6 +57,8 @@ stages:
     - task: PowerShell@2
       env:
         NODE_OPTIONS: --max_old_space_size=16384
+        ALLORS_SQLCLIENT: $(ALLORS_SQLCLIENT)
+        ALLORS_NPGSQL: $(ALLORS_NPGSQL)
       inputs:
         targetType: 'filePath'
         filePath: 'build.ps1'
