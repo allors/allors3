@@ -130,10 +130,6 @@
   <Folder Name="/System/Repository/Templates/">
     <File Path="System\Repository\Templates\meta.cs.stg" />
   </Folder>
-  <Folder Name="/System/Store/">
-    <Project Path="System/Store/Allors.Store.Files/Allors.Store.Files.csproj" />
-    <Project Path="System/Store/Allors.Store/Allors.Store.csproj" />
-  </Folder>
   <Folder Name="/System/Workspace/">
     <Project Path="System/Workspace/Allors.Workspace.Domain/Allors.Workspace.Domain.csproj" />
     <Project Path="System/Workspace/Allors.Workspace.Meta.Lazy/Allors.Workspace.Meta.Lazy.csproj" />
