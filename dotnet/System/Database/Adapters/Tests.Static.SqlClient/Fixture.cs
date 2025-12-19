@@ -11,7 +11,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     {
         public Fixture()
         {
-            var database = typeof(T).Name;
+            var database = typeof(T).Name.ToLowerInvariant();
 
             using var connection = new SqlConnection(Config.ConnectionString);
             connection.Open();

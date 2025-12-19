@@ -11,13 +11,13 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     {
         public Fixture()
         {
-            var database = typeof(T).Name;
+            var database = typeof(T).Name.ToLowerInvariant();
 
             {
                 using var connection = new NpgsqlConnection(Config.ConnectionString);
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = $"DROP DATABASE IF EXISTS \"{database}\" WITH (FORCE)";
+                command.CommandText = $"DROP DATABASE IF EXISTS {database} WITH (FORCE)";
                 command.ExecuteNonQuery();
                 connection.Close();
             }
@@ -26,7 +26,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 using var connection = new NpgsqlConnection(Config.ConnectionString);
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = $"CREATE DATABASE \"{database}\"";
+                command.CommandText = $"CREATE DATABASE {database}";
                 command.ExecuteNonQuery();
             }
         }

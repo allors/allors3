@@ -5,31 +5,21 @@
 
 namespace Allors.Database.Adapters.Sql.SqlClient
 {
+    using System;
     using System.Threading.Tasks;
-    using Testcontainers.MsSql;
     using Xunit;
 
     public class DatabaseContainer : IAsyncLifetime
     {
-        private readonly MsSqlContainer container;
-
-        public DatabaseContainer()
+        public Task InitializeAsync()
         {
-            this.container = new MsSqlBuilder().Build();
+            Config.ConnectionString = Environment.GetEnvironmentVariable("allors_sqclient")
+                ?? throw new InvalidOperationException("Environment variable 'allors_sqclient' is not set");
+
+            return Task.CompletedTask;
         }
 
-        public string ConnectionString => this.container.GetConnectionString();
-
-        public async Task InitializeAsync()
-        {
-            await this.container.StartAsync();
-            Config.ConnectionString = this.ConnectionString;
-        }
-
-        public async Task DisposeAsync()
-        {
-            await this.container.DisposeAsync();
-        }
+        public Task DisposeAsync() => Task.CompletedTask;
     }
 
     [CollectionDefinition("Database")]

@@ -7,36 +7,25 @@ namespace Allors.Database.Adapters.Sql.Npgsql
 {
     using System;
     using System.Threading.Tasks;
-    using Testcontainers.PostgreSql;
     using Xunit;
 
     public class DatabaseContainer : IAsyncLifetime
     {
-        private readonly PostgreSqlContainer container;
-
-        public DatabaseContainer()
+        public Task InitializeAsync()
         {
-            this.container = new PostgreSqlBuilder().Build();
-        }
-
-        public string ConnectionString => this.container.GetConnectionString();
-
-        public async Task InitializeAsync()
-        {
-            await this.container.StartAsync();
-            Config.ConnectionString = this.ConnectionString;
+            Config.ConnectionString = Environment.GetEnvironmentVariable("allors_npgsql")
+                ?? throw new InvalidOperationException("Environment variable 'allors_npgsql' is not set");
 
             // TODO: replace timestamp with timestamp with time zone
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             // TODO: https://www.npgsql.org/doc/release-notes/7.0.html#a-namecommandtypestoredprocedure-commandtypestoredprocedure-now-invokes-procedures-instead-of-functions
             AppContext.SetSwitch("Npgsql.EnableStoredProcedureCompatMode", true);
+
+            return Task.CompletedTask;
         }
 
-        public async Task DisposeAsync()
-        {
-            await this.container.DisposeAsync();
-        }
+        public Task DisposeAsync() => Task.CompletedTask;
     }
 
     [CollectionDefinition("Database")]
