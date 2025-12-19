@@ -13,8 +13,8 @@ namespace Allors.Database.Adapters.Sql.Npgsql
     {
         public Task InitializeAsync()
         {
-            Config.ConnectionString = Environment.GetEnvironmentVariable("allors_npgsql")
-                ?? throw new InvalidOperationException("Environment variable 'allors_npgsql' is not set");
+            Config.ConnectionString = Environment.GetEnvironmentVariable("ALLORS_NPGSQL")
+                ?? throw new InvalidOperationException("Environment variable 'ALLORS_NPGSQL' is not set");
 
             // TODO: replace timestamp with timestamp with time zone
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

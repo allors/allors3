@@ -13,8 +13,8 @@ namespace Allors.Database.Adapters.Sql.SqlClient
     {
         public Task InitializeAsync()
         {
-            Config.ConnectionString = Environment.GetEnvironmentVariable("allors_sqclient")
-                ?? throw new InvalidOperationException("Environment variable 'allors_sqclient' is not set");
+            Config.ConnectionString = Environment.GetEnvironmentVariable("ALLORS_SQLCLIENT")
+                ?? throw new InvalidOperationException("Environment variable 'ALLORS_SQLCLIENT' is not set");
 
             return Task.CompletedTask;
         }
