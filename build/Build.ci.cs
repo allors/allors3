@@ -14,6 +14,10 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(DotnetSystemAdaptersTestNpgsql);
 
+    private Target CiDotnetSystemAdaptersTestUnified => _ => _
+        .DependsOn(Reset)
+        .DependsOn(DotnetSystemAdaptersTestUnified);
+
     private Target CiDotnetCoreDatabaseTest => _ => _
         .DependsOn(Reset)
         .DependsOn(DotnetCoreDatabaseTest);
