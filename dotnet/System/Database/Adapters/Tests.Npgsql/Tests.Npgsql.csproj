@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tests.Static\Tests.Static.csproj" />
+    <ProjectReference Include="..\Tests\Tests.csproj" />
     <ProjectReference Include="..\Allors.Database.Adapters.Sql.Npgsql\Allors.Database.Adapters.Sql.Npgsql.csproj" />
     <ProjectReference Include="..\Allors.Database.Adapters.Tracing\Allors.Database.Adapters.Tracing.csproj" />
   </ItemGroup>

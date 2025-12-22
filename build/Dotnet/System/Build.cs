@@ -21,7 +21,7 @@ partial class Build
     private Target DotnetSystemAdaptersTestMemory => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() => DotNetTest(s => s
-            .SetProjectFile(Paths.DotnetSystemAdaptersStaticMemoryTests)
+            .SetProjectFile(Paths.DotnetSystemAdaptersMemoryTests)
             .AddLoggers("trx;LogFileName=AdaptersMemory.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
@@ -30,7 +30,7 @@ partial class Build
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.DotnetSystemAdaptersStaticSqlClientTests)
+                .SetProjectFile(Paths.DotnetSystemAdaptersSqlClientTests)
                 .AddLoggers("trx;LogFileName=AdaptersSqlClient.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
@@ -40,7 +40,7 @@ partial class Build
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.DotnetSystemAdaptersStaticNpgsqlTests)
+                .SetProjectFile(Paths.DotnetSystemAdaptersNpgsqlTests)
                 .AddLoggers("trx;LogFileName=AdaptersNpgsql.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
@@ -50,7 +50,7 @@ partial class Build
         .Executes(() =>
         {
             DotNetTest(s => s
-                .SetProjectFile(Paths.DotnetSystemAdaptersStaticUnifiedTests)
+                .SetProjectFile(Paths.DotnetSystemAdaptersUnifiedTests)
                 .AddLoggers("trx;LogFileName=AdaptersUnified.trx")
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });

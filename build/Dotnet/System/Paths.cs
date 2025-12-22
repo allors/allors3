@@ -15,10 +15,10 @@ public partial class Paths
 
     public AbsolutePath DotnetSystemAdaptersMetaGenerated => DotnetSystemAdapters / "Meta/Generated";
     public AbsolutePath DotnetSystemAdaptersGenerate => DotnetSystemAdapters / "Generate/Generate.csproj";
-    public AbsolutePath DotnetSystemAdaptersStaticMemoryTests => DotnetSystemAdapters / "Tests.Static.Memory/Tests.Static.Memory.csproj";
-    public AbsolutePath DotnetSystemAdaptersStaticNpgsqlTests => DotnetSystemAdapters / "Tests.Static.Npgsql/Tests.Static.Npgsql.csproj";
-    public AbsolutePath DotnetSystemAdaptersStaticSqlClientTests => DotnetSystemAdapters / "Tests.Static.SqlClient/Tests.Static.SqlClient.csproj";
-    public AbsolutePath DotnetSystemAdaptersStaticUnifiedTests => DotnetSystemAdapters / "Tests.Static.Unified/Tests.Static.Unified.csproj";
+    public AbsolutePath DotnetSystemAdaptersMemoryTests => DotnetSystemAdapters / "Tests.Memory/Tests.Memory.csproj";
+    public AbsolutePath DotnetSystemAdaptersNpgsqlTests => DotnetSystemAdapters / "Tests.Npgsql/Tests.Npgsql.csproj";
+    public AbsolutePath DotnetSystemAdaptersSqlClientTests => DotnetSystemAdapters / "Tests.SqlClient/Tests.SqlClient.csproj";
+    public AbsolutePath DotnetSystemAdaptersUnifiedTests => DotnetSystemAdapters / "Tests.Unified/Tests.Unified.csproj";
 
     public AbsolutePath DotnetSystemWorkspaceTypescript => DotnetSystem / "Workspace/Typescript";
 }

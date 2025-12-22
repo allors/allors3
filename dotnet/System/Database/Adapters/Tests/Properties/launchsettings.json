@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Tests.Static": {
+    "Tests": {
       "commandName": "Project"
     }
   }
