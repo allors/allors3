@@ -439,6 +439,35 @@ namespace Allors.Database.Adapters.Memory
             return strategies;
         }
 
+        /// <summary>
+        /// Gets strategies for new objects (not yet committed) that match the given type.
+        /// Used by index-based queries to include uncommitted objects.
+        /// </summary>
+        internal IEnumerable<Strategy> GetNewStrategiesForType(IObjectType type)
+        {
+            var concreteClasses = this.GetConcreteClasses(type);
+
+            if (concreteClasses.Length == 0)
+            {
+                yield break;
+            }
+
+            foreach (var newId in this.newObjectIds)
+            {
+                if (this.instantiatedStrategies.TryGetValue(newId, out var strategy))
+                {
+                    foreach (var concreteClass in concreteClasses)
+                    {
+                        if (strategy.UncheckedObjectType.Equals(concreteClass))
+                        {
+                            yield return strategy;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         internal void Save(XmlWriter writer)
         {
             var sortedNonDeletedStrategiesByObjectType = new Dictionary<IObjectType, List<Strategy>>();

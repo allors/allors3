@@ -114,6 +114,7 @@
     <Project Path="System/Database/Adapters/Tests.Unified/Tests.Unified.csproj" />
     <Project Path="System/Database/Adapters/Tests/Tests.csproj" />
     <Project Path="System/Database/Adapters/Tests.Memory/Tests.Memory.csproj" />
+    <Project Path="System/Database/Adapters/Tests.Memory.Benchmarks/Tests.Memory.Benchmarks.csproj" />
     <Project Path="System/Database/Adapters/Tests.SqlClient/Tests.SqlClient.csproj" />
     <Project Path="System/Database/Adapters/Tests.Npgsql/Tests.Npgsql.csproj" />
   </Folder>

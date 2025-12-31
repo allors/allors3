@@ -5,26 +5,37 @@
 
 namespace Allors.Database.Adapters.Memory
 {
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using Meta;
 
     /// <summary>
     /// Thread-safe storage for committed database state.
-    /// This is the source of truth for all committed data.
+    /// Uses ConcurrentDictionary for lock-free reads and a simple lock for atomic commits.
     /// </summary>
     internal sealed class CommittedStore
     {
-        private readonly ReaderWriterLockSlim rwLock;
-        private readonly Dictionary<long, CommittedObject> objectById;
-        private readonly Dictionary<IObjectType, HashSet<long>> objectIdsByType;
+        // Lock-free primary storage for objects
+        private readonly ConcurrentDictionary<long, CommittedObject> objectById;
+
+        // Type index with its own lock (modified less frequently)
+        private readonly ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>> objectIdsByType;
+
+        private readonly IndexStore indexStore;
+
+        // Commit lock - only needed for version check + apply atomicity
+        private readonly object commitLock;
+
         private long currentId;
 
-        internal CommittedStore()
+        internal CommittedStore(IndexStore indexStore)
         {
-            this.rwLock = new ReaderWriterLockSlim();
-            this.objectById = new Dictionary<long, CommittedObject>();
-            this.objectIdsByType = new Dictionary<IObjectType, HashSet<long>>();
+            this.objectById = new ConcurrentDictionary<long, CommittedObject>();
+            this.objectIdsByType = new ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>>();
+            this.indexStore = indexStore;
+            this.commitLock = new object();
             this.currentId = 0;
         }
 
@@ -46,49 +57,41 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Reset()
         {
-            this.rwLock.EnterWriteLock();
-            try
+            lock (this.commitLock)
             {
                 this.objectById.Clear();
                 this.objectIdsByType.Clear();
+                this.indexStore.Clear();
                 Interlocked.Exchange(ref this.currentId, 0);
             }
-            finally
-            {
-                this.rwLock.ExitWriteLock();
-            }
         }
 
+        /// <summary>
+        /// Gets a snapshot of an object. Lock-free read operation.
+        /// </summary>
         internal CommittedObject GetSnapshot(long objectId)
         {
-            this.rwLock.EnterReadLock();
-            try
-            {
-                return this.objectById.TryGetValue(objectId, out var obj) ? obj.Clone() : null;
-            }
-            finally
-            {
-                this.rwLock.ExitReadLock();
-            }
+            // Lock-free read from ConcurrentDictionary
+            // No clone needed - CommittedObject is immutable after being stored.
+            // Strategy uses an overlay pattern for local modifications.
+            return this.objectById.TryGetValue(objectId, out var obj) ? obj : null;
         }
 
+        /// <summary>
+        /// Checks if an object exists. Lock-free read operation.
+        /// </summary>
         internal bool ObjectExists(long objectId)
         {
-            this.rwLock.EnterReadLock();
-            try
-            {
-                return this.objectById.ContainsKey(objectId);
-            }
-            finally
-            {
-                this.rwLock.ExitReadLock();
-            }
+            // Lock-free read from ConcurrentDictionary
+            return this.objectById.ContainsKey(objectId);
         }
 
+        /// <summary>
+        /// Atomically commits transaction changes with optimistic concurrency.
+        /// </summary>
         internal void Commit(TransactionChanges changes)
         {
-            this.rwLock.EnterWriteLock();
-            try
+            lock (this.commitLock)
             {
                 // Version check and conflict detection for modified objects
                 foreach (var modified in changes.ModifiedObjects)
@@ -102,73 +105,118 @@ namespace Allors.Database.Adapters.Memory
                     }
                 }
 
-                // Apply deletes
+                // Apply deletes and update indexes
                 foreach (var deletedId in changes.DeletedObjectIds)
                 {
-                    if (this.objectById.TryGetValue(deletedId, out var deleted))
+                    if (this.objectById.TryRemove(deletedId, out var deleted))
                     {
-                        this.objectById.Remove(deletedId);
+                        // Remove from indexes before removing object
+                        this.indexStore.RemoveObjectFromIndexes(deletedId, deleted);
+
                         if (this.objectIdsByType.TryGetValue(deleted.ObjectType, out var typeSet))
                         {
-                            typeSet.Remove(deletedId);
+                            typeSet.TryRemove(deletedId, out _);
                         }
                     }
                 }
 
-                // Apply new objects
+                // Apply new objects and update indexes
                 foreach (var newObj in changes.NewObjects)
                 {
                     this.objectById[newObj.ObjectId] = newObj;
-                    if (!this.objectIdsByType.TryGetValue(newObj.ObjectType, out var typeSet))
-                    {
-                        typeSet = new HashSet<long>();
-                        this.objectIdsByType[newObj.ObjectType] = typeSet;
-                    }
 
-                    typeSet.Add(newObj.ObjectId);
+                    var typeSet = this.objectIdsByType.GetOrAdd(
+                        newObj.ObjectType,
+                        _ => new ConcurrentDictionary<long, byte>());
+                    typeSet[newObj.ObjectId] = 0;
+
+                    // Add to indexes (no old values since this is a new object)
+                    this.UpdateIndexesForObject(newObj.ObjectId, null, newObj);
                 }
 
-                // Apply modifications
+                // Apply modifications and update indexes
                 foreach (var modified in changes.ModifiedObjects)
                 {
+                    this.objectById.TryGetValue(modified.ObjectId, out var oldObj);
                     this.objectById[modified.ObjectId] = modified;
+
+                    // Update indexes with old and new values
+                    this.UpdateIndexesForObject(modified.ObjectId, oldObj, modified);
                 }
-            }
-            finally
-            {
-                this.rwLock.ExitWriteLock();
             }
         }
 
+        private void UpdateIndexesForObject(long objectId, CommittedObject oldObj, CommittedObject newObj)
+        {
+            // Update unit role indexes
+            var oldUnitRoles = oldObj?.UnitRoleByRoleType ?? new Dictionary<IRoleType, object>();
+            var newUnitRoles = newObj.UnitRoleByRoleType;
+
+            // Find all unit role types that have changed
+            var allUnitRoleTypes = new HashSet<IRoleType>(oldUnitRoles.Keys);
+            foreach (var key in newUnitRoles.Keys)
+            {
+                allUnitRoleTypes.Add(key);
+            }
+
+            foreach (var roleType in allUnitRoleTypes)
+            {
+                oldUnitRoles.TryGetValue(roleType, out var oldValue);
+                newUnitRoles.TryGetValue(roleType, out var newValue);
+
+                if (!Equals(oldValue, newValue))
+                {
+                    this.indexStore.UpdateUnitRoleIndex(roleType, objectId, oldValue, newValue);
+                }
+            }
+
+            // Update composite role indexes
+            var oldCompositeRoles = oldObj?.CompositeRoleByRoleType ?? new Dictionary<IRoleType, long>();
+            var newCompositeRoles = newObj.CompositeRoleByRoleType;
+
+            var allCompositeRoleTypes = new HashSet<IRoleType>(oldCompositeRoles.Keys);
+            foreach (var key in newCompositeRoles.Keys)
+            {
+                allCompositeRoleTypes.Add(key);
+            }
+
+            foreach (var roleType in allCompositeRoleTypes)
+            {
+                var hasOld = oldCompositeRoles.TryGetValue(roleType, out var oldTargetId);
+                var hasNew = newCompositeRoles.TryGetValue(roleType, out var newTargetId);
+
+                if (hasOld != hasNew || (hasOld && oldTargetId != newTargetId))
+                {
+                    this.indexStore.UpdateCompositeRoleIndex(
+                        roleType,
+                        objectId,
+                        hasOld ? oldTargetId : null,
+                        hasNew ? newTargetId : null);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets all object IDs for a type. Returns a snapshot copy.
+        /// </summary>
         internal HashSet<long> GetObjectIdsForType(IObjectType type)
         {
-            this.rwLock.EnterReadLock();
-            try
+            // Lock-free read from ConcurrentDictionary
+            if (this.objectIdsByType.TryGetValue(type, out var typeSet))
             {
-                if (this.objectIdsByType.TryGetValue(type, out var ids))
-                {
-                    return new HashSet<long>(ids);
-                }
+                return new HashSet<long>(typeSet.Keys);
+            }
 
-                return new HashSet<long>();
-            }
-            finally
-            {
-                this.rwLock.ExitReadLock();
-            }
+            return new HashSet<long>();
         }
 
+        /// <summary>
+        /// Gets all objects. Returns a snapshot copy.
+        /// </summary>
         internal IEnumerable<CommittedObject> GetAllObjects()
         {
-            this.rwLock.EnterReadLock();
-            try
-            {
-                return new List<CommittedObject>(this.objectById.Values);
-            }
-            finally
-            {
-                this.rwLock.ExitReadLock();
-            }
+            // Lock-free read - ToList creates a snapshot
+            return this.objectById.Values.ToList();
         }
     }
 }

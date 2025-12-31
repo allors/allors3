@@ -7,6 +7,7 @@ namespace Allors.Database.Adapters.Memory
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Meta;
 
     internal sealed class ExtentOperation : Extent
@@ -40,45 +41,30 @@ namespace Allors.Database.Adapters.Memory
         {
             if (this.Strategies == null)
             {
-                var firstOperandStrategies = new List<Strategy>(this.firstOperand.GetEvaluatedStrategies());
-                var secondOperandStrategies = new List<Strategy>(this.secondOperand.GetEvaluatedStrategies());
+                var firstOperandStrategies = this.firstOperand.GetEvaluatedStrategies();
+                var secondOperandStrategies = this.secondOperand.GetEvaluatedStrategies();
 
+                // Use HashSet for O(1) lookups instead of O(n) List.Contains
                 switch (this.operationType)
                 {
                     case ExtentOperationType.Union:
-                        this.Strategies = firstOperandStrategies;
-                        foreach (var strategy in secondOperandStrategies)
-                        {
-                            if (!this.Strategies.Contains(strategy))
-                            {
-                                this.Strategies.Add(strategy);
-                            }
-                        }
-
+                        var unionSet = new HashSet<Strategy>(firstOperandStrategies);
+                        unionSet.UnionWith(secondOperandStrategies);
+                        this.Strategies = unionSet.ToList();
                         break;
 
                     case ExtentOperationType.Intersect:
-                        this.Strategies = new List<Strategy>();
-                        foreach (var strategy in firstOperandStrategies)
-                        {
-                            if (secondOperandStrategies.Contains(strategy))
-                            {
-                                this.Strategies.Add(strategy);
-                            }
-                        }
-
+                        var firstSet = new HashSet<Strategy>(firstOperandStrategies);
+                        this.Strategies = secondOperandStrategies
+                            .Where(s => firstSet.Contains(s))
+                            .ToList();
                         break;
 
                     case ExtentOperationType.Except:
-                        this.Strategies = firstOperandStrategies;
-                        foreach (var strategy in secondOperandStrategies)
-                        {
-                            if (this.Strategies.Contains(strategy))
-                            {
-                                this.Strategies.Remove(strategy);
-                            }
-                        }
-
+                        var exceptSet = new HashSet<Strategy>(secondOperandStrategies);
+                        this.Strategies = firstOperandStrategies
+                            .Where(s => !exceptSet.Contains(s))
+                            .ToList();
                         break;
 
                     default:

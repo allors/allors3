@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Allors.Database.Adapters.Memory\Allors.Database.Adapters.Memory.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Meta\Meta.csproj" />
+    <ProjectReference Include="..\Tests\Tests.csproj" />
+  </ItemGroup>
+</Project>

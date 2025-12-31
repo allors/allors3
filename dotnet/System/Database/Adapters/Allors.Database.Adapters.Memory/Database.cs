@@ -15,6 +15,7 @@ namespace Allors.Database.Adapters.Memory
     {
         private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
         private readonly CommittedStore committedStore;
+        private readonly IndexStore indexStore;
         private readonly object commitLock;
 
         public Database(IDatabaseServices state, Configuration configuration)
@@ -34,10 +35,14 @@ namespace Allors.Database.Adapters.Memory
             this.MetaPopulation = this.ObjectFactory.MetaPopulation;
 
             this.concreteClassesByObjectType = new Dictionary<IObjectType, object>();
-            this.committedStore = new CommittedStore();
+            this.indexStore = new IndexStore();
+            this.committedStore = new CommittedStore(this.indexStore);
             this.commitLock = new object();
 
             this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
+
+            // Create indexes for all role types marked as indexed in the meta model
+            this.InitializeIndexesFromMeta();
 
             this.Services.OnInit(this);
         }
@@ -61,6 +66,71 @@ namespace Allors.Database.Adapters.Memory
         internal bool IsLoading { get; private set; }
 
         internal CommittedStore CommittedStore => this.committedStore;
+
+        internal IndexStore IndexStore => this.indexStore;
+
+        /// <summary>
+        /// Creates a secondary index on the specified role type for O(1) query lookups.
+        /// Note: Indexes are automatically created for role types marked as IsIndexed in the meta model.
+        /// Use this method only for additional runtime indexes not defined in the meta model.
+        /// </summary>
+        public void CreateIndex(IRoleType roleType)
+        {
+            lock (this.commitLock)
+            {
+                if (roleType.ObjectType is IUnit)
+                {
+                    this.indexStore.CreateUnitRoleIndex(roleType);
+                }
+                else if (roleType.ObjectType is IComposite)
+                {
+                    this.indexStore.CreateCompositeRoleIndex(roleType);
+                }
+
+                // Rebuild indexes from existing data
+                this.indexStore.RebuildIndexes(this.committedStore.GetAllObjects());
+            }
+        }
+
+        /// <summary>
+        /// Initializes indexes for all role types marked as IsIndexed in the meta model.
+        /// Called automatically during database construction.
+        /// </summary>
+        private void InitializeIndexesFromMeta()
+        {
+            foreach (var relationType in this.MetaPopulation.DatabaseRelationTypes)
+            {
+                if (!relationType.IsIndexed)
+                {
+                    continue;
+                }
+
+                var roleType = relationType.RoleType;
+
+                if (roleType.ObjectType is IUnit unit)
+                {
+                    // Skip large string/binary fields that can't be efficiently indexed
+                    // (matching SQL adapter behavior)
+                    if (unit.IsString || unit.IsBinary)
+                    {
+                        if (roleType.Size == -1 || roleType.Size > 4000)
+                        {
+                            continue;
+                        }
+                    }
+
+                    this.indexStore.CreateUnitRoleIndex(roleType);
+                }
+                else if (roleType.ObjectType is IComposite)
+                {
+                    // Index composite roles (one-to-one, many-to-one)
+                    if (roleType.IsOne)
+                    {
+                        this.indexStore.CreateCompositeRoleIndex(roleType);
+                    }
+                }
+            }
+        }
 
         public ITransaction CreateTransaction() => this.CreateDatabaseTransaction();
 
