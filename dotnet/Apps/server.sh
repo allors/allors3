@@ -1,5 +1,5 @@
 #/bin/bash
 
 export ASPNETCORE_ENVIRONMENT="Development"
-cd database/server
+cd Database/Server
 dotnet watch run --configuration Debug
