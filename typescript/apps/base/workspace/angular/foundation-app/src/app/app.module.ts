@@ -1,12 +1,17 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import {
   ThrottledConfig,
   ThrottledDirective,
   WorkspaceService,
+  AuthenticationConfig,
+  AuthenticationService,
+  AuthenticationSessionStoreService,
+  AuthenticationInterceptor,
 } from '@allors/base/workspace/angular/foundation';
 import { PrototypeObjectFactory } from '@allors/system/workspace/adapters';
 import { DatabaseConnection } from '@allors/system/workspace/adapters-json';
@@ -25,6 +30,8 @@ import { FetchComponent } from './fetch/fetch.component';
 import { CoreContext } from '../allors/core-context';
 import { Configuration } from '@allors/system/workspace/domain';
 import { ruleBuilder } from '@allors/base/workspace/derivations-custom';
+import { LoginComponent } from './auth/login.component';
+import { AuthorizationService } from './auth/authorization.service';
 
 export function appInitFactory(
   workspaceService: WorkspaceService,
@@ -59,8 +66,10 @@ export function appInitFactory(
 }
 
 const routes: Routes = [
+  { path: 'login', component: LoginComponent },
   {
     path: '',
+    canActivate: [AuthorizationService],
     children: [
       {
         component: HomeComponent,
@@ -85,10 +94,12 @@ const routes: Routes = [
     HomeComponent,
     QueryComponent,
     FetchComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
   ],
@@ -102,6 +113,21 @@ const routes: Routes = [
     {
       provide: ThrottledConfig,
       useValue: { time: 5000 },
+    },
+    {
+      provide: AuthenticationService,
+      useClass: AuthenticationSessionStoreService,
+    },
+    {
+      provide: AuthenticationConfig,
+      useValue: {
+        url: environment.baseUrl + environment.authUrl,
+      },
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthenticationInterceptor,
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],

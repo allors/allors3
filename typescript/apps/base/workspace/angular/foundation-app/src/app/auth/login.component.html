@@ -1,0 +1,19 @@
+<div style="padding-top: 10vh; display: flex; justify-content: center;">
+  <div style="max-width: 300px; padding: 20px; border: 1px solid #ccc;">
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <h1>Login</h1>
+
+      <div style="margin-bottom: 10px;">
+        <label>Username</label><br>
+        <input formControlName="userName" type="text" required style="width: 100%; padding: 5px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label>Password</label><br>
+        <input formControlName="password" type="password" required style="width: 100%; padding: 5px;">
+      </div>
+
+      <button type="submit">Sign In</button>
+    </form>
+  </div>
+</div>
