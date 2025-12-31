@@ -36,7 +36,6 @@ npx nx g @nrwl/workspace:library apps-intranet/workspace/meta
 npx nx g @nrwl/workspace:library apps-intranet/workspace/meta-json
 
 // Base
-npx nx g @nrwl/angular:application base/workspace/angular/foundation-app --routing=true --e2eTestRunner=none
 npx nx g @nrwl/angular:application base/workspace/angular-material/application-app --routing=true --style=scss --e2eTestRunner=none
 npx nx g @nrwl/angular:library base/workspace/angular/foundation
 npx nx g @nrwl/angular:library base/workspace/angular/application
