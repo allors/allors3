@@ -176,6 +176,35 @@ namespace Allors.Database.Adapters.Memory
                 }
             }
 
+            // Also check modified objects whose role values may have changed to match the query
+            // The index contains committed values, but locally modified values might now match
+            var foundObjectIds = new HashSet<long>(this.Strategies.Select(s => s.ObjectId));
+            foreach (var strategy in this.Transaction.GetModifiedStrategiesForType(this.objectType))
+            {
+                // Skip if already found via index lookup
+                if (foundObjectIds.Contains(strategy.ObjectId))
+                {
+                    continue;
+                }
+
+                if (strategy.IsDeleted)
+                {
+                    continue;
+                }
+
+                // Check type compatibility
+                if (!concreteClasses.Contains(strategy.UncheckedObjectType))
+                {
+                    continue;
+                }
+
+                // Apply all filters - this checks the current (modified) role values
+                if (this.filter.Evaluate(strategy) == ThreeValuedLogic.True)
+                {
+                    this.Strategies.Add(strategy);
+                }
+            }
+
             return true;
         }
 

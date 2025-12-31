@@ -468,6 +468,35 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
+        /// <summary>
+        /// Gets strategies for modified objects (committed but changed locally) that match the given type.
+        /// Used by index-based queries to find objects whose roles have changed to match a query value.
+        /// </summary>
+        internal IEnumerable<Strategy> GetModifiedStrategiesForType(IObjectType type)
+        {
+            var concreteClasses = this.GetConcreteClasses(type);
+
+            if (concreteClasses.Length == 0)
+            {
+                yield break;
+            }
+
+            foreach (var modifiedId in this.modifiedObjectIds)
+            {
+                if (this.instantiatedStrategies.TryGetValue(modifiedId, out var strategy))
+                {
+                    foreach (var concreteClass in concreteClasses)
+                    {
+                        if (strategy.UncheckedObjectType.Equals(concreteClass))
+                        {
+                            yield return strategy;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         internal void Save(XmlWriter writer)
         {
             var sortedNonDeletedStrategiesByObjectType = new Dictionary<IObjectType, List<Strategy>>();

@@ -179,5 +179,40 @@ namespace Allors.Database.Adapters
                 Assert.Single(extentAfterRollback);
             }
         }
+
+        [Fact]
+        public void QueryWithIntegerRoleShouldReflectLocalChanges()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // Arrange: Create and commit an object with an integer value
+                var c1 = (C1)this.Transaction.Create(m.C1);
+                c1.C1AllorsInteger = 42;
+                this.Transaction.Commit();
+
+                // Act: Query for original value - should find object
+                var extent1 = this.Transaction.Extent(m.C1);
+                extent1.Filter.AddEquals(m.C1.C1AllorsInteger, 42);
+                Assert.Single(extent1);
+                Assert.Contains(c1, extent1);
+
+                // Act: Modify locally without commit
+                c1.C1AllorsInteger = 99;
+
+                // Assert: Query for OLD value should NOT find object anymore
+                var extent2 = this.Transaction.Extent(m.C1);
+                extent2.Filter.AddEquals(m.C1.C1AllorsInteger, 42);
+                Assert.Empty(extent2);
+
+                // Assert: Query for NEW value should find object
+                var extent3 = this.Transaction.Extent(m.C1);
+                extent3.Filter.AddEquals(m.C1.C1AllorsInteger, 99);
+                Assert.Single(extent3);
+                Assert.Contains(c1, extent3);
+            }
+        }
     }
 }
