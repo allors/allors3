@@ -5,8 +5,8 @@
 
 namespace Allors.Database.Adapters.Memory
 {
+    using System.Collections.Frozen;
     using System.Collections.Generic;
-    using System.Linq;
     using Meta;
 
     /// <summary>
@@ -22,9 +22,9 @@ namespace Allors.Database.Adapters.Memory
             this.Version = version;
             this.UnitRoleByRoleType = new Dictionary<IRoleType, object>();
             this.CompositeRoleByRoleType = new Dictionary<IRoleType, long>();
-            this.CompositesRoleByRoleType = new Dictionary<IRoleType, long[]>();
+            this.CompositesRoleByRoleType = new Dictionary<IRoleType, FrozenSet<long>>();
             this.CompositeAssociationByAssociationType = new Dictionary<IAssociationType, long>();
-            this.CompositesAssociationByAssociationType = new Dictionary<IAssociationType, long[]>();
+            this.CompositesAssociationByAssociationType = new Dictionary<IAssociationType, FrozenSet<long>>();
         }
 
         internal long ObjectId { get; }
@@ -39,11 +39,11 @@ namespace Allors.Database.Adapters.Memory
 
         internal Dictionary<IRoleType, long> CompositeRoleByRoleType { get; }
 
-        internal Dictionary<IRoleType, long[]> CompositesRoleByRoleType { get; }
+        internal Dictionary<IRoleType, FrozenSet<long>> CompositesRoleByRoleType { get; }
 
         internal Dictionary<IAssociationType, long> CompositeAssociationByAssociationType { get; }
 
-        internal Dictionary<IAssociationType, long[]> CompositesAssociationByAssociationType { get; }
+        internal Dictionary<IAssociationType, FrozenSet<long>> CompositesAssociationByAssociationType { get; }
 
         internal CommittedObject Clone()
         {
@@ -64,7 +64,8 @@ namespace Allors.Database.Adapters.Memory
 
             foreach (var kvp in this.CompositesRoleByRoleType)
             {
-                clone.CompositesRoleByRoleType[kvp.Key] = (long[])kvp.Value.Clone();
+                // FrozenSet is immutable, no need to clone
+                clone.CompositesRoleByRoleType[kvp.Key] = kvp.Value;
             }
 
             foreach (var kvp in this.CompositeAssociationByAssociationType)
@@ -74,7 +75,8 @@ namespace Allors.Database.Adapters.Memory
 
             foreach (var kvp in this.CompositesAssociationByAssociationType)
             {
-                clone.CompositesAssociationByAssociationType[kvp.Key] = (long[])kvp.Value.Clone();
+                // FrozenSet is immutable, no need to clone
+                clone.CompositesAssociationByAssociationType[kvp.Key] = kvp.Value;
             }
 
             return clone;
@@ -112,7 +114,7 @@ namespace Allors.Database.Adapters.Memory
             }
             else
             {
-                this.CompositesRoleByRoleType[roleType] = value.ToArray();
+                this.CompositesRoleByRoleType[roleType] = value.ToFrozenSet();
             }
         }
 
@@ -136,7 +138,7 @@ namespace Allors.Database.Adapters.Memory
             }
             else
             {
-                this.CompositesAssociationByAssociationType[associationType] = value.ToArray();
+                this.CompositesAssociationByAssociationType[associationType] = value.ToFrozenSet();
             }
         }
     }

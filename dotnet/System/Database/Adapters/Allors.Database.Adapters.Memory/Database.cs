@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Xml;
     using Allors.Database.Tracing;
@@ -13,7 +14,7 @@ namespace Allors.Database.Adapters.Memory
 
     public class Database : IDatabase
     {
-        private readonly Dictionary<IObjectType, object> concreteClassesByObjectType;
+        private readonly ConcurrentDictionary<IObjectType, object> concreteClassesByObjectType;
         private readonly CommittedStore committedStore;
         private readonly IndexStore indexStore;
         private readonly object commitLock;
@@ -34,7 +35,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.MetaPopulation = this.ObjectFactory.MetaPopulation;
 
-            this.concreteClassesByObjectType = new Dictionary<IObjectType, object>();
+            this.concreteClassesByObjectType = new ConcurrentDictionary<IObjectType, object>();
             this.indexStore = new IndexStore();
             this.committedStore = new CommittedStore(this.indexStore);
             this.commitLock = new object();
@@ -165,23 +166,15 @@ namespace Allors.Database.Adapters.Memory
 
         public bool ContainsClass(IComposite objectType, IObjectType concreteClass)
         {
-            if (!this.concreteClassesByObjectType.TryGetValue(objectType, out var concreteClassOrClasses))
-            {
-                if (objectType.ExistExclusiveDatabaseClass)
-                {
-                    concreteClassOrClasses = objectType.ExclusiveDatabaseClass;
-                    this.concreteClassesByObjectType[objectType] = concreteClassOrClasses;
-                }
-                else
-                {
-                    concreteClassOrClasses = new HashSet<IObjectType>(objectType.DatabaseClasses);
-                    this.concreteClassesByObjectType[objectType] = concreteClassOrClasses;
-                }
-            }
+            var concreteClassOrClasses = this.concreteClassesByObjectType.GetOrAdd(
+                objectType,
+                _ => objectType.ExistExclusiveDatabaseClass
+                    ? objectType.ExclusiveDatabaseClass
+                    : new HashSet<IObjectType>(objectType.DatabaseClasses));
 
-            if (concreteClassOrClasses is IObjectType)
+            if (concreteClassOrClasses is IObjectType singleClass)
             {
-                return concreteClass.Equals(concreteClassOrClasses);
+                return concreteClass.Equals(singleClass);
             }
 
             var concreteClasses = (HashSet<IObjectType>)concreteClassOrClasses;

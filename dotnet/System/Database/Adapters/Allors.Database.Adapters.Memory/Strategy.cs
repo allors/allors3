@@ -6,6 +6,7 @@
 namespace Allors.Database.Adapters.Memory
 {
     using System;
+    using System.Collections.Frozen;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml;
@@ -712,7 +713,8 @@ namespace Allors.Database.Adapters.Memory
 
                 foreach (var kvp in this.snapshot.CompositesRoleByRoleType)
                 {
-                    committed.CompositesRoleByRoleType[kvp.Key] = (long[])kvp.Value.Clone();
+                    // FrozenSet is immutable - reference directly
+                    committed.CompositesRoleByRoleType[kvp.Key] = kvp.Value;
                 }
 
                 foreach (var kvp in this.snapshot.CompositeAssociationByAssociationType)
@@ -722,7 +724,8 @@ namespace Allors.Database.Adapters.Memory
 
                 foreach (var kvp in this.snapshot.CompositesAssociationByAssociationType)
                 {
-                    committed.CompositesAssociationByAssociationType[kvp.Key] = (long[])kvp.Value.Clone();
+                    // FrozenSet is immutable - reference directly
+                    committed.CompositesAssociationByAssociationType[kvp.Key] = kvp.Value;
                 }
             }
 
@@ -1142,7 +1145,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        private HashSet<long> GetCompositesRoleIds(IRoleType roleType)
+        private IReadOnlySet<long> GetCompositesRoleIds(IRoleType roleType)
         {
             if (this.compositesRoleByRoleType != null && this.compositesRoleByRoleType.TryGetValue(roleType, out var roleIds))
             {
@@ -1151,7 +1154,8 @@ namespace Allors.Database.Adapters.Memory
 
             if (this.snapshot != null && this.snapshot.CompositesRoleByRoleType.TryGetValue(roleType, out var snapshotRoleIds))
             {
-                return new HashSet<long>(snapshotRoleIds);
+                // FrozenSet is immutable - return directly without copying
+                return snapshotRoleIds;
             }
 
             return null;
@@ -1201,7 +1205,7 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        private HashSet<long> GetCompositesAssociationIds(IAssociationType associationType)
+        private IReadOnlySet<long> GetCompositesAssociationIds(IAssociationType associationType)
         {
             if (this.compositesAssociationByAssociationType != null && this.compositesAssociationByAssociationType.TryGetValue(associationType, out var associationIds))
             {
@@ -1210,7 +1214,8 @@ namespace Allors.Database.Adapters.Memory
 
             if (this.snapshot != null && this.snapshot.CompositesAssociationByAssociationType.TryGetValue(associationType, out var snapshotAssociationIds))
             {
-                return new HashSet<long>(snapshotAssociationIds);
+                // FrozenSet is immutable - return directly without copying
+                return snapshotAssociationIds;
             }
 
             return null;
