@@ -3,6 +3,9 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Tests.Memory.Benchmarks" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Allors.Database.Adapters\Allors.Database.Adapters.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -85,7 +85,7 @@ namespace Allors.Database.Adapters.Memory
 
             // Find the first indexable predicate in the AND filter to get candidate object IDs
             var indexStore = this.Transaction.Database.IndexStore;
-            HashSet<long> candidateObjectIds = null;
+            IReadOnlySet<long> candidateObjectIds = null;
 
             foreach (var predicate in this.filter.Filters)
             {

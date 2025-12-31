@@ -5,7 +5,9 @@
 
 namespace Allors.Database.Adapters.Memory
 {
+    using System.Collections.Frozen;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using Meta;
 
@@ -13,22 +15,28 @@ namespace Allors.Database.Adapters.Memory
     /// Manages secondary indexes on role types for O(1) query lookups.
     /// Indexes are opt-in per role type via Database.CreateIndex().
     /// Thread-safe for concurrent read/write access.
+    /// Uses FrozenSet for zero-copy reads - modifications convert to HashSet, modify, then freeze.
     /// </summary>
     internal sealed class IndexStore
     {
         // Unit role indexes: roleType -> (value -> objectIds)
-        private readonly Dictionary<IRoleType, Dictionary<object, HashSet<long>>> unitRoleIndexes;
+        // Uses FrozenSet for zero-copy reads
+        private readonly Dictionary<IRoleType, Dictionary<object, FrozenSet<long>>> unitRoleIndexes;
 
         // Composite role indexes: roleType -> (targetObjectId -> sourceObjectIds)
-        private readonly Dictionary<IRoleType, Dictionary<long, HashSet<long>>> compositeRoleIndexes;
+        // Uses FrozenSet for zero-copy reads
+        private readonly Dictionary<IRoleType, Dictionary<long, FrozenSet<long>>> compositeRoleIndexes;
 
         // Lock for thread-safe access to indexes
         private readonly ReaderWriterLockSlim rwLock;
 
+        // Empty frozen set singleton to avoid allocations
+        private static readonly FrozenSet<long> EmptyFrozenSet = FrozenSet<long>.Empty;
+
         internal IndexStore()
         {
-            this.unitRoleIndexes = new Dictionary<IRoleType, Dictionary<object, HashSet<long>>>();
-            this.compositeRoleIndexes = new Dictionary<IRoleType, Dictionary<long, HashSet<long>>>();
+            this.unitRoleIndexes = new Dictionary<IRoleType, Dictionary<object, FrozenSet<long>>>();
+            this.compositeRoleIndexes = new Dictionary<IRoleType, Dictionary<long, FrozenSet<long>>>();
             this.rwLock = new ReaderWriterLockSlim();
         }
 
@@ -42,7 +50,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 if (roleType.ObjectType is IUnit && !this.unitRoleIndexes.ContainsKey(roleType))
                 {
-                    this.unitRoleIndexes[roleType] = new Dictionary<object, HashSet<long>>();
+                    this.unitRoleIndexes[roleType] = new Dictionary<object, FrozenSet<long>>();
                 }
             }
             finally
@@ -61,7 +69,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 if (roleType.ObjectType is IComposite && !this.compositeRoleIndexes.ContainsKey(roleType))
                 {
-                    this.compositeRoleIndexes[roleType] = new Dictionary<long, HashSet<long>>();
+                    this.compositeRoleIndexes[roleType] = new Dictionary<long, FrozenSet<long>>();
                 }
             }
             finally
@@ -103,10 +111,28 @@ namespace Allors.Database.Adapters.Memory
         }
 
         /// <summary>
+        /// Checks if any index exists for the specified role type.
+        /// </summary>
+        internal bool HasIndex(IRoleType roleType)
+        {
+            this.rwLock.EnterReadLock();
+            try
+            {
+                return this.unitRoleIndexes.ContainsKey(roleType) ||
+                       this.compositeRoleIndexes.ContainsKey(roleType);
+            }
+            finally
+            {
+                this.rwLock.ExitReadLock();
+            }
+        }
+
+        /// <summary>
         /// Gets object IDs that have the specified unit role value.
         /// Returns null if no index exists for this role type.
+        /// Returns FrozenSet directly for zero-copy performance.
         /// </summary>
-        internal HashSet<long> GetObjectIdsByUnitRoleValue(IRoleType roleType, object value)
+        internal IReadOnlySet<long> GetObjectIdsByUnitRoleValue(IRoleType roleType, object value)
         {
             this.rwLock.EnterReadLock();
             try
@@ -117,11 +143,11 @@ namespace Allors.Database.Adapters.Memory
                     var normalizedValue = roleType.Normalize(value);
                     if (normalizedValue != null && index.TryGetValue(normalizedValue, out var objectIds))
                     {
-                        // Return a copy to avoid concurrent modification issues
-                        return new HashSet<long>(objectIds);
+                        // Return FrozenSet directly - no copy needed, it's immutable
+                        return objectIds;
                     }
 
-                    return new HashSet<long>();
+                    return EmptyFrozenSet;
                 }
 
                 return null; // No index exists
@@ -135,8 +161,9 @@ namespace Allors.Database.Adapters.Memory
         /// <summary>
         /// Gets object IDs that reference the specified target object ID via the composite role.
         /// Returns null if no index exists for this role type.
+        /// Returns FrozenSet directly for zero-copy performance.
         /// </summary>
-        internal HashSet<long> GetObjectIdsByCompositeRole(IRoleType roleType, long targetObjectId)
+        internal IReadOnlySet<long> GetObjectIdsByCompositeRole(IRoleType roleType, long targetObjectId)
         {
             this.rwLock.EnterReadLock();
             try
@@ -145,11 +172,11 @@ namespace Allors.Database.Adapters.Memory
                 {
                     if (index.TryGetValue(targetObjectId, out var objectIds))
                     {
-                        // Return a copy to avoid concurrent modification issues
-                        return new HashSet<long>(objectIds);
+                        // Return FrozenSet directly - no copy needed, it's immutable
+                        return objectIds;
                     }
 
-                    return new HashSet<long>();
+                    return EmptyFrozenSet;
                 }
 
                 return null; // No index exists
@@ -162,6 +189,7 @@ namespace Allors.Database.Adapters.Memory
 
         /// <summary>
         /// Updates indexes when an object's unit role value changes.
+        /// Creates new FrozenSet on modification (copy-on-write for immutability).
         /// </summary>
         internal void UpdateUnitRoleIndex(IRoleType roleType, long objectId, object oldValue, object newValue)
         {
@@ -177,12 +205,19 @@ namespace Allors.Database.Adapters.Memory
                 if (oldValue != null)
                 {
                     var normalizedOldValue = roleType.Normalize(oldValue);
-                    if (normalizedOldValue != null && index.TryGetValue(normalizedOldValue, out var oldSet))
+                    if (normalizedOldValue != null && index.TryGetValue(normalizedOldValue, out var oldFrozenSet))
                     {
-                        oldSet.Remove(objectId);
-                        if (oldSet.Count == 0)
+                        if (oldFrozenSet.Count == 1)
                         {
+                            // Only element, just remove the entry
                             index.Remove(normalizedOldValue);
+                        }
+                        else
+                        {
+                            // Create new FrozenSet without the objectId
+                            var mutableSet = oldFrozenSet.ToHashSet();
+                            mutableSet.Remove(objectId);
+                            index[normalizedOldValue] = mutableSet.ToFrozenSet();
                         }
                     }
                 }
@@ -193,13 +228,18 @@ namespace Allors.Database.Adapters.Memory
                     var normalizedNewValue = roleType.Normalize(newValue);
                     if (normalizedNewValue != null)
                     {
-                        if (!index.TryGetValue(normalizedNewValue, out var newSet))
+                        if (index.TryGetValue(normalizedNewValue, out var existingSet))
                         {
-                            newSet = new HashSet<long>();
-                            index[normalizedNewValue] = newSet;
+                            // Create new FrozenSet with the objectId added
+                            var mutableSet = existingSet.ToHashSet();
+                            mutableSet.Add(objectId);
+                            index[normalizedNewValue] = mutableSet.ToFrozenSet();
                         }
-
-                        newSet.Add(objectId);
+                        else
+                        {
+                            // Create new single-element FrozenSet
+                            index[normalizedNewValue] = new[] { objectId }.ToFrozenSet();
+                        }
                     }
                 }
             }
@@ -211,6 +251,7 @@ namespace Allors.Database.Adapters.Memory
 
         /// <summary>
         /// Updates indexes when an object's composite role changes.
+        /// Creates new FrozenSet on modification (copy-on-write for immutability).
         /// </summary>
         internal void UpdateCompositeRoleIndex(IRoleType roleType, long objectId, long? oldTargetId, long? newTargetId)
         {
@@ -225,12 +266,19 @@ namespace Allors.Database.Adapters.Memory
                 // Remove from old target's index
                 if (oldTargetId.HasValue)
                 {
-                    if (index.TryGetValue(oldTargetId.Value, out var oldSet))
+                    if (index.TryGetValue(oldTargetId.Value, out var oldFrozenSet))
                     {
-                        oldSet.Remove(objectId);
-                        if (oldSet.Count == 0)
+                        if (oldFrozenSet.Count == 1)
                         {
+                            // Only element, just remove the entry
                             index.Remove(oldTargetId.Value);
+                        }
+                        else
+                        {
+                            // Create new FrozenSet without the objectId
+                            var mutableSet = oldFrozenSet.ToHashSet();
+                            mutableSet.Remove(objectId);
+                            index[oldTargetId.Value] = mutableSet.ToFrozenSet();
                         }
                     }
                 }
@@ -238,13 +286,18 @@ namespace Allors.Database.Adapters.Memory
                 // Add to new target's index
                 if (newTargetId.HasValue)
                 {
-                    if (!index.TryGetValue(newTargetId.Value, out var newSet))
+                    if (index.TryGetValue(newTargetId.Value, out var existingSet))
                     {
-                        newSet = new HashSet<long>();
-                        index[newTargetId.Value] = newSet;
+                        // Create new FrozenSet with the objectId added
+                        var mutableSet = existingSet.ToHashSet();
+                        mutableSet.Add(objectId);
+                        index[newTargetId.Value] = mutableSet.ToFrozenSet();
                     }
-
-                    newSet.Add(objectId);
+                    else
+                    {
+                        // Create new single-element FrozenSet
+                        index[newTargetId.Value] = new[] { objectId }.ToFrozenSet();
+                    }
                 }
             }
             finally
@@ -256,6 +309,7 @@ namespace Allors.Database.Adapters.Memory
         /// <summary>
         /// Removes all index entries for the specified object.
         /// Called when an object is deleted.
+        /// Creates new FrozenSets on modification (copy-on-write for immutability).
         /// </summary>
         internal void RemoveObjectFromIndexes(long objectId, CommittedObject obj)
         {
@@ -271,12 +325,17 @@ namespace Allors.Database.Adapters.Memory
                     if (obj.UnitRoleByRoleType.TryGetValue(roleType, out var value) && value != null)
                     {
                         var normalizedValue = roleType.Normalize(value);
-                        if (normalizedValue != null && index.TryGetValue(normalizedValue, out var set))
+                        if (normalizedValue != null && index.TryGetValue(normalizedValue, out var frozenSet))
                         {
-                            set.Remove(objectId);
-                            if (set.Count == 0)
+                            if (frozenSet.Count == 1)
                             {
                                 index.Remove(normalizedValue);
+                            }
+                            else
+                            {
+                                var mutableSet = frozenSet.ToHashSet();
+                                mutableSet.Remove(objectId);
+                                index[normalizedValue] = mutableSet.ToFrozenSet();
                             }
                         }
                     }
@@ -290,12 +349,17 @@ namespace Allors.Database.Adapters.Memory
 
                     if (obj.CompositeRoleByRoleType.TryGetValue(roleType, out var targetId))
                     {
-                        if (index.TryGetValue(targetId, out var set))
+                        if (index.TryGetValue(targetId, out var frozenSet))
                         {
-                            set.Remove(objectId);
-                            if (set.Count == 0)
+                            if (frozenSet.Count == 1)
                             {
                                 index.Remove(targetId);
+                            }
+                            else
+                            {
+                                var mutableSet = frozenSet.ToHashSet();
+                                mutableSet.Remove(objectId);
+                                index[targetId] = mutableSet.ToFrozenSet();
                             }
                         }
                     }
@@ -310,30 +374,34 @@ namespace Allors.Database.Adapters.Memory
         /// <summary>
         /// Rebuilds all indexes from the committed store.
         /// Called after database load or when indexes are created on existing data.
+        /// Builds using mutable HashSets first, then converts to FrozenSets for efficiency.
         /// </summary>
         internal void RebuildIndexes(IEnumerable<CommittedObject> objects)
         {
             this.rwLock.EnterWriteLock();
             try
             {
-                // Clear all indexes
-                foreach (var index in this.unitRoleIndexes.Values)
+                // Build with mutable HashSets first for efficiency
+                var tempUnitIndexes = new Dictionary<IRoleType, Dictionary<object, HashSet<long>>>();
+                var tempCompositeIndexes = new Dictionary<IRoleType, Dictionary<long, HashSet<long>>>();
+
+                foreach (var roleType in this.unitRoleIndexes.Keys)
                 {
-                    index.Clear();
+                    tempUnitIndexes[roleType] = new Dictionary<object, HashSet<long>>();
                 }
 
-                foreach (var index in this.compositeRoleIndexes.Values)
+                foreach (var roleType in this.compositeRoleIndexes.Keys)
                 {
-                    index.Clear();
+                    tempCompositeIndexes[roleType] = new Dictionary<long, HashSet<long>>();
                 }
 
-                // Rebuild from objects
+                // Build indexes using mutable structures
                 foreach (var obj in objects)
                 {
                     var objectId = obj.ObjectId;
 
                     // Index unit roles
-                    foreach (var kvp in this.unitRoleIndexes)
+                    foreach (var kvp in tempUnitIndexes)
                     {
                         var roleType = kvp.Key;
                         var index = kvp.Value;
@@ -355,7 +423,7 @@ namespace Allors.Database.Adapters.Memory
                     }
 
                     // Index composite roles
-                    foreach (var kvp in this.compositeRoleIndexes)
+                    foreach (var kvp in tempCompositeIndexes)
                     {
                         var roleType = kvp.Key;
                         var index = kvp.Value;
@@ -370,6 +438,33 @@ namespace Allors.Database.Adapters.Memory
 
                             set.Add(objectId);
                         }
+                    }
+                }
+
+                // Convert to FrozenSets and update actual indexes
+                foreach (var kvp in tempUnitIndexes)
+                {
+                    var roleType = kvp.Key;
+                    var tempIndex = kvp.Value;
+                    var actualIndex = this.unitRoleIndexes[roleType];
+                    actualIndex.Clear();
+
+                    foreach (var entry in tempIndex)
+                    {
+                        actualIndex[entry.Key] = entry.Value.ToFrozenSet();
+                    }
+                }
+
+                foreach (var kvp in tempCompositeIndexes)
+                {
+                    var roleType = kvp.Key;
+                    var tempIndex = kvp.Value;
+                    var actualIndex = this.compositeRoleIndexes[roleType];
+                    actualIndex.Clear();
+
+                    foreach (var entry in tempIndex)
+                    {
+                        actualIndex[entry.Key] = entry.Value.ToFrozenSet();
                     }
                 }
             }
