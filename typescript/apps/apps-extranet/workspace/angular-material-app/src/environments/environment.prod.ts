@@ -34,7 +34,7 @@ export function appInitFactory(
 
 export const environment = {
   production: true,
-  baseUrl: 'http://localhost:4200/allors/',
+  baseUrl: 'http://localhost:4020/allors/',
   authUrl: 'TestAuthentication/Token',
   // authUrl: 'Authentication/Token',
   providers: [

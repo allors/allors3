@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:4100/allors/',
+  baseUrl: 'http://localhost:4010/allors/',
   authUrl: 'TestAuthentication/Token',
 };
 

@@ -20,7 +20,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 var httpClient = new HttpClient
 {
     //BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
-    BaseAddress = new Uri("http://localhost:4100/allors/")
+    BaseAddress = new Uri("http://localhost:4010/allors/")
 };
 
 Func<IWorkspaceServices> servicesBuilder = () => new WorkspaceServices();
@@ -50,7 +50,7 @@ builder.Services.AddAuthorizationCore();
 
 builder.Services.AddSingleton(new LocalImageServiceConfig
 {
-    Url = "http://localhost:4100"
+    Url = "http://localhost:4010"
 });
 builder.Services.AddSingleton<IImageService, LocalImageService>();
 

@@ -48,7 +48,7 @@ namespace Allors.Database.Server.Controllers
             services.AddSingleton<IDatabaseService, DatabaseService>();
             services.AddSingleton(new WorkspaceConfig(new Dictionary<HostString, string>
             {
-                {new HostString("localhost", 4200), "Default"}
+                {new HostString("localhost", 4020), "Default"}
             }));
             // Allors Scoped
             services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
@@ -61,7 +61,7 @@ namespace Allors.Database.Server.Controllers
                     builder =>
                     {
                         builder
-                            .WithOrigins("http://localhost:4000", "http://localhost:4100", "http://localhost:4200", "http://localhost:9876")
+                            .WithOrigins("http://localhost:4000", "http://localhost:4010", "http://localhost:4020", "http://localhost:9876")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
                             .AllowCredentials();

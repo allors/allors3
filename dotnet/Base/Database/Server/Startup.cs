@@ -47,7 +47,7 @@ namespace Allors.Server
             services.AddSingleton<IDatabaseService, DatabaseService>();
             services.AddSingleton(new WorkspaceConfig(new Dictionary<HostString, string>
             {
-                {new HostString("localhost", 4100), "Default"}
+                {new HostString("localhost", 4010), "Default"}
             }));
             services.AddScoped<IWorkspaceService, WorkspaceService>();
             // Allors Scoped
@@ -60,8 +60,8 @@ namespace Allors.Server
                         .WithOrigins(
                             "http://localhost",
                             "http://localhost:4000",
-                            "http://localhost:4100",
-                            "http://localhost:4200",
+                            "http://localhost:4010",
+                            "http://localhost:4020",
                             "https://localhost:9876")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
