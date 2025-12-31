@@ -6,8 +6,10 @@
 namespace Allors.Server
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
+    using Controllers;
     using Database.Adapters;
     using Database.Configuration;
     using Database.Configuration.Derivations.Default;
@@ -104,7 +106,16 @@ namespace Allors.Server
             var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
             var databaseScope = new DefaultDatabaseServices(engine);
             var databaseBuilder = new DatabaseBuilder(databaseScope, this.Configuration, objectFactory, null, 60);
-            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = databaseBuilder.Build();
+            var database = databaseBuilder.Build();
+            app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = database;
+
+            var adapter = this.Configuration["adapter"]?.Trim().ToUpperInvariant() ?? "MEMORY";
+            if (adapter == "MEMORY")
+            {
+                var dataPath = this.Configuration["datapath"];
+                var dataPathInfo = !string.IsNullOrEmpty(dataPath) ? new DirectoryInfo(".").GetAncestorSibling(dataPath) : null;
+                AdminController.Populate(database, dataPathInfo);
+            }
 
             if (env.IsDevelopment())
             {

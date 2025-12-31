@@ -97,6 +97,27 @@ namespace Allors.Server.Controllers
             }
         }
 
+        public static void Populate(IDatabase database, DirectoryInfo dataPath)
+        {
+            database.Init();
+
+            var config = new Config { DataPath = dataPath };
+            new Setup(database, config).Apply();
+
+            using var transaction = database.CreateTransaction();
+            transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
+
+            new TestPopulation(transaction, config).Populate(database);
+
+            transaction.Derive();
+            transaction.Commit();
+
+            new Upgrade(transaction, dataPath).Execute();
+
+            transaction.Derive();
+            transaction.Commit();
+        }
+
         [HttpPost]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Populate()
@@ -104,20 +125,7 @@ namespace Allors.Server.Controllers
             try
             {
                 this.Logger.LogInformation("Populate: Begin");
-
-                var database = this.Database;
-                database.Init();
-
-                var config = new Config { DataPath = this.DataPath };
-                new Setup(database, config).Apply();
-
-                using (var transaction = database.CreateTransaction())
-                {
-                    new Upgrade(transaction, this.DataPath).Execute();
-                    transaction.Derive();
-                    transaction.Commit();
-                }
-
+                Populate(this.Database, this.DataPath);
                 this.Logger.LogInformation("Populate: End");
                 return this.Ok();
             }

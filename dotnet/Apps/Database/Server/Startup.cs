@@ -6,8 +6,10 @@
 namespace Allors.Database.Server.Controllers
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Text;
     using Adapters;
+    using Allors.Server.Controllers;
     using Domain;
     using Allors.Security;
     using Allors.Server;
@@ -114,6 +116,14 @@ namespace Allors.Database.Server.Controllers
             var databaseService = app.ApplicationServices.GetRequiredService<IDatabaseService>();
             databaseService.Build = () => databaseBuilder.Build();
             databaseService.Database = databaseService.Build();
+
+            var adapter = this.Configuration["adapter"]?.Trim().ToUpperInvariant() ?? "MEMORY";
+            if (adapter == "MEMORY")
+            {
+                var dataPath = this.Configuration["datapath"];
+                var dataPathInfo = !string.IsNullOrEmpty(dataPath) ? new DirectoryInfo(".").GetAncestorSibling(dataPath) : null;
+                AdminController.Populate(databaseService.Database, dataPathInfo);
+            }
 
             if (env.IsDevelopment())
             {

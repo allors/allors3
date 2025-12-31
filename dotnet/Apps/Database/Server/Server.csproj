@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
+    <ProjectReference Include="..\TestPopulation\TestPopulation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
