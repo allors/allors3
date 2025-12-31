@@ -13,6 +13,8 @@
     "base-workspace-angular-foundation:e2e": "npx nx e2e base-workspace-angular-foundation-app-e2e",
     "base-workspace-angular-foundation:e2e-ui": "npx nx e2e-ui base-workspace-angular-foundation-app-e2e",
     "base-workspace-angular-material-application:serve": "npx nx serve base-workspace-angular-material-application-app",
+    "base-workspace-angular-material-application:e2e": "npx nx e2e base-workspace-angular-material-application-app-e2e",
+    "base-workspace-angular-material-application:e2e-ui": "npx nx e2e-ui base-workspace-angular-material-application-app-e2e",
     "system-workspace-meta:test": "npx nx test system-workspace-meta-tests --skipNxCache",
     "system-workspace-meta-json:test": "npx nx test system-workspace-meta-json-tests --skipNxCache",
     "system-workspace-adapters:test": "npx nx test system-workspace-adapters-tests --skipNxCache",
