@@ -15,7 +15,7 @@ import {
 } from '@allors/system/workspace/domain';
 import { C1, C2 } from '@allors/default/workspace/domain';
 
-const BASE_URL = 'http://localhost:5000/allors/';
+const BASE_URL = 'http://localhost:4000/allors/';
 const AUTH_URL = 'TestAuthentication/Token';
 
 export const name_c1A = 'c1A';

@@ -37,7 +37,7 @@ namespace Commands
         private IConfigurationRoot configuration;
         private IDatabase database;
 
-        [Option("-s|--server", Description = "Server URL (default: http://localhost:5000)")]
+        [Option("-s|--server", Description = "Server URL (default: http://localhost:4200)")]
         public string ServerUrl { get; set; }
 
         [Option("-i", Description = "Isolation Level (Snapshot|RepeatableRead|Serializable)")]
@@ -74,7 +74,7 @@ namespace Commands
             }
         }
 
-        public string ResolvedServerUrl => this.ServerUrl ?? this.Configuration["serverUrl"] ?? "http://localhost:5000";
+        public string ResolvedServerUrl => this.ServerUrl ?? this.Configuration["serverUrl"] ?? "http://localhost:4200";
 
         public AdminApiClient ApiClient => new AdminApiClient(this.ResolvedServerUrl);
 

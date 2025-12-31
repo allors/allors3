@@ -41,7 +41,7 @@ namespace Allors.Server
 
             var workspaceConfig = new WorkspaceConfig(new Dictionary<HostString, string>
             {
-                {new HostString("localhost", 5000), "Default"}
+                {new HostString("localhost", 4000), "Default"}
             });
 
             // Allors
@@ -57,7 +57,7 @@ namespace Allors.Server
             services.AddCors(options =>
                   options.AddDefaultPolicy(
                       builder => builder
-                          .WithOrigins("http://localhost", "http://localhost:4000", "http://localhost:4200", "http://localhost:9876")
+                          .WithOrigins("http://localhost", "http://localhost:4000", "http://localhost:4100", "http://localhost:4200", "http://localhost:9876")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials()));

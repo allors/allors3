@@ -25,7 +25,7 @@ namespace Commands
     {
         private IConfigurationRoot configuration;
 
-        [Option("-s|--server", Description = "Server URL (default: http://localhost:5000)")]
+        [Option("-s|--server", Description = "Server URL (default: http://localhost:4000)")]
         public string ServerUrl { get; set; }
 
         public int OnExecute(CommandLineApplication app)
@@ -56,7 +56,7 @@ namespace Commands
             }
         }
 
-        public string ResolvedServerUrl => this.ServerUrl ?? this.Configuration["serverUrl"] ?? "http://localhost:5000";
+        public string ResolvedServerUrl => this.ServerUrl ?? this.Configuration["serverUrl"] ?? "http://localhost:4000";
 
         public AdminApiClient ApiClient => new AdminApiClient(this.ResolvedServerUrl);
 
