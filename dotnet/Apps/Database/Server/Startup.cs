@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Allors.Server.Admin;
+
 namespace Allors.Database.Server.Controllers
 {
     using System.Collections.Generic;

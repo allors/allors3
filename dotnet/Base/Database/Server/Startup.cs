@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Allors.Server.Admin;
+
 namespace Allors.Server
 {
     using System.Collections.Generic;
@@ -62,6 +64,7 @@ namespace Allors.Server
                             "http://localhost:4000",
                             "http://localhost:4010",
                             "http://localhost:4020",
+                            "http://localhost:4200",
                             "https://localhost:9876")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
