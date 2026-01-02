@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
-  displayName: 'apps-intranet-workspace-angular-material-app',
-  preset: '../../../../jest.preset.js',
+  displayName: 'apps-workspace-app',
+  preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
     'ts-jest': {
@@ -10,7 +10,7 @@ export default {
     },
   },
   coverageDirectory:
-    '../../../../coverage/apps/apps-intranet/workspace/angular-material-app',
+    '../../coverage/apps/apps-workspace-app',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },
