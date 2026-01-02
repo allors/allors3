@@ -1,4 +1,4 @@
-﻿namespace Blazor.Bootstrap.Server.Pages
+namespace Blazor.Bootstrap.Server.Pages
 {
     using System.Diagnostics;
     using Microsoft.AspNetCore.Mvc;
@@ -11,13 +11,6 @@
         public string? RequestId { get; set; }
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
-        private readonly ILogger<ErrorModel> _logger;
-
-        public ErrorModel(ILogger<ErrorModel> logger)
-        {
-            _logger = logger;
-        }
 
         public void OnGet()
         {

@@ -9,22 +9,18 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
     using Protocol.Json.Auth;
     using Security;
 
     public class TestAuthenticationController : Controller
     {
-        public TestAuthenticationController(UserManager<IdentityUser> userManager, ILogger<AuthenticationController> logger, IConfiguration config)
+        public TestAuthenticationController(UserManager<IdentityUser> userManager, IConfiguration config)
         {
             this.UserManager = userManager;
-            this.Logger = logger;
             this.Configuration = config;
         }
 
         public UserManager<IdentityUser> UserManager { get; }
-
-        public ILogger Logger { get; }
 
         public IConfiguration Configuration { get; }
 
@@ -53,4 +49,3 @@ namespace Allors.Server
         }
     }
 }
-

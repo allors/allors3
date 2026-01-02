@@ -17,16 +17,14 @@ namespace Allors.Server.Controllers
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
     using Services;
 
     public class AdminController : Controller
     {
-        public AdminController(IDatabaseService databaseService, IConfiguration configuration, ILogger<AdminController> logger)
+        public AdminController(IDatabaseService databaseService, IConfiguration configuration)
         {
             this.DatabaseService = databaseService;
             this.Configuration = configuration;
-            this.Logger = logger;
         }
 
         public IDatabaseService DatabaseService { get; set; }
@@ -34,8 +32,6 @@ namespace Allors.Server.Controllers
         public IConfiguration Configuration { get; set; }
 
         public IDatabase Database => this.DatabaseService.Database;
-
-        private ILogger<AdminController> Logger { get; set; }
 
         private DirectoryInfo DataPath
         {
@@ -52,8 +48,6 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                this.Logger.LogInformation("Save: Begin");
-
                 var memoryStream = new MemoryStream();
                 using (var writer = XmlWriter.Create(memoryStream, new XmlWriterSettings { CloseOutput = false }))
                 {
@@ -61,12 +55,10 @@ namespace Allors.Server.Controllers
                 }
 
                 memoryStream.Position = 0;
-                this.Logger.LogInformation("Save: End");
                 return this.File(memoryStream, "application/xml", "population.xml");
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Save: Exception");
                 return this.BadRequest(e.Message);
             }
         }
@@ -77,8 +69,6 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                this.Logger.LogInformation("Load: Begin");
-
                 using (var stream = file.OpenReadStream())
                 {
                     using (var reader = XmlReader.Create(stream))
@@ -87,12 +77,10 @@ namespace Allors.Server.Controllers
                     }
                 }
 
-                this.Logger.LogInformation("Load: End");
                 return this.Ok();
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Load: Exception");
                 return this.BadRequest(e.Message);
             }
         }
@@ -124,14 +112,11 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                this.Logger.LogInformation("Populate: Begin");
                 Populate(this.Database, this.DataPath);
-                this.Logger.LogInformation("Populate: End");
                 return this.Ok();
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Populate: Exception");
                 return this.BadRequest(e.Message);
             }
         }
@@ -142,8 +127,6 @@ namespace Allors.Server.Controllers
         {
             try
             {
-                this.Logger.LogInformation("Upgrade: Begin");
-
                 var notLoadedObjectTypeIds = new HashSet<Guid>();
                 var notLoadedRelationTypeIds = new HashSet<Guid>();
                 var notLoadedObjects = new HashSet<long>();
@@ -166,7 +149,6 @@ namespace Allors.Server.Controllers
                             }
                         };
 
-                        this.Logger.LogInformation("Upgrade: Loading");
                         this.Database.Load(reader);
                     }
                 }
@@ -180,11 +162,6 @@ namespace Allors.Server.Controllers
                         NotLoadedObjectTypeIds = notLoadedObjectTypeIds.ToArray(),
                         NotLoadedRelationTypeIds = notLoadedRelationTypeIds.ToArray(),
                     };
-
-                    this.Logger.LogError(
-                        "Upgrade: Not loaded - ObjectTypes: {ObjectTypes}, RelationTypes: {RelationTypes}",
-                        string.Join(", ", notLoadedObjectTypeIds),
-                        string.Join(", ", notLoadedRelationTypeIds));
 
                     return this.BadRequest(response);
                 }
@@ -200,12 +177,10 @@ namespace Allors.Server.Controllers
                     transaction.Commit();
                 }
 
-                this.Logger.LogInformation("Upgrade: End");
                 return this.Ok(new UpgradeResponse { Success = true });
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Upgrade: Exception");
                 return this.BadRequest(new UpgradeResponse
                 {
                     Success = false,

@@ -9,7 +9,6 @@ namespace Allors.Database.Server.Controllers
     using Allors.Services;
     using Domain;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using Services;
 
     public class TestController : Controller
@@ -17,8 +16,6 @@ namespace Allors.Database.Server.Controllers
         public TestController(IDatabaseService databaseService) => this.DatabaseService = databaseService;
 
         public IDatabaseService DatabaseService { get; set; }
-
-        private ILogger<TestController> Logger { get; set; }
 
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
@@ -37,7 +34,6 @@ namespace Allors.Database.Server.Controllers
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Exception");
                 return this.BadRequest(e.Message);
             }
         }
@@ -72,7 +68,6 @@ namespace Allors.Database.Server.Controllers
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Exception");
                 return this.BadRequest(e.Message);
             }
         }
@@ -88,7 +83,6 @@ namespace Allors.Database.Server.Controllers
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Exception");
                 return this.BadRequest(e.Message);
             }
         }
@@ -105,7 +99,6 @@ namespace Allors.Database.Server.Controllers
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e, "Exception");
                 return this.BadRequest(e.Message);
             }
         }

@@ -9,7 +9,6 @@ namespace Allors.Server
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Text;
     using Controllers;
     using Database.Adapters;
@@ -25,7 +24,6 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
     using Security;
     using Services;
@@ -87,13 +85,6 @@ namespace Allors.Server
 
                 options.InvalidModelStateResponseFactory = context =>
                 {
-                    var logger = context.HttpContext.RequestServices
-                        .GetRequiredService<ILogger<Startup>>();
-
-                    var problemDetails = new ValidationProblemDetails(context.ModelState);
-                    var message = string.Join("; ", problemDetails.Errors.Select(v => $"{string.Join(",", v.Value)}"));
-                    logger.LogError(problemDetails.Title, message);
-
                     return builtInFactory(context);
                 };
             });

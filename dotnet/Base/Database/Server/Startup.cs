@@ -21,7 +21,6 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
     using ObjectFactory = Database.ObjectFactory;
     using Database.Adapters;
@@ -30,7 +29,6 @@ namespace Allors.Server
     using Database.Meta;
     using User = Database.Domain.User;
     using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
 
     public class Startup
     {
@@ -91,13 +89,6 @@ namespace Allors.Server
 
                 options.InvalidModelStateResponseFactory = context =>
                 {
-                    var logger = context.HttpContext.RequestServices
-                        .GetRequiredService<ILogger<Startup>>();
-
-                    var problemDetails = new ValidationProblemDetails(context.ModelState);
-                    var message = string.Join("; ", problemDetails.Errors.Select(v => $"{string.Join(",", v.Value)}"));
-                    logger.LogError(problemDetails.Title, message);
-
                     return builtInFactory(context);
                 };
             });
