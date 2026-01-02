@@ -19,7 +19,7 @@ export default defineConfig({
 
   globalSetup: require.resolve('./src/support/global-setup'),
 
-  timeout: 30000,
+  timeout: 60000,
   expect: {
     timeout: 5000,
   },

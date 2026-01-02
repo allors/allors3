@@ -85,34 +85,32 @@ namespace Allors.Server.Controllers
             }
         }
 
-        public static void Populate(IDatabase database, DirectoryInfo dataPath)
-        {
-            database.Init();
-
-            var config = new Config { DataPath = dataPath };
-            new Setup(database, config).Apply();
-
-            using var transaction = database.CreateTransaction();
-            transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
-
-            new TestPopulation(transaction, config).Populate(database);
-
-            transaction.Derive();
-            transaction.Commit();
-
-            new Upgrade(transaction, dataPath).Execute();
-
-            transaction.Derive();
-            transaction.Commit();
-        }
-
         [HttpPost]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Populate()
         {
             try
             {
-                Populate(this.Database, this.DataPath);
+                this.Database.Init();
+
+                var config = new Config { DataPath = this.DataPath };
+                new Setup(this.Database, config).Apply();
+
+                using (var transaction = this.Database.CreateTransaction())
+                {
+                    transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
+
+                    new TestPopulation(transaction, config).Populate(this.Database);
+
+                    transaction.Derive();
+                    transaction.Commit();
+
+                    new Upgrade(transaction, this.DataPath).Execute();
+
+                    transaction.Derive();
+                    transaction.Commit();
+                }
+
                 return this.Ok();
             }
             catch (Exception e)

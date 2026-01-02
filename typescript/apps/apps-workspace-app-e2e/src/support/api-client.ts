@@ -23,9 +23,9 @@ export class ApiClient {
     public authUrl: string = 'TestAuthentication/Token'
   ) {}
 
-  async setup(population = 'full'): Promise<void> {
+  async setup(population = 'full', timeout = 60000): Promise<void> {
     const url = `${this.baseUrl}Test/Setup?population=${population}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: AbortSignal.timeout(timeout) });
     if (!response.ok) {
       throw new Error(`Failed to setup database: ${response.status}`);
     }

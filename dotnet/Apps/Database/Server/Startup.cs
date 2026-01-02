@@ -115,14 +115,6 @@ namespace Allors.Database.Server.Controllers
             databaseService.Build = () => databaseBuilder.Build();
             databaseService.Database = databaseService.Build();
 
-            var adapter = this.Configuration["adapter"]?.Trim().ToUpperInvariant() ?? "MEMORY";
-            if (adapter == "MEMORY")
-            {
-                var dataPath = this.Configuration["datapath"];
-                var dataPathInfo = !string.IsNullOrEmpty(dataPath) ? new DirectoryInfo(".").GetAncestorSibling(dataPath) : null;
-                AdminController.Populate(databaseService.Database, dataPathInfo);
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

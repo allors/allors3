@@ -101,14 +101,6 @@ namespace Allors.Server
             var database = databaseBuilder.Build();
             app.ApplicationServices.GetRequiredService<IDatabaseService>().Database = database;
 
-            var adapter = this.Configuration["adapter"]?.Trim().ToUpperInvariant() ?? "MEMORY";
-            if (adapter == "MEMORY")
-            {
-                var dataPath = this.Configuration["datapath"];
-                var dataPathInfo = !string.IsNullOrEmpty(dataPath) ? new DirectoryInfo(".").GetAncestorSibling(dataPath) : null;
-                AdminController.Populate(database, dataPathInfo);
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
