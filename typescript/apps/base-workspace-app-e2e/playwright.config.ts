@@ -36,6 +36,6 @@ export default defineConfig({
     url: BASE_URL,
     reuseExistingServer: !process.env['CI'],
     timeout: 120000,
-    cwd: '../../../../',
+    cwd: '../../',
   },
 });
