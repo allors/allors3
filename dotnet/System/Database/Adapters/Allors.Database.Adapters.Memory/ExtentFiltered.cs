@@ -44,8 +44,8 @@ namespace Allors.Database.Adapters.Memory
         {
             if (this.Strategies == null)
             {
-                // Try index-based evaluation first
-                if (this.TryIndexBasedEvaluation())
+                // Try multi-index evaluation first (most efficient)
+                if (this.TryMultiIndexEvaluation())
                 {
                     if (this.Sorter != null)
                     {
@@ -76,16 +76,22 @@ namespace Allors.Database.Adapters.Memory
             }
         }
 
-        private bool TryIndexBasedEvaluation()
+        /// <summary>
+        /// Attempts to use multiple indexes to evaluate the query.
+        /// Collects all indexable predicates, retrieves their index results,
+        /// intersects them using efficient O(n+m) sorted merge, then filters the result.
+        /// </summary>
+        private bool TryMultiIndexEvaluation()
         {
             if (this.filter == null || !this.filter.Include)
             {
                 return false;
             }
 
-            // Find the first indexable predicate in the AND filter to get candidate object IDs
             var indexStore = this.Transaction.Database.IndexStore;
-            IReadOnlySet<long> candidateObjectIds = null;
+
+            // Collect all index results from indexable predicates
+            var indexResults = new List<IndexResult>();
 
             foreach (var predicate in this.filter.Filters)
             {
@@ -94,44 +100,48 @@ namespace Allors.Database.Adapters.Memory
                     continue;
                 }
 
-                if (predicate is RoleUnitEquals roleUnitEquals)
+                var indexResult = this.TryGetIndexResult(predicate, indexStore);
+                if (indexResult != null)
                 {
-                    var (roleType, value) = roleUnitEquals.GetIndexKey();
-                    if (roleType != null && value != null)
-                    {
-                        var objectIds = indexStore.GetObjectIdsByUnitRoleValue(roleType, value);
-                        if (objectIds != null)
-                        {
-                            candidateObjectIds = objectIds;
-                            break;
-                        }
-                    }
-                }
-                else if (predicate is RoleCompositeEqualsValue roleCompositeEquals)
-                {
-                    var (roleType, targetId) = roleCompositeEquals.GetIndexKey();
-                    if (roleType != null && targetId.HasValue)
-                    {
-                        var objectIds = indexStore.GetObjectIdsByCompositeRole(roleType, targetId.Value);
-                        if (objectIds != null)
-                        {
-                            candidateObjectIds = objectIds;
-                            break;
-                        }
-                    }
+                    indexResults.Add(indexResult.Value);
                 }
             }
 
-            if (candidateObjectIds == null)
+            // No indexes available - fall back to full scan
+            if (indexResults.Count == 0)
             {
                 return false;
             }
 
-            // Filter candidates by type and predicates
-            this.Strategies = new List<Strategy>();
+            // Sort by cardinality (smallest first) for efficient intersection
+            indexResults.Sort((a, b) => a.ObjectIds.Count.CompareTo(b.ObjectIds.Count));
+
+            // Compute intersection of all index results
+            long[] candidateIds;
+            if (indexResults.Count == 1)
+            {
+                // Single index - just convert to sorted array
+                candidateIds = SetOperations.ToSortedArray(indexResults[0].ObjectIds);
+            }
+            else
+            {
+                // Multiple indexes - intersect them all
+                candidateIds = this.IntersectIndexResults(indexResults);
+            }
+
+            // Early exit if intersection is empty
+            if (candidateIds.Length == 0)
+            {
+                this.Strategies = new List<Strategy>();
+                this.AddNewAndModifiedObjects();
+                return true;
+            }
+
+            // Filter candidates by type and all predicates
+            this.Strategies = new List<Strategy>(Math.Min(candidateIds.Length, 1000));
             var concreteClasses = this.GetConcreteClasses();
 
-            foreach (var objectId in candidateObjectIds)
+            foreach (var objectId in candidateIds)
             {
                 var strategy = this.Transaction.InstantiateMemoryStrategy(objectId);
                 if (strategy == null || strategy.IsDeleted)
@@ -145,7 +155,7 @@ namespace Allors.Database.Adapters.Memory
                     continue;
                 }
 
-                // Apply ALL filters including the indexed predicate.
+                // Apply ALL filters including the indexed predicates.
                 // The index gives us candidates from committed data, but the strategy
                 // may have local modifications that change the role value.
                 // We must always re-evaluate to get correct transaction-local results.
@@ -155,7 +165,80 @@ namespace Allors.Database.Adapters.Memory
                 }
             }
 
-            // Also check new objects in transaction that aren't in the committed store yet
+            // Add new and modified objects that might match
+            this.AddNewAndModifiedObjects();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Tries to get index results for a predicate.
+        /// Returns null if the predicate is not indexable or no index exists.
+        /// </summary>
+        private IndexResult? TryGetIndexResult(Predicate predicate, IndexStore indexStore)
+        {
+            if (predicate is RoleUnitEquals roleUnitEquals)
+            {
+                var (roleType, value) = roleUnitEquals.GetIndexKey();
+                if (roleType != null && value != null)
+                {
+                    var objectIds = indexStore.GetObjectIdsByUnitRoleValue(roleType, value);
+                    if (objectIds != null)
+                    {
+                        return new IndexResult(objectIds, predicate);
+                    }
+                }
+            }
+            else if (predicate is RoleCompositeEqualsValue roleCompositeEquals)
+            {
+                var (roleType, targetId) = roleCompositeEquals.GetIndexKey();
+                if (roleType != null && targetId.HasValue)
+                {
+                    var objectIds = indexStore.GetObjectIdsByCompositeRole(roleType, targetId.Value);
+                    if (objectIds != null)
+                    {
+                        return new IndexResult(objectIds, predicate);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Intersects multiple index results using efficient O(n+m) sorted merge algorithm.
+        /// Results are sorted by cardinality before intersection for optimal performance.
+        /// </summary>
+        private long[] IntersectIndexResults(List<IndexResult> indexResults)
+        {
+            // Start with the smallest set
+            var result = SetOperations.ToSortedArray(indexResults[0].ObjectIds);
+
+            // Intersect with each subsequent set
+            for (var i = 1; i < indexResults.Count; i++)
+            {
+                if (result.Length == 0)
+                {
+                    break; // Early exit - intersection is already empty
+                }
+
+                var nextSet = SetOperations.ToSortedArray(indexResults[i].ObjectIds);
+                result = SetOperations.IntersectSorted(result, nextSet);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Adds new and modified objects that might match the filter.
+        /// These objects are not in the committed store indexes yet.
+        /// </summary>
+        private void AddNewAndModifiedObjects()
+        {
+            var concreteClasses = this.GetConcreteClasses();
+            var foundObjectIds = new HashSet<long>(this.Strategies.Select(s => s.ObjectId));
+
+            // Check new objects in transaction that aren't in the committed store yet
             foreach (var strategy in this.Transaction.GetNewStrategiesForType(this.objectType))
             {
                 if (strategy.IsDeleted)
@@ -169,16 +252,16 @@ namespace Allors.Database.Adapters.Memory
                     continue;
                 }
 
-                // Apply all filters including the indexed one
+                // Apply all filters
                 if (this.filter.Evaluate(strategy) == ThreeValuedLogic.True)
                 {
                     this.Strategies.Add(strategy);
+                    foundObjectIds.Add(strategy.ObjectId);
                 }
             }
 
-            // Also check modified objects whose role values may have changed to match the query
+            // Check modified objects whose role values may have changed to match the query
             // The index contains committed values, but locally modified values might now match
-            var foundObjectIds = new HashSet<long>(this.Strategies.Select(s => s.ObjectId));
             foreach (var strategy in this.Transaction.GetModifiedStrategiesForType(this.objectType))
             {
                 // Skip if already found via index lookup
@@ -204,8 +287,6 @@ namespace Allors.Database.Adapters.Memory
                     this.Strategies.Add(strategy);
                 }
             }
-
-            return true;
         }
 
         private HashSet<IObjectType> GetConcreteClasses()
@@ -226,6 +307,21 @@ namespace Allors.Database.Adapters.Memory
             }
 
             return classes;
+        }
+
+        /// <summary>
+        /// Represents an index lookup result with its source predicate.
+        /// </summary>
+        private readonly struct IndexResult
+        {
+            public readonly IReadOnlySet<long> ObjectIds;
+            public readonly Predicate SourcePredicate;
+
+            public IndexResult(IReadOnlySet<long> objectIds, Predicate sourcePredicate)
+            {
+                this.ObjectIds = objectIds;
+                this.SourcePredicate = sourcePredicate;
+            }
         }
     }
 }

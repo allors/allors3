@@ -9,11 +9,13 @@ namespace Allors.Database.Adapters.Memory
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using Concurrency;
     using Meta;
 
     /// <summary>
     /// Thread-safe storage for committed database state.
-    /// Uses ConcurrentDictionary for lock-free reads and a simple lock for atomic commits.
+    /// Uses ConcurrentDictionary for lock-free reads and lock striping for parallel commits.
+    /// Transactions affecting disjoint sets of objects can commit in parallel.
     /// </summary>
     internal sealed class CommittedStore
     {
@@ -25,8 +27,11 @@ namespace Allors.Database.Adapters.Memory
 
         private readonly IndexStore indexStore;
 
-        // Commit lock - only needed for version check + apply atomicity
-        private readonly object commitLock;
+        // Lock striping for parallel commits - transactions touching different stripes can commit in parallel
+        private readonly LockStripe lockStripe;
+
+        // Global lock for operations that need exclusive access (Reset, etc.)
+        private readonly Lock globalLock;
 
         private long currentId;
 
@@ -35,7 +40,8 @@ namespace Allors.Database.Adapters.Memory
             this.objectById = new ConcurrentDictionary<long, CommittedObject>();
             this.objectIdsByType = new ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>>();
             this.indexStore = indexStore;
-            this.commitLock = new object();
+            this.lockStripe = new LockStripe();
+            this.globalLock = new Lock();
             this.currentId = 0;
         }
 
@@ -57,12 +63,28 @@ namespace Allors.Database.Adapters.Memory
 
         internal void Reset()
         {
-            lock (this.commitLock)
+            // Use global lock for exclusive access during reset
+            this.globalLock.Enter();
+            try
             {
-                this.objectById.Clear();
-                this.objectIdsByType.Clear();
-                this.indexStore.Clear();
-                Interlocked.Exchange(ref this.currentId, 0);
+                // Also acquire all stripe locks to ensure no commits are in progress
+                var allStripes = new int[this.lockStripe.StripeCount];
+                for (var i = 0; i < allStripes.Length; i++)
+                {
+                    allStripes[i] = i;
+                }
+
+                using (this.lockStripe.AcquireLocks(allStripes))
+                {
+                    this.objectById.Clear();
+                    this.objectIdsByType.Clear();
+                    this.indexStore.Clear();
+                    Interlocked.Exchange(ref this.currentId, 0);
+                }
+            }
+            finally
+            {
+                this.globalLock.Exit();
             }
         }
 
@@ -88,10 +110,24 @@ namespace Allors.Database.Adapters.Memory
 
         /// <summary>
         /// Atomically commits transaction changes with optimistic concurrency.
+        /// Uses lock striping to allow parallel commits for non-conflicting transactions.
         /// </summary>
         internal void Commit(TransactionChanges changes)
         {
-            lock (this.commitLock)
+            // Collect all affected object IDs
+            var affectedObjectIds = this.CollectAffectedObjectIds(changes);
+
+            // If no objects affected, nothing to do
+            if (affectedObjectIds.Count == 0)
+            {
+                return;
+            }
+
+            // Get sorted stripe indices for deadlock-free lock acquisition
+            var stripeIndices = this.lockStripe.GetSortedStripeIndices(affectedObjectIds);
+
+            // Acquire only the necessary stripe locks
+            using (this.lockStripe.AcquireLocks(stripeIndices))
             {
                 // Version check and conflict detection for modified objects
                 foreach (var modified in changes.ModifiedObjects)
@@ -142,6 +178,90 @@ namespace Allors.Database.Adapters.Memory
 
                     // Update indexes with old and new values
                     this.UpdateIndexesForObject(modified.ObjectId, oldObj, modified);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Collects all object IDs that will be affected by a commit.
+        /// This includes new objects, modified objects, deleted objects,
+        /// and any objects referenced in relationships.
+        /// </summary>
+        private HashSet<long> CollectAffectedObjectIds(TransactionChanges changes)
+        {
+            var affectedIds = new HashSet<long>();
+
+            // Add new object IDs
+            foreach (var newObj in changes.NewObjects)
+            {
+                affectedIds.Add(newObj.ObjectId);
+
+                // Also include referenced objects (composite roles and associations)
+                this.AddReferencedObjectIds(newObj, affectedIds);
+            }
+
+            // Add modified object IDs
+            foreach (var modified in changes.ModifiedObjects)
+            {
+                affectedIds.Add(modified.ObjectId);
+
+                // Also include referenced objects
+                this.AddReferencedObjectIds(modified, affectedIds);
+
+                // Include previously referenced objects (from old version)
+                if (this.objectById.TryGetValue(modified.ObjectId, out var oldObj))
+                {
+                    this.AddReferencedObjectIds(oldObj, affectedIds);
+                }
+            }
+
+            // Add deleted object IDs
+            foreach (var deletedId in changes.DeletedObjectIds)
+            {
+                affectedIds.Add(deletedId);
+
+                // Include objects that referenced the deleted object
+                if (this.objectById.TryGetValue(deletedId, out var deleted))
+                {
+                    this.AddReferencedObjectIds(deleted, affectedIds);
+                }
+            }
+
+            return affectedIds;
+        }
+
+        /// <summary>
+        /// Adds object IDs referenced by a committed object to the set.
+        /// </summary>
+        private void AddReferencedObjectIds(CommittedObject obj, HashSet<long> affectedIds)
+        {
+            // Add composite role targets
+            foreach (var targetId in obj.CompositeRoleByRoleType.Values)
+            {
+                affectedIds.Add(targetId);
+            }
+
+            // Add composites role targets (many-to-many)
+            foreach (var targetIds in obj.CompositesRoleByRoleType.Values)
+            {
+                foreach (var targetId in targetIds)
+                {
+                    affectedIds.Add(targetId);
+                }
+            }
+
+            // Add association sources
+            foreach (var sourceId in obj.CompositeAssociationByAssociationType.Values)
+            {
+                affectedIds.Add(sourceId);
+            }
+
+            // Add associations sources (many-to-many)
+            foreach (var sourceIds in obj.CompositesAssociationByAssociationType.Values)
+            {
+                foreach (var sourceId in sourceIds)
+                {
+                    affectedIds.Add(sourceId);
                 }
             }
         }

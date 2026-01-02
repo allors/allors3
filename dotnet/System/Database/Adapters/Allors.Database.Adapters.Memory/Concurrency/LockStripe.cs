@@ -20,9 +20,9 @@ namespace Allors.Database.Adapters.Memory.Concurrency
     {
         // Default to 64 stripes (power of 2 for efficient modulo via bitwise AND)
         private const int DefaultStripeCount = 64;
-        private const int StripeMask = DefaultStripeCount - 1;
 
         private readonly Lock[] stripes;
+        private readonly int stripeMask;
 
         internal LockStripe() : this(DefaultStripeCount)
         {
@@ -37,6 +37,7 @@ namespace Allors.Database.Adapters.Memory.Concurrency
             }
 
             this.stripes = new Lock[stripeCount];
+            this.stripeMask = stripeCount - 1;
             for (var i = 0; i < stripeCount; i++)
             {
                 this.stripes[i] = new Lock();
@@ -44,11 +45,22 @@ namespace Allors.Database.Adapters.Memory.Concurrency
         }
 
         /// <summary>
+        /// Gets the number of stripes.
+        /// </summary>
+        internal int StripeCount => this.stripes.Length;
+
+        /// <summary>
         /// Gets the stripe index for an object ID.
         /// Uses fast bitwise AND for power-of-2 stripe count.
+        /// Mixes bits to distribute sequential IDs across stripes.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal int GetStripeIndex(long objectId) => (int)(objectId & StripeMask);
+        internal int GetStripeIndex(long objectId)
+        {
+            // Mix bits to distribute sequential IDs better across stripes
+            var mixed = objectId ^ (objectId >> 16);
+            return (int)(mixed & this.stripeMask);
+        }
 
         /// <summary>
         /// Gets the lock for a specific stripe.
