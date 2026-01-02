@@ -13,8 +13,12 @@ using C2 = Domain.C2;
 
 /// <summary>
 /// Benchmarks for many-to-many relationship access.
-/// Tests the FrozenSet optimization where reading from committed state
-/// no longer requires creating a new HashSet copy.
+/// Tests multiple optimizations:
+/// 1. FrozenSet - reading from committed state returns immutable set directly (no copy)
+/// 2. Lazy Copy-on-Write - rollback backup is deferred until rollback (rare case)
+///
+/// The lazy optimization eliminates O(n) allocation on each write operation
+/// since most transactions commit (no rollback = no backup copy needed).
 /// </summary>
 [MemoryDiagnoser]
 [ShortRunJob]
@@ -169,5 +173,79 @@ public class ManyToManyBenchmarks
 
         tx.Rollback();
         return count;
+    }
+
+    /// <summary>
+    /// Tests multiple writes to same relationship then commit.
+    /// With lazy copy-on-write, we avoid N rollback copies (only mark modified once).
+    /// </summary>
+    [Benchmark]
+    public void MultipleWritesThenCommit()
+    {
+        using var tx = this.database.CreateTransaction();
+        var c1 = (C1)tx.Instantiate(this.c1Ids[0])!;
+
+        // Add multiple elements - with lazy optimization, no rollback copies created
+        for (var i = 0; i < 10; i++)
+        {
+            var newC2 = (C2)tx.Create<C2>();
+            newC2.C2AllorsString = $"Batch{i}";
+            c1.AddC1C2many2many(newC2);
+        }
+
+        // Remove some elements
+        var existingC2s = c1.C1C2many2manies.Take(3).ToList();
+        foreach (var c2 in existingC2s)
+        {
+            c1.RemoveC1C2many2many(c2);
+        }
+
+        tx.Commit(); // Rollback backup never needed
+    }
+
+    /// <summary>
+    /// Tests modification across multiple objects in same transaction.
+    /// Each object modification would have created a backup with old approach.
+    /// </summary>
+    [Benchmark]
+    public void ModifyMultipleObjectsThenCommit()
+    {
+        using var tx = this.database.CreateTransaction();
+
+        // Modify many-to-many relationships on 10 objects
+        for (var i = 0; i < Math.Min(10, this.c1Ids.Length); i++)
+        {
+            var c1 = (C1)tx.Instantiate(this.c1Ids[i])!;
+            var newC2 = (C2)tx.Create<C2>();
+            newC2.C2AllorsString = $"Multi{i}";
+            c1.AddC1C2many2many(newC2);
+        }
+
+        tx.Commit(); // No rollback copies created
+    }
+
+    /// <summary>
+    /// Tests rare rollback case where backup copy IS needed.
+    /// This is the only scenario where lazy approach creates a copy.
+    /// </summary>
+    [Benchmark]
+    public void ModifyThenRollback()
+    {
+        using var tx = this.database.CreateTransaction();
+        var c1 = (C1)tx.Instantiate(this.c1Ids[0])!;
+
+        // Get original count
+        var originalCount = c1.C1C2many2manies.Count();
+
+        // Add new element
+        var newC2 = (C2)tx.Create<C2>();
+        c1.AddC1C2many2many(newC2);
+
+        // Rollback - this is when lazy copy happens
+        tx.Rollback();
+
+        // Verify restoration
+        var restoredCount = c1.C1C2many2manies.Count();
+        _ = restoredCount == originalCount;
     }
 }

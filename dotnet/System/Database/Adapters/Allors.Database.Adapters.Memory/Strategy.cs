@@ -25,9 +25,9 @@ namespace Allors.Database.Adapters.Memory
 
         private Dictionary<IRoleType, object> rollbackUnitRoleByRoleType;
         private Dictionary<IRoleType, long?> rollbackCompositeRoleByRoleType;
-        private Dictionary<IRoleType, HashSet<long>> rollbackCompositesRoleByRoleType;
+        private HashSet<IRoleType> modifiedCompositesRoleTypes;
         private Dictionary<IAssociationType, long?> rollbackCompositeAssociationByAssociationType;
-        private Dictionary<IAssociationType, HashSet<long>> rollbackCompositesAssociationByAssociationType;
+        private HashSet<IAssociationType> modifiedCompositesAssociationTypes;
         private bool isDeletedOnRollback;
         private WeakReference allorizedObjectWeakReference;
 
@@ -53,9 +53,9 @@ namespace Allors.Database.Adapters.Memory
 
             this.rollbackUnitRoleByRoleType = null;
             this.rollbackCompositeRoleByRoleType = null;
-            this.rollbackCompositesRoleByRoleType = null;
+            this.modifiedCompositesRoleTypes = null;
             this.rollbackCompositeAssociationByAssociationType = null;
-            this.rollbackCompositesAssociationByAssociationType = null;
+            this.modifiedCompositesAssociationTypes = null;
         }
 
         internal Strategy(Transaction transaction, CommittedObject snapshot)
@@ -80,9 +80,9 @@ namespace Allors.Database.Adapters.Memory
 
             this.rollbackUnitRoleByRoleType = null;
             this.rollbackCompositeRoleByRoleType = null;
-            this.rollbackCompositesRoleByRoleType = null;
+            this.modifiedCompositesRoleTypes = null;
             this.rollbackCompositeAssociationByAssociationType = null;
-            this.rollbackCompositesAssociationByAssociationType = null;
+            this.modifiedCompositesAssociationTypes = null;
         }
 
         public bool IsDeleted { get; private set; }
@@ -114,11 +114,11 @@ namespace Allors.Database.Adapters.Memory
 
         private Dictionary<IRoleType, long?> RollbackCompositeRoleByRoleType => this.rollbackCompositeRoleByRoleType ??= new Dictionary<IRoleType, long?>();
 
-        private Dictionary<IRoleType, HashSet<long>> RollbackCompositesRoleByRoleType => this.rollbackCompositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<long>>();
+        private HashSet<IRoleType> ModifiedCompositesRoleTypes => this.modifiedCompositesRoleTypes ??= new HashSet<IRoleType>();
 
         private Dictionary<IAssociationType, long?> RollbackCompositeAssociationByAssociationType => this.rollbackCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, long?>();
 
-        private Dictionary<IAssociationType, HashSet<long>> RollbackCompositesAssociationByAssociationType => this.rollbackCompositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<long>>();
+        private HashSet<IAssociationType> ModifiedCompositesAssociationTypes => this.modifiedCompositesAssociationTypes ??= new HashSet<IAssociationType>();
 
         public override string ToString() => this.UncheckedObjectType.Name + " " + this.ObjectId;
 
@@ -541,7 +541,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 if (this.rollbackUnitRoleByRoleType != null ||
                     this.rollbackCompositeRoleByRoleType != null ||
-                    this.rollbackCompositesRoleByRoleType != null)
+                    this.modifiedCompositesRoleTypes != null)
                 {
                     ++this.ObjectVersion;
                 }
@@ -549,9 +549,9 @@ namespace Allors.Database.Adapters.Memory
 
             this.rollbackUnitRoleByRoleType = null;
             this.rollbackCompositeRoleByRoleType = null;
-            this.rollbackCompositesRoleByRoleType = null;
+            this.modifiedCompositesRoleTypes = null;
             this.rollbackCompositeAssociationByAssociationType = null;
-            this.rollbackCompositesAssociationByAssociationType = null;
+            this.modifiedCompositesAssociationTypes = null;
 
             this.isDeletedOnRollback = this.IsDeleted;
             this.IsNewInTransaction = false;
@@ -599,22 +599,21 @@ namespace Allors.Database.Adapters.Memory
                 }
             }
 
-            if (this.rollbackCompositesRoleByRoleType != null)
+            if (this.modifiedCompositesRoleTypes != null)
             {
-                foreach (var dictionaryItem in this.rollbackCompositesRoleByRoleType)
+                foreach (var roleType in this.modifiedCompositesRoleTypes)
                 {
-                    var roleType = dictionaryItem.Key;
-                    var role = dictionaryItem.Value;
-
-                    this.compositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<long>>();
-
-                    if (role != null)
+                    // Restore from immutable snapshot - copy only happens during rare rollback
+                    if (this.snapshot != null && this.snapshot.CompositesRoleByRoleType.TryGetValue(roleType, out var snapshotRoleIds))
                     {
-                        this.compositesRoleByRoleType[roleType] = role;
+                        // Snapshot had this role - restore it
+                        this.compositesRoleByRoleType ??= new Dictionary<IRoleType, HashSet<long>>();
+                        this.compositesRoleByRoleType[roleType] = new HashSet<long>(snapshotRoleIds);
                     }
                     else
                     {
-                        this.compositesRoleByRoleType.Remove(roleType);
+                        // Snapshot didn't have this role (was empty/null) - remove local modification
+                        this.compositesRoleByRoleType?.Remove(roleType);
                     }
                 }
             }
@@ -639,31 +638,30 @@ namespace Allors.Database.Adapters.Memory
                 }
             }
 
-            if (this.rollbackCompositesAssociationByAssociationType != null)
+            if (this.modifiedCompositesAssociationTypes != null)
             {
-                foreach (var dictionaryItem in this.rollbackCompositesAssociationByAssociationType)
+                foreach (var associationType in this.modifiedCompositesAssociationTypes)
                 {
-                    var associationType = dictionaryItem.Key;
-                    var association = dictionaryItem.Value;
-
-                    this.compositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<long>>();
-
-                    if (association != null)
+                    // Restore from immutable snapshot - copy only happens during rare rollback
+                    if (this.snapshot != null && this.snapshot.CompositesAssociationByAssociationType.TryGetValue(associationType, out var snapshotAssociationIds))
                     {
-                        this.compositesAssociationByAssociationType[associationType] = association;
+                        // Snapshot had this association - restore it
+                        this.compositesAssociationByAssociationType ??= new Dictionary<IAssociationType, HashSet<long>>();
+                        this.compositesAssociationByAssociationType[associationType] = new HashSet<long>(snapshotAssociationIds);
                     }
                     else
                     {
-                        this.compositesAssociationByAssociationType.Remove(associationType);
+                        // Snapshot didn't have this association (was empty/null) - remove local modification
+                        this.compositesAssociationByAssociationType?.Remove(associationType);
                     }
                 }
             }
 
             this.rollbackUnitRoleByRoleType = null;
             this.rollbackCompositeRoleByRoleType = null;
-            this.rollbackCompositesRoleByRoleType = null;
+            this.modifiedCompositesRoleTypes = null;
             this.rollbackCompositeAssociationByAssociationType = null;
-            this.rollbackCompositesAssociationByAssociationType = null;
+            this.modifiedCompositesAssociationTypes = null;
 
             this.IsDeleted = this.isDeletedOnRollback;
             this.IsNewInTransaction = false;
@@ -687,9 +685,9 @@ namespace Allors.Database.Adapters.Memory
 
                 this.rollbackUnitRoleByRoleType = null;
                 this.rollbackCompositeRoleByRoleType = null;
-                this.rollbackCompositesRoleByRoleType = null;
+                this.modifiedCompositesRoleTypes = null;
                 this.rollbackCompositeAssociationByAssociationType = null;
-                this.rollbackCompositesAssociationByAssociationType = null;
+                this.modifiedCompositesAssociationTypes = null;
 
                 this.isDeletedOnRollback = false;
             }
@@ -1263,11 +1261,9 @@ namespace Allors.Database.Adapters.Memory
 
         private void BackupCompositesRole(IRoleType roleType)
         {
-            if (!this.RollbackCompositesRoleByRoleType.ContainsKey(roleType))
-            {
-                var roleIds = this.GetCompositesRoleIds(roleType);
-                this.RollbackCompositesRoleByRoleType[roleType] = roleIds != null ? new HashSet<long>(roleIds) : null;
-            }
+            // Just mark as modified - on rollback we restore from immutable snapshot
+            // No copy needed! This eliminates O(n) allocation per modification
+            this.ModifiedCompositesRoleTypes.Add(roleType);
         }
 
         private void BackupCompositeAssociation(IAssociationType associationType)
@@ -1280,11 +1276,9 @@ namespace Allors.Database.Adapters.Memory
 
         private void BackupCompositesAssociation(IAssociationType associationType)
         {
-            if (!this.RollbackCompositesAssociationByAssociationType.ContainsKey(associationType))
-            {
-                var associationIds = this.GetCompositesAssociationIds(associationType);
-                this.RollbackCompositesAssociationByAssociationType[associationType] = associationIds != null ? new HashSet<long>(associationIds) : null;
-            }
+            // Just mark as modified - on rollback we restore from immutable snapshot
+            // No copy needed! This eliminates O(n) allocation per modification
+            this.ModifiedCompositesAssociationTypes.Add(associationType);
         }
 
         private void RemoveCompositeRoleOne2One(IRoleType roleType)
