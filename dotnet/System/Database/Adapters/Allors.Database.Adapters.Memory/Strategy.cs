@@ -1093,8 +1093,16 @@ public sealed class Strategy : IStrategy
             var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId);
             if (previousRole != null)
             {
-                var previousRoleAssociations = previousRole.GetCompositesAssociationIds(associationType);
-                this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociations != null ? previousRoleAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
+                // Only instantiate associations if ChangeLog doesn't already have them
+                if (!this.ChangeLog.HasOriginalCompositesAssociation(previousRole, associationType))
+                {
+                    var previousRoleAssociations = previousRole.GetCompositesAssociationIds(associationType);
+                    this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociations != null ? previousRoleAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
+                }
+                else
+                {
+                    this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, null);
+                }
 
                 previousRole.BackupCompositesAssociation(associationType);
                 previousRole.RemoveCompositesAssociationId(associationType, this.ObjectId);
@@ -1108,8 +1116,16 @@ public sealed class Strategy : IStrategy
         this.SetCompositeRoleId(roleType, newRoleId);
         this.Transaction.MarkModified(this.ObjectId);
 
-        var newAssociations = @new.GetCompositesAssociationIds(associationType);
-        this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, newAssociations != null ? newAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
+        // Only instantiate associations if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesAssociation(@new, associationType))
+        {
+            var newAssociations = @new.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, newAssociations != null ? newAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, null);
+        }
 
         @new.BackupCompositesAssociation(associationType);
         @new.AddCompositesAssociationId(associationType, this.ObjectId);
@@ -1250,8 +1266,16 @@ public sealed class Strategy : IStrategy
 
         var associationType = roleType.AssociationType;
 
-        var previousRoleAssociations = previousRole.GetCompositesAssociationIds(associationType);
-        this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociations?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        // Only instantiate associations if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesAssociation(previousRole, associationType))
+        {
+            var previousRoleAssociations = previousRole.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, previousRoleAssociations?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesAssociation(previousRole, associationType, null);
+        }
 
         previousRole.BackupCompositesAssociation(associationType);
         previousRole.RemoveCompositesAssociationId(associationType, this.ObjectId);
@@ -1270,7 +1294,15 @@ public sealed class Strategy : IStrategy
             return;
         }
 
-        this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        // Only instantiate previous roles if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesRole(this, roleType))
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, null);
+        }
 
         this.BackupCompositesRole(roleType);
         this.EnsureCompositesRoleIds(roleType);
@@ -1280,8 +1312,16 @@ public sealed class Strategy : IStrategy
 
         var associationType = roleType.AssociationType;
 
-        var addAssociationIds = add.GetCompositesAssociationIds(associationType);
-        this.ChangeLog.OnChangingCompositesAssociation(add, associationType, addAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        // Only instantiate previous associations if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesAssociation(add, associationType))
+        {
+            var addAssociationIds = add.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, addAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, null);
+        }
 
         add.BackupCompositesAssociation(associationType);
         add.AddCompositesAssociationId(associationType, this.ObjectId);
@@ -1296,7 +1336,15 @@ public sealed class Strategy : IStrategy
             return;
         }
 
-        this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        // Only instantiate previous roles if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesRole(this, roleType))
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, null);
+        }
 
         var associationType = roleType.AssociationType;
 
@@ -1309,8 +1357,16 @@ public sealed class Strategy : IStrategy
             var addPreviousAssociation = this.Transaction.InstantiateMemoryStrategy(addPreviousAssociationId);
             if (addPreviousAssociation != null)
             {
-                var addPreviousAssociationRoleIds = addPreviousAssociation.GetCompositesRoleIds(roleType);
-                this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, addPreviousAssociationRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+                // Only instantiate roles if ChangeLog doesn't already have them
+                if (!this.ChangeLog.HasOriginalCompositesRole(addPreviousAssociation, roleType))
+                {
+                    var addPreviousAssociationRoleIds = addPreviousAssociation.GetCompositesRoleIds(roleType);
+                    this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, addPreviousAssociationRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+                }
+                else
+                {
+                    this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, null);
+                }
 
                 addPreviousAssociation.BackupCompositesRole(roleType);
                 addPreviousAssociation.EnsureCompositesRoleIds(roleType);
@@ -1339,7 +1395,15 @@ public sealed class Strategy : IStrategy
             return;
         }
 
-        this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        // Only instantiate roles if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesRole(this, roleType))
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, null);
+        }
 
         this.BackupCompositesRole(roleType);
         this.EnsureCompositesRoleIds(roleType);
@@ -1349,8 +1413,16 @@ public sealed class Strategy : IStrategy
 
         var associationType = roleType.AssociationType;
 
-        var removeAssociationIds = remove.GetCompositesAssociationIds(associationType);
-        this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, removeAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        // Only instantiate associations if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesAssociation(remove, associationType))
+        {
+            var removeAssociationIds = remove.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, removeAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, null);
+        }
 
         remove.BackupCompositesAssociation(associationType);
         remove.RemoveCompositesAssociationId(associationType, this.ObjectId);
@@ -1365,7 +1437,15 @@ public sealed class Strategy : IStrategy
             return;
         }
 
-        this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        // Only instantiate roles if ChangeLog doesn't already have them
+        if (!this.ChangeLog.HasOriginalCompositesRole(this, roleType))
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+        }
+        else
+        {
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, null);
+        }
 
         this.BackupCompositesRole(roleType);
         this.EnsureCompositesRoleIds(roleType);
@@ -1396,7 +1476,7 @@ public sealed class Strategy : IStrategy
             var previousRole = this.Transaction.InstantiateMemoryStrategy(previousRoleId);
             if (previousRole != null)
             {
-                this.ChangeLog.OnChangingCompositesRole(this, roleType, previousRole, previousRoleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+                // RemoveCompositeRoleMany2Many handles ChangeLog internally
                 this.RemoveCompositeRoleMany2Many(roleType, previousRole);
             }
         }

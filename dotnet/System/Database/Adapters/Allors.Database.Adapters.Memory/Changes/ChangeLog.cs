@@ -70,11 +70,39 @@ namespace Allors.Database.Adapters.Memory
             this.RoleTypes(association).Add(roleType);
         }
 
+        /// <summary>
+        /// Checks if the original value for a composites role has already been recorded.
+        /// Used to avoid expensive object instantiation when the original is already known.
+        /// </summary>
+        internal bool HasOriginalCompositesRole(Strategy association, IRoleType roleType)
+        {
+            if (!this.originalByStrategy.TryGetValue(association, out var original))
+            {
+                return false;
+            }
+
+            return original.OriginalCompositesRoleByRoleType?.ContainsKey(roleType) == true;
+        }
+
         internal void OnChangingCompositeAssociation(Strategy role, IAssociationType associationType, Strategy previousAssociation)
             => this.Original(role).OnChangingCompositeAssociation(associationType, previousAssociation);
 
         internal void OnChangingCompositesAssociation(Strategy role, IAssociationType roleType, IEnumerable<Strategy> previousAssociation)
             => this.Original(role).OnChangingCompositesAssociation(roleType, previousAssociation);
+
+        /// <summary>
+        /// Checks if the original value for a composites association has already been recorded.
+        /// Used to avoid expensive object instantiation when the original is already known.
+        /// </summary>
+        internal bool HasOriginalCompositesAssociation(Strategy role, IAssociationType associationType)
+        {
+            if (!this.originalByStrategy.TryGetValue(role, out var original))
+            {
+                return false;
+            }
+
+            return original.OriginalCompositesAssociationByRoleType?.ContainsKey(associationType) == true;
+        }
 
         internal ChangeSet Checkpoint() =>
             new ChangeSet(
