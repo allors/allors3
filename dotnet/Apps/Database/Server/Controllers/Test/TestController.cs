@@ -3,6 +3,8 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using Allors.Database.Services;
+
 namespace Allors.Database.Server.Controllers
 {
     using System;
@@ -41,6 +43,36 @@ namespace Allors.Database.Server.Controllers
             }
         }
 
+        [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Setup(string population)
+        {
+            try
+            {
+                var database = this.DatabaseService.Database;
+
+                database.Init();
+
+                var config = new Config();
+                new Setup(database, config).Apply();
+
+                using var transaction = database.CreateTransaction();
+                transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
+
+                new TestPopulation(transaction, config).Populate(database);
+
+                transaction.Derive();
+                transaction.Commit();
+               
+                return this.Ok();
+            }
+            catch (Exception e)
+            {
+                this.Logger.LogError(e, "Exception");
+                return this.BadRequest(e.Message);
+            }
+        }
+        
         [HttpGet]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Restart()

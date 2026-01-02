@@ -11,6 +11,8 @@
     "base-workspace:serve": "npx nx serve base-workspace-app",
     "base-workspace:e2e": "npx nx e2e base-workspace-app-e2e",
     "base-workspace:e2e-ui": "npx nx e2e-ui base-workspace-app-e2e",
+    "apps-workspace:e2e": "npx nx e2e apps-workspace-app-e2e",
+    "apps-workspace:e2e-ui": "npx nx e2e-ui apps-workspace-app-e2e",
     "system-workspace-meta:test": "npx nx test system-workspace-meta-tests --skipNxCache",
     "system-workspace-meta-json:test": "npx nx test system-workspace-meta-json-tests --skipNxCache",
     "system-workspace-adapters:test": "npx nx test system-workspace-adapters-tests --skipNxCache",
