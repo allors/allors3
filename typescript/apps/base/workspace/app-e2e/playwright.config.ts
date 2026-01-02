@@ -32,10 +32,10 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npx nx serve base-workspace-angular-material-application-app',
+    command: 'npx nx serve base-workspace-app',
     url: BASE_URL,
     reuseExistingServer: !process.env['CI'],
     timeout: 120000,
-    cwd: '../../../../../',
+    cwd: '../../../../',
   },
 });
