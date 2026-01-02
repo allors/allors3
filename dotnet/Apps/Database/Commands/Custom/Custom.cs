@@ -10,19 +10,15 @@ namespace Commands
     using Allors.Database.Domain;
     using Allors.Database.Services;
     using McMaster.Extensions.CommandLineUtils;
-    using NLog;
 
     [Command(Description = "Execute custom code")]
     public class Custom
     {
         public Program Parent { get; set; }
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
-
         public int OnExecute(CommandLineApplication app)
         {
             using var transaction = this.Parent.Database.CreateTransaction();
-            this.Logger.Info("Begin");
 
             var m = this.Parent.M;
 
@@ -37,8 +33,6 @@ namespace Commands
             transaction.Derive();
             transaction.Commit();
 
-            this.Logger.Info("End");
-
             return ExitCode.Success;
         }
 
@@ -46,8 +40,6 @@ namespace Commands
         {
             using (var transaction = this.Parent.Database.CreateTransaction())
             {
-                this.Logger.Info("Begin");
-
                 var m = this.Parent.M;
 
                 User user = new People(transaction).FindBy(m.Person.UserName, "jane@example.com");
@@ -177,8 +169,6 @@ namespace Commands
 
                 transaction.Derive();
                 transaction.Commit();
-
-                this.Logger.Info("End");
             }
 
             return ExitCode.Success;

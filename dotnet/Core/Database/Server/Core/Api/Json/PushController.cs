@@ -5,13 +5,11 @@
 
 namespace Allors.Database.Protocol.Json
 {
-    using System;
     using System.Threading;
     using Allors.Protocol.Json.Api.Push;
     using Allors.Services;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using NLog;
 
     [ApiController]
     [Route("allors/push")]
@@ -30,8 +28,6 @@ namespace Allors.Database.Protocol.Json
 
         private IPolicyService PolicyService { get; }
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
-
         [HttpPost]
         [Authorize]
         [AllowAnonymous]
@@ -39,18 +35,9 @@ namespace Allors.Database.Protocol.Json
             this.PolicyService.PushPolicy.Execute(
                 () =>
                 {
-                    try
-                    {
-                        using var transaction = this.TransactionService.Transaction;
-                        var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken);
-                        return api.Push(pushRequest);
-                    }
-                    catch (Exception e)
-                    {
-                        this.Logger.Error(e, "PushRequest {request}", pushRequest);
-                        throw;
-                    }
+                    using var transaction = this.TransactionService.Transaction;
+                    var api = new Api(transaction, this.WorkspaceService.Name, cancellationToken);
+                    return api.Push(pushRequest);
                 });
     }
 }
-

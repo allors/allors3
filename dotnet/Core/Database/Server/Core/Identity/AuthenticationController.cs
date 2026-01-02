@@ -10,7 +10,6 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
-    using NLog;
     using Protocol.Json.Auth;
     using Security;
     using Services;
@@ -28,8 +27,6 @@ namespace Allors.Server
         public UserManager<IdentityUser> UserManager { get; }
 
         public SignInManager<IdentityUser> SignInManager { get; }
-
-        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         public IConfiguration Configuration { get; }
 

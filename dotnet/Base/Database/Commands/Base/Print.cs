@@ -9,21 +9,17 @@ namespace Commands
     using Allors.Database.Domain;
     using Allors.Database.Services;
     using McMaster.Extensions.CommandLineUtils;
-    using NLog;
 
     [Command(Description = "Print Documents")]
     public class Print
     {
         public Program Parent { get; set; }
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
-
         public int OnExecute(CommandLineApplication app)
         {
             var exitCode = ExitCode.Success;
 
             using var transaction = this.Parent.Database.CreateTransaction();
-            this.Logger.Info("Begin");
 
             var scheduler = new AutomatedAgents(transaction).System;
             transaction.Services.Get<IUserService>().User = scheduler;
@@ -37,19 +33,13 @@ namespace Commands
                 var printable = printDocument.PrintableWherePrintDocument;
                 if (printable == null)
                 {
-                    this.Logger.Warn($"PrintDocument with id {printDocument.Id} has no Printable object");
+                    Console.Error.WriteLine($"PrintDocument with id {printDocument.Id} has no Printable object");
                     continue;
                 }
 
                 try
                 {
                     printable.Print();
-
-                    if (printable.ExistPrintDocument)
-                    {
-                        this.Logger.Info($"Printed {printable.PrintDocument.Media.FileName}");
-                    }
-
                     transaction.Derive();
                     transaction.Commit();
                 }
@@ -57,12 +47,9 @@ namespace Commands
                 {
                     transaction.Rollback();
                     exitCode = ExitCode.Error;
-
-                    this.Logger.Error(e, $"Could not print {printable}");
+                    Console.Error.WriteLine($"Could not print {printable}: {e}");
                 }
             }
-
-            this.Logger.Info("End");
 
             return exitCode;
         }

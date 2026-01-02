@@ -2,9 +2,5 @@
   "/allors": {
     "target": "http://localhost:4020",
     "secure": false
-  },
-  "/jsnlog.logger": {
-    "target": "http://localhost:4020",
-    "secure": false
   }
 }

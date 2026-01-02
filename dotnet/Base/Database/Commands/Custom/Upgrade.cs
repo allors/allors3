@@ -5,18 +5,16 @@
 
 namespace Commands
 {
+    using System;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using McMaster.Extensions.CommandLineUtils;
-    using NLog;
 
     [Command(Description = "Add file contents to the index")]
     public class Upgrade
     {
         public Program Parent { get; set; }
-
-        public Logger Logger => LogManager.GetCurrentClassLogger();
 
         [Option("-f", Description = "File to load")]
         public string FileName { get; set; } = "population.xml";
@@ -25,31 +23,28 @@ namespace Commands
         {
             var fileInfo = new FileInfo(this.FileName);
 
-            this.Logger.Info("Begin");
-
             using (var client = this.Parent.ApiClient)
             {
-                this.Logger.Info("Upgrading from {file}", fileInfo.FullName);
                 using (var fileStream = File.OpenRead(fileInfo.FullName))
                 {
                     var response = await client.UpgradeAsync(fileStream, fileInfo.Name);
 
                     if (!response.Success)
                     {
-                        this.Logger.Error(response.ErrorMessage);
+                        Console.Error.WriteLine(response.ErrorMessage);
 
                         if (response.NotLoadedObjectTypeIds?.Length > 0)
                         {
                             var notLoaded = response.NotLoadedObjectTypeIds
                                 .Aggregate("Could not load following ObjectTypeIds: ", (current, objectTypeId) => current + "- " + objectTypeId);
-                            this.Logger.Error(notLoaded);
+                            Console.Error.WriteLine(notLoaded);
                         }
 
                         if (response.NotLoadedRelationTypeIds?.Length > 0)
                         {
                             var notLoaded = response.NotLoadedRelationTypeIds
                                 .Aggregate("Could not load following RelationTypeIds: ", (current, relationTypeId) => current + "- " + relationTypeId);
-                            this.Logger.Error(notLoaded);
+                            Console.Error.WriteLine(notLoaded);
                         }
 
                         return 1;
@@ -57,7 +52,6 @@ namespace Commands
                 }
             }
 
-            this.Logger.Info("End");
             return ExitCode.Success;
         }
     }

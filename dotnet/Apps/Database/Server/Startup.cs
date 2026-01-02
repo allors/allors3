@@ -18,7 +18,6 @@ namespace Allors.Database.Server.Controllers
     using Allors.Services;
     using Configuration;
     using Configuration.Derivations.Default;
-    using JSNLog;
     using Meta;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
@@ -112,7 +111,7 @@ namespace Allors.Database.Server.Controllers
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             // Allors
             var metaPopulation = new MetaBuilder().Build();
@@ -143,16 +142,6 @@ namespace Allors.Database.Server.Controllers
             }
 
             app.UseCors();
-
-            var jsnlogConfiguration = new JsnlogConfiguration
-            {
-                corsAllowedOriginsRegex = ".*",
-                serverSideMessageFormat = env.IsDevelopment() ?
-                                            "%requestId | %url | %message" :
-                                            "%requestId | %url | %userHostAddress | %userAgent | %message",
-            };
-
-            app.UseJSNLog(new LoggingAdapter(loggerFactory), jsnlogConfiguration);
 
             // app.UseHttpsRedirection();
             app.UseRouting();

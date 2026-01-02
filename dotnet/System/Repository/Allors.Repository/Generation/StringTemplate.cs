@@ -14,7 +14,6 @@ namespace Allors.Repository.Generation
     using Antlr4.StringTemplate;
     using Antlr4.StringTemplate.Misc;
     using Domain;
-    using NLog;
 
     public class StringTemplate
     {
@@ -28,8 +27,6 @@ namespace Allors.Repository.Generation
         private const string InputKey = "input";
         private const string OutputKey = "output";
         private const string GenerationKey = "generation";
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly FileInfo fileInfo;
 
@@ -140,15 +137,13 @@ namespace Allors.Repository.Generation
 
         private class LogAdapter : ITemplateErrorListener
         {
-            private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+            public void CompiletimeError(TemplateMessage msg) => Console.Error.WriteLine(msg.ToString());
 
-            public void CompiletimeError(TemplateMessage msg) => Logger.Error(msg.ToString());
+            public void RuntimeError(TemplateMessage msg) => Console.Error.WriteLine(msg.ToString());
 
-            public void RuntimeError(TemplateMessage msg) => Logger.Error(msg.ToString());
+            public void IOError(TemplateMessage msg) => Console.Error.WriteLine(msg.ToString());
 
-            public void IOError(TemplateMessage msg) => Logger.Error(msg.ToString());
-
-            public void InternalError(TemplateMessage msg) => Logger.Error(msg.ToString());
+            public void InternalError(TemplateMessage msg) => Console.Error.WriteLine(msg.ToString());
         }
     }
 }

@@ -1,12 +1,9 @@
 namespace Allors.Server
 {
-    using System;
     using System.IO;
     using Database.Configuration;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
-    using NLog;
-    using NLog.Web;
 
     public class Program
     {
@@ -14,21 +11,7 @@ namespace Allors.Server
 
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-            try
-            {
-                logger.Debug("init main");
-                CreateHostBuilder(args).Build().Run();
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Stopped program because of exception");
-                throw;
-            }
-            finally
-            {
-                LogManager.Shutdown();
-            }
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -41,7 +24,6 @@ namespace Allors.Server
                         configurationBuilder.AddCrossPlatform(".", environmentName, true);
                         configurationBuilder.AddCrossPlatform(ConfigPath, environmentName);
                         configurationBuilder.AddCrossPlatform(Path.Combine(ConfigPath, hostingContext.HostingEnvironment.ApplicationName), environmentName);
-                    })
-                    .UseNLog());
+                    }));
     }
 }

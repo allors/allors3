@@ -15,7 +15,6 @@ namespace Commands
     using Allors.Database.Population.Resx;
     using CaseExtensions;
     using McMaster.Extensions.CommandLineUtils;
-    using NLog;
     using Enumeration = Allors.Database.Domain.Enumeration;
 
     [Command(Description = "Roundtrip")]
@@ -23,12 +22,9 @@ namespace Commands
     {
         public Program Parent { get; set; }
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
-
         public int OnExecute(CommandLineApplication app)
         {
             using var transaction = this.Parent.Database.CreateTransaction();
-            this.Logger.Info("Begin");
 
             var m = this.Parent.M;
 
@@ -74,8 +70,6 @@ namespace Commands
 
                 var fileInfo = new FileInfo(@"\temp\enumerations.xml");
 
-                this.Logger.Info(fileInfo.FullName);
-
                 using var stream = File.Open(fileInfo.FullName, FileMode.Create);
                 document.Save(stream);
             }
@@ -118,8 +112,6 @@ namespace Commands
 
                 var fileInfo = new FileInfo(@"\temp\objectStates.xml");
 
-                this.Logger.Info(fileInfo.FullName);
-
                 using var stream = File.Open(fileInfo.FullName, FileMode.Create);
                 document.Save(stream);
             }
@@ -132,8 +124,6 @@ namespace Commands
                 }
 
                 directoryInfo.Create();
-
-                this.Logger.Info(directoryInfo.FullName);
 
                 {
                     var translationsByIsoCodeByClass = enumerations
@@ -168,8 +158,6 @@ namespace Commands
                 }
 
             }
-
-            this.Logger.Info("End");
 
             return ExitCode.Success;
         }

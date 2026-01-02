@@ -1,8 +1,7 @@
-import { APP_INITIALIZER, ErrorHandler } from '@angular/core';
+import { APP_INITIALIZER } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WorkspaceService } from '@allors/base/workspace/angular/foundation';
 import { config } from '../app/app.config';
-import { ErrorHandlerService } from '../app/services/error-handler.service';
 import {
   AllorsMaterialCreateService,
   AllorsMaterialEditDialogService,
@@ -38,11 +37,6 @@ export const environment = {
   authUrl: 'TestAuthentication/Token',
   // authUrl: 'Authentication/Token',
   providers: [
-    {
-      // processes all errors
-      provide: ErrorHandler,
-      useClass: ErrorHandlerService,
-    },
     {
       provide: APP_INITIALIZER,
       useFactory: appInitFactory,

@@ -10,7 +10,6 @@ namespace Commands
     using McMaster.Extensions.CommandLineUtils;
 
     using Microsoft.Extensions.Configuration;
-    using NLog;
     using Services;
     using Path = System.IO.Path;
 
@@ -70,8 +69,7 @@ namespace Commands
             }
             catch (Exception e)
             {
-                var logger = LogManager.GetCurrentClassLogger();
-                logger.Error(e, e.Message);
+                Console.Error.WriteLine(e);
                 return ExitCode.Error;
             }
         }

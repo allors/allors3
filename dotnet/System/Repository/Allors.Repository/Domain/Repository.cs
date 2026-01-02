@@ -15,7 +15,6 @@ namespace Allors.Repository.Domain
     using Inflector;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using NLog;
     using Roslyn;
 
     public class Repository
@@ -23,8 +22,6 @@ namespace Allors.Repository.Domain
         public const string RepositoryNamespaceName = "Allors.Repository";
 
         public const string AttributeNamespace = RepositoryNamespaceName + ".Attributes";
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly Inflector inflector;
 
@@ -72,7 +69,7 @@ namespace Allors.Repository.Domain
                     if (!method.AttributeByName.ContainsKey(AttributeNames.Id))
                     {
                         this.HasErrors = true;
-                        Logger.Error($"{method} has no {AttributeNames.Id} attribute.");
+                        Console.Error.WriteLine($"{method} has no {AttributeNames.Id} attribute.");
                     }
                 }
             }
@@ -412,7 +409,7 @@ namespace Allors.Repository.Domain
                     if (reflectedProperty == null)
                     {
                         this.HasErrors = true;
-                        Logger.Error($"{reflectedType.Name}.{property.RoleName} should be public");
+                        Console.Error.WriteLine($"{reflectedType.Name}.{property.RoleName} should be public");
                         continue;
                     }
 
@@ -454,13 +451,13 @@ namespace Allors.Repository.Domain
                             if (property.IsRoleOne)
                             {
                                 this.HasErrors = true;
-                                Logger.Error($"{reflectedType.Name}.{property.RoleName} should be many");
+                                Console.Error.WriteLine($"{reflectedType.Name}.{property.RoleName} should be many");
                             }
                         }
                         else if (property.IsRoleMany)
                         {
                             this.HasErrors = true;
-                            Logger.Error($"{reflectedType.Name}.{property.RoleName} should be one");
+                            Console.Error.WriteLine($"{reflectedType.Name}.{property.RoleName} should be one");
                         }
                     }
                 }
@@ -595,7 +592,7 @@ namespace Allors.Repository.Domain
             if (!Guid.TryParse(id, out var idGuid))
             {
                 this.HasErrors = true;
-                Logger.Error($"{name} has a non GUID {key}: {id}");
+                Console.Error.WriteLine($"{name} has a non GUID {key}: {id}");
             }
 
             this.CheckId(ids, idGuid, name, key);
@@ -606,7 +603,7 @@ namespace Allors.Repository.Domain
             if (ids.Contains(id))
             {
                 this.HasErrors = true;
-                Logger.Error($"{name} has a duplicate {key}: {id}");
+                Console.Error.WriteLine($"{name} has a duplicate {key}: {id}");
             }
 
             ids.Add(id);

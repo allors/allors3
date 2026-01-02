@@ -7,25 +7,18 @@ namespace Commands
 {
     using System.Threading.Tasks;
     using McMaster.Extensions.CommandLineUtils;
-    using NLog;
 
     [Command(Description = "Add file contents to the index")]
     public class Populate
     {
         public Program Parent { get; set; }
 
-        public Logger Logger => LogManager.GetCurrentClassLogger();
-
         public async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
-            this.Logger.Info("Begin");
-
             using (var client = this.Parent.ApiClient)
             {
                 await client.PopulateAsync();
             }
-
-            this.Logger.Info("End");
 
             return ExitCode.Success;
         }

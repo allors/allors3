@@ -7,38 +7,33 @@ namespace Allors.Tools.Cmd
 {
     using System;
     using System.IO;
-    using NLog;
     using Repository;
     using Repository.Roslyn;
 
     public class Program
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         public static int Main(string[] args)
         {
             try
             {
                 if (args.Length < 3)
                 {
-                    Logger.Error("missing required arguments");
+                    Console.Error.WriteLine("missing required arguments");
                 }
 
                 RepositoryGenerate(args);
             }
             catch (RepositoryException e)
             {
-                Logger.Error(e.Message);
+                Console.Error.WriteLine(e.Message);
                 return 1;
             }
             catch (Exception e)
             {
-                Logger.Error(e);
-                Logger.Info("Finished with errors");
+                Console.Error.WriteLine(e);
                 return 1;
             }
 
-            Logger.Info("Finished");
             return 0;
         }
 
@@ -50,7 +45,6 @@ namespace Allors.Tools.Cmd
 
             var fileInfo = new FileInfo(projectPath);
 
-            Logger.Info("Generate " + fileInfo.FullName);
             Generate.Execute(fileInfo.FullName, template, output);
         }
     }

@@ -13,7 +13,6 @@ namespace Allors.Server
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
-    using NLog;
     using Microsoft.IdentityModel.Tokens;
 
     public static class ExceptionHandler
@@ -26,9 +25,6 @@ namespace Allors.Server
                 if (exceptionHandler != null)
                 {
                     var error = exceptionHandler.Error;
-
-                    var logger = LogManager.GetCurrentClassLogger();
-                    logger.Error(error, "Unhandled Exception");
 
                     context.Response.ContentType = "application/json";
                     context.Response.StatusCode = error is SecurityTokenExpiredException
