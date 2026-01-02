@@ -3,291 +3,228 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Memory
+namespace Allors.Database.Adapters.Memory;
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Xml;
+using Allors.Database.Tracing;
+using Meta;
+
+public class Database : IDatabase
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Xml;
-    using Allors.Database.Tracing;
-    using Meta;
+    private readonly ConcurrentDictionary<IObjectType, object> concreteClassesByObjectType;
+    private readonly CommittedStore committedStore;
+    private readonly object commitLock;
 
-    public class Database : IDatabase
+    public Database(IDatabaseServices state, Configuration configuration)
     {
-        private readonly ConcurrentDictionary<IObjectType, object> concreteClassesByObjectType;
-        private readonly CommittedStore committedStore;
-        private readonly IndexStore indexStore;
-        private readonly object commitLock;
-
-        public Database(IDatabaseServices state, Configuration configuration)
+        this.Services = state;
+        if (this.Services == null)
         {
-            this.Services = state;
-            if (this.Services == null)
-            {
-                throw new Exception("Services is missing");
-            }
-
-            this.ObjectFactory = configuration.ObjectFactory;
-            if (this.ObjectFactory == null)
-            {
-                throw new Exception("Configuration.ObjectFactory is missing");
-            }
-
-            this.MetaPopulation = this.ObjectFactory.MetaPopulation;
-
-            this.concreteClassesByObjectType = new ConcurrentDictionary<IObjectType, object>();
-            this.indexStore = new IndexStore();
-            this.committedStore = new CommittedStore(this.indexStore);
-            this.commitLock = new object();
-
-            this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
-
-            // Create indexes for all role types marked as indexed in the meta model
-            this.InitializeIndexesFromMeta();
-
-            this.Services.OnInit(this);
+            throw new Exception("Services is missing");
         }
 
-        public event ObjectNotLoadedEventHandler ObjectNotLoaded;
-
-        public event RelationNotLoadedEventHandler RelationNotLoaded;
-
-        public string Id { get; }
-
-        public bool IsShared => true;
-
-        public IObjectFactory ObjectFactory { get; }
-
-        public IMetaPopulation MetaPopulation { get; }
-
-        public IDatabaseServices Services { get; }
-
-        public ISink Sink { get; set; }
-
-        internal bool IsLoading { get; private set; }
-
-        internal CommittedStore CommittedStore => this.committedStore;
-
-        internal IndexStore IndexStore => this.indexStore;
-
-        /// <summary>
-        /// Creates a secondary index on the specified role type for O(1) query lookups.
-        /// Note: Indexes are automatically created for role types marked as IsIndexed in the meta model.
-        /// Use this method only for additional runtime indexes not defined in the meta model.
-        /// </summary>
-        public void CreateIndex(IRoleType roleType)
+        this.ObjectFactory = configuration.ObjectFactory;
+        if (this.ObjectFactory == null)
         {
-            lock (this.commitLock)
-            {
-                if (roleType.ObjectType is IUnit)
-                {
-                    this.indexStore.CreateUnitRoleIndex(roleType);
-                }
-                else if (roleType.ObjectType is IComposite)
-                {
-                    this.indexStore.CreateCompositeRoleIndex(roleType);
-                }
-
-                // Rebuild indexes from existing data
-                this.indexStore.RebuildIndexes(this.committedStore.GetAllObjects());
-            }
+            throw new Exception("Configuration.ObjectFactory is missing");
         }
 
-        /// <summary>
-        /// Initializes indexes for all role types marked as IsIndexed in the meta model.
-        /// Called automatically during database construction.
-        /// </summary>
-        private void InitializeIndexesFromMeta()
+        this.MetaPopulation = this.ObjectFactory.MetaPopulation;
+
+        this.concreteClassesByObjectType = new ConcurrentDictionary<IObjectType, object>();
+        this.committedStore = new CommittedStore();
+        this.commitLock = new object();
+
+        // Create SlotLayout for O(1) slot-based role/association access
+        this.SlotLayout = new SlotLayout(this.MetaPopulation);
+
+        this.Id = string.IsNullOrWhiteSpace(configuration.Id) ? Guid.NewGuid().ToString("N").ToLowerInvariant() : configuration.Id;
+
+        this.Services.OnInit(this);
+    }
+
+    public event ObjectNotLoadedEventHandler ObjectNotLoaded;
+
+    public event RelationNotLoadedEventHandler RelationNotLoaded;
+
+    public string Id { get; }
+
+    public bool IsShared => true;
+
+    public IObjectFactory ObjectFactory { get; }
+
+    public IMetaPopulation MetaPopulation { get; }
+
+    public IDatabaseServices Services { get; }
+
+    public ISink Sink { get; set; }
+
+    internal bool IsLoading { get; private set; }
+
+    internal CommittedStore CommittedStore => this.committedStore;
+
+    /// <summary>
+    /// Pre-computed slot layout for O(1) role and association access.
+    /// </summary>
+    internal SlotLayout SlotLayout { get; }
+
+    public ITransaction CreateTransaction() => this.CreateDatabaseTransaction();
+
+    ITransaction IDatabase.CreateTransaction() => this.CreateDatabaseTransaction();
+
+    public ITransaction CreateDatabaseTransaction() => new Transaction(this, this.Services.CreateTransactionServices());
+
+    public void Load(XmlReader reader)
+    {
+        this.Init();
+
+        try
         {
-            foreach (var relationType in this.MetaPopulation.DatabaseRelationTypes)
-            {
-                if (!relationType.IsIndexed)
-                {
-                    continue;
-                }
+            this.IsLoading = true;
 
-                var roleType = relationType.RoleType;
-
-                if (roleType.ObjectType is IUnit unit)
-                {
-                    // Skip large string/binary fields that can't be efficiently indexed
-                    // (matching SQL adapter behavior)
-                    if (unit.IsString || unit.IsBinary)
-                    {
-                        if (roleType.Size == -1 || roleType.Size > 4000)
-                        {
-                            continue;
-                        }
-                    }
-
-                    this.indexStore.CreateUnitRoleIndex(roleType);
-                }
-                else if (roleType.ObjectType is IComposite)
-                {
-                    // Index composite roles (one-to-one, many-to-one)
-                    if (roleType.IsOne)
-                    {
-                        this.indexStore.CreateCompositeRoleIndex(roleType);
-                    }
-                }
-            }
-        }
-
-        public ITransaction CreateTransaction() => this.CreateDatabaseTransaction();
-
-        ITransaction IDatabase.CreateTransaction() => this.CreateDatabaseTransaction();
-
-        public ITransaction CreateDatabaseTransaction() => new Transaction(this, this.Services.CreateTransactionServices());
-
-        public void Load(XmlReader reader)
-        {
-            this.Init();
-
-            try
-            {
-                this.IsLoading = true;
-
-                using var transaction = (Transaction)this.CreateDatabaseTransaction();
-                var load = new Load(transaction, reader);
-                load.Execute();
-                transaction.Commit();
-            }
-            finally
-            {
-                this.IsLoading = false;
-            }
-        }
-
-        public void Save(XmlWriter writer)
-        {
             using var transaction = (Transaction)this.CreateDatabaseTransaction();
-            transaction.Save(writer);
+            var load = new Load(transaction, reader);
+            load.Execute();
+            transaction.Commit();
+        }
+        finally
+        {
+            this.IsLoading = false;
+        }
+    }
+
+    public void Save(XmlWriter writer)
+    {
+        using var transaction = (Transaction)this.CreateDatabaseTransaction();
+        transaction.Save(writer);
+    }
+
+    public bool ContainsClass(IComposite objectType, IObjectType concreteClass)
+    {
+        var concreteClassOrClasses = this.concreteClassesByObjectType.GetOrAdd(
+            objectType,
+            _ => objectType.ExistExclusiveDatabaseClass
+                ? objectType.ExclusiveDatabaseClass
+                : new HashSet<IObjectType>(objectType.DatabaseClasses));
+
+        if (concreteClassOrClasses is IObjectType singleClass)
+        {
+            return concreteClass.Equals(singleClass);
         }
 
-        public bool ContainsClass(IComposite objectType, IObjectType concreteClass)
+        var concreteClasses = (HashSet<IObjectType>)concreteClassOrClasses;
+        return concreteClasses.Contains(concreteClass);
+    }
+
+    public void UnitRoleChecks(IStrategy strategy, IRoleType roleType)
+    {
+        if (!this.ContainsClass(roleType.AssociationType.ObjectType, strategy.Class))
         {
-            var concreteClassOrClasses = this.concreteClassesByObjectType.GetOrAdd(
-                objectType,
-                _ => objectType.ExistExclusiveDatabaseClass
-                    ? objectType.ExclusiveDatabaseClass
-                    : new HashSet<IObjectType>(objectType.DatabaseClasses));
-
-            if (concreteClassOrClasses is IObjectType singleClass)
-            {
-                return concreteClass.Equals(singleClass);
-            }
-
-            var concreteClasses = (HashSet<IObjectType>)concreteClassOrClasses;
-            return concreteClasses.Contains(concreteClass);
+            throw new ArgumentException(strategy.Class + " is not a valid association object type for " + roleType + ".");
         }
 
-        public void UnitRoleChecks(IStrategy strategy, IRoleType roleType)
+        if (roleType.ObjectType is IComposite)
         {
-            if (!this.ContainsClass(roleType.AssociationType.ObjectType, strategy.Class))
-            {
-                throw new ArgumentException(strategy.Class + " is not a valid association object type for " + roleType + ".");
-            }
+            throw new ArgumentException(roleType.ObjectType + " on roleType " + roleType + " is not a unit type.");
+        }
+    }
 
-            if (roleType.ObjectType is IComposite)
-            {
-                throw new ArgumentException(roleType.ObjectType + " on roleType " + roleType + " is not a unit type.");
-            }
+    public void CompositeRoleChecks(IStrategy strategy, IRoleType roleType) => this.CompositeSharedChecks(strategy, roleType, null);
+
+    public void CompositeRoleChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
+    {
+        this.CompositeSharedChecks(strategy, roleType, roleStrategy);
+        if (!roleType.IsOne)
+        {
+            throw new ArgumentException("RelationType " + roleType + " has multiplicity many.");
+        }
+    }
+
+    public Strategy CompositeRolesChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
+    {
+        this.CompositeSharedChecks(strategy, roleType, roleStrategy);
+        if (!roleType.IsMany)
+        {
+            throw new ArgumentException("RelationType " + roleType + " has multiplicity one.");
         }
 
-        public void CompositeRoleChecks(IStrategy strategy, IRoleType roleType) => this.CompositeSharedChecks(strategy, roleType, null);
+        return roleStrategy;
+    }
 
-        public void CompositeRoleChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
+    public virtual void Init()
+    {
+        this.committedStore.Reset();
+        this.Services.OnInit(this);
+    }
+
+    internal long NextId() => this.committedStore.NextId();
+
+    internal void UpdateCurrentId(long objectId) => this.committedStore.UpdateCurrentId(objectId);
+
+    internal void CommitTransaction(TransactionChanges changes)
+    {
+        lock (this.commitLock)
         {
-            this.CompositeSharedChecks(strategy, roleType, roleStrategy);
-            if (!roleType.IsOne)
-            {
-                throw new ArgumentException("RelationType " + roleType + " has multiplicity many.");
-            }
+            this.committedStore.Commit(changes);
+        }
+    }
+
+    internal void OnObjectNotLoaded(Guid metaTypeId, long allorsObjectId)
+    {
+        var args = new ObjectNotLoadedEventArgs(metaTypeId, allorsObjectId);
+        if (this.ObjectNotLoaded != null)
+        {
+            this.ObjectNotLoaded(this, args);
+        }
+        else
+        {
+            throw new Exception("Object not loaded: " + args);
+        }
+    }
+
+    internal void OnRelationNotLoaded(Guid relationTypeId, long associationObjectId, string roleContents)
+    {
+        var args = new RelationNotLoadedEventArgs(relationTypeId, associationObjectId, roleContents);
+        if (this.RelationNotLoaded != null)
+        {
+            this.RelationNotLoaded(this, args);
+        }
+        else
+        {
+            throw new Exception("RelationType not loaded: " + args);
+        }
+    }
+
+    private void CompositeSharedChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
+    {
+        if (!this.ContainsClass(roleType.AssociationType.ObjectType, strategy.Class))
+        {
+            throw new ArgumentException(strategy.Class + " has no roleType with role " + roleType + ".");
         }
 
-        public Strategy CompositeRolesChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
+        if (roleStrategy != null)
         {
-            this.CompositeSharedChecks(strategy, roleType, roleStrategy);
-            if (!roleType.IsMany)
+            if (!strategy.Transaction.Equals(roleStrategy.Transaction))
             {
-                throw new ArgumentException("RelationType " + roleType + " has multiplicity one.");
+                throw new ArgumentException(roleStrategy + " is from different transaction");
             }
 
-            return roleStrategy;
-        }
-
-        public virtual void Init()
-        {
-            this.committedStore.Reset();
-            this.Services.OnInit(this);
-        }
-
-        internal long NextId() => this.committedStore.NextId();
-
-        internal void UpdateCurrentId(long objectId) => this.committedStore.UpdateCurrentId(objectId);
-
-        internal void CommitTransaction(TransactionChanges changes)
-        {
-            lock (this.commitLock)
+            if (roleStrategy.IsDeleted)
             {
-                this.committedStore.Commit(changes);
-            }
-        }
-
-        internal void OnObjectNotLoaded(Guid metaTypeId, long allorsObjectId)
-        {
-            var args = new ObjectNotLoadedEventArgs(metaTypeId, allorsObjectId);
-            if (this.ObjectNotLoaded != null)
-            {
-                this.ObjectNotLoaded(this, args);
-            }
-            else
-            {
-                throw new Exception("Object not loaded: " + args);
-            }
-        }
-
-        internal void OnRelationNotLoaded(Guid relationTypeId, long associationObjectId, string roleContents)
-        {
-            var args = new RelationNotLoadedEventArgs(relationTypeId, associationObjectId, roleContents);
-            if (this.RelationNotLoaded != null)
-            {
-                this.RelationNotLoaded(this, args);
-            }
-            else
-            {
-                throw new Exception("RelationType not loaded: " + args);
-            }
-        }
-
-        private void CompositeSharedChecks(IStrategy strategy, IRoleType roleType, Strategy roleStrategy)
-        {
-            if (!this.ContainsClass(roleType.AssociationType.ObjectType, strategy.Class))
-            {
-                throw new ArgumentException(strategy.Class + " has no roleType with role " + roleType + ".");
+                throw new ArgumentException(roleType + " on object " + strategy + " is removed.");
             }
 
-            if (roleStrategy != null)
+            if (!(roleType.ObjectType is IComposite compositeType))
             {
-                if (!strategy.Transaction.Equals(roleStrategy.Transaction))
-                {
-                    throw new ArgumentException(roleStrategy + " is from different transaction");
-                }
+                throw new ArgumentException(roleStrategy + " has no CompositeType");
+            }
 
-                if (roleStrategy.IsDeleted)
-                {
-                    throw new ArgumentException(roleType + " on object " + strategy + " is removed.");
-                }
-
-                if (!(roleType.ObjectType is IComposite compositeType))
-                {
-                    throw new ArgumentException(roleStrategy + " has no CompositeType");
-                }
-
-                if (!compositeType.IsAssignableFrom(roleStrategy.Class))
-                {
-                    throw new ArgumentException(roleStrategy.Class + " is not compatible with type " + roleType.ObjectType + " of role " + roleType + ".");
-                }
+            if (!compositeType.IsAssignableFrom(roleStrategy.Class))
+            {
+                throw new ArgumentException(roleStrategy.Class + " is not compatible with type " + roleType.ObjectType + " of role " + roleType + ".");
             }
         }
     }

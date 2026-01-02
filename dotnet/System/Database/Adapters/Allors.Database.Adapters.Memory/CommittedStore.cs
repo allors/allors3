@@ -3,340 +3,305 @@
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace Allors.Database.Adapters.Memory
+namespace Allors.Database.Adapters.Memory;
+
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Frozen;
+using System.Linq;
+using System.Threading;
+using Concurrency;
+using Meta;
+
+/// <summary>
+/// Thread-safe storage for committed database state using SlotSnapshot.
+/// Uses ConcurrentDictionary for lock-free reads and lock striping for parallel commits.
+/// Transactions affecting disjoint sets of objects can commit in parallel.
+/// </summary>
+internal sealed class CommittedStore
 {
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using Concurrency;
-    using Meta;
+    // Lock-free primary storage for object snapshots
+    private readonly ConcurrentDictionary<long, SlotSnapshot> snapshotById;
 
-    /// <summary>
-    /// Thread-safe storage for committed database state.
-    /// Uses ConcurrentDictionary for lock-free reads and lock striping for parallel commits.
-    /// Transactions affecting disjoint sets of objects can commit in parallel.
-    /// </summary>
-    internal sealed class CommittedStore
+    // Type index with its own lock (modified less frequently)
+    private readonly ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>> objectIdsByType;
+
+    // Lock striping for parallel commits - transactions touching different stripes can commit in parallel
+    private readonly LockStripe lockStripe;
+
+    // Global lock for operations that need exclusive access (Reset, etc.)
+    private readonly Lock globalLock;
+
+    private long currentId;
+
+    internal CommittedStore()
     {
-        // Lock-free primary storage for objects
-        private readonly ConcurrentDictionary<long, CommittedObject> objectById;
+        this.snapshotById = new ConcurrentDictionary<long, SlotSnapshot>();
+        this.objectIdsByType = new ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>>();
+        this.lockStripe = new LockStripe();
+        this.globalLock = new Lock();
+        this.currentId = 0;
+    }
 
-        // Type index with its own lock (modified less frequently)
-        private readonly ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>> objectIdsByType;
+    internal long NextId() => Interlocked.Increment(ref this.currentId);
 
-        private readonly IndexStore indexStore;
-
-        // Lock striping for parallel commits - transactions touching different stripes can commit in parallel
-        private readonly LockStripe lockStripe;
-
-        // Global lock for operations that need exclusive access (Reset, etc.)
-        private readonly Lock globalLock;
-
-        private long currentId;
-
-        internal CommittedStore(IndexStore indexStore)
+    internal void UpdateCurrentId(long objectId)
+    {
+        long current;
+        do
         {
-            this.objectById = new ConcurrentDictionary<long, CommittedObject>();
-            this.objectIdsByType = new ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>>();
-            this.indexStore = indexStore;
-            this.lockStripe = new LockStripe();
-            this.globalLock = new Lock();
-            this.currentId = 0;
-        }
-
-        internal long NextId() => Interlocked.Increment(ref this.currentId);
-
-        internal void UpdateCurrentId(long objectId)
-        {
-            long current;
-            do
-            {
-                current = Interlocked.Read(ref this.currentId);
-                if (objectId <= current)
-                {
-                    return;
-                }
-            }
-            while (Interlocked.CompareExchange(ref this.currentId, objectId, current) != current);
-        }
-
-        internal void Reset()
-        {
-            // Use global lock for exclusive access during reset
-            this.globalLock.Enter();
-            try
-            {
-                // Also acquire all stripe locks to ensure no commits are in progress
-                var allStripes = new int[this.lockStripe.StripeCount];
-                for (var i = 0; i < allStripes.Length; i++)
-                {
-                    allStripes[i] = i;
-                }
-
-                using (this.lockStripe.AcquireLocks(allStripes))
-                {
-                    this.objectById.Clear();
-                    this.objectIdsByType.Clear();
-                    this.indexStore.Clear();
-                    Interlocked.Exchange(ref this.currentId, 0);
-                }
-            }
-            finally
-            {
-                this.globalLock.Exit();
-            }
-        }
-
-        /// <summary>
-        /// Gets a snapshot of an object. Lock-free read operation.
-        /// </summary>
-        internal CommittedObject GetSnapshot(long objectId)
-        {
-            // Lock-free read from ConcurrentDictionary
-            // No clone needed - CommittedObject is immutable after being stored.
-            // Strategy uses an overlay pattern for local modifications.
-            return this.objectById.TryGetValue(objectId, out var obj) ? obj : null;
-        }
-
-        /// <summary>
-        /// Checks if an object exists. Lock-free read operation.
-        /// </summary>
-        internal bool ObjectExists(long objectId)
-        {
-            // Lock-free read from ConcurrentDictionary
-            return this.objectById.ContainsKey(objectId);
-        }
-
-        /// <summary>
-        /// Atomically commits transaction changes with optimistic concurrency.
-        /// Uses lock striping to allow parallel commits for non-conflicting transactions.
-        /// </summary>
-        internal void Commit(TransactionChanges changes)
-        {
-            // Collect all affected object IDs
-            var affectedObjectIds = this.CollectAffectedObjectIds(changes);
-
-            // If no objects affected, nothing to do
-            if (affectedObjectIds.Count == 0)
+            current = Interlocked.Read(ref this.currentId);
+            if (objectId <= current)
             {
                 return;
             }
+        }
+        while (Interlocked.CompareExchange(ref this.currentId, objectId, current) != current);
+    }
 
-            // Get sorted stripe indices for deadlock-free lock acquisition
-            var stripeIndices = this.lockStripe.GetSortedStripeIndices(affectedObjectIds);
-
-            // Acquire only the necessary stripe locks
-            using (this.lockStripe.AcquireLocks(stripeIndices))
+    internal void Reset()
+    {
+        // Use global lock for exclusive access during reset
+        this.globalLock.Enter();
+        try
+        {
+            // Also acquire all stripe locks to ensure no commits are in progress
+            var allStripes = new int[this.lockStripe.StripeCount];
+            for (var i = 0; i < allStripes.Length; i++)
             {
-                // Version check and conflict detection for modified objects
-                foreach (var modified in changes.ModifiedObjects)
-                {
-                    if (this.objectById.TryGetValue(modified.ObjectId, out var current))
-                    {
-                        if (current.Version != modified.OriginalVersion)
-                        {
-                            throw new ConcurrencyException(modified.ObjectId, current.Version, modified.OriginalVersion);
-                        }
-                    }
-                }
+                allStripes[i] = i;
+            }
 
-                // Apply deletes and update indexes
-                foreach (var deletedId in changes.DeletedObjectIds)
-                {
-                    if (this.objectById.TryRemove(deletedId, out var deleted))
-                    {
-                        // Remove from indexes before removing object
-                        this.indexStore.RemoveObjectFromIndexes(deletedId, deleted);
-
-                        if (this.objectIdsByType.TryGetValue(deleted.ObjectType, out var typeSet))
-                        {
-                            typeSet.TryRemove(deletedId, out _);
-                        }
-                    }
-                }
-
-                // Apply new objects and update indexes
-                foreach (var newObj in changes.NewObjects)
-                {
-                    this.objectById[newObj.ObjectId] = newObj;
-
-                    var typeSet = this.objectIdsByType.GetOrAdd(
-                        newObj.ObjectType,
-                        _ => new ConcurrentDictionary<long, byte>());
-                    typeSet[newObj.ObjectId] = 0;
-
-                    // Add to indexes (no old values since this is a new object)
-                    this.UpdateIndexesForObject(newObj.ObjectId, null, newObj);
-                }
-
-                // Apply modifications and update indexes
-                foreach (var modified in changes.ModifiedObjects)
-                {
-                    this.objectById.TryGetValue(modified.ObjectId, out var oldObj);
-                    this.objectById[modified.ObjectId] = modified;
-
-                    // Update indexes with old and new values
-                    this.UpdateIndexesForObject(modified.ObjectId, oldObj, modified);
-                }
+            using (this.lockStripe.AcquireLocks(allStripes))
+            {
+                this.snapshotById.Clear();
+                this.objectIdsByType.Clear();
+                Interlocked.Exchange(ref this.currentId, 0);
             }
         }
-
-        /// <summary>
-        /// Collects all object IDs that will be affected by a commit.
-        /// This includes new objects, modified objects, deleted objects,
-        /// and any objects referenced in relationships.
-        /// </summary>
-        private HashSet<long> CollectAffectedObjectIds(TransactionChanges changes)
+        finally
         {
-            var affectedIds = new HashSet<long>();
+            this.globalLock.Exit();
+        }
+    }
 
-            // Add new object IDs
-            foreach (var newObj in changes.NewObjects)
+    /// <summary>
+    /// Gets a snapshot of an object. Lock-free read operation.
+    /// Returns default (IsValid=false) if object doesn't exist.
+    /// </summary>
+    internal SlotSnapshot GetSnapshot(long objectId)
+    {
+        // Lock-free read from ConcurrentDictionary
+        // SlotSnapshot is immutable - no clone needed
+        return this.snapshotById.TryGetValue(objectId, out var snapshot) ? snapshot : default;
+    }
+
+    /// <summary>
+    /// Checks if an object exists. Lock-free read operation.
+    /// </summary>
+    internal bool ObjectExists(long objectId)
+    {
+        // Lock-free read from ConcurrentDictionary
+        return this.snapshotById.ContainsKey(objectId);
+    }
+
+    /// <summary>
+    /// Atomically commits transaction changes with optimistic concurrency.
+    /// Uses lock striping to allow parallel commits for non-conflicting transactions.
+    /// </summary>
+    internal void Commit(TransactionChanges changes)
+    {
+        // Collect all affected object IDs
+        var affectedObjectIds = this.CollectAffectedObjectIds(changes);
+
+        // If no objects affected, nothing to do
+        if (affectedObjectIds.Count == 0)
+        {
+            return;
+        }
+
+        // Get sorted stripe indices for deadlock-free lock acquisition
+        var stripeIndices = this.lockStripe.GetSortedStripeIndices(affectedObjectIds);
+
+        // Acquire only the necessary stripe locks
+        using (this.lockStripe.AcquireLocks(stripeIndices))
+        {
+            // Version check and conflict detection for modified objects
+            foreach (var modified in changes.ModifiedSnapshots)
             {
-                affectedIds.Add(newObj.ObjectId);
-
-                // Also include referenced objects (composite roles and associations)
-                this.AddReferencedObjectIds(newObj, affectedIds);
-            }
-
-            // Add modified object IDs
-            foreach (var modified in changes.ModifiedObjects)
-            {
-                affectedIds.Add(modified.ObjectId);
-
-                // Also include referenced objects
-                this.AddReferencedObjectIds(modified, affectedIds);
-
-                // Include previously referenced objects (from old version)
-                if (this.objectById.TryGetValue(modified.ObjectId, out var oldObj))
+                if (this.snapshotById.TryGetValue(modified.Snapshot.ObjectId, out var current))
                 {
-                    this.AddReferencedObjectIds(oldObj, affectedIds);
+                    if (current.Version != modified.OriginalVersion)
+                    {
+                        throw new ConcurrencyException(modified.Snapshot.ObjectId, current.Version, modified.OriginalVersion);
+                    }
                 }
             }
 
-            // Add deleted object IDs
+            // Apply deletes
             foreach (var deletedId in changes.DeletedObjectIds)
             {
-                affectedIds.Add(deletedId);
-
-                // Include objects that referenced the deleted object
-                if (this.objectById.TryGetValue(deletedId, out var deleted))
+                if (this.snapshotById.TryRemove(deletedId, out var deleted))
                 {
-                    this.AddReferencedObjectIds(deleted, affectedIds);
+                    if (this.objectIdsByType.TryGetValue(deleted.ObjectType, out var typeSet))
+                    {
+                        typeSet.TryRemove(deletedId, out _);
+                    }
                 }
             }
 
-            return affectedIds;
-        }
-
-        /// <summary>
-        /// Adds object IDs referenced by a committed object to the set.
-        /// </summary>
-        private void AddReferencedObjectIds(CommittedObject obj, HashSet<long> affectedIds)
-        {
-            // Add composite role targets
-            foreach (var targetId in obj.CompositeRoleByRoleType.Values)
+            // Apply new objects
+            foreach (var newSnapshot in changes.NewSnapshots)
             {
-                affectedIds.Add(targetId);
+                this.snapshotById[newSnapshot.ObjectId] = newSnapshot;
+
+                var typeSet = this.objectIdsByType.GetOrAdd(
+                    newSnapshot.ObjectType,
+                    _ => new ConcurrentDictionary<long, byte>());
+                typeSet[newSnapshot.ObjectId] = 0;
             }
 
-            // Add composites role targets (many-to-many)
-            foreach (var targetIds in obj.CompositesRoleByRoleType.Values)
+            // Apply modifications
+            foreach (var modified in changes.ModifiedSnapshots)
             {
-                foreach (var targetId in targetIds)
+                this.snapshotById[modified.Snapshot.ObjectId] = modified.Snapshot;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Collects all object IDs that will be affected by a commit.
+    /// This includes new objects, modified objects, deleted objects,
+    /// and any objects referenced in relationships.
+    /// </summary>
+    private HashSet<long> CollectAffectedObjectIds(TransactionChanges changes)
+    {
+        var affectedIds = new HashSet<long>();
+
+        // Add new object IDs and their referenced objects
+        foreach (var newSnapshot in changes.NewSnapshots)
+        {
+            affectedIds.Add(newSnapshot.ObjectId);
+            this.AddReferencedObjectIds(newSnapshot, affectedIds);
+        }
+
+        // Add modified object IDs and their referenced objects
+        foreach (var modified in changes.ModifiedSnapshots)
+        {
+            affectedIds.Add(modified.Snapshot.ObjectId);
+            this.AddReferencedObjectIds(modified.Snapshot, affectedIds);
+
+            // Include previously referenced objects (from old version)
+            if (this.snapshotById.TryGetValue(modified.Snapshot.ObjectId, out var oldSnapshot))
+            {
+                this.AddReferencedObjectIds(oldSnapshot, affectedIds);
+            }
+        }
+
+        // Add deleted object IDs and their referenced objects
+        foreach (var deletedId in changes.DeletedObjectIds)
+        {
+            affectedIds.Add(deletedId);
+
+            // Include objects that referenced the deleted object
+            if (this.snapshotById.TryGetValue(deletedId, out var deleted))
+            {
+                this.AddReferencedObjectIds(deleted, affectedIds);
+            }
+        }
+
+        return affectedIds;
+    }
+
+    /// <summary>
+    /// Adds object IDs referenced by a snapshot to the set.
+    /// </summary>
+    private void AddReferencedObjectIds(SlotSnapshot snapshot, HashSet<long> affectedIds)
+    {
+        // Add composite role targets
+        if (snapshot.CompositeRoles != null)
+        {
+            foreach (var targetId in snapshot.CompositeRoles)
+            {
+                if (targetId != 0)
                 {
                     affectedIds.Add(targetId);
                 }
             }
+        }
 
-            // Add association sources
-            foreach (var sourceId in obj.CompositeAssociationByAssociationType.Values)
+        // Add composites role targets (many-to-many)
+        if (snapshot.CompositesRoles != null)
+        {
+            foreach (var targetIds in snapshot.CompositesRoles)
             {
-                affectedIds.Add(sourceId);
+                if (targetIds != null)
+                {
+                    foreach (var targetId in targetIds)
+                    {
+                        affectedIds.Add(targetId);
+                    }
+                }
             }
+        }
 
-            // Add associations sources (many-to-many)
-            foreach (var sourceIds in obj.CompositesAssociationByAssociationType.Values)
+        // Add association sources
+        if (snapshot.CompositeAssociations != null)
+        {
+            foreach (var sourceId in snapshot.CompositeAssociations)
             {
-                foreach (var sourceId in sourceIds)
+                if (sourceId != 0)
                 {
                     affectedIds.Add(sourceId);
                 }
             }
         }
 
-        private void UpdateIndexesForObject(long objectId, CommittedObject oldObj, CommittedObject newObj)
+        // Add associations sources (many-to-many)
+        if (snapshot.CompositesAssociations != null)
         {
-            // Update unit role indexes
-            var oldUnitRoles = oldObj?.UnitRoleByRoleType ?? new Dictionary<IRoleType, object>();
-            var newUnitRoles = newObj.UnitRoleByRoleType;
-
-            // Find all unit role types that have changed
-            var allUnitRoleTypes = new HashSet<IRoleType>(oldUnitRoles.Keys);
-            foreach (var key in newUnitRoles.Keys)
+            foreach (var sourceIds in snapshot.CompositesAssociations)
             {
-                allUnitRoleTypes.Add(key);
-            }
-
-            foreach (var roleType in allUnitRoleTypes)
-            {
-                oldUnitRoles.TryGetValue(roleType, out var oldValue);
-                newUnitRoles.TryGetValue(roleType, out var newValue);
-
-                if (!Equals(oldValue, newValue))
+                if (sourceIds != null)
                 {
-                    this.indexStore.UpdateUnitRoleIndex(roleType, objectId, oldValue, newValue);
-                }
-            }
-
-            // Update composite role indexes
-            var oldCompositeRoles = oldObj?.CompositeRoleByRoleType ?? new Dictionary<IRoleType, long>();
-            var newCompositeRoles = newObj.CompositeRoleByRoleType;
-
-            var allCompositeRoleTypes = new HashSet<IRoleType>(oldCompositeRoles.Keys);
-            foreach (var key in newCompositeRoles.Keys)
-            {
-                allCompositeRoleTypes.Add(key);
-            }
-
-            foreach (var roleType in allCompositeRoleTypes)
-            {
-                var hasOld = oldCompositeRoles.TryGetValue(roleType, out var oldTargetId);
-                var hasNew = newCompositeRoles.TryGetValue(roleType, out var newTargetId);
-
-                if (hasOld != hasNew || (hasOld && oldTargetId != newTargetId))
-                {
-                    this.indexStore.UpdateCompositeRoleIndex(
-                        roleType,
-                        objectId,
-                        hasOld ? oldTargetId : null,
-                        hasNew ? newTargetId : null);
+                    foreach (var sourceId in sourceIds)
+                    {
+                        affectedIds.Add(sourceId);
+                    }
                 }
             }
         }
+    }
 
-        /// <summary>
-        /// Gets all object IDs for a type. Returns a snapshot copy.
-        /// </summary>
-        internal HashSet<long> GetObjectIdsForType(IObjectType type)
+    /// <summary>
+    /// Gets all object IDs for a type. Returns a snapshot copy.
+    /// </summary>
+    internal HashSet<long> GetObjectIdsForType(IObjectType type)
+    {
+        // Lock-free read from ConcurrentDictionary
+        if (this.objectIdsByType.TryGetValue(type, out var typeSet))
         {
-            // Lock-free read from ConcurrentDictionary
-            if (this.objectIdsByType.TryGetValue(type, out var typeSet))
-            {
-                return new HashSet<long>(typeSet.Keys);
-            }
-
-            return new HashSet<long>();
+            return new HashSet<long>(typeSet.Keys);
         }
 
-        /// <summary>
-        /// Gets all objects. Returns a snapshot copy.
-        /// </summary>
-        internal IEnumerable<CommittedObject> GetAllObjects()
-        {
-            // Lock-free read - ToList creates a snapshot
-            return this.objectById.Values.ToList();
-        }
+        return new HashSet<long>();
+    }
+
+    /// <summary>
+    /// Gets all object IDs. Returns a snapshot copy.
+    /// </summary>
+    internal IEnumerable<long> GetAllObjectIds()
+    {
+        // Lock-free read - ToList creates a snapshot
+        return this.snapshotById.Keys.ToList();
+    }
+
+    /// <summary>
+    /// Gets all snapshots. Returns a snapshot copy.
+    /// </summary>
+    internal IEnumerable<SlotSnapshot> GetAllSnapshots()
+    {
+        // Lock-free read - ToList creates a snapshot
+        return this.snapshotById.Values.ToList();
     }
 }
