@@ -23,7 +23,7 @@ public class Transaction : ITransaction
     private HashSet<long> newObjectIds;
     private HashSet<long> deletedObjectIds;
     private HashSet<long> modifiedObjectIds;
-    private Dictionary<long, long> snapshotVersionByObjectId;
+    private Dictionary<long, long> committedVersionByObjectId;
 
     internal Transaction(Database database, ITransactionServices scope)
     {
@@ -93,7 +93,7 @@ public class Transaction : ITransaction
                         // Increment version BEFORE building snapshot
                         strategy.IncrementVersionIfModified();
                         var snapshot = strategy.BuildCommittedSnapshot();
-                        var originalVersion = this.snapshotVersionByObjectId[objectId];
+                        var originalVersion = this.committedVersionByObjectId[objectId];
                         changes.ModifiedSnapshots.Add(new ModifiedSnapshot(snapshot, originalVersion));
                         strategiesToApplySnapshot.Add((strategy, snapshot));
                     }
@@ -122,12 +122,12 @@ public class Transaction : ITransaction
                 // Update snapshot versions for all surviving instantiated strategies
                 // This enables the rolling transaction model where objects can be modified
                 // again after a commit
-                this.snapshotVersionByObjectId.Clear();
+                this.committedVersionByObjectId.Clear();
                 foreach (var kvp in this.instantiatedStrategies)
                 {
                     if (!kvp.Value.IsDeleted)
                     {
-                        this.snapshotVersionByObjectId[kvp.Key] = kvp.Value.ObjectVersion;
+                        this.committedVersionByObjectId[kvp.Key] = kvp.Value.ObjectVersion;
                     }
                 }
 
@@ -169,12 +169,12 @@ public class Transaction : ITransaction
                 }
 
                 // Update snapshot versions from refreshed strategies
-                this.snapshotVersionByObjectId.Clear();
+                this.committedVersionByObjectId.Clear();
                 foreach (var kvp in this.instantiatedStrategies)
                 {
                     if (!kvp.Value.IsDeleted)
                     {
-                        this.snapshotVersionByObjectId[kvp.Key] = kvp.Value.ObjectVersion;
+                        this.committedVersionByObjectId[kvp.Key] = kvp.Value.ObjectVersion;
                     }
                 }
 
@@ -364,7 +364,7 @@ public class Transaction : ITransaction
             return strategy.IsDeleted ? null : strategy;
         }
 
-        var snapshot = this.Database.CommittedStore.GetSnapshot(objectId);
+        var snapshot = this.Database.Store.GetSnapshot(objectId);
         if (!snapshot.IsValid)
         {
             return null;
@@ -372,7 +372,7 @@ public class Transaction : ITransaction
 
         strategy = new Strategy(this, snapshot);
         this.instantiatedStrategies[objectId] = strategy;
-        this.snapshotVersionByObjectId[objectId] = snapshot.Version;
+        this.committedVersionByObjectId[objectId] = snapshot.Version;
 
         return strategy;
     }
@@ -416,7 +416,7 @@ public class Transaction : ITransaction
         this.modifiedObjectIds.Remove(objectId);
     }
 
-    internal virtual HashSet<Strategy> GetStrategiesForExtentIncludingDeleted(IObjectType type)
+    internal virtual HashSet<Strategy> GetAllStrategiesForType(IObjectType type)
     {
         var concreteClasses = this.GetConcreteClasses(type);
 
@@ -429,7 +429,7 @@ public class Transaction : ITransaction
 
         foreach (var concreteClass in concreteClasses)
         {
-            var committedIds = this.Database.CommittedStore.GetObjectIdsForType(concreteClass);
+            var committedIds = this.Database.Store.GetObjectIdsForType(concreteClass);
             foreach (var objectId in committedIds)
             {
                 var strategy = this.InstantiateMemoryStrategy(objectId);
@@ -446,7 +446,7 @@ public class Transaction : ITransaction
             {
                 foreach (var concreteClass in concreteClasses)
                 {
-                    if (strategy.UncheckedObjectType.Equals(concreteClass))
+                    if (strategy.CachedObjectType.Equals(concreteClass))
                     {
                         strategies.Add(strategy);
                         break;
@@ -477,7 +477,7 @@ public class Transaction : ITransaction
             {
                 foreach (var concreteClass in concreteClasses)
                 {
-                    if (strategy.UncheckedObjectType.Equals(concreteClass))
+                    if (strategy.CachedObjectType.Equals(concreteClass))
                     {
                         yield return strategy;
                         break;
@@ -506,7 +506,7 @@ public class Transaction : ITransaction
             {
                 foreach (var concreteClass in concreteClasses)
                 {
-                    if (strategy.UncheckedObjectType.Equals(concreteClass))
+                    if (strategy.CachedObjectType.Equals(concreteClass))
                     {
                         yield return strategy;
                         break;
@@ -520,13 +520,13 @@ public class Transaction : ITransaction
     {
         var sortedNonDeletedStrategiesByObjectType = new Dictionary<IObjectType, List<Strategy>>();
 
-        var allObjectIds = this.Database.CommittedStore.GetAllObjectIds();
+        var allObjectIds = this.Database.Store.GetAllObjectIds();
         foreach (var objectId in allObjectIds)
         {
             var strategy = this.InstantiateMemoryStrategy(objectId);
             if (strategy != null && !strategy.IsDeleted)
             {
-                var objectType = strategy.UncheckedObjectType;
+                var objectType = strategy.CachedObjectType;
 
                 if (!sortedNonDeletedStrategiesByObjectType.TryGetValue(objectType, out var sortedNonDeletedStrategies))
                 {
@@ -581,6 +581,6 @@ public class Transaction : ITransaction
         this.newObjectIds = new HashSet<long>();
         this.deletedObjectIds = new HashSet<long>();
         this.modifiedObjectIds = new HashSet<long>();
-        this.snapshotVersionByObjectId = new Dictionary<long, long>();
+        this.committedVersionByObjectId = new Dictionary<long, long>();
     }
 }

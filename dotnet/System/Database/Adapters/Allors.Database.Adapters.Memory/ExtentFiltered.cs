@@ -17,13 +17,13 @@ internal sealed class ExtentFiltered : Extent
 {
     private readonly IComposite objectType;
 
-    private And filter;
+    private And predicate;
 
     internal ExtentFiltered(Transaction transaction, IComposite objectType)
         : base(transaction) =>
         this.objectType = objectType;
 
-    public override ICompositePredicate Filter => this.filter ??= new And(this);
+    public override ICompositePredicate Filter => this.predicate ??= new And(this);
 
     public override IComposite ObjectType => this.objectType;
 
@@ -50,11 +50,11 @@ internal sealed class ExtentFiltered : Extent
             // Simple O(n) scan - strategy performance is prioritized over extent performance
             this.Strategies = new List<Strategy>();
 
-            foreach (var strategy in this.Transaction.GetStrategiesForExtentIncludingDeleted(this.objectType))
+            foreach (var strategy in this.Transaction.GetAllStrategiesForType(this.objectType))
             {
                 if (!strategy.IsDeleted)
                 {
-                    if (this.filter?.Include != true || this.filter.Evaluate(strategy) == ThreeValuedLogic.True)
+                    if (this.predicate?.Include != true || this.predicate.Evaluate(strategy) == ThreeValuedLogic.True)
                     {
                         this.Strategies.Add(strategy);
                     }

@@ -52,7 +52,7 @@ public sealed class Strategy : IStrategy
     private long[] rollbackCompositeAssociations;
 
     private bool isDeletedOnRollback;
-    private WeakReference allorizedObjectWeakReference;
+    private WeakReference objectWeakReference;
 
     /// <summary>
     /// Constructor for new objects (not yet committed).
@@ -60,7 +60,7 @@ public sealed class Strategy : IStrategy
     internal Strategy(Transaction transaction, IClass objectType, long objectId, long version)
     {
         this.Transaction = transaction;
-        this.UncheckedObjectType = objectType;
+        this.CachedObjectType = objectType;
         this.ObjectId = objectId;
         this.ObjectVersion = version;
 
@@ -87,7 +87,7 @@ public sealed class Strategy : IStrategy
     internal Strategy(Transaction transaction, SlotSnapshot snapshot)
     {
         this.Transaction = transaction;
-        this.UncheckedObjectType = snapshot.ObjectType;
+        this.CachedObjectType = snapshot.ObjectType;
         this.ObjectId = snapshot.ObjectId;
         this.ObjectVersion = snapshot.Version;
 
@@ -120,19 +120,19 @@ public sealed class Strategy : IStrategy
         get
         {
             this.AssertNotDeleted();
-            return this.UncheckedObjectType;
+            return this.CachedObjectType;
         }
     }
 
     ITransaction IStrategy.Transaction => this.Transaction;
 
-    internal IClass UncheckedObjectType { get; }
+    internal IClass CachedObjectType { get; }
 
     internal Transaction Transaction { get; }
 
     private ChangeLog ChangeLog => this.Transaction.ChangeLog;
 
-    public override string ToString() => this.UncheckedObjectType.Name + " " + this.ObjectId;
+    public override string ToString() => this.CachedObjectType.Name + " " + this.ObjectId;
 
     #region Role Dispatch
 
@@ -663,7 +663,7 @@ public sealed class Strategy : IStrategy
     {
         this.AssertNotDeleted();
 
-        foreach (var roleType in this.UncheckedObjectType.DatabaseRoleTypes)
+        foreach (var roleType in this.CachedObjectType.DatabaseRoleTypes)
         {
             if (this.ExistRole(roleType))
             {
@@ -697,7 +697,7 @@ public sealed class Strategy : IStrategy
             }
         }
 
-        foreach (var associationType in this.UncheckedObjectType.DatabaseAssociationTypes)
+        foreach (var associationType in this.CachedObjectType.DatabaseAssociationTypes)
         {
             var roleType = associationType.RoleType;
 
@@ -762,18 +762,18 @@ public sealed class Strategy : IStrategy
     public IObject GetObject()
     {
         IObject allorsObject;
-        if (this.allorizedObjectWeakReference == null)
+        if (this.objectWeakReference == null)
         {
             allorsObject = this.Transaction.Database.ObjectFactory.Create(this);
-            this.allorizedObjectWeakReference = new WeakReference(allorsObject);
+            this.objectWeakReference = new WeakReference(allorsObject);
         }
         else
         {
-            allorsObject = (IObject)this.allorizedObjectWeakReference.Target;
+            allorsObject = (IObject)this.objectWeakReference.Target;
             if (allorsObject == null)
             {
                 allorsObject = this.Transaction.Database.ObjectFactory.Create(this);
-                this.allorizedObjectWeakReference.Target = allorsObject;
+                this.objectWeakReference.Target = allorsObject;
             }
         }
 
@@ -894,7 +894,7 @@ public sealed class Strategy : IStrategy
     internal void Refresh()
     {
         // Get a fresh snapshot from the committed store
-        var freshSnapshot = this.Transaction.Database.CommittedStore.GetSnapshot(this.ObjectId);
+        var freshSnapshot = this.Transaction.Database.Store.GetSnapshot(this.ObjectId);
         if (freshSnapshot.IsValid)
         {
             this.snapshot = freshSnapshot;
@@ -915,7 +915,7 @@ public sealed class Strategy : IStrategy
 
     internal SlotSnapshot BuildCommittedSnapshot()
     {
-        var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+        var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
 
         // Build unit roles array
         object[] unitRolesArray = null;
@@ -1016,7 +1016,7 @@ public sealed class Strategy : IStrategy
 
         return new SlotSnapshot(
             this.ObjectId,
-            this.UncheckedObjectType,
+            this.CachedObjectType,
             this.ObjectVersion,
             unitRolesArray,
             compositeRolesArray,
@@ -1029,13 +1029,13 @@ public sealed class Strategy : IStrategy
 
     #region Relationship Implementations
 
-    internal void SetCompositeRoleOne2One(IRoleType roleType, Strategy @new)
+    internal void SetCompositeRoleOne2One(IRoleType roleType, Strategy newRoleStrategy)
     {
         this.AssertNotDeleted();
-        this.Transaction.Database.CompositeRoleChecks(this, roleType, @new);
+        this.Transaction.Database.CompositeRoleChecks(this, roleType, newRoleStrategy);
 
         var previousRoleId = this.GetCompositeRoleId(roleType);
-        var newRoleId = @new.ObjectId;
+        var newRoleId = newRoleStrategy.ObjectId;
 
         if (newRoleId == previousRoleId)
         {
@@ -1058,15 +1058,15 @@ public sealed class Strategy : IStrategy
             }
         }
 
-        var newPreviousAssociationId = @new.GetCompositeAssociationId(associationType);
-        this.ChangeLog.OnChangingCompositeAssociation(@new, associationType, newPreviousAssociationId != 0 ? this.Transaction.InstantiateMemoryStrategy(newPreviousAssociationId) : null);
+        var newPreviousAssociationId = newRoleStrategy.GetCompositeAssociationId(associationType);
+        this.ChangeLog.OnChangingCompositeAssociation(newRoleStrategy, associationType, newPreviousAssociationId != 0 ? this.Transaction.InstantiateMemoryStrategy(newPreviousAssociationId) : null);
 
         if (newPreviousAssociationId != 0 && newPreviousAssociationId != this.ObjectId)
         {
             var newPreviousAssociation = this.Transaction.InstantiateMemoryStrategy(newPreviousAssociationId);
             if (newPreviousAssociation != null)
             {
-                this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, previousRoleId != 0 ? @new : null);
+                this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, previousRoleId != 0 ? newRoleStrategy : null);
 
                 newPreviousAssociation.BackupCompositeRole(roleType);
                 newPreviousAssociation.SetCompositeRoleId(roleType, 0);
@@ -1074,24 +1074,24 @@ public sealed class Strategy : IStrategy
             }
         }
 
-        this.ChangeLog.OnChangingCompositeRole(this, roleType, @new, previousRoleId != 0 ? this.Transaction.InstantiateMemoryStrategy(previousRoleId) : null);
+        this.ChangeLog.OnChangingCompositeRole(this, roleType, newRoleStrategy, previousRoleId != 0 ? this.Transaction.InstantiateMemoryStrategy(previousRoleId) : null);
 
         this.BackupCompositeRole(roleType);
         this.SetCompositeRoleId(roleType, newRoleId);
         this.Transaction.MarkModified(this.ObjectId);
 
-        @new.BackupCompositeAssociation(associationType);
-        @new.SetCompositeAssociationId(associationType, this.ObjectId);
-        this.Transaction.MarkModified(@new.ObjectId);
+        newRoleStrategy.BackupCompositeAssociation(associationType);
+        newRoleStrategy.SetCompositeAssociationId(associationType, this.ObjectId);
+        this.Transaction.MarkModified(newRoleStrategy.ObjectId);
     }
 
-    internal void SetCompositeRoleMany2One(IRoleType roleType, Strategy @new)
+    internal void SetCompositeRoleMany2One(IRoleType roleType, Strategy newRoleStrategy)
     {
         this.AssertNotDeleted();
-        this.Transaction.Database.CompositeRoleChecks(this, roleType, @new);
+        this.Transaction.Database.CompositeRoleChecks(this, roleType, newRoleStrategy);
 
         var previousRoleId = this.GetCompositeRoleId(roleType);
-        var newRoleId = @new.ObjectId;
+        var newRoleId = newRoleStrategy.ObjectId;
 
         if (newRoleId == previousRoleId)
         {
@@ -1122,26 +1122,26 @@ public sealed class Strategy : IStrategy
             }
         }
 
-        this.ChangeLog.OnChangingCompositeRole(this, roleType, @new, previousRoleId != 0 ? this.Transaction.InstantiateMemoryStrategy(previousRoleId) : null);
+        this.ChangeLog.OnChangingCompositeRole(this, roleType, newRoleStrategy, previousRoleId != 0 ? this.Transaction.InstantiateMemoryStrategy(previousRoleId) : null);
 
         this.BackupCompositeRole(roleType);
         this.SetCompositeRoleId(roleType, newRoleId);
         this.Transaction.MarkModified(this.ObjectId);
 
         // Only instantiate associations if ChangeLog doesn't already have them
-        if (!this.ChangeLog.HasOriginalCompositesAssociation(@new, associationType))
+        if (!this.ChangeLog.HasOriginalCompositesAssociation(newRoleStrategy, associationType))
         {
-            var newAssociations = @new.GetCompositesAssociationIds(associationType);
-            this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, newAssociations != null ? newAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
+            var newAssociations = newRoleStrategy.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(newRoleStrategy, associationType, newAssociations != null ? newAssociations.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray() : null);
         }
         else
         {
-            this.ChangeLog.OnChangingCompositesAssociation(@new, associationType, null);
+            this.ChangeLog.OnChangingCompositesAssociation(newRoleStrategy, associationType, null);
         }
 
-        @new.BackupCompositesAssociation(associationType);
-        @new.AddCompositesAssociationId(associationType, this.ObjectId);
-        this.Transaction.MarkModified(@new.ObjectId);
+        newRoleStrategy.BackupCompositesAssociation(associationType);
+        newRoleStrategy.AddCompositesAssociationId(associationType, this.ObjectId);
+        this.Transaction.MarkModified(newRoleStrategy.ObjectId);
     }
 
     internal void SetCompositesRolesOne2Many(IRoleType roleType, IEnumerable<Strategy> roles)
@@ -1298,10 +1298,10 @@ public sealed class Strategy : IStrategy
         this.Transaction.MarkModified(this.ObjectId);
     }
 
-    private void AddCompositeRoleMany2Many(IRoleType roleType, Strategy add)
+    private void AddCompositeRoleMany2Many(IRoleType roleType, Strategy roleToAdd)
     {
         var previousRoleIds = this.GetCompositesRoleIds(roleType);
-        if (previousRoleIds?.Contains(add.ObjectId) == true)
+        if (previousRoleIds?.Contains(roleToAdd.ObjectId) == true)
         {
             return;
         }
@@ -1309,41 +1309,41 @@ public sealed class Strategy : IStrategy
         // Only instantiate previous roles if ChangeLog doesn't already have them
         if (!this.ChangeLog.HasOriginalCompositesRole(this, roleType))
         {
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToAdd, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
         }
         else
         {
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, null);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToAdd, null);
         }
 
         this.BackupCompositesRole(roleType);
         this.EnsureCompositesRoleIds(roleType);
         var slot = this.slotLayout.GetCompositesSlotIndex(roleType);
-        this.compositesRoles[slot].Add(add.ObjectId);
+        this.compositesRoles[slot].Add(roleToAdd.ObjectId);
         this.Transaction.MarkModified(this.ObjectId);
 
         var associationType = roleType.AssociationType;
 
         // Only instantiate previous associations if ChangeLog doesn't already have them
-        if (!this.ChangeLog.HasOriginalCompositesAssociation(add, associationType))
+        if (!this.ChangeLog.HasOriginalCompositesAssociation(roleToAdd, associationType))
         {
-            var addAssociationIds = add.GetCompositesAssociationIds(associationType);
-            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, addAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+            var addAssociationIds = roleToAdd.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(roleToAdd, associationType, addAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
         }
         else
         {
-            this.ChangeLog.OnChangingCompositesAssociation(add, associationType, null);
+            this.ChangeLog.OnChangingCompositesAssociation(roleToAdd, associationType, null);
         }
 
-        add.BackupCompositesAssociation(associationType);
-        add.AddCompositesAssociationId(associationType, this.ObjectId);
-        this.Transaction.MarkModified(add.ObjectId);
+        roleToAdd.BackupCompositesAssociation(associationType);
+        roleToAdd.AddCompositesAssociationId(associationType, this.ObjectId);
+        this.Transaction.MarkModified(roleToAdd.ObjectId);
     }
 
-    private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy add)
+    private void AddCompositeRoleOne2Many(IRoleType roleType, Strategy roleToAdd)
     {
         var previousRoleIds = this.GetCompositesRoleIds(roleType);
-        if (previousRoleIds?.Contains(add.ObjectId) == true)
+        if (previousRoleIds?.Contains(roleToAdd.ObjectId) == true)
         {
             return;
         }
@@ -1351,58 +1351,58 @@ public sealed class Strategy : IStrategy
         // Only instantiate previous roles if ChangeLog doesn't already have them
         if (!this.ChangeLog.HasOriginalCompositesRole(this, roleType))
         {
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToAdd, previousRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
         }
         else
         {
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, add, null);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToAdd, null);
         }
 
         var associationType = roleType.AssociationType;
 
-        var addPreviousAssociationId = add.GetCompositeAssociationId(associationType);
+        var roleToAddPreviousAssociationId = roleToAdd.GetCompositeAssociationId(associationType);
 
-        this.ChangeLog.OnChangingCompositeAssociation(add, associationType, addPreviousAssociationId != 0 ? this.Transaction.InstantiateMemoryStrategy(addPreviousAssociationId) : null);
+        this.ChangeLog.OnChangingCompositeAssociation(roleToAdd, associationType, roleToAddPreviousAssociationId != 0 ? this.Transaction.InstantiateMemoryStrategy(roleToAddPreviousAssociationId) : null);
 
-        if (addPreviousAssociationId != 0 && addPreviousAssociationId != this.ObjectId)
+        if (roleToAddPreviousAssociationId != 0 && roleToAddPreviousAssociationId != this.ObjectId)
         {
-            var addPreviousAssociation = this.Transaction.InstantiateMemoryStrategy(addPreviousAssociationId);
-            if (addPreviousAssociation != null)
+            var roleToAddPreviousAssociation = this.Transaction.InstantiateMemoryStrategy(roleToAddPreviousAssociationId);
+            if (roleToAddPreviousAssociation != null)
             {
                 // Only instantiate roles if ChangeLog doesn't already have them
-                if (!this.ChangeLog.HasOriginalCompositesRole(addPreviousAssociation, roleType))
+                if (!this.ChangeLog.HasOriginalCompositesRole(roleToAddPreviousAssociation, roleType))
                 {
-                    var addPreviousAssociationRoleIds = addPreviousAssociation.GetCompositesRoleIds(roleType);
-                    this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, addPreviousAssociationRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+                    var roleToAddPreviousAssociationRoleIds = roleToAddPreviousAssociation.GetCompositesRoleIds(roleType);
+                    this.ChangeLog.OnChangingCompositesRole(roleToAddPreviousAssociation, roleType, null, roleToAddPreviousAssociationRoleIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
                 }
                 else
                 {
-                    this.ChangeLog.OnChangingCompositesRole(addPreviousAssociation, roleType, null, null);
+                    this.ChangeLog.OnChangingCompositesRole(roleToAddPreviousAssociation, roleType, null, null);
                 }
 
-                addPreviousAssociation.BackupCompositesRole(roleType);
-                addPreviousAssociation.EnsureCompositesRoleIds(roleType);
+                roleToAddPreviousAssociation.BackupCompositesRole(roleType);
+                roleToAddPreviousAssociation.EnsureCompositesRoleIds(roleType);
                 var prevSlot = this.slotLayout.GetCompositesSlotIndex(roleType);
-                addPreviousAssociation.compositesRoles[prevSlot].Remove(add.ObjectId);
-                this.Transaction.MarkModified(addPreviousAssociation.ObjectId);
+                roleToAddPreviousAssociation.compositesRoles[prevSlot].Remove(roleToAdd.ObjectId);
+                this.Transaction.MarkModified(roleToAddPreviousAssociation.ObjectId);
             }
         }
 
         this.BackupCompositesRole(roleType);
         this.EnsureCompositesRoleIds(roleType);
         var slot = this.slotLayout.GetCompositesSlotIndex(roleType);
-        this.compositesRoles[slot].Add(add.ObjectId);
+        this.compositesRoles[slot].Add(roleToAdd.ObjectId);
         this.Transaction.MarkModified(this.ObjectId);
 
-        add.BackupCompositeAssociation(associationType);
-        add.SetCompositeAssociationId(associationType, this.ObjectId);
-        this.Transaction.MarkModified(add.ObjectId);
+        roleToAdd.BackupCompositeAssociation(associationType);
+        roleToAdd.SetCompositeAssociationId(associationType, this.ObjectId);
+        this.Transaction.MarkModified(roleToAdd.ObjectId);
     }
 
-    private void RemoveCompositeRoleMany2Many(IRoleType roleType, Strategy remove)
+    private void RemoveCompositeRoleMany2Many(IRoleType roleType, Strategy roleToRemove)
     {
         var roleIds = this.GetCompositesRoleIds(roleType);
-        if (roleIds?.Contains(remove.ObjectId) != true)
+        if (roleIds?.Contains(roleToRemove.ObjectId) != true)
         {
             return;
         }
@@ -1410,35 +1410,35 @@ public sealed class Strategy : IStrategy
         // Only instantiate roles if ChangeLog doesn't already have them
         if (!this.ChangeLog.HasOriginalCompositesRole(this, roleType))
         {
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, roleIds.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
         }
         else
         {
-            this.ChangeLog.OnChangingCompositesRole(this, roleType, remove, null);
+            this.ChangeLog.OnChangingCompositesRole(this, roleType, roleToRemove, null);
         }
 
         this.BackupCompositesRole(roleType);
         this.EnsureCompositesRoleIds(roleType);
         var slot = this.slotLayout.GetCompositesSlotIndex(roleType);
-        this.compositesRoles[slot].Remove(remove.ObjectId);
+        this.compositesRoles[slot].Remove(roleToRemove.ObjectId);
         this.Transaction.MarkModified(this.ObjectId);
 
         var associationType = roleType.AssociationType;
 
         // Only instantiate associations if ChangeLog doesn't already have them
-        if (!this.ChangeLog.HasOriginalCompositesAssociation(remove, associationType))
+        if (!this.ChangeLog.HasOriginalCompositesAssociation(roleToRemove, associationType))
         {
-            var removeAssociationIds = remove.GetCompositesAssociationIds(associationType);
-            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, removeAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
+            var roleToRemoveAssociationIds = roleToRemove.GetCompositesAssociationIds(associationType);
+            this.ChangeLog.OnChangingCompositesAssociation(roleToRemove, associationType, roleToRemoveAssociationIds?.Select(id => this.Transaction.InstantiateMemoryStrategy(id)).Where(s => s != null).ToArray());
         }
         else
         {
-            this.ChangeLog.OnChangingCompositesAssociation(remove, associationType, null);
+            this.ChangeLog.OnChangingCompositesAssociation(roleToRemove, associationType, null);
         }
 
-        remove.BackupCompositesAssociation(associationType);
-        remove.RemoveCompositesAssociationId(associationType, this.ObjectId);
-        this.Transaction.MarkModified(remove.ObjectId);
+        roleToRemove.BackupCompositesAssociation(associationType);
+        roleToRemove.RemoveCompositesAssociationId(associationType, this.ObjectId);
+        this.Transaction.MarkModified(roleToRemove.ObjectId);
     }
 
     private void RemoveCompositeRoleOne2Many(IRoleType roleType, Strategy roleToRemove)
@@ -1523,7 +1523,7 @@ public sealed class Strategy : IStrategy
             return;
         }
 
-        foreach (var roleType in this.UncheckedObjectType.DatabaseRoleTypes)
+        foreach (var roleType in this.CachedObjectType.DatabaseRoleTypes)
         {
             if (roleType.ObjectType is IUnit)
             {
@@ -1676,7 +1676,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.unitRoles == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.unitRoles = new object[counts.UnitRoleCount];
 
             // Copy from snapshot if exists
@@ -1692,7 +1692,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.rollbackUnitRoles == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.rollbackUnitRoles = new object[counts.UnitRoleCount];
         }
     }
@@ -1702,7 +1702,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.compositeRoles == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.compositeRoles = new long[counts.CompositeRoleCount];
 
             // Copy from snapshot if exists
@@ -1718,7 +1718,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.rollbackCompositeRoles == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.rollbackCompositeRoles = new long[counts.CompositeRoleCount];
         }
     }
@@ -1728,7 +1728,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.compositesRoles == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.compositesRoles = new HashSet<long>[counts.CompositesRoleCount];
         }
     }
@@ -1738,7 +1738,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.compositeAssociations == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.compositeAssociations = new long[counts.CompositeAssociationCount];
 
             // Copy from snapshot if exists
@@ -1754,7 +1754,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.rollbackCompositeAssociations == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.rollbackCompositeAssociations = new long[counts.CompositeAssociationCount];
         }
     }
@@ -1764,7 +1764,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.compositesAssociations == null)
         {
-            var counts = this.slotLayout.GetSlotCounts(this.UncheckedObjectType);
+            var counts = this.slotLayout.GetSlotCounts(this.CachedObjectType);
             this.compositesAssociations = new HashSet<long>[counts.CompositesAssociationCount];
         }
     }
@@ -1807,7 +1807,7 @@ public sealed class Strategy : IStrategy
     {
         if (this.IsDeleted)
         {
-            throw new Exception($"Object of class {this.UncheckedObjectType.Name} with id {this.ObjectId} has been deleted");
+            throw new Exception($"Object of class {this.CachedObjectType.Name} with id {this.ObjectId} has been deleted");
         }
     }
 

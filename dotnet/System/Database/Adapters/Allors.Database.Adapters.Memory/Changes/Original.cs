@@ -21,9 +21,9 @@ namespace Allors.Database.Adapters.Memory
 
         internal Dictionary<IRoleType, Strategy[]> OriginalCompositesRoleByRoleType { get; private set; }
 
-        internal Dictionary<IAssociationType, Strategy> OriginalCompositeAssociationByRoleType { get; private set; }
+        internal Dictionary<IAssociationType, Strategy> OriginalCompositeAssociationByAssociationType { get; private set; }
 
-        internal Dictionary<IAssociationType, Strategy[]> OriginalCompositesAssociationByRoleType { get; private set; }
+        internal Dictionary<IAssociationType, Strategy[]> OriginalCompositesAssociationByAssociationType { get; private set; }
 
         internal void OnChangingUnitRole(IRoleType roleType, object previousRole)
         {
@@ -57,21 +57,21 @@ namespace Allors.Database.Adapters.Memory
 
         internal void OnChangingCompositeAssociation(IAssociationType associationType, Strategy previousAssociation)
         {
-            this.OriginalCompositeAssociationByRoleType ??= new Dictionary<IAssociationType, Strategy>();
+            this.OriginalCompositeAssociationByAssociationType ??= new Dictionary<IAssociationType, Strategy>();
 
-            if (!this.OriginalCompositeAssociationByRoleType.ContainsKey(associationType))
+            if (!this.OriginalCompositeAssociationByAssociationType.ContainsKey(associationType))
             {
-                this.OriginalCompositeAssociationByRoleType.Add(associationType, previousAssociation);
+                this.OriginalCompositeAssociationByAssociationType.Add(associationType, previousAssociation);
             }
         }
 
         internal void OnChangingCompositesAssociation(IAssociationType associationType, IEnumerable<Strategy> previousAssociations)
         {
-            this.OriginalCompositesAssociationByRoleType ??= new Dictionary<IAssociationType, Strategy[]>();
+            this.OriginalCompositesAssociationByAssociationType ??= new Dictionary<IAssociationType, Strategy[]>();
 
-            if (!this.OriginalCompositesAssociationByRoleType.ContainsKey(associationType))
+            if (!this.OriginalCompositesAssociationByAssociationType.ContainsKey(associationType))
             {
-                this.OriginalCompositesAssociationByRoleType.Add(associationType, previousAssociations?.ToArray());
+                this.OriginalCompositesAssociationByAssociationType.Add(associationType, previousAssociations?.ToArray());
             }
         }
 
@@ -112,7 +112,7 @@ namespace Allors.Database.Adapters.Memory
             {
                 if (associationType.IsOne)
                 {
-                    var originalAssociation = this.OriginalCompositeAssociationByRoleType[associationType];
+                    var originalAssociation = this.OriginalCompositeAssociationByAssociationType[associationType];
                     if (this.Strategy.ShouldTrim(associationType, originalAssociation))
                     {
                         associationTypes.Remove(associationType);
@@ -120,7 +120,7 @@ namespace Allors.Database.Adapters.Memory
                 }
                 else
                 {
-                    var originalAssociation = this.OriginalCompositesAssociationByRoleType[associationType];
+                    var originalAssociation = this.OriginalCompositesAssociationByAssociationType[associationType];
                     if (this.Strategy.ShouldTrim(associationType, originalAssociation))
                     {
                         associationTypes.Remove(associationType);

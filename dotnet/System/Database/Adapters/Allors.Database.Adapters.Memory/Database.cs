@@ -16,8 +16,8 @@ using Meta;
 public class Database : IDatabase
 {
     private readonly ConcurrentDictionary<IObjectType, object> concreteClassesByObjectType;
-    private readonly CommittedStore committedStore;
-    private readonly Lock commitLock;
+    private readonly Store store;
+    private readonly Lock globalLock;
 
     public Database(IDatabaseServices state, Configuration configuration)
     {
@@ -36,8 +36,8 @@ public class Database : IDatabase
         this.MetaPopulation = this.ObjectFactory.MetaPopulation;
 
         this.concreteClassesByObjectType = new ConcurrentDictionary<IObjectType, object>();
-        this.committedStore = new CommittedStore();
-        this.commitLock = new Lock();
+        this.store = new Store();
+        this.globalLock = new Lock();
 
         // Create SlotLayout for O(1) slot-based role/association access
         this.SlotLayout = new SlotLayout(this.MetaPopulation);
@@ -65,7 +65,7 @@ public class Database : IDatabase
 
     internal bool IsLoading { get; private set; }
 
-    internal CommittedStore CommittedStore => this.committedStore;
+    internal Store Store => this.store;
 
     /// <summary>
     /// Pre-computed slot layout for O(1) role and association access.
@@ -157,23 +157,23 @@ public class Database : IDatabase
 
     public virtual void Init()
     {
-        using (this.commitLock.EnterScope())
+        using (this.globalLock.EnterScope())
         {
-            this.committedStore.Reset();
+            this.store.Reset();
         }
 
         this.Services.OnInit(this);
     }
 
-    internal long NextId() => this.committedStore.NextId();
+    internal long NextId() => this.store.NextId();
 
-    internal void UpdateCurrentId(long objectId) => this.committedStore.UpdateCurrentId(objectId);
+    internal void UpdateCurrentId(long objectId) => this.store.UpdateCurrentId(objectId);
 
     internal void CommitTransaction(TransactionChanges changes)
     {
-        using (this.commitLock.EnterScope())
+        using (this.globalLock.EnterScope())
         {
-            this.committedStore.Commit(changes);
+            this.store.Commit(changes);
         }
     }
 

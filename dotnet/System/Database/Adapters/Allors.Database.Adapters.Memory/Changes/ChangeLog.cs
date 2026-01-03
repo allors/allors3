@@ -101,7 +101,7 @@ namespace Allors.Database.Adapters.Memory
                 return false;
             }
 
-            return original.OriginalCompositesAssociationByRoleType?.ContainsKey(associationType) == true;
+            return original.OriginalCompositesAssociationByAssociationType?.ContainsKey(associationType) == true;
         }
 
         internal ChangeSet Checkpoint() =>

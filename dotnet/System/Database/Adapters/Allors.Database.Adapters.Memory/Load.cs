@@ -411,7 +411,7 @@ namespace Allors.Database.Adapters.Memory
 
                                 if (association == null ||
                                     !this.transaction.Database.ContainsClass(
-                                        relationType.AssociationType.ObjectType, association.UncheckedObjectType) ||
+                                        relationType.AssociationType.ObjectType, association.CachedObjectType) ||
                                     (relationType.RoleType.IsOne && roleIdStringArray.Length != 1))
                                 {
                                     foreach (var roleId in roleIdStringArray)
@@ -423,7 +423,7 @@ namespace Allors.Database.Adapters.Memory
                                 {
                                     var roleIdString = long.Parse(roleIdStringArray[0]);
                                     var roleStrategy = this.LoadInstantiateStrategy(roleIdString);
-                                    if (roleStrategy == null || !this.transaction.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.UncheckedObjectType))
+                                    if (roleStrategy == null || !this.transaction.Database.ContainsClass((IComposite)relationType.RoleType.ObjectType, roleStrategy.CachedObjectType))
                                     {
                                         this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleIdStringArray[0]);
                                     }
@@ -446,7 +446,7 @@ namespace Allors.Database.Adapters.Memory
                                         if (role == null ||
                                             !this.transaction.Database.ContainsClass(
                                                 (IComposite)relationType.RoleType.ObjectType,
-                                                role.UncheckedObjectType))
+                                                role.CachedObjectType))
                                         {
                                             this.transaction.Database.OnRelationNotLoaded(relationType.Id, associationId, roleId.ToString());
                                         }

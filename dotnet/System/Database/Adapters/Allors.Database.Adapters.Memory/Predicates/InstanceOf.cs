@@ -8,11 +8,11 @@ namespace Allors.Database.Adapters.Memory
     using Adapters;
     using Meta;
 
-    internal sealed class Instanceof : Predicate
+    internal sealed class InstanceOf : Predicate
     {
         private readonly IObjectType objectType;
 
-        internal Instanceof(IObjectType objectType)
+        internal InstanceOf(IObjectType objectType)
         {
             PredicateAssertions.ValidateInstanceof(objectType);
 
@@ -21,12 +21,12 @@ namespace Allors.Database.Adapters.Memory
 
         internal override ThreeValuedLogic Evaluate(Strategy strategy)
         {
-            if (strategy.UncheckedObjectType.Equals(this.objectType))
+            if (strategy.CachedObjectType.Equals(this.objectType))
             {
                 return ThreeValuedLogic.True;
             }
 
-            return this.objectType is IInterface @interface && strategy.UncheckedObjectType.ExistSupertype(@interface)
+            return this.objectType is IInterface @interface && strategy.CachedObjectType.ExistSupertype(@interface)
                        ? ThreeValuedLogic.True
                        : ThreeValuedLogic.False;
         }

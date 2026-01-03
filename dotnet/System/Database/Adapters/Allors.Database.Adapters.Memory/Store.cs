@@ -1,4 +1,4 @@
-// <copyright file="CommittedStore.cs" company="Allors bv">
+// <copyright file="Store.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,14 +16,14 @@ using Meta;
 /// Uses ConcurrentDictionary for lock-free reads.
 /// All write operations (Commit, Reset) must be externally synchronized by the caller.
 /// </summary>
-internal sealed class CommittedStore
+internal sealed class Store
 {
     private readonly ConcurrentDictionary<long, SlotSnapshot> snapshotById;
     private readonly ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>> objectIdsByType;
 
     private long currentId;
 
-    internal CommittedStore()
+    internal Store()
     {
         this.snapshotById = new ConcurrentDictionary<long, SlotSnapshot>();
         this.objectIdsByType = new ConcurrentDictionary<IObjectType, ConcurrentDictionary<long, byte>>();

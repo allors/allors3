@@ -161,14 +161,14 @@ namespace Allors.Database.Adapters.Memory
 
         public ICompositePredicate AddInstanceof(IComposite type)
         {
-            this.Filters.Add(new Instanceof(type));
+            this.Filters.Add(new InstanceOf(type));
             this.extent.Invalidate();
             return this;
         }
 
         public ICompositePredicate AddInstanceof(IRoleType role, IComposite type)
         {
-            this.Filters.Add(new RoleInstanceof(this.extent, role, type));
+            this.Filters.Add(new RoleInstanceOf(this.extent, role, type));
             this.extent.Invalidate();
             return this;
         }
