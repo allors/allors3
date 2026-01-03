@@ -1,7 +1,6 @@
 <Solution>
   <Folder Name="/Apps/" />
   <Folder Name="/Apps/Database/">
-    <Project Path="Apps/Database/Commands/Commands.csproj" />
     <Project Path="Apps/Database/Configuration.Tests/Configuration.Tests.csproj" />
     <Project Path="Apps/Database/Configuration/Configuration.csproj" />
     <Project Path="Apps/Database/Domain.Tests/Domain.Tests.csproj" />
@@ -24,7 +23,6 @@
   </Folder>
   <Folder Name="/Base/" />
   <Folder Name="/Base/Database/">
-    <Project Path="Base/Database/Commands/Commands.csproj" />
     <Project Path="Base/Database/Configuration.Tests/Configuration.Tests.csproj" />
     <Project Path="Base/Database/Configuration/Configuration.csproj" />
     <Project Path="Base/Database/Domain.Tests/Domain.Tests.csproj" />
@@ -53,7 +51,6 @@
   </Folder>
   <Folder Name="/Core/" />
   <Folder Name="/Core/Database/">
-    <Project Path="Core/Database/Commands/Commands.csproj" />
     <Project Path="Core/Database/Configuration.Tests/Configuration.Tests.csproj" />
     <Project Path="Core/Database/Configuration/Configuration.csproj" />
     <Project Path="Core/Database/Domain.Tests/Domain.Tests.csproj" />
