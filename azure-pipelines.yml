@@ -38,6 +38,10 @@ stages:
           target: 'CiTypescriptWorkspaceTest'
         typescript_workspace_adapters_json:
           target: 'CiTypescriptWorkspaceAdaptersJsonTest'
+        base_workspace_e2e:
+          target: 'CiTypescriptBaseWorkspaceE2e'
+        apps_workspace_e2e:
+          target: 'CiTypescriptAppsWorkspaceE2e'
 
     steps:
     - checkout: self

@@ -59,4 +59,14 @@ partial class Build
         .DependsOn(Reset)
         .DependsOn(TypescriptInstall)
         .DependsOn(TypescriptWorkspaceAdaptersJsonTest);
+
+    private Target CiTypescriptBaseWorkspaceE2e => _ => _
+        .DependsOn(Reset)
+        .DependsOn(TypescriptInstall)
+        .DependsOn(TypescriptBaseWorkspaceE2e);
+
+    private Target CiTypescriptAppsWorkspaceE2e => _ => _
+        .DependsOn(Reset)
+        .DependsOn(TypescriptInstall)
+        .DependsOn(TypescriptAppsWorkspaceE2e);
 }

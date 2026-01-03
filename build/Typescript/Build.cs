@@ -66,4 +66,36 @@ partial class Build
     private Target TypescriptWorkspaceAdaptersJsonTest => _ => _
         .After(TypescriptInstall)
         .DependsOn(TypescriptSystemWorkspaceAdaptersJson);
+
+    private Target TypescriptBaseWorkspaceE2e => _ => _
+        .After(TypescriptInstall)
+        .DependsOn(EnsureDirectories)
+        .DependsOn(DotnetBasePublishServer)
+        .DependsOn(DotnetBasePublishCommands)
+        .Executes(async () =>
+        {
+            using var server = new Server(Paths.ArtifactsBaseServer, 4010);
+            await server.Ready();
+            DotNet("Commands.dll Populate", Paths.ArtifactsBaseCommands);
+            NpmRun(s => s
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(Paths.Typescript)
+                .SetCommand("base-workspace:e2e"));
+        });
+
+    private Target TypescriptAppsWorkspaceE2e => _ => _
+        .After(TypescriptInstall)
+        .DependsOn(EnsureDirectories)
+        .DependsOn(DotnetAppsPublishServer)
+        .DependsOn(DotnetAppsPublishCommands)
+        .Executes(async () =>
+        {
+            using var server = new Server(Paths.ArtifactsAppsServer, 4020);
+            await server.Ready();
+            DotNet("Commands.dll Populate", Paths.ArtifactsAppsCommands);
+            NpmRun(s => s
+                .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .SetProcessWorkingDirectory(Paths.Typescript)
+                .SetCommand("apps-workspace:e2e"));
+        });
 }

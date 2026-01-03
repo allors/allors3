@@ -9,13 +9,16 @@ using static Nuke.Common.Tooling.ProcessTasks;
 
 internal class Server : IDisposable
 {
-    public Server(AbsolutePath path)
+    public Server(AbsolutePath path, int port = 4000)
     {
+        Port = port;
         var arguments = $@"{path}/Server.dll";
         var workingDirectory = path;
 
         Process = StartProcess(DotNetTasks.DotNetPath, arguments, workingDirectory);
     }
+
+    private int Port { get; }
 
     private IProcess Process { get; set; }
 
@@ -48,7 +51,7 @@ internal class Server : IDisposable
             {
                 using var client = new HttpClient();
                 Debug($"Server request: ${url}");
-                var response = await client.GetAsync($"http://localhost:4000{url}");
+                var response = await client.GetAsync($"http://localhost:{Port}{url}");
                 success = response.IsSuccessStatusCode;
                 var result = response.Content.ReadAsStringAsync().Result;
                 if (!success)

@@ -46,19 +46,11 @@ namespace Allors.Database.Server.Controllers
             try
             {
                 var database = this.DatabaseService.Database;
-
                 database.Init();
 
                 var config = new Config();
-                new Setup(database, config).Apply();
-
                 using var transaction = database.CreateTransaction();
-                transaction.Services.Get<IUserService>().User = new AutomatedAgents(transaction).System;
-
                 new TestPopulation(transaction, config).Populate(database);
-
-                transaction.Derive();
-                transaction.Commit();
 
                 return this.Ok();
             }
