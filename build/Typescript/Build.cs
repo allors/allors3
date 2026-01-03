@@ -67,9 +67,17 @@ partial class Build
         .After(TypescriptInstall)
         .DependsOn(TypescriptSystemWorkspaceAdaptersJson);
 
+    private Target TypescriptPlaywrightInstall => _ => _
+        .After(TypescriptInstall)
+        .Executes(() => NpmRun(s => s
+            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .SetProcessWorkingDirectory(Paths.Typescript)
+            .SetCommand("playwright:install")));
+
     private Target TypescriptBaseWorkspaceE2e => _ => _
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
+        .DependsOn(TypescriptPlaywrightInstall)
         .DependsOn(DotnetBasePublishServer)
         .DependsOn(DotnetBasePublishCommands)
         .Executes(async () =>
@@ -86,6 +94,7 @@ partial class Build
     private Target TypescriptAppsWorkspaceE2e => _ => _
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
+        .DependsOn(TypescriptPlaywrightInstall)
         .DependsOn(DotnetAppsPublishServer)
         .DependsOn(DotnetAppsPublishCommands)
         .Executes(async () =>

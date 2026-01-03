@@ -9,6 +9,7 @@
     "postinstall": "ngcc --properties es2020 browser module main",
     "apps-workspace:serve": "npx nx serve apps-workspace-app",
     "base-workspace:serve": "npx nx serve base-workspace-app",
+    "playwright:install": "npx playwright install chromium",
     "base-workspace:e2e": "npx nx e2e base-workspace-app-e2e",
     "base-workspace:e2e-ui": "npx nx e2e-ui base-workspace-app-e2e",
     "apps-workspace:e2e": "npx nx e2e apps-workspace-app-e2e",
