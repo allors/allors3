@@ -8,6 +8,7 @@ namespace Allors.Database.Adapters.Memory;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Xml;
 using Allors.Database.Tracing;
 using Meta;
@@ -16,7 +17,7 @@ public class Database : IDatabase
 {
     private readonly ConcurrentDictionary<IObjectType, object> concreteClassesByObjectType;
     private readonly CommittedStore committedStore;
-    private readonly object commitLock;
+    private readonly Lock commitLock;
 
     public Database(IDatabaseServices state, Configuration configuration)
     {
@@ -36,7 +37,7 @@ public class Database : IDatabase
 
         this.concreteClassesByObjectType = new ConcurrentDictionary<IObjectType, object>();
         this.committedStore = new CommittedStore();
-        this.commitLock = new object();
+        this.commitLock = new Lock();
 
         // Create SlotLayout for O(1) slot-based role/association access
         this.SlotLayout = new SlotLayout(this.MetaPopulation);
@@ -156,7 +157,11 @@ public class Database : IDatabase
 
     public virtual void Init()
     {
-        this.committedStore.Reset();
+        using (this.commitLock.EnterScope())
+        {
+            this.committedStore.Reset();
+        }
+
         this.Services.OnInit(this);
     }
 
@@ -166,7 +171,7 @@ public class Database : IDatabase
 
     internal void CommitTransaction(TransactionChanges changes)
     {
-        lock (this.commitLock)
+        using (this.commitLock.EnterScope())
         {
             this.committedStore.Commit(changes);
         }
