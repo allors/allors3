@@ -36,16 +36,6 @@ partial class Build
                 .SetProjectFile(Paths.DotnetAppsDatabaseGenerate));
         });
 
-    private Target DotnetAppsPublishCommands => _ => _
-        .DependsOn(DotnetAppsGenerate)
-        .Executes(() =>
-        {
-            var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetProcessWorkingDirectory(Paths.DotnetAppsDatabaseCommands)
-                .SetOutput(Paths.ArtifactsAppsCommands);
-            DotNetPublish(dotNetPublishSettings);
-        });
-
     private Target DotnetAppsPublishServer => _ => _
         .DependsOn(DotnetAppsGenerate)
         .Executes(() =>
