@@ -16,9 +16,10 @@ namespace Allors.Database.Domain.Tests
         public void WhenPopulateWithAccountingHasOccuredDutchOrganisationsExist()
         {
             var internalOrganisations = new InternalOrganisations(this.Transaction).Extent().ToArray();
-            Assert.Contains(internalOrganisations.Select(v => v.DisplayName).ToArray(), v => v == "dutchInternalOrganisation");
-            Assert.Contains(internalOrganisations.Select(v => v.DisplayName).ToArray(), v => v == "Ned. Belastingdienst");
-            Assert.Contains(internalOrganisations.Select(v => v.DisplayName).ToArray(), v => v == "Federale OverheidsDienst FINANCIËN");
+            var displayNames = internalOrganisations.Select(v => v.DisplayName);
+            Assert.Contains("dutchInternalOrganisation", displayNames);
+            Assert.Contains("Ned. Belastingdienst", displayNames);
+            Assert.Contains("Federale OverheidsDienst FINANCIËN", displayNames);
         }
     }
 }

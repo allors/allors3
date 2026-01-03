@@ -10,6 +10,7 @@ namespace Allors.Database.Adapters
     using System.Linq;
     using Domain;
     using Xunit;
+    using Sandbox = Domain.Sandbox;
 
     public abstract class Many2ManyTest : IDisposable
     {
@@ -5702,6 +5703,69 @@ namespace Allors.Database.Adapters
 
                     Assert.True(exceptionThrown);
                 }
+            }
+        }
+
+        [Fact]
+        public void GetCompositesAssociationWithMismatchedTypeShouldNotThrow()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // Create C1 objects and set up a many-to-many relationship
+                var c1 = C1.Create(this.Transaction);
+                var c1Other = C1.Create(this.Transaction);
+                c1.AddC1C1many2many(c1Other);
+
+                this.Transaction.Commit();
+
+                // Create a Sandbox object (different class with fewer association types)
+                var sandbox = Sandbox.Create(this.Transaction);
+                this.Transaction.Commit();
+
+                // Query a C1 association type on Sandbox - should return empty, not throw
+                var c1AssociationType = m.C1.C1sWhereC1C1many2many;
+
+                var exception = Record.Exception(() =>
+                {
+                    var result = sandbox.Strategy.GetCompositesAssociation<C1>(c1AssociationType);
+                    _ = result.ToArray();
+                });
+
+                Assert.Null(exception);
+            }
+        }
+
+        [Fact]
+        public void GetCompositeAssociationWithMismatchedTypeShouldNotThrow()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                // Create C1 objects and set up a one-to-many relationship
+                var c1 = C1.Create(this.Transaction);
+                var c1Other = C1.Create(this.Transaction);
+                c1.AddC1C1one2many(c1Other);
+
+                this.Transaction.Commit();
+
+                // Create a Sandbox object
+                var sandbox = Sandbox.Create(this.Transaction);
+                this.Transaction.Commit();
+
+                // Query a C1 association type on Sandbox - should return null, not throw
+                var c1AssociationType = m.C1.C1WhereC1C1one2many;
+
+                var exception = Record.Exception(() =>
+                {
+                    var result = sandbox.Strategy.GetCompositeAssociation(c1AssociationType);
+                });
+
+                Assert.Null(exception);
             }
         }
     }

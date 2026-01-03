@@ -530,13 +530,19 @@ public sealed class Strategy : IStrategy
         var slot = this.slotLayout.GetCompositeAssociationSlotIndex(associationType);
 
         // Check local modification first
-        if (this.compositeAssociations != null && this.IsSlotModified(slot, ref this.compositeAssociationModifiedMask, this.compositeAssociationModifiedOverflow))
+        if (this.compositeAssociations != null && slot < this.compositeAssociations.Length && this.IsSlotModified(slot, ref this.compositeAssociationModifiedMask, this.compositeAssociationModifiedOverflow))
         {
             return this.compositeAssociations[slot];
         }
 
         // Fall back to snapshot
-        return this.snapshot.CompositeAssociations?[slot] ?? 0;
+        var snapshotAssociations = this.snapshot.CompositeAssociations;
+        if (snapshotAssociations != null && slot < snapshotAssociations.Length)
+        {
+            return snapshotAssociations[slot];
+        }
+
+        return 0;
     }
 
     public bool ExistCompositeAssociation(IAssociationType associationType) =>
@@ -569,13 +575,19 @@ public sealed class Strategy : IStrategy
         var slot = this.slotLayout.GetCompositesAssociationSlotIndex(associationType);
 
         // Check local modification first
-        if (this.compositesAssociations?[slot] != null)
+        if (this.compositesAssociations != null && slot < this.compositesAssociations.Length && this.compositesAssociations[slot] != null)
         {
             return this.compositesAssociations[slot];
         }
 
         // Fall back to snapshot (FrozenSet - zero copy)
-        return this.snapshot.CompositesAssociations?[slot];
+        var snapshotAssociations = this.snapshot.CompositesAssociations;
+        if (snapshotAssociations != null && slot < snapshotAssociations.Length)
+        {
+            return snapshotAssociations[slot];
+        }
+
+        return null;
     }
 
     public bool ExistCompositesAssociation(IAssociationType associationType)
