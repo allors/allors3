@@ -46,16 +46,6 @@ partial class Build
             .AddLoggers("trx;LogFileName=CoreDatabaseApi.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
-    private Target DotnetCorePublishCommands => _ => _
-        .DependsOn(DotnetCoreGenerate)
-        .Executes(() =>
-        {
-            var dotNetPublishSettings = new DotNetPublishSettings()
-                .SetProcessWorkingDirectory(Paths.DotnetCoreDatabaseCommands)
-                .SetOutput(Paths.ArtifactsCoreCommands);
-            DotNetPublish(dotNetPublishSettings);
-        });
-
     private Target DotnetCorePublishServer => _ => _
         .DependsOn(DotnetCoreGenerate)
         .Executes(() =>
