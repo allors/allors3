@@ -63,6 +63,10 @@ stages:
     - task: PowerShell@2
       env:
         NODE_OPTIONS: --max_old_space_size=16384
+        CI: 'true'
+        NX_DAEMON: 'false'
+        WATCHPACK_POLLING: 'true'
+        CHOKIDAR_USEPOLLING: '1'
         ALLORS_SQLCLIENT: $(ALLORS_SQLCLIENT)
         ALLORS_NPGSQL: $(ALLORS_NPGSQL)
       inputs:
