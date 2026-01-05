@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Allors.Domain.User" Collapsed="true">
+    <Position X="8.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACBAAAAAACAAAAAAAQAABAAAAEgAAAAAQAQCBICCAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Grant">
+    <Position X="4.75" Y="1" Width="2.5" />
+    <AssociationLine Name="Subjects" Type="Allors.Domain.User" FixedFromPoint="true">
+      <Path>
+        <Point X="7.25" Y="1.567" />
+        <Point X="8.5" Y="1.567" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_EffectiveUsers" Type="Allors.Domain.User" FixedFromPoint="true">
+      <Path>
+        <Point X="7.25" Y="1.944" />
+        <Point X="8.5" Y="1.944" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAACAEAAAAAAAAAAAAIAAAAAAAAIAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SubjectGroups" />
+      <Property Name="Subjects" />
+      <Property Name="Role" />
+      <Property Name="_EffectivePermissions" />
+      <Property Name="_EffectiveUsers" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.Permission">
+    <Position X="5.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Role">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Permissions" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.UserGroup" Collapsed="true">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Members" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.SecurityToken">
+    <Position X="1.75" Y="1" Width="1.5" />
+    <AssociationLine Name="_Permissions" Type="Allors.Domain.Permission" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.25" Y="1.673" />
+        <Point X="3.625" Y="1.673" />
+        <Point X="3.625" Y="5.812" />
+        <Point X="5.25" Y="5.812" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_Users" Type="Allors.Domain.User" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="2.5" Y="1" />
+        <Point X="2.5" Y="0.383" />
+        <Point X="10.375" Y="0.383" />
+        <Point X="10.375" Y="1.875" />
+        <Point X="10" Y="1.875" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAIAAAAAAAAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Grants" />
+      <Property Name="_Permissions" />
+      <Property Name="_Users" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.Object">
+    <Position X="1.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SecurityTokens" />
+      <Property Name="_Revocations" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.Person" Collapsed="true">
+    <Position X="8.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAABAEACAEAAAAIAEEATAAQEBCAAAIAAAAgASAQAAAg=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.ReadPermission">
+    <Position X="4.25" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.ExecutePermission">
+    <Position X="8.25" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.WritePermission">
+    <Position X="6.25" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.CreatePermission">
+    <Position X="2.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.Revocation">
+    <Position X="1.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DeniedPermissions" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.DelegatedAccessObject">
+    <Position X="0.5" Y="4.25" Width="2" />
+    <AssociationLine Name="DelegatedAccess" Type="Allors.Domain.Object" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.062" Y="4.25" />
+        <Point X="1.062" Y="3.434" />
+        <Point X="1.5" Y="3.434" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DelegatedAccess" />
+    </ShowAsAssociation>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
