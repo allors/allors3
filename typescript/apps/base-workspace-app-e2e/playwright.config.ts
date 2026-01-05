@@ -8,7 +8,10 @@ export default defineConfig({
   forbidOnly: !!process.env['CI'],
   retries: process.env['CI'] ? 2 : 0,
   workers: 1,
-  reporter: [['html', { outputFolder: 'playwright-report' }]],
+  reporter: [
+    ['html', { outputFolder: 'playwright-report' }],
+    ['junit', { outputFile: '../../../artifacts/tests/base-workspace-e2e.xml' }],
+  ],
 
   use: {
     baseURL: BASE_URL,

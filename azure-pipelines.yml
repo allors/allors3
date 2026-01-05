@@ -83,3 +83,11 @@ stages:
         testResultsFiles: '*.trx'
         searchFolder: 'artifacts/tests'
       displayName: 'Results for $(target)'
+    - task: PublishTestResults@2
+      condition: always()
+      inputs:
+        testRunTitle: $(target)
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '*.xml'
+        searchFolder: 'artifacts/tests'
+      displayName: 'Results for $(target) (JUnit)'
