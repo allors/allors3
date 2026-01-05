@@ -81,7 +81,6 @@ partial class Build
         {
             using var server = new Server(Paths.ArtifactsBaseServer, 4010);
             await server.Ready();
-            DotNet("Commands.dll Populate", Paths.ArtifactsBaseCommands);
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.Typescript)
@@ -97,7 +96,6 @@ partial class Build
         {
             using var server = new Server(Paths.ArtifactsAppsServer, 4020);
             await server.Ready();
-            DotNet("Commands.dll Populate", Paths.ArtifactsAppsCommands);
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
                 .SetProcessWorkingDirectory(Paths.Typescript)
