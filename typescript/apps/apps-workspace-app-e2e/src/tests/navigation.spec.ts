@@ -57,7 +57,7 @@ test.describe('Navigation', () => {
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
     await authenticatedPage.waitForTimeout(500);
-    await mainPage.navigateViaMenu(['Contacts', 'Organisation']);
+    await mainPage.navigateViaMenu(['Contacts', 'Companies']);
 
     await organisationListPage.waitForPage();
     await expect(authenticatedPage).toHaveURL(/.*\/contacts\/organisations/);
@@ -73,7 +73,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Contacts', 'Communication Event']);
+    await mainPage.navigateViaMenu(['Contacts', 'CommunicationEvents']);
 
     await commEventListPage.waitForPage();
     await expect(authenticatedPage).toHaveURL(/.*\/contacts\/communicationevents/);
@@ -89,7 +89,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Sales', 'Request For Quote']);
+    await mainPage.navigateViaMenu(['Sales', 'RequestsForQuote']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/sales\/requestsforquote/);
   });
@@ -103,7 +103,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Sales', 'Product Quote']);
+    await mainPage.navigateViaMenu(['Sales', 'ProductQuotes']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/sales\/productquotes/);
   });
@@ -117,7 +117,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Sales', 'Sales Order']);
+    await mainPage.navigateViaMenu(['Sales', 'SalesOrders']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/sales\/salesorders/);
   });
@@ -131,7 +131,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Sales', 'Sales Invoice']);
+    await mainPage.navigateViaMenu(['Sales', 'SalesInvoices']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/sales\/salesinvoices/);
   });
@@ -146,7 +146,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Products', 'Good']);
+    await mainPage.navigateViaMenu(['Products', 'Goods']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/products\/goods/);
   });
@@ -160,7 +160,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Products', 'Part']);
+    await mainPage.navigateViaMenu(['Products', 'Parts']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/products\/parts/);
   });
@@ -175,7 +175,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Purchasing', 'Purchase Order']);
+    await mainPage.navigateViaMenu(['Purchasing', 'PurchaseOrders']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/purchasing\/purchaseorders/);
   });
@@ -189,7 +189,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Purchasing', 'Purchase Invoice']);
+    await mainPage.navigateViaMenu(['Purchasing', 'PurchaseInvoices']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/purchasing\/purchaseinvoices/);
   });
@@ -204,7 +204,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Shipments', 'Shipment']);
+    await mainPage.navigateViaMenu(['Shipments', 'Shipments']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/shipment\/shipments/);
   });
@@ -219,7 +219,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['WorkEfforts', 'Work Requirement']);
+    await mainPage.navigateViaMenu(['WorkEfforts', 'WorkRequirements']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/workefforts\/workrequirements/);
   });
@@ -233,7 +233,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['WorkEfforts', 'Work Effort']);
+    await mainPage.navigateViaMenu(['WorkEfforts', 'WorkEfforts']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/workefforts\/workefforts/);
   });
@@ -248,7 +248,7 @@ test.describe('Navigation', () => {
     await authenticatedPage
       .locator('mat-sidenav-container')
       .waitFor({ state: 'visible' });
-    await mainPage.navigateViaMenu(['Accounting', 'Exchange Rate']);
+    await mainPage.navigateViaMenu(['Accounting', 'ExchangeRates']);
 
     await expect(authenticatedPage).toHaveURL(/.*\/accounting\/exchangerates/);
   });
