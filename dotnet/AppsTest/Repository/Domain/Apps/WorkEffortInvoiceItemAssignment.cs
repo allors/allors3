@@ -1,0 +1,61 @@
+// <copyright file="WorkEffortSalesInvoiceItemAssignment.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Allors.Repository
+{
+    using Attributes;
+    using static Workspaces;
+
+    #region Allors
+    [Id("f3f761ef-1081-4376-98d9-20d4730e3d58")]
+    #endregion
+    public partial class WorkEffortInvoiceItemAssignment : Deletable, DelegatedAccessObject
+    {
+        #region inherited properties
+
+        public Revocation[] Revocations { get; set; }
+
+        public SecurityToken[] SecurityTokens { get; set; }
+
+        public Object DelegatedAccess { get; set; }
+
+        #endregion
+
+        #region Allors
+        [Id("7197c265-151c-49e4-86b8-a27189f3c223")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToOne)]
+        [Indexed]
+        [Workspace(Default)]
+        public WorkEffortInvoiceItem WorkEffortInvoiceItem { get; set; }
+
+        #region Allors
+        [Id("b36ea9c8-c20a-4d4a-a90e-0f4dd73e7ca5")]
+        #endregion
+        [Multiplicity(Multiplicity.ManyToOne)]
+        [Indexed]
+        [Required]
+        [Workspace(Default)]
+        public WorkEffort Assignment { get; set; }
+
+        #region inherited methods
+
+        public void OnBuild() { }
+
+        public void OnPostBuild() { }
+
+        public void OnInit()
+        {
+        }
+
+        public void OnPostDerive() { }
+
+        public void Delete() { }
+
+
+
+        #endregion
+    }
+}

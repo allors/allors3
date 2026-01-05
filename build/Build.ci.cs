@@ -44,11 +44,11 @@ partial class Build
 
     private Target CiDotnetAppsDatabaseTest => _ => _
         .DependsOn(Reset)
-        .DependsOn(DotnetAppsDatabaseTest);
+        .DependsOn(DotnetAppsTestDatabaseTest);
 
     private Target CiDotnetAppsWorkspaceTest => _ => _
         .DependsOn(Reset)
-        .DependsOn(DotnetAppsWorkspaceTest);
+        .DependsOn(DotnetAppsTestWorkspaceTest);
 
     private Target CiTypescriptWorkspaceTest => _ => _
         .DependsOn(Reset)

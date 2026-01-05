@@ -28,14 +28,6 @@ namespace Allors.Meta.Generation.Storage
                 { "../Core/Workspace/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated" },
                 { "../Core/Workspace/Templates/domain.cs.stg", "Workspace/Domain/Generated" },
                 { "../Core/Workspace/Templates/uml.cs.stg", "Workspace/Diagrams/Generated" },
-
-                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/apps-intranet/workspace/meta/src/lib/generated" },
-                { "../../typescript/templates/workspace.meta.json.ts.stg", "../../typescript/libs/apps-intranet/workspace/meta-json/src/lib/generated" },
-                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/apps-intranet/workspace/domain/src/lib/generated" },
-
-                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/apps-extranet/workspace/meta/src/lib/generated" },
-                { "../../typescript/templates/workspace.meta.json.ts.stg", "../../typescript/libs/apps-extranet/workspace/meta-json/src/lib/generated" },
-                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/apps-extranet/workspace/domain/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

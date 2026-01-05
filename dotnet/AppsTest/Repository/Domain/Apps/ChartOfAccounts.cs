@@ -1,0 +1,67 @@
+// <copyright file="ChartOfAccount.cs" company="Allors bv">
+// Copyright (c) Allors bv. All rights reserved.
+// Licensed under the LGPL license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace Allors.Repository
+{
+    using System;
+
+    using Attributes;
+
+    #region Allors
+    [Id("6cf4845d-65a0-4957-95e9-f2b5327d6515")]
+    #endregion
+    [Plural("ChartsOfAccounts")]
+    public partial class ChartOfAccounts : UniquelyIdentifiable, Object
+    {
+        #region inherited properties
+        public Guid UniqueId { get; set; }
+
+        public Revocation[] Revocations { get; set; }
+
+        public SecurityToken[] SecurityTokens { get; set; }
+
+        #endregion
+
+        #region Allors
+        [Id("65f44f44-a613-4cbf-a924-1098c9876f20")]
+        #endregion
+        [Required]
+        [Size(256)]
+        public string Name { get; set; }
+
+        #region Allors
+        [Id("d1e363c0-02ee-478b-94e7-c5aee846a55e")]
+        #endregion
+        public string Version { get; set; }
+
+        #region Allors
+        [Id("71d503fb-ebb9-45b3-af62-1b233677adce")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        public GeneralLedgerAccount[] GeneralLedgerAccounts { get; set; }
+
+        #region Allors
+        [Id("52220446-2480-469c-98d0-a9d36ea77220")]
+        #endregion
+        [Multiplicity(Multiplicity.OneToMany)]
+        [Indexed]
+        public GeneralLedgerAccountClassification[] GeneralLedgerAccountClassifications { get; set; }
+
+        #region inherited methods
+
+        public void OnBuild() { }
+
+        public void OnPostBuild() { }
+
+        public void OnInit()
+        {
+        }
+
+        public void OnPostDerive() { }
+
+        #endregion
+    }
+}

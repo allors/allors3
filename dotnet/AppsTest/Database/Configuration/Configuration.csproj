@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Allors.Domain</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Allors.Documents" Version="1.0.10" />
+    <PackageReference Include="DataUtils.DataUrl" Version="1.0.2" />
+    <PackageReference Include="MailKit" Version="4.14.1" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.1" />
+    <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.22" />
+    <PackageReference Include="Bogus" Version="35.6.5" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Core\Database\Configuration\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Configuration\Base*\**\*.cs" />
+    <Compile Include="..\..\..\Apps\Database\Configuration\Apps*\**\*.cs" />
+  </ItemGroup>
+
+</Project>

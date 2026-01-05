@@ -8,8 +8,6 @@ public partial class Paths
     public AbsolutePath DotnetAppsDatabase => DotnetApps / "Database";
     public AbsolutePath DotnetAppsDatabaseMetaGenerated => DotnetAppsDatabase / "Meta/Generated";
     public AbsolutePath DotnetAppsDatabaseGenerate => DotnetAppsDatabase / "Generate/Generate.csproj";
-    public AbsolutePath DotnetAppsDatabaseServer => DotnetAppsDatabase / "Server";
-    public AbsolutePath DotnetAppsDatabaseDomainTests => DotnetAppsDatabase / "Domain.Tests/Domain.Tests.csproj";
     public AbsolutePath DotnetAppsDatabaseResources => DotnetAppsDatabase / "Resources";
     public AbsolutePath DotnetAppsDatabaseResourcesApps => DotnetAppsDatabaseResources / "Apps";
 

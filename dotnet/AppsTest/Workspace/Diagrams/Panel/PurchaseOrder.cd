@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Interface Name="Allors.Domain.Organisation" Collapsed="true">
+    <Position X="4.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAoAgAAAAAAoAAAAAgAAQAAAAAAAgACAABAAAAAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Allors.Domain.PurchaseOrder" Collapsed="true">
+    <Position X="7.5" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>EAABAEggAAAAgQAAAAAABAAAEAAAQAgAAECAAAAggAI=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TakenViaSupplier" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.SupplierOffering" Collapsed="true">
+    <Position X="0.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAgAIQAgAIgAAAAAAAIICAAAAAlAAAAAAAAABAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Supplier" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Allors.Domain.PurchaseInvoice" Collapsed="true">
+    <Position X="13" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>IEAEEAhAkAIAAySAIACSAAAAQAIOEIgAAAgQAAAgAAA=</HashCode>
+      <FileName>generated\domain.g.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="PurchaseOrders" />
+    </ShowAsAssociation>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
