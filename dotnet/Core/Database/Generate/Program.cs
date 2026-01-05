@@ -24,14 +24,10 @@ namespace Allors.Meta.Generation
 
             string[,] workspace =
             {
-                //{ "Workspace/Templates/uml.cs.stg", "Workspace/Diagrams/Generated" },
                 { "Workspace/Templates/meta.cs.stg", "Workspace/Meta/Generated" },
                 { "Workspace/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated" },
                 { "Workspace/Templates/domain.cs.stg", "Workspace/Domain/Generated" },
-
-                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/core/workspace/meta/src/lib/generated" },
-                { "../../typescript/templates/workspace.meta.json.ts.stg", "../../typescript/libs/core/workspace/meta-json/src/lib/generated" },
-                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/core/workspace/domain/src/lib/generated" },
+                { "Workspace/Templates/uml.cs.stg", "Workspace/Diagrams/Generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

@@ -4,14 +4,10 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Workspace.Domain.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Meta.Lazy\Allors.Workspace.Meta.Lazy.csproj" />
+    <ProjectReference Include="..\Meta\Workspace.Meta.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\..\Core\Workspace\Configuration\Core*\**\*.cs" />
-  </ItemGroup>
-
 </Project>

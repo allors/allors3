@@ -19,7 +19,7 @@ namespace Allors.Meta.Generation.Storage
             string[,] database =
             {
                 { "../Core/Database/Templates/domain.cs.stg", "Database/Domain/Generated" },
-                { "../Core/Database/Templates/uml.cs.stg", "Database/Domain.Diagrams/Generated" },
+                { "../Core/Database/Templates/uml.cs.stg", "Database/Diagrams/Generated" },
             };
 
             string[,] workspace =
@@ -27,7 +27,11 @@ namespace Allors.Meta.Generation.Storage
                 { "../Core/Workspace/Templates/meta.cs.stg", "Workspace/Meta/Generated" },
                 { "../Core/Workspace/Templates/meta.lazy.cs.stg", "Workspace/Meta.Lazy/Generated" },
                 { "../Core/Workspace/Templates/domain.cs.stg", "Workspace/Domain/Generated" },
-                { "../Core/Workspace/Templates/uml.cs.stg", "Workspace/Domain.Diagrams/Generated" },
+                { "../Core/Workspace/Templates/uml.cs.stg", "Workspace/Diagrams/Generated" },
+
+                { "../../typescript/templates/workspace.meta.ts.stg", "../../typescript/libs/base/workspace/meta/src/lib/generated" },
+                { "../../typescript/templates/workspace.meta.json.ts.stg", "../../typescript/libs/base/workspace/meta-json/src/lib/generated" },
+                { "../../typescript/templates/workspace.domain.ts.stg", "../../typescript/libs/base/workspace/domain/src/lib/generated" },
             };
 
             var metaPopulation = MetaBuilder.Build();

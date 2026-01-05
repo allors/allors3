@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>default</LangVersion>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Domain\Allors.Workspace.Domain.csproj" />
+    <ProjectReference Include="..\Meta\Workspace.Meta.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Core\Workspace\Domain\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Workspace\Domain\Base*\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
+  </ItemGroup>
+</Project>

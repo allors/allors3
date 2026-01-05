@@ -20,12 +20,19 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Core\Database\Domain\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Database\Domain\Base*\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Resources\about.md" />
     <None Remove="Resources\avatar.png" />
     <None Remove="Resources\madeliefje.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\about.md" />
+    <EmbeddedResource Include="Resources\avatar.png" />
+    <EmbeddedResource Include="Resources\madeliefje.jpg" />
   </ItemGroup>
 
 </Project>

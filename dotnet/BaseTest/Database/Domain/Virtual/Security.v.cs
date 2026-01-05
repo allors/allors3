@@ -11,12 +11,14 @@ namespace Allors.Database.Domain
         {
             this.CoreOnPreSetup();
             this.BaseOnPreSetup();
+            this.CustomOnPreSetup();
         }
 
         private void OnPostSetup()
         {
             this.CoreOnPostSetup();
             this.BaseOnPostSetup();
+            this.CustomOnPostSetup();
         }
     }
 }

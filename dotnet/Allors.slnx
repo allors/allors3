@@ -23,9 +23,7 @@
   </Folder>
   <Folder Name="/Base/" />
   <Folder Name="/Base/Database/">
-    <Project Path="Base/Database/Configuration.Tests/Configuration.Tests.csproj" />
     <Project Path="Base/Database/Configuration/Configuration.csproj" />
-    <Project Path="Base/Database/Domain.Tests/Domain.Tests.csproj" />
     <Project Path="Base/Database/Domain/Domain.csproj" />
     <Project Path="Base/Database/Generate/Generate.csproj" />
     <Project Path="Base/Database/Meta/Meta.csproj" />
@@ -40,7 +38,27 @@
     <Project Path="Base/Workspace/Domain/Workspace.Domain.csproj" />
     <Project Path="Base/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
     <Project Path="Base/Workspace/Meta/Workspace.Meta.csproj" />
-    <Project Path="Base/Workspace/Tests/Workspace.Tests.csproj" />
+  </Folder>
+  <Folder Name="/BaseTest/" />
+  <Folder Name="/BaseTest/Database/">
+    <Project Path="BaseTest/Database/Configuration.Tests/Configuration.Tests.csproj" />
+    <Project Path="BaseTest/Database/Configuration/Configuration.csproj" />
+    <Project Path="BaseTest/Database/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="BaseTest/Database/Domain/Domain.csproj" />
+    <Project Path="BaseTest/Database/Generate/Generate.csproj" />
+    <Project Path="BaseTest/Database/Meta/Meta.csproj" />
+    <Project Path="BaseTest/Database/Resources/Resources.csproj" />
+    <Project Path="BaseTest/Database/Server/Server.csproj" />
+  </Folder>
+  <Folder Name="/BaseTest/Repository/">
+    <Project Path="BaseTest/Repository/Domain/Repository.csproj" />
+  </Folder>
+  <Folder Name="/BaseTest/Workspace/">
+    <Project Path="BaseTest/Workspace/Configuration/Workspace.Configuration.csproj" />
+    <Project Path="BaseTest/Workspace/Domain/Workspace.Domain.csproj" />
+    <Project Path="BaseTest/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
+    <Project Path="BaseTest/Workspace/Meta/Workspace.Meta.csproj" />
+    <Project Path="BaseTest/Workspace/Tests/Workspace.Tests.csproj" />
   </Folder>
   <Folder Name="/Core/" />
   <Folder Name="/Core/Database/">

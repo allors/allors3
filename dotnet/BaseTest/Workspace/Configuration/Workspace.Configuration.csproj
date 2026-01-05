@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\Core\Workspace\Configuration\Core*\**\*.cs" />
+    <Compile Include="..\..\..\Base\Workspace\Configuration\Base*\**\*.cs" />
   </ItemGroup>
 
 </Project>

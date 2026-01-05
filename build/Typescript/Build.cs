@@ -76,7 +76,7 @@ partial class Build
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
         .DependsOn(TypescriptPlaywrightInstall)
-        .DependsOn(DotnetBasePublishServer)
+        .DependsOn(DotnetBaseTestPublishServer)
         .Executes(async () =>
         {
             using var server = new Server(Paths.ArtifactsBaseServer, 4010);

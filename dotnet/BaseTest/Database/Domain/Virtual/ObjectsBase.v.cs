@@ -13,12 +13,14 @@ namespace Allors.Database.Domain
         {
             this.CorePrepare(setup);
             this.BasePrepare(setup);
+            this.CustomPrepare(setup);
         }
 
         public void Setup(Setup setup)
         {
             this.CoreSetup(setup);
             this.BaseSetup(setup);
+            this.CustomSetup(setup);
 
             this.Transaction.Derive();
         }
@@ -27,12 +29,14 @@ namespace Allors.Database.Domain
         {
             this.CorePrepare(security);
             this.BasePrepare(security);
+            this.CustomPrepare(security);
         }
 
         public void Secure(Security security)
         {
             this.CoreSecure(security);
             this.BaseSecure(security);
+            this.CustomSecure(security);
         }
     }
 }
