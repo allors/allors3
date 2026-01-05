@@ -61,11 +61,7 @@ export class PersonListPage {
     await this.table.clickRowCell(rowIndex, 1);
   }
 
-  async sortByFirstName(): Promise<void> {
-    await this.table.clickSortHeader('First Name');
-  }
-
-  async sortByLastName(): Promise<void> {
-    await this.table.clickSortHeader('Last Name');
+  async sortByName(): Promise<void> {
+    await this.table.clickSortHeader('Name');
   }
 }

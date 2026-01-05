@@ -24,19 +24,19 @@ test.describe('Person List', () => {
     }
   });
 
-  test('should sort by firstName when clicking header', async ({
+  test('should sort by name when clicking header', async ({
     authenticatedPage,
   }) => {
     const personListPage = new PersonListPage(authenticatedPage);
     await personListPage.goto();
     await personListPage.waitForPage();
 
-    await personListPage.sortByFirstName();
+    await personListPage.sortByName();
     await authenticatedPage.waitForTimeout(500);
 
     // Verify sorting happened (header should have sort indicator)
     const header = personListPage.table.headerRow.locator('th[mat-header-cell]', {
-      hasText: /First Name/i,
+      hasText: /Name/i,
     });
     await expect(header).toBeVisible();
   });
@@ -115,7 +115,10 @@ test.describe('Person List', () => {
     const rowCount = await personListPage.table.getRowCount();
     if (rowCount > 0) {
       await personListPage.table.openRowMenu(0);
-      await expect(authenticatedPage.locator('mat-menu')).toBeVisible();
+      // When mat-menu opens, the panel appears in an overlay container
+      await expect(
+        authenticatedPage.locator('.cdk-overlay-container .mat-menu-panel')
+      ).toBeVisible();
     }
   });
 });
