@@ -70,12 +70,14 @@ export class MaterialSidenavComponent {
     childTitle: string
   ): Promise<void> {
     await this.expandMenuItem(parentTitle);
-    const childItem = this.menu
-      .locator('mat-list-item.expanded', {
+    // Child items have an <a> element with the link, parent items use <span>
+    // This ensures we click the child even when parent and child have the same title
+    const childLink = this.menu
+      .locator('mat-list-item.expanded a', {
         hasText: childTitle,
       })
       .first();
-    await childItem.click();
+    await childLink.click();
   }
 
   async navigateToRoute(link: string): Promise<void> {
