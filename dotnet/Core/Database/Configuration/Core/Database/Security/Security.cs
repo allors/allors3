@@ -28,9 +28,8 @@ namespace Allors.Database.Configuration
 
         private readonly Dictionary<string, HashSet<long>> permissionIdsByWorkspaceName;
 
-        public Security(DatabaseServices databaseServices)
+        public Security(IDatabase database, IDatabaseServices databaseServices)
         {
-            var database = databaseServices.Database;
             var m = database.Services.Get<MetaPopulation>();
             var metaCache = databaseServices.Get<IMetaCache>();
 

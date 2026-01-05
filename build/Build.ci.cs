@@ -20,19 +20,19 @@ partial class Build
 
     private Target CiDotnetCoreDatabaseTest => _ => _
         .DependsOn(Reset)
-        .DependsOn(DotnetCoreDatabaseTest);
+        .DependsOn(DotnetCoreTestDatabaseTest);
 
     private Target CiDotnetCoreWorkspaceLocalTest => _ => _
         .DependsOn(Reset)
-        .DependsOn(DotnetCoreWorkspaceLocalTest);
+        .DependsOn(DotnetCoreTestWorkspaceLocalTest);
 
     private Target CiDotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
         .DependsOn(Reset)
-        .DependsOn(DotnetCoreWorkspaceRemoteJsonSystemTextTest);
+        .DependsOn(DotnetCoreTestWorkspaceRemoteJsonSystemTextTest);
 
     private Target CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
         .DependsOn(Reset)
-        .DependsOn(DotnetCoreWorkspaceRemoteJsonNewtonsoftTest);
+        .DependsOn(DotnetCoreTestWorkspaceRemoteJsonNewtonsoftTest);
 
     private Target CiDotnetBaseDatabaseTest => _ => _
         .DependsOn(Reset)

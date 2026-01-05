@@ -16,7 +16,7 @@ partial class Build : NukeBuild
                 directoryInfo.Refresh();
                 if (!directoryInfo.Exists) return;
                 if (new[] { "node_modules", "packages", "out-tsc", "bin", "obj", "generated" }.Contains(
-                    directoryInfo.Name.ToLowerInvariant()))
+                        directoryInfo.Name.ToLowerInvariant()))
                 {
                     ((AbsolutePath)directoryInfo.FullName).DeleteDirectory();
                     return;
@@ -29,7 +29,7 @@ partial class Build : NukeBuild
                 }
             }
 
-            foreach (var path in new[] { Paths.DotnetSystem, Paths.DotnetCore, Paths.DotnetBase, Paths.DotnetApps })
+            foreach (var path in new[] { Paths.DotnetSystem, Paths.DotnetCoreTest, Paths.DotnetBase, Paths.DotnetApps })
             {
                 foreach (var child in new DirectoryInfo(path).GetDirectories().Where(v => !v.Name.Equals("build")))
                 {
@@ -40,18 +40,19 @@ partial class Build : NukeBuild
             Paths.Artifacts.DeleteDirectory();
         });
 
-
     private Target Install => _ => _
         .DependsOn(TypescriptInstall);
 
     private Target Merge => _ => _
-       .DependsOn(DotnetCoreMerge)
-       .DependsOn(DotnetBaseMerge)
-       .DependsOn(DotnetAppsMerge);
+        .DependsOn(DotnetCoreMerge)
+        .DependsOn(DotnetCoreTestMerge)
+        .DependsOn(DotnetBaseMerge)
+        .DependsOn(DotnetAppsMerge);
 
     private Target Generate => _ => _
         .DependsOn(DotnetSystemAdaptersGenerate)
         .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCoreTestGenerate)
         .DependsOn(DotnetBaseGenerate)
         .DependsOn(DotnetAppsGenerate);
 

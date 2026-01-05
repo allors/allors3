@@ -10,25 +10,21 @@ namespace Allors.Database.Domain
         private void OnPrePrepare()
         {
             this.CoreOnPrePrepare();
-            this.CustomOnPrePrepare();
         }
 
         private void OnPostPrepare()
         {
             this.CoreOnPostPrepare();
-            this.CustomOnPostPrepare();
         }
 
         private void OnPreSetup()
         {
             this.CoreOnPreSetup();
-            this.CustomOnPreSetup();
         }
 
         private void OnPostSetup(Config config)
         {
             this.CoreOnPostSetup(config);
-            this.CustomOnPostSetup(config);
         }
     }
 }

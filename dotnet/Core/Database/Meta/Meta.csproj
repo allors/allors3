@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\..\System\Database\Allors.Database.Meta.Props\Props*\**\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace\Allors.Database.Workspace.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="..\..\..\System\Database\Allors.Database.Meta.Props\Props*\**\*.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\System\Database\Allors.Database.Workspace\Allors.Database.Workspace.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50"/>
+    </ItemGroup>
 </Project>

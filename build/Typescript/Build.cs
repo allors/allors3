@@ -14,7 +14,7 @@ partial class Build
 
     private Target TypescriptSystemWorkspaceMeta => _ => _
     .After(TypescriptInstall)
-    .DependsOn(DotnetCoreGenerate)
+    .DependsOn(DotnetCoreTestGenerate)
     .DependsOn(EnsureDirectories)
     .Executes(() => NpmRun(s => s
         .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
@@ -24,7 +24,7 @@ partial class Build
 
     private Target TypescriptSystemWorkspaceMetaJson => _ => _
         .After(TypescriptInstall)
-        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCoreTestGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
@@ -33,7 +33,7 @@ partial class Build
 
     private Target TypescriptSystemWorkspaceAdapters => _ => _
         .After(TypescriptInstall)
-        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetCoreTestGenerate)
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
@@ -43,8 +43,8 @@ partial class Build
     private Target TypescriptSystemWorkspaceAdaptersJson => _ => _
         .After(TypescriptInstall)
         .DependsOn(EnsureDirectories)
-        .DependsOn(DotnetCoreGenerate)
-        .DependsOn(DotnetCorePublishServer)
+        .DependsOn(DotnetCoreTestGenerate)
+        .DependsOn(DotnetCoreTestPublishServer)
         .Executes(async () =>
         {
             using var server = new Server(Paths.ArtifactsCoreServer);

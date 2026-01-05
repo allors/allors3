@@ -2,14 +2,6 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath DotnetCore => Dotnet / "Core";
-    
-    public AbsolutePath DotnetCoreDatabase => DotnetCore / "Database";
-    public AbsolutePath DotnetCoreDatabaseMerge => DotnetCoreDatabase / "Merge/Merge.csproj";
-    public AbsolutePath DotnetCoreDatabaseResources => DotnetCoreDatabase / "Resources";
-    public AbsolutePath DotnetCoreDatabaseResourcesCore => DotnetCoreDatabaseResources / "Core";
-
-    
     public AbsolutePath DotnetCoreTest => Dotnet / "CoreTest";
     public AbsolutePath DotnetCoreTestRepositoryDomainRepository => DotnetCoreTest / "Repository/Domain/Repository.csproj";
 

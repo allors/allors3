@@ -42,26 +42,14 @@
     <Project Path="Base/Workspace/Meta/Workspace.Meta.csproj" />
     <Project Path="Base/Workspace/Tests/Workspace.Tests.csproj" />
   </Folder>
-  <Folder Name="/Base/Workspace/Blazor/">
-    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site.Server/Allors.Workspace.Blazor.Bootstrap.Site.Server.csproj" />
-    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site.Wasm/Allors.Workspace.Blazor.Bootstrap.Site.Wasm.csproj" />
-    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site/Allors.Workspace.Blazor.Bootstrap.Site.csproj" />
-    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap/Allors.Workspace.Blazor.Bootstrap.csproj" />
-    <Project Path="Base/Workspace/Blazor/Blazor/Allors.Workspace.Blazor.csproj" />
-  </Folder>
   <Folder Name="/Core/" />
   <Folder Name="/Core/Database/">
-    <Project Path="Core/Database/Configuration.Tests/Configuration.Tests.csproj" />
     <Project Path="Core/Database/Configuration/Configuration.csproj" />
-    <Project Path="Core/Database/Domain.Tests/Domain.Tests.csproj" />
     <Project Path="Core/Database/Domain/Domain.csproj" />
     <Project Path="Core/Database/Generate/Generate.csproj" />
     <Project Path="Core/Database/Merge/Merge.csproj" />
-    <Project Path="Core/Database/Meta.Tests/Meta.Tests.csproj" />
     <Project Path="Core/Database/Meta/Meta.csproj" />
     <Project Path="Core/Database/Resources/Resources.csproj" />
-    <Project Path="Core/Database/Server.Local.Tests/Server.Local.Tests.csproj" />
-    <Project Path="Core/Database/Server.Remote.Tests/Server.Remote.Tests.csproj" />
     <Project Path="Core/Database/Server/Server.csproj" />
   </Folder>
   <Folder Name="/Core/Database/Templates/">
@@ -80,10 +68,40 @@
     <Project Path="Core/Workspace/Domain/Workspace.Domain.csproj" />
     <Project Path="Core/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
     <Project Path="Core/Workspace/Meta/Workspace.Meta.csproj" />
-    <Project Path="Core/Workspace/Tests.Local/Workspace.Tests.Local.csproj" />
-    <Project Path="Core/Workspace/Tests.Remote.Json.Newtonsoft/Workspace.Tests.Remote.Json.Newtonsoft.csproj" />
-    <Project Path="Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj" />
-    <Project Path="Core/Workspace/Tests/Workspace.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Core/Workspace/Templates/">
+    <File Path="Core\Workspace\Templates\domain.cs.stg" />
+    <File Path="Core\Workspace\Templates\meta.builder.cs.stg" />
+    <File Path="Core\Workspace\Templates\meta.cs.stg" />
+    <File Path="Core\Workspace\Templates\meta.lazy.cs.stg" />
+    <File Path="Core\Workspace\Templates\uml.cs.stg" />
+  </Folder>
+  <Folder Name="/CoreTest/" />
+  <Folder Name="/CoreTest/Database/">
+    <Project Path="CoreTest/Database/Configuration.Tests/Configuration.Tests.csproj" />
+    <Project Path="CoreTest/Database/Configuration/Configuration.csproj" />
+    <Project Path="CoreTest/Database/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="CoreTest/Database/Domain/Domain.csproj" />
+    <Project Path="CoreTest/Database/Generate/Generate.csproj" />
+    <Project Path="CoreTest/Database/Meta.Tests/Meta.Tests.csproj" />
+    <Project Path="CoreTest/Database/Meta/Meta.csproj" />
+    <Project Path="CoreTest/Database/Resources/Resources.csproj" />
+    <Project Path="CoreTest/Database/Server.Local.Tests/Server.Local.Tests.csproj" />
+    <Project Path="CoreTest/Database/Server.Remote.Tests/Server.Remote.Tests.csproj" />
+    <Project Path="CoreTest/Database/Server/Server.csproj" />
+  </Folder>
+  <Folder Name="/CoreTest/Repository/">
+    <Project Path="CoreTest/Repository/Domain/Repository.csproj" />
+  </Folder>
+  <Folder Name="/CoreTest/Workspace/">
+    <Project Path="CoreTest/Workspace/Configuration/Workspace.Configuration.csproj" />
+    <Project Path="CoreTest/Workspace/Domain/Workspace.Domain.csproj" />
+    <Project Path="CoreTest/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
+    <Project Path="CoreTest/Workspace/Meta/Workspace.Meta.csproj" />
+    <Project Path="CoreTest/Workspace/Tests.Local/Workspace.Tests.Local.csproj" />
+    <Project Path="CoreTest/Workspace/Tests.Remote.Json.Newtonsoft/Workspace.Tests.Remote.Json.Newtonsoft.csproj" />
+    <Project Path="CoreTest/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj" />
+    <Project Path="CoreTest/Workspace/Tests/Workspace.Tests.csproj" />
   </Folder>
   <Folder Name="/System/">
     <Project Path="System/Shared.Tests/Allors.Shared.Tests.csproj" />

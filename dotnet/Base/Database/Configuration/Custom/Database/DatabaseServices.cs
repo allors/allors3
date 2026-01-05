@@ -82,7 +82,7 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(IMetaCache) => (T)this.metaCache,
                 { } type when type == typeof(IDerivationService) => (T)(this.derivationService ??= this.CreateDerivationFactory()),
                 { } type when type == typeof(IProcedures) => (T)(this.procedures ??= new Procedures(this.Database.ObjectFactory.Assembly)),
-                { } type when type == typeof(ISecurity) => (T)(this.security ??= new Security(this)),
+                { } type when type == typeof(ISecurity) => (T)(this.security ??= new Security(this.Database, this)),
                 { } type when type == typeof(IPrefetchPolicyCache) => (T)(this.prefetchPolicyCache ??= new PrefetchPolicyCache(this.Database, this.metaCache)),
                 // Core
                 { } type when type == typeof(MetaPopulation) => (T)(object)this.M,

@@ -1,15 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <UserSecretsId>94b38c8f-6e22-42d0-931b-f2f9701fdfb4</UserSecretsId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="Server.Local.Tests" />
-    <InternalsVisibleTo Include="Workspace.Tests.Remote.Json.Newtonsoft" />
-    <InternalsVisibleTo Include="Workspace.Tests.Remote.Json.SystemText" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -28,11 +22,6 @@
     <ProjectReference Include="..\Configuration\Configuration.csproj" />
     <ProjectReference Include="..\Meta\Meta.csproj" />
     <ProjectReference Include="..\Resources\Resources.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Watch Include="**\*.cs" />
-    <Watch Include="appsettings*.json" />
   </ItemGroup>
 
 </Project>

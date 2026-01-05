@@ -5,15 +5,15 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
-    private Target DotnetCoreMerge => _ => _
+    private Target DotnetCoreTestMerge => _ => _
         .Executes(() => DotNetRun(s => s
             .SetProjectFile(Paths.DotnetCoreDatabaseMerge)
             .SetApplicationArguments(Paths.DotnetCoreDatabaseResourcesCore, Paths.DotnetTestCoreDatabaseResourcesCustom,
                 Paths.DotnetCoreTestDatabaseResources)));
 
-    private Target DotnetCoreGenerate => _ => _
+    private Target DotnetCoreTestGenerate => _ => _
         .After(Clean)
-        .DependsOn(DotnetCoreMerge)
+        .DependsOn(DotnetCoreTestMerge)
         .Executes(() =>
         {
             DotNetRun(s => s
@@ -25,29 +25,29 @@ partial class Build
                 .SetProjectFile(Paths.DotnetCoreTestDatabaseGenerate));
         });
 
-    private Target DotnetCoreDatabaseTestMeta => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestDatabaseTestMeta => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreTestDatabaseMetaTests)
             .AddLoggers("trx;LogFileName=CoreDatabaseMeta.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
-    private Target DotnetCoreDatabaseTestDomain => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestDatabaseTestDomain => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreTestDatabaseDomainTests)
             .AddLoggers("trx;LogFileName=CoreDatabaseDomain.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
-    private Target DotnetCoreDatabaseTestServerLocal => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestDatabaseTestServerLocal => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetCoreTestDatabaseServerLocalTests)
             .AddLoggers("trx;LogFileName=CoreDatabaseApi.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
-    private Target DotnetCorePublishServer => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestPublishServer => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(() =>
         {
             var dotNetPublishSettings = new DotNetPublishSettings()
@@ -56,15 +56,15 @@ partial class Build
             DotNetPublish(dotNetPublishSettings);
         });
 
-    private Target DotnetCoreDatabaseTestServerRemote => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestDatabaseTestServerRemote => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(() => DotNetTest(s => s
             .SetProjectFile(Paths.DotnetTestCoreDatabaseServerRemoteTests)
             .AddLoggers("trx;LogFileName=CoreDatabaseServer.trx")
             .SetResultsDirectory(Paths.ArtifactsTests)));
 
-    private Target DotnetCoreWorkspaceLocalTest => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestWorkspaceLocalTest => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(() =>
         {
             DotNetTest(s => s
@@ -73,8 +73,8 @@ partial class Build
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
-    private Target DotnetCoreWorkspaceRemoteJsonSystemTextTest => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestWorkspaceRemoteJsonSystemTextTest => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(async () =>
         {
             DotNetTest(s => s
@@ -83,8 +83,8 @@ partial class Build
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
-    private Target DotnetCoreWorkspaceRemoteJsonNewtonsoftTest => _ => _
-        .DependsOn(DotnetCoreGenerate)
+    private Target DotnetCoreTestWorkspaceRemoteJsonNewtonsoftTest => _ => _
+        .DependsOn(DotnetCoreTestGenerate)
         .Executes(async () =>
         {
             DotNetTest(s => s
@@ -93,22 +93,18 @@ partial class Build
                 .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
-    private Target DotnetCoreDatabaseTest => _ => _
-        .DependsOn(DotnetCoreDatabaseTestMeta)
-        .DependsOn(DotnetCoreDatabaseTestDomain)
-        .DependsOn(DotnetCoreDatabaseTestServerLocal)
-        .DependsOn(DotnetCoreDatabaseTestServerRemote);
+    private Target DotnetCoreTestDatabaseTest => _ => _
+        .DependsOn(DotnetCoreTestDatabaseTestMeta)
+        .DependsOn(DotnetCoreTestDatabaseTestDomain)
+        .DependsOn(DotnetCoreTestDatabaseTestServerLocal)
+        .DependsOn(DotnetCoreTestDatabaseTestServerRemote);
 
-    private Target DotnetCoreWorkspaceTest => _ => _
-        .DependsOn(DotnetCoreWorkspaceLocalTest)
-        .DependsOn(DotnetCoreWorkspaceRemoteJsonSystemTextTest)
-        .DependsOn(DotnetCoreWorkspaceRemoteJsonNewtonsoftTest);
+    private Target DotnetCoreTestWorkspaceTest => _ => _
+        .DependsOn(DotnetCoreTestWorkspaceLocalTest)
+        .DependsOn(DotnetCoreTestWorkspaceRemoteJsonSystemTextTest)
+        .DependsOn(DotnetCoreTestWorkspaceRemoteJsonNewtonsoftTest);
 
     private Target DotnetCoreTest => _ => _
-        .DependsOn(DotnetCoreDatabaseTest)
-        .DependsOn(DotnetCoreWorkspaceTest);
-
-    private Target DotnetCore => _ => _
-        .DependsOn(Clean)
-        .DependsOn(DotnetCoreTest);
+        .DependsOn(DotnetCoreTestDatabaseTest)
+        .DependsOn(DotnetCoreTestWorkspaceTest);
 }

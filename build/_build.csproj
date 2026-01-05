@@ -20,4 +20,8 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Remove="Dotnet\Core\**" />
+  </ItemGroup>
+
 </Project>
