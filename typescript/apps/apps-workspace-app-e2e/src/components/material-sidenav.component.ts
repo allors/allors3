@@ -52,12 +52,12 @@ export class MaterialSidenavComponent {
   }
 
   async clickMenuItem(title: string): Promise<void> {
-    const item = this.menu.locator('mat-list-item', { hasText: title });
+    const item = this.menu.locator('mat-list-item', { hasText: title }).first();
     await item.click();
   }
 
   async expandMenuItem(title: string): Promise<void> {
-    const item = this.menu.locator('mat-list-item', { hasText: title });
+    const item = this.menu.locator('mat-list-item', { hasText: title }).first();
     const isExpanded = (await item.getAttribute('class'))?.includes('expanded');
     if (!isExpanded) {
       await item.click();
@@ -70,9 +70,11 @@ export class MaterialSidenavComponent {
     childTitle: string
   ): Promise<void> {
     await this.expandMenuItem(parentTitle);
-    const childItem = this.menu.locator('mat-list-item.expanded', {
-      hasText: childTitle,
-    });
+    const childItem = this.menu
+      .locator('mat-list-item.expanded', {
+        hasText: childTitle,
+      })
+      .first();
     await childItem.click();
   }
 
