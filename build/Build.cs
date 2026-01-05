@@ -55,7 +55,7 @@ partial class Build : NukeBuild
         .DependsOn(DotnetSystemAdaptersGenerate)
         .DependsOn(DotnetCoreGenerate)
         .DependsOn(DotnetCoreTestGenerate)
-        .DependsOn(DotnetCoreGenerate)
+        .DependsOn(DotnetBaseGenerate)
         .DependsOn(DotnetBaseTestGenerate)
         .DependsOn(DotnetAppsGenerate)
         .DependsOn(DotnetAppsTestGenerate);
