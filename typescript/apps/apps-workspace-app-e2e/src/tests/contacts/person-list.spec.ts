@@ -116,9 +116,8 @@ test.describe('Person List', () => {
     if (rowCount > 0) {
       await personListPage.table.openRowMenu(0);
       // When mat-menu opens, the panel appears in an overlay container
-      await expect(
-        authenticatedPage.locator('.cdk-overlay-container .mat-menu-panel')
-      ).toBeVisible();
+      const menu = authenticatedPage.locator('.mat-mdc-menu-panel, .mat-menu-panel');
+      await expect(menu).toBeVisible();
     }
   });
 });

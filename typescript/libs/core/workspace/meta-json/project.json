@@ -5,15 +5,15 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/core/workspace/meta-json/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/core/workspace/meta-json"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/core/workspace/meta-json"],
       "options": {
         "jestConfig": "libs/core/workspace/meta-json/jest.config.ts",
         "passWithNoTests": true

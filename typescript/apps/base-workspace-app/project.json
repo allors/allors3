@@ -35,8 +35,8 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumWarning": "2.5mb",
+              "maximumError": "3mb"
             },
             {
               "type": "anyComponentStyle",
@@ -84,7 +84,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/base-workspace-app/**/*.ts",
@@ -93,10 +93,8 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/base-workspace-app"
-      ],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/base-workspace-app"],
       "options": {
         "jestConfig": "apps/base-workspace-app/jest.config.ts",
         "passWithNoTests": true

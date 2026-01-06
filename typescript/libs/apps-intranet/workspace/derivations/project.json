@@ -5,15 +5,17 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/apps-intranet/workspace/derivations/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/apps-intranet/workspace/derivations"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/apps-intranet/workspace/derivations"
+      ],
       "options": {
         "jestConfig": "libs/apps-intranet/workspace/derivations/jest.config.ts",
         "passWithNoTests": true

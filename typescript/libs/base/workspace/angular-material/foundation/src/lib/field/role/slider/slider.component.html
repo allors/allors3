@@ -5,18 +5,15 @@
   <mat-slider
     aFocus
     [aFocusTrigger]="roleType"
-    [(ngModel)]="model"
-    [name]="name"
-    [invert]="invert"
     [min]="min"
     [max]="max"
     [step]="step"
-    [thumbLabel]="thumbLabel"
-    [tickInterval]="tickInterval"
-    [vertical]="vertical"
     [color]="color"
-    [required]="required"
     [disabled]="disabled"
-  ></mat-slider>
+    [discrete]="thumbLabel"
+    [showTickMarks]="tickInterval === 'auto' || tickInterval > 0"
+  >
+    <input matSliderThumb [(ngModel)]="model" [name]="name" />
+  </mat-slider>
   <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
 </div>

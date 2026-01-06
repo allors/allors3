@@ -84,7 +84,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/apps-workspace-app/**/*.ts",
@@ -93,8 +93,8 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/apps-workspace-app"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/apps-workspace-app"],
       "options": {
         "jestConfig": "apps/apps-workspace-app/jest.config.ts",
         "passWithNoTests": true
