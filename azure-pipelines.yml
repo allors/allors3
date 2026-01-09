@@ -55,9 +55,16 @@ stages:
     #     version: 7.0.x
     #     installationPath: $(Agent.ToolsDirectory)/dotnet
     - powershell: |
-        Set-Service postgresql-x64-14 -StartupType manual
-        Start-Service postgresql-x64-14
-        Get-CimInstance win32_service | Where-Object Name -eq "postgresql-x64-14"
+        $pgService = Get-Service -Name 'postgresql*' | Select-Object -First 1
+        if ($pgService) {
+          Write-Host "Found PostgreSQL service: $($pgService.Name)"
+          Set-Service $pgService.Name -StartupType manual
+          Start-Service $pgService.Name
+          Get-Service $pgService.Name
+        } else {
+          Write-Error "PostgreSQL service not found"
+          exit 1
+        }
       displayName: 'Setup PostgreSQL'
     - task: PowerShell@2
       env:
