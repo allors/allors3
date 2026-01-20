@@ -1,0 +1,137 @@
+<Solution>
+  <Folder Name="/Apps/" />
+  <Folder Name="/Apps/Database/">
+    <Project Path="Apps/Database/Commands/Commands.csproj" />
+    <Project Path="Apps/Database/Configuration.Tests/Configuration.Tests.csproj" />
+    <Project Path="Apps/Database/Configuration/Configuration.csproj" />
+    <Project Path="Apps/Database/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="Apps/Database/Domain/Domain.csproj" />
+    <Project Path="Apps/Database/Generate/Generate.csproj" />
+    <Project Path="Apps/Database/Meta/Meta.csproj" />
+    <Project Path="Apps/Database/Resources/Resources.csproj" />
+    <Project Path="Apps/Database/Server/Server.csproj" />
+    <Project Path="Apps/Database/TestPopulation.Tests/TestPopulation.Tests.csproj" />
+    <Project Path="Apps/Database/TestPopulation/TestPopulation.csproj" />
+  </Folder>
+  <Folder Name="/Apps/Repository/">
+    <Project Path="Apps/Repository/Domain/Repository.csproj" />
+  </Folder>
+  <Folder Name="/Apps/Workspace/">
+    <Project Path="Apps/Workspace/Domain/Workspace.Domain.csproj" />
+    <Project Path="Apps/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
+    <Project Path="Apps/Workspace/Meta/Workspace.Meta.csproj" />
+    <Project Path="Apps/Workspace/Tests/Workspace.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Base/" />
+  <Folder Name="/Base/Database/">
+    <Project Path="Base/Database/Commands/Commands.csproj" />
+    <Project Path="Base/Database/Configuration.Tests/Configuration.Tests.csproj" />
+    <Project Path="Base/Database/Configuration/Configuration.csproj" />
+    <Project Path="Base/Database/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="Base/Database/Domain/Domain.csproj" />
+    <Project Path="Base/Database/Generate/Generate.csproj" />
+    <Project Path="Base/Database/Meta/Meta.csproj" />
+    <Project Path="Base/Database/Resources/Resources.csproj" />
+    <Project Path="Base/Database/Server/Server.csproj" />
+  </Folder>
+  <Folder Name="/Base/Repository/">
+    <Project Path="Base/Repository/Domain/Repository.csproj" />
+  </Folder>
+  <Folder Name="/Base/Workspace/">
+    <Project Path="Base/Workspace/Configuration/Workspace.Configuration.csproj" />
+    <Project Path="Base/Workspace/Domain/Workspace.Domain.csproj" />
+    <Project Path="Base/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
+    <Project Path="Base/Workspace/Meta/Workspace.Meta.csproj" />
+    <Project Path="Base/Workspace/Tests/Workspace.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Base/Workspace/Blazor/">
+    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site.Server/Allors.Workspace.Blazor.Bootstrap.Site.Server.csproj" />
+    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site.Wasm/Allors.Workspace.Blazor.Bootstrap.Site.Wasm.csproj" />
+    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap.Site/Allors.Workspace.Blazor.Bootstrap.Site.csproj" />
+    <Project Path="Base/Workspace/Blazor/Blazor.Bootstrap/Allors.Workspace.Blazor.Bootstrap.csproj" />
+    <Project Path="Base/Workspace/Blazor/Blazor/Allors.Workspace.Blazor.csproj" />
+  </Folder>
+  <Folder Name="/Core/" />
+  <Folder Name="/Core/Database/">
+    <Project Path="Core/Database/Commands/Commands.csproj" />
+    <Project Path="Core/Database/Configuration.Tests/Configuration.Tests.csproj" />
+    <Project Path="Core/Database/Configuration/Configuration.csproj" />
+    <Project Path="Core/Database/Domain.Tests/Domain.Tests.csproj" />
+    <Project Path="Core/Database/Domain/Domain.csproj" />
+    <Project Path="Core/Database/Generate/Generate.csproj" />
+    <Project Path="Core/Database/Merge/Merge.csproj" />
+    <Project Path="Core/Database/Meta.Tests/Meta.Tests.csproj" />
+    <Project Path="Core/Database/Meta/Meta.csproj" />
+    <Project Path="Core/Database/Resources/Resources.csproj" />
+    <Project Path="Core/Database/Server.Local.Tests/Server.Local.Tests.csproj" />
+    <Project Path="Core/Database/Server.Remote.Tests/Server.Remote.Tests.csproj" />
+    <Project Path="Core/Database/Server/Server.csproj" />
+  </Folder>
+  <Folder Name="/Core/Repository/">
+    <Project Path="Core/Repository/Domain/Repository.csproj" />
+  </Folder>
+  <Folder Name="/Core/Workspace/">
+    <Project Path="Core/Workspace/Configuration/Workspace.Configuration.csproj" />
+    <Project Path="Core/Workspace/Domain/Workspace.Domain.csproj" />
+    <Project Path="Core/Workspace/Meta.Lazy/Workspace.Meta.Lazy.csproj" />
+    <Project Path="Core/Workspace/Meta/Workspace.Meta.csproj" />
+    <Project Path="Core/Workspace/Tests.Local/Workspace.Tests.Local.csproj" />
+    <Project Path="Core/Workspace/Tests.Remote.Json.Newtonsoft/Workspace.Tests.Remote.Json.Newtonsoft.csproj" />
+    <Project Path="Core/Workspace/Tests.Remote.Json.SystemText/Workspace.Tests.Remote.Json.SystemText.csproj" />
+    <Project Path="Core/Workspace/Tests/Workspace.Tests.csproj" />
+  </Folder>
+  <Folder Name="/System/">
+    <Project Path="System/Shared.Tests/Allors.Shared.Tests.csproj" />
+    <Project Path="System/Shared/Allors.Shared.csproj" />
+  </Folder>
+  <Folder Name="/System/Database/">
+    <Project Path="System/Database/Allors.Database.Meta.Props/Allors.Database.Meta.Props.csproj" />
+    <Project Path="System/Database/Allors.Database.Workspace.Json/Allors.Database.Workspace.Json.csproj" />
+    <Project Path="System/Database/Allors.Database.Workspace/Allors.Database.Workspace.csproj" />
+    <Project Path="System/Database/Allors.Database/Allors.Database.csproj" />
+  </Folder>
+  <Folder Name="/System/Database/Adapters/">
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters.Memory/Allors.Database.Adapters.Memory.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql.Npgsql/Allors.Database.Adapters.Sql.Npgsql.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql.SqlClient/Allors.Database.Adapters.Sql.SqlClient.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters.Sql/Allors.Database.Adapters.Sql.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters.Tracing/Allors.Database.Adapters.Tracing.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Adapters/Allors.Database.Adapters.csproj" />
+    <Project Path="System/Database/Adapters/Allors.Database.Builder/Allors.Database.Builder.csproj" />
+    <Project Path="System/Database/Adapters/Domain/Domain.csproj" />
+    <Project Path="System/Database/Adapters/Generate/Generate.csproj" />
+    <Project Path="System/Database/Adapters/Meta/Meta.csproj" />
+    <Project Path="System/Database/Adapters/Repository/Domain/Repository.csproj" />
+    <Project Path="System/Database/Adapters/Tests.Dynamic/Tests.Dynamic.csproj" />
+    <Project Path="System/Database/Adapters/Tests.Static/Tests.Static.csproj" />
+  </Folder>
+  <Folder Name="/System/Protocol/">
+    <Project Path="System/Protocol/Allors.Protocol.Json.Newtonsoft/Allors.Protocol.Json.Newtonsoft.csproj" />
+    <Project Path="System/Protocol/Allors.Protocol.Json.SystemText/Allors.Protocol.Json.SystemText.csproj" />
+    <Project Path="System/Protocol/Allors.Protocol.Json/Allors.Protocol.Json.csproj" />
+  </Folder>
+  <Folder Name="/System/Repository/">
+    <Project Path="System/Repository/Allors.Repository/Allors.Repository.csproj" />
+    <Project Path="System/Repository/Attributes/Attributes.csproj" />
+    <Project Path="System/Repository/Generate/Generate.csproj" />
+  </Folder>
+  <Folder Name="/System/Store/">
+    <Project Path="System/Store/Allors.Store.Files/Allors.Store.Files.csproj" />
+    <Project Path="System/Store/Allors.Store/Allors.Store.csproj" />
+  </Folder>
+  <Folder Name="/System/Workspace/">
+    <Project Path="System/Workspace/Allors.Workspace.Domain/Allors.Workspace.Domain.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Meta.Lazy/Allors.Workspace.Meta.Lazy.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Meta/Allors.Workspace.Meta.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Protocol.Direct/Allors.Workspace.Protocol.Direct.csproj" />
+    <Project Path="System/Workspace/Allors.Workspace.Protocol.Json/Allors.Workspace.Protocol.Json.csproj" />
+  </Folder>
+  <Folder Name="/System/Workspace/Adapters/">
+    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Local/Allors.Workspace.Adapters.Local.csproj" />
+    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote.Newtonsoft/Allors.Workspace.Adapters.Remote.Newtonsoft.csproj" />
+    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote.SystemText/Allors.Workspace.Adapters.Remote.SystemText.csproj" />
+    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters.Remote/Allors.Workspace.Adapters.Remote.csproj" />
+    <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters/Allors.Workspace.Adapters.csproj" />
+  </Folder>
+  <Project Path="../build/_build.csproj" />
+</Solution>
