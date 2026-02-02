@@ -35,6 +35,7 @@ namespace Allors.Database.Domain
 
                 @this.DerivedIrpfRegime = @this.ExistAssignedIrpfRegime ? @this.AssignedIrpfRegime : @this.SalesInvoiceWhereSalesInvoiceItem?.DerivedIrpfRegime;
                 @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= salesInvoice.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= salesInvoice.InvoiceDate));
+                @this.IrpfRatePercentage = @this.IrpfRate?.Rate ?? 0;
             }
         }
     }

@@ -72,6 +72,8 @@ namespace Allors.Repository
 
         public VatRate DerivedVatRate { get; set; }
 
+        public decimal DerivedVatRatePercentage { get; set; }
+
         public decimal TotalVat { get; set; }
 
         public decimal TotalFee { get; set; }
@@ -107,6 +109,8 @@ namespace Allors.Repository
         public IrpfRegime DerivedIrpfRegime { get; set; }
 
         public IrpfRate DerivedIrpfRate { get; set; }
+
+        public decimal DerivedIrpfRatePercentage { get; set; }
 
         public decimal TotalIrpf { get; set; }
 

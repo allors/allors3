@@ -36,7 +36,9 @@ namespace Allors.Database.Domain
                 if (@this.ExistInvoiceDate)
                 {
                     @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+                    @this.DerivedVatRatePercentage = @this.DerivedVatRate?.Rate ?? 0;
                     @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.InvoiceDate && (!v.ExistThroughDate || v.ThroughDate >= @this.InvoiceDate));
+                    @this.DerivedIrpfRatePercentage = @this.DerivedIrpfRate?.Rate ?? 0;
                 }
 
                 if (@this.ExistDerivedVatRegime)

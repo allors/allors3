@@ -98,6 +98,16 @@ namespace Allors.Repository
         VatRate VatRate { get; set; }
 
         #region Allors
+        [Id("d4a7c5e8-2f91-4b63-a8d9-6c3e1b5f7a2d")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace(Default)]
+        decimal VatRatePercentage { get; set; }
+
+        #region Allors
         [Id("b88638a1-4c91-4b50-80d8-430cf840c38b")]
         #endregion
         [Multiplicity(Multiplicity.OneToMany)]

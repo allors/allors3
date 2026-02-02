@@ -35,6 +35,7 @@ namespace Allors.Database.Domain
 
                 @this.DerivedVatRegime = @this.AssignedVatRegime ?? salesOrder?.DerivedVatRegime;
                 @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= salesOrder.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= salesOrder.OrderDate));
+                @this.VatRatePercentage = @this.VatRate?.Rate ?? 0;
             }
         }
     }

@@ -41,6 +41,8 @@ namespace Allors.Repository
 
         public VatRate VatRate { get; set; }
 
+        public decimal VatRatePercentage { get; set; }
+
         public decimal TotalBasePrice { get; set; }
 
         public decimal TotalVat { get; set; }
@@ -298,6 +300,16 @@ namespace Allors.Repository
         [Indexed]
         [Workspace(Default)]
         public IrpfRate IrpfRate { get; set; }
+
+        #region Allors
+        [Id("d4a8b0c6-2e97-4f9d-c5ab-6b8c0e4f3a7d")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace(Default)]
+        public decimal IrpfRatePercentage { get; set; }
 
         #region Allors
         [Id("e646b243-674a-42c5-804a-596bfcc80d33")]

@@ -58,6 +58,8 @@ namespace Allors.Repository
 
         public IrpfRate IrpfRate { get; set; }
 
+        public decimal IrpfRatePercentage { get; set; }
+
         public decimal UnitIrpf { get; set; }
 
         public decimal TotalIrpf { get; set; }
@@ -91,6 +93,8 @@ namespace Allors.Repository
         public decimal UnitDiscount { get; set; }
 
         public VatRate VatRate { get; set; }
+
+        public decimal VatRatePercentage { get; set; }
 
         public decimal AssignedUnitPrice { get; set; }
 

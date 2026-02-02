@@ -214,6 +214,16 @@ namespace Allors.Repository
         VatRate DerivedVatRate { get; set; }
 
         #region Allors
+        [Id("a7f4d3b2-8c91-4e56-b3d7-2a1f9c8e5d4a")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace(Default)]
+        decimal DerivedVatRatePercentage { get; set; }
+
+        #region Allors
         [Id("9a12fc10-722b-42c4-aa68-cec89aeb5c12")]
         #endregion
         [Multiplicity(Multiplicity.ManyToOne)]
@@ -238,6 +248,16 @@ namespace Allors.Repository
         [Derived]
         [Workspace(Default)]
         IrpfRate DerivedIrpfRate { get; set; }
+
+        #region Allors
+        [Id("e8b3f5d1-7a92-4c6e-9d8f-1b3c5e7a9d2f")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace(Default)]
+        decimal DerivedIrpfRatePercentage { get; set; }
 
         #region Allors
         [Id("c7350047-9282-41c8-8d82-4e1f86369e9c")]

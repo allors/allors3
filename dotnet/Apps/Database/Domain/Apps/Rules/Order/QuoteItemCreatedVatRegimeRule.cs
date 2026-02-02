@@ -33,6 +33,7 @@ namespace Allors.Database.Domain
                 {
                     @this.DerivedVatRegime = @this.AssignedVatRegime ?? quote.DerivedVatRegime;
                     @this.VatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= quote.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= quote.IssueDate));
+                    @this.VatRatePercentage = @this.VatRate?.Rate ?? 0;
                 }
             }
         }

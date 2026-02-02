@@ -88,8 +88,8 @@ namespace Allors.Database.Domain
                     purchaseOrderItem.TotalSurcharge = purchaseOrderItem.UnitSurcharge * purchaseOrderItem.QuantityOrdered;
                     purchaseOrderItem.UnitPrice = purchaseOrderItem.UnitBasePrice - purchaseOrderItem.UnitDiscount + purchaseOrderItem.UnitSurcharge;
 
-                    purchaseOrderItem.UnitVat = purchaseOrderItem.ExistVatRate ? purchaseOrderItem.UnitPrice * purchaseOrderItem.VatRate.Rate / 100 : 0;
-                    purchaseOrderItem.UnitIrpf = purchaseOrderItem.ExistIrpfRate ? purchaseOrderItem.UnitPrice * purchaseOrderItem.IrpfRate.Rate / 100 : 0;
+                    purchaseOrderItem.UnitVat = purchaseOrderItem.ExistVatRate ? purchaseOrderItem.UnitPrice * purchaseOrderItem.VatRatePercentage / 100 : 0;
+                    purchaseOrderItem.UnitIrpf = purchaseOrderItem.ExistIrpfRate ? purchaseOrderItem.UnitPrice * purchaseOrderItem.IrpfRatePercentage / 100 : 0;
                     purchaseOrderItem.TotalVat = purchaseOrderItem.UnitVat * purchaseOrderItem.QuantityOrdered;
                     purchaseOrderItem.TotalExVat = purchaseOrderItem.UnitPrice * purchaseOrderItem.QuantityOrdered;
                     purchaseOrderItem.TotalIrpf = purchaseOrderItem.UnitIrpf * purchaseOrderItem.QuantityOrdered;
@@ -153,12 +153,12 @@ namespace Allors.Database.Domain
 
                     if (@this.ExistDerivedVatRegime)
                     {
-                        discountVat = discount * @this.DerivedVatRate.Rate / 100;
+                        discountVat = discount * @this.DerivedVatRatePercentage / 100;
                     }
 
                     if (@this.ExistDerivedIrpfRegime)
                     {
-                        discountIrpf = discount * @this.DerivedIrpfRate.Rate / 100;
+                        discountIrpf = discount * @this.DerivedIrpfRatePercentage / 100;
                     }
                 }
 
@@ -172,12 +172,12 @@ namespace Allors.Database.Domain
 
                     if (@this.ExistDerivedVatRegime)
                     {
-                        surchargeVat = surcharge * @this.DerivedVatRate.Rate / 100;
+                        surchargeVat = surcharge * @this.DerivedVatRatePercentage / 100;
                     }
 
                     if (@this.ExistDerivedIrpfRegime)
                     {
-                        surchargeIrpf = surcharge * @this.DerivedIrpfRate.Rate / 100;
+                        surchargeIrpf = surcharge * @this.DerivedIrpfRatePercentage / 100;
                     }
                 }
 
@@ -191,12 +191,12 @@ namespace Allors.Database.Domain
 
                     if (@this.ExistDerivedVatRegime)
                     {
-                        feeVat = fee * @this.DerivedVatRate.Rate / 100;
+                        feeVat = fee * @this.DerivedVatRatePercentage / 100;
                     }
 
                     if (@this.ExistDerivedIrpfRegime)
                     {
-                        feeIrpf = fee * @this.DerivedIrpfRate.Rate / 100;
+                        feeIrpf = fee * @this.DerivedIrpfRatePercentage / 100;
                     }
                 }
 
@@ -210,12 +210,12 @@ namespace Allors.Database.Domain
 
                     if (@this.ExistDerivedVatRegime)
                     {
-                        shippingVat = shipping * @this.DerivedVatRate.Rate / 100;
+                        shippingVat = shipping * @this.DerivedVatRatePercentage / 100;
                     }
 
                     if (@this.ExistDerivedIrpfRegime)
                     {
-                        shippingIrpf = shipping * @this.DerivedIrpfRate.Rate / 100;
+                        shippingIrpf = shipping * @this.DerivedIrpfRatePercentage / 100;
                     }
                 }
 
@@ -229,12 +229,12 @@ namespace Allors.Database.Domain
 
                     if (@this.ExistDerivedVatRegime)
                     {
-                        miscellaneousVat = miscellaneous * @this.DerivedVatRate.Rate / 100;
+                        miscellaneousVat = miscellaneous * @this.DerivedVatRatePercentage / 100;
                     }
 
                     if (@this.ExistDerivedIrpfRegime)
                     {
-                        miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRate.Rate / 100;
+                        miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRatePercentage / 100;
                     }
                 }
             }

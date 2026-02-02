@@ -143,6 +143,16 @@ namespace Allors.Repository
         IrpfRate IrpfRate { get; set; }
 
         #region Allors
+        [Id("c3f7a9b5-1d86-4e8c-b4fa-5a7b9d3e2f6c")]
+        #endregion
+        [Derived]
+        [Required]
+        [Precision(19)]
+        [Scale(2)]
+        [Workspace(Default)]
+        decimal IrpfRatePercentage { get; set; }
+
+        #region Allors
         [Id("a726e7b8-9414-4582-a591-fb98b33bef15")]
         #endregion
         [Required]

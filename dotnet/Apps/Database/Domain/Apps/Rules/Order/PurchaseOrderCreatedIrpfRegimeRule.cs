@@ -33,6 +33,7 @@ namespace Allors.Database.Domain
                 if (@this.ExistOrderDate)
                 {
                     @this.DerivedIrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= @this.OrderDate && (!v.ExistThroughDate || v.ThroughDate >= @this.OrderDate));
+                    @this.DerivedIrpfRatePercentage = @this.DerivedIrpfRate?.Rate ?? 0;
                 }
             }
         }

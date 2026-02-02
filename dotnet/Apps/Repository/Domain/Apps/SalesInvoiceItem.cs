@@ -71,6 +71,8 @@ namespace Allors.Repository
 
         public VatRate VatRate { get; set; }
 
+        public decimal VatRatePercentage { get; set; }
+
         public decimal AssignedUnitPrice { get; set; }
 
         public decimal UnitBasePrice { get; set; }
@@ -98,6 +100,8 @@ namespace Allors.Repository
         public IrpfRegime AssignedIrpfRegime { get; set; }
 
         public IrpfRate IrpfRate { get; set; }
+
+        public decimal IrpfRatePercentage { get; set; }
 
         public decimal UnitIrpf { get; set; }
 
