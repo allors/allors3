@@ -55,7 +55,12 @@ partial class Build : NukeBuild
         .DependsOn(DotnetBaseGenerate)
         .DependsOn(DotnetAppsGenerate);
 
+    private Target Scaffold => _ => _
+        .DependsOn(TypescriptE2EAngularBaseScaffold)
+        .DependsOn(TypescriptE2EAngularAppsIntranetScaffold);
+
     private Target Default => _ => _
         .DependsOn(Install)
-        .DependsOn(Generate);
+        .DependsOn(Generate)
+        .DependsOn(Scaffold);
 }

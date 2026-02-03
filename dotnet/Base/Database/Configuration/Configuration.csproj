@@ -7,10 +7,10 @@
   <ItemGroup>
     <PackageReference Include="Allors.Documents" Version="1.0.10" />
     <PackageReference Include="DataUtils.DataUrl" Version="1.0.2" />
-    <PackageReference Include="MailKit" Version="4.10.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
-    <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.21" />
+    <PackageReference Include="MailKit" Version="4.14.1" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.2" />
+    <PackageReference Include="ZXing.Net.Bindings.SkiaSharp" Version="0.16.22" />
   </ItemGroup>
 
   <ItemGroup>

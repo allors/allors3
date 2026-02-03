@@ -134,4 +134,17 @@
     <Project Path="System/Workspace/Adapters/Allors.Workspace.Adapters/Allors.Workspace.Adapters.csproj" />
   </Folder>
   <Project Path="../build/_build.csproj" />
+  <Folder Name="/E2E/">
+    <Project Path="../typescript/e2e/Scaffold/Scaffold.csproj" />
+  </Folder>
+  <Folder Name="/E2E/Base/">
+    <Project Path="../typescript/e2e/Base/E2E/Allors.E2E.csproj" />
+    <Project Path="../typescript/e2e/Base/Scaffold.Command/Scaffold.Command.csproj" />
+    <Project Path="../typescript/e2e/Base/Tests/Tests.csproj" />
+  </Folder>
+  <Folder Name="/E2E/AppsIntranet/">
+    <Project Path="../typescript/e2e/AppsIntranet/E2E/Allors.E2E.csproj" />
+    <Project Path="../typescript/e2e/AppsIntranet/Scaffold.Command/Scaffold.Command.csproj" />
+    <Project Path="../typescript/e2e/AppsIntranet/Tests/Tests.csproj" />
+  </Folder>
 </Solution>

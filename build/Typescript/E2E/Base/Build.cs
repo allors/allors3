@@ -7,6 +7,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 partial class Build
 {
     private Target TypescriptE2EAngularBaseScaffold => _ => _
+        .DependsOn(DotnetBaseGenerate)
         .Executes(() =>
         {
             Paths.TypescriptE2EBaseE2EGenerated.DeleteDirectory();
