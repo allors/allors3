@@ -13,6 +13,7 @@ internal class Angular : IDisposable
     {
         NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .AddProcessEnvironmentVariable("CI", "true")
             .SetProcessWorkingDirectory(path)
             .SetCommand(command));
     }

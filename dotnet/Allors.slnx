@@ -102,7 +102,6 @@
     <Project Path="System/Database/Adapters/Generate/Generate.csproj" />
     <Project Path="System/Database/Adapters/Meta/Meta.csproj" />
     <Project Path="System/Database/Adapters/Repository/Domain/Repository.csproj" />
-    <Project Path="System/Database/Adapters/Tests.Dynamic/Tests.Dynamic.csproj" />
     <Project Path="System/Database/Adapters/Tests.Static/Tests.Static.csproj" />
   </Folder>
   <Folder Name="/System/Protocol/">

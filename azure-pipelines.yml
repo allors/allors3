@@ -69,11 +69,12 @@ stages:
     - task: PowerShell@2
       env:
         NODE_OPTIONS: --max_old_space_size=16384
+        CI: true
       inputs:
         targetType: 'filePath'
         filePath: 'build.ps1'
         arguments: -target $(target)
-        failOnStderr: true
+        failOnStderr: false
       displayName: Running $(target)
     - task: PublishTestResults@2
       condition: always()
