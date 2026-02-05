@@ -29,11 +29,11 @@ namespace Allors.Database.Domain.Print.ProposalModel
 
             // IRPF is subtracted for total amount to pay
             var totalIrpf = quote.TotalIrpf * -1;
-            this.IrpfRate = quote.DerivedIrpfRatePercentage.ToString("n2");
+            this.IrpfRate = quote.DerivedIrpfRatePercentage?.ToString("n2");
             this.TotalIrpf = totalIrpf.ToString("N2", new CultureInfo("nl-BE"));
             this.PrintIrpf = quote.TotalIrpf != 0;
 
-            this.IrpfRate = quote.DerivedIrpfRatePercentage.ToString("n2");
+            this.IrpfRate = quote.DerivedIrpfRatePercentage?.ToString("n2");
             this.TotalIrpf = quote.TotalIrpf.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
             this.TotalIncVat = quote.TotalIncVat.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
             this.GrandTotal = quote.GrandTotal.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;

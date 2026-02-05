@@ -21,7 +21,7 @@ namespace Allors.Database.Domain.Print.PurchaseInvoiceModel
             this.TotalExVat = invoice.TotalExVat.ToString("N2", new CultureInfo("nl-BE"));
             this.VatRate = invoice.DerivedVatRatePercentage.ToString("n2");
             this.TotalVat = invoice.TotalVat.ToString("N2", new CultureInfo("nl-BE"));
-            this.IrpfRate = invoice.DerivedIrpfRatePercentage.ToString("n2");
+            this.IrpfRate = invoice.DerivedIrpfRatePercentage?.ToString("n2");
 
             // IRPF is subtracted for total amount to pay
             var totalIrpf = invoice.TotalIrpf * -1;

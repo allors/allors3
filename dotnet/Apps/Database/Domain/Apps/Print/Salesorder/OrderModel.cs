@@ -41,7 +41,7 @@ namespace Allors.Database.Domain.Print.SalesOrderModel
 
             // IRPF is subtracted for total amount to pay
             var totalIrpf = order.TotalIrpf * -1;
-            this.IrpfRate = order.DerivedIrpfRatePercentage.ToString("n2");
+            this.IrpfRate = order.DerivedIrpfRatePercentage?.ToString("n2");
             this.TotalIrpf = totalIrpf.ToString("N2", new CultureInfo("nl-BE"));
             this.PrintIrpf = order.TotalIrpf != 0;
 

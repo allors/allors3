@@ -93,7 +93,7 @@ namespace Allors.Database.Domain
                         purchaseInvoiceItem.UnitPrice = purchaseInvoiceItem.UnitBasePrice - purchaseInvoiceItem.UnitDiscount + purchaseInvoiceItem.UnitSurcharge;
 
                         purchaseInvoiceItem.UnitVat = purchaseInvoiceItem.ExistVatRate ? purchaseInvoiceItem.UnitPrice * purchaseInvoiceItem.VatRatePercentage / 100 : 0;
-                        purchaseInvoiceItem.UnitIrpf = purchaseInvoiceItem.ExistIrpfRate ? purchaseInvoiceItem.UnitPrice * purchaseInvoiceItem.IrpfRatePercentage / 100 : 0;
+                        purchaseInvoiceItem.UnitIrpf = purchaseInvoiceItem.ExistIrpfRate ? purchaseInvoiceItem.UnitPrice * purchaseInvoiceItem.IrpfRatePercentage.Value / 100 : 0;
                         purchaseInvoiceItem.TotalVat = purchaseInvoiceItem.UnitVat * purchaseInvoiceItem.Quantity;
                         purchaseInvoiceItem.TotalExVat = purchaseInvoiceItem.UnitPrice * purchaseInvoiceItem.Quantity;
                         purchaseInvoiceItem.TotalIrpf = purchaseInvoiceItem.UnitIrpf * purchaseInvoiceItem.Quantity;
@@ -156,7 +156,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            discountIrpf = discount * @this.DerivedIrpfRatePercentage / 100;
+                            discountIrpf = discount * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -175,7 +175,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            surchargeIrpf = surcharge * @this.DerivedIrpfRatePercentage / 100;
+                            surchargeIrpf = surcharge * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -194,7 +194,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            feeIrpf = fee * @this.DerivedIrpfRatePercentage / 100;
+                            feeIrpf = fee * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -213,7 +213,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            shippingIrpf = shipping * @this.DerivedIrpfRatePercentage / 100;
+                            shippingIrpf = shipping * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -232,7 +232,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRatePercentage / 100;
+                            miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
                 }

@@ -153,7 +153,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            discountIrpf = discount * @this.DerivedIrpfRatePercentage / 100;
+                            discountIrpf = discount * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -172,7 +172,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            surchargeIrpf = surcharge * @this.DerivedIrpfRatePercentage / 100;
+                            surchargeIrpf = surcharge * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -191,7 +191,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            feeIrpf = fee * @this.DerivedIrpfRatePercentage / 100;
+                            feeIrpf = fee * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -210,7 +210,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            shippingIrpf = shipping * @this.DerivedIrpfRatePercentage / 100;
+                            shippingIrpf = shipping * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
 
@@ -229,7 +229,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRatePercentage / 100;
+                            miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRatePercentage.Value / 100;
                         }
                     }
                 }
@@ -360,7 +360,7 @@ namespace Allors.Database.Domain
                 }
 
                 salesInvoiceItem.UnitVat = salesInvoiceItem.ExistVatRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.VatRatePercentage / 100 : 0;
-                salesInvoiceItem.UnitIrpf = salesInvoiceItem.ExistIrpfRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.IrpfRatePercentage / 100 : 0;
+                salesInvoiceItem.UnitIrpf = salesInvoiceItem.ExistIrpfRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.IrpfRatePercentage.Value / 100 : 0;
 
                 // Calculate Totals
                 salesInvoiceItem.TotalBasePrice = salesInvoiceItem.UnitBasePrice * salesInvoiceItem.Quantity;
