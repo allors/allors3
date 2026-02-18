@@ -24,7 +24,7 @@ namespace Allors.Database.Domain.Print.ProposalModel
             var currency = "€";
             this.SubTotal = quote.TotalBasePrice.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
             this.TotalExVat = quote.TotalExVat.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
-            this.VatRate = quote.DerivedVatRatePercentage.ToString("n2");
+            this.VatRate = quote.DerivedVatRatePercentage?.ToString("n2");
             this.TotalVat = quote.TotalVat.ToString("N2", new CultureInfo("nl-BE")) + " " + currency;
 
             // IRPF is subtracted for total amount to pay

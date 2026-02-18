@@ -18,7 +18,7 @@ namespace Allors.Database.Domain.Print.PurchaseOrderModel
 
             this.SubTotal = order.TotalBasePrice.ToString("N2", new CultureInfo("nl-BE"));
             this.TotalExVat = order.TotalExVat.ToString("N2", new CultureInfo("nl-BE"));
-            this.VatRate = order.DerivedVatRatePercentage.ToString("n2");
+            this.VatRate = order.DerivedVatRatePercentage?.ToString("n2");
             this.TotalVat = order.TotalVat.ToString("N2", new CultureInfo("nl-BE"));
             this.IrpfRate = order.DerivedIrpfRatePercentage?.ToString("n2");
             this.TotalIrpf = order.TotalIrpf.ToString("N2", new CultureInfo("nl-BE"));

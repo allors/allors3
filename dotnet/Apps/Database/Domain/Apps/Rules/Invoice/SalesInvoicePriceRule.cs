@@ -148,7 +148,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            discountVat = discount * @this.DerivedVatRatePercentage / 100;
+                            discountVat = discount * (@this.DerivedVatRatePercentage ?? 0) / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
@@ -167,7 +167,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            surchargeVat = surcharge * @this.DerivedVatRatePercentage / 100;
+                            surchargeVat = surcharge * (@this.DerivedVatRatePercentage ?? 0) / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
@@ -186,7 +186,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            feeVat = fee * @this.DerivedVatRatePercentage / 100;
+                            feeVat = fee * (@this.DerivedVatRatePercentage ?? 0) / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
@@ -205,7 +205,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            shippingVat = shipping * @this.DerivedVatRatePercentage / 100;
+                            shippingVat = shipping * (@this.DerivedVatRatePercentage ?? 0) / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
@@ -224,7 +224,7 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            miscellaneousVat = miscellaneous * @this.DerivedVatRatePercentage / 100;
+                            miscellaneousVat = miscellaneous * (@this.DerivedVatRatePercentage ?? 0) / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
@@ -359,7 +359,7 @@ namespace Allors.Database.Domain
                     salesInvoiceItem.UnitPrice = salesInvoiceItem.UnitBasePrice - salesInvoiceItem.UnitDiscount + salesInvoiceItem.UnitSurcharge;
                 }
 
-                salesInvoiceItem.UnitVat = salesInvoiceItem.ExistVatRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.VatRatePercentage / 100 : 0;
+                salesInvoiceItem.UnitVat = salesInvoiceItem.ExistVatRate ? salesInvoiceItem.UnitPrice * (salesInvoiceItem.VatRatePercentage ?? 0) / 100 : 0;
                 salesInvoiceItem.UnitIrpf = salesInvoiceItem.ExistIrpfRate ? salesInvoiceItem.UnitPrice * salesInvoiceItem.IrpfRatePercentage.Value / 100 : 0;
 
                 // Calculate Totals

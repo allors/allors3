@@ -101,7 +101,6 @@ namespace Allors.Repository
         [Id("d4a7c5e8-2f91-4b63-a8d9-6c3e1b5f7a2d")]
         #endregion
         [Derived]
-        [Required]
         [Precision(19)]
         [Scale(2)]
         [Workspace(Default)]
