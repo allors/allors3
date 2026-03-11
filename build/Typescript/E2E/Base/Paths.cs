@@ -2,7 +2,7 @@ using Nuke.Common.IO;
 
 public partial class Paths
 {
-    public AbsolutePath TypescriptE2EBase => TypescriptE2E / "base";
+    public AbsolutePath TypescriptE2EBase => TypescriptE2E / "Base";
 
     public AbsolutePath TypescriptE2EBaseE2E => TypescriptE2EBase / "E2E";
     public AbsolutePath TypescriptE2EBaseE2EGenerated => TypescriptE2EBaseE2E / "Generated";

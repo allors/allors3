@@ -41,7 +41,7 @@ export * from './lib/data/node';
 export * from './lib/data/predicate';
 export * from './lib/data/predicate-kind';
 export * from './lib/data/procedure';
-export * from './lib/data/property-Kind';
+export * from './lib/data/property-kind';
 export * from './lib/data/pull';
 export * from './lib/data/result';
 export * from './lib/data/select';

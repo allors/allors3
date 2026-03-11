@@ -28,13 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appSettings.Json">
+    <None Update="appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="appSettings.osx.Json">
+    <None Update="appSettings.osx.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="appSettings.windows.Json">
+    <None Update="appSettings.windows.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="nlog.config">

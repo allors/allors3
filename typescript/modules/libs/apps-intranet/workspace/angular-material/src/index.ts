@@ -96,7 +96,7 @@ export { PositionTypeRateListPageComponent } from './lib/domain/positiontyperate
 export { PositionTypesListPageComponent } from './lib/domain/positiontype/list/positiontype-list-page.component';
 export { PostalAddressCreateFormComponent } from './lib/domain/postaladdress/create/postaladdress-create-form.component';
 export { PostalAddressEditFormComponent } from './lib/domain/postaladdress/edit/postaladdress-edit-form.component';
-export { PostalAddressInlineComponent } from './lib/domain/postaladdress/inline/PostalAddress-inline.component';
+export { PostalAddressInlineComponent } from './lib/domain/postaladdress/inline/postaladdress-inline.component';
 export { PrintAction } from './lib/actions/print/print-action';
 export { PrintService, PrintConfig } from './lib/actions/print/print.service';
 export { ProductCategoryFormComponent } from './lib/domain/productcategory/form/productcategory-form.component';
