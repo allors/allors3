@@ -33,7 +33,6 @@ namespace Allors.Database.Domain
                 {
                     @this.DerivedIrpfRegime = @this.AssignedIrpfRegime ?? quote.DerivedIrpfRegime;
                     @this.IrpfRate = @this.DerivedIrpfRegime?.IrpfRates.First(v => v.FromDate <= quote.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= quote.IssueDate));
-                    @this.IrpfRatePercentage = @this.IrpfRate?.Rate ?? 0;
                 }
             }
         }

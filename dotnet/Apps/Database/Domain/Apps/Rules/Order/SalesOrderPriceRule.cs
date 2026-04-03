@@ -108,12 +108,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            discountVat = discount * (@this.DerivedVatRatePercentage ?? 0) / 100;
+                            discountVat = discount * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            discountIrpf = discount * @this.DerivedIrpfRatePercentage.Value / 100;
+                            discountIrpf = discount * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
@@ -127,12 +127,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            surchargeVat = surcharge * (@this.DerivedVatRatePercentage ?? 0) / 100;
+                            surchargeVat = surcharge * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            surchargeIrpf = surcharge * @this.DerivedIrpfRatePercentage.Value / 100;
+                            surchargeIrpf = surcharge * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
@@ -146,12 +146,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            feeVat = fee * (@this.DerivedVatRatePercentage ?? 0) / 100;
+                            feeVat = fee * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            feeIrpf = fee * @this.DerivedIrpfRatePercentage.Value / 100;
+                            feeIrpf = fee * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
@@ -165,12 +165,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            shippingVat = shipping * (@this.DerivedVatRatePercentage ?? 0) / 100;
+                            shippingVat = shipping * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            shippingIrpf = shipping * @this.DerivedIrpfRatePercentage.Value / 100;
+                            shippingIrpf = shipping * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
 
@@ -184,12 +184,12 @@ namespace Allors.Database.Domain
 
                         if (@this.ExistDerivedVatRegime)
                         {
-                            miscellaneousVat = miscellaneous * (@this.DerivedVatRatePercentage ?? 0) / 100;
+                            miscellaneousVat = miscellaneous * @this.DerivedVatRate.Rate / 100;
                         }
 
                         if (@this.ExistDerivedIrpfRegime)
                         {
-                            miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRatePercentage.Value / 100;
+                            miscellaneousIrpf = miscellaneous * @this.DerivedIrpfRate.Rate / 100;
                         }
                     }
                 }

@@ -33,7 +33,6 @@ namespace Allors.Database.Domain
                 if (@this.ExistIssueDate)
                 {
                     @this.DerivedVatRate = @this.DerivedVatRegime?.VatRates.First(v => v.FromDate <= @this.IssueDate && (!v.ExistThroughDate || v.ThroughDate >= @this.IssueDate));
-                    @this.DerivedVatRatePercentage = @this.DerivedVatRate?.Rate ?? 0;
                 }
             }
         }

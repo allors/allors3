@@ -138,8 +138,8 @@ namespace Allors.Database.Domain
                         @this.UnitSurcharge += featureItem.UnitSurcharge;
                     }
 
-                    @this.UnitVat = @this.ExistVatRate ? @this.UnitPrice * (@this.VatRatePercentage ?? 0) / 100 : 0;
-                    @this.UnitIrpf = @this.ExistIrpfRate ? @this.UnitPrice * @this.IrpfRatePercentage.Value / 100 : 0;
+                    @this.UnitVat = @this.ExistVatRate ? @this.UnitPrice * @this.VatRate.Rate / 100 : 0;
+                    @this.UnitIrpf = @this.ExistIrpfRate ? @this.UnitPrice * @this.IrpfRate.Rate / 100 : 0;
 
                     // Calculate Totals
                     var totalBasePrice = @this.UnitBasePrice * @this.QuantityOrdered;
