@@ -149,9 +149,9 @@ namespace Allors.Repository
         [Id("6af30dd9-7f3b-47e7-a929-7ecd28b9b53f")]
         [Indexed]
         #endregion
-        [Multiplicity(Multiplicity.ManyToMany)]
+        [Multiplicity(Multiplicity.ManyToOne)]
         [Workspace(Default)]
-        WorkEffortPurpose[] WorkEffortPurposes { get; set; }
+        WorkEffortPurpose WorkEffortPurpose { get; set; }
 
         #region Allors
         [Id("cbef7da1-a540-4fa0-b308-7a0d330aaaf3")]

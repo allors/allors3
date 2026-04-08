@@ -43,7 +43,7 @@ namespace Allors.Repository
 
         public Priority Priority { get; set; }
 
-        public WorkEffortPurpose[] WorkEffortPurposes { get; set; }
+        public WorkEffortPurpose WorkEffortPurpose { get; set; }
 
         public DateTime IssueDate { get; set; }
 

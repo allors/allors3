@@ -57,7 +57,7 @@ namespace Allors.Database.Domain
                     security.Grant(Roles.CustomerContactId, @class, m.WorkTask.TakenBy, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.WorkTask.ExecutedBy, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.WorkTask.WorkDone, Operations.Read);
-                    security.Grant(Roles.CustomerContactId, @class, m.WorkTask.WorkEffortPurposes, Operations.Read);
+                    security.Grant(Roles.CustomerContactId, @class, m.WorkTask.WorkEffortPurpose, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.WorkTask.WorkEffortType, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.WorkTask.WorkEffortState, Operations.Read);
                     security.Grant(Roles.CustomerContactId, @class, m.WorkTask.ActualStart, Operations.Read);

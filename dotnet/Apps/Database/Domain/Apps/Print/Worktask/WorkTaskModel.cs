@@ -6,7 +6,6 @@
 namespace Allors.Database.Domain.Print.WorkTaskModel
 {
     using System.Globalization;
-    using System.Linq;
 
     public class WorkTaskModel
     {
@@ -18,7 +17,7 @@ namespace Allors.Database.Domain.Print.WorkTaskModel
             this.WorkDone = workTask.WorkDone?.Split('\n');
 
             this.Date = (workTask.ThroughDate() ?? workTask.Strategy.Transaction.Now()).ToString("yyyy-MM-dd");
-            this.Purpose = string.Join(", ", workTask.WorkEffortPurposes.Select(v => v.Name));
+            this.Purpose = workTask.WorkEffortPurpose?.Name;
             this.Facility = workTask.Facility?.Name;
             this.ContactName = workTask.ContactPerson?.DisplayName;
             this.ContactTelephone = workTask.ContactPerson?.CellPhoneNumber?.Description ?? workTask.ContactPerson?.GeneralPhoneNumber?.Description;
