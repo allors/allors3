@@ -1,4 +1,6 @@
 /* eslint-disable */
+const trxFile = process.env.ALLORS_TRX_OUTPUT_FILE;
+
 export default {
   displayName: 'system-workspace-adapters-json-tests',
   preset: '../../../../jest.preset.js',
@@ -6,7 +8,9 @@ export default {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
     },
+    ...(trxFile ? { trxOptions: { outputFile: trxFile } } : {}),
   },
+  ...(trxFile ? { testResultsProcessor: 'jest-trx-results-processor' } : {}),
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },

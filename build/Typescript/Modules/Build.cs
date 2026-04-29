@@ -17,6 +17,7 @@ partial class Build
     .DependsOn(EnsureDirectories)
     .Executes(() => NpmRun(s => s
         .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+        .AddProcessEnvironmentVariable("ALLORS_TRX_OUTPUT_FILE", Paths.ArtifactsTests / "SystemWorkspaceMetaTests.trx")
         .SetProcessWorkingDirectory(Paths.TypescriptModules)
         .SetCommand("system-workspace-meta:test")));
 
@@ -27,6 +28,7 @@ partial class Build
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .AddProcessEnvironmentVariable("ALLORS_TRX_OUTPUT_FILE", Paths.ArtifactsTests / "SystemWorkspaceMetaJsonTests.trx")
             .SetProcessWorkingDirectory(Paths.TypescriptModules)
             .SetCommand("system-workspace-meta-json:test")));
 
@@ -36,6 +38,7 @@ partial class Build
         .DependsOn(EnsureDirectories)
         .Executes(() => NpmRun(s => s
             .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+            .AddProcessEnvironmentVariable("ALLORS_TRX_OUTPUT_FILE", Paths.ArtifactsTests / "SystemWorkspaceAdaptersTests.trx")
             .SetProcessWorkingDirectory(Paths.TypescriptModules)
             .SetCommand("system-workspace-adapters:test")));
 
@@ -53,6 +56,7 @@ partial class Build
             await server.Ready();
             NpmRun(s => s
                 .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
+                .AddProcessEnvironmentVariable("ALLORS_TRX_OUTPUT_FILE", Paths.ArtifactsTests / "SystemWorkspaceAdaptersJsonTests.trx")
                 .SetProcessWorkingDirectory(Paths.TypescriptModules)
                 .SetCommand("system-workspace-adapters-json:test"));
         });
