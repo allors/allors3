@@ -8,9 +8,15 @@ export default {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
     },
-    ...(trxFile ? { trxOptions: { outputFile: trxFile } } : {}),
   },
-  ...(trxFile ? { testResultsProcessor: 'jest-trx-results-processor' } : {}),
+  ...(trxFile
+    ? {
+        reporters: [
+          'default',
+          ['jest-trx-results-processor', { outputFile: trxFile }],
+        ],
+      }
+    : {}),
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
