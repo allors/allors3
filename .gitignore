@@ -339,6 +339,9 @@ paket-files/
 .idea/
 *.sln.iml
 
+# Claude Code
+.claude/
+
 
 Core/Workspace/Typescript.legacy/Site/wwwroot/tsc.js
 Core/Workspace/Typescript.legacy/Site/wwwroot/tsc.js.map

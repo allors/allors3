@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'issue/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  test:
+    name: ${{ matrix.target }}
+    runs-on: windows-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - CiDotnetSystemAdaptersTestMemory
+          - CiDotnetSystemAdaptersTestSqlClient
+          - CiDotnetSystemAdaptersTestNpgsql
+          - CiDotnetCoreDatabaseTest
+          - CiDotnetCoreWorkspaceLocalTest
+          - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
+          - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
+          - CiDotnetBaseDatabaseTest
+          - CiDotnetAppsDatabaseTest
+          - CiTypescriptWorkspaceTest
+          - CiTypescriptWorkspaceAdaptersJsonTest
+          - CiTypescriptE2EAngularBaseTest
+          - CiTypescriptWorkspacesE2EAngularAppsIntranetTest
+          # - CiTypescriptWorkspacesE2EAngularAppsExtranetTest  # disabled in azure-pipelines.yml
+
+    env:
+      NODE_OPTIONS: --max_old_space_size=16384
+      CI: 'true'
+      DOTNET_NOLOGO: 'true'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Set culture nl-BE
+        shell: pwsh
+        run: Set-Culture -CultureInfo nl-BE
+
+      - name: Setup .NET SDK (from global.json)
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Start PostgreSQL service
+        shell: pwsh
+        run: |
+          $pgService = Get-Service -Name 'postgresql*' | Select-Object -First 1
+          if ($pgService) {
+            Write-Host "Found PostgreSQL service: $($pgService.Name)"
+            Set-Service $pgService.Name -StartupType Manual
+            Start-Service $pgService.Name
+            Get-Service $pgService.Name
+          } else {
+            Write-Error "PostgreSQL service not found"
+            exit 1
+          }
+
+      - name: Bootstrap PostgreSQL role and databases
+        shell: pwsh
+        run: |
+          $env:PGPASSWORD = 'root'
+          $psql = (Get-Command psql -ErrorAction SilentlyContinue)?.Source
+          if (-not $psql) {
+            $pgBin = Get-ChildItem 'C:\Program Files\PostgreSQL' -Directory | Sort-Object Name -Descending | Select-Object -First 1
+            $psql  = Join-Path $pgBin.FullName 'bin\psql.exe'
+          }
+          & $psql -U postgres -h localhost -v ON_ERROR_STOP=1 -c "DO `$`$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='allors') THEN CREATE ROLE allors LOGIN PASSWORD 'allors' SUPERUSER; END IF; END `$`$;"
+          foreach ($db in 'core','base','apps') {
+            $exists = & $psql -U postgres -h localhost -tAc "SELECT 1 FROM pg_database WHERE datname='$db'"
+            if ($exists -ne '1') {
+              & $psql -U postgres -h localhost -v ON_ERROR_STOP=1 -c "CREATE DATABASE $db OWNER allors;"
+            }
+          }
+
+      - name: Run Nuke target ${{ matrix.target }}
+        shell: pwsh
+        run: ./build.ps1 -target ${{ matrix.target }}
+
+      - name: Upload TRX artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trx-${{ matrix.target }}
+          path: artifacts/Tests/*.trx
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: ${{ matrix.target }}
+          path: artifacts/Tests/*.trx
+          reporter: dotnet-trx
+          fail-on-error: false
