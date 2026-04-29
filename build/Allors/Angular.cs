@@ -1,21 +1,28 @@
 using System;
+using System.Collections;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Npm;
 using static Serilog.Log;
-using static Nuke.Common.Tools.Npm.NpmTasks;
 
 internal class Angular : IDisposable
 {
     public Angular(AbsolutePath path, string command)
     {
-        NpmRun(s => s
-            .AddProcessEnvironmentVariable("npm_config_loglevel", "error")
-            .AddProcessEnvironmentVariable("CI", "true")
-            .SetProcessWorkingDirectory(path)
-            .SetCommand(command));
+        var environmentVariables = System.Environment.GetEnvironmentVariables()
+            .Cast<DictionaryEntry>()
+            .ToDictionary(e => (string)e.Key, e => (string)e.Value, StringComparer.OrdinalIgnoreCase);
+        environmentVariables["npm_config_loglevel"] = "error";
+        environmentVariables["CI"] = "true";
+
+        Process = ProcessTasks.StartProcess(
+            NpmTasks.NpmPath,
+            $"run {command}",
+            path,
+            environmentVariables);
     }
 
     private IProcess Process { get; set; }
