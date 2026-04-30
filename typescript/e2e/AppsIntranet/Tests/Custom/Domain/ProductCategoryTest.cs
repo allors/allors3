@@ -49,12 +49,12 @@ namespace Tests.E2E.Objects
 
             var after = new ProductCategories(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var productCategory = after.Except(before).First();
 
-            Assert.AreEqual("Lucca", productCategory.Name);
-            Assert.AreEqual(scope, productCategory.CatScope);
+            ClassicAssert.AreEqual("Lucca", productCategory.Name);
+            ClassicAssert.AreEqual(scope, productCategory.CatScope);
         }
 
         [Test]
@@ -91,15 +91,15 @@ namespace Tests.E2E.Objects
 
             var after = new ProductCategories(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var productCategory = after.Except(before).First();
 
-            Assert.AreEqual("Lucca", productCategory.Name);
-            Assert.AreEqual(scope, productCategory.CatScope);
-            Assert.AreEqual(primaryParent, productCategory.PrimaryParent);
-            Assert.AreEqual(1, productCategory.SecondaryParents.Count());
-            Assert.Contains(secondaryParent, productCategory.SecondaryParents.ToArray());
+            ClassicAssert.AreEqual("Lucca", productCategory.Name);
+            ClassicAssert.AreEqual(scope, productCategory.CatScope);
+            ClassicAssert.AreEqual(primaryParent, productCategory.PrimaryParent);
+            ClassicAssert.AreEqual(1, productCategory.SecondaryParents.Count());
+            ClassicAssert.Contains(secondaryParent, productCategory.SecondaryParents.ToArray());
         }
     }
 }

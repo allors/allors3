@@ -47,11 +47,11 @@ namespace Tests.E2E.Objects
 
             var after = new Organisations(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var organisation = after.Except(before).First();
 
-            Assert.AreEqual("Driesjes", organisation.Name);
+            ClassicAssert.AreEqual("Driesjes", organisation.Name);
         }
 
         [Test]
@@ -101,21 +101,21 @@ namespace Tests.E2E.Objects
 
             var after = new Organisations(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var organisation = after.Except(before).First();
 
-            Assert.AreEqual("Driesjes", organisation.Name);
-            Assert.AreEqual("BE047747474", organisation.TaxNumber);
-            Assert.AreEqual(legalForm, organisation.LegalForm);
-            Assert.AreEqual(locale, organisation.Locale);
-            Assert.AreEqual(currency, organisation.PreferredCurrency);
-            Assert.AreEqual(industryClassification, organisation.IndustryClassifications.First());
-            Assert.AreEqual(customOrganisationClassification, organisation.CustomClassifications.First());
-            Assert.AreEqual(true, organisation.IsManufacturer);
-            Assert.AreEqual(true, organisation.IsInternalOrganisation);
-            Assert.AreEqual("This is a comment", organisation.Comment);
-            Assert.AreEqual(true, organisation.CollectiveWorkEffortInvoice);
+            ClassicAssert.AreEqual("Driesjes", organisation.Name);
+            ClassicAssert.AreEqual("BE047747474", organisation.TaxNumber);
+            ClassicAssert.AreEqual(legalForm, organisation.LegalForm);
+            ClassicAssert.AreEqual(locale, organisation.Locale);
+            ClassicAssert.AreEqual(currency, organisation.PreferredCurrency);
+            ClassicAssert.AreEqual(industryClassification, organisation.IndustryClassifications.First());
+            ClassicAssert.AreEqual(customOrganisationClassification, organisation.CustomClassifications.First());
+            ClassicAssert.AreEqual(true, organisation.IsManufacturer);
+            ClassicAssert.AreEqual(true, organisation.IsInternalOrganisation);
+            ClassicAssert.AreEqual("This is a comment", organisation.Comment);
+            ClassicAssert.AreEqual(true, organisation.CollectiveWorkEffortInvoice);
         }
     }
 }

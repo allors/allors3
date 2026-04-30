@@ -50,10 +50,10 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.Null(data.AutocompleteAssignedFilter);
-            Assert.AreEqual(this.jane, data.SelectDerived);
+            ClassicAssert.Null(data.AutocompleteAssignedFilter);
+            ClassicAssert.AreEqual(this.jane, data.SelectDerived);
         }
 
         [Test]
@@ -67,10 +67,10 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.Null(data.AutocompleteAssignedFilter);
-            Assert.AreEqual(this.jane, data.SelectDerived);
+            ClassicAssert.Null(data.AutocompleteAssignedFilter);
+            ClassicAssert.AreEqual(this.jane, data.SelectDerived);
         }
 
         [Test]
@@ -84,10 +84,10 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(this.jenny, data.SelectAssigned);
-            Assert.AreEqual(this.jenny, data.SelectDerived);
+            ClassicAssert.AreEqual(this.jenny, data.SelectAssigned);
+            ClassicAssert.AreEqual(this.jenny, data.SelectDerived);
         }
     }
 }

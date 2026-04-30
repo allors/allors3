@@ -51,12 +51,12 @@ namespace Tests.E2E.Objects
 
             var after = new Catalogues(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var catalogue = after.Except(before).First();
 
-            Assert.AreEqual("Joren", catalogue.Name);
-            Assert.AreEqual(scope, catalogue.CatScope);
+            ClassicAssert.AreEqual("Joren", catalogue.Name);
+            ClassicAssert.AreEqual(scope, catalogue.CatScope);
         }
 
         [Test]
@@ -94,13 +94,13 @@ namespace Tests.E2E.Objects
 
             var after = new Catalogues(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var catalogue = after.Except(before).First();
 
-            Assert.AreEqual("Joren", catalogue.Name);
-            Assert.AreEqual(scope, catalogue.CatScope);
-            Assert.AreEqual(categorie, catalogue.ProductCategories.First());
+            ClassicAssert.AreEqual("Joren", catalogue.Name);
+            ClassicAssert.AreEqual(scope, catalogue.CatScope);
+            ClassicAssert.AreEqual(categorie, catalogue.ProductCategories.First());
         }
     }
 }

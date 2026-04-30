@@ -50,12 +50,12 @@ namespace Tests.E2E.Objects
 
             var after = new People(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var person = after.Except(before).First();
 
-            Assert.AreEqual("Jos", person.FirstName);
-            Assert.AreEqual("Smos", person.LastName);
+            ClassicAssert.AreEqual("Jos", person.FirstName);
+            ClassicAssert.AreEqual("Smos", person.LastName);
         }
 
         [Test]
@@ -86,8 +86,8 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            Assert.AreEqual("Jenny", person.FirstName);
-            Assert.AreEqual("Penny", person.LastName);
+            ClassicAssert.AreEqual("Jenny", person.FirstName);
+            ClassicAssert.AreEqual("Penny", person.LastName);
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace Tests.E2E.Objects
             var edit = personOverview.EditEmployment;
 
             var objectIds = await edit.Table.GetObjectIds();
-            Assert.AreEqual(0, objectIds.Length);
+            ClassicAssert.AreEqual(0, objectIds.Length);
 
             await edit.FactoryFab.Create(this.M.Employment);
 
@@ -131,16 +131,16 @@ namespace Tests.E2E.Objects
 
             var employments = after.Except(before).ToArray();
 
-            Assert.AreEqual(1, employments.Length);
+            ClassicAssert.AreEqual(1, employments.Length);
 
             var employment = employments[0];
 
             objectIds = await edit.Table.GetObjectIds();
-            Assert.AreEqual(1, objectIds.Length);
-            Assert.AreEqual(employment.Strategy.ObjectId.ToString(), objectIds[0]);
+            ClassicAssert.AreEqual(1, objectIds.Length);
+            ClassicAssert.AreEqual(employment.Strategy.ObjectId.ToString(), objectIds[0]);
 
-            Assert.AreEqual(organisation, employment.Employer);
-            Assert.AreEqual(person, employment.Employee);
+            ClassicAssert.AreEqual(organisation, employment.Employer);
+            ClassicAssert.AreEqual(person, employment.Employee);
         }
 
 
@@ -180,7 +180,7 @@ namespace Tests.E2E.Objects
 
             var after = new Employments(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length - 1, after.Length);
+            ClassicAssert.AreEqual(before.Length - 1, after.Length);
         }
     }
 }

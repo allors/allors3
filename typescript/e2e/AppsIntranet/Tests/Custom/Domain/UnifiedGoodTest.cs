@@ -49,12 +49,12 @@ namespace Tests.E2E.Objects
 
             var after = new UnifiedGoods(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var unifiedGood = after.Except(before).First();
 
-            Assert.AreEqual("Driesjes", unifiedGood.Name);
-            Assert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
+            ClassicAssert.AreEqual("Driesjes", unifiedGood.Name);
+            ClassicAssert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
         }
 
         [Test]
@@ -89,13 +89,13 @@ namespace Tests.E2E.Objects
 
             var after = new UnifiedGoods(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var unifiedGood = after.Except(before).First();
 
-            Assert.AreEqual("TempName", unifiedGood.Name);
-            Assert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
-            Assert.AreEqual(productType, unifiedGood.ProductType);
+            ClassicAssert.AreEqual("TempName", unifiedGood.Name);
+            ClassicAssert.AreEqual(inventoryItemKind, unifiedGood.InventoryItemKind);
+            ClassicAssert.AreEqual(productType, unifiedGood.ProductType);
         }
 
     }

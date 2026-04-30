@@ -49,11 +49,11 @@ namespace Tests.E2E.Objects
 
             var after = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var salesOrder = after.Except(before).First();
 
-            Assert.AreEqual(customer, salesOrder.ShipToCustomer);
+            ClassicAssert.AreEqual(customer, salesOrder.ShipToCustomer);
         }
 
         [Test]
@@ -101,21 +101,21 @@ namespace Tests.E2E.Objects
 
             var after = new SalesOrders(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var salesOrder = after.Except(before).First();
 
-            Assert.AreEqual(customer, salesOrder.ShipToCustomer);
-            Assert.AreEqual(customer, salesOrder.ShipToEndCustomer);
-            Assert.AreEqual(customer, salesOrder.BillToCustomer);
-            Assert.AreEqual(customer, salesOrder.BillToEndCustomer);
-            Assert.AreEqual(contactPerson, salesOrder.ShipToContactPerson);
-            Assert.AreEqual(contactPerson, salesOrder.BillToContactPerson);
-            Assert.AreEqual(contactPerson, salesOrder.ShipToEndCustomerContactPerson);
-            Assert.AreEqual(contactPerson, salesOrder.BillToEndCustomerContactPerson);
-            Assert.AreEqual(currency, salesOrder.AssignedCurrency);
-            Assert.AreEqual(vatRegime, salesOrder.AssignedVatRegime);
-            Assert.AreEqual("Customer Reference", salesOrder.CustomerReference);
+            ClassicAssert.AreEqual(customer, salesOrder.ShipToCustomer);
+            ClassicAssert.AreEqual(customer, salesOrder.ShipToEndCustomer);
+            ClassicAssert.AreEqual(customer, salesOrder.BillToCustomer);
+            ClassicAssert.AreEqual(customer, salesOrder.BillToEndCustomer);
+            ClassicAssert.AreEqual(contactPerson, salesOrder.ShipToContactPerson);
+            ClassicAssert.AreEqual(contactPerson, salesOrder.BillToContactPerson);
+            ClassicAssert.AreEqual(contactPerson, salesOrder.ShipToEndCustomerContactPerson);
+            ClassicAssert.AreEqual(contactPerson, salesOrder.BillToEndCustomerContactPerson);
+            ClassicAssert.AreEqual(currency, salesOrder.AssignedCurrency);
+            ClassicAssert.AreEqual(vatRegime, salesOrder.AssignedVatRegime);
+            ClassicAssert.AreEqual("Customer Reference", salesOrder.CustomerReference);
 
         }
     }

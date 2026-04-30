@@ -32,7 +32,7 @@ namespace Tests.E2E.Form
 
             var date = await this.FormComponent.DateDatepicker.GetAsync();
 
-            Assert.IsNull(date);
+            ClassicAssert.IsNull(date);
         }
 
         [Test]
@@ -50,12 +50,12 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
             var data = after.Except(before).First();
-            Assert.True(data.Date != null);
-            Assert.AreEqual(now.Year, data.Date.Value.Year);
-            Assert.AreEqual(now.Month, data.Date.Value.Month);
-            Assert.AreEqual(now.Day, data.Date.Value.Day);
+            ClassicAssert.True(data.Date != null);
+            ClassicAssert.AreEqual(now.Year, data.Date.Value.Year);
+            ClassicAssert.AreEqual(now.Month, data.Date.Value.Month);
+            ClassicAssert.AreEqual(now.Day, data.Date.Value.Day);
         }
     }
 }

@@ -49,11 +49,11 @@ namespace Tests.E2E.Objects
 
             var after = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var serialisedItemCharacteristicType = after.Except(before).First();
 
-            Assert.AreEqual("Joren", serialisedItemCharacteristicType.Name);
+            ClassicAssert.AreEqual("Joren", serialisedItemCharacteristicType.Name);
         }
 
         [Test]
@@ -87,12 +87,12 @@ namespace Tests.E2E.Objects
 
             var after = new SerialisedItemCharacteristicTypes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var serialisedItemCharacteristicType = after.Except(before).First();
 
-            Assert.AreEqual("Joren", serialisedItemCharacteristicType.Name);
-            Assert.AreEqual(unitOfMeasure, serialisedItemCharacteristicType.UnitOfMeasure);
+            ClassicAssert.AreEqual("Joren", serialisedItemCharacteristicType.Name);
+            ClassicAssert.AreEqual(unitOfMeasure, serialisedItemCharacteristicType.UnitOfMeasure);
         }
     }
 }

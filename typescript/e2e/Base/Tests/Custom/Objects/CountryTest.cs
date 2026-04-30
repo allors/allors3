@@ -49,12 +49,12 @@ namespace Tests.E2E.Objects
 
             var after = new Countries(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var country = after.Except(before).First();
 
-            Assert.AreEqual("Alloristan", country.Name);
-            Assert.AreEqual("AS", country.IsoCode);
+            ClassicAssert.AreEqual("Alloristan", country.Name);
+            ClassicAssert.AreEqual("AS", country.IsoCode);
         }
 
         [Test]
@@ -85,8 +85,8 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            Assert.AreEqual("Albania Edit", country.Name);
-            Assert.AreEqual("AE", country.IsoCode);
+            ClassicAssert.AreEqual("Albania Edit", country.Name);
+            ClassicAssert.AreEqual("AE", country.IsoCode);
         }
 
     }

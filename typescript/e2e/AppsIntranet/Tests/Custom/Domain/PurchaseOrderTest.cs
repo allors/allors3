@@ -48,11 +48,11 @@ namespace Tests.E2E.Objects
 
             var after = new PurchaseOrders(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var purchaseOrder = after.Except(before).First();
 
-            Assert.AreEqual(supplier, purchaseOrder.TakenViaSupplier);
+            ClassicAssert.AreEqual(supplier, purchaseOrder.TakenViaSupplier);
         }
 
         [Test]
@@ -99,20 +99,20 @@ namespace Tests.E2E.Objects
 
             var after = new PurchaseOrders(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var purchaseOrder = after.Except(before).First();
 
-            Assert.AreEqual(supplier, purchaseOrder.TakenViaSupplier);
-            Assert.AreEqual(supplierContactMechanism, purchaseOrder.DerivedTakenViaContactMechanism);
-            Assert.AreEqual(takenViaContactPerson, purchaseOrder.TakenViaContactPerson);
-            Assert.AreEqual(internalOrganisationContactPerson, purchaseOrder.BillToContactPerson);
-            Assert.AreEqual(internalOrganisationContactPerson, purchaseOrder.ShipToContactPerson);
-            Assert.AreEqual(facility, purchaseOrder.StoredInFacility);
-            Assert.AreEqual("CustomerReference", purchaseOrder.CustomerReference);
-            Assert.AreEqual(vatRegime, purchaseOrder.DerivedVatRegime);
-            Assert.AreEqual("Description", purchaseOrder.Description);
-            Assert.AreEqual("InternalComment", purchaseOrder.InternalComment);
+            ClassicAssert.AreEqual(supplier, purchaseOrder.TakenViaSupplier);
+            ClassicAssert.AreEqual(supplierContactMechanism, purchaseOrder.DerivedTakenViaContactMechanism);
+            ClassicAssert.AreEqual(takenViaContactPerson, purchaseOrder.TakenViaContactPerson);
+            ClassicAssert.AreEqual(internalOrganisationContactPerson, purchaseOrder.BillToContactPerson);
+            ClassicAssert.AreEqual(internalOrganisationContactPerson, purchaseOrder.ShipToContactPerson);
+            ClassicAssert.AreEqual(facility, purchaseOrder.StoredInFacility);
+            ClassicAssert.AreEqual("CustomerReference", purchaseOrder.CustomerReference);
+            ClassicAssert.AreEqual(vatRegime, purchaseOrder.DerivedVatRegime);
+            ClassicAssert.AreEqual("Description", purchaseOrder.Description);
+            ClassicAssert.AreEqual("InternalComment", purchaseOrder.InternalComment);
         }
     }
 }

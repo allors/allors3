@@ -37,9 +37,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.ExistFile);
+            ClassicAssert.True(data.ExistFile);
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace Tests.E2E.Form
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
-            Assert.False(data.ExistFile);
+            ClassicAssert.False(data.ExistFile);
         }
     }
 }

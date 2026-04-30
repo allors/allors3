@@ -51,12 +51,12 @@ namespace Tests.E2E.Objects
 
             var after = new WorkTasks(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var workTask = after.Except(before).First();
 
-            Assert.AreEqual(name, workTask.Name);
-            Assert.AreEqual(customer, workTask.Customer);
+            ClassicAssert.AreEqual(name, workTask.Name);
+            ClassicAssert.AreEqual(customer, workTask.Customer);
         }
 
         [Test]
@@ -107,19 +107,19 @@ namespace Tests.E2E.Objects
 
             var after = new WorkTasks(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var workTask = after.Except(before).First();
 
-            Assert.AreEqual(name, workTask.Name);
-            Assert.AreEqual(customer, workTask.Customer);
-            Assert.AreEqual(executedBy, workTask.ExecutedBy);
-            Assert.AreEqual(fullfillContactMechanism, workTask.FullfillContactMechanism);
-            Assert.AreEqual(contactPerson, workTask.ContactPerson);
-            Assert.AreEqual(description, workTask.Description);
-            Assert.AreEqual(issueDate, workTask.IssueDate.Value.Date);
-            Assert.AreEqual(scheduledStart, workTask.ScheduledStart?.ToLocalTime());
-            Assert.AreEqual(scheduledCompletion, workTask.ScheduledCompletion?.ToLocalTime());
+            ClassicAssert.AreEqual(name, workTask.Name);
+            ClassicAssert.AreEqual(customer, workTask.Customer);
+            ClassicAssert.AreEqual(executedBy, workTask.ExecutedBy);
+            ClassicAssert.AreEqual(fullfillContactMechanism, workTask.FullfillContactMechanism);
+            ClassicAssert.AreEqual(contactPerson, workTask.ContactPerson);
+            ClassicAssert.AreEqual(description, workTask.Description);
+            ClassicAssert.AreEqual(issueDate, workTask.IssueDate.Value.Date);
+            ClassicAssert.AreEqual(scheduledStart, workTask.ScheduledStart?.ToLocalTime());
+            ClassicAssert.AreEqual(scheduledCompletion, workTask.ScheduledCompletion?.ToLocalTime());
         }
     }
 }

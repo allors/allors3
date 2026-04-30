@@ -47,11 +47,11 @@ namespace Tests.E2E.Objects
 
             var after = new RequestsForQuote(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var request = after.Except(before).First();
 
-            Assert.NotNull(request);
+            ClassicAssert.NotNull(request);
         }
 
         [Test]
@@ -101,17 +101,17 @@ namespace Tests.E2E.Objects
 
             var after = new RequestsForQuote(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var request = after.Except(before).First();
 
-            Assert.AreEqual(customer, request.Originator);
-            Assert.AreEqual(contactMechanism, request.FullfillContactMechanism);
-            Assert.AreEqual(contactPerson, request.ContactPerson);
-            Assert.AreEqual(dateNow.Date, request.RequestDate.Date);
-            Assert.AreEqual("Description", request.Description);
-            Assert.AreEqual("Comment", request.Comment);
-            Assert.AreEqual("Internal comment", request.InternalComment);
+            ClassicAssert.AreEqual(customer, request.Originator);
+            ClassicAssert.AreEqual(contactMechanism, request.FullfillContactMechanism);
+            ClassicAssert.AreEqual(contactPerson, request.ContactPerson);
+            ClassicAssert.AreEqual(dateNow.Date, request.RequestDate.Date);
+            ClassicAssert.AreEqual("Description", request.Description);
+            ClassicAssert.AreEqual("Comment", request.Comment);
+            ClassicAssert.AreEqual("Internal comment", request.InternalComment);
         }
     }
 }

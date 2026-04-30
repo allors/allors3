@@ -20,7 +20,7 @@ namespace Tests.E2E.Info
         {
             var application = await ApplicationInfo.New(this.AppRoot);
 
-            Assert.IsNotEmpty(application.ComponentInfoByName);
+            ClassicAssert.IsNotEmpty(application.ComponentInfoByName);
         }
     }
 }

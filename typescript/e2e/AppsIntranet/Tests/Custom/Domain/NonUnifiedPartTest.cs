@@ -51,13 +51,13 @@ namespace Tests.E2E.Objects
 
             var after = new NonUnifiedParts(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var nonUnifiedPart = after.Except(before).First();
 
-            Assert.AreEqual("TempName", nonUnifiedPart.Name);
-            Assert.AreEqual(facility, nonUnifiedPart.DefaultFacility);
-            Assert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
+            ClassicAssert.AreEqual("TempName", nonUnifiedPart.Name);
+            ClassicAssert.AreEqual(facility, nonUnifiedPart.DefaultFacility);
+            ClassicAssert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
         }
 
         [Test]
@@ -101,17 +101,17 @@ namespace Tests.E2E.Objects
 
             var after = new NonUnifiedParts(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var nonUnifiedPart = after.Except(before).First();
 
-            Assert.AreEqual("TempName", nonUnifiedPart.Name);
-            Assert.AreEqual(facility, nonUnifiedPart.DefaultFacility);
-            Assert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
-            Assert.AreEqual(productType, nonUnifiedPart.ProductType);
-            Assert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
-            Assert.AreEqual(manufacteredBy.Name, nonUnifiedPart.ManufacturedBy.DisplayName);
-            Assert.AreEqual("4202 21", nonUnifiedPart.HsCode);
+            ClassicAssert.AreEqual("TempName", nonUnifiedPart.Name);
+            ClassicAssert.AreEqual(facility, nonUnifiedPart.DefaultFacility);
+            ClassicAssert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
+            ClassicAssert.AreEqual(productType, nonUnifiedPart.ProductType);
+            ClassicAssert.AreEqual(inventoryItemKind, nonUnifiedPart.InventoryItemKind);
+            ClassicAssert.AreEqual(manufacteredBy.Name, nonUnifiedPart.ManufacturedBy.DisplayName);
+            ClassicAssert.AreEqual("4202 21", nonUnifiedPart.HsCode);
         }
 
     }

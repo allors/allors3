@@ -56,14 +56,14 @@ namespace Tests.E2E.Objects
 
             var after = new PurchaseInvoices(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var purchaseInvoice = after.Except(before).First();
 
-            Assert.AreEqual(purchaseInvoiceType, purchaseInvoice.PurchaseInvoiceType);
-            Assert.AreEqual(billedFrom, purchaseInvoice.BilledFrom);
-            Assert.AreEqual(invoiceDate, purchaseInvoice.InvoiceDate);
-            Assert.AreEqual(actualAmount, purchaseInvoice.ActualInvoiceAmount);
+            ClassicAssert.AreEqual(purchaseInvoiceType, purchaseInvoice.PurchaseInvoiceType);
+            ClassicAssert.AreEqual(billedFrom, purchaseInvoice.BilledFrom);
+            ClassicAssert.AreEqual(invoiceDate, purchaseInvoice.InvoiceDate);
+            ClassicAssert.AreEqual(actualAmount, purchaseInvoice.ActualInvoiceAmount);
         }
 
         [Test]
@@ -125,25 +125,25 @@ namespace Tests.E2E.Objects
 
             var after = new PurchaseInvoices(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var purchaseInvoice = after.Except(before).First();
 
-            Assert.AreEqual(purchaseInvoiceType, purchaseInvoice.PurchaseInvoiceType);
-            Assert.AreEqual(billedFrom, purchaseInvoice.BilledFrom);
-            Assert.AreEqual(billedFromContactMechanism, purchaseInvoice.AssignedBilledFromContactMechanism);
-            Assert.AreEqual(billedFromContactPerson, purchaseInvoice.BilledFromContactPerson);
-            //Assert.AreEqual(billToContactPerson, purchaseInvoice.BilledToContactPerson);
-            Assert.AreEqual(shipToCustomer, purchaseInvoice.ShipToCustomer);
-            Assert.AreEqual(shipToContactPerson, purchaseInvoice.ShipToCustomerContactPerson);
-            Assert.AreEqual(billToEndCustomer, purchaseInvoice.BillToEndCustomer);
-            Assert.AreEqual(biledToContactPerson, purchaseInvoice.BillToEndCustomerContactPerson);
-            Assert.AreEqual(shipingContactPerson, purchaseInvoice.ShipToEndCustomerContactPerson);
-            Assert.AreEqual(vatRegime, purchaseInvoice.AssignedVatRegime);
-            Assert.AreEqual(invoiceDate, purchaseInvoice.InvoiceDate);
-            Assert.AreEqual(dueDate, purchaseInvoice.DueDate);
-            Assert.AreEqual(customerReference, purchaseInvoice.CustomerReference);
-            Assert.AreEqual(actualAmount, purchaseInvoice.ActualInvoiceAmount);
+            ClassicAssert.AreEqual(purchaseInvoiceType, purchaseInvoice.PurchaseInvoiceType);
+            ClassicAssert.AreEqual(billedFrom, purchaseInvoice.BilledFrom);
+            ClassicAssert.AreEqual(billedFromContactMechanism, purchaseInvoice.AssignedBilledFromContactMechanism);
+            ClassicAssert.AreEqual(billedFromContactPerson, purchaseInvoice.BilledFromContactPerson);
+            //ClassicAssert.AreEqual(billToContactPerson, purchaseInvoice.BilledToContactPerson);
+            ClassicAssert.AreEqual(shipToCustomer, purchaseInvoice.ShipToCustomer);
+            ClassicAssert.AreEqual(shipToContactPerson, purchaseInvoice.ShipToCustomerContactPerson);
+            ClassicAssert.AreEqual(billToEndCustomer, purchaseInvoice.BillToEndCustomer);
+            ClassicAssert.AreEqual(biledToContactPerson, purchaseInvoice.BillToEndCustomerContactPerson);
+            ClassicAssert.AreEqual(shipingContactPerson, purchaseInvoice.ShipToEndCustomerContactPerson);
+            ClassicAssert.AreEqual(vatRegime, purchaseInvoice.AssignedVatRegime);
+            ClassicAssert.AreEqual(invoiceDate, purchaseInvoice.InvoiceDate);
+            ClassicAssert.AreEqual(dueDate, purchaseInvoice.DueDate);
+            ClassicAssert.AreEqual(customerReference, purchaseInvoice.CustomerReference);
+            ClassicAssert.AreEqual(actualAmount, purchaseInvoice.ActualInvoiceAmount);
         }
     }
 }

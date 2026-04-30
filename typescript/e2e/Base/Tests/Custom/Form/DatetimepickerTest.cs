@@ -33,7 +33,7 @@ namespace Tests.E2E.Form
 
             var date = await this.FormComponent.DateTimeDatetimepicker.GetAsync();
 
-            Assert.IsNull(date);
+            ClassicAssert.IsNull(date);
         }
 
         [Test]
@@ -68,10 +68,10 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.ExistDateTime);
-            Assert.AreEqual(date, data.DateTime.Value.ToLocalTime());
+            ClassicAssert.True(data.ExistDateTime);
+            ClassicAssert.AreEqual(date, data.DateTime.Value.ToLocalTime());
         }
 
         [Test]
@@ -93,9 +93,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(date, data.DateTime.Value.ToLocalTime());
+            ClassicAssert.AreEqual(date, data.DateTime.Value.ToLocalTime());
         }
     }
 }

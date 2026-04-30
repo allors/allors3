@@ -25,8 +25,8 @@ namespace Tests.E2E.Info
         {
             var menuInfo = await this.AppRoot.GetMenuInfos();
 
-            Assert.NotNull(menuInfo);
-            Assert.IsNotEmpty(menuInfo);
+            ClassicAssert.NotNull(menuInfo);
+            ClassicAssert.IsNotEmpty(menuInfo);
         }
     }
 }

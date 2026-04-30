@@ -36,9 +36,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(jane, data.AutocompleteFilter);
+            ClassicAssert.AreEqual(jane, data.AutocompleteFilter);
         }
 
         [Test]
@@ -53,9 +53,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(jane, data.AutocompleteFilter);
+            ClassicAssert.AreEqual(jane, data.AutocompleteFilter);
         }
 
         [Test]
@@ -70,9 +70,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(jane, data.AutocompleteFilter);
+            ClassicAssert.AreEqual(jane, data.AutocompleteFilter);
         }
     }
 }

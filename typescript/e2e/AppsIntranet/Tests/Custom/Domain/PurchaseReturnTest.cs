@@ -45,7 +45,7 @@ namespace Tests.E2E.Objects
 
             var after = new PurchaseReturns(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             //var productType = after.Except(before).First();
         }
@@ -76,7 +76,7 @@ namespace Tests.E2E.Objects
 
             var after = new PurchaseReturns(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             //var productType = after.Except(before).First();
         }

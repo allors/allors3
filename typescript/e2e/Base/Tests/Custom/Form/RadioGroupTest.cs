@@ -35,9 +35,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
             var data = after.Except(before).First();
-            Assert.AreEqual("one", data.RadioGroup);
+            ClassicAssert.AreEqual("one", data.RadioGroup);
         }
 
         [Test]
@@ -51,9 +51,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
             var data = after.Except(before).First();
-            Assert.AreEqual("two", data.RadioGroup);
+            ClassicAssert.AreEqual("two", data.RadioGroup);
         }
     }
 }

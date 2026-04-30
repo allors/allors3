@@ -27,7 +27,7 @@ namespace Tests.E2E.Generic
 
                 var components = this.Application.ComponentInfoByName.Values.Where(v => v.MenuInfo != null).ToArray();
 
-                Assert.IsNotEmpty(components);
+                ClassicAssert.IsNotEmpty(components);
 
                 foreach (var component in components)
                 {

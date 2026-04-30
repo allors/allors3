@@ -49,12 +49,12 @@ namespace Tests.E2E.Objects
 
             var after = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var nonUnifiedGood = after.Except(before).First();
 
-            Assert.AreEqual("TempName", nonUnifiedGood.Name);
-            Assert.AreEqual(part, nonUnifiedGood.Part);
+            ClassicAssert.AreEqual("TempName", nonUnifiedGood.Name);
+            ClassicAssert.AreEqual(part, nonUnifiedGood.Part);
         }
 
         [Test]
@@ -90,13 +90,13 @@ namespace Tests.E2E.Objects
 
             var after = new NonUnifiedGoods(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var nonUnifiedGood = after.Except(before).First();
 
-            Assert.AreEqual("TempName", nonUnifiedGood.Name);
-            Assert.AreEqual(part, nonUnifiedGood.Part);
-            Assert.AreEqual("Dit is een test description", nonUnifiedGood.Description);
+            ClassicAssert.AreEqual("TempName", nonUnifiedGood.Name);
+            ClassicAssert.AreEqual(part, nonUnifiedGood.Part);
+            ClassicAssert.AreEqual("Dit is een test description", nonUnifiedGood.Description);
         }
 
     }

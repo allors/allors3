@@ -25,8 +25,8 @@ namespace Tests.E2E.Info
         {
             var routeInfos = await this.AppRoot.GetRouteInfos();
 
-            Assert.NotNull(routeInfos);
-            Assert.IsNotEmpty(routeInfos);
+            ClassicAssert.NotNull(routeInfos);
+            ClassicAssert.IsNotEmpty(routeInfos);
         }
     }
 }

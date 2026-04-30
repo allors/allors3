@@ -34,6 +34,6 @@ namespace Tests
         }
 
         [TearDown]
-        public void TearDown() => Assert.IsEmpty(this.ConsoleErrorMessages, string.Join(", ", this.ConsoleErrorMessages.Select(v => v.Text)));
+        public void TearDown() => ClassicAssert.IsEmpty(this.ConsoleErrorMessages, string.Join(", ", this.ConsoleErrorMessages.Select(v => v.Text)));
     }
 }

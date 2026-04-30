@@ -48,11 +48,11 @@ namespace Tests.E2E.Objects
 
             var after = new Carriers(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var carrier = after.Except(before).First();
 
-            Assert.AreEqual(name, carrier.Name);
+            ClassicAssert.AreEqual(name, carrier.Name);
         }
     }
 }

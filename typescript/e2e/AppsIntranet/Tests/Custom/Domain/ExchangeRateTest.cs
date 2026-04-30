@@ -52,13 +52,13 @@ namespace Tests.E2E.Objects
 
             var after = new ExchangeRates(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var exchangeRate = after.Except(before).First();
 
-            Assert.AreEqual(datum, exchangeRate.ValidFrom);
-            Assert.AreEqual(currency, exchangeRate.FromCurrency);
-            Assert.AreEqual(1.12M, exchangeRate.Rate);
+            ClassicAssert.AreEqual(datum, exchangeRate.ValidFrom);
+            ClassicAssert.AreEqual(currency, exchangeRate.FromCurrency);
+            ClassicAssert.AreEqual(1.12M, exchangeRate.Rate);
         }
 
     }

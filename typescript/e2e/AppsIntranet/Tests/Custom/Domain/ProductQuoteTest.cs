@@ -54,13 +54,13 @@ namespace Tests.E2E.Objects
 
             var after = new ProductQuotes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var productQuote = after.Except(before).First();
 
-            Assert.AreEqual(customer, productQuote.Receiver);
-            Assert.AreEqual(contactMechanism, productQuote.FullfillContactMechanism);
-            Assert.AreEqual(contactPerson, productQuote.ContactPerson);
+            ClassicAssert.AreEqual(customer, productQuote.Receiver);
+            ClassicAssert.AreEqual(contactMechanism, productQuote.FullfillContactMechanism);
+            ClassicAssert.AreEqual(contactPerson, productQuote.ContactPerson);
         }
 
         [Test]
@@ -111,21 +111,21 @@ namespace Tests.E2E.Objects
 
             var after = new ProductQuotes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var productQuote = after.Except(before).First();
 
-            Assert.AreEqual(customer, productQuote.Receiver);
-            Assert.AreEqual(contactMechanism, productQuote.FullfillContactMechanism);
-            Assert.AreEqual(contactPerson, productQuote.ContactPerson);
-            Assert.AreEqual(date, productQuote.ValidFromDate.Value.Date);
-            Assert.AreEqual(tomorrow, productQuote.ValidThroughDate.Value.Date);
-            Assert.AreEqual(date, productQuote.IssueDate.Date);
-            Assert.AreEqual(currency, productQuote.AssignedCurrency);
-            Assert.AreEqual(vatRegime, productQuote.AssignedVatRegime);
-            Assert.AreEqual("Description", productQuote.Description);
-            Assert.AreEqual("Comment", productQuote.Comment);
-            Assert.AreEqual("Internal Comment", productQuote.InternalComment);
+            ClassicAssert.AreEqual(customer, productQuote.Receiver);
+            ClassicAssert.AreEqual(contactMechanism, productQuote.FullfillContactMechanism);
+            ClassicAssert.AreEqual(contactPerson, productQuote.ContactPerson);
+            ClassicAssert.AreEqual(date, productQuote.ValidFromDate.Value.Date);
+            ClassicAssert.AreEqual(tomorrow, productQuote.ValidThroughDate.Value.Date);
+            ClassicAssert.AreEqual(date, productQuote.IssueDate.Date);
+            ClassicAssert.AreEqual(currency, productQuote.AssignedCurrency);
+            ClassicAssert.AreEqual(vatRegime, productQuote.AssignedVatRegime);
+            ClassicAssert.AreEqual("Description", productQuote.Description);
+            ClassicAssert.AreEqual("Comment", productQuote.Comment);
+            ClassicAssert.AreEqual("Internal Comment", productQuote.InternalComment);
         }
     }
 }

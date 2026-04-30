@@ -29,8 +29,8 @@ namespace Tests.E2E.Info
             var list = navigationInfo.Where(v => v.List != null).ToArray();
             var overview = navigationInfo.Where(v => v.List != null).ToArray();
 
-            Assert.NotNull(navigationInfo);
-            Assert.IsNotEmpty(navigationInfo);
+            ClassicAssert.NotNull(navigationInfo);
+            ClassicAssert.IsNotEmpty(navigationInfo);
         }
     }
 }

@@ -53,14 +53,14 @@ namespace Tests.E2E.Objects
 
             var after = new PositionTypeRates(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var positionTypeRate = after.Except(before).First();
 
-            Assert.AreEqual(rateType, positionTypeRate.RateType);
-            Assert.AreEqual(date, positionTypeRate.FromDate);
-            Assert.AreEqual(frequency, positionTypeRate.Frequency);
-            Assert.AreEqual(10D, positionTypeRate.Rate);
+            ClassicAssert.AreEqual(rateType, positionTypeRate.RateType);
+            ClassicAssert.AreEqual(date, positionTypeRate.FromDate);
+            ClassicAssert.AreEqual(frequency, positionTypeRate.Frequency);
+            ClassicAssert.AreEqual(10D, positionTypeRate.Rate);
         }
 
         [Test]
@@ -100,16 +100,16 @@ namespace Tests.E2E.Objects
 
             var after = new PositionTypeRates(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var positionTypeRate = after.Except(before).First();
 
-            Assert.AreEqual(rateType, positionTypeRate.RateType);
-            Assert.AreEqual(date, positionTypeRate.FromDate);
-            Assert.AreEqual(frequency, positionTypeRate.Frequency);
-            Assert.AreEqual(10D, positionTypeRate.Rate);
-            Assert.AreEqual(5D, positionTypeRate.Cost);
-            Assert.AreEqual(date, positionTypeRate.ThroughDate);
+            ClassicAssert.AreEqual(rateType, positionTypeRate.RateType);
+            ClassicAssert.AreEqual(date, positionTypeRate.FromDate);
+            ClassicAssert.AreEqual(frequency, positionTypeRate.Frequency);
+            ClassicAssert.AreEqual(10D, positionTypeRate.Rate);
+            ClassicAssert.AreEqual(5D, positionTypeRate.Cost);
+            ClassicAssert.AreEqual(date, positionTypeRate.ThroughDate);
         }
     }
 }

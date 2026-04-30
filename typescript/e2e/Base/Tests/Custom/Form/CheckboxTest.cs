@@ -31,7 +31,7 @@ namespace Tests.E2E.Form
 
             var value = await this.FormComponent.CheckboxCheckbox.GetAsync();
 
-            Assert.Null(value);
+            ClassicAssert.Null(value);
         }
 
         [Test]
@@ -45,9 +45,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.True(data.Checkbox);
+            ClassicAssert.True(data.Checkbox);
         }
 
         [Test]
@@ -61,9 +61,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.False(data.Checkbox);
+            ClassicAssert.False(data.Checkbox);
         }
     }
 }

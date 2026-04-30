@@ -36,9 +36,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.Contains(jane, data.Chips.ToArray());
+            ClassicAssert.Contains(jane, data.Chips.ToArray());
         }
 
         [Test]
@@ -55,10 +55,10 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.Contains(jane, data.Chips.ToArray());
-            Assert.Contains(john, data.Chips.ToArray());
+            ClassicAssert.Contains(jane, data.Chips.ToArray());
+            ClassicAssert.Contains(john, data.Chips.ToArray());
         }
 
         [Test]
@@ -76,9 +76,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.IsEmpty(data.Chips);
+            ClassicAssert.IsEmpty(data.Chips);
         }
     }
 }

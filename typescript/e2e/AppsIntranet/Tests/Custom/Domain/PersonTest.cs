@@ -48,11 +48,11 @@ namespace Tests.E2E.Objects
 
             var after = new People(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var person = after.Except(before).First();
 
-            Assert.AreEqual("Jos", person.FirstName);
+            ClassicAssert.AreEqual("Jos", person.FirstName);
         }
 
         [Test]
@@ -81,8 +81,8 @@ namespace Tests.E2E.Objects
 
             this.Transaction.Rollback();
 
-            Assert.AreEqual("Jenny", person.FirstName);
-            Assert.AreEqual("Penny", person.LastName);
+            ClassicAssert.AreEqual("Jenny", person.FirstName);
+            ClassicAssert.AreEqual("Penny", person.LastName);
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace Tests.E2E.Objects
             var edit = personOverview.EditCommunicationEvent;
 
             var objectIds = await edit.Table.GetObjectIds();
-            Assert.AreEqual(0, objectIds.Length);
+            ClassicAssert.AreEqual(0, objectIds.Length);
 
             await edit.FactoryFab.Create(this.M.EmailCommunication);
 
@@ -128,15 +128,15 @@ namespace Tests.E2E.Objects
 
             var emailCommunications = after.Except(before).ToArray();
 
-            Assert.AreEqual(1, emailCommunications.Length);
+            ClassicAssert.AreEqual(1, emailCommunications.Length);
 
             var emailCommunication = emailCommunications[0];
 
             objectIds = await edit.Table.GetObjectIds();
-            Assert.AreEqual(1, objectIds.Length);
-            Assert.AreEqual(emailCommunication.Strategy.ObjectId.ToString(), objectIds[0]);
+            ClassicAssert.AreEqual(1, objectIds.Length);
+            ClassicAssert.AreEqual(emailCommunication.Strategy.ObjectId.ToString(), objectIds[0]);
 
-            Assert.AreEqual(person, emailCommunication.FromParty);
+            ClassicAssert.AreEqual(person, emailCommunication.FromParty);
         }
 
 
@@ -176,7 +176,7 @@ namespace Tests.E2E.Objects
 
         //    var after = new Employments(this.Transaction).Extent().ToArray();
 
-        //    Assert.AreEqual(before.Length - 1, after.Length);
+        //    ClassicAssert.AreEqual(before.Length - 1, after.Length);
         //}
     }
 }

@@ -45,7 +45,7 @@ namespace Tests.E2E.Objects
 
             var after = new WorkRequirements(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
         }
 
         [Test]
@@ -89,16 +89,16 @@ namespace Tests.E2E.Objects
 
             var after = new WorkRequirements(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var workRequirement = after.Except(before).First();
 
-            Assert.AreEqual(originator, workRequirement.Originator);
-            Assert.AreEqual(fixedAsset, workRequirement.FixedAsset);
-            Assert.AreEqual(priority, workRequirement.Priority);
-            Assert.AreEqual(location, workRequirement.Location);
-            Assert.AreEqual(reason, workRequirement.Reason);
-            Assert.AreEqual(unServiceable, workRequirement.UnServiceable);
+            ClassicAssert.AreEqual(originator, workRequirement.Originator);
+            ClassicAssert.AreEqual(fixedAsset, workRequirement.FixedAsset);
+            ClassicAssert.AreEqual(priority, workRequirement.Priority);
+            ClassicAssert.AreEqual(location, workRequirement.Location);
+            ClassicAssert.AreEqual(reason, workRequirement.Reason);
+            ClassicAssert.AreEqual(unServiceable, workRequirement.UnServiceable);
         }
     }
 }

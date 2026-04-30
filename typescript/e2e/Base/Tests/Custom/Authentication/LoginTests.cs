@@ -13,7 +13,7 @@ namespace Tests.E2E.Authentication
             var page = new LoginComponent(this.Page);
             await page.Login("jane@example.com");
 
-            Assert.AreEqual("Dashboard", await this.Page.TitleAsync());
+            ClassicAssert.AreEqual("Dashboard", await this.Page.TitleAsync());
         }
     }
 }

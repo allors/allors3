@@ -52,12 +52,12 @@ namespace Tests.E2E.Objects
 
             var after = new SalesInvoices(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var salesInvoice = after.Except(before).First();
 
-            Assert.AreEqual(salesInvoiceType, salesInvoice.SalesInvoiceType);
-            Assert.AreEqual(billTo, salesInvoice.BillToCustomer);
+            ClassicAssert.AreEqual(salesInvoiceType, salesInvoice.SalesInvoiceType);
+            ClassicAssert.AreEqual(billTo, salesInvoice.BillToCustomer);
         }
 
         [Test]
@@ -110,21 +110,21 @@ namespace Tests.E2E.Objects
 
             var after = new SalesInvoices(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var salesInvoice = after.Except(before).First();
 
-            Assert.AreEqual(salesInvoiceType, salesInvoice.SalesInvoiceType);
-            Assert.AreEqual(billTo, salesInvoice.BillToCustomer);
-            Assert.AreEqual(billToContactPerson, salesInvoice.BillToContactPerson);
-            Assert.AreEqual(billToShipingContactPerson, salesInvoice.ShipToContactPerson);
-            Assert.AreEqual(shipToEndCustomer, salesInvoice.ShipToEndCustomer);
-            Assert.AreEqual(billToEndCustomer, salesInvoice.BillToEndCustomer);
-            Assert.AreEqual(endCustomerShippingContactPerson, salesInvoice.ShipToEndCustomerContactPerson);
-            Assert.AreEqual(endCustomerBillingContactPerson, salesInvoice.BillToEndCustomerContactPerson);
-            Assert.AreEqual(advancePayment, salesInvoice.AdvancePayment);
-            Assert.AreEqual(vatRegime, salesInvoice.DerivedVatRegime);
-            Assert.AreEqual(customerReference, salesInvoice.CustomerReference);
+            ClassicAssert.AreEqual(salesInvoiceType, salesInvoice.SalesInvoiceType);
+            ClassicAssert.AreEqual(billTo, salesInvoice.BillToCustomer);
+            ClassicAssert.AreEqual(billToContactPerson, salesInvoice.BillToContactPerson);
+            ClassicAssert.AreEqual(billToShipingContactPerson, salesInvoice.ShipToContactPerson);
+            ClassicAssert.AreEqual(shipToEndCustomer, salesInvoice.ShipToEndCustomer);
+            ClassicAssert.AreEqual(billToEndCustomer, salesInvoice.BillToEndCustomer);
+            ClassicAssert.AreEqual(endCustomerShippingContactPerson, salesInvoice.ShipToEndCustomerContactPerson);
+            ClassicAssert.AreEqual(endCustomerBillingContactPerson, salesInvoice.BillToEndCustomerContactPerson);
+            ClassicAssert.AreEqual(advancePayment, salesInvoice.AdvancePayment);
+            ClassicAssert.AreEqual(vatRegime, salesInvoice.DerivedVatRegime);
+            ClassicAssert.AreEqual(customerReference, salesInvoice.CustomerReference);
         }
     }
 }

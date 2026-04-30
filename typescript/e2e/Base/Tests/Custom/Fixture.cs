@@ -50,7 +50,7 @@ namespace Tests.E2E
             database.Load(reader);
 
             var response = this.HttpClient.GetAsync(RestartUrl).Result;
-            Assert.True(response.IsSuccessStatusCode);
+            ClassicAssert.True(response.IsSuccessStatusCode);
 
             return database;
         }

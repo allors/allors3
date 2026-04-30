@@ -37,9 +37,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(1, data.MultipleFiles.Count());
+            ClassicAssert.AreEqual(1, data.MultipleFiles.Count());
         }
 
         [Test]
@@ -57,9 +57,9 @@ namespace Tests.E2E.Form
             this.Transaction.Rollback();
 
             var after = new Datas(this.Transaction).Extent().ToArray();
-            Assert.AreEqual(after.Length, before.Length + 1);
+            ClassicAssert.AreEqual(after.Length, before.Length + 1);
             var data = after.Except(before).First();
-            Assert.AreEqual(2, data.MultipleFiles.Count());
+            ClassicAssert.AreEqual(2, data.MultipleFiles.Count());
         }
 
         [Test]
@@ -87,8 +87,8 @@ namespace Tests.E2E.Form
             await this.FormComponent.SaveAsync();
             this.Transaction.Rollback();
 
-            Assert.AreEqual(1, data.MultipleFiles.Count());
-            Assert.AreEqual(logo2, data.MultipleFiles.First());
+            ClassicAssert.AreEqual(1, data.MultipleFiles.Count());
+            ClassicAssert.AreEqual(logo2, data.MultipleFiles.First());
         }
     }
 }

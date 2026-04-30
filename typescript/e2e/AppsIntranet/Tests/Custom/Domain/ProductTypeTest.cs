@@ -47,11 +47,11 @@ namespace Tests.E2E.Objects
 
             var after = new ProductTypes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var productType = after.Except(before).First();
 
-            Assert.AreEqual("Joren", productType.Name);
+            ClassicAssert.AreEqual("Joren", productType.Name);
         }
 
         [Test]
@@ -84,13 +84,13 @@ namespace Tests.E2E.Objects
 
             var after = new ProductTypes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var productType = after.Except(before).First();
 
-            Assert.AreEqual("Joren", productType.Name);
-            Assert.AreEqual(1, productType.SerialisedItemCharacteristicTypes.Count());
-            Assert.Contains(serialisedItemCharacteristicType, productType.SerialisedItemCharacteristicTypes.ToArray());
+            ClassicAssert.AreEqual("Joren", productType.Name);
+            ClassicAssert.AreEqual(1, productType.SerialisedItemCharacteristicTypes.Count());
+            ClassicAssert.Contains(serialisedItemCharacteristicType, productType.SerialisedItemCharacteristicTypes.ToArray());
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Tests.E2E.Objects
 
             var after = new PositionTypes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var positionType = after.Except(before).First();
         }
@@ -79,12 +79,12 @@ namespace Tests.E2E.Objects
 
             var after = new PositionTypes(this.Transaction).Extent().ToArray();
 
-            Assert.AreEqual(before.Length + 1, after.Length);
+            ClassicAssert.AreEqual(before.Length + 1, after.Length);
 
             var positionType = after.Except(before).First();
 
-            Assert.AreEqual("Title", positionType.Title);
-            Assert.AreEqual("Description", positionType.Description);
+            ClassicAssert.AreEqual("Title", positionType.Title);
+            ClassicAssert.AreEqual("Description", positionType.Description);
         }
     }
 }
