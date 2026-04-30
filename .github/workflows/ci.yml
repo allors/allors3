@@ -101,6 +101,15 @@ jobs:
             }
           }
 
+      - name: Setup SQL Server LocalDB
+        if: matrix.target == 'CiDotnetSystemAdaptersTestSqlClient'
+        shell: pwsh
+        run: |
+          choco install sqllocaldb -y --no-progress
+          $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
+          sqllocaldb create MSSQLLocalDB -s
+          sqllocaldb info MSSQLLocalDB
+
       - name: Run Nuke target ${{ matrix.target }}
         shell: pwsh
         run: ./build.ps1 -target ${{ matrix.target }}
