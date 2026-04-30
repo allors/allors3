@@ -34,7 +34,7 @@ partial class Build
              DotNetBuild(s => s
                  .SetProjectFile(Paths.TypescriptE2EBaseTestsProject));
 
-             ProcessTasks.StartProcess(Paths.TypescriptE2EBaseTestsPlaywrightCommand, @$"install").WaitForExit();
+             ProcessTasks.StartProcess("pwsh", $"-NoProfile -ExecutionPolicy Bypass -File \"{Paths.TypescriptE2EBaseTestsPlaywrightCommand}\" install").AssertZeroExitCode();
 
              DotNetTest(s => s
                  .SetProjectFile(Paths.TypescriptE2EBaseTestsProject)
