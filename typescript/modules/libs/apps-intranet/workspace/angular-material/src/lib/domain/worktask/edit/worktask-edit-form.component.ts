@@ -93,7 +93,7 @@ export class WorkTaskEditFormComponent extends AllorsFormComponent<WorkTask> {
           WorkEffortState: {},
           FullfillContactMechanism: {},
           Priority: {},
-          WorkEffortPurposes: {},
+          WorkEffortPurpose: {},
           Customer: {},
           ExecutedBy: {},
           ContactPerson: {},

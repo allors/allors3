@@ -183,7 +183,7 @@ export class WorkEffortListPageComponent implements OnInit, OnDestroy {
                     Media: x,
                   },
                   WorkEffortState: x,
-                  WorkEffortPurposes: x,
+                  WorkEffortPurpose: x,
                   WorkEffortFixedAssetAssignmentsWhereAssignment: {
                     FixedAsset: x,
                   },

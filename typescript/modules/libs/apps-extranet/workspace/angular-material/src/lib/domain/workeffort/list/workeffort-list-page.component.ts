@@ -157,7 +157,7 @@ export class WorkEffortListPageComponent
                     Media: x,
                   },
                   WorkEffortState: x,
-                  WorkEffortPurposes: x,
+                  WorkEffortPurpose: x,
                   WorkEffortFixedAssetAssignmentsWhereAssignment: {
                     FixedAsset: x,
                   },
