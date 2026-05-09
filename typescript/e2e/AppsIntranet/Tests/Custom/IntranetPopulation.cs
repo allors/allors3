@@ -294,6 +294,9 @@ namespace Tests
 
             good_2.Part.AddSerialisedItem(serialisedItem1);
 
+            serialisedItem1.SerialisedItemAvailability = new SerialisedItemAvailabilities(this.Transaction).InRent;
+            serialisedItem1.RentedBy = allorsB2BCustomer;
+
             this.Transaction.Derive();
 
             new SerialisedInventoryItemBuilder(this.Transaction)
