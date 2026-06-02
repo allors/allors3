@@ -23,7 +23,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public Fixture()
         {
             var database = typeof(T).Name;
-            var connectionString = "Server=localhost; User Id=postgres; Password=root; Database=postgres; Pooling=false; CommandTimeout=300";
+            var connectionString = "Server=localhost; User Id=allors; Password=allors; Database=postgres; Pooling=false; CommandTimeout=300";
 
             int version;
 
