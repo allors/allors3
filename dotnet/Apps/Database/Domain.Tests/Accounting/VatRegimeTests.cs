@@ -20,7 +20,12 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void OnVatRegimeDeriveDeletePermission()
         {
-            Assert.DoesNotContain(this.deleteRevocation, new VatRegimes(this.Transaction).DutchReducedTariff.Revocations);
+            var vatRegime = new VatRegimeBuilder(this.Transaction)
+                .WithCountry(new Countries(this.Transaction).CountryByIsoCode["NL"])
+                .Build();
+            this.Derive();
+
+            Assert.DoesNotContain(this.deleteRevocation, vatRegime.Revocations);
         }
 
         [Fact]
