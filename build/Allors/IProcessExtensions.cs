@@ -17,4 +17,18 @@ public static class IProcessExtensions
             throw new Exception($"{@this.Output}");
         }
     }
+
+    public static void KillTree(this IProcess @this)
+    {
+        try
+        {
+            // IProcess.Kill() only kills the direct child (e.g. the npm wrapper),
+            // orphaning grandchildren such as the Angular dev server.
+            System.Diagnostics.Process.GetProcessById(@this.Id).Kill(entireProcessTree: true);
+        }
+        catch (Exception)
+        {
+            // Already exited.
+        }
+    }
 }

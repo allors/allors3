@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Nuke.Common.IO;
@@ -9,6 +10,8 @@ using static Nuke.Common.Tooling.ProcessTasks;
 
 internal class Server : IDisposable
 {
+    private const int Port = 5000;
+
     public Server(AbsolutePath path)
     {
         var arguments = $@"{path}/Server.dll";
@@ -21,7 +24,7 @@ internal class Server : IDisposable
 
     public void Dispose()
     {
-        Process?.Kill();
+        Process?.KillTree();
         Process?.Dispose();
         Process = null;
     }
@@ -30,7 +33,7 @@ internal class Server : IDisposable
     {
         if (!await Get("/allors/Test/Ready", TimeSpan.FromMinutes(5)))
         {
-            throw new Exception("Server is not ready");
+            throw new Exception($"Server is not ready. Last output:\n{OutputTail()}");
         }
     }
 
@@ -42,13 +45,18 @@ internal class Server : IDisposable
         var success = false;
         while (!success && DateTime.Now < stop)
         {
+            if (Process.HasExited)
+            {
+                throw new Exception($"Server exited early with code {Process.ExitCode}. Last output:\n{OutputTail()}");
+            }
+
             await Task.Delay(1000);
 
             try
             {
                 using var client = new HttpClient();
                 Debug($"Server request: ${url}");
-                var response = await client.GetAsync($"http://localhost:5000{url}");
+                var response = await client.GetAsync($"http://localhost:{Port}{url}");
                 success = response.IsSuccessStatusCode;
                 var result = response.Content.ReadAsStringAsync().Result;
                 if (!success)
@@ -70,4 +78,6 @@ internal class Server : IDisposable
 
         return success;
     }
+
+    private string OutputTail() => string.Join("\n", Process.Output.TakeLast(20).Select(v => v.Text));
 }

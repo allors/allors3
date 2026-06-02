@@ -10,8 +10,14 @@ using static Serilog.Log;
 
 internal class Angular : IDisposable
 {
+    private const int Port = 4200;
+
+    private readonly string command;
+
     public Angular(AbsolutePath path, string command)
     {
+        this.command = command;
+
         var environmentVariables = System.Environment.GetEnvironmentVariables()
             .Cast<DictionaryEntry>()
             .ToDictionary(e => (string)e.Key, e => (string)e.Value, StringComparer.OrdinalIgnoreCase);
@@ -29,7 +35,7 @@ internal class Angular : IDisposable
 
     public void Dispose()
     {
-        Process?.Kill();
+        Process?.KillTree();
         Process?.Dispose();
         Process = null;
     }
@@ -38,7 +44,7 @@ internal class Angular : IDisposable
     {
         if (!await Get("/", TimeSpan.FromMinutes(10)))
         {
-            throw new Exception("Could not initialize angular");
+            throw new Exception($"Could not initialize angular ({command}). Last output:\n{OutputTail()}");
         }
     }
 
@@ -50,13 +56,18 @@ internal class Angular : IDisposable
         var success = false;
         while (!success && DateTime.Now < stop)
         {
+            if (Process.HasExited)
+            {
+                throw new Exception($"Angular ({command}) exited early with code {Process.ExitCode}. Last output:\n{OutputTail()}");
+            }
+
             await Task.Delay(1000);
 
             try
             {
                 using var client = new HttpClient();
                 Debug($"Angular request: ${url}");
-                var response = await client.GetAsync($"http://localhost:4200{url}");
+                var response = await client.GetAsync($"http://localhost:{Port}{url}");
                 success = response.IsSuccessStatusCode;
                 var result = response.Content.ReadAsStringAsync().Result;
                 if (!success)
@@ -78,4 +89,6 @@ internal class Angular : IDisposable
 
         return success;
     }
+
+    private string OutputTail() => string.Join("\n", Process.Output.TakeLast(20).Select(v => v.Text));
 }
