@@ -1,6 +1,7 @@
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.NerdbankGitVersioning;
 using static Nuke.Common.Tooling.ProcessTasks;
 
 public partial class Build
@@ -9,7 +10,7 @@ public partial class Build
 
     //[Solution] private readonly Solution Solution;
     //[GitRepository] private readonly GitRepository GitRepository;
-    //[GitVersion] private readonly GitVersion GitVersion;
+    [NerdbankGitVersioning] private readonly NerdbankGitVersioning Versioning;
 
     private readonly Paths Paths = new Paths(RootDirectory);
 

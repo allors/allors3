@@ -1,5 +1,14 @@
 <Project>
   <PropertyGroup>
     <LangVersion>default</LangVersion>
+    <!-- Treat every build as a public release so the version is a clean incrementing
+         prerelease (3.1.0-alpha.N) with no -g<commit> suffix. Internal repo, no package
+         feed, so cross-branch version collisions are acceptable. Override on the command
+         line with /p:PublicRelease=false if a dev build ever needs the commit suffix. -->
+    <PublicRelease Condition="'$(PublicRelease)' == ''">true</PublicRelease>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.9.50" PrivateAssets="all" />
+  </ItemGroup>
 </Project>
