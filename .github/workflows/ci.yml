@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - main
+      - 'v[0-9]*'
       - 'feature/**'
       - 'issue/**'
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - 'v[0-9]*'
   workflow_dispatch:
 
 permissions:
@@ -48,13 +51,16 @@ jobs:
       CI: 'true'
       DOTNET_NOLOGO: 'true'
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      # Clean incrementing versions (3.1.0-alpha.N) with no -g<commit> suffix in CI too.
+      PublicRelease: 'true'
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: false
-          fetch-depth: 1
+          fetch-depth: 0      # nbgv needs full history for git-height versioning
+          fetch-tags: true
 
       - name: Set culture nl-BE
         shell: pwsh
@@ -64,6 +70,14 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+
+      - name: Restore .NET local tools
+        shell: pwsh
+        run: dotnet tool restore
+
+      - name: Compute version (nbgv)
+        shell: pwsh
+        run: dotnet nbgv cloud
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

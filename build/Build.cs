@@ -63,4 +63,14 @@ partial class Build : NukeBuild
         .DependsOn(Install)
         .DependsOn(Generate)
         .DependsOn(Scaffold);
+
+    private Target ShowVersion => _ => _
+        .Executes(() =>
+        {
+            Serilog.Log.Information("Version:                      {V}", Versioning.Version);
+            Serilog.Log.Information("AssemblyVersion:              {V}", Versioning.AssemblyVersion);
+            Serilog.Log.Information("AssemblyInformationalVersion: {V}", Versioning.AssemblyInformationalVersion);
+            Serilog.Log.Information("NuGetPackageVersion:          {V}", Versioning.NuGetPackageVersion);
+            Serilog.Log.Information("NpmPackageVersion:            {V}", Versioning.NpmPackageVersion);
+        });
 }
