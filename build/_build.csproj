@@ -20,4 +20,11 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- nbgv CLI for the [NerdbankGitVersioning] attribute. PackageDownload only fetches the
+         tool package (no compile/runtime reference) so the build assembly stays unversioned.
+         Keep the version in sync with dotnet/Directory.Build.props and .config/dotnet-tools.json. -->
+    <PackageDownload Include="nbgv" Version="[3.9.50]" />
+  </ItemGroup>
+
 </Project>
