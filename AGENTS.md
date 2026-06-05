@@ -27,6 +27,7 @@
 - Verify builds succeed and tests are green before considering a task complete
 - When fixing bugs, always write a failing test first or at least amend an existing test
 - When creating a new test, find a suitable existing class to add it to.
+- Record notable changes in `CHANGELOG.md` under the `[Unreleased]` section (Keep a Changelog format).
 
 ## Build Commands
 
