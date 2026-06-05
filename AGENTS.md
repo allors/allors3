@@ -29,6 +29,11 @@
 - When creating a new test, find a suitable existing class to add it to.
 - Record notable changes in `CHANGELOG.md` under the `[Unreleased]` section (Keep a Changelog format).
 
+## Testing — where test code may live (important)
+- `typescript/modules/apps/**` (the apps: `apps-intranet`, `base`) MAY contain test-only code, including **test-only pages/routes**. App code is NOT inherited by other domains, so test scaffolding here is safe and isolated.
+- `typescript/modules/libs/**` is **inheritable** by other domains and MUST NOT contain test code or test-only scaffolding — keep it production-only. (The only exception is a dedicated test project, e.g. a `*-tests` lib.)
+- Consequence for e2e: to exercise a reusable lib component (e.g. a shared panel) whose bug is not reachable through existing shipped screens, add a **test-only page in the relevant app** that wires the component to the triggering data, then drive it from `typescript/e2e/**`. Never add test hooks, test routes, or test-only config to the lib itself.
+
 ## Build Commands
 
 Build uses Nuke. 
