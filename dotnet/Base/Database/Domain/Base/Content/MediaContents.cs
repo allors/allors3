@@ -10,6 +10,19 @@ namespace Allors.Database.Domain
 
     public partial class MediaContents
     {
+        /// <summary>
+        /// Builds a new, empty <see cref="MediaContent"/> of the concrete type dictated by the
+        /// global <see cref="Singleton.StoreMediaContentOnFile"/> setting.
+        /// </summary>
+        public static MediaContent Create(ITransaction transaction)
+        {
+            var singleton = transaction.GetSingleton();
+
+            return singleton?.StoreMediaContentOnFile == true
+                ? (MediaContent)new FileMediaContentBuilder(transaction).Build()
+                : new InlineMediaContentBuilder(transaction).Build();
+        }
+
         // File signatures
         // See http://en.wikipedia.org/wiki/List_of_file_signatures and http://www.garykessler.net/library/file_sigs.html
         private static readonly byte[] PngSignature = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };

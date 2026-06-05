@@ -87,7 +87,7 @@ namespace Allors.Database.Server.Controllers
                 var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
-                    if (media.MediaContent?.Data == null)
+                    if (media.MediaContent == null)
                     {
                         return this.NoContent();
                     }
@@ -120,6 +120,11 @@ namespace Allors.Database.Server.Controllers
                     this.Response.Headers[HeaderNames.ETag] = $"\"{media.Revision}\"";
 
                     var data = media.MediaContent.Data;
+                    if (data == null)
+                    {
+                        return this.NoContent();
+                    }
+
                     var mediaType = media.MediaContent.Type ?? "application/octet-stream";
                     return this.File(data, mediaType, name ?? media.FileName);
                 }

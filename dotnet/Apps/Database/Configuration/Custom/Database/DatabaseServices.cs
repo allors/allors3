@@ -7,6 +7,7 @@
 namespace Allors.Database.Configuration
 {
     using System;
+    using System.IO;
     using Bogus;
     using Data;
     using Database.Derivations;
@@ -48,6 +49,8 @@ namespace Allors.Database.Configuration
 
         private IMailer mailer;
 
+        private IMediaContentStorage mediaContentStorage;
+
         private IBarcodeGenerator barcodeGenerator;
 
         private ITemplateObjectCache templateObjectCache;
@@ -60,10 +63,13 @@ namespace Allors.Database.Configuration
 
         private Faker faker;
 
-        protected DatabaseServices(Engine engine)
+        protected DatabaseServices(Engine engine, DirectoryInfo dataPath = null)
         {
             this.Engine = engine;
+            this.DataPath = dataPath;
         }
+
+        protected DirectoryInfo DataPath { get; }
 
         internal IDatabase Database { get; private set; }
 
@@ -103,6 +109,7 @@ namespace Allors.Database.Configuration
                 // Base
                 { } type when type == typeof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
                 { } type when type == typeof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
+                { } type when type == typeof(IMediaContentStorage) => (T)(this.mediaContentStorage ??= new FileMediaContentStorage(this.DataPath ?? new DirectoryInfo("media"))),
                 { } type when type == typeof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
                 { } type when type == typeof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
                 // Custom

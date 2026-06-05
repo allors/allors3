@@ -53,6 +53,12 @@ namespace Allors.Repository
         [Workspace(Default)]
         public Media LogoImage { get; set; }
 
+        #region Allors
+        [Id("caeefcd9-1ca9-4606-91a0-ed56bb4ded42")]
+        #endregion
+        [Workspace(Default)]
+        public bool StoreMediaContentOnFile { get; set; }
+
         #region inherited methods
 
         public void OnBuild() { }

@@ -11,3 +11,27 @@ under a dated version heading.
 ## [Unreleased]
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
+
+### Added
+
+- `MediaContent` is now an interface with two strategy implementations: `InlineMediaContent`
+  (bytes in the database, the previous behaviour) and `FileMediaContent` (bytes on the
+  filesystem, named by the object id).
+- Global setting `Singleton.StoreMediaContentOnFile` selects which implementation new media use
+  (defaults to inline).
+- `IMediaContentStorage` service (filesystem implementation `FileMediaContentStorage`) for
+  reading/writing/deleting file-backed content. Its base directory comes from the `datapath`
+  configuration key (falls back to a local `media` directory).
+
+### Changed
+
+- Media content is now **write-once**: changing a `Media`'s data builds a fresh `MediaContent`
+  and cascade-deletes the previous one (removing the old file for `FileMediaContent`) instead
+  of mutating it in place.
+
+### Migration
+
+- `InlineMediaContent` reuses the former `MediaContent` class id, so existing rows are re-typed
+  to `InlineMediaContent` automatically by the standard save/load upgrade — no data migration
+  code is required. Because the table is renamed (`mediacontent` → `inlinemediacontent`), run the
+  Upgrade (save then load) rather than opening an old database in place.

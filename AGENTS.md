@@ -13,6 +13,16 @@
 - Follow existing naming and structure; avoid new conventions without reason.
 - Allors is in a refactoring/reeingineering cycle. Breaking changes are allowed but ask first.
 
+## Allors Meta-Modeling
+- `[Workspace(Default)]` is valid on classes, roles, methods, and properties but **not on an interface declaration** — put it on the interface's roles, not the type.
+- Unit `bool` roles are generated as nullable (`bool?`, null = unset) — compare with `== true`, don't rely on plain `&&`.
+- To expose behavior polymorphically across an interface's implementations, declare a C#-only member on a hand-written `partial interface` in `*/Database/Domain` (not a meta-role) and implement it per class (precedent: `Invoice.InvoiceItems`).
+- Roles/relations are persisted by their own `[Id]`. To refactor a concrete type into an interface + implementations without losing data, give one implementation the original type's `[Id]` (existing rows re-type to it for free on the save/load Upgrade) and give the new interface a fresh `[Id]`.
+
+## Services & Layers
+- Domain code resolves app services via `this.Strategy.Transaction.Database.Services.Get<T>()`.
+- Each layer (Core/Base/Apps) has its own `DatabaseServices` registry (plus `Default`/`Test` variants) — register a new service in every layer that uses it.
+
 ## Git
 - No AI attribution in commits (no "Generated with", "Co-authored-by", or similar trailers)
 - Keep commits focused and well-described
@@ -29,6 +39,17 @@
 - When creating a new test, find a suitable existing class to add it to.
 - Record notable changes in `CHANGELOG.md` under the `[Unreleased]` section (Keep a Changelog format).
 
+## Testing
+- Domain tests use the in-memory adapter (`Adapters.Memory`) — no database server required.
+- Iterate with `dotnet build <Domain.Tests>.csproj` then `dotnet test --no-build --filter "FullyQualifiedName~XTest"`.
+
 ## Build Commands
 
-Build uses Nuke. 
+Build uses Nuke.
+
+- After editing `Repository/Domain` POCOs, run `./build.sh Generate` before building.
+- Generated code (`**/Generated/*.g.cs`, `**/Meta/Generated/`) is gitignored and reproduced by Generate — never commit it.
+- IDE/LSP diagnostics are stale right after regeneration (the whole `MetaPopulation` may appear to be missing members, or `MetaBuilder().Build()` mis-resolves) — trust `dotnet build`, not the live errors.
+
+## Known Issues
+- The full `Base/Database/Domain.Tests` run can crash the test host via a SkiaSharp GC finalizer when the native `libSkiaSharp.so` is missing. Install the native library, or filter to non-image tests (`--filter`) while iterating.

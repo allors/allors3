@@ -117,7 +117,8 @@ namespace Allors.Database.Domain
                         @class.Equals(m.TelecommunicationsNumber) ||
                         @class.Equals(m.WebAddress) ||
                         @class.Equals(m.Media) ||
-                        @class.Equals(m.MediaContent) ||
+                        @class.Equals(m.InlineMediaContent) ||
+                        @class.Equals(m.FileMediaContent) ||
                         @class.Equals(m.LocalisedMedia) ||
                         @class.Equals(m.LocalisedText))
                 {

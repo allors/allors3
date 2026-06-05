@@ -6,13 +6,14 @@
 
 namespace Allors.Database.Configuration
 {
+    using System.IO;
     using Database.Derivations;
     using Derivations.Default;
     using Domain;
 
     public class TestDatabaseServices : DatabaseServices
     {
-        public TestDatabaseServices(Engine engine) : base(engine) { }
+        public TestDatabaseServices(Engine engine, DirectoryInfo dataPath = null) : base(engine, dataPath) { }
 
         protected override IPasswordHasher CreatePasswordHasher() => new TestPasswordHasher();
 

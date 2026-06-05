@@ -36,31 +36,42 @@ namespace Allors.Database.Domain
 
                 media.Revision = Guid.NewGuid();
 
-                if (media.ExistInData || media.ExistInDataUri)
-                {
-                    if (!media.ExistMediaContent)
-                    {
-                        media.MediaContent = new MediaContentBuilder(media.Strategy.Transaction).Build();
-                    }
-                }
+                byte[] data = null;
+                string type = null;
 
                 if (media.ExistInData)
                 {
-                    media.MediaContent.Data = media.InData;
-                    media.MediaContent.Type = media.InType ?? MediaContents.Sniff(media.InData, media.InFileName);
+                    data = media.InData;
+                    type = media.InType ?? MediaContents.Sniff(media.InData, media.InFileName);
 
                     media.RemoveInType();
                     media.RemoveInData();
                 }
-
-                if (media.ExistInDataUri)
+                else if (media.ExistInDataUri)
                 {
                     var dataUrl = new DataUrl(media.InDataUri);
 
-                    media.MediaContent.Data = Convert.FromBase64String(dataUrl.ReadAsBase64EncodedString());
-                    media.MediaContent.Type = MediaContents.Sniff(media.MediaContent.Data, media.InFileName);
+                    data = Convert.FromBase64String(dataUrl.ReadAsBase64EncodedString());
+                    type = MediaContents.Sniff(data, media.InFileName);
 
                     media.RemoveInDataUri();
+                }
+
+                if (data != null)
+                {
+                    // MediaContent is write-once: build a fresh one and discard the previous.
+                    var previousMediaContent = media.MediaContent;
+
+                    var mediaContent = MediaContents.Create(media.Strategy.Transaction);
+                    mediaContent.Type = type;
+                    mediaContent.Data = data;
+
+                    media.MediaContent = mediaContent;
+
+                    if (previousMediaContent != null && !previousMediaContent.Equals(mediaContent))
+                    {
+                        previousMediaContent.CascadingDelete();
+                    }
                 }
 
                 if (media.ExistInFileName)

@@ -59,12 +59,11 @@ namespace Allors.Database.Server.Controllers
                         return this.RedirectPermanent($"/image/{id}/{media.Revision}");
                     }
 
-                    if (media.MediaContent?.Data == null)
+                    var data = media.MediaContent?.Data;
+                    if (data == null)
                     {
                         return this.NoContent();
                     }
-
-                    var data = media.MediaContent.Data;
 
                     var mediaType = media.Type?.ToLowerInvariant() ?? "application/octet-stream";
 

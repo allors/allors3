@@ -112,5 +112,70 @@ namespace Allors.Database.Domain.Tests
             Assert.True(media.ExistMediaContent);
             Assert.Equal(media.MediaContent.Type, "application/octet-stream");
         }
+
+        [Fact]
+        public void DefaultsToInlineMediaContent()
+        {
+            var binary = new byte[] { 0, 1, 2, 3 };
+            var media = new MediaBuilder(this.Transaction).WithInData(binary).Build();
+
+            this.Transaction.Derive();
+
+            Assert.IsType<InlineMediaContent>(media.MediaContent);
+            Assert.Equal(binary, media.MediaContent.Data);
+        }
+
+        [Fact]
+        public void FileMediaContentStoresDataOnDisk()
+        {
+            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+
+            var binary = new byte[] { 0, 1, 2, 3 };
+            var media = new MediaBuilder(this.Transaction).WithInData(binary).Build();
+
+            this.Transaction.Derive();
+
+            Assert.IsType<FileMediaContent>(media.MediaContent);
+            Assert.Equal(binary, media.MediaContent.Data);
+
+            var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
+            Assert.True(storage.Exists(media.MediaContent.Id));
+        }
+
+        [Fact]
+        public void NewDataReplacesWriteOnceMediaContent()
+        {
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+
+            var first = media.MediaContent;
+
+            media.InData = new byte[] { 4, 5, 6, 7 };
+            this.Transaction.Derive();
+
+            var second = media.MediaContent;
+
+            Assert.NotEqual(first, second);
+            Assert.Equal(new byte[] { 4, 5, 6, 7 }, second.Data);
+            Assert.True(first.Strategy.IsDeleted);
+        }
+
+        [Fact]
+        public void DeleteMediaDeletesFileMediaContent()
+        {
+            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+
+            var id = media.MediaContent.Id;
+            var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
+            Assert.True(storage.Exists(id));
+
+            media.Delete();
+            this.Transaction.Derive();
+
+            Assert.False(storage.Exists(id));
+        }
     }
 }

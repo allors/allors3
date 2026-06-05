@@ -1,20 +1,14 @@
-// <copyright file="MediaContents.cs" company="Allors bv">
+// <copyright file="MediaContent.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace Allors.Database.Domain
 {
-    public partial class MediaContent
+    public partial interface MediaContent
     {
-        public void CoreOnPostDerive(ObjectOnPostDerive method)
-        {
-            var derivation = method.Derivation;
-
-            if (!this.ExistData || this.Data.Length == 0)
-            {
-                derivation.Validation.AddError(this, this.Meta.Data, "Empty data");
-            }
-        }
+        // The bytes of this content. The storage strategy is implementation specific:
+        // InlineMediaContent keeps them in the database, FileMediaContent on the filesystem.
+        byte[] Data { get; set; }
     }
 }
