@@ -1,0 +1,17 @@
+# Dependabot keeps the GitHub Actions used in .github/workflows up to date.
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"            # scans .github/workflows/ from the repo root
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      timezone: "Europe/Brussels"
+    groups:
+      actions:                # bundle all action bumps into ONE PR (not one per action)
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "ci"            # -> "ci(deps): bump ..." matching the repo's conventional commits
+      include: "scope"
