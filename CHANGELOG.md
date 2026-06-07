@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Fixed
 
+- Prefetching (SQL adapters) now uses an object's modified (uncommitted) composites role.
+  `PrefetchTryGetCompositesRole` set its out-parameter from the modified role but always returned `false`, so
+  the prefetcher ignored it and prefetched the committed value instead — leaving targets added in the
+  transaction out of the transitive prefetch (extra database round-trips).
 - The in-memory adapter's change set now reports the association that is displaced when a one-to-one
   composite role is reassigned. `SetCompositeRoleOne2One` recorded the displaced association's original
   role as the wrong value, so when the new association had no prior role its role change (now → null) was
