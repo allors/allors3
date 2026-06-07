@@ -11,3 +11,10 @@ under a dated version heading.
 ## [Unreleased]
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
+
+### Fixed
+
+- E2E tests no longer fail on transient browser network errors (`net::ERR_NO_BUFFER_SPACE` and
+  similar socket/connection errors) that surface sporadically on CI. The console-error assertion
+  now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx
+  resource failures.
