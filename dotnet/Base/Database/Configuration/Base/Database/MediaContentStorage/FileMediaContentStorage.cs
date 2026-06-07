@@ -9,12 +9,20 @@ namespace Allors.Database.Configuration
     using System.Collections.Generic;
     using System.IO;
     using Domain;
+    using Microsoft.Extensions.Configuration;
 
     public class FileMediaContentStorage : IMediaContentStorage
     {
+        // Configuration key for the directory that backs file media content (a media subfolder of the data path).
+        public const string DirectoryConfigurationKey = "Media:Directory";
+
         private readonly DirectoryInfo directory;
 
         public FileMediaContentStorage(DirectoryInfo directory) => this.directory = directory;
+
+        // Single resolution point shared by every host (server and commands) so they never diverge.
+        public static DirectoryInfo ResolveDirectory(IConfiguration configuration) =>
+            new DirectoryInfo(configuration?[DirectoryConfigurationKey] ?? "media");
 
         public bool Exists(long id) => File.Exists(this.PathFor(id));
 

@@ -82,7 +82,7 @@ namespace Commands
                     var metaPopulation = new MetaBuilder().Build();
                     var engine = new Engine(Rules.Create(metaPopulation));
                     var objectFactory = new ObjectFactory(metaPopulation, typeof(User));
-                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine, this.DataPath), this.Configuration, objectFactory, this.IsolationLevel, this.CommandTimeout);
+                    var databaseBuilder = new DatabaseBuilder(new DefaultDatabaseServices(engine, this.Configuration), this.Configuration, objectFactory, this.IsolationLevel, this.CommandTimeout);
                     this.database = databaseBuilder.Build();
                 }
 

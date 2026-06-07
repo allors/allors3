@@ -20,8 +20,10 @@ under a dated version heading.
 - Global setting `Singleton.StoreMediaContentExternal` selects which implementation new media use
   (defaults to embedded).
 - `IMediaContentStorage` service (filesystem implementation `FileMediaContentStorage`) for
-  reading/writing/deleting file-backed content. Its base directory comes from the `datapath`
-  configuration key (falls back to a local `media` directory).
+  reading/writing/deleting file-backed content. Its base directory comes from the dedicated
+  `Media:Directory` configuration key (a `media` subfolder of the data path; falls back to a local
+  `media` directory) and is resolved in one place — the service registration — so the server and
+  command-line tools always resolve the same directory.
 - `PruneMediaFiles` command (in `Base` Commands, shared into `Apps`) reclaims orphaned file-backed media:
   files whose id is below the highest live `ExternalMediaContent` id ("ceiling") and that no live content owns.
   Backed by `ExternalMediaContents.RemoveOrphanedFiles` and a new `IMediaContentStorage.Enumerate`.
@@ -34,7 +36,8 @@ under a dated version heading.
 
 - Media content is now **write-once**: changing a `Media`'s data builds a fresh `MediaContent`
   and cascade-deletes the previous one (removing the old file for `ExternalMediaContent`) instead
-  of mutating it in place.
+  of mutating it in place. `ExternalMediaContent.Data` enforces this — reassigning it on an
+  already-persisted content throws rather than overwriting the file (an overwrite is not rollback-safe).
 
 ### Migration
 
@@ -49,6 +52,9 @@ under a dated version heading.
   rollback-safe: a rolled-back delete (or content replacement) permanently lost the file even though
   the database object was restored. Deletion is now deferred; orphaned files are reclaimed by the
   `PruneMediaFiles` command.
+- Command-line media tools (`ExternalizeMedia`/`PruneMediaFiles`) resolved their storage directory
+  differently from the server and could operate on a stray `media/` folder the server never read.
+  Both now resolve the same `Media:Directory` through the shared service registration.
 - E2E tests no longer fail on transient browser network errors (`net::ERR_NO_BUFFER_SPACE` and
   similar socket/connection errors) that surface sporadically on CI. The console-error assertion
   now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx

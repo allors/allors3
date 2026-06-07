@@ -7,8 +7,11 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using Allors.Database.Configuration;
     using Domain;
+    using Microsoft.Extensions.Configuration;
     using Xunit;
 
     public class MediaTest : ContentTests, IClassFixture<Fixture>
@@ -161,6 +164,23 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ExternalMediaContentDataIsWriteOnce()
+        {
+            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var content = (ExternalMediaContent)media.MediaContent;
+
+            // Once committed, the content's file carries committed state. Overwriting it in place is not
+            // rollback-safe, so it is rejected; replacements go through a fresh MediaContent (see
+            // NewDataReplacesWriteOnceMediaContent).
+            Assert.Throws<InvalidOperationException>(() => content.Data = new byte[] { 4, 5, 6, 7 });
+        }
+
+        [Fact]
         public void DeleteMediaDeletesExternalMediaContent()
         {
             this.Transaction.GetSingleton().StoreMediaContentExternal = true;
@@ -266,6 +286,29 @@ namespace Allors.Database.Domain.Tests
 
             var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
             Assert.True(storage.Exists(media.MediaContent.Id));
+        }
+
+        [Fact]
+        public void ResolveDirectoryUsesConfiguredMediaDirectory()
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string> { ["Media:Directory"] = "../../../data/media" })
+                .Build();
+
+            // Server and command-line tools share this single resolver, so they always agree.
+            Assert.Equal(
+                new DirectoryInfo("../../../data/media").FullName,
+                FileMediaContentStorage.ResolveDirectory(configuration).FullName);
+        }
+
+        [Fact]
+        public void ResolveDirectoryFallsBackToMediaWhenUnset()
+        {
+            var configuration = new ConfigurationBuilder().Build();
+
+            Assert.Equal(
+                new DirectoryInfo("media").FullName,
+                FileMediaContentStorage.ResolveDirectory(configuration).FullName);
         }
     }
 }

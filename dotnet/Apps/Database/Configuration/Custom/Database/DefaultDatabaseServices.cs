@@ -6,13 +6,14 @@
 
 namespace Allors.Database.Configuration
 {
-    using System.IO;
     using Database.Derivations;
     using Derivations.Default;
     using Domain;
+    using Microsoft.Extensions.Configuration;
+
     public class DefaultDatabaseServices : DatabaseServices
     {
-        public DefaultDatabaseServices(Engine engine, DirectoryInfo dataPath = null) : base(engine, dataPath) { }
+        public DefaultDatabaseServices(Engine engine, IConfiguration configuration = null) : base(engine, configuration) { }
 
         protected override IPasswordHasher CreatePasswordHasher() => new PasswordHasher();
 
