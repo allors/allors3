@@ -1,8 +1,8 @@
-// <copyright file="InlineMediaContent.cs" company="Allors bv">
+// <copyright file="ExternalMediaContent.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
-// <summary>Defines the InlineMediaContent type.</summary>
+// <summary>Defines the ExternalMediaContent type.</summary>
 
 namespace Allors.Repository
 {
@@ -11,10 +11,10 @@ namespace Allors.Repository
 
 
     #region Allors
-    [Id("6c20422e-cb3e-4402-bb40-dacaf584405e")]
+    [Id("b06e49e2-4aac-4454-ad6a-68ce5010b5e2")]
     #endregion
     [Workspace(Default)]
-    public partial class InlineMediaContent : MediaContent
+    public partial class ExternalMediaContent : MediaContent
     {
         #region inherited properties
         public Revocation[] Revocations { get; set; }
@@ -23,14 +23,6 @@ namespace Allors.Repository
 
         public string Type { get; set; }
         #endregion
-
-        #region Allors
-        [Id("0756d508-44b7-405e-bf92-bc09e5702e63")]
-        #endregion
-        [Required]
-        [Size(-1)]
-        [Workspace(Default)]
-        public byte[] Data { get; set; }
 
         #region inherited methods
         public void OnBuild() { }

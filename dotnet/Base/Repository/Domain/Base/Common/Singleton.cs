@@ -57,7 +57,7 @@ namespace Allors.Repository
         [Id("caeefcd9-1ca9-4606-91a0-ed56bb4ded42")]
         #endregion
         [Workspace(Default)]
-        public bool StoreMediaContentOnFile { get; set; }
+        public bool StoreMediaContentExternal { get; set; }
 
         #region inherited methods
 

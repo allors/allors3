@@ -18,7 +18,7 @@ namespace Allors.Database.Domain
         void Delete(long id);
 
         /// <summary>
-        /// Enumerates the object id of every stored item. Used by <see cref="FileMediaContents.RemoveOrphanedFiles"/>
+        /// Enumerates the object id of every stored item. Used by <see cref="ExternalMediaContents.RemoveOrphanedFiles"/>
         /// to find files that no live content owns.
         /// </summary>
         IEnumerable<long> Enumerate();

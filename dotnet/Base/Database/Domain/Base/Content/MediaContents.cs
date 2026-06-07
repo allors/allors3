@@ -12,15 +12,15 @@ namespace Allors.Database.Domain
     {
         /// <summary>
         /// Builds a new, empty <see cref="MediaContent"/> of the concrete type dictated by the
-        /// global <see cref="Singleton.StoreMediaContentOnFile"/> setting.
+        /// global <see cref="Singleton.StoreMediaContentExternal"/> setting.
         /// </summary>
         public static MediaContent Create(ITransaction transaction)
         {
             var singleton = transaction.GetSingleton();
 
-            return singleton?.StoreMediaContentOnFile == true
-                ? (MediaContent)new FileMediaContentBuilder(transaction).Build()
-                : new InlineMediaContentBuilder(transaction).Build();
+            return singleton?.StoreMediaContentExternal == true
+                ? (MediaContent)new ExternalMediaContentBuilder(transaction).Build()
+                : new EmbeddedMediaContentBuilder(transaction).Build();
         }
 
         // File signatures

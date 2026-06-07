@@ -1,4 +1,4 @@
-// <copyright file="CleanMedia.cs" company="Allors bv">
+// <copyright file="PruneMediaFiles.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,8 +9,8 @@ namespace Commands
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
-    [Command(Description = "Removes orphaned file-backed media (files below the highest content id with no live content).")]
-    public class CleanMedia
+    [Command(Description = "Removes orphaned media files (files below the highest live content id that no live content owns).")]
+    public class PruneMediaFiles
     {
         public Program Parent { get; set; }
 
@@ -20,7 +20,7 @@ namespace Commands
         {
             using var transaction = this.Parent.Database.CreateTransaction();
 
-            var removed = FileMediaContents.RemoveOrphanedFiles(transaction);
+            var removed = ExternalMediaContents.RemoveOrphanedFiles(transaction);
             this.Logger.Info($"Removed {removed} orphaned media file(s).");
 
             return ExitCode.Success;

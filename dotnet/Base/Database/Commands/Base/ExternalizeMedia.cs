@@ -1,4 +1,4 @@
-// <copyright file="MigrateMediaToFile.cs" company="Allors bv">
+// <copyright file="ExternalizeMedia.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -10,8 +10,8 @@ namespace Commands
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
-    [Command(Description = "Replaces every Media's InlineMediaContent with a FileMediaContent and switches new media to file storage.")]
-    public class MigrateMediaToFile
+    [Command(Description = "Replaces every Media's EmbeddedMediaContent with an ExternalMediaContent and switches new media to external storage.")]
+    public class ExternalizeMedia
     {
         public Program Parent { get; set; }
 
@@ -24,15 +24,15 @@ namespace Commands
             var scheduler = new AutomatedAgents(transaction).System;
             transaction.Services.Get<IUserService>().User = scheduler;
 
-            // New media should be file-backed from now on.
-            transaction.GetSingleton().StoreMediaContentOnFile = true;
+            // New media should be stored externally from now on.
+            transaction.GetSingleton().StoreMediaContentExternal = true;
 
-            var converted = Medias.ConvertInlineMediaContentToFile(transaction);
+            var converted = Medias.ConvertEmbeddedMediaContentToExternal(transaction);
 
             transaction.Derive();
             transaction.Commit();
 
-            this.Logger.Info($"Converted {converted} media to file-backed content; new media will use file storage.");
+            this.Logger.Info($"Converted {converted} media to external content; new media will use external storage.");
 
             return ExitCode.Success;
         }

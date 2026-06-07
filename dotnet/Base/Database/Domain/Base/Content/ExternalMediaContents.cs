@@ -1,4 +1,4 @@
-// <copyright file="FileMediaContents.cs" company="Allors bv">
+// <copyright file="ExternalMediaContents.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -7,11 +7,11 @@ namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
 
-    public partial class FileMediaContents
+    public partial class ExternalMediaContents
     {
         /// <summary>
         /// Removes orphaned file-backed media: files whose id is below the highest live
-        /// <see cref="FileMediaContent"/> id ("ceiling") and that no live content owns (left by a rolled-back
+        /// <see cref="ExternalMediaContent"/> id ("ceiling") and that no live content owns (left by a rolled-back
         /// write or a deferred delete). Files at or above the ceiling are left alone — their content may belong
         /// to a not-yet-committed transaction (ids are allocated before commit). Returns the number removed.
         /// </summary>
@@ -19,7 +19,7 @@ namespace Allors.Database.Domain
         {
             var liveIds = new HashSet<long>();
             var ceiling = 0L;
-            foreach (FileMediaContent content in transaction.Extent<FileMediaContent>())
+            foreach (ExternalMediaContent content in transaction.Extent<ExternalMediaContent>())
             {
                 liveIds.Add(content.Id);
                 if (content.Id > ceiling)

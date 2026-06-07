@@ -10,26 +10,26 @@ namespace Allors.Database.Domain
     public partial class Medias
     {
         /// <summary>
-        /// Replaces every <see cref="Media"/>'s <see cref="InlineMediaContent"/> (bytes in the database) with a
-        /// <see cref="FileMediaContent"/> (bytes on the file store), preserving Type and Data. Media already
-        /// backed by a file are skipped (idempotent). Returns the number converted.
+        /// Replaces every <see cref="Media"/>'s <see cref="EmbeddedMediaContent"/> (bytes in the database) with an
+        /// <see cref="ExternalMediaContent"/> (bytes in external storage), preserving Type and Data. Media already
+        /// stored externally are skipped (idempotent). Returns the number converted.
         /// </summary>
-        public static int ConvertInlineMediaContentToFile(ITransaction transaction)
+        public static int ConvertEmbeddedMediaContentToExternal(ITransaction transaction)
         {
             var converted = 0;
 
             // Materialize the extent before mutating (building/deleting content changes transaction state).
             foreach (var media in transaction.Extent<Media>().ToArray())
             {
-                if (media.MediaContent is InlineMediaContent inline)
+                if (media.MediaContent is EmbeddedMediaContent embedded)
                 {
-                    // Write-once replacement, forced to FileMediaContent (see MediaRule for the inline path).
-                    var file = new FileMediaContentBuilder(transaction).Build();
-                    file.Type = inline.Type;
-                    file.Data = inline.Data;
+                    // Write-once replacement, forced to ExternalMediaContent (see MediaRule for the default path).
+                    var external = new ExternalMediaContentBuilder(transaction).Build();
+                    external.Type = embedded.Type;
+                    external.Data = embedded.Data;
 
-                    media.MediaContent = file;
-                    inline.CascadingDelete();
+                    media.MediaContent = external;
+                    embedded.CascadingDelete();
 
                     converted++;
                 }

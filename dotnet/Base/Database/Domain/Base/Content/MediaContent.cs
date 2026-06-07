@@ -8,7 +8,7 @@ namespace Allors.Database.Domain
     public partial interface MediaContent
     {
         // The bytes of this content. The storage strategy is implementation specific:
-        // InlineMediaContent keeps them in the database, FileMediaContent on the filesystem.
+        // EmbeddedMediaContent keeps them in the database, ExternalMediaContent in external storage.
         byte[] Data { get; set; }
     }
 }

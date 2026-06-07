@@ -14,41 +14,41 @@ under a dated version heading.
 
 ### Added
 
-- `MediaContent` is now an interface with two strategy implementations: `InlineMediaContent`
-  (bytes in the database, the previous behaviour) and `FileMediaContent` (bytes on the
-  filesystem, named by the object id).
-- Global setting `Singleton.StoreMediaContentOnFile` selects which implementation new media use
-  (defaults to inline).
+- `MediaContent` is now an interface with two strategy implementations: `EmbeddedMediaContent`
+  (bytes in the database, the previous behaviour) and `ExternalMediaContent` (bytes in external
+  storage; the filesystem backend names them by the object id).
+- Global setting `Singleton.StoreMediaContentExternal` selects which implementation new media use
+  (defaults to embedded).
 - `IMediaContentStorage` service (filesystem implementation `FileMediaContentStorage`) for
   reading/writing/deleting file-backed content. Its base directory comes from the `datapath`
   configuration key (falls back to a local `media` directory).
-- `CleanMedia` command (in `Base` Commands, shared into `Apps`) reclaims orphaned file-backed media:
-  files whose id is below the highest live `FileMediaContent` id ("ceiling") and that no live content owns.
-  Backed by `FileMediaContents.RemoveOrphanedFiles` and a new `IMediaContentStorage.Enumerate`.
-- `MigrateMediaToFile` command (in `Base` Commands, shared into `Apps`) converts every `Media`'s
-  `InlineMediaContent` to a `FileMediaContent` (moving bytes from the database to the file store) and sets
-  `Singleton.StoreMediaContentOnFile` so new media is file-backed too. Idempotent; backed by
-  `Medias.ConvertInlineMediaContentToFile`.
+- `PruneMediaFiles` command (in `Base` Commands, shared into `Apps`) reclaims orphaned file-backed media:
+  files whose id is below the highest live `ExternalMediaContent` id ("ceiling") and that no live content owns.
+  Backed by `ExternalMediaContents.RemoveOrphanedFiles` and a new `IMediaContentStorage.Enumerate`.
+- `ExternalizeMedia` command (in `Base` Commands, shared into `Apps`) converts every `Media`'s
+  `EmbeddedMediaContent` to an `ExternalMediaContent` (moving bytes from the database to external storage) and sets
+  `Singleton.StoreMediaContentExternal` so new media is stored externally too. Idempotent; backed by
+  `Medias.ConvertEmbeddedMediaContentToExternal`.
 
 ### Changed
 
 - Media content is now **write-once**: changing a `Media`'s data builds a fresh `MediaContent`
-  and cascade-deletes the previous one (removing the old file for `FileMediaContent`) instead
+  and cascade-deletes the previous one (removing the old file for `ExternalMediaContent`) instead
   of mutating it in place.
 
 ### Migration
 
-- `InlineMediaContent` reuses the former `MediaContent` class id, so existing rows are re-typed
-  to `InlineMediaContent` automatically by the standard save/load upgrade — no data migration
-  code is required. Because the table is renamed (`mediacontent` → `inlinemediacontent`), run the
+- `EmbeddedMediaContent` reuses the former `MediaContent` class id, so existing rows are re-typed
+  to `EmbeddedMediaContent` automatically by the standard save/load upgrade — no data migration
+  code is required. Because the table is renamed (`mediacontent` → `embeddedmediacontent`), run the
   Upgrade (save then load) rather than opening an old database in place.
 
 ### Fixed
 
-- File-backed media (`FileMediaContent`) no longer unlinks its file during derivation, which was not
+- File-backed media (`ExternalMediaContent`) no longer unlinks its file during derivation, which was not
   rollback-safe: a rolled-back delete (or content replacement) permanently lost the file even though
   the database object was restored. Deletion is now deferred; orphaned files are reclaimed by the
-  `CleanMedia` command.
+  `PruneMediaFiles` command.
 - E2E tests no longer fail on transient browser network errors (`net::ERR_NO_BUFFER_SPACE` and
   similar socket/connection errors) that surface sporadically on CI. The console-error assertion
   now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx

@@ -114,28 +114,28 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void DefaultsToInlineMediaContent()
+        public void DefaultsToEmbeddedMediaContent()
         {
             var binary = new byte[] { 0, 1, 2, 3 };
             var media = new MediaBuilder(this.Transaction).WithInData(binary).Build();
 
             this.Transaction.Derive();
 
-            Assert.IsType<InlineMediaContent>(media.MediaContent);
+            Assert.IsType<EmbeddedMediaContent>(media.MediaContent);
             Assert.Equal(binary, media.MediaContent.Data);
         }
 
         [Fact]
-        public void FileMediaContentStoresDataOnDisk()
+        public void ExternalMediaContentStoresDataOnDisk()
         {
-            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
 
             var binary = new byte[] { 0, 1, 2, 3 };
             var media = new MediaBuilder(this.Transaction).WithInData(binary).Build();
 
             this.Transaction.Derive();
 
-            Assert.IsType<FileMediaContent>(media.MediaContent);
+            Assert.IsType<ExternalMediaContent>(media.MediaContent);
             Assert.Equal(binary, media.MediaContent.Data);
 
             var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
@@ -161,9 +161,9 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void DeleteMediaDeletesFileMediaContent()
+        public void DeleteMediaDeletesExternalMediaContent()
         {
-            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
 
             // A second, higher-id content stays live as the ceiling so the deleted one is below it.
             var deleted = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
@@ -185,7 +185,7 @@ namespace Allors.Database.Domain.Tests
             // Deletion is deferred: the file survives until the command reclaims it.
             Assert.True(storage.Exists(deletedId));
 
-            FileMediaContents.RemoveOrphanedFiles(this.Transaction);
+            ExternalMediaContents.RemoveOrphanedFiles(this.Transaction);
 
             // The orphan is below the ceiling (keeper) and no longer live, so it is removed; keeper stays.
             Assert.False(storage.Exists(deletedId));
@@ -195,7 +195,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeleteThenRollbackKeepsFile()
         {
-            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
 
             var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
@@ -220,7 +220,7 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void RemoveOrphanedFilesKeepsFileAtOrAboveCeiling()
         {
-            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
 
             // A committed content establishes the ceiling.
             var keeper = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
@@ -237,7 +237,7 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Rollback();
 
-            FileMediaContents.RemoveOrphanedFiles(this.Transaction);
+            ExternalMediaContents.RemoveOrphanedFiles(this.Transaction);
 
             // The orphan is at/above the ceiling, so it is protected; the live keeper is untouched.
             Assert.True(storage.Exists(orphanId));
@@ -245,24 +245,24 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ConvertInlineMediaContentToFile()
+        public void ConvertEmbeddedMediaContentToExternal()
         {
             var binary = new byte[] { 0, 1, 2, 3 };
             var media = new MediaBuilder(this.Transaction).WithInData(binary).Build();
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            Assert.IsType<InlineMediaContent>(media.MediaContent);
-            var inline = media.MediaContent;
+            Assert.IsType<EmbeddedMediaContent>(media.MediaContent);
+            var embedded = media.MediaContent;
 
-            var converted = Medias.ConvertInlineMediaContentToFile(this.Transaction);
+            var converted = Medias.ConvertEmbeddedMediaContentToExternal(this.Transaction);
             this.Transaction.Derive();
 
             Assert.True(converted >= 1);
-            Assert.IsType<FileMediaContent>(media.MediaContent);
+            Assert.IsType<ExternalMediaContent>(media.MediaContent);
             Assert.Equal(binary, media.MediaContent.Data);
             Assert.Equal("application/octet-stream", media.MediaContent.Type);
-            Assert.True(inline.Strategy.IsDeleted);
+            Assert.True(embedded.Strategy.IsDeleted);
 
             var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
             Assert.True(storage.Exists(media.MediaContent.Id));
