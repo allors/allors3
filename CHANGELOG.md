@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The SQL adapters no longer emit invalid SQL for a `NOT (association ContainedIn enumerable)` filter on a
+  many-to-many association (or a relation without exclusive database classes): that branch opened three
+  parentheses but closed only two, causing a syntax error (`Incorrect syntax near ')'`) at query execution.
 - The in-memory adapter's change set now reports the association that is displaced when a one-to-one
   composite role is reassigned. `SetCompositeRoleOne2One` recorded the displaced association's original
   role as the wrong value, so when the new association had no prior role its role change (now → null) was
