@@ -224,6 +224,30 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void AssociationMany2ManyNotContainedInEnumerable()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                this.Populate();
+                var m = this.Transaction.Database.Context().M;
+
+                // NOT (C2's many-to-many C1 association contained in [all C1s]) — exercises the
+                // NotAssociationContainedInEnumerable many-to-many branch, whose generated SQL had
+                // unbalanced parentheses (3 opened, 2 closed).
+                var inExtent = this.Transaction.Extent(m.C1);
+                var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
+
+                var extent = this.Transaction.Extent(m.C2);
+                extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, enumerable);
+
+                // Only the C2 with no many-to-many C1 association remains.
+                Assert.Single(extent);
+                this.AssertC2(extent, true, false, false, false);
+            }
+        }
+
+        [Fact]
         public void AssociationMany2ManyContainedIn()
         {
             foreach (var init in this.Inits)
@@ -16200,6 +16224,34 @@ namespace Allors.Database.Adapters
                 extent = this.Transaction.Extent(m.C1);
                 extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbra%");
                 Assert.Equal(3, extent.Count);
+            }
+        }
+
+        [Fact]
+        public void InstantiateDuplicateIds()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var c1 = (C1)this.Transaction.Create(m.C1);
+                var c2 = (C1)this.Transaction.Create(m.C1);
+                this.Transaction.Commit();
+                var id1 = c1.Id;
+                var id2 = c2.Id;
+
+                using (var transaction = this.CreateTransaction())
+                {
+                    transaction.Instantiate(id1); // cache id1 in this transaction
+
+                    // id1 (cached, listed twice) + id2 (uncached) makes the non-cached branch build a
+                    // Dictionary over references that already holds id1 twice -> duplicate-key throw.
+                    var objects = transaction.Instantiate(new[] { id1, id1, id2 });
+
+                    Assert.Contains(objects, o => o.Id == id1);
+                    Assert.Contains(objects, o => o.Id == id2);
+                }
             }
         }
 

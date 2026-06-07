@@ -18,6 +18,12 @@ under a dated version heading.
   `PrefetchTryGetCompositesRole` set its out-parameter from the modified role but always returned `false`, so
   the prefetcher ignored it and prefetched the committed value instead — leaving targets added in the
   transaction out of the transitive prefetch (extra database round-trips).
+- `Instantiate(IEnumerable<long>)` (SQL adapters) no longer throws `ArgumentException` ("An item with the
+  same key has already been added") when the ids contain a duplicate of an already-cached object alongside
+  an uncached id; the per-id reference lookup now tolerates duplicate keys.
+- The SQL adapters no longer emit invalid SQL for a `NOT (association ContainedIn enumerable)` filter on a
+  many-to-many association (or a relation without exclusive database classes): that branch opened three
+  parentheses but closed only two, causing a syntax error (`Incorrect syntax near ')'`) at query execution.
 - The in-memory adapter's change set now reports the association that is displaced when a one-to-one
   composite role is reassigned. `SetCompositeRoleOne2One` recorded the displaced association's original
   role as the wrong value, so when the new association had no prior role its role change (now → null) was
