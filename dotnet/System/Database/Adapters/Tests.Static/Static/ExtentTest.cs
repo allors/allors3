@@ -16228,6 +16228,34 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void InstantiateDuplicateIds()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var c1 = (C1)this.Transaction.Create(m.C1);
+                var c2 = (C1)this.Transaction.Create(m.C1);
+                this.Transaction.Commit();
+                var id1 = c1.Id;
+                var id2 = c2.Id;
+
+                using (var transaction = this.CreateTransaction())
+                {
+                    transaction.Instantiate(id1); // cache id1 in this transaction
+
+                    // id1 (cached, listed twice) + id2 (uncached) makes the non-cached branch build a
+                    // Dictionary over references that already holds id1 twice -> duplicate-key throw.
+                    var objects = transaction.Instantiate(new[] { id1, id1, id2 });
+
+                    Assert.Contains(objects, o => o.Id == id1);
+                    Assert.Contains(objects, o => o.Id == id2);
+                }
+            }
+        }
+
+        [Fact]
         public void RoleStringLike()
         {
             foreach (var init in this.Inits)
