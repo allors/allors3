@@ -238,6 +238,32 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void One2OneRoleDisplacedAssociation()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var from1 = (C1)this.Transaction.Create(m.C1);
+                var from2 = (C1)this.Transaction.Create(m.C1);
+                var to = (C1)this.Transaction.Create(m.C1);
+
+                from1.C1C1one2one = to;
+                this.Transaction.Checkpoint();
+
+                // Reassigning `to` to from2 displaces from1: from1.C1C1one2one goes to -> null.
+                from2.C1C1one2one = to;
+
+                var changeSet = this.Transaction.Checkpoint();
+
+                // The displaced association (from1) must be reported in the change set.
+                Assert.Contains(from1, changeSet.Associations);
+                Assert.Contains(m.C1.C1C1one2one, changeSet.GetRoleTypes(from1));
+            }
+        }
+
+        [Fact]
         public void BooleanRole()
         {
             foreach (var init in this.Inits)

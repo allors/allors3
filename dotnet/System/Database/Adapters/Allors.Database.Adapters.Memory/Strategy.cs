@@ -637,7 +637,7 @@ namespace Allors.Database.Adapters.Memory
 
                 if (newPreviousAssociation != null && !this.Equals(newPreviousAssociation))
                 {
-                    this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, previousRole);
+                    this.ChangeLog.OnChangingCompositeRole(newPreviousAssociation, roleType, null, @new);
 
                     newPreviousAssociation.Backup(roleType);
                     newPreviousAssociation.compositeRoleByRoleType.Remove(roleType);
