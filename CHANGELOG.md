@@ -18,3 +18,6 @@ under a dated version heading.
   similar socket/connection errors) that surface sporadically on CI. The console-error assertion
   now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx
   resource failures.
+- SqlClient adapter tests now run with a 300s command timeout and `Connection Timeout=0` against
+  SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
+  (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.

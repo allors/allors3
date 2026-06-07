@@ -13,9 +13,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         {
             var database = typeof(T).Name;
 
-            using var connection = new SqlConnection(@"Server=(localdb)\MSSQLLocalDB;Database=master;Integrated Security=true");
+            using var connection = new SqlConnection(@"Server=(localdb)\MSSQLLocalDB;Database=master;Integrated Security=true;Connection Timeout=0");
             connection.Open();
             using var command = connection.CreateCommand();
+            command.CommandTimeout = 300;
             command.CommandText = $"DROP DATABASE IF EXISTS {database}";
             command.ExecuteNonQuery();
             command.CommandText = $"CREATE DATABASE {database}";
