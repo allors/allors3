@@ -8,6 +8,9 @@
 - Roles are forward and writable
 - Associations are inverse and readonly
 - Objects delegate to their Strategy to handle operations.
+- Object ids: `0` denotes null (no object). Database object ids are positive and start at 1;
+  workspace/session ids are negative and start at -1 (`Session.IsNewId(id) => id < 0`).
+  Object-id ranges (`IRanges<long>`) therefore never contain `0`.
 - Follow existing patterns; prefer minimal changes in public APIs.
 - Never edit generated files (`*.g.ts`, `*.g.cs`); regenerate with `./build.sh Generate` when needed.
 - Follow existing naming and structure; avoid new conventions without reason.

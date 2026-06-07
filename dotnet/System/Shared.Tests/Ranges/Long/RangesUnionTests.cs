@@ -133,5 +133,33 @@ namespace Allors.Ranges.Long
 
             Assert.Equal(new long[] { 2, 3, 4, 5 }, z);
         }
+
+        [Fact]
+        public void ZeroBeforeIntertwinedPairWithPair()
+        {
+            // Guards the "nothing emitted yet" sentinel in the struct merge loop when the leading
+            // element is default(T) (== 0) and comes from the first range (branch 1). A generic
+            // data-structure boundary; real Allors id-ranges never contain 0 (0 = null).
+            var num = this.Ranges;
+
+            var x = num.Load(0, 5);
+            var y = num.Load(3, 7);
+            var z = num.Union(x, y);
+
+            Assert.Equal(new long[] { 0, 3, 5, 7 }, z);
+        }
+
+        [Fact]
+        public void ZeroAfterIntertwinedPairWithPair()
+        {
+            // Same sentinel, but the leading default(T) (== 0) comes from the second range (branch 2).
+            var num = this.Ranges;
+
+            var x = num.Load(3, 7);
+            var y = num.Load(0, 5);
+            var z = num.Union(x, y);
+
+            Assert.Equal(new long[] { 0, 3, 5, 7 }, z);
+        }
     }
 }
