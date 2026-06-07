@@ -224,6 +224,30 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void AssociationMany2ManyNotContainedInEnumerable()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                this.Populate();
+                var m = this.Transaction.Database.Context().M;
+
+                // NOT (C2's many-to-many C1 association contained in [all C1s]) — exercises the
+                // NotAssociationContainedInEnumerable many-to-many branch, whose generated SQL had
+                // unbalanced parentheses (3 opened, 2 closed).
+                var inExtent = this.Transaction.Extent(m.C1);
+                var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
+
+                var extent = this.Transaction.Extent(m.C2);
+                extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, enumerable);
+
+                // Only the C2 with no many-to-many C1 association remains.
+                Assert.Single(extent);
+                this.AssertC2(extent, true, false, false, false);
+            }
+        }
+
+        [Fact]
         public void AssociationMany2ManyContainedIn()
         {
             foreach (var init in this.Inits)
