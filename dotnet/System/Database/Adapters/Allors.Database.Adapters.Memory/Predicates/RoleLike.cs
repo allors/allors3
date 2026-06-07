@@ -22,7 +22,7 @@ namespace Allors.Database.Adapters.Memory
 
             this.roleType = roleType;
             this.isEmpty = like.Length == 0;
-            this.regex = new Regex("^" + like.Replace("%", ".*") + "$");
+            this.regex = new Regex("^" + Regex.Escape(like).Replace("%", ".*").Replace("_", ".") + "$");
         }
 
         internal override ThreeValuedLogic Evaluate(Strategy strategy)

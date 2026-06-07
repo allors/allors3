@@ -18,6 +18,10 @@ under a dated version heading.
   composite role is reassigned. `SetCompositeRoleOne2One` recorded the displaced association's original
   role as the wrong value, so when the new association had no prior role its role change (now → null) was
   trimmed out and omitted from the change set.
+- The in-memory adapter's `LIKE` filter now follows SQL `LIKE` semantics: `%` (any sequence) and `_`
+  (any single character) are wildcards and every other character — including regex metacharacters such
+  as `.`, `(`, `[`, `\` — is matched literally. Previously the pattern was compiled to a regex without
+  escaping, so metacharacters were misinterpreted and `_` was treated literally.
 - `DefaultStructRanges.Union` no longer drops a leading element equal to `default(T)` (e.g. `0`).
   Both merge branches relied on a sentinel that never fired (`Equals(previous, default)` resolves
   `default` to `null`, so it is always false for a value type); they now use a nullable `T? previous`

@@ -16173,6 +16173,37 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void RoleStringLikeSqlSemantics()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                this.Populate();
+                var m = this.Transaction.Database.Context().M;
+
+                // '.' is a literal, not regex "any char" (else it would match "ᴀbra").
+                var extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr.");
+                Assert.Empty(extent);
+
+                // '.*' is literal, not regex "any sequence" (else it would match every C1 with a string).
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, ".*");
+                Assert.Empty(extent);
+
+                // '_' is a single-character wildcard (ANSI SQL LIKE): "ᴀbr_" matches the 4-char "ᴀbra".
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr_");
+                Assert.Single(extent);
+
+                // '%' (any sequence) still works after escaping.
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbra%");
+                Assert.Equal(3, extent.Count);
+            }
+        }
+
+        [Fact]
         public void RoleStringLike()
         {
             foreach (var init in this.Inits)
