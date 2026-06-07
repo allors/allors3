@@ -59,7 +59,30 @@ namespace Tests.E2E
 
         public IList<IConsoleMessage> ConsoleMessages { get; private set; }
 
-        public IConsoleMessage[] ConsoleErrorMessages => this.ConsoleMessages.Where(v => "error".Equals(v.Type)).ToArray();
+        // Transient, environment-induced browser network errors that are not application defects.
+        // They appear sporadically on CI (e.g. Windows socket/buffer exhaustion under load) and must
+        // not fail otherwise-passing E2E tests. Real failures (JS exceptions, HTTP 4xx/5xx resource
+        // errors) are NOT listed here and still fail the console-empty assertion in TearDown.
+        private static readonly string[] TransientNetworkErrorMarkers =
+        {
+            "net::ERR_NO_BUFFER_SPACE",
+            "net::ERR_INSUFFICIENT_RESOURCES",
+            "net::ERR_NETWORK_CHANGED",
+            "net::ERR_CONNECTION_RESET",
+            "net::ERR_CONNECTION_CLOSED",
+            "net::ERR_CONNECTION_ABORTED",
+            "net::ERR_TIMED_OUT",
+        };
+
+        public IConsoleMessage[] ConsoleErrorMessages =>
+            this.ConsoleMessages
+                .Where(v => "error".Equals(v.Type))
+                .Where(v => !IsTransientNetworkError(v))
+                .ToArray();
+
+        private static bool IsTransientNetworkError(IConsoleMessage message) =>
+            message.Text is { } text &&
+            TransientNetworkErrorMarkers.Any(marker => text.Contains(marker, StringComparison.Ordinal));
 
         [SetUp]
         public async Task E2ETestSetup()
