@@ -13,8 +13,8 @@ namespace Allors.Database.Domain
         public TemplateObjectCacheEntry(Template template)
         {
             this.Revision = template.Media.Revision.Value;
-            this.Object = template.TemplateType.IsOpenDocumentTemplate ?
-                new OpenDocumentTemplate(template.Media.MediaContent.Data, template.Arguments) :
+            this.Object = template.TemplateType.IsOpenDocumentTemplate && template.Media.MediaContent?.Data is { } data ?
+                new OpenDocumentTemplate(data, template.Arguments) :
                 null;
         }
 

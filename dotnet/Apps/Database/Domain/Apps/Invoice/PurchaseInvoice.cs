@@ -71,13 +71,15 @@ namespace Allors.Database.Domain
         {
             var singleton = this.Strategy.Transaction.GetSingleton();
             var logo = this.BilledTo?.ExistLogoImage == true ?
-                this.BilledTo.LogoImage.MediaContent.Data :
-                singleton.LogoImage.MediaContent.Data;
+                this.BilledTo.LogoImage.MediaContent?.Data :
+                singleton.LogoImage?.MediaContent?.Data;
 
-            var images = new Dictionary<string, byte[]>
+            var images = new Dictionary<string, byte[]>();
+            if (logo != null)
             {
-                { "Logo", logo },
-            };
+                // A missing external file yields null bytes; skip the logo rather than passing null to the renderer.
+                images.Add("Logo", logo);
+            }
 
             if (this.ExistInvoiceNumber)
             {

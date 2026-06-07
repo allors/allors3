@@ -28,7 +28,6 @@ namespace Commands
         typeof(Upgrade),
         typeof(Populate),
         typeof(Print),
-        typeof(PruneMediaFiles),
         typeof(ExternalizeMedia),
         typeof(Roundtrip),
         typeof(Custom))]

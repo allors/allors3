@@ -87,8 +87,11 @@ namespace Allors.Database.Server.Controllers
                 var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
-                    if (media.MediaContent == null)
+                    if (media.MediaContent == null || !media.MediaContent.HasData)
                     {
+                        // No content, or its bytes are missing/empty (e.g. a lost external file): answer 204
+                        // here, before the ETag/304 short-circuit below, so a conditional request is not told
+                        // its cached copy is still valid. HasData is a cheap probe (no full read).
                         return this.NoContent();
                     }
 

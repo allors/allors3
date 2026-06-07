@@ -26,22 +26,23 @@ namespace Allors.Database.Domain
                     throw new InvalidOperationException(
                         $"ExternalMediaContent {this.Id} is already persisted and is write-once: overwriting its " +
                         "file is not rollback-safe. To change media data set Media.InData (a fresh MediaContent is built); " +
-                        "the old file is reclaimed by the PruneMediaFiles command.");
+                        "the old file is reclaimed at the next Load/Upgrade.");
                 }
 
                 this.Storage.Write(this.Id, value);
             }
         }
 
+        // True when the backing file exists and is non-empty; checked via a cheap length probe (no read).
+        public bool HasData => this.Storage.Length(this.Id) > 0;
+
         private IMediaContentStorage Storage => this.Strategy.Transaction.Database.Services.Get<IMediaContentStorage>();
 
         public void CoreOnPostDerive(ObjectOnPostDerive method)
         {
-            var data = this.Storage.Read(this.Id);
-
-            if (data == null || data.Length == 0)
+            if (!this.HasData)
             {
-                method.Derivation.Validation.AddError(this, this.Meta.Type, "Empty data");
+                method.Derivation.Validation.AddError($"ExternalMediaContent {this.Id} has no stored data.");
             }
         }
 
@@ -49,7 +50,7 @@ namespace Allors.Database.Domain
         {
             // Deletion is deferred: unlinking the file here is not rollback-safe — Strategy.Delete() is
             // reverted on Rollback, but a deleted file cannot be restored. The file is left as an orphan and
-            // reclaimed by the PruneMediaFiles command (ExternalMediaContents.RemoveOrphanedFiles), guaranteeing no data loss.
+            // reclaimed at the next Load/Upgrade (ExternalMediaContents.ReconcileFiles), guaranteeing no data loss.
         }
     }
 }

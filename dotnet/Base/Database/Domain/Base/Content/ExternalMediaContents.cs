@@ -6,34 +6,32 @@
 namespace Allors.Database.Domain
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     public partial class ExternalMediaContents
     {
         /// <summary>
-        /// Removes orphaned file-backed media: files whose id is below the highest live
-        /// <see cref="ExternalMediaContent"/> id ("ceiling") and that no live content owns (left by a rolled-back
-        /// write or a deferred delete). Files at or above the ceiling are left alone — their content may belong
-        /// to a not-yet-committed transaction (ids are allocated before commit). Returns the number removed.
+        /// Reconciles the file store against the database: deletes every file that no live
+        /// <see cref="ExternalMediaContent"/> owns — orphans left by a rolled-back write or a deferred delete.
+        /// Must run single-user; it is invoked from <see cref="Upgrade"/>, where the load process is the only
+        /// connection, so a file with no live owner is always a true orphan and never an in-flight write.
+        /// Returns the number removed.
         /// </summary>
-        public static int RemoveOrphanedFiles(ITransaction transaction)
+        public static int ReconcileFiles(ITransaction transaction)
         {
             var liveIds = new HashSet<long>();
-            var ceiling = 0L;
             foreach (ExternalMediaContent content in transaction.Extent<ExternalMediaContent>())
             {
                 liveIds.Add(content.Id);
-                if (content.Id > ceiling)
-                {
-                    ceiling = content.Id;
-                }
             }
 
             var storage = transaction.Database.Services.Get<IMediaContentStorage>();
 
             var removed = 0;
-            foreach (var id in storage.Enumerate())
+            // Materialize before deleting: mutating the directory while enumerating it can skip entries.
+            foreach (var id in storage.Enumerate().ToList())
             {
-                if (id < ceiling && !liveIds.Contains(id))
+                if (!liveIds.Contains(id))
                 {
                     storage.Delete(id);
                     removed++;

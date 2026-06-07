@@ -20,7 +20,7 @@ namespace Allors.Workspace.Configuration
             var metaPopulation = new MetaBuilder().Build();
             var engine = new Engine(Rules.Create(metaPopulation));
             var objectFactory = new ObjectFactory(metaPopulation, typeof(Database.Domain.User));
-            var databaseScope = new DefaultDatabaseServices(engine);
+            var databaseScope = new DefaultDatabaseServices(engine, configuration);
             var databaseBuilder = new Database.Adapters.DatabaseBuilder(databaseScope, configuration, objectFactory);
             var database = databaseBuilder.Build();
 

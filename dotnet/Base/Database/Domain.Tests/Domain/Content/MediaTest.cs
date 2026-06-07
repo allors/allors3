@@ -181,35 +181,29 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void DeleteMediaDeletesExternalMediaContent()
+        public void DeleteMediaReclaimsExternalFileOnReconcile()
         {
             this.Transaction.GetSingleton().StoreMediaContentExternal = true;
 
-            // A second, higher-id content stays live as the ceiling so the deleted one is below it.
-            var deleted = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
-            this.Transaction.Derive();
-            var keeper = new MediaBuilder(this.Transaction).WithInData(new byte[] { 4, 5, 6, 7 }).Build();
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            var deletedId = deleted.MediaContent.Id;
-            var keeperId = keeper.MediaContent.Id;
+            var id = media.MediaContent.Id;
             var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
-            Assert.True(storage.Exists(deletedId));
-            Assert.True(storage.Exists(keeperId));
+            Assert.True(storage.Exists(id));
 
-            deleted.Delete();
+            media.Delete();
             this.Transaction.Derive();
             this.Transaction.Commit();
 
-            // Deletion is deferred: the file survives until the command reclaims it.
-            Assert.True(storage.Exists(deletedId));
+            // Deletion is deferred: the file survives the derive/commit until reclamation.
+            Assert.True(storage.Exists(id));
 
-            ExternalMediaContents.RemoveOrphanedFiles(this.Transaction);
+            ExternalMediaContents.ReconcileFiles(this.Transaction);
 
-            // The orphan is below the ceiling (keeper) and no longer live, so it is removed; keeper stays.
-            Assert.False(storage.Exists(deletedId));
-            Assert.True(storage.Exists(keeperId));
+            // No live content owns the file, so it is reclaimed (no surviving "ceiling" content required).
+            Assert.False(storage.Exists(id));
         }
 
         [Fact]
@@ -238,17 +232,17 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void RemoveOrphanedFilesKeepsFileAtOrAboveCeiling()
+        public void ReconcileFilesReclaimsOrphansAndKeepsLiveFiles()
         {
             this.Transaction.GetSingleton().StoreMediaContentExternal = true;
 
-            // A committed content establishes the ceiling.
+            // A committed, live content whose file must be kept.
             var keeper = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
             this.Transaction.Commit();
             var keeperId = keeper.MediaContent.Id;
 
-            // A later (higher-id) content is written to disk, then rolled back: an orphan above the ceiling.
+            // A higher-id content written to disk, then rolled back: an orphan with no live owner.
             var orphan = new MediaBuilder(this.Transaction).WithInData(new byte[] { 4, 5, 6, 7 }).Build();
             this.Transaction.Derive();
             var orphanId = orphan.MediaContent.Id;
@@ -257,10 +251,10 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Rollback();
 
-            ExternalMediaContents.RemoveOrphanedFiles(this.Transaction);
+            // Run single-user (as at Load/Upgrade): the orphan is reclaimed, the live keeper is untouched.
+            ExternalMediaContents.ReconcileFiles(this.Transaction);
 
-            // The orphan is at/above the ceiling, so it is protected; the live keeper is untouched.
-            Assert.True(storage.Exists(orphanId));
+            Assert.False(storage.Exists(orphanId));
             Assert.True(storage.Exists(keeperId));
         }
 
@@ -289,6 +283,65 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void UpgradeReconcilesOrphanExternalFiles()
+        {
+            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+
+            var orphan = new MediaBuilder(this.Transaction).WithInData(new byte[] { 1, 2, 3, 4 }).Build();
+            this.Transaction.Derive();
+            var orphanId = orphan.MediaContent.Id;
+            var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
+            Assert.True(storage.Exists(orphanId));
+
+            this.Transaction.Rollback();
+
+            // Reclamation runs from the Upgrade (the load process is the only connection).
+            new Allors.Database.Domain.Upgrade(this.Transaction, new DirectoryInfo(".")).Execute();
+
+            Assert.False(storage.Exists(orphanId));
+        }
+
+        [Fact]
+        public void EmbeddedMediaContentHasData()
+        {
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+
+            Assert.IsType<EmbeddedMediaContent>(media.MediaContent);
+            Assert.True(media.MediaContent.HasData);
+        }
+
+        [Fact]
+        public void ExternalMediaContentHasData()
+        {
+            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+
+            Assert.IsType<ExternalMediaContent>(media.MediaContent);
+            Assert.True(media.MediaContent.HasData);
+        }
+
+        [Fact]
+        public void EmptyDataUpdateKeepsExistingContent()
+        {
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var original = media.MediaContent;
+
+            media.InData = Array.Empty<byte>();
+            var derivationLog = this.Transaction.Derive(false);
+
+            // The empty update is rejected and must not destroy the existing content.
+            Assert.True(derivationLog.HasErrors);
+            Assert.Equal(original, media.MediaContent);
+            Assert.False(original.Strategy.IsDeleted);
+        }
+
+        [Fact]
         public void ResolveDirectoryUsesConfiguredMediaDirectory()
         {
             var configuration = new ConfigurationBuilder()
@@ -306,6 +359,19 @@ namespace Allors.Database.Domain.Tests
         {
             var configuration = new ConfigurationBuilder().Build();
 
+            Assert.Equal(
+                new DirectoryInfo("media").FullName,
+                FileMediaContentStorage.ResolveDirectory(configuration).FullName);
+        }
+
+        [Fact]
+        public void ResolveDirectoryFallsBackToMediaWhenEmpty()
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string> { ["Media:Directory"] = "" })
+                .Build();
+
+            // An explicitly empty value (e.g. an unset env override) must not throw on new DirectoryInfo("").
             Assert.Equal(
                 new DirectoryInfo("media").FullName,
                 FileMediaContentStorage.ResolveDirectory(configuration).FullName);

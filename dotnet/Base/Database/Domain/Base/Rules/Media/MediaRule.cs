@@ -43,9 +43,6 @@ namespace Allors.Database.Domain
                 {
                     data = media.InData;
                     type = media.InType ?? MediaContents.Sniff(media.InData, media.InFileName);
-
-                    media.RemoveInType();
-                    media.RemoveInData();
                 }
                 else if (media.ExistInDataUri)
                 {
@@ -53,8 +50,19 @@ namespace Allors.Database.Domain
 
                     data = Convert.FromBase64String(dataUrl.ReadAsBase64EncodedString());
                     type = MediaContents.Sniff(data, media.InFileName);
+                }
 
-                    media.RemoveInDataUri();
+                // Consume every data input so a leftover role cannot re-trigger this rule (and reprocess) next cycle.
+                media.RemoveInType();
+                media.RemoveInData();
+                media.RemoveInDataUri();
+
+                if (data != null && data.Length == 0)
+                {
+                    // Reject an empty update without mutating: do not build a fresh content or discard the
+                    // existing one, which would destroy data on an invalid update.
+                    cycle.Validation.AddError("Media data may not be empty.");
+                    continue;
                 }
 
                 if (data != null)
@@ -68,7 +76,7 @@ namespace Allors.Database.Domain
 
                     media.MediaContent = mediaContent;
 
-                    if (previousMediaContent != null && !previousMediaContent.Equals(mediaContent))
+                    if (previousMediaContent != null)
                     {
                         previousMediaContent.CascadingDelete();
                     }

@@ -9,13 +9,13 @@ namespace Allors.Database.Domain
     {
         // Data is a persisted role; it satisfies MediaContent.Data directly.
 
+        public bool HasData => this.ExistData && this.Data.Length > 0;
+
         public void CoreOnPostDerive(ObjectOnPostDerive method)
         {
-            var derivation = method.Derivation;
-
-            if (!this.ExistData || this.Data.Length == 0)
+            if (!this.HasData)
             {
-                derivation.Validation.AddError(this, this.Meta.Data, "Empty data");
+                method.Derivation.Validation.AddError(this, this.Meta.Data, "Empty data");
             }
         }
     }

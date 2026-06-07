@@ -11,6 +11,12 @@ namespace Allors.Database.Domain
     {
         bool Exists(long id);
 
+        /// <summary>
+        /// The byte length of the stored item, or -1 when it does not exist. Lets callers test presence and
+        /// emptiness without reading the bytes.
+        /// </summary>
+        long Length(long id);
+
         byte[] Read(long id);
 
         void Write(long id, byte[] data);
@@ -18,7 +24,7 @@ namespace Allors.Database.Domain
         void Delete(long id);
 
         /// <summary>
-        /// Enumerates the object id of every stored item. Used by <see cref="ExternalMediaContents.RemoveOrphanedFiles"/>
+        /// Enumerates the object id of every stored item. Used by <see cref="ExternalMediaContents.ReconcileFiles"/>
         /// to find files that no live content owns.
         /// </summary>
         IEnumerable<long> Enumerate();

@@ -21,10 +21,21 @@ namespace Allors.Database.Configuration
         public FileMediaContentStorage(DirectoryInfo directory) => this.directory = directory;
 
         // Single resolution point shared by every host (server and commands) so they never diverge.
-        public static DirectoryInfo ResolveDirectory(IConfiguration configuration) =>
-            new DirectoryInfo(configuration?[DirectoryConfigurationKey] ?? "media");
+        // An empty/whitespace value (e.g. an unset "Media__Directory=" env override) falls back to "media"
+        // rather than throwing on new DirectoryInfo("").
+        public static DirectoryInfo ResolveDirectory(IConfiguration configuration)
+        {
+            var configured = configuration?[DirectoryConfigurationKey];
+            return new DirectoryInfo(string.IsNullOrWhiteSpace(configured) ? "media" : configured);
+        }
 
         public bool Exists(long id) => File.Exists(this.PathFor(id));
+
+        public long Length(long id)
+        {
+            var path = this.PathFor(id);
+            return File.Exists(path) ? new FileInfo(path).Length : -1;
+        }
 
         public byte[] Read(long id)
         {
@@ -34,10 +45,9 @@ namespace Allors.Database.Configuration
 
         public void Write(long id, byte[] data)
         {
-            if (!this.directory.Exists)
-            {
-                this.directory.Create();
-            }
+            // CreateDirectory is idempotent and queries the live filesystem; DirectoryInfo.Exists is cached at
+            // first access and would go stale for this process-lifetime singleton.
+            Directory.CreateDirectory(this.directory.FullName);
 
             File.WriteAllBytes(this.PathFor(id), data ?? Array.Empty<byte>());
         }

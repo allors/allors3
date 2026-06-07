@@ -10,5 +10,8 @@ namespace Allors.Database.Domain
         // The bytes of this content. The storage strategy is implementation specific:
         // EmbeddedMediaContent keeps them in the database, ExternalMediaContent in external storage.
         byte[] Data { get; set; }
+
+        // True when this content has non-empty bytes. Cheap to evaluate (no full read for external storage).
+        bool HasData { get; }
     }
 }

@@ -36,14 +36,16 @@ namespace Allors.Database.Domain
         {
             var singleton = this.Strategy.Transaction.GetSingleton();
             var logo = this.Issuer?.ExistLogoImage == true ?
-                            this.Issuer.LogoImage.MediaContent.Data :
-                            singleton.LogoImage.MediaContent.Data;
+                            this.Issuer.LogoImage.MediaContent?.Data :
+                            singleton.LogoImage?.MediaContent?.Data;
 
-            var images = new Dictionary<string, byte[]>
-                                {
-                                    { "Logo1", logo },
-                                    { "Logo2", logo },
-                                };
+            var images = new Dictionary<string, byte[]>();
+            if (logo != null)
+            {
+                // A missing external file yields null bytes; skip the logo rather than passing null to the renderer.
+                images.Add("Logo1", logo);
+                images.Add("Logo2", logo);
+            }
 
             if (this.ExistQuoteNumber)
             {

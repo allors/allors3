@@ -21,6 +21,9 @@ namespace Allors.Database.Domain
 
         public void Execute()
         {
+            // Reclaim orphaned external media files (rolled-back writes, deferred deletes). Safe here: the
+            // load/upgrade process is the only connection, so a file with no live owner is a true orphan.
+            ExternalMediaContents.ReconcileFiles(this.transaction);
         }
 
         private void Derive(Extent extent)

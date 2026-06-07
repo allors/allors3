@@ -69,44 +69,44 @@ namespace Allors.Database.Domain.Print.ProductQuoteModel
                     this.Hours = $"{hoursCharacteristic.Value} {hoursType.UnitOfMeasure?.Abbreviation}";
                 }
 
-                if (serialisedItem.ExistPrimaryPhoto)
+                if (serialisedItem.ExistPrimaryPhoto && serialisedItem.PrimaryPhoto.MediaContent?.Data is { } primaryPhoto)
                 {
                     this.PrimaryPhotoName = $"{item.Id}_primaryPhoto";
-                    imageByImageName.Add(this.PrimaryPhotoName, serialisedItem.PrimaryPhoto.MediaContent.Data);
+                    imageByImageName.Add(this.PrimaryPhotoName, primaryPhoto);
                 }
 
-                if (serialisedItem.AdditionalPhotos.Any())
+                if (serialisedItem.AdditionalPhotos.Any() && serialisedItem.AdditionalPhotos.ElementAt(0).MediaContent?.Data is { } secondaryPhoto1)
                 {
                     this.SecondaryPhotoName1 = $"{item.Id}_secondaryPhoto1";
-                    imageByImageName.Add(this.SecondaryPhotoName1, serialisedItem.AdditionalPhotos.ElementAt(0).MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName1, secondaryPhoto1);
                 }
 
-                if (serialisedItem.AdditionalPhotos.Count() > 1)
+                if (serialisedItem.AdditionalPhotos.Count() > 1 && serialisedItem.AdditionalPhotos.ElementAt(1).MediaContent?.Data is { } secondaryPhoto2)
                 {
                     this.SecondaryPhotoName2 = $"{item.Id}_secondaryPhoto2";
-                    imageByImageName.Add(this.SecondaryPhotoName2, serialisedItem.AdditionalPhotos.ElementAt(1).MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName2, secondaryPhoto2);
                 }
             }
             else if (product != null)
             {
                 this.IdentificationNumber = product.ProductIdentifications.FirstOrDefault(v => v.ProductIdentificationType.Equals(new ProductIdentificationTypes(transaction).Good)).Identification;
 
-                if (product.ExistPrimaryPhoto)
+                if (product.ExistPrimaryPhoto && product.PrimaryPhoto.MediaContent?.Data is { } primaryPhoto)
                 {
                     this.PrimaryPhotoName = $"{item.Id}_primaryPhoto";
-                    imageByImageName.Add(this.PrimaryPhotoName, product.PrimaryPhoto.MediaContent.Data);
+                    imageByImageName.Add(this.PrimaryPhotoName, primaryPhoto);
                 }
 
-                if (product.Photos.Any())
+                if (product.Photos.Any() && product.Photos.ElementAt(0).MediaContent?.Data is { } secondaryPhoto1)
                 {
                     this.SecondaryPhotoName1 = $"{item.Id}_secondaryPhoto1";
-                    imageByImageName.Add(this.SecondaryPhotoName1, product.Photos.ElementAt(0).MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName1, secondaryPhoto1);
                 }
 
-                if (product.Photos.Count() > 1)
+                if (product.Photos.Count() > 1 && product.Photos.ElementAt(1).MediaContent?.Data is { } secondaryPhoto2)
                 {
                     this.SecondaryPhotoName2 = $"{item.Id}_secondaryPhoto2";
-                    imageByImageName.Add(this.SecondaryPhotoName2, product.Photos.ElementAt(1).MediaContent.Data);
+                    imageByImageName.Add(this.SecondaryPhotoName2, secondaryPhoto2);
                 }
             }
         }
