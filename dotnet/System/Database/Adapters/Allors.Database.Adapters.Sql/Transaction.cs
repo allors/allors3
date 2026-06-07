@@ -202,7 +202,11 @@ namespace Allors.Database.Adapters.Sql
                 references.AddRange(nonCachedReferences);
 
                 // Return objects in the same order as objectIds
-                var referenceById = references.ToDictionary(v => v.ObjectId);
+                var referenceById = new Dictionary<long, Reference>();
+                foreach (var reference in references)
+                {
+                    referenceById[reference.ObjectId] = reference;
+                }
                 references = new List<Reference>();
                 foreach (var objectId in objectIdArray)
                 {
