@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The in-memory adapter's `LIKE` filter now follows SQL `LIKE` semantics: `%` (any sequence) and `_`
+  (any single character) are wildcards and every other character — including regex metacharacters such
+  as `.`, `(`, `[`, `\` — is matched literally. Previously the pattern was compiled to a regex without
+  escaping, so metacharacters were misinterpreted and `_` was treated literally.
 - `DefaultStructRanges.Union` no longer drops a leading element equal to `default(T)` (e.g. `0`).
   Both merge branches relied on a sentinel that never fired (`Equals(previous, default)` resolves
   `default` to `null`, so it is always false for a value type); they now use a nullable `T? previous`
