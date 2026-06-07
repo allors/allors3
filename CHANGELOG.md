@@ -35,3 +35,10 @@ under a dated version heading.
   to `InlineMediaContent` automatically by the standard save/load upgrade — no data migration
   code is required. Because the table is renamed (`mediacontent` → `inlinemediacontent`), run the
   Upgrade (save then load) rather than opening an old database in place.
+
+### Fixed
+
+- E2E tests no longer fail on transient browser network errors (`net::ERR_NO_BUFFER_SPACE` and
+  similar socket/connection errors) that surface sporadically on CI. The console-error assertion
+  now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx
+  resource failures.
