@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Fixed
 
+- Prefetching (SQL adapters) now uses an object's modified (uncommitted) composites role.
+  `PrefetchTryGetCompositesRole` set its out-parameter from the modified role but always returned `false`, so
+  the prefetcher ignored it and prefetched the committed value instead — leaving targets added in the
+  transaction out of the transitive prefetch (extra database round-trips).
 - `Instantiate(IEnumerable<long>)` (SQL adapters) no longer throws `ArgumentException` ("An item with the
   same key has already been added") when the ids contain a duplicate of an already-cached object alongside
   an uncached id; the per-id reference lookup now tolerates duplicate keys.
