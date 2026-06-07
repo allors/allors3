@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `Instantiate(IEnumerable<long>)` (SQL adapters) no longer throws `ArgumentException` ("An item with the
+  same key has already been added") when the ids contain a duplicate of an already-cached object alongside
+  an uncached id; the per-id reference lookup now tolerates duplicate keys.
 - The in-memory adapter's change set now reports the association that is displaced when a one-to-one
   composite role is reassigned. `SetCompositeRoleOne2One` recorded the displaced association's original
   role as the wrong value, so when the new association had no prior role its role change (now → null) was
