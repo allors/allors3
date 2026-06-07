@@ -5,6 +5,8 @@
 
 namespace Allors.Database.Domain
 {
+    using System.Collections.Generic;
+
     public interface IMediaContentStorage
     {
         bool Exists(long id);
@@ -14,5 +16,11 @@ namespace Allors.Database.Domain
         void Write(long id, byte[] data);
 
         void Delete(long id);
+
+        /// <summary>
+        /// Enumerates the object id of every stored item. Used by <see cref="FileMediaContents.RemoveOrphanedFiles"/>
+        /// to find files that no live content owns.
+        /// </summary>
+        IEnumerable<long> Enumerate();
     }
 }

@@ -26,6 +26,11 @@ namespace Allors.Database.Domain
             }
         }
 
-        public void CoreDelete(DeletableDelete method) => this.Storage.Delete(this.Id);
+        public void CoreDelete(DeletableDelete method)
+        {
+            // Deletion is deferred: unlinking the file here is not rollback-safe — Strategy.Delete() is
+            // reverted on Rollback, but a deleted file cannot be restored. The file is left as an orphan and
+            // reclaimed by the CleanMedia command (FileMediaContents.RemoveOrphanedFiles), guaranteeing no data loss.
+        }
     }
 }

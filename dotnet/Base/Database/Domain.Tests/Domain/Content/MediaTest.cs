@@ -165,8 +165,41 @@ namespace Allors.Database.Domain.Tests
         {
             this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
 
+            // A second, higher-id content stays live as the ceiling so the deleted one is below it.
+            var deleted = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+            var keeper = new MediaBuilder(this.Transaction).WithInData(new byte[] { 4, 5, 6, 7 }).Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var deletedId = deleted.MediaContent.Id;
+            var keeperId = keeper.MediaContent.Id;
+            var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
+            Assert.True(storage.Exists(deletedId));
+            Assert.True(storage.Exists(keeperId));
+
+            deleted.Delete();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            // Deletion is deferred: the file survives until the command reclaims it.
+            Assert.True(storage.Exists(deletedId));
+
+            FileMediaContents.RemoveOrphanedFiles(this.Transaction);
+
+            // The orphan is below the ceiling (keeper) and no longer live, so it is removed; keeper stays.
+            Assert.False(storage.Exists(deletedId));
+            Assert.True(storage.Exists(keeperId));
+        }
+
+        [Fact]
+        public void DeleteThenRollbackKeepsFile()
+        {
+            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+
             var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
+            this.Transaction.Commit();
 
             var id = media.MediaContent.Id;
             var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
@@ -175,7 +208,64 @@ namespace Allors.Database.Domain.Tests
             media.Delete();
             this.Transaction.Derive();
 
-            Assert.False(storage.Exists(id));
+            // Deletion is deferred to garbage collection, so the file must survive the derive.
+            Assert.True(storage.Exists(id));
+
+            this.Transaction.Rollback();
+
+            // The rollback restores the media, so losing its file would be data loss.
+            Assert.True(storage.Exists(id));
+        }
+
+        [Fact]
+        public void RemoveOrphanedFilesKeepsFileAtOrAboveCeiling()
+        {
+            this.Transaction.GetSingleton().StoreMediaContentOnFile = true;
+
+            // A committed content establishes the ceiling.
+            var keeper = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+            var keeperId = keeper.MediaContent.Id;
+
+            // A later (higher-id) content is written to disk, then rolled back: an orphan above the ceiling.
+            var orphan = new MediaBuilder(this.Transaction).WithInData(new byte[] { 4, 5, 6, 7 }).Build();
+            this.Transaction.Derive();
+            var orphanId = orphan.MediaContent.Id;
+            var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
+            Assert.True(storage.Exists(orphanId));
+
+            this.Transaction.Rollback();
+
+            FileMediaContents.RemoveOrphanedFiles(this.Transaction);
+
+            // The orphan is at/above the ceiling, so it is protected; the live keeper is untouched.
+            Assert.True(storage.Exists(orphanId));
+            Assert.True(storage.Exists(keeperId));
+        }
+
+        [Fact]
+        public void ConvertInlineMediaContentToFile()
+        {
+            var binary = new byte[] { 0, 1, 2, 3 };
+            var media = new MediaBuilder(this.Transaction).WithInData(binary).Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            Assert.IsType<InlineMediaContent>(media.MediaContent);
+            var inline = media.MediaContent;
+
+            var converted = Medias.ConvertInlineMediaContentToFile(this.Transaction);
+            this.Transaction.Derive();
+
+            Assert.True(converted >= 1);
+            Assert.IsType<FileMediaContent>(media.MediaContent);
+            Assert.Equal(binary, media.MediaContent.Data);
+            Assert.Equal("application/octet-stream", media.MediaContent.Type);
+            Assert.True(inline.Strategy.IsDeleted);
+
+            var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
+            Assert.True(storage.Exists(media.MediaContent.Id));
         }
     }
 }

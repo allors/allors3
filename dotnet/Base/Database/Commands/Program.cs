@@ -28,6 +28,8 @@ namespace Commands
         typeof(Upgrade),
         typeof(Populate),
         typeof(Print),
+        typeof(CleanMedia),
+        typeof(MigrateMediaToFile),
         typeof(Custom))]
     public class Program
     {

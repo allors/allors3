@@ -6,6 +6,7 @@
 namespace Allors.Database.Configuration
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using Domain;
 
@@ -39,6 +40,24 @@ namespace Allors.Database.Configuration
             if (File.Exists(path))
             {
                 File.Delete(path);
+            }
+        }
+
+        public IEnumerable<long> Enumerate()
+        {
+            // Query the filesystem freshly; DirectoryInfo.Exists is cached and may be stale.
+            if (!Directory.Exists(this.directory.FullName))
+            {
+                yield break;
+            }
+
+            foreach (var path in Directory.EnumerateFiles(this.directory.FullName))
+            {
+                // File names are object ids (see PathFor); ignore anything else in the directory.
+                if (long.TryParse(Path.GetFileName(path), out var id))
+                {
+                    yield return id;
+                }
             }
         }
 
