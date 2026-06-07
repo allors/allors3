@@ -50,7 +50,7 @@ namespace Allors.Ranges
                                     var j = 0;
                                     var k = 0;
 
-                                    T previous = default;
+                                    T? previous = null;
                                     while (i < arrayLength && j < otherArrayLength)
                                     {
                                         var value = items[i];
@@ -58,7 +58,7 @@ namespace Allors.Ranges
 
                                         if (value.CompareTo(otherValue) < 0)
                                         {
-                                            if (value.CompareTo(previous) != 0)
+                                            if (previous == null || value.CompareTo(previous.Value) != 0)
                                             {
                                                 result[k++] = value;
                                             }
@@ -68,7 +68,7 @@ namespace Allors.Ranges
                                         }
                                         else
                                         {
-                                            if (Equals(previous, default) || otherValue.CompareTo(previous) != 0)
+                                            if (previous == null || otherValue.CompareTo(previous.Value) != 0)
                                             {
                                                 result[k++] = otherValue;
                                             }
