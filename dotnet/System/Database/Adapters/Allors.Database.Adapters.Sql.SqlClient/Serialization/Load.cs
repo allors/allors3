@@ -139,7 +139,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                         command.CommandType = CommandType.Text;
                         command.CommandText = $@"
 insert into {tableName} (o, c)
-select o, c from allors._o
+select o, c from {this.database.Mapping.TableNameForObjects}
 where c = '{@class.Id}'";
 
                         command.ExecuteNonQuery();
