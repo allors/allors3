@@ -28,6 +28,11 @@ under a dated version heading.
   `InvalidCastException` (e.g. casting `JsonElement` to `int`/`byte[]`). It now routes the value through the
   adapter's `IUnitConvert`, mapping the requested CLR type to its unit tag, so values round-trip to the correct
   type. (Pull values are sent untagged, so the conversion is keyed by `T`.)
+- The workspace adapters' session-origin `SetCompositeRoleMany2One` no longer leaves a stale inverse when an
+  object's many-to-one composite role is reassigned. When changing `A`'s role from `PR` to `R` it detached the
+  *new* role `R` (a no-op, since `A` was not yet associated with `R`) instead of the *previous* role `PR`, so
+  `PR`'s inverse association still listed `A` while `A`'s role was already `R`. It now detaches the previous
+  role, matching the one-to-one sibling. Affects the Local and Remote workspace adapters.
 - The workspace `ContainedIn` predicate with an explicit object list now round-trips over the JSON protocol.
   Both `ToJsonVisitor`s (the workspace and the database one) serialized the objects to the `vs` (values) field,
   but the database `FromJsonVisitor` reads them from `obs` (the object-id field), so the object list was lost in
