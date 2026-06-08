@@ -22,6 +22,11 @@ under a dated version heading.
 
 ### Fixed
 
+- `PrefetchPolicyBuilder.WithNodes` now nests a tree node's child prefetch rules under their parent role
+  instead of flattening them onto the root policy. The `WithNode` helper created a nested builder for the
+  child nodes but recursed on the outer builder (`@this`), so the nested policy was always empty (deeper
+  tree levels were never prefetched) and the child rules — and their security rules — leaked onto the
+  outer policy. It now recurses on the nested builder.
 - The remote workspace adapter's `IPullResult.GetValue<T>` now converts a pulled value to `T` instead of
   hard-casting the raw deserialized JSON. `PullResult.Values` exposes values as received over the wire (a
   `JsonElement` for System.Text.Json, a boxed/`JToken` value for Newtonsoft), so `GetValue<T>` threw

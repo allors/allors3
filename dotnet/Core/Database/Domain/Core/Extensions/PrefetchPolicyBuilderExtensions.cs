@@ -70,7 +70,7 @@ namespace Allors.Database.Domain
                 var nestedPrefetchPolicyBuilder = new PrefetchPolicyBuilder();
                 foreach (var node in treeNode.Nodes)
                 {
-                    @this.WithNode(node, m);
+                    nestedPrefetchPolicyBuilder.WithNode(node, m);
                 }
 
                 var nestedPrefetchPolicy = nestedPrefetchPolicyBuilder.Build();
