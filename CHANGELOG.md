@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The SQL adapters' `CreateObjects` stored procedure now holds the generated object id in a `bigint` variable
+  instead of `INT`/`integer`, so creating objects no longer overflows once ids pass `int.MaxValue` (≈2.1 billion):
+  SqlClient's `@IDS` table variable and Npgsql's `ID` variable. (The unused `@O INT` declaration on SqlClient was
+  also removed.)
 - `Extent.CopyTo(array, index)` for a converted extent (the `IObject[] → Allors.Database.Extent` cast) now
   begins copying at the requested destination `index` instead of always at `0`. The override hardcoded `0` as
   the `Array.Copy` destination, ignoring its `index` parameter and overwriting earlier elements of the target.
