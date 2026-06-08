@@ -96,7 +96,7 @@ namespace Allors.Workspace.Protocol.Json
                 d = visited.Dependencies,
                 a = (visited.PropertyType as IAssociationType)?.RelationType.Tag,
                 r = (visited.PropertyType as IRoleType)?.RelationType.Tag,
-                vs = visited.Objects?.Select(v => v.Id as object).ToArray(),
+                obs = visited.Objects?.Select(v => v.Id).ToArray(),
                 p = visited.Parameter,
             };
 
