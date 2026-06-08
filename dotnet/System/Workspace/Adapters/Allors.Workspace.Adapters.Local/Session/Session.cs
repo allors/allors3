@@ -40,7 +40,16 @@ namespace Allors.Workspace.Adapters.Local
         public override Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null)
         {
             var result = new Invoke(this);
-            result.Execute(methods, options);
+
+            try
+            {
+                result.Execute(methods, options);
+            }
+            finally
+            {
+                result.ReleaseTransaction();
+            }
+
             return Task.FromResult<IInvokeResult>(result);
         }
 
