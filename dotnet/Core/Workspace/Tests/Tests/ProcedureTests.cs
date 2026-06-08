@@ -81,6 +81,28 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async void TestValues()
+        {
+            await this.Login("administrator");
+            var session = this.Workspace.CreateSession();
+
+            var procedure = new Procedure("TestValues");
+
+            var result = await session.CallAsync(procedure);
+
+            Assert.False(result.HasErrors);
+
+            Assert.Equal(new byte[] { 1, 2, 3 }, result.GetValue<byte[]>("allorsBinary"));
+            Assert.True(result.GetValue<bool>("allorsBoolean"));
+            Assert.Equal(new DateTime(1973, 3, 27, 0, 0, 0, DateTimeKind.Utc), result.GetValue<DateTime>("allorsDateTime"));
+            Assert.Equal(12.34m, result.GetValue<decimal>("allorsDecimal"));
+            Assert.Equal(123d, result.GetValue<double>("allorsDouble"));
+            Assert.Equal(1000, result.GetValue<int>("allorsInteger"));
+            Assert.Equal("a string", result.GetValue<string>("allorsString"));
+            Assert.Equal(new Guid("2946CF37-71BE-4681-8FE6-D0024D59BEFF"), result.GetValue<Guid>("allorsUnique"));
+        }
+
+        [Fact]
         public async void NonExistingProcedure()
         {
             await this.Login("administrator");
