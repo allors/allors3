@@ -22,6 +22,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The resource `Merger` no longer corrupts a resx `<data>` entry when the same key appears in more than one
+  input directory. For an existing key it ran `data.Value = mergeData.Value`, whose setter replaces the
+  entry's child elements (the `<value>`, and any `<comment>`) with a single raw-text node — emitting
+  `<data name="…">text</data>` instead of `<data name="…"><value>text</value></data>`, which is not valid
+  resx. It now replaces the whole element with a clone of the incoming one (matching the new-key branch),
+  preserving the `<value>`/`<comment>` children and the incoming attributes.
 - `PrefetchPolicyBuilder.WithNodes` now nests a tree node's child prefetch rules under their parent role
   instead of flattening them onto the root policy. The `WithNode` helper created a nested builder for the
   child nodes but recursed on the outer builder (`@this`), so the nested policy was always empty (deeper
