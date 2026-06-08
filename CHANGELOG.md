@@ -22,6 +22,9 @@ under a dated version heading.
 
 ### Fixed
 
+- The workspace UML diagram template (`Workspace/Templates/uml.cs.stg`) now renders a many-valued role as
+  an array type (`ElementType[]`), matching the database diagram template; its many-valued branch previously
+  emitted the element type without the `[]`, so a collection role looked like a single-valued one.
 - `commands.sh` now forwards its arguments with `"$@"` instead of the unquoted `$*`, so an argument
   containing spaces (or shell glob characters) reaches `Database/Commands` as a single token instead of
   being word-split/globbed. Previously e.g. a file path with a space was split into several arguments.
