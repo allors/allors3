@@ -162,10 +162,10 @@ namespace Allors.Ranges.Long
             var num = this.Ranges;
 
             var x = num.Load(2, 3, 4);
-            var y = num.Load(3);
+            var y = num.Load(4);
             var z = num.Except(x, y);
 
-            Assert.Equal(new long[] { 2, 4 }, z);
+            Assert.Equal(new long[] { 2, 3 }, z);
         }
 
         [Fact]
@@ -198,10 +198,10 @@ namespace Allors.Ranges.Long
             var num = this.Ranges;
 
             var x = num.Load(2, 3, 4);
-            var y = num.Load(4);
+            var y = num.Load(3, 4);
             var z = num.Except(x, y);
 
-            Assert.Equal(new long[] { 2, 3 }, z);
+            Assert.Equal(new long[] { 2 }, z);
         }
 
         [Fact]

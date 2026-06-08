@@ -1215,6 +1215,7 @@ namespace Allors.Database.Adapters.Sql
             if (this.TryGetModifiedCompositesRole(roleType, out var compositesRole))
             {
                 roleIds = compositesRole.ObjectIds;
+                return true;
             }
 
             return false;

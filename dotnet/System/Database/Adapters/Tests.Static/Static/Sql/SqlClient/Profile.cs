@@ -58,7 +58,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        protected string ConnectionString => $@"server=(localdb)\MSSQLLocalDB;database={this.database};Integrated Security=true";
+        protected string ConnectionString => $@"server=(localdb)\MSSQLLocalDB;database={this.database};Integrated Security=true;Connection Timeout=0";
 
         public override IDatabase CreateDatabase()
         {
@@ -70,6 +70,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
                 ConnectionString = this.ConnectionString,
                 ConnectionFactory = this.connectionFactory,
                 CacheFactory = this.cacheFactory,
+                CommandTimeout = 300,
             });
         }
 

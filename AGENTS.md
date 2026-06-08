@@ -8,6 +8,9 @@
 - Roles are forward and writable
 - Associations are inverse and readonly
 - Objects delegate to their Strategy to handle operations.
+- Object ids: `0` denotes null (no object). Database object ids are positive and start at 1;
+  workspace/session ids are negative and start at -1 (`Session.IsNewId(id) => id < 0`).
+  Object-id ranges (`IRanges<long>`) therefore never contain `0`.
 - Follow existing patterns; prefer minimal changes in public APIs.
 - Never edit generated files (`*.g.ts`, `*.g.cs`); regenerate with `./build.sh Generate` when needed.
 - Follow existing naming and structure; avoid new conventions without reason.
@@ -43,6 +46,11 @@
 ## Testing
 - Domain tests use the in-memory adapter (`Adapters.Memory`) — no database server required.
 - Iterate with `dotnet build <Domain.Tests>.csproj` then `dotnet test --no-build --filter "FullyQualifiedName~XTest"`.
+
+## Testing — where test code may live (important)
+- `typescript/modules/apps/**` (the apps: `apps-intranet`, `base`) MAY contain test-only code, including **test-only pages/routes**. App code is NOT inherited by other domains, so test scaffolding here is safe and isolated.
+- `typescript/modules/libs/**` is **inheritable** by other domains and MUST NOT contain test code or test-only scaffolding — keep it production-only. (The only exception is a dedicated test project, e.g. a `*-tests` lib.)
+- Consequence for e2e: to exercise a reusable lib component (e.g. a shared panel) whose bug is not reachable through existing shipped screens, add a **test-only page in the relevant app** that wires the component to the triggering data, then drive it from `typescript/e2e/**`. Never add test hooks, test routes, or test-only config to the lib itself.
 
 ## Build Commands
 

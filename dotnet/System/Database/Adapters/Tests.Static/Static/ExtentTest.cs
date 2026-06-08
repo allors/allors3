@@ -224,6 +224,30 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void AssociationMany2ManyNotContainedInEnumerable()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                this.Populate();
+                var m = this.Transaction.Database.Context().M;
+
+                // NOT (C2's many-to-many C1 association contained in [all C1s]) — exercises the
+                // NotAssociationContainedInEnumerable many-to-many branch, whose generated SQL had
+                // unbalanced parentheses (3 opened, 2 closed).
+                var inExtent = this.Transaction.Extent(m.C1);
+                var enumerable = (IEnumerable<IObject>)(Extent<IObject>)inExtent;
+
+                var extent = this.Transaction.Extent(m.C2);
+                extent.Filter.AddNot().AddContainedIn(m.C2.C1sWhereC1C2many2many, enumerable);
+
+                // Only the C2 with no many-to-many C1 association remains.
+                Assert.Single(extent);
+                this.AssertC2(extent, true, false, false, false);
+            }
+        }
+
+        [Fact]
         public void AssociationMany2ManyContainedIn()
         {
             foreach (var init in this.Inits)
@@ -16169,6 +16193,114 @@ namespace Allors.Database.Adapters
                 }
 
                 Assert.True(exception);
+            }
+        }
+
+        [Fact]
+        public void RoleStringLikeSqlSemantics()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                this.Populate();
+                var m = this.Transaction.Database.Context().M;
+
+                // '.' is a literal, not regex "any char" (else it would match "ᴀbra").
+                var extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr.");
+                Assert.Empty(extent);
+
+                // '.*' is literal, not regex "any sequence" (else it would match every C1 with a string).
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, ".*");
+                Assert.Empty(extent);
+
+                // '_' is a single-character wildcard (ANSI SQL LIKE): "ᴀbr_" matches the 4-char "ᴀbra".
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbr_");
+                Assert.Single(extent);
+
+                // '%' (any sequence) still works after escaping.
+                extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "ᴀbra%");
+                Assert.Equal(3, extent.Count);
+            }
+        }
+
+        [Fact]
+        public void RoleStringLikeBracketIsLiteral()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var literal = (C1)this.Transaction.Create(m.C1);
+                literal.C1AllorsString = "[abc]";
+
+                var single = (C1)this.Transaction.Create(m.C1);
+                single.C1AllorsString = "a";
+
+                this.Transaction.Commit();
+
+                // ANSI SQL LIKE: '[abc]' is a literal pattern, not a T-SQL character class.
+                // It matches the literal string "[abc]" and not the single character "a".
+                var extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "[abc]");
+
+                Assert.Single(extent);
+                Assert.Equal("[abc]", ((C1)extent[0]).C1AllorsString);
+            }
+        }
+
+        [Fact]
+        public void InstantiateDuplicateIds()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var c1 = (C1)this.Transaction.Create(m.C1);
+                var c2 = (C1)this.Transaction.Create(m.C1);
+                this.Transaction.Commit();
+                var id1 = c1.Id;
+                var id2 = c2.Id;
+
+                using (var transaction = this.CreateTransaction())
+                {
+                    transaction.Instantiate(id1); // cache id1 in this transaction
+
+                    // id1 (cached, listed twice) + id2 (uncached) makes the non-cached branch build a
+                    // Dictionary over references that already holds id1 twice -> duplicate-key throw.
+                    var objects = transaction.Instantiate(new[] { id1, id1, id2 });
+
+                    Assert.Contains(objects, o => o.Id == id1);
+                    Assert.Contains(objects, o => o.Id == id2);
+                }
+            }
+        }
+
+        [Fact]
+        public void ConvertedExtentCopyToStartsAtDestinationIndex()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var first = this.Transaction.Create(m.C1);
+                var second = this.Transaction.Create(m.C1);
+
+                Allors.Database.Extent extent = new IObject[] { first, second };
+
+                var destination = new IObject[4];
+                extent.CopyTo(destination, 1);
+
+                Assert.Null(destination[0]);
+                Assert.Same(first, destination[1]);
+                Assert.Same(second, destination[2]);
+                Assert.Null(destination[3]);
             }
         }
 

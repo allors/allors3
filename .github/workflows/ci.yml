@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: false
           fetch-depth: 0      # nbgv needs full history for git-height versioning
@@ -67,7 +67,7 @@ jobs:
         run: Set-Culture -CultureInfo nl-BE
 
       - name: Setup .NET SDK (from global.json)
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           global-json-file: global.json
 
@@ -80,9 +80,9 @@ jobs:
         run: dotnet nbgv cloud
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '18'
+          node-version: '24'
 
       - name: Start PostgreSQL service
         shell: pwsh
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload TRX artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trx-${{ matrix.target }}
           path: artifacts/Tests/*.trx
@@ -139,7 +139,7 @@ jobs:
 
       - name: Publish test results
         if: always()
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         with:
           name: ${{ matrix.target }}
           path: artifacts/Tests/*.trx

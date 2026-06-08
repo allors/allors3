@@ -325,7 +325,7 @@ namespace Allors.Database
             /// <exception cref="T:System.ArgumentOutOfRangeException">index is less than zero. </exception>
             /// <exception cref="T:System.ArgumentException">array is multidimensional.-or- index is equal to or greater than the length of array.-or- The number of elements in the source <see cref="T:System.Collections.ICollection"></see> is greater than the available space from index to the end of the destination array. </exception>
             /// <exception cref="T:System.InvalidCastException">The type of the source <see cref="T:System.Collections.ICollection"></see> cannot be cast automatically to the type of the destination array. </exception>
-            public override void CopyTo(Array array, int index) => Array.Copy(this.objects, 0, array, 0, this.objects.Length);
+            public override void CopyTo(Array array, int index) => Array.Copy(this.objects, 0, array, index, this.objects.Length);
 
             /// <summary>
             /// Returns an enumerator that iterates through a collection.

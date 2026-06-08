@@ -688,54 +688,54 @@ namespace Allors.Database.Adapters
 
                     // Multiplicity
                     // Same New / Same To
-                    from.C1C1one2one = to;
-                    from.C1C1one2one = to;
+                    from.C1I1one2one = to;
+                    from.C1I1one2one = to;
 
                     mark();
-                    Assert.Equal(to, from.C1C1one2one);
-                    Assert.Equal(from, to.C1WhereC1C1one2one);
+                    Assert.Equal(to, from.C1I1one2one);
+                    Assert.Equal(from, to.C1WhereC1I1one2one);
 
-                    from.RemoveC1C1one2one();
+                    from.RemoveC1I1one2one();
 
                     // Same New / Different To
-                    from.C1C1one2one = to;
-                    from.C1C1one2one = toAnother;
+                    from.C1I1one2one = to;
+                    from.C1I1one2one = toAnother;
 
                     mark();
-                    Assert.Null(to.C1WhereC1C1one2one);
-                    Assert.Equal(toAnother, from.C1C1one2one);
-                    Assert.Equal(from, toAnother.C1WhereC1C1one2one);
+                    Assert.Null(to.C1WhereC1I1one2one);
+                    Assert.Equal(toAnother, from.C1I1one2one);
+                    Assert.Equal(from, toAnother.C1WhereC1I1one2one);
 
                     // Different New / Different To
-                    from.C1C1one2one = to;
-                    fromAnother.C1C1one2one = toAnother;
+                    from.C1I1one2one = to;
+                    fromAnother.C1I1one2one = toAnother;
 
                     mark();
-                    Assert.Equal(to, from.C1C1one2one);
-                    Assert.Equal(from, to.C1WhereC1C1one2one);
-                    Assert.Equal(toAnother, fromAnother.C1C1one2one);
-                    Assert.Equal(fromAnother, toAnother.C1WhereC1C1one2one);
+                    Assert.Equal(to, from.C1I1one2one);
+                    Assert.Equal(from, to.C1WhereC1I1one2one);
+                    Assert.Equal(toAnother, fromAnother.C1I1one2one);
+                    Assert.Equal(fromAnother, toAnother.C1WhereC1I1one2one);
 
                     // Different New / Same To
-                    from.C1C1one2one = to;
-                    fromAnother.C1C1one2one = to;
+                    from.C1I1one2one = to;
+                    fromAnother.C1I1one2one = to;
 
                     mark();
-                    Assert.Null(from.C1C1one2one);
-                    Assert.Equal(to, fromAnother.C1C1one2one);
-                    Assert.Equal(fromAnother, to.C1WhereC1C1one2one);
+                    Assert.Null(from.C1I1one2one);
+                    Assert.Equal(to, fromAnother.C1I1one2one);
+                    Assert.Equal(fromAnother, to.C1WhereC1I1one2one);
 
-                    fromAnother.RemoveC1C1one2one();
+                    fromAnother.RemoveC1I1one2one();
 
                     // Null
                     // Set Null
-                    from.C1C1one2one = null;
+                    from.C1I1one2one = null;
                     mark();
-                    Assert.Null(from.C1C1one2one);
-                    from.C1C1one2one = to;
-                    from.C1C1one2one = null;
+                    Assert.Null(from.C1I1one2one);
+                    from.C1I1one2one = to;
+                    from.C1I1one2one = null;
                     mark();
-                    Assert.Null(from.C1C1one2one);
+                    Assert.Null(from.C1I1one2one);
                 }
             }
         }
