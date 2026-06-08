@@ -93,6 +93,8 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
+        internal void ReleaseTransaction() => this.Transaction.Dispose();
+
         private bool Execute(Method invocation)
         {
             var obj = this.Transaction.Instantiate(invocation.Object.Id);
