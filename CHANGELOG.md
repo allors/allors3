@@ -22,6 +22,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The workspace `ContainedIn` predicate with an explicit object list now round-trips over the JSON protocol.
+  Both `ToJsonVisitor`s (the workspace and the database one) serialized the objects to the `vs` (values) field,
+  but the database `FromJsonVisitor` reads them from `obs` (the object-id field), so the object list was lost in
+  transit — a `ContainedIn { Objects = … }` pull reached the server with neither objects nor extent and failed
+  with HTTP 500. The writers now use `obs`, matching the reader and the `ob`/`obs` convention. (The `Extent`
+  form of `ContainedIn` was unaffected.)
 - The Local workspace adapter's `Push` now releases (disposes) the database transaction it opens, instead of
   leaving it open. `Session.PushAsync` previously returned without disposing on both the error path (the early
   return when the push has errors — the transaction was then neither committed nor rolled back) and the success
