@@ -16256,6 +16256,29 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void ConvertedExtentCopyToStartsAtDestinationIndex()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var first = this.Transaction.Create(m.C1);
+                var second = this.Transaction.Create(m.C1);
+
+                Allors.Database.Extent extent = new IObject[] { first, second };
+
+                var destination = new IObject[4];
+                extent.CopyTo(destination, 1);
+
+                Assert.Null(destination[0]);
+                Assert.Same(first, destination[1]);
+                Assert.Same(second, destination[2]);
+                Assert.Null(destination[3]);
+            }
+        }
+
+        [Fact]
         public void RoleStringLike()
         {
             foreach (var init in this.Inits)
