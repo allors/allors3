@@ -18,6 +18,14 @@ under a dated version heading.
   instead of `INT`/`integer`, so creating objects no longer overflows once ids pass `int.MaxValue` (≈2.1 billion):
   SqlClient's `@IDS` table variable and Npgsql's `ID` variable. (The unused `@O INT` declaration on SqlClient was
   also removed.)
+- The SQL adapters' shared `Database` caches (`concreteClassesByObjectType`, `sortedUnitRolesByObjectType`) are
+  now `ConcurrentDictionary`s populated via `GetOrAdd`, so concurrent transactions no longer race while lazily
+  computing concrete classes / sorted unit roles — an unsynchronized `Dictionary` write could previously corrupt
+  the cache or throw. The cached values are immutable once built.
+- The SQL adapters' serialization `Load` now reads the staging objects table using the configured schema
+  (`{SchemaName}._o`) instead of a hardcoded `allors._o`, so loading into a database configured with a
+  non-default `SchemaName` no longer fails with "Invalid object name 'allors._o'". Fixes the SqlClient and
+  Npgsql adapters.
 - `Extent.CopyTo(array, index)` for a converted extent (the `IObject[] → Allors.Database.Extent` cast) now
   begins copying at the requested destination `index` instead of always at `0`. The override hardcoded `0` as
   the `Array.Copy` destination, ignoring its `index` parameter and overwriting earlier elements of the target.
