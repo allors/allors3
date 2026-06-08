@@ -155,6 +155,42 @@ namespace Tests.Workspace
         }
 
         [Fact]
+        public async void AssociationMany2ManyContainedInObjects()
+        {
+            await this.Login("administrator");
+
+            var session = this.Workspace.CreateSession();
+            var m = this.M;
+
+            // The "ᴀbra" C1 objects, passed explicitly (the by-Objects form of ContainedIn,
+            // as opposed to the by-Extent form exercised by AssociationMany2ManyContainedIn).
+            var c1Result = await session.PullAsync(new Pull
+            {
+                Extent = new Filter(this.M.C1)
+                {
+                    Predicate = new Equals(m.C1.C1AllorsString) { Value = "ᴀbra" }
+                }
+            });
+            var abraC1s = c1Result.GetCollection<C1>();
+
+            var pull = new Pull
+            {
+                Extent = new Filter(this.M.C2)
+                {
+                    Predicate = new ContainedIn(m.C2.C1sWhereC1C2Many2Many) { Objects = abraC1s }
+                }
+            };
+
+            var result = await session.PullAsync(pull);
+
+            Assert.Single(result.Collections);
+            Assert.Empty(result.Objects);
+            Assert.Empty(result.Values);
+
+            result.Assert().Collection<C2>().Equal(c2B);
+        }
+
+        [Fact]
         public async void AssociationMany2ManyContains()
         {
             await this.Login("administrator");
