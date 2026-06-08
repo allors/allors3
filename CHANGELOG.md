@@ -22,6 +22,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The Local workspace adapter's `Push` now releases (disposes) the database transaction it opens, instead of
+  leaving it open. `Session.PushAsync` previously returned without disposing on both the error path (the early
+  return when the push has errors — the transaction was then neither committed nor rolled back) and the success
+  path (committed but never disposed), leaking a database connection on every push — benign on the in-memory
+  adapter but a real connection leak on the SQL adapters. The transaction is now released on every path via
+  `try`/`finally`; on the error path disposal rolls back the uncommitted failed push.
 - The Local workspace adapter's `Pull` now releases (disposes) the database transaction it opens, once the
   pull has been executed and synced, instead of leaving it open. Previously `Session.PullAsync` / `CallAsync`
   created a transaction per pull that was never committed or disposed, leaking a database connection on every

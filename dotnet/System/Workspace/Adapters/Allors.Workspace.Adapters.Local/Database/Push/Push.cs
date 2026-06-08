@@ -138,6 +138,8 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
+        internal void ReleaseTransaction() => this.Transaction.Dispose();
+
         private void PushRequestRoles(Strategy local, IObject obj)
         {
             if (local.DatabaseOriginState.ChangedRoleByRelationType == null)
