@@ -110,5 +110,49 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
                 }
             }
         }
+
+        [Fact]
+        public async void ReplaceRole()
+        {
+            foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
+            {
+                foreach (DatabaseMode mode2 in Enum.GetValues(typeof(DatabaseMode)))
+                {
+                    foreach (var contextFactory in this.contextFactories)
+                    {
+                        var ctx = contextFactory();
+                        var (session1, session2) = ctx;
+
+                        var c1x_1 = await ctx.Create<C1>(session1, mode1);
+                        var c1a_2 = await ctx.Create<C1>(session2, mode2);
+                        var c1b_2 = await ctx.Create<C1>(session2, mode2);
+
+                        c1x_1.ShouldNotBeNull(ctx, mode1, mode2);
+                        c1a_2.ShouldNotBeNull(ctx, mode1, mode2);
+                        c1b_2.ShouldNotBeNull(ctx, mode1, mode2);
+
+                        await session2.PushAsync();
+                        var resultA = await session1.PullAsync(new Pull { Object = c1a_2 });
+                        var c1a_1 = (C1)resultA.Objects.Values.First();
+                        var resultB = await session1.PullAsync(new Pull { Object = c1b_2 });
+                        var c1b_1 = (C1)resultB.Objects.Values.First();
+
+                        c1a_1.ShouldNotBeNull(ctx, mode1, mode2);
+                        c1b_1.ShouldNotBeNull(ctx, mode1, mode2);
+
+                        // initial role
+                        c1x_1.SessionC1Many2One = c1a_1;
+                        c1x_1.SessionC1Many2One.ShouldEqual(c1a_1, ctx, mode1, mode2);
+                        c1a_1.C1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+
+                        // reassign to another role: the previous role's inverse association must be cleared
+                        c1x_1.SessionC1Many2One = c1b_1;
+                        c1x_1.SessionC1Many2One.ShouldEqual(c1b_1, ctx, mode1, mode2);
+                        c1b_1.C1sWhereSessionC1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1a_1.C1sWhereSessionC1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                    }
+                }
+            }
+        }
     }
 }

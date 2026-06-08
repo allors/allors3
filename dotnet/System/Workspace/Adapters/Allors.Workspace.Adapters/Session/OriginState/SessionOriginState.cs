@@ -168,7 +168,7 @@ namespace Allors.Workspace.Adapters
             // A --x-- PR
             if (previousRole != null)
             {
-                this.RemoveCompositeRoleMany2One(association, roleType, role);
+                this.RemoveCompositeRoleMany2One(association, roleType, previousRole);
             }
 
             // A <---- R
