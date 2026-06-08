@@ -65,6 +65,10 @@ namespace Allors.Database.Adapters.Sql.SqlClient
         public override string Ascending => "ASC";
         public override string Descending => "DESC";
 
+        // T-SQL LIKE treats '[' as the start of a character class; '[[]' matches a literal '['. Escaping '['
+        // keeps '%' and '_' as wildcards (ANSI) while disabling char-class/range syntax, matching Npgsql and Memory.
+        public override string EscapeLikePattern(string like) => like.Replace("[", "[[]");
+
         public override IDictionary<IRelationType, string> TableNameForRelationByRelationType => this.tableNameForRelationByRelationType;
 
         internal const string SqlTypeForClass = "uniqueidentifier";
