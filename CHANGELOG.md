@@ -114,3 +114,7 @@ under a dated version heading.
 - SqlClient adapter tests now run with a 300s command timeout and `Connection Timeout=0` against
   SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
   (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.
+- The CI `Upload TRX artifacts` step (test-result diagnostics) now runs only on failure and is
+  non-gating (`continue-on-error`), so a transient GitHub artifact-service flake on the success path
+  no longer fails the whole job. The test report is still published on every run — the reporter reads
+  the `.trx` from disk, not from the uploaded artifact.
