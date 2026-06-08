@@ -44,7 +44,7 @@ namespace Allors.R1.Development.Resources
 
                 if (data != null)
                 {
-                    data.Value = mergeData.Value;
+                    data.ReplaceWith(new XElement(mergeData));
                 }
                 else
                 {
