@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The SQL adapters' shared `Database` caches (`concreteClassesByObjectType`, `sortedUnitRolesByObjectType`) are
+  now `ConcurrentDictionary`s populated via `GetOrAdd`, so concurrent transactions no longer race while lazily
+  computing concrete classes / sorted unit roles — an unsynchronized `Dictionary` write could previously corrupt
+  the cache or throw. The cached values are immutable once built.
 - The SQL adapters' serialization `Load` now reads the staging objects table using the configured schema
   (`{SchemaName}._o`) instead of a hardcoded `allors._o`, so loading into a database configured with a
   non-default `SchemaName` no longer fails with "Invalid object name 'allors._o'". Fixes the SqlClient and
