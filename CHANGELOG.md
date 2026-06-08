@@ -14,6 +14,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `Extent.CopyTo(array, index)` for a converted extent (the `IObject[] → Allors.Database.Extent` cast) now
+  begins copying at the requested destination `index` instead of always at `0`. The override hardcoded `0` as
+  the `Array.Copy` destination, ignoring its `index` parameter and overwriting earlier elements of the target.
 - Prefetching (SQL adapters) now uses an object's modified (uncommitted) composites role.
   `PrefetchTryGetCompositesRole` set its out-parameter from the modified role but always returned `false`, so
   the prefetcher ignored it and prefetched the committed value instead — leaving targets added in the
