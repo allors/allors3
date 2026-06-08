@@ -35,9 +35,7 @@ namespace Allors.Server
                         ? (int)HttpStatusCode.Unauthorized
                         : (int)HttpStatusCode.InternalServerError;
 
-                    var message = env.IsDevelopment() ?
-                        $"{error.Message}\n{error.StackTrace}" :
-                        $"{error.Message}";
+                    var message = ErrorMessage(error, env.IsDevelopment());
                     await context.Response.WriteAsync(JsonSerializer.Serialize(message));
                 }
                 else
@@ -47,6 +45,19 @@ namespace Allors.Server
             }
 
             return appBuilder.UseExceptionHandler(v => v.Use(Middleware));
+        }
+
+        public static string ErrorMessage(Exception error, bool isDevelopment)
+        {
+            if (isDevelopment)
+            {
+                return $"{error.Message}\n{error.StackTrace}";
+            }
+
+            // Production: never expose the raw exception detail (it is logged server-side above).
+            return error is SecurityTokenExpiredException
+                ? "Authentication token expired."
+                : "An internal server error has occurred.";
         }
     }
 }

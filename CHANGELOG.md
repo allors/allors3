@@ -42,6 +42,11 @@ under a dated version heading.
   never incremented the lockout counter and an account could be brute-forced indefinitely. With the default
   Identity options (5 attempts / 5-minute lockout) and the lockout-aware `AllorsUserStore`, repeated failures
   now lock the account. (Security.)
+- The production error handler no longer returns raw exception detail to clients. `ExceptionHandler`'s
+  middleware wrote `error.Message` to the response in non-development environments (the full error is already
+  logged server-side), leaking internal details (e.g. SQL errors, paths). Production responses are now a
+  generic message (`"An internal server error has occurred."`, or `"Authentication token expired."` for an
+  expired token); Development still returns the message and stack trace. (Security.)
 - The Json API's `Pull` no longer crashes (`NullReferenceException` → HTTP 500) when a request dependency
   carries an unknown or wrong-kind meta tag. `Api.ToDependencies` cast each client-supplied tag
   (`FindByTag(...)`) to `IComposite`/`IRelationType` and dereferenced it unchecked, so a bogus `o`/`a`/`r`
