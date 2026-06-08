@@ -53,32 +53,6 @@ namespace Tests
         }
 
         [Fact]
-        public async void SelectRef()
-        {
-            // TODO: Not implemented
-            this.SetUser("jane@example.com");
-
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    new Pull
-                    {
-                        er = PreparedExtents.OrganisationByName,
-                        a = new Dictionary<string, object> { ["name"] = "Acme" },
-                    },
-                },
-            };
-
-            var api = new Api(this.Transaction, "Default", CancellationToken.None);
-            var pullResponse = api.Pull(pullRequest);
-
-            var organisations = pullResponse.c["Organisations"];
-
-            Assert.Single(organisations);
-        }
-
-        [Fact]
         public async void NamedResult()
         {
             var user = this.SetUser("jane@example.com");
