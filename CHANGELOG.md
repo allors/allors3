@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The SQL adapters' `CreateObjects` stored procedure now holds the generated object id in a `bigint` variable
+  instead of `INT`/`integer`, so creating objects no longer overflows once ids pass `int.MaxValue` (≈2.1 billion):
+  SqlClient's `@IDS` table variable and Npgsql's `ID` variable. (The unused `@O INT` declaration on SqlClient was
+  also removed.)
 - The SQL adapters' shared `Database` caches (`concreteClassesByObjectType`, `sortedUnitRolesByObjectType`) are
   now `ConcurrentDictionary`s populated via `GetOrAdd`, so concurrent transactions no longer race while lazily
   computing concrete classes / sorted unit roles — an unsynchronized `Dictionary` write could previously corrupt

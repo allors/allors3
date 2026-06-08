@@ -702,8 +702,8 @@ CREATE PROCEDURE {name}
     {this.ParamNameForCount} {"int"}
 AS
 BEGIN
-    DECLARE @IDS TABLE (id INT);
-    DECLARE @O INT, @COUNTER INT
+    DECLARE @IDS TABLE (id {SqlTypeForObject});
+    DECLARE @COUNTER INT
 
     SET @COUNTER = 0
     WHILE @COUNTER < {this.ParamNameForCount}
