@@ -69,6 +69,7 @@ namespace Tests
             Assert.Null(pushResponse.n);
         }
 
+        [Fact]
         public void WorkspaceY1ObjectInWorkspaceNone()
         {
             this.SetUser("jane@example.com");
