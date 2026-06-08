@@ -325,6 +325,8 @@ namespace Allors.Workspace.Adapters.Local
             }
         }
 
+        internal void ReleaseTransaction() => this.Transaction.Dispose();
+
         private void Add(Database.IObject @object)
         {
             if (this.AccessControl[@object].IsMasked())
