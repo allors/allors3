@@ -205,39 +205,6 @@ namespace Tests
         }
 
         [Fact]
-        public void WithDeniedPermissionsFromDatabaseAndOtherWorkspace()
-        {
-            var m = this.M;
-            var user = this.SetUser("jane@example.com");
-
-            var pull = new Pull { Extent = new Extent(m.Denied) };
-
-            var pullRequest = new PullRequest
-            {
-                l = new[]
-                {
-                    pull.ToJson(this.UnitConvert)
-                },
-            };
-
-            var api = new Api(this.Transaction, "Default", CancellationToken.None);
-            var pullResponse = api.Pull(pullRequest);
-
-            var pullResponseObject = pullResponse.p[0];
-
-            var databaseWrite = new Permissions(this.Transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.DatabaseProperty));
-            var defaultWorkspaceWrite = new Permissions(this.Transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.DefaultWorkspaceProperty) && v.Operation == Operations.Write);
-            var workspaceXWrite = new Permissions(this.Transaction).Extent().First(v => v.Operation == Operations.Write && v.OperandType.Equals(m.Denied.WorkspaceXProperty) && v.Operation == Operations.Write);
-
-            // TODO: Koen
-            //Assert.Single(pullResponseObject.d);
-
-            //Assert.Contains(defaultWorkspaceWrite.Id, pullResponseObject.d);
-            //Assert.DoesNotContain(databaseWrite.Id, pullResponseObject.d);
-            //Assert.DoesNotContain(workspaceXWrite.Id, pullResponseObject.d);
-        }
-
-        [Fact]
         public async void WithoutDeniedPermissions()
         {
             var user = this.SetUser("jane@example.com");
