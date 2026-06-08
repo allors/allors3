@@ -1,3 +1,3 @@
 #!/bin/sh
 
-dotnet run --verbosity q --project Database/Commands -- $*
+dotnet run --verbosity q --project Database/Commands -- "$@"
