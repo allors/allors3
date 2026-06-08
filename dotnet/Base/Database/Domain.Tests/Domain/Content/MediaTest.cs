@@ -349,39 +349,48 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
-        public void ResolveDirectoryUsesConfiguredMediaDirectory()
-        {
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string> { ["Media:Directory"] = "../../../data/media" })
-                .Build();
-
-            // Server and command-line tools share this single resolver, so they always agree.
-            Assert.Equal(
-                new DirectoryInfo("../../../data/media").FullName,
-                FileMediaContentStorage.ResolveDirectory(configuration).FullName);
-        }
-
-        [Fact]
-        public void ResolveDirectoryFallsBackToMediaWhenUnset()
+        public void CreateOrNullReturnsNullWhenNotConfigured()
         {
             var configuration = new ConfigurationBuilder().Build();
 
-            Assert.Equal(
-                new DirectoryInfo("media").FullName,
-                FileMediaContentStorage.ResolveDirectory(configuration).FullName);
+            // External (file-backed) storage is opt-in: with no Media:Directory the service is unavailable.
+            Assert.Null(FileMediaContentStorage.CreateOrNull(configuration));
         }
 
         [Fact]
-        public void ResolveDirectoryFallsBackToMediaWhenEmpty()
+        public void CreateOrNullReturnsNullWhenConfiguredEmpty()
         {
             var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string> { ["Media:Directory"] = "" })
                 .Build();
 
-            // An explicitly empty value (e.g. an unset env override) must not throw on new DirectoryInfo("").
+            Assert.Null(FileMediaContentStorage.CreateOrNull(configuration));
+        }
+
+        [Fact]
+        public void CreateOrNullThrowsWhenDirectoryDoesNotExist()
+        {
+            var missing = Path.Combine(Path.GetTempPath(), "allors-media-missing-" + Guid.NewGuid().ToString("N"));
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string> { ["Media:Directory"] = missing })
+                .Build();
+
+            // Configured but the directory is absent: fail hard (the service never creates it).
+            Assert.Throws<DirectoryNotFoundException>(() => FileMediaContentStorage.CreateOrNull(configuration));
+        }
+
+        [Fact]
+        public void UsesConfiguredMediaDirectory()
+        {
+            var existing = Path.GetTempPath();
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string> { ["Media:Directory"] = existing })
+                .Build();
+
+            // Server and command-line tools construct the storage the same way, so they always agree.
             Assert.Equal(
-                new DirectoryInfo("media").FullName,
-                FileMediaContentStorage.ResolveDirectory(configuration).FullName);
+                new DirectoryInfo(existing).FullName,
+                new FileMediaContentStorage(configuration).Directory.FullName);
         }
 
         [Fact]

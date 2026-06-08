@@ -111,7 +111,7 @@ namespace Allors.Database.Configuration
                 // Base
                 { } type when type == typeof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
                 { } type when type == typeof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
-                { } type when type == typeof(IMediaContentStorage) => (T)(this.mediaContentStorage ??= new FileMediaContentStorage(FileMediaContentStorage.ResolveDirectory(this.configuration))),
+                { } type when type == typeof(IMediaContentStorage) => (T)(this.mediaContentStorage ??= FileMediaContentStorage.CreateOrNull(this.configuration)),
                 { } type when type == typeof(IMediaContentFactory) => (T)(this.mediaContentFactory ??= this.CreateMediaContentFactory()),
                 { } type when type == typeof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
                 { } type when type == typeof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),

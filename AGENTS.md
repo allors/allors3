@@ -22,6 +22,7 @@
 ## Services & Layers
 - Domain code resolves app services via `this.Strategy.Transaction.Database.Services.Get<T>()`.
 - Each layer (Core/Base/Apps) has its own `DatabaseServices` registry (plus `Default`/`Test` variants) — register a new service in every layer that uses it.
+- Services can be **optional** — a registry's `Get<T>()` may return `null` when the service isn't configured; callers null-check and fail hard only when the feature is actually used. Example: `IMediaContentStorage` is `null` unless the `Media:Directory` setting is present (via `FileMediaContentStorage.CreateOrNull`), so embedded-only installs don't configure it and storage-dependent paths (e.g. `ExternalMediaContents.ReconcileFiles`) skip it; using external media while unconfigured throws.
 
 ## Git
 - No AI attribution in commits (no "Generated with", "Co-authored-by", or similar trailers)

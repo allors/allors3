@@ -7,8 +7,10 @@
 namespace Allors.Database.Domain.Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
+    using Microsoft.Extensions.Configuration;
     using Database;
     using Adapters.Memory;
     using Domain;
@@ -23,8 +25,15 @@ namespace Allors.Database.Domain.Tests
     {
         public DomainTest(Fixture fixture, bool populate = true)
         {
+            var mediaDirectory = new DirectoryInfo("media");
+            mediaDirectory.Create(); // idempotent; tests provision their own store (the service won't create it)
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string> { ["Media:Directory"] = mediaDirectory.FullName })
+                .Build();
+
             var database = new Database(
-                new TestDatabaseServices(fixture.Engine),
+                new TestDatabaseServices(fixture.Engine, configuration),
                 new Configuration
                 {
                     ObjectFactory = new ObjectFactory(fixture.MetaPopulation, typeof(User)),

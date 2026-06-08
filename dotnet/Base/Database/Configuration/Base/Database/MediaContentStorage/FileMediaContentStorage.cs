@@ -14,20 +14,41 @@ namespace Allors.Database.Configuration
     public class FileMediaContentStorage : IMediaContentStorage
     {
         // Configuration key for the directory that backs file media content (a media subfolder of the data path).
-        public const string DirectoryConfigurationKey = "Media:Directory";
+        private const string DirectoryConfigurationKey = "Media:Directory";
 
         private readonly DirectoryInfo directory;
 
-        public FileMediaContentStorage(DirectoryInfo directory) => this.directory = directory;
-
-        // Single resolution point shared by every host (server and commands) so they never diverge.
-        // An empty/whitespace value (e.g. an unset "Media__Directory=" env override) falls back to "media"
-        // rather than throwing on new DirectoryInfo("").
-        public static DirectoryInfo ResolveDirectory(IConfiguration configuration)
+        // Optional service: returns null when Media:Directory is not configured. External (file-backed) media
+        // storage is opt-in, so an embedded-only install never configures it and callers (e.g.
+        // ExternalMediaContents.ReconcileFiles) simply skip a null storage.
+        public static IMediaContentStorage CreateOrNull(IConfiguration configuration)
         {
             var configured = configuration?[DirectoryConfigurationKey];
-            return new DirectoryInfo(string.IsNullOrWhiteSpace(configured) ? "media" : configured);
+            return string.IsNullOrWhiteSpace(configured) ? null : new FileMediaContentStorage(configuration);
         }
+
+        // Constructed with a configured directory (normally via CreateOrNull). There is no fallback and the
+        // directory is never created here: an unset/empty setting or a directory that does not exist is a
+        // configuration error and fails hard. The directory must be provisioned before the service is used.
+        public FileMediaContentStorage(IConfiguration configuration)
+        {
+            var configured = configuration?[DirectoryConfigurationKey];
+            if (string.IsNullOrWhiteSpace(configured))
+            {
+                throw new InvalidOperationException(
+                    $"The '{DirectoryConfigurationKey}' setting is not configured. Set it to the directory that backs external media content.");
+            }
+
+            this.directory = new DirectoryInfo(configured);
+            if (!System.IO.Directory.Exists(this.directory.FullName))
+            {
+                throw new DirectoryNotFoundException(
+                    $"The media directory '{this.directory.FullName}' (from the '{DirectoryConfigurationKey}' setting) does not exist. Create it or correct the setting.");
+            }
+        }
+
+        // The resolved backing directory (read-only); exposed for diagnostics and tests.
+        public DirectoryInfo Directory => this.directory;
 
         public bool Exists(long id) => File.Exists(this.PathFor(id));
 
@@ -44,13 +65,9 @@ namespace Allors.Database.Configuration
         }
 
         public void Write(long id, byte[] data)
-        {
-            // CreateDirectory is idempotent and queries the live filesystem; DirectoryInfo.Exists is cached at
-            // first access and would go stale for this process-lifetime singleton.
-            Directory.CreateDirectory(this.directory.FullName);
-
-            File.WriteAllBytes(this.PathFor(id), data ?? Array.Empty<byte>());
-        }
+            // No auto-create: the directory is a validated precondition (see constructor). Writing into a
+            // directory removed at runtime throws DirectoryNotFoundException — fail hard.
+            => File.WriteAllBytes(this.PathFor(id), data ?? Array.Empty<byte>());
 
         public void Delete(long id)
         {
@@ -64,12 +81,12 @@ namespace Allors.Database.Configuration
         public IEnumerable<long> Enumerate()
         {
             // Query the filesystem freshly; DirectoryInfo.Exists is cached and may be stale.
-            if (!Directory.Exists(this.directory.FullName))
+            if (!System.IO.Directory.Exists(this.directory.FullName))
             {
                 yield break;
             }
 
-            foreach (var path in Directory.EnumerateFiles(this.directory.FullName))
+            foreach (var path in System.IO.Directory.EnumerateFiles(this.directory.FullName))
             {
                 // File names are object ids (see PathFor); ignore anything else in the directory.
                 if (long.TryParse(Path.GetFileName(path), out var id))

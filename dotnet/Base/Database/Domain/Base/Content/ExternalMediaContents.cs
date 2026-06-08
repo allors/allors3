@@ -19,13 +19,19 @@ namespace Allors.Database.Domain
         /// </summary>
         public static int ReconcileFiles(ITransaction transaction)
         {
+            var storage = transaction.Database.Services.Get<IMediaContentStorage>();
+            if (storage == null)
+            {
+                // External (file-backed) media storage is not configured (e.g. an embedded-only install),
+                // so there is no file store to reconcile.
+                return 0;
+            }
+
             var liveIds = new HashSet<long>();
             foreach (ExternalMediaContent content in transaction.Extent<ExternalMediaContent>())
             {
                 liveIds.Add(content.Id);
             }
-
-            var storage = transaction.Database.Services.Get<IMediaContentStorage>();
 
             var removed = 0;
             // Materialize before deleting: mutating the directory while enumerating it can skip entries.

@@ -22,9 +22,10 @@ under a dated version heading.
   every host so the server and command-line processes agree.
 - `IMediaContentStorage` service (filesystem implementation `FileMediaContentStorage`) for
   reading/writing/deleting file-backed content and for enumerating and sizing it (`Enumerate`,
-  `Length`). Its base directory comes from the `Media:Directory` configuration key (falls back to a
-  local `media` directory; an empty value also falls back rather than throwing) and is resolved in
-  one place — the service registration — so every host resolves it the same way.
+  `Length`). External (file-backed) media storage is **opt-in and optional**: it is configured by the
+  `Media:Directory` setting, and `Get<IMediaContentStorage>()` returns `null` when that setting is unset,
+  so embedded-only installs need no media directory. There is no fallback; when configured, the directory
+  is never created automatically and **must already exist** — a missing directory fails hard at construction.
 - `MediaContent.HasData`, a cheap presence/non-empty probe (no full read for external storage), used
   by validation and the media controller.
 - `ExternalizeMedia` command (in `Base` Commands, shared into `Apps`) converts every `Media`'s

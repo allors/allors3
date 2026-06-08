@@ -36,7 +36,10 @@ namespace Allors.Database.Domain
         // True when the backing file exists and is non-empty; checked via a cheap length probe (no read).
         public bool HasData => this.Storage.Length(this.Id) > 0;
 
-        private IMediaContentStorage Storage => this.Strategy.Transaction.Database.Services.Get<IMediaContentStorage>();
+        private IMediaContentStorage Storage =>
+            this.Strategy.Transaction.Database.Services.Get<IMediaContentStorage>()
+            ?? throw new InvalidOperationException(
+                "External media content is in use but the 'Media:Directory' setting is not configured. Set it to enable file-backed media storage.");
 
         public void CoreOnPostDerive(ObjectOnPostDerive method)
         {
