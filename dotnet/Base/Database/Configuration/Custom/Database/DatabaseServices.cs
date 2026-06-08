@@ -50,6 +50,8 @@ namespace Allors.Database.Configuration
 
         private IMediaContentStorage mediaContentStorage;
 
+        private IMediaContentFactory mediaContentFactory;
+
         private IBarcodeGenerator barcodeGenerator;
 
         private ITemplateObjectCache templateObjectCache;
@@ -107,12 +109,15 @@ namespace Allors.Database.Configuration
                 { } type when type == typeof(ISingletonId) => (T)(this.singletonId ??= new SingletonId()),
                 { } type when type == typeof(IMailer) => (T)(this.mailer ??= new MailKitMailer()),
                 { } type when type == typeof(IMediaContentStorage) => (T)(this.mediaContentStorage ??= new FileMediaContentStorage(FileMediaContentStorage.ResolveDirectory(this.configuration))),
+                { } type when type == typeof(IMediaContentFactory) => (T)(this.mediaContentFactory ??= this.CreateMediaContentFactory()),
                 { } type when type == typeof(IBarcodeGenerator) => (T)(this.barcodeGenerator ??= new ZXingBarcodeGenerator()),
                 { } type when type == typeof(ITemplateObjectCache) => (T)(this.templateObjectCache ??= new TemplateObjectCache()),
                 _ => throw new NotSupportedException($"Service {typeof(T)} not supported")
             };
 
         protected abstract IPasswordHasher CreatePasswordHasher();
+
+        protected abstract IMediaContentFactory CreateMediaContentFactory();
 
         protected abstract IDerivationService CreateDerivationFactory();
 

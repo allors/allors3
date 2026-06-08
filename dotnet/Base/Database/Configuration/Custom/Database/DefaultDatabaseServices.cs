@@ -17,6 +17,9 @@ namespace Allors.Database.Configuration
 
         protected override IPasswordHasher CreatePasswordHasher() => new PasswordHasher();
 
+        protected override IMediaContentFactory CreateMediaContentFactory() =>
+            new MediaContentFactory(transaction => new EmbeddedMediaContentBuilder(transaction).Build());
+
         protected override IDerivationService CreateDerivationFactory() => new DerivationService(this.Engine);
     }
 }

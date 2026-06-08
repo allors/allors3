@@ -11,17 +11,11 @@ namespace Allors.Database.Domain
     public partial class MediaContents
     {
         /// <summary>
-        /// Builds a new, empty <see cref="MediaContent"/> of the concrete type dictated by the
-        /// global <see cref="Singleton.StoreMediaContentExternal"/> setting.
+        /// Builds a new, empty <see cref="MediaContent"/> using the registered
+        /// <see cref="IMediaContentFactory"/> (its storage strategy is configured at startup).
         /// </summary>
-        public static MediaContent Create(ITransaction transaction)
-        {
-            var singleton = transaction.GetSingleton();
-
-            return singleton?.StoreMediaContentExternal == true
-                ? (MediaContent)new ExternalMediaContentBuilder(transaction).Build()
-                : new EmbeddedMediaContentBuilder(transaction).Build();
-        }
+        public static MediaContent Create(ITransaction transaction) =>
+            transaction.Database.Services.Get<IMediaContentFactory>().Create(transaction);
 
         // File signatures
         // See http://en.wikipedia.org/wiki/List_of_file_signatures and http://www.garykessler.net/library/file_sigs.html

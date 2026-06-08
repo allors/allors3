@@ -17,8 +17,9 @@ under a dated version heading.
 - `MediaContent` is now an interface with two strategy implementations: `EmbeddedMediaContent`
   (bytes in the database, the previous behaviour) and `ExternalMediaContent` (bytes in external
   storage; the filesystem backend names them by the object id).
-- Global setting `Singleton.StoreMediaContentExternal` selects which implementation new media use
-  (defaults to embedded).
+- `IMediaContentFactory` service selects which implementation new media use; its build strategy is a
+  lambda configured in code at startup (`DefaultDatabaseServices`, defaults to embedded), shared by
+  every host so the server and command-line processes agree.
 - `IMediaContentStorage` service (filesystem implementation `FileMediaContentStorage`) for
   reading/writing/deleting file-backed content and for enumerating and sizing it (`Enumerate`,
   `Length`). Its base directory comes from the `Media:Directory` configuration key (falls back to a
@@ -28,8 +29,8 @@ under a dated version heading.
   by validation and the media controller.
 - `ExternalizeMedia` command (in `Base` Commands, shared into `Apps`) converts every `Media`'s
   `EmbeddedMediaContent` to an `ExternalMediaContent` (moving bytes from the database to external
-  storage) and sets `Singleton.StoreMediaContentExternal` so new media is stored externally too.
-  Idempotent; backed by `Medias.ConvertEmbeddedMediaContentToExternal`.
+  storage). Whether new media is stored externally is a separate, code-configured choice
+  (`IMediaContentFactory`). Idempotent; backed by `Medias.ConvertEmbeddedMediaContentToExternal`.
 
 ### Changed
 

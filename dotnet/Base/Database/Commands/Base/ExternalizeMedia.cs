@@ -10,7 +10,7 @@ namespace Commands
     using McMaster.Extensions.CommandLineUtils;
     using NLog;
 
-    [Command(Description = "Replaces every Media's EmbeddedMediaContent with an ExternalMediaContent and switches new media to external storage.")]
+    [Command(Description = "Replaces every Media's EmbeddedMediaContent with an ExternalMediaContent (moving bytes from the database to external storage). Whether new media is stored externally is configured in code (see DefaultDatabaseServices).")]
     public class ExternalizeMedia
     {
         public Program Parent { get; set; }
@@ -24,15 +24,12 @@ namespace Commands
             var scheduler = new AutomatedAgents(transaction).System;
             transaction.Services.Get<IUserService>().User = scheduler;
 
-            // New media should be stored externally from now on.
-            transaction.GetSingleton().StoreMediaContentExternal = true;
-
             var converted = Medias.ConvertEmbeddedMediaContentToExternal(transaction);
 
             transaction.Derive();
             transaction.Commit();
 
-            this.Logger.Info($"Converted {converted} media to external content; new media will use external storage.");
+            this.Logger.Info($"Converted {converted} media to external content. New media is stored externally only when the host's IMediaContentFactory is configured for it (see DefaultDatabaseServices).");
 
             return ExitCode.Success;
         }

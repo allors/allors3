@@ -131,7 +131,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ExternalMediaContentStoresDataOnDisk()
         {
-            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
 
             var binary = new byte[] { 0, 1, 2, 3 };
             var media = new MediaBuilder(this.Transaction).WithInData(binary).Build();
@@ -166,7 +167,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ExternalMediaContentDataIsWriteOnce()
         {
-            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
 
             var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
@@ -183,7 +185,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeleteMediaReclaimsExternalFileOnReconcile()
         {
-            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
 
             var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
@@ -209,7 +212,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void DeleteThenRollbackKeepsFile()
         {
-            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
 
             var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
@@ -234,7 +238,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ReconcileFilesReclaimsOrphansAndKeepsLiveFiles()
         {
-            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
 
             // A committed, live content whose file must be kept.
             var keeper = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
@@ -285,7 +290,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void UpgradeReconcilesOrphanExternalFiles()
         {
-            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
 
             var orphan = new MediaBuilder(this.Transaction).WithInData(new byte[] { 1, 2, 3, 4 }).Build();
             this.Transaction.Derive();
@@ -314,7 +320,8 @@ namespace Allors.Database.Domain.Tests
         [Fact]
         public void ExternalMediaContentHasData()
         {
-            this.Transaction.GetSingleton().StoreMediaContentExternal = true;
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
 
             var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
             this.Transaction.Derive();
@@ -375,6 +382,23 @@ namespace Allors.Database.Domain.Tests
             Assert.Equal(
                 new DirectoryInfo("media").FullName,
                 FileMediaContentStorage.ResolveDirectory(configuration).FullName);
+        }
+
+        [Fact]
+        public void MediaContentFactoryBuildsEmbeddedByDefault()
+        {
+            var factory = this.Transaction.Database.Services.Get<IMediaContentFactory>();
+
+            Assert.IsType<EmbeddedMediaContent>(factory.Create(this.Transaction));
+        }
+
+        [Fact]
+        public void MediaContentFactoryBuilderSelectsImplementation()
+        {
+            var factory = (MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>();
+            factory.Builder = transaction => new ExternalMediaContentBuilder(transaction).Build();
+
+            Assert.IsType<ExternalMediaContent>(factory.Create(this.Transaction));
         }
     }
 }
