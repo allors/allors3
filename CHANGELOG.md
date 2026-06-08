@@ -14,6 +14,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The SQL adapters' shared `Database` caches (`concreteClassesByObjectType`, `sortedUnitRolesByObjectType`) are
+  now `ConcurrentDictionary`s populated via `GetOrAdd`, so concurrent transactions no longer race while lazily
+  computing concrete classes / sorted unit roles — an unsynchronized `Dictionary` write could previously corrupt
+  the cache or throw. The cached values are immutable once built.
 - `Extent.CopyTo(array, index)` for a converted extent (the `IObject[] → Allors.Database.Extent` cast) now
   begins copying at the requested destination `index` instead of always at `0`. The override hardcoded `0` as
   the `Array.Copy` destination, ignoring its `index` parameter and overwriting earlier elements of the target.
