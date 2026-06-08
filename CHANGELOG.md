@@ -22,6 +22,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The remote workspace adapter's `IPullResult.GetValue<T>` now converts a pulled value to `T` instead of
+  hard-casting the raw deserialized JSON. `PullResult.Values` exposes values as received over the wire (a
+  `JsonElement` for System.Text.Json, a boxed/`JToken` value for Newtonsoft), so `GetValue<T>` threw
+  `InvalidCastException` (e.g. casting `JsonElement` to `int`/`byte[]`). It now routes the value through the
+  adapter's `IUnitConvert`, mapping the requested CLR type to its unit tag, so values round-trip to the correct
+  type. (Pull values are sent untagged, so the conversion is keyed by `T`.)
 - The workspace `ContainedIn` predicate with an explicit object list now round-trips over the JSON protocol.
   Both `ToJsonVisitor`s (the workspace and the database one) serialized the objects to the `vs` (values) field,
   but the database `FromJsonVisitor` reads them from `obs` (the object-id field), so the object list was lost in
