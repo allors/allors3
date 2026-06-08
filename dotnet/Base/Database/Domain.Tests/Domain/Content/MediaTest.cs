@@ -331,6 +331,27 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ExternalMediaContentDataThrowsWhenFileMissing()
+        {
+            ((MediaContentFactory)this.Transaction.Database.Services.Get<IMediaContentFactory>()).Builder =
+                transaction => new ExternalMediaContentBuilder(transaction).Build();
+
+            var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var storage = this.Transaction.Database.Services.Get<IMediaContentStorage>();
+            var id = media.MediaContent.Id;
+            Assert.True(storage.Exists(id));
+
+            // Simulate a lost backing file for a live external content.
+            storage.Delete(id);
+
+            // A missing file is a data-integrity error, not a tolerated empty result: reading fails fast.
+            Assert.Throws<FileNotFoundException>(() => _ = media.MediaContent.Data);
+        }
+
+        [Fact]
         public void EmptyDataUpdateKeepsExistingContent()
         {
             var media = new MediaBuilder(this.Transaction).WithInData(new byte[] { 0, 1, 2, 3 }).Build();

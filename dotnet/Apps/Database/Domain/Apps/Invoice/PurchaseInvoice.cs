@@ -70,14 +70,14 @@ namespace Allors.Database.Domain
         public void AppsPrint(PrintablePrint method)
         {
             var singleton = this.Strategy.Transaction.GetSingleton();
-            var logo = this.BilledTo?.ExistLogoImage == true ?
-                this.BilledTo.LogoImage.MediaContent?.Data :
-                singleton.LogoImage?.MediaContent?.Data;
+            var logoMedia = this.BilledTo?.LogoImage ?? singleton.LogoImage;
+            var logo = logoMedia?.MediaContent?.Data;
 
             var images = new Dictionary<string, byte[]>();
             if (logo != null)
             {
-                // A missing external file yields null bytes; skip the logo rather than passing null to the renderer.
+                // No logo configured on the party or the singleton: skip it.
+                // (A missing external file now fails fast in the storage read path; it never yields null here.)
                 images.Add("Logo", logo);
             }
 

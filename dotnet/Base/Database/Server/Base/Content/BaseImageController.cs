@@ -59,11 +59,22 @@ namespace Allors.Database.Server.Controllers
                         return this.RedirectPermanent($"/image/{id}/{media.Revision}");
                     }
 
-                    var data = media.MediaContent?.Data;
-                    if (data == null)
+                    if (media.MediaContent == null)
                     {
+                        // No content was ever attached: a legitimate empty result.
                         return this.NoContent();
                     }
+
+                    if (!media.MediaContent.HasData)
+                    {
+                        // A live MediaContent with no bytes (a lost or empty external file) is a data-integrity
+                        // fault, not an empty result: fail fast so the loss surfaces. No-store so the error is
+                        // never cached (the action carries a one-year cache).
+                        this.Response.Headers[HeaderNames.CacheControl] = "no-store";
+                        return this.StatusCode(StatusCodes.Status500InternalServerError);
+                    }
+
+                    var data = media.MediaContent.Data;
 
                     var mediaType = media.Type?.ToLowerInvariant() ?? "application/octet-stream";
 

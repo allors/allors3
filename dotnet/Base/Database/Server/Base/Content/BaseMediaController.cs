@@ -87,12 +87,20 @@ namespace Allors.Database.Server.Controllers
                 var media = new Medias(this.Transaction).FindBy(m.Media.UniqueId, id);
                 if (media != null)
                 {
-                    if (media.MediaContent == null || !media.MediaContent.HasData)
+                    if (media.MediaContent == null)
                     {
-                        // No content, or its bytes are missing/empty (e.g. a lost external file): answer 204
-                        // here, before the ETag/304 short-circuit below, so a conditional request is not told
-                        // its cached copy is still valid. HasData is a cheap probe (no full read).
+                        // No content was ever attached: a legitimate empty result.
                         return this.NoContent();
+                    }
+
+                    if (!media.MediaContent.HasData)
+                    {
+                        // A live MediaContent with no bytes (a lost or empty external file) is a data-integrity
+                        // fault, not an empty result: fail fast so the loss surfaces. Returned here, before the
+                        // ETag/304 short-circuit below, so a conditional request is not told its cached copy is
+                        // still valid; and no-store so the error is never cached (the action carries a one-year cache).
+                        this.Response.Headers[HeaderNames.CacheControl] = "no-store";
+                        return this.StatusCode(StatusCodes.Status500InternalServerError);
                     }
 
                     if (Guid.TryParse(revisionString, out var revision))

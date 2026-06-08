@@ -60,8 +60,18 @@ namespace Allors.Database.Configuration
 
         public byte[] Read(long id)
         {
+            // A live ExternalMediaContent must have its file: a missing file is a data-integrity error, not an
+            // empty result. Fail fast so the loss surfaces instead of silently degrading (see ExternalMediaContent.Data).
             var path = this.PathFor(id);
-            return File.Exists(path) ? File.ReadAllBytes(path) : null;
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException(
+                    $"External media content {id} has no backing file at '{path}'. A live ExternalMediaContent must " +
+                    "have its file; restore it, or reclaim the orphaned content (ExternalMediaContents.ReconcileFiles).",
+                    path);
+            }
+
+            return File.ReadAllBytes(path);
         }
 
         public void Write(long id, byte[] data)

@@ -45,6 +45,13 @@ under a dated version heading.
   `Upgrade.Execute()`), where the load process is the only connection so a file with no live owner is
   always a true orphan. This replaces the earlier ceiling-based `PruneMediaFiles` command (removed),
   which could not reclaim the highest-id orphans and was unsafe to run against a live database.
+- File-backed media now **fails fast on a lost file**: `FileMediaContentStorage.Read` throws when an
+  `ExternalMediaContent`'s backing file is missing, instead of returning `null` bytes, so a
+  data-integrity loss surfaces at the read site (e.g. printing) rather than degrading silently. The
+  presence probes (`Exists`/`Length`/`HasData`) stay tolerant. The HTTP media/image endpoints (`BaseMediaController`,
+  `BaseImageController`) now return `500` for a live `MediaContent` whose bytes are missing/empty (a
+  lost external file); only genuinely-absent content (no `MediaContent`) returns `204`, and the error
+  is `no-store` so it is never cached.
 - The SqlClient adapter's `LIKE` filter now follows ANSI semantics like the Npgsql and in-memory adapters:
   `%` and `_` are the only wildcards and `[` is matched literally. Previously T-SQL character classes
   (e.g. `[abc]`, `[a-z]`, `[^…]`) were active only on SqlClient, so the same `LIKE` pattern could match
@@ -70,8 +77,9 @@ under a dated version heading.
   `Base` server. Set an absolute `Media:Directory` in production for hosts that share a database.
 - The media controller now returns `204 No Content` (not `304 Not Modified`) for a conditional
   request when an external file is missing, so a client is not told its stale cached copy is valid.
-- Print and document-template rendering tolerate a missing external file: the affected logo/photo is
-  skipped instead of throwing a `NullReferenceException`.
+- Print and document-template rendering no longer throw a `NullReferenceException` when no logo/photo
+  is configured — the image is simply omitted. (A configured media whose external file is missing now
+  fails fast at the read path; see Changed.)
 - The SQL adapters' `CreateObjects` stored procedure now holds the generated object id in a `bigint` variable
   instead of `INT`/`integer`, so creating objects no longer overflows once ids pass `int.MaxValue` (≈2.1 billion):
   SqlClient's `@IDS` table variable and Npgsql's `ID` variable. (The unused `@O INT` declaration on SqlClient was
