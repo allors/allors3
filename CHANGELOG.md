@@ -22,6 +22,9 @@ under a dated version heading.
 
 ### Fixed
 
+- `commands.sh` now forwards its arguments with `"$@"` instead of the unquoted `$*`, so an argument
+  containing spaces (or shell glob characters) reaches `Database/Commands` as a single token instead of
+  being word-split/globbed. Previously e.g. a file path with a space was split into several arguments.
 - The resource `Merger` no longer corrupts a resx `<data>` entry when the same key appears in more than one
   input directory. For an existing key it ran `data.Value = mergeData.Value`, whose setter replaces the
   entry's child elements (the `<value>`, and any `<comment>`) with a single raw-text node — emitting
