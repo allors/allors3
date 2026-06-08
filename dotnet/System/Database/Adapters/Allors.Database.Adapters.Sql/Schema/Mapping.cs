@@ -47,5 +47,12 @@ namespace Allors.Database.Adapters.Sql
         public abstract string StringCollation { get; }
         public abstract string Ascending { get; }
         public abstract string Descending { get; }
+
+        /// <summary>
+        /// Escapes a SQL <c>LIKE</c> pattern so only <c>%</c> and <c>_</c> are wildcards (ANSI semantics). The
+        /// default leaves the pattern unchanged (PostgreSQL); SqlClient overrides it to neutralise T-SQL
+        /// character classes.
+        /// </summary>
+        public virtual string EscapeLikePattern(string like) => like;
     }
 }

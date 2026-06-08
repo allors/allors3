@@ -12,6 +12,14 @@ under a dated version heading.
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
+### Changed
+
+- The SqlClient adapter's `LIKE` filter now follows ANSI semantics like the Npgsql and in-memory adapters:
+  `%` and `_` are the only wildcards and `[` is matched literally. Previously T-SQL character classes
+  (e.g. `[abc]`, `[a-z]`, `[^…]`) were active only on SqlClient, so the same `LIKE` pattern could match
+  differently across adapters. Patterns that relied on SqlClient char-classes no longer match as classes
+  (that behaviour was never portable to Npgsql/Memory).
+
 ### Fixed
 
 - The SQL adapters' `CreateObjects` stored procedure now holds the generated object id in a `bigint` variable
