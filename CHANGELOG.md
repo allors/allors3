@@ -22,6 +22,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The Local workspace adapter's `Pull` now releases (disposes) the database transaction it opens, once the
+  pull has been executed and synced, instead of leaving it open. Previously `Session.PullAsync` / `CallAsync`
+  created a transaction per pull that was never committed or disposed, leaking a database connection on every
+  pull — benign on the in-memory adapter (which reuses a single transaction) but a real connection leak on the
+  SQL adapters. The transaction is now released on every path via `try`/`finally`.
 - The SQL adapters' `CreateObjects` stored procedure now holds the generated object id in a `bigint` variable
   instead of `INT`/`integer`, so creating objects no longer overflows once ids pass `int.MaxValue` (≈2.1 billion):
   SqlClient's `@IDS` table variable and Npgsql's `ID` variable. (The unused `@O INT` declaration on SqlClient was
