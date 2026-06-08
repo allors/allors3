@@ -48,11 +48,18 @@ namespace Allors.Workspace.Adapters.Local
         {
             var result = new Pull(this);
 
-            result.Execute(procedure);
-            result.Execute(pull);
-            result.AddDependencies();
+            try
+            {
+                result.Execute(procedure);
+                result.Execute(pull);
+                result.AddDependencies();
 
-            this.OnPulled(result);
+                this.OnPulled(result);
+            }
+            finally
+            {
+                result.ReleaseTransaction();
+            }
 
             return Task.FromResult<IPullResult>(result);
         }
@@ -61,7 +68,14 @@ namespace Allors.Workspace.Adapters.Local
         {
             var result = new Pull(this);
 
-            result.Execute(args, name);
+            try
+            {
+                result.Execute(args, name);
+            }
+            finally
+            {
+                result.ReleaseTransaction();
+            }
 
             return Task.FromResult<IPullResult>(result);
         }
@@ -77,9 +91,17 @@ namespace Allors.Workspace.Adapters.Local
             }
 
             var result = new Pull(this);
-            result.Execute(pulls);
 
-            this.OnPulled(result);
+            try
+            {
+                result.Execute(pulls);
+
+                this.OnPulled(result);
+            }
+            finally
+            {
+                result.ReleaseTransaction();
+            }
 
             return Task.FromResult<IPullResult>(result);
         }
