@@ -22,6 +22,7 @@ namespace Allors.Database.Protocol.Json
     using Security;
     using Services;
     using Tracing;
+    using NLog;
 
     public class Api
     {
@@ -89,6 +90,8 @@ namespace Allors.Database.Protocol.Json
         public Func<IValidation> Derive { get; }
 
         public UnitConvert UnitConvert { get; }
+
+        private Logger Logger => LogManager.GetCurrentClassLogger();
 
         public InvokeResponse Invoke(InvokeRequest invokeRequest)
         {
@@ -190,15 +193,32 @@ namespace Allors.Database.Protocol.Json
 
             foreach (var pullDependency in pullDependencies)
             {
-                var objectType = (IComposite)this.M.FindByTag(pullDependency.o);
+                if (this.M.FindByTag(pullDependency.o) is not IComposite objectType)
+                {
+                    this.Logger.Warn("Ignoring pull dependency: unknown or non-composite object type tag {ObjectTypeTag}", pullDependency.o);
+                    continue;
+                }
+
                 IPropertyType propertyType;
                 if (pullDependency.a != null)
                 {
-                    propertyType = ((IRelationType)this.M.FindByTag(pullDependency.a)).AssociationType;
+                    if (this.M.FindByTag(pullDependency.a) is not IRelationType associationRelationType)
+                    {
+                        this.Logger.Warn("Ignoring pull dependency: unknown or non-relation association tag {AssociationTag}", pullDependency.a);
+                        continue;
+                    }
+
+                    propertyType = associationRelationType.AssociationType;
                 }
                 else
                 {
-                    propertyType = ((IRelationType)this.M.FindByTag(pullDependency.r)).RoleType;
+                    if (this.M.FindByTag(pullDependency.r) is not IRelationType roleRelationType)
+                    {
+                        this.Logger.Warn("Ignoring pull dependency: unknown or non-relation role tag {RoleTag}", pullDependency.r);
+                        continue;
+                    }
+
+                    propertyType = roleRelationType.RoleType;
                 }
 
                 foreach (var @class in objectType.Classes)
