@@ -266,5 +266,24 @@ namespace Allors.Database.Domain.Tests
             tree = new[] { new Node(this.M.C1.C1C1Many2Manies) };
             new PrefetchPolicyBuilder().WithNodes(tree, this.M).Build();
         }
+
+        [Fact]
+        public void WithNodeBuildsNestedPolicyWithoutLeakingToOuter()
+        {
+            var outerRole = this.M.C1.C1C1Many2Manies;
+            var nestedRole = this.M.C1.C1C2Many2Manies;
+
+            var tree = new[] { new Node(outerRole).Add(nestedRole) };
+            var prefetchPolicy = new PrefetchPolicyBuilder().WithNodes(tree, this.M).Build();
+
+            var outerRule = Assert.Single(prefetchPolicy.PrefetchRules, r => Equals(r.PropertyType, outerRole));
+
+            // The child rule must live on the nested policy ...
+            Assert.NotNull(outerRule.PrefetchPolicy);
+            Assert.Contains(outerRule.PrefetchPolicy.PrefetchRules, r => Equals(r.PropertyType, nestedRole));
+
+            // ... and must not have leaked onto the outer policy.
+            Assert.DoesNotContain(prefetchPolicy.PrefetchRules, r => Equals(r.PropertyType, nestedRole));
+        }
     }
 }
