@@ -16228,6 +16228,32 @@ namespace Allors.Database.Adapters
         }
 
         [Fact]
+        public void RoleStringLikeBracketIsLiteral()
+        {
+            foreach (var init in this.Inits)
+            {
+                init();
+                var m = this.Transaction.Database.Context().M;
+
+                var literal = (C1)this.Transaction.Create(m.C1);
+                literal.C1AllorsString = "[abc]";
+
+                var single = (C1)this.Transaction.Create(m.C1);
+                single.C1AllorsString = "a";
+
+                this.Transaction.Commit();
+
+                // ANSI SQL LIKE: '[abc]' is a literal pattern, not a T-SQL character class.
+                // It matches the literal string "[abc]" and not the single character "a".
+                var extent = this.Transaction.Extent(m.C1);
+                extent.Filter.AddLike(m.C1.C1AllorsString, "[abc]");
+
+                Assert.Single(extent);
+                Assert.Equal("[abc]", ((C1)extent[0]).C1AllorsString);
+            }
+        }
+
+        [Fact]
         public void InstantiateDuplicateIds()
         {
             foreach (var init in this.Inits)
