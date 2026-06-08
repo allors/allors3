@@ -1,4 +1,4 @@
-// <copyright file="ServicesTest.cs" company="Allors bv">
+// <copyright file="LifeCycleTest.cs" company="Allors bv">
 // Copyright (c) Allors bv. All rights reserved.
 // Licensed under the LGPL license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -16,7 +16,7 @@ namespace Allors.Database.Adapters
     using ClassWithoutRoles = Domain.ClassWithoutRoles;
     using ClassWithoutUnitRoles = Domain.ClassWithoutUnitRoles;
 
-    public abstract class ServicesTest : IDisposable
+    public abstract class LifeCycleTest : IDisposable
     {
         protected static readonly bool[] TrueFalse = { true, false };
 
