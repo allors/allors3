@@ -78,6 +78,9 @@ under a dated version heading.
 
 ### Fixed
 
+- Removing an item from a session-origin many-valued role now removes it. `Strategy.removeCompositesRole`
+  routed the `Origin.Session` case to `sessionOriginState.addCompositesRole`, so the item was re-added instead
+  of removed; it now calls `removeCompositesRole`, matching the `Origin.Database` case.
 - Workspace objects are JSON-serializable again. `PrototypeObjectFactory` built each object's `toJSON` to call
   the non-existent `this.strategy.ToJSON()` (PascalCase), so `object.toJSON()` / `JSON.stringify(object)` threw
   `TypeError: this.strategy.ToJSON is not a function`. It now calls the real lowercase `this.strategy.toJSON()`
