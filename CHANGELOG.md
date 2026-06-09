@@ -98,6 +98,9 @@ under a dated version heading.
   corrupted the file, failing a random matrix job. A new `dotnet/Directory.Build.targets` clears the
   `CloudBuildVersionVars` item before the target runs, skipping the emission. Assembly version stamping
   is unaffected, and `cloudBuild.setVersionVariables: false` does **not** gate this MSBuild-side write.
+- Removing an item from a session-origin one-to-many role now removes it.
+  `SessionOriginState.removeCompositesRoleOne2Many` used `ranges.add` instead of `ranges.remove`, so the item
+  was left in place; it now calls `ranges.remove`, matching the many-to-many case.
 - Removing an item from a session-origin many-valued role now removes it. `Strategy.removeCompositesRole`
   routed the `Origin.Session` case to `sessionOriginState.addCompositesRole`, so the item was re-added instead
   of removed; it now calls `removeCompositesRole`, matching the `Origin.Database` case.
