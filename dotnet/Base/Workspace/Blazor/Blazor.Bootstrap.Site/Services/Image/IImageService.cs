@@ -4,6 +4,6 @@ namespace Allors.Services
 
     public partial interface IImageService
     {
-        string Source(Media media, int? width = null, int? quality = null, string type = null, string background = null);
+        string Source(Media media, int? width = null, int? quality = null, string type = null, string background = "FFF");
     }
 }
