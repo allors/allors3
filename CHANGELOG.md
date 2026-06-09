@@ -178,3 +178,7 @@ under a dated version heading.
   resolved a Grant to a wiped id and never re-linked its subjects. Guarded by a new `RepeatedSetupTests`
   (runs under `CiDotnetCoreDatabaseTest` on every adapter). Unblocks the out-of-process Npgsql server
   tests previously noted under "Known limitations".
+- The Angular e2e test harness (`Base`, `AppsIntranet`) now builds its database through the adapter-aware
+  `DatabaseBuilder` and loads configuration via `ALLORS_CONFIG_ROOT` (`AddAllorsConfiguration`), instead
+  of a hardcoded `SqlClient` adapter and local `appSettings.{platform}.json`. The e2e suites therefore run
+  on whichever provider the build selects, not only SQL Server.

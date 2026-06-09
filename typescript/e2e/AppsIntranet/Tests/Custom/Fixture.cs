@@ -6,10 +6,9 @@ namespace Tests
     using System.Net.Http.Headers;
     using System.Xml;
     using Allors.Database;
-    using Allors.Database.Adapters.Sql;
+    using Allors.Database.Adapters;
     using Allors.Database.Configuration;
     using NUnit.Framework;
-    using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
     using Person = Allors.Database.Domain.Person;
 
     public class Fixture : IDisposable
@@ -37,13 +36,10 @@ namespace Tests
 
         public IDatabase Init()
         {
-            var database = new Database(
+            var database = new DatabaseBuilder(
                    new DefaultDatabaseServices(Config.Engine),
-                   new Configuration
-                   {
-                       ConnectionString = Config.Configuration["ConnectionStrings:DefaultConnection"],
-                       ObjectFactory = new ObjectFactory(Config.MetaPopulation, typeof(Person)),
-                   });
+                   Config.Configuration,
+                   new ObjectFactory(Config.MetaPopulation, typeof(Person))).Build();
 
             using var stream = Config.PopulationFileInfo.OpenRead();
             using var reader = XmlReader.Create(stream);
