@@ -12,9 +12,9 @@ namespace Allors.Server.Controllers
     using Database.Domain;
     using Database.Meta;
     using Database.Protocol.Json;
+    using Database.Services;
     using Microsoft.AspNetCore.Mvc;
     using Services;
-    using User = Database.Domain.User;
 
     public class TestShareHoldersController : Controller
     {
@@ -40,7 +40,7 @@ namespace Allors.Server.Controllers
                 var response = api.CreatePullResponseBuilder();
 
                 var m = this.Transaction.Database.Services.Get<MetaPopulation>();
-                var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Services.Get<User>());
+                var organisation = new Organisations(this.Transaction).FindBy(m.Organisation.Owner, this.Transaction.Services.Get<IUserService>().User);
                 response.AddObject("root", organisation,
                     new[] {
                                 new Node(m.Organisation.Shareholders)
