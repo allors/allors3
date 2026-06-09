@@ -31,6 +31,12 @@ partial class Build
                 .SetProjectFile(Paths.DotnetCoreDatabaseGenerate));
         });
 
+    private Target DotnetCoreDatabaseTestMerge => _ => _
+        .Executes(() => DotNetTest(s => s
+            .SetProjectFile(Paths.DotnetCoreDatabaseMergeTests)
+            .AddLoggers("trx;LogFileName=CoreDatabaseMerge.trx")
+            .SetResultsDirectory(Paths.ArtifactsTests)));
+
     private Target DotnetCoreDatabaseTestMeta => _ => _
         .DependsOn(DotnetCoreGenerate)
         .Executes(() => DotNetTest(s => s
@@ -144,6 +150,7 @@ partial class Build
         });
 
     private Target DotnetCoreDatabaseTest => _ => _
+        .DependsOn(DotnetCoreDatabaseTestMerge)
         .DependsOn(DotnetCoreDatabaseTestMeta)
         .DependsOn(DotnetCoreDatabaseTestDomain)
         .DependsOn(DotnetCoreDatabaseTestServerLocal)

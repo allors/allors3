@@ -12,6 +12,15 @@ under a dated version heading.
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
+### Added
+
+- A `Merge.Tests` project for the resource `Merger` (`Core/Database/Merge`), driven black-box through its
+  public `Input`/`Output` API. It covers structure preservation for overlapping keys (the regression that
+  motivated the resx-merge fix — `<value>`/`<comment>` children and `xml:space`/`type` attributes survive),
+  last-writer-wins precedence across input directories, key union, `<xsd:schema>`/`<resheader>` survival, and
+  `Input` robustness (missing directories skipped, non-`.resx` files ignored, case-insensitive extension). The
+  project is wired into the `DotnetCoreDatabaseTest` target (CI `CiDotnetCoreDatabaseTest`) so it actually gates.
+
 ### Changed
 
 - The SqlClient adapter's `LIKE` filter now follows ANSI semantics like the Npgsql and in-memory adapters:
