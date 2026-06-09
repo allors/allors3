@@ -13,14 +13,20 @@ namespace Allors.Services
     {
         public PolicyService()
         {
-            var defaultPolicy = Policy
+            // Reads are idempotent — safe to auto-retry a transient DbException.
+            var retryPolicy = Policy
                 .Handle<DbException>()
                 .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
-            this.PullPolicy = defaultPolicy;
-            this.SyncPolicy = defaultPolicy;
-            this.PushPolicy = defaultPolicy;
-            this.InvokePolicy = defaultPolicy;
+            this.PullPolicy = retryPolicy;
+            this.SyncPolicy = retryPolicy;
+
+            // Writes are not idempotent — auto-retrying a DbException after an (ambiguous) commit
+            // would re-apply the unit (double execution), so Invoke and Push are not retried.
+            var noRetryPolicy = Policy.NoOp();
+
+            this.PushPolicy = noRetryPolicy;
+            this.InvokePolicy = noRetryPolicy;
         }
 
         public Policy PullPolicy { get; }
