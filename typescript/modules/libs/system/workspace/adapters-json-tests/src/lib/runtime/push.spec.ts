@@ -138,13 +138,13 @@ test('pushShouldUpdateId', async () => {
   person.FirstName = 'Johny';
   person.LastName = 'Doey';
 
-  expect(person.id < 0);
+  expect(person.id).toBeLessThan(0);
 
   const pushResult = await session.push();
 
   expect(pushResult.hasErrors).toBeFalsy();
 
-  expect(person.id > 0);
+  expect(person.id).toBeGreaterThan(0);
 });
 
 test('pushShouldNotUpdateVersion', async () => {
