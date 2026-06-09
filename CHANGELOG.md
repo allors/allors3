@@ -98,6 +98,10 @@ under a dated version heading.
   corrupted the file, failing a random matrix job. A new `dotnet/Directory.Build.targets` clears the
   `CloudBuildVersionVars` item before the target runs, skipping the emission. Assembly version stamping
   is unaffected, and `cloudBuild.setVersionVariables: false` does **not** gate this MSBuild-side write.
+- Binary unit values are no longer double base64-encoded when pulled. `unitFromJson` returned `btoa(value)` for
+  a `Binary` unit, but the wire value is already base64 and the push path (`unitToJson`) sends it through
+  unchanged, so the round-trip produced a doubly-encoded value. It now returns the value as-is, matching the
+  other units.
 - Missing-revocation detection now checks the cached revocations instead of the permissions.
   `ResponseContext.checkForMissingRevocations` tested `database.permissions` rather than
   `database.revocationById`, so it flagged the wrong ids as missing (cached revocations were re-requested and
