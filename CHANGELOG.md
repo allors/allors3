@@ -185,3 +185,7 @@ under a dated version heading.
   `DatabaseBuilder` and loads configuration via `ALLORS_CONFIG_ROOT` (`AddAllorsConfiguration`), instead
   of a hardcoded `SqlClient` adapter and local `appSettings.{platform}.json`. The e2e suites therefore run
   on whichever provider the build selects, not only SQL Server.
+- The Server/Configuration projects now reference `SkiaSharp.NativeAssets.Linux` (and pin `SkiaSharp` to
+  the Servers' `3.119.2`), so the ZXing/SkiaSharp barcode generation ships `libSkiaSharp.so` for Linux.
+  Previously the native library was absent on Linux, crashing the Base/Apps domain tests, `Commands
+  Populate` and the Server with `libSkiaSharp.so: cannot open shared object file`.
