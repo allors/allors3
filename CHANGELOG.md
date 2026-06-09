@@ -75,6 +75,11 @@ under a dated version heading.
   `InvalidCastException` (e.g. casting `JsonElement` to `int`/`byte[]`). It now routes the value through the
   adapter's `IUnitConvert`, mapping the requested CLR type to its unit tag, so values round-trip to the correct
   type. (Pull values are sent untagged, so the conversion is keyed by `T`.)
+- The image content endpoint no longer returns HTTP 500 for an overlay-only request (an overlay with no
+  width). `BaseImageController.Get` enters its image-processing branch when a width *or* an overlay is
+  supplied, but always passed `w.Value` to `Process`, throwing `InvalidOperationException` when only the
+  overlay was set (width null). `Process` now takes a nullable width and resizes only when one is given; an
+  overlay-only request keeps the original dimensions and just draws the overlay.
 - The workspace adapters' session-origin `SetCompositeRoleMany2One` no longer leaves a stale inverse when an
   object's many-to-one composite role is reassigned. When changing `A`'s role from `PR` to `R` it detached the
   *new* role `R` (a no-op, since `A` was not yet associated with `R`) instead of the *previous* role `PR`, so
