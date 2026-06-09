@@ -86,6 +86,10 @@ under a dated version heading.
   transit — a `ContainedIn { Objects = … }` pull reached the server with neither objects nor extent and failed
   with HTTP 500. The writers now use `obs`, matching the reader and the `ob`/`obs` convention. (The `Extent`
   form of `ContainedIn` was unaffected.)
+- A required many-valued role is now flagged as missing when its collection is empty. `RoleField.Validate`
+  tested `Model == null`, but for a many-valued role `Model` is a non-null (possibly empty) composites
+  collection, so an empty required many-role was never reported as required. It now treats an empty collection
+  as missing for many-valued roles; unit and single-composite roles keep the existing null check.
 - The Local workspace adapter's `Push` now releases (disposes) the database transaction it opens, instead of
   leaving it open. `Session.PushAsync` previously returned without disposing on both the error path (the early
   return when the push has errors — the transaction was then neither committed nor rolled back) and the success
