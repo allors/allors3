@@ -78,6 +78,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The Material prompt dialog's **Cancel** button no longer returns the typed value. Both the Ok and Cancel
+  buttons in `dialog.component.html` bound `[mat-dialog-close]="value"`, so cancelling a prompt closed it with
+  the same string as Ok; callers test the result for truthiness, so a cancelled prompt was indistinguishable
+  from a confirmed one and the typed value was acted upon anyway. Cancel now closes with `undefined` (matching
+  dismissal via Escape or a backdrop click), so a non-empty result unambiguously means the user pressed Ok.
 - The dynamic **edit extent panel** no longer crashes when a displayed `DateTime` column is unset. Its row
   builder formatted every DateTime cell with `format(value, 'dd-MM-yyyy')` (date-fns), which throws
   `RangeError: Invalid time value` on a null value — so a single unset DateTime (e.g. an included organisation's
