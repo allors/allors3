@@ -22,6 +22,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The Json `Token` (login) endpoint now counts a failed attempt toward Identity lockout
+  (`CheckPasswordSignInAsync(…, lockoutOnFailure: true)`); it previously passed `false`, so a wrong password
+  never incremented the lockout counter and an account could be brute-forced indefinitely. With the default
+  Identity options (5 attempts / 5-minute lockout) and the lockout-aware `AllorsUserStore`, repeated failures
+  now lock the account. (Security.)
 - The Json API's `Pull` no longer crashes (`NullReferenceException` → HTTP 500) when a request dependency
   carries an unknown or wrong-kind meta tag. `Api.ToDependencies` cast each client-supplied tag
   (`FindByTag(...)`) to `IComposite`/`IRelationType` and dereferenced it unchecked, so a bogus `o`/`a`/`r`
