@@ -22,6 +22,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The Json API no longer auto-retries `Invoke` and `Push` on a `DbException`. Both are non-idempotent writes,
+  but `PolicyService` retried them with the same policy as the idempotent `Pull`/`Sync` reads — so a
+  `DbException` surfacing after the write's commit (e.g. an ambiguous / lost-ack commit, or post-commit work)
+  made Polly re-run the controller delegate and re-apply the already-committed invocations/push (double
+  execution). `Invoke`/`Push` now run once; `Pull`/`Sync` still auto-retry. Clients that need to retry a
+  failed write must do so explicitly.
 - The Json `Token` (login) endpoint now counts a failed attempt toward Identity lockout
   (`CheckPasswordSignInAsync(…, lockoutOnFailure: true)`); it previously passed `false`, so a wrong password
   never incremented the lockout counter and an account could be brute-forced indefinitely. With the default
