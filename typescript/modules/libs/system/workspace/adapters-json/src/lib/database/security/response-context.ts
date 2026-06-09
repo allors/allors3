@@ -23,7 +23,7 @@ export class ResponseContext {
 
   checkForMissingRevocations(value: IRange<number>): IRange<number> {
     for (const id of this.database.ranges.enumerate(value)) {
-      if (!this.database.permissions.has(id)) {
+      if (!this.database.revocationById.has(id)) {
         this.missingRevocationIds.add(id);
       }
     }
