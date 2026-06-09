@@ -8,11 +8,11 @@ using static Nuke.Common.Tools.Npm.NpmTasks;
 partial class Build
 {
     private Target DotnetBaseResetDatabase => _ => _
+        .DependsOn(DotnetBasePublishCommands)
         .Executes(() =>
         {
-            var database = "Base";
-            using var sqlLocalDb = new SqlLocalDB();
-            sqlLocalDb.Init(database);
+            SetDatabaseEnvironment("Base");
+            DotNet("Commands.dll Init", Paths.ArtifactsBaseCommands);
         });
 
     private Target DotnetBaseDatabaseTest => _ => _

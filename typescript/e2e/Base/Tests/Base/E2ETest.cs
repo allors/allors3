@@ -91,12 +91,15 @@ namespace Tests.E2E
             this.BrowserType = this.Playwright[(Environment.GetEnvironmentVariable("BROWSER") ?? Microsoft.Playwright.BrowserType.Chromium).ToLower()];
 
             var browserTypeLaunchOptions = new BrowserTypeLaunchOptions();
+            this.Configure(browserTypeLaunchOptions);
+
+            // HEADLESS (e.g. on CI) overrides the per-test Configure default, so a headed local default can
+            // still run headless on a display-less runner. Applied after Configure so the env var wins.
             if (bool.TryParse(Environment.GetEnvironmentVariable("HEADLESS"), out var headless))
             {
                 browserTypeLaunchOptions.Headless = headless;
             }
 
-            this.Configure(browserTypeLaunchOptions);
             this.Browser = await this.BrowserType.LaunchAsync(browserTypeLaunchOptions);
             var browserNewContextOptions = new BrowserNewContextOptions();
             this.Configure(browserNewContextOptions);

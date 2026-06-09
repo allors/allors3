@@ -59,6 +59,17 @@ namespace Allors.Database.Configuration
             this.Database = database;
             this.M = (MetaPopulation)this.Database.MetaPopulation;
             this.metaCache = new MetaCache(this.Database);
+
+            // Init() recreates the schema and restarts object-id allocation, so any service that caches
+            // domain identity -> database object-id/version becomes stale and must be discarded. Otherwise
+            // a second Init/Setup in the same process reuses dead ids -- e.g. the security Setup merger
+            // resolves a Grant to a wiped id and never re-links its subjects, failing the
+            // "Grant.Subjects, Grant.SubjectGroups at least one!" derivation.
+            this.caches = null;
+            this.classById = null;
+            this.versionedIdByStrategy = null;
+            this.security = null;
+            this.permissions = null;
         }
 
         public MetaPopulation M { get; private set; }

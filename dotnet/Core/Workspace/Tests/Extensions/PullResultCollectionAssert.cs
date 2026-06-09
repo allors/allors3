@@ -14,8 +14,10 @@ namespace Tests.Workspace
 
         public void Equal(params string[] expected)
         {
+            // Order-insensitive: an unsorted Pull/Extent has no defined row order, and it differs across
+            // adapters (e.g. PostgreSQL vs SQL Server). Compare as sets by sorting both sides.
             var actual = this.collection.Select(v => (string)((dynamic)v).Name);
-            Assert.Equal(expected, actual);
+            Assert.Equal(expected.OrderBy(v => v), actual.OrderBy(v => v));
         }
     }
 }

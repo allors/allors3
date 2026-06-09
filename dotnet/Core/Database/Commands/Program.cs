@@ -19,7 +19,6 @@ namespace Commands
     using Microsoft.Extensions.Configuration;
     using NLog;
     using ObjectFactory = Allors.Database.ObjectFactory;
-    using Path = System.IO.Path;
     using User = Allors.Database.Domain.User;
 
     [Command(Description = "Allors Core Commands")]
@@ -27,7 +26,8 @@ namespace Commands
         typeof(Save),
         typeof(Load),
         typeof(Upgrade),
-        typeof(Populate)
+        typeof(Populate),
+        typeof(Init)
         )]
     public class Program
     {
@@ -53,14 +53,9 @@ namespace Commands
             {
                 if (this.configuration == null)
                 {
-                    const string root = "/config/core";
-
                     var configurationBuilder = new ConfigurationBuilder();
 
-                    configurationBuilder.AddCrossPlatform(".");
-                    configurationBuilder.AddCrossPlatform(root);
-                    configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-                    configurationBuilder.AddEnvironmentVariables();
+                    configurationBuilder.AddAllorsConfiguration("core", "commands");
 
                     this.configuration = configurationBuilder.Build();
                 }

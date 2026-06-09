@@ -14,7 +14,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\dotnet\Apps\Database\Configuration\Configuration.csproj" />
 		<ProjectReference Include="..\..\..\..\dotnet\Apps\Database\TestPopulation\TestPopulation.csproj" />
-		<ProjectReference Include="..\..\..\..\dotnet\System\Database\Adapters\Allors.Database.Adapters.Sql.SqlClient\Allors.Database.Adapters.Sql.SqlClient.csproj" />
+		<ProjectReference Include="..\..\..\..\dotnet\System\Database\Adapters\Allors.Database.Builder\Allors.Database.Builder.csproj" />
 		<ProjectReference Include="..\E2E\Allors.E2E.csproj" />
 	</ItemGroup>
 
@@ -24,15 +24,6 @@
 
 
   <ItemGroup>
-	  <None Update="appsettings.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="appsettings.osx.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="appsettings.windows.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	  <None Update="logo.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

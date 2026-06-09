@@ -17,7 +17,7 @@ namespace Tests.E2E
         static Config()
         {
             var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddCrossPlatform(".");
+            configurationBuilder.AddAllorsConfiguration("base", "commands");
             Configuration = configurationBuilder.Build();
 
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");

@@ -28,6 +28,7 @@ namespace Commands
         typeof(Upgrade),
         typeof(Populate),
         typeof(Print),
+        typeof(Init),
         typeof(Custom))]
     public class Program
     {
@@ -53,14 +54,9 @@ namespace Commands
             {
                 if (this.configuration == null)
                 {
-                    const string root = "/config/core";
-
                     var configurationBuilder = new ConfigurationBuilder();
 
-                    configurationBuilder.AddCrossPlatform(".");
-                    configurationBuilder.AddCrossPlatform(root);
-                    configurationBuilder.AddCrossPlatform(System.IO.Path.Combine(root, "commands"));
-                    configurationBuilder.AddEnvironmentVariables();
+                    configurationBuilder.AddAllorsConfiguration("base", "commands");
 
                     this.configuration = configurationBuilder.Build();
                 }

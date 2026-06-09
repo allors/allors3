@@ -18,7 +18,7 @@ namespace Tests
         static Config()
         {
             var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddCrossPlatform(".");
+            configurationBuilder.AddAllorsConfiguration("apps", "commands");
             Configuration = configurationBuilder.Build();
 
             CultureInfo.CurrentCulture = new CultureInfo("nl-BE");

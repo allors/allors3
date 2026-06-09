@@ -14,6 +14,26 @@ under a dated version heading.
 
 ### Added
 
+- Configuration is now delivered from outside the source tree via the **required** `ALLORS_CONFIG_ROOT`
+  environment variable. Each server, command-line tool and integration test loads
+  `$ALLORS_CONFIG_ROOT/<domain>/appsettings.json` (domain = `core`/`base`/`apps`) through the new
+  `IConfigurationBuilder.AddAllorsConfiguration(domain, …)` helper, with environment variables layered
+  last so they override the JSON. A missing variable or missing file fails fast with an actionable error
+  instead of silently falling back to per-OS defaults.
+- `InstallConfig` Nuke target copies a provider's templates into the config root, e.g.
+  `./build.sh InstallConfig --provider npgsql --config-root /opt/allors`.
+- Test databases are created on demand from an admin connection: `ALLORS_NPGSQL` / `ALLORS_SQLCLIENT`
+  (matching the allors4 CI names) hold a connection allowed to create databases, and each test's connection
+  string is derived from them by swapping the database name. The shared `DatabaseProvisioning` helper (over
+  the provider-specific `Provisioning` types) drops/creates the database, and the in-process tests (the
+  static adapter tests and the Core/Base `Server.Local.Tests`) self-provision a per-test-class database — so
+  `dotnet test` runs against the containers with no pre-existing database and no SQL LocalDB. The legacy
+  `ALLORS_TEST_SQLCLIENT_CONNECTION` / `ALLORS_TEST_NPGSQL_CONNECTION` names are still accepted as aliases;
+  if neither is set the helper fails fast with an actionable error.
+- `Commands Init` (Core/Base/Apps) drops and (re)creates the configured database from the admin connection,
+  giving the out-of-process server tests and e2e flows a cross-platform provisioning step.
+- `launchSettings.json` profiles for the Core/Base/Apps servers that select the database provider
+  (e.g. *Core (Postgres)* / *Core (SqlClient)*) by setting `ALLORS_CONFIG_ROOT`.
 - A `Merge.Tests` project for the resource `Merger` (`Core/Database/Merge`), driven black-box through its
   public `Input`/`Output` API. It covers structure preservation for overlapping keys (the regression that
   motivated the resx-merge fix — `<value>`/`<comment>` children and `xml:space`/`type` attributes survive),
@@ -29,14 +49,37 @@ under a dated version heading.
 
 ### Changed
 
+- The database provider (SqlClient / Npgsql) is now selected by which template populates
+  `ALLORS_CONFIG_ROOT` rather than by the host operating system. The in-repo `config/<provider>/<domain>`
+  files are templates (with development defaults) copied to the config root (e.g. `/opt/allors`); real
+  secrets belong in the deployed copy or in environment variables, not in source.
+- Configuration file names are normalized to lowercase `appsettings.json` so the same files resolve on
+  case-sensitive filesystems (Linux); previously the loader looked for `appSettings.json`.
 - The SqlClient adapter's `LIKE` filter now follows ANSI semantics like the Npgsql and in-memory adapters:
   `%` and `_` are the only wildcards and `[` is matched literally. Previously T-SQL character classes
   (e.g. `[abc]`, `[a-z]`, `[^…]`) were active only on SqlClient, so the same `LIKE` pattern could match
   differently across adapters. Patterns that relied on SqlClient char-classes no longer match as classes
   (that behaviour was never portable to Npgsql/Memory).
+- Database provisioning for the Nuke test/e2e targets now runs cross-platform via `Commands Init` against the
+  Postgres/SQL Server containers instead of the Windows-only SQL LocalDB step; `--provider` selects both the
+  admin connection and the derived `ConnectionStrings__DefaultConnection` passed to the child processes.
+- The Npgsql legacy `AppContext` switches (`EnableLegacyTimestampBehavior`, `EnableStoredProcedureCompatMode`)
+  are now set by a module initializer in the Npgsql adapter, so the server, command-line tools and tests get
+  the same behaviour (previously only the adapter test fixture set them).
+- The Core `Server.Local.Tests` / `Server.Remote.Tests` build their database through the adapter-aware
+  `DatabaseBuilder` instead of a hardcoded SqlClient type, so they honour the configured provider.
+
+### Removed
+
+- The Windows-only `SqlLocalDB` build helper and the `MartinCostello.SqlLocalDb` build dependency; the build
+  no longer provisions SQL LocalDB.
+- Legacy per-project `appSettings.json` and `appSettings.{development,osx,windows}.json` files next to the
+  servers, command-line tools and server tests. Configuration now comes solely from `ALLORS_CONFIG_ROOT`.
 
 ### Fixed
 
+- The `Base` server and command-line tools loaded the `core` configuration instead of `base`, so the
+  `config/<provider>/base` templates were never used. They now resolve the `base` domain.
 - The `PersonEdit` Blazor page no longer crashes when its `{id}` route parameter is not a number. It parsed
   the segment with `long.Parse(id)` in `OnInitializedAsync`, throwing `FormatException` for a non-numeric id
   (e.g. `/person/edit/abc`); it now uses `long.TryParse` and skips the pull when the id is invalid (the page
@@ -200,6 +243,36 @@ under a dated version heading.
 - SqlClient adapter tests now run with a 300s command timeout and `Connection Timeout=0` against
   SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
   (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.
+- CI now runs on `ubuntu-latest` with PostgreSQL and SQL Server provided as **service containers** (the
+  Windows-only SqlLocalDB install and the host PostgreSQL service/bootstrap steps are gone). The
+  database/server/workspace/e2e suites run on **SqlClient**, each adapter has its own adapter test
+  (Memory/SqlClient/Npgsql), and admin connections come from `ALLORS_NPGSQL` / `ALLORS_SQLCLIENT` with
+  `Commands Init` provisioning the databases. Previously the database/workspace/e2e targets defaulted to
+  the `sqlclient` build provider on a runner with no SQL Server, and aborted on the (fail-fast) missing
+  admin connection. Running the full database/server/workspace/e2e suite on **Npgsql** is a tracked
+  follow-up — it surfaces pre-existing npgsql-specific issues (result ordering, long index-name truncation,
+  an `Equals` empty-pull).
+- The Npgsql adapter now connects to the lower-cased database name, matching the database that
+  `Provisioning`/`Commands Init` actually creates (PostgreSQL folds unquoted identifiers to lower-case).
+  A configured non-lower-case `Database=` (e.g. a deployed `Database=AllorsCore`) previously created
+  `allorscore` but left the server trying to connect to `AllorsCore`. `Provisioning.DatabaseName` is
+  lower-cased for the same reason.
+- Re-initializing a database (`Init`, as the server does on every `Test/Setup`) now resets the
+  data-scoped database services (the identity/security/permission caches) in `DatabaseServices.OnInit`.
+  `Init` recreates the schema and restarts object-id allocation, but the stale UniqueId→object-id
+  mappings were kept, so a repeated `Setup` on Npgsql failed with
+  `DerivationException: Grant.Subjects, Grant.SubjectGroups at least one!` — the security `Setup` merger
+  resolved a Grant to a wiped id and never re-linked its subjects. Guarded by a new `RepeatedSetupTests`
+  (runs under `CiDotnetCoreDatabaseTest` on every adapter). Unblocks the out-of-process Npgsql server
+  tests previously noted under "Known limitations".
+- The Angular e2e test harness (`Base`, `AppsIntranet`) now builds its database through the adapter-aware
+  `DatabaseBuilder` and loads configuration via `ALLORS_CONFIG_ROOT` (`AddAllorsConfiguration`), instead
+  of a hardcoded `SqlClient` adapter and local `appSettings.{platform}.json`. The e2e suites therefore run
+  on whichever provider the build selects, not only SQL Server.
+- The Server/Configuration projects now reference `SkiaSharp.NativeAssets.Linux` (and pin `SkiaSharp` to
+  the Servers' `3.119.2`), so the ZXing/SkiaSharp barcode generation ships `libSkiaSharp.so` for Linux.
+  Previously the native library was absent on Linux, crashing the Base/Apps domain tests, `Commands
+  Populate` and the Server with `libSkiaSharp.so: cannot open shared object file`.
 - The CI `Upload TRX artifacts` step (test-result diagnostics) now runs only on failure and is
   non-gating (`continue-on-error`), so a transient GitHub artifact-service flake on the success path
   no longer fails the whole job. The test report is still published on every run — the reporter reads

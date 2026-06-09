@@ -7,10 +7,11 @@
 namespace Tests
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
     using Allors.Database;
-    using Allors.Database.Adapters.Sql;
+    using Allors.Database.Adapters;
     using Allors.Database.Configuration;
     using Allors.Database.Configuration.Derivations.Default;
     using Allors.Database.Derivations;
@@ -20,32 +21,27 @@ namespace Tests
     using Allors.Database.Services;
     using Microsoft.Extensions.Configuration;
     using C1 = Allors.Database.Domain.C1;
-    using Database = Allors.Database.Adapters.Sql.SqlClient.Database;
 
     public class ApiTest : IDisposable
     {
         public ApiTest(Fixture fixture, bool populate = true)
         {
+            var connectionString = fixture.EnsureDatabase(this.GetType().Name);
+
             var configurationBuilder = new ConfigurationBuilder();
-
-            const string root = "/config/core";
-            configurationBuilder.AddCrossPlatform(".");
-            configurationBuilder.AddCrossPlatform(root);
-            configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-            configurationBuilder.AddEnvironmentVariables();
-
+            configurationBuilder.AddAllorsConfiguration("core", "commands");
+            configurationBuilder.AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["ConnectionStrings:DefaultConnection"] = connectionString,
+            });
             var configuration = configurationBuilder.Build();
 
-            var metaPopulation = new MetaBuilder().Build();
-            var rules = Rules.Create(metaPopulation);
-            var engine = new Engine(rules);
-            var database = new Database(
+            var metaPopulation = fixture.MetaPopulation;
+            var engine = fixture.Engine;
+            var database = new DatabaseBuilder(
                 new DefaultDatabaseServices(engine),
-                new Configuration
-                {
-                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
-                });
+                configuration,
+                new ObjectFactory(metaPopulation, typeof(C1))).Build();
 
             this.M = metaPopulation;
 

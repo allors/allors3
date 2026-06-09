@@ -58,7 +58,7 @@ namespace Allors.Database.Adapters.Sql.SqlClient
             }
         }
 
-        protected string ConnectionString => $@"server=(localdb)\MSSQLLocalDB;database={this.database};Integrated Security=true;Connection Timeout=0";
+        protected string ConnectionString => Provisioning.ConnectionString(this.database);
 
         public override IDatabase CreateDatabase()
         {
