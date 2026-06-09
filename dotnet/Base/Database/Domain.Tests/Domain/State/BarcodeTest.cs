@@ -5,7 +5,6 @@
 
 namespace Allors.Database.Domain.Tests
 {
-    using System.IO;
     using Xunit;
 
     public class BarcodeTest : DomainTest, IClassFixture<Fixture>
@@ -16,8 +15,16 @@ namespace Allors.Database.Domain.Tests
         public void Default()
         {
             var barcodeService = this.Transaction.Database.Services.Get<IBarcodeGenerator>();
+
             var image = barcodeService.Generate("Allors", BarcodeType.CODE_128);
-            File.WriteAllBytes("barcode.png", image);
+
+            Assert.NotNull(image);
+            Assert.NotEmpty(image);
+
+            // The generator encodes to PNG (SKEncodedImageFormat.Png); verify the PNG file signature.
+            var pngSignature = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+            Assert.True(image.Length >= pngSignature.Length);
+            Assert.Equal(pngSignature, image[..pngSignature.Length]);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Allors.Workspace.Configuration
                 var claimsPrincipalService = serviceProvider.GetRequiredService<IClaimsPrincipalService>();
                 var user = claimsPrincipalService.User;
                 var claim = user.FindFirst(ClaimTypes.NameIdentifier);
-                var userId = claim != null ? int.Parse(claim.Value, CultureInfo.InvariantCulture) : 0;
+                var userId = claim != null ? long.Parse(claim.Value, CultureInfo.InvariantCulture) : 0;
                 return new Adapters.Local.DatabaseConnection(configuration, database, servicesBuilder, rangesFactory) { UserId = userId };
             });
 

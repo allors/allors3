@@ -48,7 +48,7 @@ roleType(roleType) ::= <<
 $if(roleType.IsOne)$
 			$nullableName(roleType)$ $roleType.SingularName$ {set;}
 $else$
-			$nullableName(roleType)$ $roleType.PluralName$ {set;}
+			$nullableName(roleType)$[] $roleType.PluralName$ {set;}
 $endif$
 >>
 

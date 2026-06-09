@@ -218,7 +218,10 @@ jobs:
       - name: Run Nuke target ${{ matrix.target }}
         run: ./build.sh -target ${{ matrix.target }} --provider sqlclient
       - name: Upload TRX artifacts
-        if: always()
+        # Diagnostic download only (the report is published from disk by the next step), so upload
+        # just on failure and never let a transient artifact-service flake gate the job.
+        if: failure()
+        continue-on-error: true
         uses: actions/upload-artifact@v7
         with:
           name: trx-${{ matrix.target }}-sqlclient

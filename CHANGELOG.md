@@ -34,6 +34,18 @@ under a dated version heading.
   giving the out-of-process server tests and e2e flows a cross-platform provisioning step.
 - `launchSettings.json` profiles for the Core/Base/Apps servers that select the database provider
   (e.g. *Core (Postgres)* / *Core (SqlClient)*) by setting `ALLORS_CONFIG_ROOT`.
+- A `Merge.Tests` project for the resource `Merger` (`Core/Database/Merge`), driven black-box through its
+  public `Input`/`Output` API. It covers structure preservation for overlapping keys (the regression that
+  motivated the resx-merge fix — `<value>`/`<comment>` children and `xml:space`/`type` attributes survive),
+  last-writer-wins precedence across input directories, key union, `<xsd:schema>`/`<resheader>` survival, and
+  `Input` robustness (missing directories skipped, non-`.resx` files ignored, case-insensitive extension). The
+  project is wired into the `DotnetCoreDatabaseTest` target (CI `CiDotnetCoreDatabaseTest`) so it actually gates.
+- Comprehensive regression coverage for object versioning in `VersioningTests` (Base) — 16 tests over the
+  `Order`/`OrderLine` model: changed vs unchanged unit / single-composite / many-composite roles;
+  add / remove / clear / repopulate and order-independent set comparison on the many-role; version-snapshot
+  history (each version keeps the value at its own derivation); sequential versions; several versioned roles
+  changing in one cycle producing a single new version; independent child (`OrderLine`) versioning; and
+  non-versioned roles not creating versions. Run by `CiDotnetBaseDatabaseTest`.
 
 ### Changed
 
@@ -68,9 +80,50 @@ under a dated version heading.
 
 - The `Base` server and command-line tools loaded the `core` configuration instead of `base`, so the
   `config/<provider>/base` templates were never used. They now resolve the `base` domain.
-- `commands.sh` now forwards its arguments with `"$@"` instead of the unquoted `$*`, so an argument
+- The `PersonEdit` Blazor page no longer crashes when its `{id}` route parameter is not a number. It parsed
+  the segment with `long.Parse(id)` in `OnInitializedAsync`, throwing `FormatException` for a non-numeric id
+  (e.g. `/person/edit/abc`); it now uses `long.TryParse` and skips the pull when the id is invalid (the page
+  renders nothing instead of throwing).
+- The Json API no longer auto-retries `Invoke` and `Push` on a `DbException`. Both are non-idempotent writes,
+  but `PolicyService` retried them with the same policy as the idempotent `Pull`/`Sync` reads — so a
+  `DbException` surfacing after the write's commit (e.g. an ambiguous / lost-ack commit, or post-commit work)
+  made Polly re-run the controller delegate and re-apply the already-committed invocations/push (double
+  execution). `Invoke`/`Push` now run once; `Pull`/`Sync` still auto-retry. Clients that need to retry a
+  failed write must do so explicitly.
+- The Json `Token` (login) endpoint now counts a failed attempt toward Identity lockout
+  (`CheckPasswordSignInAsync(…, lockoutOnFailure: true)`); it previously passed `false`, so a wrong password
+  never incremented the lockout counter and an account could be brute-forced indefinitely. With the default
+  Identity options (5 attempts / 5-minute lockout) and the lockout-aware `AllorsUserStore`, repeated failures
+  now lock the account. (Security.)
+- The Blazor.Bootstrap.Site server's Identity logout page (`Areas/Identity/Pages/Account/LogOut.cshtml`) no
+  longer carries `@attribute [IgnoreAntiforgeryToken]`, so the logout POST is antiforgery-protected again.
+  Without it, a cross-site request could log a signed-in user out without consent (logout CSRF). The
+  scaffolded logout form (`_LoginPartial`) already posts the antiforgery token, so normal logout is
+  unaffected. (Security.)
+- The production error handler no longer returns raw exception detail to clients. `ExceptionHandler`'s
+  middleware wrote `error.Message` to the response in non-development environments (the full error is already
+  logged server-side), leaking internal details (e.g. SQL errors, paths). Production responses are now a
+  generic message (`"An internal server error has occurred."`, or `"Authentication token expired."` for an
+  expired token); Development still returns the message and stack trace. (Security.)
+- The image content endpoint's stale-revision redirect now targets `/allors/image/{id}/{revision}` instead of
+  `/image/{id}/{revision}`. `BaseImageController.Get` is routed at `/allors/image/...`, but on a revision
+  mismatch it issued a permanent redirect to a path missing the `/allors` prefix — which matches no route, so
+  the redirect 404'd instead of serving the current revision. The prefix now matches the route (and the
+  image URL builders, which already emit `/allors/image/...`).
+- The Json API's `Pull` no longer crashes (`NullReferenceException` → HTTP 500) when a request dependency
+  carries an unknown or wrong-kind meta tag. `Api.ToDependencies` cast each client-supplied tag
+  (`FindByTag(...)`) to `IComposite`/`IRelationType` and dereferenced it unchecked, so a bogus `o`/`a`/`r`
+  tag null-crashed the whole pull. Unresolvable dependencies — which are only prefetch hints — are now
+  skipped (and logged as a warning, since they indicate a faulty client), so the pull proceeds normally.
+- The workspace UML diagram template (`Workspace/Templates/uml.cs.stg`) now renders a many-valued role as
+  an array type (`ElementType[]`), matching the database diagram template; its many-valued branch previously
+  emitted the element type without the `[]`, so a collection role looked like a single-valued one.
+- `Core/commands.sh` now forwards its arguments with `"$@"` instead of the unquoted `$*`, so an argument
   containing spaces (or shell glob characters) reaches `Database/Commands` as a single token instead of
   being word-split/globbed. Previously e.g. a file path with a space was split into several arguments.
+- `Base/commands.sh` had the identical unquoted `$*` defect; it now also forwards its arguments with
+  `"$@"`, so an argument containing spaces (or shell glob characters) reaches `Database/Commands` as a
+  single token instead of being word-split/globbed.
 - The resource `Merger` no longer corrupts a resx `<data>` entry when the same key appears in more than one
   input directory. For an existing key it ran `data.Value = mergeData.Value`, whose setter replaces the
   entry's child elements (the `<value>`, and any `<comment>`) with a single raw-text node — emitting
@@ -82,23 +135,44 @@ under a dated version heading.
   child nodes but recursed on the outer builder (`@this`), so the nested policy was always empty (deeper
   tree levels were never prefetched) and the child rules — and their security rules — leaked onto the
   outer policy. It now recurses on the nested builder.
+- Object versioning no longer creates a redundant `*Version` on every derive of a versioned object that has a
+  non-empty many-role (and no longer throws when comparing one). `VersionedExtensions.CoreOnPostDerive`'s
+  many-role change check led with `!(!versionedRole.Any() && !versionRole.Any())`, which is `true` whenever
+  either side is non-empty — so the role always looked "changed" (a new version every derive) and the real
+  `Count()`/`SequenceEqual` comparison was short-circuited. Removing that clause exposed a second defect: the
+  comparison ordered the composites with `OrderBy(s => s)` on `IObject` (which is not `IComparable`), throwing
+  `ArgumentException`. The clause is removed and the composites are ordered by `.Id`, so a versioned many-role
+  now creates a new version only when its contents actually change.
 - The remote workspace adapter's `IPullResult.GetValue<T>` now converts a pulled value to `T` instead of
   hard-casting the raw deserialized JSON. `PullResult.Values` exposes values as received over the wire (a
   `JsonElement` for System.Text.Json, a boxed/`JToken` value for Newtonsoft), so `GetValue<T>` threw
   `InvalidCastException` (e.g. casting `JsonElement` to `int`/`byte[]`). It now routes the value through the
   adapter's `IUnitConvert`, mapping the requested CLR type to its unit tag, so values round-trip to the correct
   type. (Pull values are sent untagged, so the conversion is keyed by `T`.)
+- The image content endpoint no longer returns HTTP 500 for an overlay-only request (an overlay with no
+  width). `BaseImageController.Get` enters its image-processing branch when a width *or* an overlay is
+  supplied, but always passed `w.Value` to `Process`, throwing `InvalidOperationException` when only the
+  overlay was set (width null). `Process` now takes a nullable width and resizes only when one is given; an
+  overlay-only request keeps the original dimensions and just draws the overlay.
 - The workspace adapters' session-origin `SetCompositeRoleMany2One` no longer leaves a stale inverse when an
   object's many-to-one composite role is reassigned. When changing `A`'s role from `PR` to `R` it detached the
   *new* role `R` (a no-op, since `A` was not yet associated with `R`) instead of the *previous* role `PR`, so
   `PR`'s inverse association still listed `A` while `A`'s role was already `R`. It now detaches the previous
   role, matching the one-to-one sibling. Affects the Local and Remote workspace adapters.
+- The Blazor server workspace configuration now parses the Allors user id from the `NameIdentifier` claim as a
+  `long` instead of an `int`. Object ids are `long` (`DefaultStructRanges<long>`, and
+  `DatabaseConnection.UserId` is `long`), so `int.Parse` threw `OverflowException` once a user's id exceeded
+  `int.MaxValue` (~2.1 billion), preventing the workspace from being created for that user.
 - The workspace `ContainedIn` predicate with an explicit object list now round-trips over the JSON protocol.
   Both `ToJsonVisitor`s (the workspace and the database one) serialized the objects to the `vs` (values) field,
   but the database `FromJsonVisitor` reads them from `obs` (the object-id field), so the object list was lost in
   transit — a `ContainedIn { Objects = … }` pull reached the server with neither objects nor extent and failed
   with HTTP 500. The writers now use `obs`, matching the reader and the `ob`/`obs` convention. (The `Extent`
   form of `ContainedIn` was unaffected.)
+- A required many-valued role is now flagged as missing when its collection is empty. `RoleField.Validate`
+  tested `Model == null`, but for a many-valued role `Model` is a non-null (possibly empty) composites
+  collection, so an empty required many-role was never reported as required. It now treats an empty collection
+  as missing for many-valued roles; unit and single-composite roles keep the existing null check.
 - The Local workspace adapter's `Push` now releases (disposes) the database transaction it opens, instead of
   leaving it open. `Session.PushAsync` previously returned without disposing on both the error path (the early
   return when the push has errors — the transaction was then neither committed nor rolled back) and the success
@@ -153,10 +227,19 @@ under a dated version heading.
   `default` to `null`, so it is always false for a value type); they now use a nullable `T? previous`
   sentinel (`previous == null`), matching the `DefaultClassRanges` sibling. Object-id ranges never contain `0`
   (`0` denotes null), so this is a generic data-structure correctness/consistency fix.
+- `BarcodeTest.Default` now asserts the generated barcode image instead of only writing it to disk. The test
+  produced a barcode via `IBarcodeGenerator` and wrote the bytes to `barcode.png` without any assertion, so it
+  passed even if `Generate` returned `null`/empty/non-image data (the generator returns `null` when PNG
+  encoding fails). It now asserts the result is non-null, non-empty, and begins with the PNG file signature.
 - E2E tests no longer fail on transient browser network errors (`net::ERR_NO_BUFFER_SPACE` and
   similar socket/connection errors) that surface sporadically on CI. The console-error assertion
   now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx
   resource failures.
+- `MediaTest.ModifyMediaContent` now re-derives after changing the media content and asserts the outcome,
+  instead of asserting the pre-modification state. It set `MediaContent.Data` to an empty array but never
+  called `Derive()` again, so its assertions still reflected the original (valid) derivation and the test
+  passed even though emptying the data should be rejected. It now re-derives and asserts the derivation
+  reports an error (`MediaContent`'s post-derivation rejects empty data), matching `BuilderWithEmptyData`.
 - SqlClient adapter tests now run with a 300s command timeout and `Connection Timeout=0` against
   SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
   (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.
@@ -190,3 +273,13 @@ under a dated version heading.
   the Servers' `3.119.2`), so the ZXing/SkiaSharp barcode generation ships `libSkiaSharp.so` for Linux.
   Previously the native library was absent on Linux, crashing the Base/Apps domain tests, `Commands
   Populate` and the Server with `libSkiaSharp.so: cannot open shared object file`.
+- The CI `Upload TRX artifacts` step (test-result diagnostics) now runs only on failure and is
+  non-gating (`continue-on-error`), so a transient GitHub artifact-service flake on the success path
+  no longer fails the whole job. The test report is still published on every run — the reporter reads
+  the `.trx` from disk, not from the uploaded artifact.
+- `IImageService.Source`'s `background` parameter now defaults to `"FFF"` on the interface, matching the
+  `LocalImageService` / `WeservImageService` implementations (which already defaulted to `"FFF"`). C# binds
+  optional-argument defaults from the static type of the receiver, and the service is consumed through the
+  `IImageService` interface (DI-registered, injected into `Image.razor`), so callers that omitted `background`
+  picked up the interface's `null` default — not the impls' `"FFF"` — and PNG image URLs were built with an
+  empty `b=` / `bg=` (background) query parameter. The interface and both implementations now agree.
