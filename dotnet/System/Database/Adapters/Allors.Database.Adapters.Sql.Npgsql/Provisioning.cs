@@ -37,9 +37,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 CommandTimeout = 300,
             }.ConnectionString;
 
-        /// <summary>The database name contained in <paramref name="connectionString"/>.</summary>
+        /// <summary>The database name contained in <paramref name="connectionString"/>, lower-cased to
+        /// match how <see cref="DropCreate"/> and PostgreSQL fold unquoted identifiers.</summary>
         public static string DatabaseName(string connectionString) =>
-            new NpgsqlConnectionStringBuilder(connectionString).Database;
+            new NpgsqlConnectionStringBuilder(connectionString).Database?.ToLowerInvariant();
 
         /// <summary>Drops <paramref name="database"/> if it exists and creates it fresh.</summary>
         public static void DropCreate(string database)

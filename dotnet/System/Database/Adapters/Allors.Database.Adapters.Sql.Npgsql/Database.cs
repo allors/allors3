@@ -30,6 +30,16 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             this.managementConnectionFactory = configuration.ManagementConnectionFactory;
 
             var connectionStringBuilder = new NpgsqlConnectionStringBuilder(this.ConnectionString);
+
+            // PostgreSQL folds unquoted identifiers to lower-case and Provisioning creates databases that
+            // way, so normalize the connect database name to match (e.g. a configured 'AllorsCore' would
+            // otherwise try to connect to a database that was actually created as 'allorscore').
+            if (!string.IsNullOrWhiteSpace(connectionStringBuilder.Database))
+            {
+                connectionStringBuilder.Database = connectionStringBuilder.Database.ToLowerInvariant();
+                this.ConnectionString = connectionStringBuilder.ConnectionString;
+            }
+
             var applicationName = connectionStringBuilder.ApplicationName?.Trim();
             if (!string.IsNullOrWhiteSpace(applicationName))
             {
@@ -37,7 +47,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             }
             else if (!string.IsNullOrWhiteSpace(connectionStringBuilder.Database))
             {
-                this.Id = connectionStringBuilder.Database.ToLowerInvariant();
+                this.Id = connectionStringBuilder.Database;
             }
             else
             {

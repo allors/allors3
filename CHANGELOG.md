@@ -169,3 +169,8 @@ under a dated version heading.
 - SqlClient adapter tests now run with a 300s command timeout and `Connection Timeout=0` against
   SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
   (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.
+- The Npgsql adapter now connects to the lower-cased database name, matching the database that
+  `Provisioning`/`Commands Init` actually creates (PostgreSQL folds unquoted identifiers to lower-case).
+  A configured non-lower-case `Database=` (e.g. a deployed `Database=AllorsCore`) previously created
+  `allorscore` but left the server trying to connect to `AllorsCore`. `Provisioning.DatabaseName` is
+  lower-cased for the same reason.
