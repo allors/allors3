@@ -140,6 +140,10 @@ under a dated version heading.
   `default` to `null`, so it is always false for a value type); they now use a nullable `T? previous`
   sentinel (`previous == null`), matching the `DefaultClassRanges` sibling. Object-id ranges never contain `0`
   (`0` denotes null), so this is a generic data-structure correctness/consistency fix.
+- `BarcodeTest.Default` now asserts the generated barcode image instead of only writing it to disk. The test
+  produced a barcode via `IBarcodeGenerator` and wrote the bytes to `barcode.png` without any assertion, so it
+  passed even if `Generate` returned `null`/empty/non-image data (the generator returns `null` when PNG
+  encoding fails). It now asserts the result is non-null, non-empty, and begins with the PNG file signature.
 - E2E tests no longer fail on transient browser network errors (`net::ERR_NO_BUFFER_SPACE` and
   similar socket/connection errors) that surface sporadically on CI. The console-error assertion
   now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx
