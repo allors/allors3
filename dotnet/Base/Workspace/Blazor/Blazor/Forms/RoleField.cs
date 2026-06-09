@@ -1,6 +1,8 @@
 namespace Allors.Workspace.Blazor
 {
     using System;
+    using System.Collections;
+    using System.Linq;
     using Meta;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Forms;
@@ -137,7 +139,11 @@ namespace Allors.Workspace.Blazor
 
         public override void Validate(ValidationMessageStore messages)
         {
-            if (this.RoleType.IsRequired && this.Model == null)
+            var model = this.Model;
+            var isEmpty = model == null ||
+                (this.RoleType.IsMany && model is IEnumerable composites && !composites.Cast<object>().Any());
+
+            if (this.RoleType.IsRequired && isEmpty)
             {
                 messages.Add(this.FieldIdentifier, $"{this.RoleType.Name} is required");
             }
