@@ -78,7 +78,7 @@ namespace Allors.Database.Server.Controllers
 
                         if (width != null || !string.IsNullOrWhiteSpace(overlay))
                         {
-                            data = this.Process(data, w.Value, overlay);
+                            data = this.Process(data, width, overlay);
                         }
                     }
 
@@ -105,17 +105,17 @@ namespace Allors.Database.Server.Controllers
             return this.Content(string.Empty);
         }
 
-        private byte[] Process(byte[] src, int width, string overlay, SKFilterQuality quality = SKFilterQuality.High)
+        private byte[] Process(byte[] src, int? width, string overlay, SKFilterQuality quality = SKFilterQuality.High)
         {
             try
             {
                 using var ms = new MemoryStream(src);
                 using var sourceBitmap = SKBitmap.Decode(ms);
 
-                var aspectRatio = (float)sourceBitmap.Height / sourceBitmap.Width;
-                var height = (int)Math.Round(width * aspectRatio);
-
-                using var scaledBitmap = sourceBitmap.Resize(new SKImageInfo(width, height), quality);
+                // Resize only when a width is requested; an overlay-only request keeps the original size.
+                using var scaledBitmap = width.HasValue
+                    ? sourceBitmap.Resize(new SKImageInfo(width.Value, (int)Math.Round(width.Value * ((float)sourceBitmap.Height / sourceBitmap.Width))), quality)
+                    : sourceBitmap.Copy();
 
                 if (!string.IsNullOrWhiteSpace(overlay))
                 {
