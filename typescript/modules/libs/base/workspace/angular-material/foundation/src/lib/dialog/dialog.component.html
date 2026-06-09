@@ -27,5 +27,5 @@
   <button *ngIf="confirmation" mat-button [mat-dialog-close]="true">Yes</button>
   <button *ngIf="confirmation" mat-button [mat-dialog-close]="false">No</button>
   <button *ngIf="prompt" mat-button [mat-dialog-close]="value">Ok</button>
-  <button *ngIf="prompt" mat-button [mat-dialog-close]="value">Cancel</button>
+  <button *ngIf="prompt" mat-button [mat-dialog-close]="undefined">Cancel</button>
 </mat-dialog-actions>
