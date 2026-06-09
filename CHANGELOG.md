@@ -151,3 +151,9 @@ under a dated version heading.
   non-gating (`continue-on-error`), so a transient GitHub artifact-service flake on the success path
   no longer fails the whole job. The test report is still published on every run — the reporter reads
   the `.trx` from disk, not from the uploaded artifact.
+- `IImageService.Source`'s `background` parameter now defaults to `"FFF"` on the interface, matching the
+  `LocalImageService` / `WeservImageService` implementations (which already defaulted to `"FFF"`). C# binds
+  optional-argument defaults from the static type of the receiver, and the service is consumed through the
+  `IImageService` interface (DI-registered, injected into `Image.razor`), so callers that omitted `background`
+  picked up the interface's `null` default — not the impls' `"FFF"` — and PNG image URLs were built with an
+  empty `b=` / `bg=` (background) query parameter. The interface and both implementations now agree.
