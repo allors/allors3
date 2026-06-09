@@ -85,6 +85,10 @@ export class AllorsMaterialFileComponent extends RoleField {
 
         reader.addEventListener('load', load, false);
         reader.readAsDataURL(file);
+
+        // Reset the input so re-selecting the same file fires `change` again
+        // (a file input does not re-fire when its value is unchanged).
+        input.value = '';
       }
     }
   }
