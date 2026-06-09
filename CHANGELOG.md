@@ -42,6 +42,11 @@ under a dated version heading.
   never incremented the lockout counter and an account could be brute-forced indefinitely. With the default
   Identity options (5 attempts / 5-minute lockout) and the lockout-aware `AllorsUserStore`, repeated failures
   now lock the account. (Security.)
+- The Blazor.Bootstrap.Site server's Identity logout page (`Areas/Identity/Pages/Account/LogOut.cshtml`) no
+  longer carries `@attribute [IgnoreAntiforgeryToken]`, so the logout POST is antiforgery-protected again.
+  Without it, a cross-site request could log a signed-in user out without consent (logout CSRF). The
+  scaffolded logout form (`_LoginPartial`) already posts the antiforgery token, so normal logout is
+  unaffected. (Security.)
 - The production error handler no longer returns raw exception detail to clients. `ExceptionHandler`'s
   middleware wrote `error.Message` to the response in non-development environments (the full error is already
   logged server-side), leaking internal details (e.g. SQL errors, paths). Production responses are now a
