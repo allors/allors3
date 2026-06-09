@@ -12,16 +12,71 @@ under a dated version heading.
 
 <!-- Add entries under one of: Added, Changed, Deprecated, Removed, Fixed, Security -->
 
+### Added
+
+- Configuration is now delivered from outside the source tree via the **required** `ALLORS_CONFIG_ROOT`
+  environment variable. Each server, command-line tool and integration test loads
+  `$ALLORS_CONFIG_ROOT/<domain>/appsettings.json` (domain = `core`/`base`/`apps`) through the new
+  `IConfigurationBuilder.AddAllorsConfiguration(domain, …)` helper, with environment variables layered
+  last so they override the JSON. A missing variable or missing file fails fast with an actionable error
+  instead of silently falling back to per-OS defaults.
+- `InstallConfig` Nuke target copies a provider's templates into the config root, e.g.
+  `./build.sh InstallConfig --provider npgsql --config-root /opt/allors`.
+- Test databases are created on demand from an admin connection: `ALLORS_NPGSQL` / `ALLORS_SQLCLIENT`
+  (matching the allors4 CI names) hold a connection allowed to create databases, and each test's connection
+  string is derived from them by swapping the database name. The shared `DatabaseProvisioning` helper (over
+  the provider-specific `Provisioning` types) drops/creates the database, and the in-process tests (the
+  static adapter tests and the Core/Base `Server.Local.Tests`) self-provision a per-test-class database — so
+  `dotnet test` runs against the containers with no pre-existing database and no SQL LocalDB. The legacy
+  `ALLORS_TEST_SQLCLIENT_CONNECTION` / `ALLORS_TEST_NPGSQL_CONNECTION` names are still accepted as aliases;
+  if neither is set the helper fails fast with an actionable error.
+- `Commands Init` (Core/Base/Apps) drops and (re)creates the configured database from the admin connection,
+  giving the out-of-process server tests and e2e flows a cross-platform provisioning step.
+- `launchSettings.json` profiles for the Core/Base/Apps servers that select the database provider
+  (e.g. *Core (Postgres)* / *Core (SqlClient)*) by setting `ALLORS_CONFIG_ROOT`.
+
 ### Changed
 
+- The database provider (SqlClient / Npgsql) is now selected by which template populates
+  `ALLORS_CONFIG_ROOT` rather than by the host operating system. The in-repo `config/<provider>/<domain>`
+  files are templates (with development defaults) copied to the config root (e.g. `/opt/allors`); real
+  secrets belong in the deployed copy or in environment variables, not in source.
+- Configuration file names are normalized to lowercase `appsettings.json` so the same files resolve on
+  case-sensitive filesystems (Linux); previously the loader looked for `appSettings.json`.
 - The SqlClient adapter's `LIKE` filter now follows ANSI semantics like the Npgsql and in-memory adapters:
   `%` and `_` are the only wildcards and `[` is matched literally. Previously T-SQL character classes
   (e.g. `[abc]`, `[a-z]`, `[^…]`) were active only on SqlClient, so the same `LIKE` pattern could match
   differently across adapters. Patterns that relied on SqlClient char-classes no longer match as classes
   (that behaviour was never portable to Npgsql/Memory).
+- Database provisioning for the Nuke test/e2e targets now runs cross-platform via `Commands Init` against the
+  Postgres/SQL Server containers instead of the Windows-only SQL LocalDB step; `--provider` selects both the
+  admin connection and the derived `ConnectionStrings__DefaultConnection` passed to the child processes.
+- The Npgsql legacy `AppContext` switches (`EnableLegacyTimestampBehavior`, `EnableStoredProcedureCompatMode`)
+  are now set by a module initializer in the Npgsql adapter, so the server, command-line tools and tests get
+  the same behaviour (previously only the adapter test fixture set them).
+- The Core `Server.Local.Tests` / `Server.Remote.Tests` build their database through the adapter-aware
+  `DatabaseBuilder` instead of a hardcoded SqlClient type, so they honour the configured provider.
+
+### Known limitations
+
+- Running the out-of-process `Server.Remote` tests on **Npgsql** currently fails on a pre-existing
+  server-side defect (unrelated to provisioning, surfaced now that these tests are provider-aware): a
+  repeated `Test/Setup` raises `DerivationException: Grant.Subjects, Grant.SubjectGroups at least one!`
+  (a first `Setup` succeeds; a second leaves a `Grant` with no subjects). SqlClient is unaffected, and Npgsql
+  is green for the adapter tests, in-process `Server.Local.Tests`, `Commands Init`, `Populate` and schema.
+  Tracked as a separate follow-up.
+
+### Removed
+
+- The Windows-only `SqlLocalDB` build helper and the `MartinCostello.SqlLocalDb` build dependency; the build
+  no longer provisions SQL LocalDB.
+- Legacy per-project `appSettings.json` and `appSettings.{development,osx,windows}.json` files next to the
+  servers, command-line tools and server tests. Configuration now comes solely from `ALLORS_CONFIG_ROOT`.
 
 ### Fixed
 
+- The `Base` server and command-line tools loaded the `core` configuration instead of `base`, so the
+  `config/<provider>/base` templates were never used. They now resolve the `base` domain.
 - `commands.sh` now forwards its arguments with `"$@"` instead of the unquoted `$*`, so an argument
   containing spaces (or shell glob characters) reaches `Database/Commands` as a single token instead of
   being word-split/globbed. Previously e.g. a file path with a space was split into several arguments.

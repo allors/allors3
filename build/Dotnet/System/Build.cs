@@ -29,14 +29,13 @@ partial class Build
         .DependsOn(DotnetSystemAdaptersGenerate)
         .Executes(() =>
         {
-            using (new SqlLocalDB())
-            {
-                DotNetTest(s => s
-                    .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
-                    .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.SqlClient")
-                    .AddLoggers("trx;LogFileName=AdaptersSqlClient.trx")
-                    .SetResultsDirectory(Paths.ArtifactsTests));
-            }
+            // The adapter fixtures create a per-test-class database from the ALLORS_SQLCLIENT admin
+            // connection, so no local SQL Server instance needs to be provisioned here.
+            DotNetTest(s => s
+                .SetProjectFile(Paths.DotnetSystemAdaptersStaticTests)
+                .SetFilter("FullyQualifiedName~Allors.Database.Adapters.Sql.SqlClient")
+                .AddLoggers("trx;LogFileName=AdaptersSqlClient.trx")
+                .SetResultsDirectory(Paths.ArtifactsTests));
         });
 
     private Target DotnetSystemAdaptersTestNpgsql => _ => _

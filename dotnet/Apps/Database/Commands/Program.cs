@@ -29,6 +29,7 @@ namespace Commands
         typeof(Populate),
         typeof(Print),
         typeof(Roundtrip),
+        typeof(Init),
         typeof(Custom))]
     public class Program
     {
@@ -54,14 +55,9 @@ namespace Commands
             {
                 if (this.configuration == null)
                 {
-                    const string root = "/config/apps";
-
                     var configurationBuilder = new ConfigurationBuilder();
 
-                    configurationBuilder.AddCrossPlatform(".");
-                    configurationBuilder.AddCrossPlatform(root);
-                    configurationBuilder.AddCrossPlatform(System.IO.Path.Combine(root, "commands"));
-                    configurationBuilder.AddEnvironmentVariables();
+                    configurationBuilder.AddAllorsConfiguration("apps", "commands");
 
                     this.configuration = configurationBuilder.Build();
                 }

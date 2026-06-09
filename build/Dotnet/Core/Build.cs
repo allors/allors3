@@ -6,11 +6,11 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 partial class Build
 {
     private Target DotnetCoreResetDatabase => _ => _
+        .DependsOn(DotnetCorePublishCommands)
         .Executes(() =>
         {
-            var database = "Core";
-            using var sqlLocalDb = new SqlLocalDB();
-            sqlLocalDb.Init(database);
+            SetDatabaseEnvironment("Core");
+            DotNet("Commands.dll Init", Paths.ArtifactsCoreCommands);
         });
 
     private Target DotnetCoreMerge => _ => _

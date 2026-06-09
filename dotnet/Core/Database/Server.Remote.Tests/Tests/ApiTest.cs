@@ -15,6 +15,7 @@ namespace Allors.Server.Tests
     using System.Text.Json;
     using System.Threading.Tasks;
     using Database;
+    using Database.Adapters;
     using Database.Adapters.Sql;
     using Database.Domain;
     using Database.Configuration;
@@ -24,9 +25,7 @@ namespace Allors.Server.Tests
     using Protocol.Json.Auth;
     using Xunit;
     using C1 = Database.Domain.C1;
-    using Database = Database.Adapters.Sql.SqlClient.Database;
     using ObjectFactory = Database.ObjectFactory;
-    using Path = System.IO.Path;
     using User = Database.Domain.User;
 
     public abstract class ApiTest : IDisposable
@@ -39,24 +38,17 @@ namespace Allors.Server.Tests
         {
             var configurationBuilder = new ConfigurationBuilder();
 
-            const string root = "/config/core";
-            configurationBuilder.AddCrossPlatform(".");
-            configurationBuilder.AddCrossPlatform(root);
-            configurationBuilder.AddCrossPlatform(Path.Combine(root, "commands"));
-            configurationBuilder.AddEnvironmentVariables();
+            configurationBuilder.AddAllorsConfiguration("core", "commands");
 
             var configuration = configurationBuilder.Build();
 
             var metaPopulation = new MetaBuilder().Build();
             var rules = Rules.Create(metaPopulation);
             var engine = new Engine(rules);
-            var database = new Database(
+            var database = new DatabaseBuilder(
                 new DefaultDatabaseServices(engine),
-                new Configuration
-                {
-                    ConnectionString = configuration["ConnectionStrings:DefaultConnection"],
-                    ObjectFactory = new ObjectFactory(metaPopulation, typeof(C1)),
-                });
+                configuration,
+                new ObjectFactory(metaPopulation, typeof(C1))).Build();
 
             this.HttpClientHandler = new HttpClientHandler();
             this.HttpClient = new HttpClient(this.HttpClientHandler)
