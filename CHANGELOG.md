@@ -57,15 +57,6 @@ under a dated version heading.
 - The Core `Server.Local.Tests` / `Server.Remote.Tests` build their database through the adapter-aware
   `DatabaseBuilder` instead of a hardcoded SqlClient type, so they honour the configured provider.
 
-### Known limitations
-
-- Running the out-of-process `Server.Remote` tests on **Npgsql** currently fails on a pre-existing
-  server-side defect (unrelated to provisioning, surfaced now that these tests are provider-aware): a
-  repeated `Test/Setup` raises `DerivationException: Grant.Subjects, Grant.SubjectGroups at least one!`
-  (a first `Setup` succeeds; a second leaves a `Grant` with no subjects). SqlClient is unaffected, and Npgsql
-  is green for the adapter tests, in-process `Server.Local.Tests`, `Commands Init`, `Populate` and schema.
-  Tracked as a separate follow-up.
-
 ### Removed
 
 - The Windows-only `SqlLocalDB` build helper and the `MartinCostello.SqlLocalDb` build dependency; the build
@@ -179,3 +170,11 @@ under a dated version heading.
   A configured non-lower-case `Database=` (e.g. a deployed `Database=AllorsCore`) previously created
   `allorscore` but left the server trying to connect to `AllorsCore`. `Provisioning.DatabaseName` is
   lower-cased for the same reason.
+- Re-initializing a database (`Init`, as the server does on every `Test/Setup`) now resets the
+  data-scoped database services (the identity/security/permission caches) in `DatabaseServices.OnInit`.
+  `Init` recreates the schema and restarts object-id allocation, but the stale UniqueId→object-id
+  mappings were kept, so a repeated `Setup` on Npgsql failed with
+  `DerivationException: Grant.Subjects, Grant.SubjectGroups at least one!` — the security `Setup` merger
+  resolved a Grant to a wiped id and never re-linked its subjects. Guarded by a new `RepeatedSetupTests`
+  (runs under `CiDotnetCoreDatabaseTest` on every adapter). Unblocks the out-of-process Npgsql server
+  tests previously noted under "Known limitations".
