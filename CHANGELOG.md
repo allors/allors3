@@ -78,6 +78,10 @@ under a dated version heading.
 
 ### Fixed
 
+- Binary unit values are no longer double base64-encoded when pulled. `unitFromJson` returned `btoa(value)` for
+  a `Binary` unit, but the wire value is already base64 and the push path (`unitToJson`) sends it through
+  unchanged, so the round-trip produced a doubly-encoded value. It now returns the value as-is, matching the
+  other units.
 - Missing-revocation detection now checks the cached revocations instead of the permissions.
   `ResponseContext.checkForMissingRevocations` tested `database.permissions` rather than
   `database.revocationById`, so it flagged the wrong ids as missing (cached revocations were re-requested and
