@@ -217,5 +217,34 @@ namespace Tests
             Assert.Single(pool);
             Assert.Contains(pool, v => v.i == c1b.Id);
         }
+
+        [Fact]
+        public void UnknownPullDependencyTagIsIgnored()
+        {
+            this.SetUser("jane@example.com");
+
+            var c1b = new C1s(this.Transaction).Extent().First(v => "c1B".Equals(v.Name));
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var pull = new Pull { Object = c1b, Results = new[] { new Result { Name = "Data" }, } };
+
+            var pullRequest = new PullRequest
+            {
+                l = new[] { pull.ToJson(this.UnitConvert) },
+                d = new[]
+                {
+                    new PullDependency { o = "an-unknown-object-type-tag", r = this.M.C1.C1C2One2One.RelationType.Tag },
+                },
+            };
+
+            var api = new Api(this.Transaction, "Default", CancellationToken.None);
+
+            // An unknown dependency tag must be ignored, not crash the pull (previously a NullReferenceException).
+            var pullResponse = api.Pull(pullRequest);
+
+            Assert.Equal(c1b.Id, pullResponse.o["Data"]);
+        }
     }
 }
