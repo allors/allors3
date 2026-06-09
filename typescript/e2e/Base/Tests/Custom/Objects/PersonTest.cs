@@ -182,5 +182,51 @@ namespace Tests.E2E.Objects
 
             ClassicAssert.AreEqual(before.Length - 1, after.Length);
         }
+
+        [Test]
+        public async Task EmploymentExtentWithUnsetIncorporationDate()
+        {
+            // Regression for the dynamic edit-extent panel: a row whose DateTime display
+            // column is unset must not crash the table render. The person-overview Employment
+            // panel includes the Employer organisation, whose primary display columns include
+            // the DateTime IncorporationDate. With an employer that has no IncorporationDate,
+            // refreshTable previously called date-fns format(null) and threw "Invalid time
+            // value", so the panel rendered no rows (and logged a console error).
+            var person = new People(this.Transaction).FindBy(this.M.Person.FirstName, "John");
+
+            // Employer deliberately built without an IncorporationDate (the column is optional).
+            var organisation = new OrganisationBuilder(this.Transaction)
+                .WithName("Organisation Without IncorporationDate")
+                .Build();
+
+            var employment = new EmploymentBuilder(this.Transaction)
+                .WithEmployee(person)
+                .WithEmployer(organisation)
+                .WithFromDate(this.Transaction.Now().AddDays(-1))
+                .Build();
+
+            this.Transaction.Derive();
+            this.Transaction.Commit();
+
+            var @class = this.M.Person;
+
+            var overview = this.Application.GetOverview(@class);
+            var url = overview.RouteInfo.FullPath.Replace(":id", $"{person.Strategy.ObjectId}");
+            await this.Page.GotoAsync(url);
+            await this.Page.WaitForAngular();
+
+            var personOverview = new PersonOverviewPageComponent(this.AppRoot);
+
+            await personOverview.ViewEmployment.Locator.ClickAsync();
+            await this.Page.WaitForAngular();
+
+            var edit = personOverview.EditEmployment;
+
+            var objectIds = await edit.Table.GetObjectIds();
+
+            // The current employment renders (its unset-IncorporationDate employer no longer
+            // throws); without the fix the table is empty and the console-error TearDown trips.
+            ClassicAssert.Contains(employment.Strategy.ObjectId.ToString(), objectIds);
+        }
     }
 }
