@@ -78,6 +78,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The filter-field dialog no longer saves a non-Between field as a Between range. `apply()` decided
+  single-vs-Between solely from whether the `value2` control was truthy, but `value2` is never reset — so a
+  value entered for a Between field leaked into a subsequently-selected non-Between field (whose `value2` input
+  isn't shown, so the stale value survived) and the field was stored as a range (`FilterField.argument` →
+  `[value, value2]`), producing the wrong predicate. `apply()` now takes the Between branch only when the field
+  actually is Between (`this.isBetween && value2`).
 - The Material single-file upload field can re-select a file after it was removed. `onFileInput` read the
   picked file but never reset the hidden `<input type="file">`, so its `value` kept the previous filename;
   after deleting the media, re-picking the **same** file did not fire the input's `change` event (a file input
