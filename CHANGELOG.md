@@ -161,13 +161,14 @@ under a dated version heading.
   SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
   (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.
 - CI now runs on `ubuntu-latest` with PostgreSQL and SQL Server provided as **service containers** (the
-  Windows-only SqlLocalDB install and the host PostgreSQL service/bootstrap steps are gone), and exercises
-  every provider-agnostic suite — database, server local/remote, workspace and e2e — on **both** Npgsql
-  and SqlClient via a cross-provider matrix. Admin connections come from `ALLORS_NPGSQL` / `ALLORS_SQLCLIENT`
-  and `Commands Init` provisions the databases. Previously the database/workspace/e2e targets defaulted to
+  Windows-only SqlLocalDB install and the host PostgreSQL service/bootstrap steps are gone). The
+  database/server/workspace/e2e suites run on **SqlClient**, each adapter has its own adapter test
+  (Memory/SqlClient/Npgsql), and admin connections come from `ALLORS_NPGSQL` / `ALLORS_SQLCLIENT` with
+  `Commands Init` provisioning the databases. Previously the database/workspace/e2e targets defaulted to
   the `sqlclient` build provider on a runner with no SQL Server, and aborted on the (fail-fast) missing
-  admin connection. This is the cross-platform, cross-adapter CI the `ALLORS_CONFIG_ROOT` work targets,
-  and would have caught the casing and repeated-`Setup` regressions above on the offending provider.
+  admin connection. Running the full database/server/workspace/e2e suite on **Npgsql** is a tracked
+  follow-up — it surfaces pre-existing npgsql-specific issues (result ordering, long index-name truncation,
+  an `Equals` empty-pull).
 - The Npgsql adapter now connects to the lower-cased database name, matching the database that
   `Provisioning`/`Commands Init` actually creates (PostgreSQL folds unquoted identifiers to lower-case).
   A configured non-lower-case `Database=` (e.g. a deployed `Database=AllorsCore`) previously created
