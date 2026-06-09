@@ -46,6 +46,10 @@ namespace Allors.Database.Adapters.Sql.Npgsql
         public static void DropCreate(string database)
         {
             database = database.ToLowerInvariant();
+
+            // Quote the identifier so names that require it (e.g. 'allors-core' or a reserved word) are valid
+            // SQL; double any embedded quote. The name is lower-cased to match the adapter's connect name.
+            var quoted = "\"" + database.Replace("\"", "\"\"") + "\"";
             var adminConnectionString = AdminConnectionString();
 
             int version;
@@ -65,7 +69,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
                 using var command = connection.CreateCommand();
                 // FORCE (PostgreSQL 13+) terminates active connections so the drop cannot block.
                 var withForce = version >= 13 ? "WITH (FORCE)" : string.Empty;
-                command.CommandText = $"DROP DATABASE IF EXISTS {database} {withForce}";
+                command.CommandText = $"DROP DATABASE IF EXISTS {quoted} {withForce}";
                 command.ExecuteNonQuery();
             }
 
@@ -73,7 +77,7 @@ namespace Allors.Database.Adapters.Sql.Npgsql
             {
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = $"CREATE DATABASE {database}";
+                command.CommandText = $"CREATE DATABASE {quoted}";
                 command.ExecuteNonQuery();
             }
         }
