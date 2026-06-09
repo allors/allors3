@@ -125,6 +125,10 @@ jobs:
           fetch-tags: true
       - name: Generate nl-BE locale
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
+      - name: Install native test dependencies
+        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
+        # xvfb: the e2e tests launch a headed browser; run them under a virtual X server.
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1 xvfb
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5
         with:
@@ -137,11 +141,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Install Playwright OS dependencies
-        if: contains(matrix.target, 'E2E')
-        run: npx --yes playwright install-deps
       - name: Run Nuke target ${{ matrix.target }}
-        run: ./build.sh -target ${{ matrix.target }} --provider npgsql
+        run: |
+          if [[ "${{ matrix.target }}" == *E2E* ]]; then
+            xvfb-run --auto-servernum ./build.sh -target ${{ matrix.target }} --provider npgsql
+          else
+            ./build.sh -target ${{ matrix.target }} --provider npgsql
+          fi
       - name: Upload TRX artifacts
         if: always()
         uses: actions/upload-artifact@v7
@@ -204,6 +210,10 @@ jobs:
           fetch-tags: true
       - name: Generate nl-BE locale
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
+      - name: Install native test dependencies
+        # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
+        # xvfb: the e2e tests launch a headed browser; run them under a virtual X server.
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1 xvfb
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5
         with:
@@ -216,11 +226,13 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '24'
-      - name: Install Playwright OS dependencies
-        if: contains(matrix.target, 'E2E')
-        run: npx --yes playwright install-deps
       - name: Run Nuke target ${{ matrix.target }}
-        run: ./build.sh -target ${{ matrix.target }} --provider sqlclient
+        run: |
+          if [[ "${{ matrix.target }}" == *E2E* ]]; then
+            xvfb-run --auto-servernum ./build.sh -target ${{ matrix.target }} --provider sqlclient
+          else
+            ./build.sh -target ${{ matrix.target }} --provider sqlclient
+          fi
       - name: Upload TRX artifacts
         if: always()
         uses: actions/upload-artifact@v7
