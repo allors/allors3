@@ -98,6 +98,10 @@ under a dated version heading.
   corrupted the file, failing a random matrix job. A new `dotnet/Directory.Build.targets` clears the
   `CloudBuildVersionVars` item before the target runs, skipping the emission. Assembly version stamping
   is unaffected, and `cloudBuild.setVersionVariables: false` does **not** gate this MSBuild-side write.
+- Missing-revocation detection now checks the cached revocations instead of the permissions.
+  `ResponseContext.checkForMissingRevocations` tested `database.permissions` rather than
+  `database.revocationById`, so it flagged the wrong ids as missing (cached revocations were re-requested and
+  genuinely missing ones were not). It now checks `revocationById`, matching `checkForMissingGrants`.
 - Removing an item from a session-origin one-to-many role now removes it.
   `SessionOriginState.removeCompositesRoleOne2Many` used `ranges.add` instead of `ranges.remove`, so the item
   was left in place; it now calls `ranges.remove`, matching the many-to-many case.
