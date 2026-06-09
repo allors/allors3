@@ -78,6 +78,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The workspace `nodeLeafs` pointer helper now returns the tree's leaf `Node`s instead of `undefined`.
+  `resolveLeafs` is a standalone function, so `results.add(this)` added `this` (`undefined`, not a method
+  receiver) for every leaf instead of the leaf `node`; `nodeLeafs` therefore returned a set containing
+  `undefined`. It now adds `node`.
 - The markdown field no longer leaks its EasyMDE/CodeMirror editor. The component created an EasyMDE editor
   (with a CodeMirror `change` listener) in `ngAfterViewInit` but never tore it down, so destroying the component
   left the editor and its listeners dangling (EasyMDE's `toTextArea` teardown never ran). It now overrides
