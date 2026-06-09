@@ -9,6 +9,7 @@ public partial class Paths
     public AbsolutePath DotnetCoreDatabaseMetaGenerated => DotnetCoreDatabase / "Meta/Generated";
     public AbsolutePath DotnetCoreDatabaseGenerate => DotnetCoreDatabase / "Generate/Generate.csproj";
     public AbsolutePath DotnetCoreDatabaseMerge => DotnetCoreDatabase / "Merge/Merge.csproj";
+    public AbsolutePath DotnetCoreDatabaseMergeTests => DotnetCoreDatabase / "Merge.Tests/Merge.Tests.csproj";
     public AbsolutePath DotnetCoreDatabaseServer => DotnetCoreDatabase / "Server";
     public AbsolutePath DotnetCoreDatabaseCommands => DotnetCoreDatabase / "Commands";
     public AbsolutePath DotnetCoreDatabaseMetaTests => DotnetCoreDatabase / "Meta.Tests/Meta.Tests.csproj";
