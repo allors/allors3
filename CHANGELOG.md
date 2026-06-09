@@ -22,6 +22,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The Json API's `Pull` no longer crashes (`NullReferenceException` → HTTP 500) when a request dependency
+  carries an unknown or wrong-kind meta tag. `Api.ToDependencies` cast each client-supplied tag
+  (`FindByTag(...)`) to `IComposite`/`IRelationType` and dereferenced it unchecked, so a bogus `o`/`a`/`r`
+  tag null-crashed the whole pull. Unresolvable dependencies — which are only prefetch hints — are now
+  skipped (and logged as a warning, since they indicate a faulty client), so the pull proceeds normally.
 - The workspace UML diagram template (`Workspace/Templates/uml.cs.stg`) now renders a many-valued role as
   an array type (`ElementType[]`), matching the database diagram template; its many-valued branch previously
   emitted the element type without the `[]`, so a collection role looked like a single-valued one.
