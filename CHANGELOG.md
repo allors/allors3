@@ -169,6 +169,11 @@ under a dated version heading.
 - SqlClient adapter tests now run with a 300s command timeout and `Connection Timeout=0` against
   SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
   (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.
+- The GitHub Actions CI workflow now selects the database provider per target (PostgreSQL for the
+  database/workspace/e2e targets, SQL Server LocalDB only for the SqlClient adapter target) and supplies
+  the `ALLORS_NPGSQL` / `ALLORS_SQLCLIENT` admin connection strings. Previously these targets defaulted to
+  the `sqlclient` build provider — for which CI started no SQL Server — and aborted on the (now fail-fast)
+  missing admin connection before `Commands Init` could provision the database.
 - The Npgsql adapter now connects to the lower-cased database name, matching the database that
   `Provisioning`/`Commands Init` actually creates (PostgreSQL folds unquoted identifiers to lower-case).
   A configured non-lower-case `Database=` (e.g. a deployed `Database=AllorsCore`) previously created

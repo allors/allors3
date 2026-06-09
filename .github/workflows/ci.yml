@@ -30,21 +30,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - CiDotnetSystemAdaptersTestMemory
-          - CiDotnetSystemAdaptersTestSqlClient
-          - CiDotnetSystemAdaptersTestNpgsql
-          - CiDotnetCoreDatabaseTest
-          - CiDotnetCoreWorkspaceLocalTest
-          - CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
-          - CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
-          - CiDotnetBaseDatabaseTest
-          - CiDotnetAppsDatabaseTest
-          - CiTypescriptWorkspaceTest
-          - CiTypescriptWorkspaceAdaptersJsonTest
-          - CiTypescriptE2EAngularBaseTest
-          - CiTypescriptWorkspacesE2EAngularAppsIntranetTest
-          # - CiTypescriptWorkspacesE2EAngularAppsExtranetTest  # disabled in azure-pipelines.yml
+        # Each target declares the database provider it runs against. The provider selects the in-repo
+        # config template (config/<provider>) and the admin connection used to provision the database.
+        include:
+          # Memory adapter needs no database.
+          - target: CiDotnetSystemAdaptersTestMemory
+          # SqlClient adapter self-provisions per-test-class databases from ALLORS_SQLCLIENT (LocalDB).
+          - target: CiDotnetSystemAdaptersTestSqlClient
+            provider: sqlclient
+          # Everything else runs against the bootstrapped PostgreSQL service.
+          - target: CiDotnetSystemAdaptersTestNpgsql
+            provider: npgsql
+          - target: CiDotnetCoreDatabaseTest
+            provider: npgsql
+          - target: CiDotnetCoreWorkspaceLocalTest
+            provider: npgsql
+          - target: CiDotnetCoreWorkspaceRemoteJsonSystemTextTest
+            provider: npgsql
+          - target: CiDotnetCoreWorkspaceRemoteJsonNewtonsoftTest
+            provider: npgsql
+          - target: CiDotnetBaseDatabaseTest
+            provider: npgsql
+          - target: CiDotnetAppsDatabaseTest
+            provider: npgsql
+          - target: CiTypescriptWorkspaceTest
+            provider: npgsql
+          - target: CiTypescriptWorkspaceAdaptersJsonTest
+            provider: npgsql
+          - target: CiTypescriptE2EAngularBaseTest
+            provider: npgsql
+          - target: CiTypescriptWorkspacesE2EAngularAppsIntranetTest
+            provider: npgsql
+          # - target: CiTypescriptWorkspacesE2EAngularAppsExtranetTest  # disabled in azure-pipelines.yml
 
     env:
       NODE_OPTIONS: --max_old_space_size=16384
@@ -53,6 +70,11 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
       # Clean incrementing versions (3.1.0-alpha.N) with no -g<commit> suffix in CI too.
       PublicRelease: 'true'
+      # Admin connections that can create/drop databases. Each target reads only the one matching its
+      # provider; the unused one is harmless. allors/allors is the superuser the bootstrap step creates;
+      # AdminConnectionString() redirects these to the postgres/master maintenance catalog.
+      ALLORS_NPGSQL: 'Server=localhost; Port=5432; User Id=allors; Password=allors'
+      ALLORS_SQLCLIENT: 'Server=(localdb)\MSSQLLocalDB; Integrated Security=true; TrustServerCertificate=true'
 
     steps:
       - name: Checkout
@@ -116,7 +138,7 @@ jobs:
           }
 
       - name: Setup SQL Server LocalDB
-        if: matrix.target == 'CiDotnetSystemAdaptersTestSqlClient'
+        if: matrix.provider == 'sqlclient'
         shell: pwsh
         run: |
           choco install sqllocaldb -y --no-progress
@@ -126,7 +148,7 @@ jobs:
 
       - name: Run Nuke target ${{ matrix.target }}
         shell: pwsh
-        run: ./build.ps1 -target ${{ matrix.target }}
+        run: ./build.ps1 -target ${{ matrix.target }}${{ matrix.provider && format(' --provider {0}', matrix.provider) || '' }}
 
       - name: Upload TRX artifacts
         if: always()
