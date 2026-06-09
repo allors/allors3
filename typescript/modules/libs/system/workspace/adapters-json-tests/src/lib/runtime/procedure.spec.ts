@@ -50,7 +50,7 @@ test('testUnitSamplesWithValues', async () => {
 
   const unitSample = result.object<UnitSample>(m.UnitSample);
 
-  expect(unitSample.AllorsBinary).toEqual('QVFJRA==');
+  expect(unitSample.AllorsBinary).toEqual('AQID');
   expect(unitSample.AllorsBoolean).toBeTruthy();
   expect(new Date(unitSample.AllorsDateTime)).toEqual(
     new Date('Tue Mar 27 1973 00:00:00 GMT+0000')
