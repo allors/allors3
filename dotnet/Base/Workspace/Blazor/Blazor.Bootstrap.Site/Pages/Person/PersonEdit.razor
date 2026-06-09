@@ -48,9 +48,14 @@
     {
         this.Session = this.Workspace.CreateSession();
 
+        if (!long.TryParse(id, out var objectId))
+        {
+            return;
+        }
+
         var pull = new Pull
             {
-                ObjectId = long.Parse(id)
+                ObjectId = objectId
             };
 
         var result = await this.Session.PullAsync(pull);
