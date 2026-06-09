@@ -1,4 +1,5 @@
 export * from './lib/database/database-connection';
+export * from './lib/database/security/response-context';
 
 export * from './lib/json/from-json';
 export * from './lib/json/to-json';
