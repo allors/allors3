@@ -373,7 +373,7 @@ export abstract class Strategy implements IStrategy {
 
     switch (roleType.origin) {
       case Origin.Session:
-        this.session.sessionOriginState.addCompositesRole(
+        this.session.sessionOriginState.removeCompositesRole(
           this.object,
           roleType,
           value
