@@ -78,6 +78,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The markdown field no longer leaks its EasyMDE/CodeMirror editor. The component created an EasyMDE editor
+  (with a CodeMirror `change` listener) in `ngAfterViewInit` but never tore it down, so destroying the component
+  left the editor and its listeners dangling (EasyMDE's `toTextArea` teardown never ran). It now overrides
+  `ngOnDestroy` — `super.ngOnDestroy()` then `easyMDE.toTextArea()` — disposing the editor and restoring the
+  original textarea.
 - The localised-markdown field no longer leaks its EasyMDE/CodeMirror editor. The component created an EasyMDE
   editor (with a CodeMirror `change` listener) in `ngOnInit` but never tore it down, so destroying the component
   left the editor and its listeners dangling (EasyMDE's `toTextArea` teardown never ran). It now implements

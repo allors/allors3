@@ -49,4 +49,9 @@ export class AllorsMaterialMarkdownComponent
 
     this.elementRef.nativeElement.easyMDE = this.easyMDE;
   }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    this.easyMDE?.toTextArea();
+  }
 }
