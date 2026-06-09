@@ -106,6 +106,10 @@ under a dated version heading.
   *new* role `R` (a no-op, since `A` was not yet associated with `R`) instead of the *previous* role `PR`, so
   `PR`'s inverse association still listed `A` while `A`'s role was already `R`. It now detaches the previous
   role, matching the one-to-one sibling. Affects the Local and Remote workspace adapters.
+- The Blazor server workspace configuration now parses the Allors user id from the `NameIdentifier` claim as a
+  `long` instead of an `int`. Object ids are `long` (`DefaultStructRanges<long>`, and
+  `DatabaseConnection.UserId` is `long`), so `int.Parse` threw `OverflowException` once a user's id exceeded
+  `int.MaxValue` (~2.1 billion), preventing the workspace from being created for that user.
 - The workspace `ContainedIn` predicate with an explicit object list now round-trips over the JSON protocol.
   Both `ToJsonVisitor`s (the workspace and the database one) serialized the objects to the `vs` (values) field,
   but the database `FromJsonVisitor` reads them from `obs` (the object-id field), so the object list was lost in
