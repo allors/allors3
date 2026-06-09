@@ -37,7 +37,7 @@ export class PrototypeObjectFactory implements IObjectFactory {
       };
 
       prototype.toJSON = function () {
-        return this.strategy.ToJSON();
+        return this.strategy.toJSON();
       };
 
       objectType.roleTypes.forEach((roleType) => {

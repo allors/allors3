@@ -78,6 +78,10 @@ under a dated version heading.
 
 ### Fixed
 
+- Workspace objects are JSON-serializable again. `PrototypeObjectFactory` built each object's `toJSON` to call
+  the non-existent `this.strategy.ToJSON()` (PascalCase), so `object.toJSON()` / `JSON.stringify(object)` threw
+  `TypeError: this.strategy.ToJSON is not a function`. It now calls the real lowercase `this.strategy.toJSON()`
+  (matching the sibling `toString`), so an object serializes to its `{ id }` projection instead of throwing.
 - The workspace `nodeLeafs` pointer helper now returns the tree's leaf `Node`s instead of `undefined`.
   `resolveLeafs` is a standalone function, so `results.add(this)` added `this` (`undefined`, not a method
   receiver) for every leaf instead of the leaf `node`; `nodeLeafs` therefore returned a set containing
