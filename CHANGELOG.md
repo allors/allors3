@@ -78,6 +78,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The localised-markdown field no longer leaks its EasyMDE/CodeMirror editor. The component created an EasyMDE
+  editor (with a CodeMirror `change` listener) in `ngOnInit` but never tore it down, so destroying the component
+  left the editor and its listeners dangling (EasyMDE's `toTextArea` teardown never ran). It now implements
+  `ngOnDestroy` — `super.ngOnDestroy()` then `easyMDE.toTextArea()` — disposing the editor and restoring the
+  original textarea.
 - The filter-field dialog no longer saves a non-Between field as a Between range. `apply()` decided
   single-vs-Between solely from whether the `value2` control was truthy, but `value2` is never reset — so a
   value entered for a Between field leaked into a subsequently-selected non-Between field (whose `value2` input
