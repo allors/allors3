@@ -78,6 +78,11 @@ under a dated version heading.
 
 ### Fixed
 
+- The Material single-file upload field can re-select a file after it was removed. `onFileInput` read the
+  picked file but never reset the hidden `<input type="file">`, so its `value` kept the previous filename;
+  after deleting the media, re-picking the **same** file did not fire the input's `change` event (a file input
+  only re-fires when its value changes), so the file could not be re-selected. The input is now reset
+  (`input.value = ''`) once the selection has been read.
 - The Material prompt dialog's **Cancel** button no longer returns the typed value. Both the Ok and Cancel
   buttons in `dialog.component.html` bound `[mat-dialog-close]="value"`, so cancelling a prompt closed it with
   the same string as Ok; callers test the result for truthiness, so a cancelled prompt was indistinguishable
