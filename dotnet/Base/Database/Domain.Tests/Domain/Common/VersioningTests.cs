@@ -116,5 +116,55 @@ namespace Allors.Database.Domain.Tests
             Assert.Single(version.OrderLines);
             Assert.Equal(orderLine, version.OrderLines.ElementAt(0));
         }
+
+        [Fact]
+        public void VersionedCompositesRoleUnchanged()
+        {
+            // Two lines so the equal-count comparison runs OrderBy over more than one element
+            // (a single element never invokes the comparer).
+            var orderLine1 = new OrderLineBuilder(this.Transaction).Build();
+            var orderLine2 = new OrderLineBuilder(this.Transaction).Build();
+
+            var order = new OrderBuilder(this.Transaction)
+                .WithOrderLine(orderLine1)
+                .WithOrderLine(orderLine2)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var currentVersion = order.CurrentVersion;
+            Assert.Single(order.AllVersions);
+
+            // Force a re-derivation without changing any versioned role.
+            order.NonVersionedAmount = 20m;
+
+            this.Transaction.Derive();
+
+            Assert.Single(order.AllVersions);
+            Assert.Equal(currentVersion, order.CurrentVersion);
+        }
+
+        [Fact]
+        public void VersionedCompositesRoleChanged()
+        {
+            var orderLine = new OrderLineBuilder(this.Transaction).Build();
+
+            var order = new OrderBuilder(this.Transaction)
+                .WithOrderLine(orderLine)
+                .Build();
+
+            this.Transaction.Derive();
+
+            var currentVersion = order.CurrentVersion;
+            Assert.Single(order.AllVersions);
+
+            var anotherOrderLine = new OrderLineBuilder(this.Transaction).Build();
+            order.AddOrderLine(anotherOrderLine);
+
+            this.Transaction.Derive();
+
+            Assert.Equal(2, order.AllVersions.Count());
+            Assert.NotEqual(currentVersion, order.CurrentVersion);
+        }
     }
 }

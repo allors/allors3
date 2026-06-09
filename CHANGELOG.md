@@ -82,6 +82,14 @@ under a dated version heading.
   child nodes but recursed on the outer builder (`@this`), so the nested policy was always empty (deeper
   tree levels were never prefetched) and the child rules — and their security rules — leaked onto the
   outer policy. It now recurses on the nested builder.
+- Object versioning no longer creates a redundant `*Version` on every derive of a versioned object that has a
+  non-empty many-role (and no longer throws when comparing one). `VersionedExtensions.CoreOnPostDerive`'s
+  many-role change check led with `!(!versionedRole.Any() && !versionRole.Any())`, which is `true` whenever
+  either side is non-empty — so the role always looked "changed" (a new version every derive) and the real
+  `Count()`/`SequenceEqual` comparison was short-circuited. Removing that clause exposed a second defect: the
+  comparison ordered the composites with `OrderBy(s => s)` on `IObject` (which is not `IComparable`), throwing
+  `ArgumentException`. The clause is removed and the composites are ordered by `.Id`, so a versioned many-role
+  now creates a new version only when its contents actually change.
 - The remote workspace adapter's `IPullResult.GetValue<T>` now converts a pulled value to `T` instead of
   hard-casting the raw deserialized JSON. `PullResult.Values` exposes values as received over the wire (a
   `JsonElement` for System.Text.Json, a boxed/`JToken` value for Newtonsoft), so `GetValue<T>` threw
