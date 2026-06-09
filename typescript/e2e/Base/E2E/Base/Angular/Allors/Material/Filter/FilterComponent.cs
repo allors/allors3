@@ -8,6 +8,7 @@ namespace Allors.E2E.Angular.Material.Filter
     using Allors.Database.Meta;
     using Info;
     using Microsoft.Playwright;
+    using Task = System.Threading.Tasks.Task;
 
     public partial class FilterComponent : IComponent
     {
@@ -26,5 +27,16 @@ namespace Allors.E2E.Angular.Material.Filter
         public ILocator Locator { get; }
 
         public ApplicationInfo ApplicationInfo => this.Container.ApplicationInfo;
+
+        /// <summary>The applied filter chips (one per added field).</summary>
+        public ILocator Chips => this.Locator.Locator("mat-chip");
+
+        /// <summary>Clicks the filter toolbar to open the filter-field dialog.</summary>
+        public async Task AddAsync()
+        {
+            await this.Page.WaitForAngular();
+            await this.Locator.Locator("mat-toolbar").ClickAsync();
+            await this.Page.WaitForAngular();
+        }
     }
 }

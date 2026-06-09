@@ -136,7 +136,7 @@ export class AllorsMaterialFilterFieldDialogComponent
       value == null || (objectType.isComposite && value.strategy == null);
 
     if (!inValid) {
-      if (!value2) {
+      if (!this.isBetween || !value2) {
         this.filter.addField(
           new FilterField({
             definition: this.fieldDefinition,
