@@ -107,10 +107,14 @@ namespace Allors.Database.Domain.Tests
 
             this.Transaction.Derive();
 
-            media.MediaContent.Data = new byte[] { };
-
             Assert.True(media.ExistMediaContent);
-            Assert.Equal(media.MediaContent.Type, "application/octet-stream");
+            Assert.Equal("application/octet-stream", media.MediaContent.Type);
+
+            media.MediaContent.Data = Array.Empty<byte>();
+
+            var derivationLog = this.Transaction.Derive(false);
+
+            Assert.True(derivationLog.HasErrors);
         }
     }
 }
