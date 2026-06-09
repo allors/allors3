@@ -144,6 +144,11 @@ under a dated version heading.
   similar socket/connection errors) that surface sporadically on CI. The console-error assertion
   now ignores this known-transient class while still catching real JS errors and HTTP 4xx/5xx
   resource failures.
+- `MediaTest.ModifyMediaContent` now re-derives after changing the media content and asserts the outcome,
+  instead of asserting the pre-modification state. It set `MediaContent.Data` to an empty array but never
+  called `Derive()` again, so its assertions still reflected the original (valid) derivation and the test
+  passed even though emptying the data should be rejected. It now re-derives and asserts the derivation
+  reports an error (`MediaContent`'s post-derivation rejects empty data), matching `BuilderWithEmptyData`.
 - SqlClient adapter tests now run with a 300s command timeout and `Connection Timeout=0` against
   SQL Server LocalDB, matching the Npgsql adapter tests. This stops sporadic CI failures
   (`SqlException: Execution Timeout Expired`) caused by LocalDB slowness on hosted runners.
