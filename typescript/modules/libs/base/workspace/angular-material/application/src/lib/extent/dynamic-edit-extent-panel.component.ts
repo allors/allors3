@@ -287,7 +287,10 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
           if (w.objectType.isUnit) {
             const unit = w.objectType as Unit;
             const value = include.strategy.getUnitRole(w) as any;
-            row[w.name] = unit.isDateTime ? format(value, 'dd-MM-yyyy') : value;
+            row[w.name] =
+              unit.isDateTime && value != null
+                ? format(value, 'dd-MM-yyyy')
+                : value;
           } else {
             const role = include.strategy.getCompositeRole(w);
             if (role) {
@@ -304,7 +307,10 @@ export class AllorsMaterialDynamicEditExtentPanelComponent
         if (w.objectType.isUnit) {
           const unit = w.objectType as Unit;
           const value = v.strategy.getUnitRole(w) as any;
-          row[w.name] = unit.isDateTime ? format(value, 'dd-MM-yyyy') : value;
+          row[w.name] =
+            unit.isDateTime && value != null
+              ? format(value, 'dd-MM-yyyy')
+              : value;
         } else {
           if (w.isOne) {
             const composite = v.strategy.getCompositeRole(w);

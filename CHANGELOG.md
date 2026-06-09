@@ -78,6 +78,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The dynamic **edit extent panel** no longer crashes when a displayed `DateTime` column is unset. Its row
+  builder formatted every DateTime cell with `format(value, 'dd-MM-yyyy')` (date-fns), which throws
+  `RangeError: Invalid time value` on a null value — so a single unset DateTime (e.g. an included organisation's
+  `IncorporationDate`) threw while building the row array and the whole table failed to render. Both the display
+  and include-display columns now guard the value (`value != null`) before formatting, matching the panel's
+  existing period-date handling; an unset DateTime renders as an empty cell.
 - The `Base` server and command-line tools loaded the `core` configuration instead of `base`, so the
   `config/<provider>/base` templates were never used. They now resolve the `base` domain.
 - The `PersonEdit` Blazor page no longer crashes when its `{id}` route parameter is not a number. It parsed
