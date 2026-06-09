@@ -31,6 +31,10 @@ under a dated version heading.
 
 ### Fixed
 
+- The `PersonEdit` Blazor page no longer crashes when its `{id}` route parameter is not a number. It parsed
+  the segment with `long.Parse(id)` in `OnInitializedAsync`, throwing `FormatException` for a non-numeric id
+  (e.g. `/person/edit/abc`); it now uses `long.TryParse` and skips the pull when the id is invalid (the page
+  renders nothing instead of throwing).
 - The Json API no longer auto-retries `Invoke` and `Push` on a `DbException`. Both are non-idempotent writes,
   but `PolicyService` retried them with the same policy as the idempotent `Pull`/`Sync` reads — so a
   `DbException` surfacing after the write's commit (e.g. an ambiguous / lost-ack commit, or post-commit work)
