@@ -41,10 +41,9 @@ namespace Allors.Database.Domain
                         var versionedRole = @this.Strategy.GetCompositesRole<IObject>(versionedRoleType);
                         var versionRole = currentVersion.Strategy.GetCompositesRole<IObject>(versionRoleType);
                         // TODO: use Numbers
-                        if (!(!versionedRole.Any() && !versionRole.Any()) ||
-                            versionedRole.Count() != versionRole.Count() ||
-                            !versionedRole.ToArray().OrderBy(s => s)
-                                .SequenceEqual(versionRole.ToArray().OrderBy(t => t)))
+                        if (versionedRole.Count() != versionRole.Count() ||
+                            !versionedRole.ToArray().OrderBy(s => s.Id)
+                                .SequenceEqual(versionRole.ToArray().OrderBy(t => t.Id)))
                         {
                             isNewVersion = true;
                             break;
