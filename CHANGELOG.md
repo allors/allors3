@@ -20,6 +20,12 @@ under a dated version heading.
   last-writer-wins precedence across input directories, key union, `<xsd:schema>`/`<resheader>` survival, and
   `Input` robustness (missing directories skipped, non-`.resx` files ignored, case-insensitive extension). The
   project is wired into the `DotnetCoreDatabaseTest` target (CI `CiDotnetCoreDatabaseTest`) so it actually gates.
+- Comprehensive regression coverage for object versioning in `VersioningTests` (Base) — 16 tests over the
+  `Order`/`OrderLine` model: changed vs unchanged unit / single-composite / many-composite roles;
+  add / remove / clear / repopulate and order-independent set comparison on the many-role; version-snapshot
+  history (each version keeps the value at its own derivation); sequential versions; several versioned roles
+  changing in one cycle producing a single new version; independent child (`OrderLine`) versioning; and
+  non-versioned roles not creating versions. Run by `CiDotnetBaseDatabaseTest`.
 
 ### Changed
 
