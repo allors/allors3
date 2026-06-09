@@ -32,6 +32,8 @@ env:
   # Default culture parity with the old Windows 'Set-Culture nl-BE' (the locale is generated per job).
   LANG: nl_BE.UTF-8
   LC_ALL: nl_BE.UTF-8
+  # The e2e Playwright tests default to a headed browser (Test.cs); force headless on the display-less CI.
+  HEADLESS: 'true'
 
 jobs:
   # In-memory adapter: no database, no provider.
@@ -127,8 +129,7 @@ jobs:
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
       - name: Install native test dependencies
         # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
-        # xvfb: the e2e tests launch a headed browser; run them under a virtual X server.
-        run: sudo apt-get update && sudo apt-get install -y libfontconfig1 xvfb
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5
         with:
@@ -142,12 +143,7 @@ jobs:
         with:
           node-version: '24'
       - name: Run Nuke target ${{ matrix.target }}
-        run: |
-          if [[ "${{ matrix.target }}" == *E2E* ]]; then
-            xvfb-run --auto-servernum ./build.sh -target ${{ matrix.target }} --provider npgsql
-          else
-            ./build.sh -target ${{ matrix.target }} --provider npgsql
-          fi
+        run: ./build.sh -target ${{ matrix.target }} --provider npgsql
       - name: Upload TRX artifacts
         if: always()
         uses: actions/upload-artifact@v7
@@ -212,8 +208,7 @@ jobs:
         run: sudo locale-gen nl_BE.UTF-8 && sudo update-locale
       - name: Install native test dependencies
         # libfontconfig1: SkiaSharp/ZXing barcode generation (Base/Apps domain tests).
-        # xvfb: the e2e tests launch a headed browser; run them under a virtual X server.
-        run: sudo apt-get update && sudo apt-get install -y libfontconfig1 xvfb
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1
       - name: Setup .NET SDK (from global.json)
         uses: actions/setup-dotnet@v5
         with:
@@ -227,12 +222,7 @@ jobs:
         with:
           node-version: '24'
       - name: Run Nuke target ${{ matrix.target }}
-        run: |
-          if [[ "${{ matrix.target }}" == *E2E* ]]; then
-            xvfb-run --auto-servernum ./build.sh -target ${{ matrix.target }} --provider sqlclient
-          else
-            ./build.sh -target ${{ matrix.target }} --provider sqlclient
-          fi
+        run: ./build.sh -target ${{ matrix.target }} --provider sqlclient
       - name: Upload TRX artifacts
         if: always()
         uses: actions/upload-artifact@v7
