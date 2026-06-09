@@ -56,7 +56,7 @@ namespace Allors.Database.Server.Controllers
                 {
                     if (media.Revision != revision)
                     {
-                        return this.RedirectPermanent($"/image/{id}/{media.Revision}");
+                        return this.RedirectPermanent($"/allors/image/{id}/{media.Revision}");
                     }
 
                     if (media.MediaContent?.Data == null)

@@ -47,6 +47,11 @@ under a dated version heading.
   logged server-side), leaking internal details (e.g. SQL errors, paths). Production responses are now a
   generic message (`"An internal server error has occurred."`, or `"Authentication token expired."` for an
   expired token); Development still returns the message and stack trace. (Security.)
+- The image content endpoint's stale-revision redirect now targets `/allors/image/{id}/{revision}` instead of
+  `/image/{id}/{revision}`. `BaseImageController.Get` is routed at `/allors/image/...`, but on a revision
+  mismatch it issued a permanent redirect to a path missing the `/allors` prefix — which matches no route, so
+  the redirect 404'd instead of serving the current revision. The prefix now matches the route (and the
+  image URL builders, which already emit `/allors/image/...`).
 - The Json API's `Pull` no longer crashes (`NullReferenceException` → HTTP 500) when a request dependency
   carries an unknown or wrong-kind meta tag. `Api.ToDependencies` cast each client-supplied tag
   (`FindByTag(...)`) to `IComposite`/`IRelationType` and dereferenced it unchecked, so a bogus `o`/`a`/`r`
