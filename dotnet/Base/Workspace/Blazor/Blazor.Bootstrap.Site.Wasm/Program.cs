@@ -3,7 +3,7 @@ using Allors.Services;
 using Allors.Workspace;
 using Allors.Workspace.Adapters;
 using Allors.Workspace.Blazor;
-using Allors.Workspace.Derivations;
+using Allors.Workspace.Signals.Default;
 using Allors.Workspace.Meta.Lazy;
 using Allors.Workspace.Blazor.Bootstrap.Site.Wasm;
 using BlazorStrap;
@@ -28,11 +28,7 @@ var idGenerator = new IdGenerator();
 DefaultRanges<long> defaultRanges = new DefaultStructRanges<long>();
 var metaPopulation = new MetaBuilder().Build();
 var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Allors.Workspace.Domain.Person));
-var rules = new IRule[]
-{
-    //new PersonSessionFullNameRule(metaPopulation)
-};
-var configuration = new Configuration("Default", metaPopulation, objectFactory, rules);
+var configuration = new Configuration("Default", metaPopulation, objectFactory, new DefaultSignalFactory());
 
 var databaseConnection = new DatabaseConnection(configuration, servicesBuilder, httpClient, idGenerator, defaultRanges);
 builder.Services.AddSingleton(databaseConnection);

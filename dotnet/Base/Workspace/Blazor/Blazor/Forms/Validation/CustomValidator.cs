@@ -1,7 +1,6 @@
 namespace Allors.Workspace.Blazor.Validation
 {
     using System;
-    using System.Collections;
     using System.Linq;
     using Meta;
     using Microsoft.AspNetCore.Components;
@@ -54,19 +53,9 @@ namespace Allors.Workspace.Blazor.Validation
                 var model = field.Object;
                 var roleType = field.PropertyType as IRoleType;
 
-                if (roleType?.IsOne == true)
+                if (roleType != null && !model.Strategy.ExistRole(roleType).Value)
                 {
-                    if (model.Strategy.GetRole(roleType) == null)
-                    {
-                        this.AddShouldExistMessage(field, messages);
-                    }
-                }
-                else if (roleType?.IsMany == true)
-                {
-                    if (((ICollection)model.Strategy.GetRole(roleType)).Count == 0)
-                    {
-                        this.AddShouldExistMessage(field, messages);
-                    }
+                    this.AddShouldExistMessage(field, messages);
                 }
             }
         }
@@ -78,19 +67,9 @@ namespace Allors.Workspace.Blazor.Validation
                 var model = field.Object;
                 var roleType = field.PropertyType as IRoleType;
 
-                if (roleType?.IsOne == true)
+                if (roleType != null && model.Strategy.ExistRole(roleType).Value)
                 {
-                    if (model.Strategy.GetRole(roleType) != null)
-                    {
-                        this.AddShouldNotExistMessage(field, messages);
-                    }
-                }
-                else if (roleType?.IsMany == true)
-                {
-                    if (((ICollection)model.Strategy.GetRole(roleType)).Count > 0)
-                    {
-                        this.AddShouldNotExistMessage(field, messages);
-                    }
+                    this.AddShouldNotExistMessage(field, messages);
                 }
             }
         }

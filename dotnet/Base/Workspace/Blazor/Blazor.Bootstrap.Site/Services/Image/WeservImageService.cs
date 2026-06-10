@@ -30,19 +30,19 @@ namespace Allors.Services
                 parameters.Add($"output={type}");
             }
 
-            if ("png".Equals(type) || (string.IsNullOrWhiteSpace(type) && "image/png".Equals(media.Type)))
+            if ("png".Equals(type) || (string.IsNullOrWhiteSpace(type) && "image/png".Equals(media.Type.Value)))
             {
                 parameters.Add($"af");
             }
 
-            if (!"png".Equals(type) && "image/png".Equals(media.Type))
+            if (!"png".Equals(type) && "image/png".Equals(media.Type.Value))
             {
                 parameters.Add($"bg={background}");
             }
 
             parameters.Add($"we");
 
-            return $"//images.weserv.nl/?url={this.BaseUri}/allors/image/{media.UniqueId}/{media.Revision}?{string.Join("&", parameters)}";
+            return $"//images.weserv.nl/?url={this.BaseUri}/allors/image/{media.UniqueId.Value}/{media.Revision.Value}?{string.Join("&", parameters)}";
         }
     }
 }

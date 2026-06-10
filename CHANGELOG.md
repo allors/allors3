@@ -55,6 +55,12 @@ under a dated version heading.
 
 ### Changed
 
+- The Blazor workspace UI is migrated to the signal-based workspace surface. `RoleField`, `CustomValidator`
+  and the Bootstrap role controls use the signal accessors (`CanRead`/`CanWrite(…).Value`; `ScalarRole`/
+  `CompositeRole`/`CompositesRole` dispatched on the role's kind, mirroring the removed `GetRole`/`SetRole`;
+  `ExistRole` for the validators), the Bootstrap sites' workspace configurations pass a `DefaultSignalFactory`
+  instead of the removed `IRule[]`, and the site pages and image services read generated role signals with
+  `.Value`.
 - The C# workspace is now **signal-based** (allors4 parity). `IStrategy`/`ISession` expose signal-returning
   members — `ISignal<…> Version/IsNew/HasChanges`, `ISignal<bool> CanRead/CanWrite/CanExecute/ExistRole/HasChanged`,
   and `IRoleSignal<T>`/`ICompositesRoleSignal<T>`/`IDerivedRoleSignal<T>`/`IAssociationSignal<T>`/`IMethodSignal`
@@ -62,7 +68,7 @@ under a dated version heading.
   `.Set(…)`). `IConfiguration` now requires an `ISignalFactory` (`Allors.Workspace.Adapters.Configuration`
   takes it instead of `IRule[]`; wire `DefaultSignalFactory`). Internally every signal recomputes off a
   session-wide graph revision bumped on role writes, pulls and pushes. Workspace test suites were migrated to
-  the signal surface accordingly. (TypeScript/Angular and the Blazor UI are a later pass.)
+  the signal surface accordingly. (TypeScript/Angular is a later pass.)
 - The database provider (SqlClient / Npgsql) is now selected by which template populates
   `ALLORS_CONFIG_ROOT` rather than by the host operating system. The in-repo `config/<provider>/<domain>`
   files are templates (with development defaults) copied to the config root (e.g. `/opt/allors`); real

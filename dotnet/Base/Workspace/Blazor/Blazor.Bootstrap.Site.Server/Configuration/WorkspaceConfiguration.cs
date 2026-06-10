@@ -10,10 +10,10 @@ namespace Allors.Workspace.Configuration
     using System.Security.Claims;
     using Adapters;
     using Allors.Ranges;
-    using Derivations;
     using Domain;
     using Meta.Lazy;
     using Services;
+    using Signals.Default;
 
     public static class WorkspaceConfiguration
     {
@@ -24,8 +24,7 @@ namespace Allors.Workspace.Configuration
 
             var metaPopulation = new MetaBuilder().Build();
             var objectFactory = new ReflectionObjectFactory(metaPopulation, typeof(Person));
-            var rules = new IRule[] { };
-            var configuration = new Adapters.Local.Configuration("Default", metaPopulation, objectFactory, rules);
+            var configuration = new Adapters.Local.Configuration("Default", metaPopulation, objectFactory, new DefaultSignalFactory());
 
             services.AddScoped<DatabaseConnection>(serviceProvider =>
             {
