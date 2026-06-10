@@ -29,7 +29,10 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithInvoiceItemType(faker.Random.ListItem(otherInvoiceItemTypes))
                 .WithMessage(faker.Lorem.Sentence())
                 .WithQuantity(1)
-                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+                // Floor 2, not 1: several invoice tests form a partial payment as `TotalIncVat - 1`,
+                // which must stay > 0. A unit price of 1 makes it 0, so the derivation yields NotPaid
+                // instead of PartiallyPaid and flakes those tests (this Faker is unseeded/random).
+                .WithAssignedUnitPrice(faker.Random.UInt(2, 100));
 
             return @this;
         }
@@ -53,7 +56,7 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
                 .WithMessage(faker.Lorem.Sentence())
                 .WithQuantity(1)
-                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+                .WithAssignedUnitPrice(faker.Random.UInt(2, 100));
 
             return @this;
         }
@@ -73,7 +76,7 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
                 .WithMessage(faker.Lorem.Sentence())
                 .WithQuantity(1)
-                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+                .WithAssignedUnitPrice(faker.Random.UInt(2, 100));
 
             return @this;
         }
@@ -98,7 +101,7 @@ namespace Allors.Database.Domain.TestPopulation
                 .WithNextSerialisedItemAvailability(faker.Random.ListItem(@this.Transaction.Extent<SerialisedItemAvailability>()))
                 .WithMessage(faker.Lorem.Sentence())
                 .WithQuantity(1)
-                .WithAssignedUnitPrice(faker.Random.UInt(1, 100));
+                .WithAssignedUnitPrice(faker.Random.UInt(2, 100));
 
             return @this;
         }
