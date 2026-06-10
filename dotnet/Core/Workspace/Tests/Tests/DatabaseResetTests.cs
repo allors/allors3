@@ -9,6 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -18,7 +19,7 @@ namespace Tests.Workspace
         protected DatabaseResetTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void ResetUnitWithoutPush()
+        public async Task ResetUnitWithoutPush()
         {
             await this.Login("administrator");
 
@@ -43,7 +44,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetUnitAfterPushTest()
+        public async Task ResetUnitAfterPushTest()
         {
             await this.Login("administrator");
 
@@ -65,7 +66,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetUnitAfterDoublePush()
+        public async Task ResetUnitAfterDoublePush()
         {
             await this.Login("administrator");
 
@@ -91,7 +92,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2OneWithoutPush()
+        public async Task ResetOne2OneWithoutPush()
         {
             await this.Login("administrator");
 
@@ -122,7 +123,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2OneIncludeWithoutPush()
+        public async Task ResetOne2OneIncludeWithoutPush()
         {
             await this.Login("administrator");
 
@@ -157,7 +158,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2OneAfterPush()
+        public async Task ResetOne2OneAfterPush()
         {
             await this.Login("administrator");
 
@@ -183,7 +184,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2OneIncludeAfterPush()
+        public async Task ResetOne2OneIncludeAfterPush()
         {
             await this.Login("administrator");
 
@@ -220,7 +221,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2OneRemoveAfterPush()
+        public async Task ResetOne2OneRemoveAfterPush()
         {
             await this.Login("administrator");
 
@@ -251,7 +252,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetMany2OneWithoutPush()
+        public async Task ResetMany2OneWithoutPush()
         {
             await this.Login("administrator");
 
@@ -271,7 +272,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetMany2OneAfterPush()
+        public async Task ResetMany2OneAfterPush()
         {
             await this.Login("administrator");
 
@@ -293,7 +294,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetMany2OneRemoveAfterPush()
+        public async Task ResetMany2OneRemoveAfterPush()
         {
             await this.Login("administrator");
 
@@ -324,7 +325,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2ManyWithoutPush()
+        public async Task ResetOne2ManyWithoutPush()
         {
             await this.Login("administrator");
 
@@ -344,7 +345,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2ManyAfterPush()
+        public async Task ResetOne2ManyAfterPush()
         {
             await this.Login("administrator");
 
@@ -366,7 +367,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetOne2ManyRemoveAfterPush()
+        public async Task ResetOne2ManyRemoveAfterPush()
         {
             await this.Login("administrator");
 
@@ -394,7 +395,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetMany2ManyWithoutPush()
+        public async Task ResetMany2ManyWithoutPush()
         {
             await this.Login("administrator");
 
@@ -414,7 +415,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetMany2ManyAfterPush()
+        public async Task ResetMany2ManyAfterPush()
         {
             await this.Login("administrator");
 
@@ -436,7 +437,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ResetMany2ManyRemoveAfterPush()
+        public async Task ResetMany2ManyRemoveAfterPush()
         {
             await this.Login("administrator");
 

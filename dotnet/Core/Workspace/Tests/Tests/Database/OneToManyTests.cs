@@ -39,7 +39,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
         }
 
         [Fact]
-        public async void SetRole()
+        public async Task SetRole()
         {
             foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
             {
@@ -76,7 +76,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
         }
 
         [Fact]
-        public async void SetRoleToNull()
+        public async Task SetRoleToNull()
         {
             foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
             {
@@ -122,7 +122,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
         }
 
         [Fact]
-        public async void RemoveRole()
+        public async Task RemoveRole()
         {
             foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
             {
@@ -163,7 +163,7 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
         }
 
         [Fact]
-        public async void RemoveNullRole()
+        public async Task RemoveNullRole()
         {
             foreach (DatabaseMode mode1 in Enum.GetValues(typeof(DatabaseMode)))
             {

@@ -78,6 +78,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The Core workspace test suite no longer intermittently crashes its test host after passing. Its 188 `[Fact]`
+  methods were declared `async void` (xUnit1048); on xUnit v3 an `async void` test whose continuation throws
+  after the run is considered complete escapes as an unobserved exception, failing the job *after* a green
+  summary (observed as a flaky `CiDotnetCoreWorkspaceLocalTest`). All Core workspace tests are now `async Task`
+  so xUnit awaits them; this covers the Local and both Remote workspace jobs (the methods live in shared
+  abstract base classes inherited by each adapter's runner).
 - The `SalesInvoiceStateRuleTests.ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid`
   domain test no longer flakes (~1% of CI runs). `SalesInvoiceItemBuilder.WithDefaults()` drew a random unit
   price in `[1, 100]`; when it rolled `1` the test's `TotalIncVat - 1` partial payment was `0`, so

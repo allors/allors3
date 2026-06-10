@@ -38,7 +38,7 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
         }
 
         [Fact]
-        public async void SetRole()
+        public async Task SetRole()
         {
             foreach (var contextFactory in this.contextFactories)
             {
@@ -92,7 +92,7 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
         }
 
         [Fact]
-        public async void SetRoleNull()
+        public async Task SetRoleNull()
         {
             foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
             {
@@ -233,7 +233,7 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRelation
         }
 
         [Fact]
-        public async void RemoveRole()
+        public async Task RemoveRole()
         {
             foreach (DatabaseMode mode in Enum.GetValues(typeof(DatabaseMode)))
             {

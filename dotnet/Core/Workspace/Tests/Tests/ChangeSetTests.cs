@@ -9,6 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -18,7 +19,7 @@ namespace Tests.Workspace
         protected ChangeSetTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void CreatingChangeSetAfterCreatingSession()
+        public async Task CreatingChangeSetAfterCreatingSession()
         {
             await this.Login("administrator");
 
@@ -30,7 +31,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Instantiated()
+        public async Task Instantiated()
         {
             await this.Login("administrator");
 
@@ -50,7 +51,7 @@ namespace Tests.Workspace
 
 
         [Fact]
-        public async void ChangeSetAfterPush()
+        public async Task ChangeSetAfterPush()
         {
             await this.Login("administrator");
 
@@ -70,7 +71,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetPushChangeNoPush()
+        public async Task ChangeSetPushChangeNoPush()
         {
             await this.Login("administrator");
 
@@ -98,7 +99,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetPushChangePush()
+        public async Task ChangeSetPushChangePush()
         {
             await this.Login("administrator");
 
@@ -128,7 +129,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushWithNoChanges()
+        public async Task ChangeSetAfterPushWithNoChanges()
         {
             await this.Login("administrator");
 
@@ -147,7 +148,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushWithPull()
+        public async Task ChangeSetAfterPushWithPull()
         {
             await this.Login("administrator");
 
@@ -169,7 +170,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushWithPullWithNoChanges()
+        public async Task ChangeSetAfterPushWithPullWithNoChanges()
         {
             await this.Login("administrator");
 
@@ -195,7 +196,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetOne2One()
+        public async Task ChangeSetOne2One()
         {
             await this.Login("administrator");
 
@@ -227,7 +228,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushOne2One()
+        public async Task ChangeSetAfterPushOne2One()
         {
             await this.Login("administrator");
 
@@ -257,7 +258,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushOne2OneRemove()
+        public async Task ChangeSetAfterPushOne2OneRemove()
         {
             await this.Login("administrator");
 
@@ -285,7 +286,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushMany2One()
+        public async Task ChangeSetAfterPushMany2One()
         {
             await this.Login("administrator");
 
@@ -315,7 +316,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushMany2OneRemove()
+        public async Task ChangeSetAfterPushMany2OneRemove()
         {
             await this.Login("administrator");
 
@@ -354,7 +355,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushOne2Many()
+        public async Task ChangeSetAfterPushOne2Many()
         {
             await this.Login("administrator");
 
@@ -384,7 +385,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushOne2ManyRemove()
+        public async Task ChangeSetAfterPushOne2ManyRemove()
         {
             await this.Login("administrator");
 
@@ -418,7 +419,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetMany2Many()
+        public async Task ChangeSetMany2Many()
         {
             await this.Login("administrator");
 
@@ -449,7 +450,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushMany2Many()
+        public async Task ChangeSetAfterPushMany2Many()
         {
             await this.Login("administrator");
 
@@ -479,7 +480,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPushMany2ManyRemove()
+        public async Task ChangeSetAfterPushMany2ManyRemove()
         {
             await this.Login("administrator");
 
@@ -521,7 +522,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterPullInNewSessionButNoPush()
+        public async Task ChangeSetAfterPullInNewSessionButNoPush()
         {
             await this.Login("administrator");
 
@@ -537,7 +538,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterDoubleDatabaseReset()
+        public async Task ChangeSetAfterDoubleDatabaseReset()
         {
             await this.Login("administrator");
 
@@ -574,7 +575,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void ChangeSetAfterDoubleWorkspaceReset()
+        public async Task ChangeSetAfterDoubleWorkspaceReset()
         {
             await this.Login("administrator");
 

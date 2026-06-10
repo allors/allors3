@@ -6,6 +6,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
@@ -18,7 +19,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void CallSingle()
+        public async Task CallSingle()
         {
             await this.Login("administrator");
 
@@ -41,7 +42,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void CallMultiple()
+        public async Task CallMultiple()
         {
             await this.Login("administrator");
 
@@ -68,7 +69,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void CallMultipleIsolated()
+        public async Task CallMultipleIsolated()
         {
             await this.Login("administrator");
 

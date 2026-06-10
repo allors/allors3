@@ -6,6 +6,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -18,7 +19,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Database_GetOne2Many()
+        public async Task Database_GetOne2Many()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();
@@ -58,7 +59,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void Database_GetOne2One()
+        public async Task Database_GetOne2One()
         {
             await this.Login("administrator");
             var session = this.Workspace.CreateSession();

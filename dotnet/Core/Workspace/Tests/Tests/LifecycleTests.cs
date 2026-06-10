@@ -25,7 +25,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PullSameSessionNotPushedException()
+        public async Task PullSameSessionNotPushedException()
         {
             var session = this.Workspace.CreateSession();
 
@@ -48,7 +48,7 @@ namespace Tests.Workspace
         }
 
         [Fact]
-        public async void PullOtherSessionNotPushedException()
+        public async Task PullOtherSessionNotPushedException()
         {
             var session1 = this.Workspace.CreateSession();
 

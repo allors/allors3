@@ -9,6 +9,7 @@
 namespace Tests.Workspace
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using Allors.Workspace.Data;
     using Allors.Workspace.Domain;
     using Xunit;
@@ -18,7 +19,7 @@ namespace Tests.Workspace
         protected DerivationTests(Fixture fixture) : base(fixture) { }
 
         [Fact]
-        public async void SessionFullName()
+        public async Task SessionFullName()
         {
             await this.Login("administrator");
 
