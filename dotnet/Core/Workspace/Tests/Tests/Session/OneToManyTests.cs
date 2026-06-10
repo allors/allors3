@@ -61,7 +61,7 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1x_1.AddSessionC1One2Many(c1y_1);
 
-                        c1x_1.SessionC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1One2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
                         c1y_1.C1WhereSessionC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                     }
                 }
@@ -92,12 +92,12 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1x_1.AddSessionC1One2Many(null);
 
-                        Assert.Empty(c1x_1.SessionC1One2Manies);
+                        Assert.Empty(c1x_1.SessionC1One2Manies.Value);
                         c1y_1.C1WhereSessionC1One2Many.ShouldEqual(null, ctx, mode1, mode2);
 
                         c1x_1.AddSessionC1One2Many(c1y_1);
 
-                        c1x_1.SessionC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1One2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
                         c1y_1.C1WhereSessionC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
                     }
                 }
@@ -128,12 +128,12 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1x_1.AddSessionC1One2Many(c1y_1);
 
-                        c1x_1.SessionC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1One2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
                         c1y_1.C1WhereSessionC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                         c1x_1.RemoveSessionC1One2Many(c1y_1);
 
-                        c1x_1.SessionC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1One2Manies.Value.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                         c1y_1.C1WhereSessionC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                     }
                 }
@@ -166,12 +166,12 @@ namespace Tests.Workspace.DatabaseAssociation.SessionRole
 
                         c1x_1.RemoveSessionC1One2Many(null);
 
-                        c1x_1.SessionC1One2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1One2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
                         c1y_1.C1WhereSessionC1One2Many.ShouldEqual(c1x_1, ctx, mode1, mode2);
 
                         c1x_1.RemoveSessionC1One2Many(c1y_1);
 
-                        c1x_1.SessionC1One2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                        c1x_1.SessionC1One2Manies.Value.ShouldNotContain(c1y_1, ctx, mode1, mode2);
                         c1y_1.C1WhereSessionC1One2Many.ShouldNotEqual(c1x_1, ctx, mode1, mode2);
                     }
                 }

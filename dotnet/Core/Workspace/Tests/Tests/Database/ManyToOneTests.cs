@@ -65,10 +65,10 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                             await session1.PullAsync(new Pull { Object = c1x_1 });
                         }
 
-                        c1x_1.C1C1Many2One = c1y_1;
+                        c1x_1.C1C1Many2One.Set(c1y_1);
 
-                        c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.C1C1Many2One.Value.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2One.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                         await session1.PushAsync();
                         await session2.PushAsync();
@@ -104,13 +104,13 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                             await session1.PullAsync(new Pull { Object = c1x_1 });
                         }
 
-                        c1x_1.C1C1Many2One = c1y_1;
-                        c1x_1.C1C1Many2One.ShouldEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2One.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.C1C1Many2One.Set(c1y_1);
+                        c1x_1.C1C1Many2One.Value.ShouldEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2One.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                         c1x_1.RemoveC1C1Many2One();
-                        c1x_1.C1C1Many2One.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2One.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.C1C1Many2One.Value.ShouldNotEqual(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2One.Value.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                     }
                 }
             }

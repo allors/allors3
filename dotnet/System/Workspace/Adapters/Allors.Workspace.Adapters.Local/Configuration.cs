@@ -5,11 +5,11 @@
 
 namespace Allors.Workspace.Adapters.Local
 {
-    using Derivations;
     using Meta;
+    using Signals;
 
     public class Configuration : Adapters.Configuration
     {
-        public Configuration(string name, IMetaPopulation metaPopulation, ReflectionObjectFactory objectFactory, IRule[] rules) : base(name, metaPopulation, objectFactory, rules) { }
+        public Configuration(string name, IMetaPopulation metaPopulation, ReflectionObjectFactory objectFactory, ISignalFactory signalFactory) : base(name, metaPopulation, objectFactory, signalFactory) { }
     }
 }

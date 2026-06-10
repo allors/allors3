@@ -14,6 +14,12 @@ under a dated version heading.
 
 ### Added
 
+- **Workspace signals** — reactive `state`/`computed`/`effect` primitives backported from allors4 core, as the
+  standard reactive mechanism of the C# workspace. New netstandard2.0 projects `Allors.Workspace.Signals`
+  (the `ISignal`/`IStateSignal`/`IComputedSignal`/`IEffect`/`IEffectScope`/`ISignalFactory` contract),
+  `Allors.Workspace.Signals.Default` (the push-pull dependency-tracking engine) and
+  `Allors.Workspace.Signals.Plain` (a non-reactive fallback), with xUnit tests gated by the new Nuke target
+  `DotnetSystemWorkspaceSignalsTest` (CI `CiDotnetSystemWorkspaceSignalsTest`).
 - Configuration is now delivered from outside the source tree via the **required** `ALLORS_CONFIG_ROOT`
   environment variable. Each server, command-line tool and integration test loads
   `$ALLORS_CONFIG_ROOT/<domain>/appsettings.json` (domain = `core`/`base`/`apps`) through the new
@@ -49,6 +55,14 @@ under a dated version heading.
 
 ### Changed
 
+- The C# workspace is now **signal-based** (allors4 parity). `IStrategy`/`ISession` expose signal-returning
+  members — `ISignal<…> Version/IsNew/HasChanges`, `ISignal<bool> CanRead/CanWrite/CanExecute/ExistRole/HasChanged`,
+  and `IRoleSignal<T>`/`ICompositesRoleSignal<T>`/`IDerivedRoleSignal<T>`/`IAssociationSignal<T>`/`IMethodSignal`
+  accessors — and generated workspace domain classes expose those signals (read with `.Value`, write with
+  `.Set(…)`). `IConfiguration` now requires an `ISignalFactory` (`Allors.Workspace.Adapters.Configuration`
+  takes it instead of `IRule[]`; wire `DefaultSignalFactory`). Internally every signal recomputes off a
+  session-wide graph revision bumped on role writes, pulls and pushes. Workspace test suites were migrated to
+  the signal surface accordingly. (TypeScript/Angular and the Blazor UI are a later pass.)
 - The database provider (SqlClient / Npgsql) is now selected by which template populates
   `ALLORS_CONFIG_ROOT` rather than by the host operating system. The in-repo `config/<provider>/<domain>`
   files are templates (with development defaults) copied to the config root (e.g. `/opt/allors`); real
@@ -71,6 +85,10 @@ under a dated version heading.
 
 ### Removed
 
+- The workspace client-side `IRule` derivation engine (`ISession.Activate`, `IConfiguration.Rules`, the
+  `Allors.Workspace.Derivations` namespace and the workspace `Rule` base class). Derived workspace roles are
+  now exposed as `IDerivedRoleSignal<T>`; their values are computed server-side and arrive via pull (matching
+  allors4). The separate database-side derivation engine is unaffected.
 - The Windows-only `SqlLocalDB` build helper and the `MartinCostello.SqlLocalDb` build dependency; the build
   no longer provisions SQL LocalDB.
 - Legacy per-project `appSettings.json` and `appSettings.{development,osx,windows}.json` files next to the

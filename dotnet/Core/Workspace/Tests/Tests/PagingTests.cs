@@ -44,7 +44,7 @@ namespace Tests.Workspace
 
             Assert.Single(i12s);
 
-            Assert.Equal("c2D", i12s[0].Name);
+            Assert.Equal("c2D", i12s[0].Name.Value);
         }
     }
 }

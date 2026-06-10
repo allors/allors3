@@ -50,22 +50,22 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PullAsync(new Pull { Object = c1a });
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
             }
 
             {
@@ -76,21 +76,21 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PullAsync(new Pull { Object = c1b });
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
             }
 
             {
@@ -101,21 +101,21 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PullAsync(new Pull { Object = c1a }, new Pull { Object = c1b });
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
 
@@ -132,13 +132,13 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                 Assert.False(c1a.CanWriteC1C1Many2Manies);
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Empty(c1a.C1C1Many2Manies.Value);
+                Assert.Empty(c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Empty(c1a.C1C1Many2Manies.Value);
+                Assert.Empty(c1b.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
 
@@ -155,15 +155,15 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
 
@@ -179,15 +179,15 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
 
@@ -203,13 +203,13 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                 Assert.False(c1a.CanWriteC1C1Many2Manies);
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Empty(c1a.C1C1Many2Manies.Value);
+                Assert.Empty(c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Empty(c1a.C1C1Many2Manies);
-                Assert.Empty(c1b.C1sWhereC1C1Many2Many);
+                Assert.Empty(c1a.C1C1Many2Manies.Value);
+                Assert.Empty(c1b.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
 
@@ -225,15 +225,15 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a.AddC1C1Many2Many(c1b);
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
 
                 await session.PushAsync();
 
-                Assert.Single(c1a.C1C1Many2Manies);
-                Assert.Single(c1b.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a.C1C1Many2Manies.Value);
+                Assert.Single(c1b.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a, c1b.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
 
@@ -253,17 +253,17 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a_1.AddC1C1Many2Many(c1b_1);
 
-                Assert.Single(c1a_1.C1C1Many2Manies);
-                Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a_1.C1C1Many2Manies.Value);
+                Assert.Single(c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
 
                 await session1.PushAsync();
 
-                Assert.Single(c1a_1.C1C1Many2Manies);
-                Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a_1.C1C1Many2Manies.Value);
+                Assert.Single(c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
             #region c1b in other session
@@ -281,17 +281,17 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a_1.AddC1C1Many2Many(c1b_1);
 
-                Assert.Single(c1a_1.C1C1Many2Manies);
-                Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a_1.C1C1Many2Manies.Value);
+                Assert.Single(c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
 
                 await session1.PushAsync();
 
-                Assert.Single(c1a_1.C1C1Many2Manies);
-                Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a_1.C1C1Many2Manies.Value);
+                Assert.Single(c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
             #region c1a and c1b in other session
@@ -310,17 +310,17 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                 c1a_1.AddC1C1Many2Many(c1b_1);
 
-                Assert.Single(c1a_1.C1C1Many2Manies);
-                Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a_1.C1C1Many2Manies.Value);
+                Assert.Single(c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
 
                 await session1.PushAsync();
 
-                Assert.Single(c1a_1.C1C1Many2Manies);
-                Assert.Single(c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
-                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many);
+                Assert.Single(c1a_1.C1C1Many2Manies.Value);
+                Assert.Single(c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
+                Assert.Contains(c1a_1, c1b_1.C1sWhereC1C1Many2Many.Value);
             }
             #endregion
         }
@@ -354,10 +354,10 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                         c1x_1.AddC1C1Many2Many(c1y_1);
 
-                        Assert.Single(c1x_1.C1C1Many2Manies);
-                        Assert.Single(c1y_1.C1sWhereC1C1Many2Many);
-                        c1x_1.C1C1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        Assert.Single(c1x_1.C1C1Many2Manies.Value);
+                        Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Value);
+                        c1x_1.C1C1Many2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2Many.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
                     }
                 }
             }
@@ -392,14 +392,14 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                         c1x_1.AddC1C1Many2Many(null);
 
-                        Assert.Empty(c1x_1.C1C1Many2Manies);
+                        Assert.Empty(c1x_1.C1C1Many2Manies.Value);
 
                         c1x_1.AddC1C1Many2Many(c1y_1);
 
-                        c1x_1.C1C1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.C1C1Many2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2Many.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
 
-                        Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Where(v => v.Equals(c1x_1)));
+                        Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Value.Where(v => v.Equals(c1x_1)));
                     }
                 }
             }
@@ -441,8 +441,8 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                         c1x_1.RemoveC1C1Many2Many(c1y_1);
 
-                        c1x_1.C1C1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.C1C1Many2Manies.Value.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2Many.Value.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                     }
                 }
             }
@@ -476,13 +476,13 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
                         }
 
                         c1x_1.AddC1C1Many2Many(null);
-                        Assert.Empty(c1x_1.C1C1Many2Manies);
+                        Assert.Empty(c1x_1.C1C1Many2Manies.Value);
 
                         c1x_1.AddC1C1Many2Many(c1y_1);
 
-                        c1x_1.C1C1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
-                        Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Where(v => v.Equals(c1x_1)));
+                        c1x_1.C1C1Many2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2Many.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        Assert.Single(c1y_1.C1sWhereC1C1Many2Many.Value.Where(v => v.Equals(c1x_1)));
 
                         if (!c1x_1.CanWriteC1C1Many2Manies)
                         {
@@ -491,8 +491,8 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                         c1x_1.RemoveC1C1Many2Many(null);
 
-                        c1x_1.C1C1Many2Manies.ShouldContain(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2Many.ShouldContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.C1C1Many2Manies.Value.ShouldContain(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2Many.Value.ShouldContain(c1x_1, ctx, mode1, mode2);
 
                         if (!c1x_1.CanWriteC1C1Many2Manies)
                         {
@@ -501,8 +501,8 @@ namespace Tests.Workspace.DatabaseAssociation.DatabaseRelation.DatabaseRole
 
                         c1x_1.RemoveC1C1Many2Many(c1y_1);
 
-                        c1x_1.C1C1Many2Manies.ShouldNotContain(c1y_1, ctx, mode1, mode2);
-                        c1y_1.C1sWhereC1C1Many2Many.ShouldNotContain(c1x_1, ctx, mode1, mode2);
+                        c1x_1.C1C1Many2Manies.Value.ShouldNotContain(c1y_1, ctx, mode1, mode2);
+                        c1y_1.C1sWhereC1C1Many2Many.Value.ShouldNotContain(c1x_1, ctx, mode1, mode2);
                     }
                 }
             }

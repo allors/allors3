@@ -70,14 +70,14 @@ namespace Tests.Workspace
             Assert.True(unitSample.ExistAllorsString);
             Assert.True(unitSample.ExistAllorsUnique);
 
-            Assert.Equal(new byte[] { 1, 2, 3 }, unitSample.AllorsBinary);
-            Assert.True(unitSample.AllorsBoolean);
-            Assert.Equal(new DateTime(1973, 3, 27, 0, 0, 0, DateTimeKind.Utc), unitSample.AllorsDateTime);
-            Assert.Equal(12.34m, unitSample.AllorsDecimal);
-            Assert.Equal(123d, unitSample.AllorsDouble);
-            Assert.Equal(1000, unitSample.AllorsInteger);
-            Assert.Equal("a string", unitSample.AllorsString);
-            Assert.Equal(new Guid("2946CF37-71BE-4681-8FE6-D0024D59BEFF"), unitSample.AllorsUnique);
+            Assert.Equal(new byte[] { 1, 2, 3 }, unitSample.AllorsBinary.Value);
+            Assert.True(unitSample.AllorsBoolean.Value);
+            Assert.Equal(new DateTime(1973, 3, 27, 0, 0, 0, DateTimeKind.Utc), unitSample.AllorsDateTime.Value);
+            Assert.Equal(12.34m, unitSample.AllorsDecimal.Value);
+            Assert.Equal(123d, unitSample.AllorsDouble.Value);
+            Assert.Equal(1000, unitSample.AllorsInteger.Value);
+            Assert.Equal("a string", unitSample.AllorsString.Value);
+            Assert.Equal(new Guid("2946CF37-71BE-4681-8FE6-D0024D59BEFF"), unitSample.AllorsUnique.Value);
         }
 
         [Fact]

@@ -29,14 +29,14 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
-            c1a_1.C1AllorsString = "X";
+            c1a_1.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
             result = await session.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a_2.C1AllorsString = "Y";
+            c1a_2.C1AllorsString.Set("Y");
 
             var diffs = c1a_2.Strategy.Diff();
             Assert.Single(diffs);
@@ -58,14 +58,14 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a_1 = result.GetCollection<C1>()[0];
 
-            c1a_1.C1AllorsString = "X";
+            c1a_1.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
             result = await session.PullAsync(pull);
             var c1a_2 = result.GetCollection<C1>()[0];
 
-            c1a_2.C1AllorsString = "Y";
+            c1a_2.C1AllorsString.Set("Y");
 
             c1a_2.Strategy.Reset();
             var diff = c1a_2.Strategy.Diff();
@@ -84,14 +84,14 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
+            c1a.C1AllorsString.Set("X");
 
             await session.PushAsync();
 
             result = await session.PullAsync(pull);
             var c1b = result.GetCollection<C1>()[0];
 
-            c1b.C1AllorsString = "Y";
+            c1b.C1AllorsString.Set("Y");
 
             c1b.Strategy.Reset();
             c1b.Strategy.Reset();
@@ -113,16 +113,16 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
             var c1a = result.GetCollection<C1>()[0];
 
-            c1a.C1AllorsString = "X";
-            c1a.C1AllorsInteger = 1;
+            c1a.C1AllorsString.Set("X");
+            c1a.C1AllorsInteger.Set(1);
 
             await session.PushAsync();
 
             result = await session.PullAsync(pull);
             var c1b = result.GetCollection<C1>()[0];
 
-            c1b.C1AllorsString = "Y";
-            c1b.C1AllorsInteger = 2;
+            c1b.C1AllorsString.Set("Y");
+            c1b.C1AllorsInteger.Set(2);
 
             var diffs = c1b.Strategy.Diff();
 

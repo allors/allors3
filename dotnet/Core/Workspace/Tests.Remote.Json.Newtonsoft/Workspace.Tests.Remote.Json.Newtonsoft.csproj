@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote.Newtonsoft\Allors.Workspace.Adapters.Remote.Newtonsoft.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters.Remote\Allors.Workspace.Adapters.Remote.csproj" />
     <ProjectReference Include="..\..\..\System\Workspace\Adapters\Allors.Workspace.Adapters\Allors.Workspace.Adapters.csproj" />
+    <ProjectReference Include="..\..\..\System\Workspace\Allors.Workspace.Signals.Default\Allors.Workspace.Signals.Default.csproj" />
     <ProjectReference Include="..\Tests\Workspace.Tests.csproj" />
   </ItemGroup>
 

@@ -9,8 +9,8 @@ namespace Allors.Workspace
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Data;
-    using Derivations;
     using System;
+    using Signals;
 
     public interface ISession
     {
@@ -18,11 +18,9 @@ namespace Allors.Workspace
 
         event EventHandler OnChange;
 
-        bool HasChanges { get; }
+        ISignal<bool> HasChanges { get; }
 
         ISessionServices Services { get; }
-
-        public void Activate(IEnumerable<IRule> rules);
 
         void Reset();
 
@@ -59,6 +57,10 @@ namespace Allors.Workspace
         Task<IInvokeResult> InvokeAsync(Method method, InvokeOptions options = null);
 
         Task<IInvokeResult> InvokeAsync(Method[] methods, InvokeOptions options = null);
+
+        Task<IInvokeResult> InvokeAsync(IMethodSignal method, InvokeOptions options = null);
+
+        Task<IInvokeResult> InvokeAsync(IMethodSignal[] methods, InvokeOptions options = null);
 
         Task<IPullResult> CallAsync(Procedure procedure, params Pull[] pull);
 

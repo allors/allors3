@@ -7,6 +7,7 @@ namespace Tests.Workspace
 {
     using System;
     using System.Threading.Tasks;
+    using Allors.Workspace;
     using Allors.Workspace.Domain;
     using Xunit;
 
@@ -35,7 +36,7 @@ namespace Tests.Workspace
 
             try
             {
-                c1.Strategy.SetUnitRole(this.M.C1.C1AllorsInteger, "Not an integer");
+                c1.Strategy.ScalarRole(this.M.C1.C1AllorsInteger).Set("Not an integer");
                 hasErrors = false;
             }
             catch (Exception)
@@ -60,7 +61,7 @@ namespace Tests.Workspace
 
             try
             {
-                c1.Strategy.SetCompositeRole(this.M.C1.C1C1One2One, c2);
+                c1.Strategy.CompositeRole<IObject>(this.M.C1.C1C1One2One).Set(c2);
                 hasErrors = false;
             }
             catch (Exception)
@@ -83,11 +84,11 @@ namespace Tests.Workspace
 
             bool hasErrors;
 
-            c1.Strategy.SetCompositesRole(this.M.C1.C1C2Many2Manies, new[] { c2 });
+            c1.Strategy.CompositesRole<C2>(this.M.C1.C1C2Many2Manies).Set(new[] { c2 });
 
             try
             {
-                c1.Strategy.SetCompositeRole(this.M.C1.C1C2Many2Manies, c2);
+                c1.Strategy.CompositeRole<C2>(this.M.C1.C1C2Many2Manies).Set(c2);
                 hasErrors = false;
             }
             catch (Exception)
@@ -109,7 +110,7 @@ namespace Tests.Workspace
             bool hasErrors;
             try
             {
-                c1.Strategy.AddCompositesRole(this.M.C1.C1C1Many2Manies, c2);
+                c1.Strategy.CompositesRole<IObject>(this.M.C1.C1C1Many2Manies).Add(c2);
                 hasErrors = false;
             }
             catch (Exception)
@@ -134,7 +135,7 @@ namespace Tests.Workspace
 
             try
             {
-                c1.Strategy.AddCompositesRole(this.M.C1.C1C2One2One, c2);
+                c1.Strategy.CompositesRole<C2>(this.M.C1.C1C2One2One).Add(c2);
                 hasErrors = false;
             }
             catch (Exception)

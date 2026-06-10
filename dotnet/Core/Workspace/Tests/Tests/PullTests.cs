@@ -2088,15 +2088,15 @@ namespace Tests.Workspace
             var result = await session.PullAsync(pull);
 
             var c1s = result.GetCollection<C1>();
-            var c1b = c1s.Single(v => v.Name == "c1B");
-            var c1c = c1s.Single(v => v.Name == "c1C");
-            var c1d = c1s.Single(v => v.Name == "c1D");
+            var c1b = c1s.Single(v => v.Name.Value == "c1B");
+            var c1c = c1s.Single(v => v.Name.Value == "c1C");
+            var c1d = c1s.Single(v => v.Name.Value == "c1D");
 
             var c2ByC1 = c1s.ToDictionary(v => v, v => v.C1C2One2One);
 
-            Assert.Equal("c2B", c2ByC1[c1b].Name);
-            Assert.Equal("c2C", c2ByC1[c1c].Name);
-            Assert.Equal("c2D", c2ByC1[c1d].Name);
+            Assert.Equal("c2B", c2ByC1[c1b].Value.Name.Value);
+            Assert.Equal("c2C", c2ByC1[c1c].Value.Name.Value);
+            Assert.Equal("c2D", c2ByC1[c1d].Value.Name.Value);
         }
 
         [Fact]
@@ -2114,14 +2114,14 @@ namespace Tests.Workspace
 
             var i12s = result.GetCollection<I12>();
 
-            Assert.Equal("c2D", i12s[0].Name);
-            Assert.Equal("c2C", i12s[1].Name);
-            Assert.Equal("c1B", i12s[2].Name);
-            Assert.Equal("c1A", i12s[3].Name);
-            Assert.Equal("c2A", i12s[4].Name);
-            Assert.Equal("c2B", i12s[5].Name);
-            Assert.Equal("c1D", i12s[6].Name);
-            Assert.Equal("c1C", i12s[7].Name);
+            Assert.Equal("c2D", i12s[0].Name.Value);
+            Assert.Equal("c2C", i12s[1].Name.Value);
+            Assert.Equal("c1B", i12s[2].Name.Value);
+            Assert.Equal("c1A", i12s[3].Name.Value);
+            Assert.Equal("c2A", i12s[4].Name.Value);
+            Assert.Equal("c2B", i12s[5].Name.Value);
+            Assert.Equal("c1D", i12s[6].Name.Value);
+            Assert.Equal("c1C", i12s[7].Name.Value);
         }
 
         [Fact]
@@ -2139,14 +2139,14 @@ namespace Tests.Workspace
 
             var i12s = result.GetCollection<I12>();
 
-            Assert.Equal("c2D", i12s[0].Name);
-            Assert.Equal("c2C", i12s[1].Name);
-            Assert.Equal("c1B", i12s[2].Name);
-            Assert.Equal("c1A", i12s[3].Name);
-            Assert.Equal("c2A", i12s[4].Name);
-            Assert.Equal("c2B", i12s[5].Name);
-            Assert.Equal("c1D", i12s[6].Name);
-            Assert.Equal("c1C", i12s[7].Name);
+            Assert.Equal("c2D", i12s[0].Name.Value);
+            Assert.Equal("c2C", i12s[1].Name.Value);
+            Assert.Equal("c1B", i12s[2].Name.Value);
+            Assert.Equal("c1A", i12s[3].Name.Value);
+            Assert.Equal("c2A", i12s[4].Name.Value);
+            Assert.Equal("c2B", i12s[5].Name.Value);
+            Assert.Equal("c1D", i12s[6].Name.Value);
+            Assert.Equal("c1C", i12s[7].Name.Value);
         }
 
 
@@ -2165,14 +2165,14 @@ namespace Tests.Workspace
 
             var i12s = result.GetCollection<I12>();
 
-            Assert.Equal("c2D", i12s[7].Name);
-            Assert.Equal("c2C", i12s[6].Name);
-            Assert.Equal("c1B", i12s[5].Name);
-            Assert.Equal("c1A", i12s[4].Name);
-            Assert.Equal("c2A", i12s[3].Name);
-            Assert.Equal("c2B", i12s[2].Name);
-            Assert.Equal("c1D", i12s[1].Name);
-            Assert.Equal("c1C", i12s[0].Name);
+            Assert.Equal("c2D", i12s[7].Name.Value);
+            Assert.Equal("c2C", i12s[6].Name.Value);
+            Assert.Equal("c1B", i12s[5].Name.Value);
+            Assert.Equal("c1A", i12s[4].Name.Value);
+            Assert.Equal("c2A", i12s[3].Name.Value);
+            Assert.Equal("c2B", i12s[2].Name.Value);
+            Assert.Equal("c1D", i12s[1].Name.Value);
+            Assert.Equal("c1C", i12s[0].Name.Value);
         }
     }
 }

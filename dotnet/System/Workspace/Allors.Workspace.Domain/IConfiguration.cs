@@ -5,8 +5,8 @@
 
 namespace Allors.Workspace
 {
-    using Derivations;
     using Meta;
+    using Signals;
 
     public interface IConfiguration
     {
@@ -16,6 +16,6 @@ namespace Allors.Workspace
 
         IObjectFactory ObjectFactory { get; }
 
-        IRule[] Rules { get; }
+        ISignalFactory SignalFactory { get; }
     }
 }
