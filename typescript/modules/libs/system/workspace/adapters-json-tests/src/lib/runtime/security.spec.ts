@@ -89,7 +89,7 @@ test('deniedPermissions', async () => {
         expect(denied.strategy.canWrite(roleType)).toBeFalsy();
       } else {
         expect(denied.strategy.canRead(roleType)).toBeTruthy();
-        expect(denied.strategy.canRead(roleType)).toBeTruthy();
+        expect(denied.strategy.canWrite(roleType)).toBeTruthy();
       }
     }
   }
