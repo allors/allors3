@@ -5,7 +5,9 @@
 
 namespace Allors.Database.Domain.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using Allors.Database.Domain.TestPopulation;
     using Xunit;
 
     public class SetupConfigurationTests : DomainTest, IClassFixture<Fixture>
@@ -19,6 +21,23 @@ namespace Allors.Database.Domain.Tests
             Assert.Contains(internalOrganisations.Select(v => v.DisplayName).ToArray(), v => v == "dutchInternalOrganisation");
             Assert.Contains(internalOrganisations.Select(v => v.DisplayName).ToArray(), v => v == "Ned. Belastingdienst");
             Assert.Contains(internalOrganisations.Select(v => v.DisplayName).ToArray(), v => v == "Federale OverheidsDienst FINANCIËN");
+        }
+
+        [Fact]
+        public void OrganisationDefaultsGenerateUniqueNames()
+        {
+            const int countPerMethod = 500;
+            var faker = this.Transaction.Faker();
+            var names = new List<string>(countPerMethod * 3);
+
+            for (var i = 0; i < countPerMethod; i++)
+            {
+                names.Add(new OrganisationBuilder(this.Transaction).WithDefaults().Build().Name);
+                names.Add(new OrganisationBuilder(this.Transaction).WithManufacturerDefaults(faker).Build().Name);
+                names.Add(new OrganisationBuilder(this.Transaction).WithInternalOrganisationDefaults().Build().Name);
+            }
+
+            Assert.Equal(names.Count, names.Distinct().Count());
         }
     }
 }
