@@ -2090,6 +2090,39 @@ namespace Allors.Database.Domain.Tests
         }
 
         [Fact]
+        public void ChangedSalesInvoiceItemAmountPaidAtMinimalUnitPriceDeriveSalesInvoiceItemStatePartiallyPaid()
+        {
+            // Regression for a flaky CI failure: WithDefaults() draws a random unit price; a price of 1 made the
+            // `TotalIncVat - 1` payment 0, deriving NotPaid. Pin the minimal sensible price (qty 1 from defaults)
+            // so the boundary (one unit short of full payment) is covered deterministically instead of ~1% of the time.
+            var invoice = new SalesInvoiceBuilder(this.Transaction).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
+
+            this.Transaction.Derive();
+
+            var invoiceItem = new SalesInvoiceItemBuilder(this.Transaction).WithDefaults().Build();
+            invoiceItem.AssignedUnitPrice = 2M;
+            invoice.AddSalesInvoiceItem(invoiceItem);
+            this.Transaction.Derive();
+
+            invoice.Send();
+            this.Transaction.Derive();
+
+            var partialAmount = invoiceItem.TotalIncVat - 1;
+            new ReceiptBuilder(this.Transaction)
+                .WithAmount(partialAmount)
+                .WithEffectiveDate(this.Transaction.Now())
+                .WithPaymentApplication(new PaymentApplicationBuilder(this.Transaction)
+                                            .WithAmountApplied(partialAmount)
+                                            .WithInvoiceItem(invoiceItem)
+                                            .Build())
+                .Build();
+
+            this.Transaction.Derive();
+
+            Assert.Equal(invoiceItem.SalesInvoiceItemState, new SalesInvoiceItemStates(this.Transaction).PartiallyPaid);
+        }
+
+        [Fact]
         public void ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePaid()
         {
             var invoice = new SalesInvoiceBuilder(this.Transaction).WithDefaultsWithoutItems(this.InternalOrganisation).Build();
