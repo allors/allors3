@@ -96,6 +96,13 @@ under a dated version heading.
 
 ### Fixed
 
+- Disposing a parent effect scope while a nested child scope was the active scope no longer leaves the
+  signals engine's active scope pointing at the disposed parent. `EffectScopeNode.Dispose` only restored the
+  active scope when it was exactly the disposed node, but disposal recurses into child scopes, so the child's
+  restore re-targeted its already-disposed (and already unlinked) parent — and effects created afterwards
+  registered under that disposed scope, where no outer scope could ever dispose them. `Dispose` now restores
+  the active scope whenever it lies anywhere in the disposed subtree, so it lands on the disposed scope's
+  outer scope.
 - Reassigning a session-origin one-to-many role to a new association now detaches it from the old one.
   `SessionOriginState.addCompositesRoleOne2Many` set the role's association back-pointer to the role itself
   instead of the association, so the "remove from previous association" step targeted the wrong object and the

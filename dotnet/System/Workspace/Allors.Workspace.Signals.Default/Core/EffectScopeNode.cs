@@ -33,7 +33,9 @@ namespace Allors.Workspace.Signals.Default.Core
 
             this.disposed = true;
 
-            if (TrackingContext.ActiveScope == this)
+            // The active scope may be a descendant about to be disposed with this subtree;
+            // restoring it here, before recursing, keeps it from ever pointing at a disposed scope.
+            if (this.ContainsActiveScope())
             {
                 TrackingContext.ActiveScope = this.previousScope;
             }
@@ -72,11 +74,28 @@ namespace Allors.Workspace.Signals.Default.Core
                 this.previousScope.childTail = this.previousSibling;
             }
 
+            // previousScope is intentionally kept: ContainsActiveScope walks it on disposed nodes.
             this.nextSibling = null;
             this.previousSibling = null;
             this.childHead = null;
             this.childTail = null;
             this.effectsHead = null;
+        }
+
+        private bool ContainsActiveScope()
+        {
+            var scope = TrackingContext.ActiveScope;
+            while (scope != null)
+            {
+                if (scope == this)
+                {
+                    return true;
+                }
+
+                scope = scope.previousScope;
+            }
+
+            return false;
         }
 
         internal void AddEffect(EffectNode effect)

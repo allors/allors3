@@ -36,6 +36,33 @@ namespace Allors.Workspace.Signals.Default.Tests
         }
 
         [Fact]
+        public void DisposingParentScopeWhileChildScopeIsActiveRestoresOuterScope()
+        {
+            var factory = new DefaultSignalFactory();
+            var state = factory.State(0);
+            var runs = 0;
+
+            var outerScope = factory.EffectScope();
+            var parentScope = factory.EffectScope();
+            _ = factory.EffectScope(); // child of parentScope; stays the active scope
+
+            parentScope.Dispose();
+
+            factory.Effect(() =>
+            {
+                _ = state.Value;
+                runs++;
+            });
+
+            Assert.Equal(1, runs);
+
+            outerScope.Dispose();
+            state.Value = 1;
+
+            Assert.Equal(1, runs);
+        }
+
+        [Fact]
         public void DisposingNestedScopeKeepsParentEffectsActive()
         {
             var factory = new DefaultSignalFactory();
