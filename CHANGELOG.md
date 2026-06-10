@@ -78,6 +78,12 @@ under a dated version heading.
 
 ### Fixed
 
+- The `SalesInvoiceStateRuleTests.ChangedSalesInvoiceItemAmountPaidDeriveSalesInvoiceItemStatePartiallyPaid`
+  domain test no longer flakes (~1% of CI runs). `SalesInvoiceItemBuilder.WithDefaults()` drew a random unit
+  price in `[1, 100]`; when it rolled `1` the test's `TotalIncVat - 1` partial payment was `0`, so
+  `SalesInvoiceStateRule` correctly derived `NotPaid` instead of the asserted `PartiallyPaid`. The test-data
+  builders now floor the random unit price at `2`, and a deterministic regression test pins the minimal price
+  so the "one unit short of full payment" boundary is always covered.
 - Test-population organisation builders now generate unique `Organisation.Name` values by construction.
   `OrganisationBuilderExtensions.WithDefaults`, `WithManufacturerDefaults` and `WithInternalOrganisationDefaults`
   used Bogus `Company.CompanyName()`, which is not unique, so a population occasionally produced two organisations
