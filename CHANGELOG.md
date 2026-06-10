@@ -98,6 +98,10 @@ under a dated version heading.
   corrupted the file, failing a random matrix job. A new `dotnet/Directory.Build.targets` clears the
   `CloudBuildVersionVars` item before the target runs, skipping the emission. Assembly version stamping
   is unaffected, and `cloudBuild.setVersionVariables: false` does **not** gate this MSBuild-side write.
+- Reassigning a session-origin one-to-many role to a new association now detaches it from the old one.
+  `SessionOriginState.addCompositesRoleOne2Many` set the role's association back-pointer to the role itself
+  instead of the association, so the "remove from previous association" step targeted the wrong object and the
+  role stayed in both associations (violating the one-to-many). It now stores the association.
 - Binary unit values are no longer double base64-encoded when pulled. `unitFromJson` returned `btoa(value)` for
   a `Binary` unit, but the wire value is already base64 and the push path (`unitToJson`) sends it through
   unchanged, so the round-trip produced a doubly-encoded value. It now returns the value as-is, matching the
